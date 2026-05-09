@@ -62,6 +62,15 @@ assert(widgets.bridge.verifyOrigin, "widget bridge must verify origin");
 const proof = await request("/api/reviewer-proof");
 assert(proof.proof.score >= 90, "reviewer proof score is below target");
 
+const resilience = await request("/api/resilience");
+assert(resilience.drills.length >= 5, "resilience drills are incomplete");
+assert(
+  resilience.drills.some((drill) => drill.id === "non_idempotent_check_then_retry"),
+  "non-idempotent recovery drill is missing",
+);
+assert(resilience.runbook.nonBlindRetryTools.includes("place_food_order"), "order retry runbook is missing");
+assert(resilience.runbook.score >= 90, "resilience drill score is below target");
+
 const submission = await request("/api/submission-package");
 assert(submission.package.fields.length >= 10, "submission package is incomplete");
 
@@ -79,6 +88,7 @@ console.log(
       replaySteps: replay.replay.length,
       widgets: widgets.widgets.length,
       reviewerScore: proof.proof.score,
+      resilienceScore: resilience.runbook.score,
       submissionFields: submission.package.fields.length,
       storage: storage.storage.kind,
     },

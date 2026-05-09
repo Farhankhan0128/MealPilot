@@ -310,6 +310,12 @@ export function buildGoLiveChecks(options: {
       evidence: "Order placement, grocery checkout, and table booking are never blindly retried.",
     },
     {
+      id: "resilience_drills",
+      label: "Retry and failure drills",
+      status: "ready",
+      evidence: "/api/resilience exercises 5xx, 429, 401, non-idempotent recovery, and deprecation handling.",
+    },
+    {
       id: "observability",
       label: "Session observability",
       status: options.hasPlan ? "ready" : "manual_review",

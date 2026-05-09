@@ -336,6 +336,43 @@ export interface ReviewerProof {
   artifacts: Array<{ label: string; path: string }>;
 }
 
+export type ResilienceStatus = "pass" | "watch" | "blocked";
+
+export interface ResilienceDrillStep {
+  id: string;
+  sequence: number;
+  server: SwiggyServer | "all";
+  tool: string;
+  label: string;
+  simulatedResponse: string;
+  action: string;
+  evidence: string;
+  status: ResilienceStatus;
+}
+
+export interface ResilienceDrill {
+  id: string;
+  label: string;
+  swiggyRequirement: string;
+  failureMode: string;
+  protectedTools: string[];
+  recoveryPattern: string;
+  retryBudgetMs: number;
+  userImpact: string;
+  status: ResilienceStatus;
+  steps: ResilienceDrillStep[];
+}
+
+export interface ResilienceRunbook {
+  generatedAt: string;
+  score: number;
+  safeRetryClasses: string[];
+  nonBlindRetryTools: CommerceAction[];
+  escalationEmail: string;
+  checklist: Array<{ id: string; label: string; status: ResilienceStatus; evidence: string }>;
+  supportPayload: Record<string, string>;
+}
+
 export interface MealPlan {
   id: string;
   summary: string;

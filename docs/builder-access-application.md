@@ -67,6 +67,7 @@ Scale-up after staging:
 - Rate-limit plan for per-user, write-tool, client-day, and tracking-poll budgets.
 - Version/deprecation monitor for v1 route pinning, 180-day deprecation windows, and `_meta.swiggy.deprecation` alerts.
 - DPDP-oriented compliance evidence for consent, minimization, deletion, audit logging, and no model-training use of Swiggy-originated data.
+- Executable Resilience Lab for 5xx retry, 429 Retry-After, 401 reauth, non-idempotent check-then-retry, and deprecation metadata drills.
 - OpenAPI 3.1 contract, readiness probe, request IDs, and security headers.
 - GitHub Actions CI, Dockerfile, Render blueprint, and production smoke verification script.
 - Optional file-backed persistence with versioned snapshots, restore, compaction, retention, and storage diagnostics.
@@ -97,10 +98,11 @@ The application will include a 2-3 minute Loom or unlisted YouTube demo showing:
 5. Cart and booking actions pause for explicit confirmation.
 6. Launch Center shows 35-tool coverage, chat/voice behavior, go-live gates, and observability metrics.
 7. Demo Studio shows cart preflight, MCP replay, and submission readiness.
-8. Production Evidence shows widgets, rate limits, versioning, compliance, and reviewer proof score.
+8. Production Evidence shows widgets, rate limits, versioning, compliance, resilience drills, and reviewer proof score.
 9. Show `/api/ready`, `/api/openapi.json`, and `npm run verify:production`.
 10. Show storage diagnostics and snapshot export in `/api/storage/status` and `/api/storage/export`.
-11. Logs show trace IDs, no raw PII, and safe error handling.
+11. Show `/api/resilience` with the order-placement recovery runbook.
+12. Logs show trace IDs, no raw PII, and safe error handling.
 
 ## Primary Technical Contact
 

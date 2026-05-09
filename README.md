@@ -58,6 +58,7 @@ Planned MCP servers:
 - Version monitor for v1 route pinning, 180-day deprecation windows, and `_meta.swiggy.deprecation` alert readiness.
 - DPDP-oriented compliance evidence for consent, PII minimization, deletion, audit logging, and training-data exclusion.
 - OpenAPI 3.1 contract, readiness probe, security headers, and request IDs for production review.
+- Executable Resilience Lab for Swiggy's 5xx retry, 429 Retry-After, 401 reauth, non-idempotent check-then-retry, and deprecation-monitoring checklist.
 - Dockerfile, Render blueprint, GitHub Actions CI, and automated production smoke verification.
 - Optional file-backed persistence with snapshot export, restore, compaction, retention, and storage diagnostics.
 - Privacy export and local data deletion endpoints.
@@ -159,6 +160,7 @@ GET  /api/rate-limit-plan
 GET  /api/version-monitor
 GET  /api/compliance-evidence
 GET  /api/reviewer-proof
+GET  /api/resilience
 GET  /api/storage/status
 GET  /api/storage/export
 POST /api/storage/restore
@@ -174,7 +176,7 @@ GET  /api/builder-package.md
 3. Open MCP Coverage and show all 35 documented tools mapped across the three Swiggy servers.
 4. Confirm one action, refresh tracking, and show the audit timeline with session IDs.
 5. Open Demo Studio and show cart preflight, coupon opportunities, MCP replay, and submission readiness.
-6. Open Production Evidence and show widgets, rate limits, version monitor, compliance controls, and reviewer proof score.
+6. Open Production Evidence and show widgets, rate limits, version monitor, compliance controls, Resilience Lab, and reviewer proof score.
 7. Schedule reminders, open Go-Live Gates, then export the Builder Access packet.
 8. Generate a support report to show how a production issue would be escalated with traceable session context.
 
@@ -199,7 +201,7 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 
 ## Current Status
 
-Runnable full-stack localhost app, optional durable persistence, 35-tool Swiggy MCP coverage map, builder access proposal, technical packet, safety plan, launch readiness dashboard, demo studio, production evidence center, submission package, support workflow, and tests are ready. Next step: record the 2-3 minute demo and submit the Swiggy Builders Club access form with the GitHub repo and packet export.
+Runnable full-stack localhost app, optional durable persistence, 35-tool Swiggy MCP coverage map, builder access proposal, technical packet, safety plan, launch readiness dashboard, demo studio, production evidence center, executable resilience drills, submission package, support workflow, and tests are ready. Next step: record the 2-3 minute demo and submit the Swiggy Builders Club access form with the GitHub repo and packet export.
 
 CI/CD and deploy assets are included: GitHub Actions runs lint, tests, build, and production smoke verification; Docker serves the built frontend and API from one container; Render can deploy from `render.yaml` after Swiggy credentials are issued.
 

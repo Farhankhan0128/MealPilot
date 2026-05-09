@@ -45,6 +45,14 @@ Unsafe to retry blindly:
 
 For non-idempotent calls, MealPilot records the attempted action and asks the user to verify the result before trying again.
 
+The `/api/resilience` endpoint turns this policy into executable demo evidence:
+
+- 5xx and upstream timeout backoff for safe read tools.
+- 429 `Retry-After` handling without extra burst traffic.
+- 401 and JSON-RPC auth recovery through OAuth PKCE.
+- Check-then-retry for `place_food_order`, `checkout`, and `book_table`.
+- Version/deprecation alerting through `_meta.swiggy.deprecation`.
+
 ## Rate Limits And Traffic
 
 Initial pilot target:

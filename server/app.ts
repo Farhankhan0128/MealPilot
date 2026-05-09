@@ -41,6 +41,7 @@ import {
   buildVersionMonitor,
   buildWidgets,
 } from "./services/productionEvidence.js";
+import { buildResilienceDrills, buildResilienceRunbook } from "./services/resilienceDrills.js";
 import { buildOpenApiDocument } from "./services/openApi.js";
 import { createPkcePair, createState } from "./services/pkce.js";
 import { createMemorySessionStore, type SessionStore } from "./store/sessionStore.js";
@@ -556,6 +557,19 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
         compliance,
         version,
       }),
+    });
+  });
+
+  app.get("/api/resilience", (_req, res) => {
+    const plans = store.getAllPlans();
+    const drills = buildResilienceDrills({
+      plans,
+      hasClientId: config.swiggyClientId !== "replace_after_builder_access",
+    });
+
+    res.json({
+      drills,
+      runbook: buildResilienceRunbook(drills, plans),
     });
   });
 
