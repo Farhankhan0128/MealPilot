@@ -200,4 +200,28 @@ describe("MealPilot API", () => {
     expect(submission.body.package.fields.some((field: { id: string }) => field.id === "tool_coverage")).toBe(true);
     expect(submission.body.package.links.some((link: { label: string }) => link.label === "GitHub")).toBe(true);
   });
+
+  it("returns widget, rate-limit, version, compliance, and reviewer proof evidence", async () => {
+    const { app } = createMealPilotServer();
+    const created = await request(app).post("/api/plan").send(planningRequest).expect(201);
+    const sessionId = created.body.plan.id as string;
+
+    const widgets = await request(app).get(`/api/sessions/${sessionId}/widgets`).expect(200);
+    expect(widgets.body.widgets.length).toBeGreaterThanOrEqual(5);
+    expect(widgets.body.bridge.verifyOrigin).toBe(true);
+
+    const rateLimit = await request(app).get("/api/rate-limit-plan").expect(200);
+    expect(rateLimit.body.rateLimit.budgets.some((budget: { scope: string }) => budget.scope.includes("client_id"))).toBe(true);
+
+    const version = await request(app).get("/api/version-monitor").expect(200);
+    expect(version.body.version.deprecationWindowDays).toBe(180);
+    expect(version.body.version.pinnedRoutes.food).toContain("/v1/food");
+
+    const compliance = await request(app).get("/api/compliance-evidence").expect(200);
+    expect(compliance.body.compliance.controls.some((control: { id: string }) => control.id === "deletion")).toBe(true);
+
+    const proof = await request(app).get("/api/reviewer-proof").expect(200);
+    expect(proof.body.proof.score).toBeGreaterThanOrEqual(80);
+    expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Widget contracts")).toBe(true);
+  });
 });

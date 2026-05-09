@@ -466,6 +466,10 @@ MealPilot India is a privacy-first AI commerce assistant for Indian households. 
 - Minimal profile storage with explicit consent
 - Swiggy session ids treated as support identifiers only
 - Chat and voice response contracts are separated so IDs, tokens, and long lists are never read aloud
+- Widget contracts use sandboxed iframe settings and semantic fallbacks
+- Rate-limit plan keeps pilot traffic below planned developer-tier ceilings
+- Version monitor is wired for v1 route pinning and deprecation metadata
+- Compliance controls cover consent, minimization, deletion, audit logging, and no model-training use
 
 ## Profile Snapshot
 

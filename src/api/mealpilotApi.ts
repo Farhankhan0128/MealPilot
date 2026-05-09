@@ -3,6 +3,7 @@ import type {
   AgentSurfaceResponse,
   BuilderReadinessItem,
   CartPreflightReport,
+  ComplianceEvidence,
   DemoStudioStep,
   GoLiveCheck,
   GroupMember,
@@ -14,12 +15,16 @@ import type {
   ObservabilityMetric,
   OpsStatus,
   PantryItem,
+  RateLimitPlan,
   Reminder,
+  ReviewerProof,
   RestockSuggestion,
   SubmissionPackage,
+  SwiggyWidget,
   TrackingEvent,
   UserPlanningRequest,
   UserProfile,
+  VersionMonitor,
 } from "../domain/types";
 
 export interface HealthResponse {
@@ -165,6 +170,13 @@ export function fetchMcpReplay(sessionId: string) {
   return requestJson<{ replay: McpReplayStep[] }>(`/api/sessions/${sessionId}/replay`);
 }
 
+export function fetchWidgets(sessionId: string) {
+  return requestJson<{
+    widgets: SwiggyWidget[];
+    bridge: { origin: string; sandbox: string; verifyOrigin: boolean };
+  }>(`/api/sessions/${sessionId}/widgets`);
+}
+
 export function fetchPantry() {
   return requestJson<{ pantry: PantryItem[]; suggestions: RestockSuggestion[] }>("/api/pantry");
 }
@@ -215,6 +227,22 @@ export function fetchDemoStudio() {
 
 export function fetchSubmissionPackage() {
   return requestJson<{ package: SubmissionPackage }>("/api/submission-package");
+}
+
+export function fetchRateLimitPlan() {
+  return requestJson<{ rateLimit: RateLimitPlan }>("/api/rate-limit-plan");
+}
+
+export function fetchVersionMonitor() {
+  return requestJson<{ version: VersionMonitor }>("/api/version-monitor");
+}
+
+export function fetchComplianceEvidence() {
+  return requestJson<{ compliance: ComplianceEvidence }>("/api/compliance-evidence");
+}
+
+export function fetchReviewerProof() {
+  return requestJson<{ proof: ReviewerProof }>("/api/reviewer-proof");
 }
 
 export function exportPrivacyData() {
