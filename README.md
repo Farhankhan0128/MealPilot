@@ -57,6 +57,8 @@ Planned MCP servers:
 - Rate-limit plan aligned to planned developer-tier ceilings, including per-user, write-tool, client-day, and tracking-poll budgets.
 - Version monitor for v1 route pinning, 180-day deprecation windows, and `_meta.swiggy.deprecation` alert readiness.
 - DPDP-oriented compliance evidence for consent, PII minimization, deletion, audit logging, and training-data exclusion.
+- OpenAPI 3.1 contract, readiness probe, security headers, and request IDs for production review.
+- Dockerfile, Render blueprint, GitHub Actions CI, and automated production smoke verification.
 - Privacy export and local data deletion endpoints.
 - Ops status dashboard for API, MCP mode, sessions, and reminders.
 - Builder Access package endpoint with readiness evidence.
@@ -73,6 +75,10 @@ Planned MCP servers:
 - [`docs/architecture.md`](docs/architecture.md): agent architecture and Swiggy MCP integration model.
 - [`docs/safety-and-compliance.md`](docs/safety-and-compliance.md): order confirmation, PII, OAuth, traffic, and abuse-prevention plan.
 - [`docs/roadmap.md`](docs/roadmap.md): MVP, staging, and production path.
+- [`.github/workflows/ci.yml`](.github/workflows/ci.yml): lint, test, build, and production smoke workflow.
+- [`Dockerfile`](Dockerfile): production container with `/api/ready` healthcheck.
+- [`render.yaml`](render.yaml): deploy blueprint with Swiggy credential placeholders.
+- [`scripts/verify-production.mjs`](scripts/verify-production.mjs): automated reviewer smoke test.
 - [`prototype/`](prototype/): dependency-free fallback prototype.
 
 ## Run Locally
@@ -121,10 +127,25 @@ Then visit:
 http://localhost:8787
 ```
 
+Verify the production server:
+
+```bash
+npm run verify:production
+```
+
+Docker run:
+
+```bash
+docker build -t mealpilot .
+docker run --rm -p 8787:8787 mealpilot
+```
+
 Useful demo endpoints:
 
 ```text
 GET  /api/mcp/catalog
+GET  /api/ready
+GET  /api/openapi.json
 GET  /api/go-live
 GET  /api/sessions/:sessionId/surface?surface=chat
 GET  /api/sessions/:sessionId/surface?surface=voice
@@ -170,6 +191,8 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 ## Current Status
 
 Runnable full-stack localhost app, 35-tool Swiggy MCP coverage map, builder access proposal, technical packet, safety plan, launch readiness dashboard, demo studio, production evidence center, submission package, support workflow, and tests are ready. Next step: record the 2-3 minute demo and submit the Swiggy Builders Club access form with the GitHub repo and packet export.
+
+CI/CD and deploy assets are included: GitHub Actions runs lint, tests, build, and production smoke verification; Docker serves the built frontend and API from one container; Render can deploy from `render.yaml` after Swiggy credentials are issued.
 
 ## Official References
 

@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: mealpilot
+    runtime: docker
+    plan: starter
+    healthCheckPath: /api/ready
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: SWIGGY_ENV
+        value: mock
+      - key: SWIGGY_CLIENT_ID
+        sync: false
+      - key: SWIGGY_REDIRECT_URI
+        sync: false
+      - key: SWIGGY_SCOPE
+        value: mcp:tools mcp:resources mcp:prompts

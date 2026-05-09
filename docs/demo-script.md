@@ -130,6 +130,14 @@ Open Production Evidence and show:
 
 ### 10. Close
 
+Briefly show production readiness:
+
+- `/api/ready`
+- `/api/openapi.json`
+- GitHub Actions workflow
+- Dockerfile
+- `npm run verify:production`
+
 Voiceover:
 
 > We are requesting access to Food, Instamart, and Dineout servers for a private pilot. Our expected traffic is below 1 QPS, with staging validation before production use.

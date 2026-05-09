@@ -16,7 +16,8 @@
     "preview": "npm run build && npm start",
     "test": "vitest run",
     "test:watch": "vitest",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "verify:production": "node scripts/verify-production.mjs"
   },
   "repository": {
     "type": "git",

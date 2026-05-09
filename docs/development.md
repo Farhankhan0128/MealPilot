@@ -9,6 +9,7 @@ npm run lint
 npm test
 npm run build
 npm start
+npm run verify:production
 ```
 
 ## App Structure
@@ -35,10 +36,16 @@ server/
   mock/
     swiggyToolRouter.ts
   services/
+    advancedWorkflows.ts
     confirmationService.ts
+    demoStudio.ts
+    openApi.ts
     pkce.ts
+    productionEvidence.ts
   store/
     sessionStore.ts
+scripts/
+  verify-production.mjs
 ```
 
 ## Runtime Shape
@@ -59,12 +66,28 @@ npm start
 
 Open `http://localhost:8787`.
 
+Production verification expects the server to be running:
+
+```bash
+npm run build
+npm start
+npm run verify:production
+```
+
+The verifier creates a plan, checks 35-tool coverage, validates preflight/replay/widgets/submission evidence, and asserts reviewer proof remains above target.
+
 ## API
 
 - `GET /api/health`
+- `GET /api/ready`
+- `GET /api/openapi.json`
 - `GET /api/config`
 - `POST /api/plan`
 - `GET /api/sessions/:sessionId`
+- `GET /api/sessions/:sessionId/surface`
+- `GET /api/sessions/:sessionId/preflight`
+- `GET /api/sessions/:sessionId/replay`
+- `GET /api/sessions/:sessionId/widgets`
 - `POST /api/confirm`
 - `POST /api/confirm-all`
 - `POST /api/substitute`
@@ -81,11 +104,49 @@ Open `http://localhost:8787`.
 - `POST /api/schedule`
 - `GET /api/schedule`
 - `GET /api/ops`
+- `GET /api/go-live`
+- `GET /api/demo-studio`
+- `GET /api/submission-package`
+- `GET /api/rate-limit-plan`
+- `GET /api/version-monitor`
+- `GET /api/compliance-evidence`
+- `GET /api/reviewer-proof`
 - `GET /api/privacy/export`
 - `DELETE /api/privacy`
 - `POST /api/mcp/:server`
 - `POST /api/auth/swiggy/start`
 - `GET /api/auth/swiggy/callback`
+
+## CI And Deploy
+
+GitHub Actions workflow:
+
+```text
+.github/workflows/ci.yml
+```
+
+It runs:
+
+- `npm ci`
+- `npm run lint`
+- `npm test -- --run`
+- `npm run build`
+- production smoke verification against `npm start`
+
+Docker:
+
+```bash
+docker build -t mealpilot .
+docker run --rm -p 8787:8787 mealpilot
+```
+
+Render:
+
+```text
+render.yaml
+```
+
+Fill `SWIGGY_CLIENT_ID` and `SWIGGY_REDIRECT_URI` after Builder Access credentials are issued.
 
 ## Swiggy Modes
 
@@ -113,6 +174,7 @@ The test suite checks that:
 - `/api/plan`, `/api/confirm`, and `/api/mcp/:server` work end to end.
 - Profile, substitution, confirm-all, tracking, and Builder Access package routes work end to end.
 - Pantry, group planning, scheduling, ops, privacy, markdown export, and OAuth callback routes work end to end.
+- Readiness, OpenAPI, preflight, replay, widgets, submission, rate-limit, version, compliance, and reviewer proof routes work end to end.
 - The React UI loads server-generated plans and confirms through the API.
 - All commercial actions require explicit confirmation.
 - Confirming one recommendation does not silently confirm the others.

@@ -41,6 +41,7 @@ import {
   buildVersionMonitor,
   buildWidgets,
 } from "./services/productionEvidence.js";
+import { buildOpenApiDocument } from "./services/openApi.js";
 import { createPkcePair, createState } from "./services/pkce.js";
 import { createMemorySessionStore, type SessionStore } from "./store/sessionStore.js";
 
@@ -124,11 +125,44 @@ function hashForLog(input: string) {
   return `sha256:${crypto.createHash("sha256").update(input).digest("hex").slice(0, 16)}`;
 }
 
+function securityHeaders(_req: Request, res: Response, next: NextFunction) {
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("X-Frame-Options", "DENY");
+  res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+  res.setHeader("Permissions-Policy", "geolocation=(), microphone=(), camera=()");
+  res.setHeader("Cross-Origin-Resource-Policy", "same-origin");
+  next();
+}
+
+function requestContext(req: Request, res: Response, next: NextFunction) {
+  const requestId = crypto.randomUUID();
+  res.setHeader("X-MealPilot-Request-Id", requestId);
+  const startedAt = Date.now();
+  res.on("finish", () => {
+    if (req.path.startsWith("/api")) {
+      console.info(
+        JSON.stringify({
+          event: "mealpilot_request",
+          requestId,
+          method: req.method,
+          path: req.path,
+          status: res.statusCode,
+          durationMs: Date.now() - startedAt,
+        }),
+      );
+    }
+  });
+  next();
+}
+
 export function createMealPilotServer(options: MealPilotServerOptions = {}) {
   const config = options.config ?? readConfig();
   const store = options.store ?? createMemorySessionStore();
   const app = express();
 
+  app.disable("x-powered-by");
+  app.use(securityHeaders);
+  app.use(requestContext);
   app.use(cors({ origin: true, credentials: false }));
   app.use(express.json({ limit: "1mb" }));
 
@@ -140,6 +174,30 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
       hasClientId: config.swiggyClientId !== "replace_after_builder_access",
       time: new Date().toISOString(),
     });
+  });
+
+  app.get("/api/ready", (_req, res) => {
+    const plans = store.getAllPlans();
+    const coverage = buildMcpCoverage();
+    const totalTools = coverage.reduce((sum, server) => sum + server.totalTools, 0);
+    const mappedTools = coverage.reduce((sum, server) => sum + server.demoReady + server.guarded, 0);
+    const ready = totalTools === mappedTools && config.swiggyScope.includes("mcp:tools");
+
+    res.status(ready ? 200 : 503).json({
+      ok: ready,
+      mode: config.swiggyMode,
+      checks: {
+        api: "ready",
+        staticServing: options.serveStatic ? "enabled" : "disabled",
+        mcpCoverage: `${mappedTools}/${totalTools}`,
+        scope: config.swiggyScope,
+        sessions: plans.length,
+      },
+    });
+  });
+
+  app.get("/api/openapi.json", (_req, res) => {
+    res.json(buildOpenApiDocument(config));
   });
 
   app.get("/api/config", (_req, res) => {
