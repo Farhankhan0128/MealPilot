@@ -8,12 +8,13 @@ Target length: 2-3 minutes.
 - App state: fresh user session.
 - Demo city: Bengaluru or Delhi NCR.
 - Persona: vegetarian professional planning meals for the week.
+- Command: `npm run dev`
 
 ## Script
 
 ### 1. Open The Product
 
-Show the MealPilot interface. The first screen should already be the planning workspace, not a marketing page.
+Show the MealPilot command center. The first screen should already be the planning workspace, not a marketing page.
 
 Voiceover:
 
@@ -74,13 +75,18 @@ Do not show a real payment or production order unless staging credentials explic
 
 ### 6. Show Safety Logs
 
-Show developer console or observability panel with:
+Show the in-app audit timeline with:
 
 - Tool names.
 - Status codes.
 - Trace IDs.
 - No raw PII.
 - 401 and 429 handling notes.
+
+Then mention the tested retry policy:
+
+- Reads and cart mutations may retry with backoff.
+- `place_food_order`, `checkout`, and `book_table` are not blindly retried.
 
 ### 7. Close
 
@@ -95,3 +101,4 @@ Voiceover:
 - Add production redirect URI.
 - Add primary engineering contact email.
 - Confirm requested servers: `food`, `instamart`, `dineout`.
+- Run `npm run lint`, `npm test`, and `npm run build` before sharing.

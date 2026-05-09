@@ -2,7 +2,7 @@
 
 MealPilot India is a privacy-first AI commerce assistant for Indian households and busy professionals. It helps users plan meals, build grocery baskets, order food, and plan dining experiences through Swiggy MCP.
 
-This repository is built as a Swiggy Builders Club access packet: a concrete real-user use case, a safe confirmation-first commerce flow, a local prototype, and a production-minded technical plan for Food, Instamart, and Dineout.
+This repository is built as a Swiggy Builders Club access packet and a runnable product prototype: a concrete real-user use case, a safe confirmation-first commerce flow, a local MCP-style stub, and a production-minded technical plan for Food, Instamart, and Dineout.
 
 ## Core Use Case
 
@@ -28,22 +28,38 @@ Planned MCP servers:
 - `instamart`: grocery discovery, basket creation, and checkout-ready carts.
 - `dineout`: restaurant discovery, availability checks, and reservation planning.
 
+## Product Surface
+
+- React + TypeScript planning workspace.
+- Mock Swiggy MCP adapter for localhost demos before credentials are issued.
+- Swiggy staging/production endpoint map for the eventual MCP swap.
+- OAuth 2.1 PKCE helper for the Swiggy authorization flow.
+- Confirmation modals for Food, Instamart, and Dineout actions.
+- Audit timeline with tool names, session IDs, and redacted details.
+- Vitest coverage for planner behavior and retry safety.
+
 ## Repository Map
 
+- [`src/`](src/): runnable MealPilot app and Swiggy integration layer.
 - [`docs/builder-access-application.md`](docs/builder-access-application.md): copy-ready Swiggy Builders Club application details.
 - [`docs/demo-script.md`](docs/demo-script.md): 2-3 minute demo recording flow.
 - [`docs/architecture.md`](docs/architecture.md): agent architecture and Swiggy MCP integration model.
 - [`docs/safety-and-compliance.md`](docs/safety-and-compliance.md): order confirmation, PII, OAuth, traffic, and abuse-prevention plan.
 - [`docs/roadmap.md`](docs/roadmap.md): MVP, staging, and production path.
-- [`prototype/`](prototype/): lightweight static localhost demo for the reviewer-facing walkthrough.
+- [`prototype/`](prototype/): dependency-free fallback prototype.
 
-## Local Prototype
+## Run Locally
 
-The static prototype is intentionally dependency-free so it can be opened immediately:
+Install dependencies:
 
 ```bash
-cd prototype
-python3 -m http.server 5173
+npm install
+```
+
+Start the app:
+
+```bash
+npm run dev
 ```
 
 Then visit:
@@ -52,15 +68,34 @@ Then visit:
 http://localhost:5173
 ```
 
-The prototype shows the intended multi-step Swiggy MCP flow and the mandatory confirmation gates before checkout or booking.
+Quality checks:
+
+```bash
+npm run lint
+npm test
+npm run build
+```
+
+## Environment
+
+Copy `.env.example` to `.env.local` when credentials are issued:
+
+```text
+VITE_SWIGGY_ENV=mock
+VITE_SWIGGY_CLIENT_ID=replace_after_builder_access
+VITE_SWIGGY_REDIRECT_URI=http://localhost:5173/auth/swiggy/callback
+VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
+```
 
 ## Current Status
 
-Initial builder access proposal and technical packet are ready. Next step: connect the static prototype to a local Swiggy MCP dev stub, record the demo, and submit the Swiggy Builders Club access form.
+Runnable localhost app, builder access proposal, technical packet, safety plan, and tests are ready. Next step: record the 2-3 minute demo and submit the Swiggy Builders Club access form.
 
 ## Official References
 
 - Swiggy Builders Club: https://mcp.swiggy.com/builders/
 - Access and onboarding: https://mcp.swiggy.com/builders/docs/operate/access/
 - Developer start guide: https://mcp.swiggy.com/builders/docs/start/
+- Authenticate: https://mcp.swiggy.com/builders/docs/start/authenticate/
 - Combined Food + Dineout recipe: https://mcp.swiggy.com/builders/docs/build/recipes/combined/
+- Ship to production: https://mcp.swiggy.com/builders/docs/build/ship-to-production/

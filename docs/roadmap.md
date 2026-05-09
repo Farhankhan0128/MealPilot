@@ -2,7 +2,7 @@
 
 ## Phase 0: Builder Access Packet
 
-Status: ready.
+Status: complete.
 
 - Define use case and target users.
 - Prepare GitHub repository.
@@ -11,13 +11,14 @@ Status: ready.
 
 ## Phase 1: Local Prototype
 
-Target: 2-4 days.
+Status: in progress.
 
-- Add local dev stub for Food, Instamart, and Dineout responses.
-- Connect UI to a small backend agent API.
-- Add structured planning state.
-- Add explicit confirmation modals for all risky actions.
-- Add trace IDs and redacted logs.
+- Add local dev stub for Food, Instamart, and Dineout responses. Complete.
+- Connect UI to structured planning state. Complete.
+- Add explicit confirmation modals for all risky actions. Complete.
+- Add audit timeline and redacted log shape. Complete.
+- Add OAuth callback screen and token exchange path. Next.
+- Add real MCP transport behind a staging flag. Next.
 
 ## Phase 2: Swiggy Staging
 
