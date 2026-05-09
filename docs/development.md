@@ -66,6 +66,13 @@ Open `http://localhost:8787`.
 - `POST /api/plan`
 - `GET /api/sessions/:sessionId`
 - `POST /api/confirm`
+- `POST /api/confirm-all`
+- `POST /api/substitute`
+- `POST /api/remove-item`
+- `GET /api/tracking/:sessionId`
+- `GET /api/profile`
+- `PUT /api/profile`
+- `GET /api/builder-package`
 - `POST /api/mcp/:server`
 - `POST /api/auth/swiggy/start`
 - `GET /api/auth/swiggy/callback`
@@ -94,6 +101,7 @@ The test suite checks that:
 
 - MealPilot composes Food, Instamart, and Dineout recommendations.
 - `/api/plan`, `/api/confirm`, and `/api/mcp/:server` work end to end.
+- Profile, substitution, confirm-all, tracking, and Builder Access package routes work end to end.
 - The React UI loads server-generated plans and confirms through the API.
 - All commercial actions require explicit confirmation.
 - Confirming one recommendation does not silently confirm the others.

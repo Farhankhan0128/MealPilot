@@ -12,6 +12,7 @@ import {
   LockKeyhole,
   MapPin,
   Play,
+  RefreshCw,
   ShieldCheck,
   ShoppingBasket,
   Sparkles,
@@ -19,9 +20,24 @@ import {
 } from "lucide-react";
 import type { ReactNode } from "react";
 import { useEffect, useMemo, useState } from "react";
-import { buildServerPlan, confirmServerRecommendation, fetchHealth, type HealthResponse } from "./api/mealpilotApi";
+import {
+  buildServerPlan,
+  confirmAllRecommendations,
+  confirmServerRecommendation,
+  fetchBuilderPackage,
+  fetchHealth,
+  fetchProfile,
+  fetchTracking,
+  removeRecommendationItem,
+  startSwiggyAuth,
+  substituteRecommendationItem,
+  updateProfile,
+  type BuilderPackageResponse,
+  type HealthResponse,
+} from "./api/mealpilotApi";
+import { defaultUserProfile, normalizeListInput } from "./domain/profile";
 import { buildConfirmationMessage } from "./domain/safety";
-import type { MealPlan, Recommendation, SwiggyServer, ToolCallEvent, UserPlanningRequest } from "./domain/types";
+import type { MealPlan, Recommendation, SwiggyServer, ToolCallEvent, UserPlanningRequest, UserProfile } from "./domain/types";
 
 const initialRequest: UserPlanningRequest = {
   prompt:
@@ -92,6 +108,9 @@ function App() {
   const [isPlanning, setIsPlanning] = useState(false);
   const [isConfirming, setIsConfirming] = useState(false);
   const [health, setHealth] = useState<HealthResponse | null>(null);
+  const [profile, setProfile] = useState<UserProfile>(defaultUserProfile);
+  const [builderPackage, setBuilderPackage] = useState<BuilderPackageResponse | null>(null);
+  const [authUrl, setAuthUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const confirmedCount = plan?.recommendations.filter((item) => item.status === "confirmed").length ?? 0;
 
@@ -118,6 +137,72 @@ function App() {
     } finally {
       setIsPlanning(false);
     }
+  }
+
+  async function saveProfile(nextProfile = profile) {
+    setError(null);
+    try {
+      const response = await updateProfile(nextProfile);
+      setProfile(response.profile);
+      setRequest((current) => ({
+        ...current,
+        city: response.profile.defaultCity,
+        budget: response.profile.defaultBudget,
+        diet: response.profile.diet,
+        guests: response.profile.householdSize,
+      }));
+      const packageResponse = await fetchBuilderPackage();
+      setBuilderPackage(packageResponse);
+    } catch (profileError) {
+      setError(profileError instanceof Error ? profileError.message : "Unable to save profile.");
+    }
+  }
+
+  async function confirmEverything() {
+    if (!plan) return;
+    setIsConfirming(true);
+    setError(null);
+    try {
+      const response = await confirmAllRecommendations(plan.id);
+      setPlan(response.plan);
+    } catch (confirmError) {
+      setError(confirmError instanceof Error ? confirmError.message : "Unable to confirm all actions.");
+    } finally {
+      setIsConfirming(false);
+    }
+  }
+
+  async function refreshTracking() {
+    if (!plan) return;
+    setError(null);
+    try {
+      const response = await fetchTracking(plan.id);
+      setPlan(response.plan);
+    } catch (trackingError) {
+      setError(trackingError instanceof Error ? trackingError.message : "Unable to refresh tracking.");
+    }
+  }
+
+  async function beginOAuth() {
+    setError(null);
+    try {
+      const response = await startSwiggyAuth();
+      setAuthUrl(response.authorizationUrl);
+    } catch (authError) {
+      setError(authError instanceof Error ? authError.message : "Unable to start Swiggy OAuth.");
+    }
+  }
+
+  async function substituteItem(recommendationId: string, alternativeId: string) {
+    if (!plan) return;
+    const response = await substituteRecommendationItem(plan.id, recommendationId, alternativeId);
+    setPlan(response.plan);
+  }
+
+  async function removeItem(recommendationId: string, itemId: string) {
+    if (!plan) return;
+    const response = await removeRecommendationItem(plan.id, recommendationId, itemId);
+    setPlan(response.plan);
   }
 
   function updateRequest<K extends keyof UserPlanningRequest>(key: K, value: UserPlanningRequest[K]) {
@@ -149,6 +234,12 @@ function App() {
     void fetchHealth()
       .then(setHealth)
       .catch(() => setHealth(null));
+    void fetchProfile()
+      .then((response) => setProfile(response.profile))
+      .catch(() => setProfile(defaultUserProfile));
+    void fetchBuilderPackage()
+      .then(setBuilderPackage)
+      .catch(() => setBuilderPackage(null));
   }, []);
 
   return (
@@ -173,6 +264,34 @@ function App() {
             <strong>{health?.mode === "mock" ? "Local API + MCP stub" : `${health?.mode ?? "API"} mode`}</strong>
             <span>{health?.ok ? "Backend connected" : "Checking backend"}</span>
           </div>
+        </section>
+
+        <section className="side-panel profile-panel">
+          <div className="panel-title">
+            <Bot aria-hidden="true" />
+            <span>Household Profile</span>
+          </div>
+          <label>
+            Name
+            <input value={profile.name} onChange={(event) => setProfile({ ...profile, name: event.target.value })} />
+          </label>
+          <label>
+            Allergies
+            <input
+              value={profile.allergies.join(", ")}
+              onChange={(event) => setProfile({ ...profile, allergies: normalizeListInput(event.target.value) })}
+            />
+          </label>
+          <label>
+            Cuisines
+            <input
+              value={profile.favoriteCuisines.join(", ")}
+              onChange={(event) => setProfile({ ...profile, favoriteCuisines: normalizeListInput(event.target.value) })}
+            />
+          </label>
+          <button className="ghost-button compact" type="button" onClick={() => void saveProfile()}>
+            Save profile
+          </button>
         </section>
 
         <section className="side-panel">
@@ -208,6 +327,26 @@ function App() {
             <span>{isPlanning ? "Planning" : "Run plan"}</span>
           </button>
         </header>
+
+        <section className="action-bar" aria-label="Operations">
+          <button className="icon-button dark" type="button" onClick={() => void confirmEverything()} disabled={!plan || isConfirming}>
+            {isConfirming ? <Loader2 className="spin" aria-hidden="true" /> : <ShieldCheck aria-hidden="true" />}
+            <span>Confirm all prepared</span>
+          </button>
+          <button className="ghost-button" type="button" onClick={() => void refreshTracking()} disabled={!plan}>
+            <RefreshCw aria-hidden="true" />
+            Refresh tracking
+          </button>
+          <button className="ghost-button" type="button" onClick={() => void beginOAuth()}>
+            <LockKeyhole aria-hidden="true" />
+            Start Swiggy OAuth
+          </button>
+          {authUrl ? (
+            <a className="auth-url" href={authUrl} target="_blank" rel="noreferrer">
+              OAuth URL ready
+            </a>
+          ) : null}
+        </section>
 
         <section className="planner-grid">
           <div className="composer-card">
@@ -299,12 +438,24 @@ function App() {
               <strong data-fit={plan.budgetFit}>{plan.budgetFit.replace("_", " ")}</strong>
             </section>
 
+            <section className="variant-strip" aria-label="Plan variants">
+              {plan.variants.map((variant) => (
+                <article key={variant.id}>
+                  <strong>{variant.label}</strong>
+                  <span>{formatMoney(variant.total)}</span>
+                  <p>{variant.tradeoff}</p>
+                </article>
+              ))}
+            </section>
+
             <section className="recommendations" aria-label="Swiggy recommendations">
               {plan.recommendations.map((recommendation) => (
                 <RecommendationCard
                   key={recommendation.id}
                   recommendation={recommendation}
                   onConfirm={() => setSelectedRecommendation(recommendation)}
+                  onSubstitute={(alternativeId) => void substituteItem(recommendation.id, alternativeId)}
+                  onRemove={(itemId) => void removeItem(recommendation.id, itemId)}
                 />
               ))}
             </section>
@@ -312,6 +463,8 @@ function App() {
             <section className="lower-grid">
               <InsightsPanel insights={plan.insights} />
               <AuditPanel events={plan.auditTrail} />
+              <TrackingPanel plan={plan} />
+              <ReadinessPanel readiness={builderPackage?.readiness ?? []} />
             </section>
           </>
         ) : (
@@ -359,9 +512,13 @@ function Metric({ icon, label, value }: { icon: ReactNode; label: string; value:
 function RecommendationCard({
   recommendation,
   onConfirm,
+  onSubstitute,
+  onRemove,
 }: {
   recommendation: Recommendation;
   onConfirm: () => void;
+  onSubstitute: (alternativeId: string) => void;
+  onRemove: (itemId: string) => void;
 }) {
   return (
     <article className="recommendation" data-server={recommendation.server}>
@@ -390,10 +547,39 @@ function RecommendationCard({
               <span>{item.name}</span>
               <small>{item.quantity}</small>
             </div>
-            <strong>{item.price === 0 ? "Included" : formatMoney(item.price)}</strong>
+            <div className="item-actions">
+              <strong>{item.price === 0 ? "Included" : formatMoney(item.price)}</strong>
+              {item.price > 0 && item.id ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (item.id) onRemove(item.id);
+                  }}
+                  disabled={recommendation.status !== "prepared"}
+                >
+                  Remove
+                </button>
+              ) : null}
+            </div>
           </li>
         ))}
       </ul>
+
+      {recommendation.alternatives.length > 0 ? (
+        <div className="substitution-box">
+          <small>Smart substitution</small>
+          {recommendation.alternatives.map((alternative) => (
+            <button
+              key={alternative.id}
+              type="button"
+              onClick={() => onSubstitute(alternative.id)}
+              disabled={recommendation.status !== "prepared"}
+            >
+              {alternative.name} - {formatMoney(alternative.price)}
+            </button>
+          ))}
+        </div>
+      ) : null}
 
       <div className="guardrails">
         {recommendation.guardrails.map((guardrail) => (
@@ -455,6 +641,49 @@ function AuditPanel({ events }: { events: ToolCallEvent[] }) {
           </li>
         ))}
       </ol>
+    </section>
+  );
+}
+
+function TrackingPanel({ plan }: { plan: MealPlan }) {
+  const events = plan.tracking;
+  return (
+    <section className="analysis-panel">
+      <div className="section-heading">
+        <RefreshCw aria-hidden="true" />
+        <h2>Live Tracking</h2>
+      </div>
+      {events.length > 0 ? (
+        <ol className="tracking-list">
+          {events.map((event) => (
+            <li key={event.id}>
+              <strong>{event.label}</strong>
+              <span>{event.status.replace("_", " ")}</span>
+            </li>
+          ))}
+        </ol>
+      ) : (
+        <p className="muted-copy">Confirm at least one action to generate simulated Swiggy tracking events.</p>
+      )}
+    </section>
+  );
+}
+
+function ReadinessPanel({ readiness }: { readiness: BuilderPackageResponse["readiness"] }) {
+  return (
+    <section className="analysis-panel">
+      <div className="section-heading">
+        <ClipboardCheck aria-hidden="true" />
+        <h2>Builder Access Package</h2>
+      </div>
+      <ul className="readiness-list">
+        {readiness.map((item) => (
+          <li key={item.id} data-status={item.status}>
+            <strong>{item.label}</strong>
+            <span>{item.evidence}</span>
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }

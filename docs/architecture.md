@@ -24,8 +24,11 @@ flowchart LR
 ### Web App
 
 - Planning workspace with prompt, budget, city, diet, and party controls.
+- Household profile editor with allergy, dislike, cuisine, and consent fields.
 - Budget, diet, location, and timing controls.
+- Plan variants and item-level substitution controls before checkout.
 - Separate confirmation panels for Food, Instamart, and Dineout.
+- Simulated tracking after confirmation.
 - No checkout, order, or booking call is hidden inside a generic "continue" button.
 
 ### Planner Domain Service
@@ -46,6 +49,7 @@ Implementation:
 - Owns plan sessions instead of keeping commerce state only in the browser.
 - Validates requests with Zod.
 - Executes confirmation actions through a server-side service.
+- Supports item substitution, item removal, confirm-all, profile updates, tracking, and builder package export.
 - Exposes an MCP-shaped local JSON-RPC route for Swiggy tool demos.
 - Starts the Swiggy OAuth flow with server-stored PKCE verifier and state.
 

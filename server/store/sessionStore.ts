@@ -1,4 +1,5 @@
-import type { MealPlan } from "../../src/domain/types.js";
+import type { MealPlan, UserProfile } from "../../src/domain/types.js";
+import { defaultUserProfile } from "../../src/domain/profile.js";
 
 export interface AuthSession {
   state: string;
@@ -16,11 +17,14 @@ export interface SessionStore {
   saveAuthSession(session: AuthSession): void;
   consumeAuthSession(state: string): AuthSession | undefined;
   getAllPlans(): MealPlan[];
+  getProfile(): UserProfile;
+  updateProfile(profile: UserProfile): UserProfile;
 }
 
 export function createMemorySessionStore(): SessionStore {
   const plans = new Map<string, MealPlan>();
   const authSessions = new Map<string, AuthSession>();
+  let profile = defaultUserProfile;
 
   return {
     savePlan(plan) {
@@ -42,6 +46,13 @@ export function createMemorySessionStore(): SessionStore {
     },
     getAllPlans() {
       return [...plans.values()];
+    },
+    getProfile() {
+      return profile;
+    },
+    updateProfile(nextProfile) {
+      profile = nextProfile;
+      return profile;
     },
   };
 }

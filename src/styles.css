@@ -148,7 +148,8 @@ a {
 .modal-actions,
 .metric,
 .insight-strip,
-.scenario-row {
+.scenario-row,
+.action-bar {
   display: flex;
   align-items: center;
 }
@@ -278,6 +279,24 @@ h2 {
   font-weight: 900;
 }
 
+.ghost-button.compact {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.profile-panel {
+  display: grid;
+  gap: 10px;
+}
+
+.profile-panel label {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
 .icon-button.primary {
   color: #fff;
   background: var(--green);
@@ -303,6 +322,28 @@ h2 {
   display: grid;
   grid-template-columns: minmax(0, 1.7fr) minmax(280px, 0.7fr);
   gap: 16px;
+}
+
+.action-bar {
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: var(--shadow);
+}
+
+.auth-url {
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 8px;
+  padding: 0 12px;
+  color: var(--green-dark);
+  background: #e6f4eb;
+  font-weight: 900;
 }
 
 .composer-card,
@@ -429,6 +470,40 @@ select:focus {
   color: #9d2d21;
 }
 
+.variant-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.variant-strip article {
+  min-height: 118px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.variant-strip strong,
+.variant-strip span {
+  display: block;
+}
+
+.variant-strip span {
+  margin-top: 6px;
+  color: var(--green-dark);
+  font-size: 1.2rem;
+  font-weight: 900;
+}
+
+.variant-strip p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  line-height: 1.35;
+}
+
 .error-strip {
   margin-top: 16px;
   border: 1px solid #f3b3aa;
@@ -547,6 +622,39 @@ select:focus {
   color: var(--muted);
 }
 
+.item-actions {
+  display: grid;
+  justify-items: end;
+  gap: 6px;
+}
+
+.item-actions button,
+.substitution-box button {
+  min-height: 30px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0 9px;
+  color: var(--green-dark);
+  background: #f1f8f3;
+  font-size: 0.76rem;
+  font-weight: 900;
+}
+
+.substitution-box {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+  border: 1px dashed #bed9c6;
+  border-radius: 8px;
+  padding: 10px;
+  background: #f6fbf7;
+}
+
+.substitution-box small {
+  color: var(--muted);
+  font-weight: 900;
+}
+
 .guardrails {
   display: flex;
   flex-wrap: wrap;
@@ -581,7 +689,7 @@ select:focus {
 
 .lower-grid {
   display: grid;
-  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
   margin-top: 16px;
 }
@@ -620,6 +728,38 @@ select:focus {
   padding: 12px;
   border-radius: 8px;
   background: var(--surface-strong);
+}
+
+.tracking-list,
+.readiness-list {
+  display: grid;
+  gap: 10px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.tracking-list li,
+.readiness-list li {
+  display: grid;
+  gap: 5px;
+  border-radius: 8px;
+  padding: 12px;
+  background: var(--surface-strong);
+}
+
+.tracking-list span,
+.readiness-list span,
+.muted-copy {
+  color: var(--muted);
+}
+
+.readiness-list li[data-status="ready"] {
+  border-left: 4px solid var(--green);
+}
+
+.readiness-list li[data-status="needs_credentials"] {
+  border-left: 4px solid var(--gold);
 }
 
 .timeline-server {
@@ -706,7 +846,8 @@ select:focus {
 
   .recommendations,
   .planner-grid,
-  .lower-grid {
+  .lower-grid,
+  .variant-strip {
     grid-template-columns: 1fr;
   }
 
@@ -722,6 +863,7 @@ select:focus {
   }
 
   .workspace-header,
+  .action-bar,
   .insight-strip,
   .recommendation-head,
   .recommendation-foot,

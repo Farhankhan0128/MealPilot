@@ -1,4 +1,5 @@
 import { createMockSwiggyClient } from "../integrations/swiggy/mockClient.js";
+import type { UserProfile } from "./types.js";
 import type {
   MealPlan,
   Recommendation,
@@ -50,9 +51,43 @@ function createInsights(request: UserPlanningRequest, recommendations: Recommend
   ].filter(Boolean);
 }
 
+function createVariants(total: number): MealPlan["variants"] {
+  return [
+    {
+      id: "balanced",
+      label: "Balanced",
+      total,
+      description: "Best mix of convenience, nutrition, and weekend dining.",
+      tradeoff: "Keeps the original Food, Instamart, and Dineout composition.",
+    },
+    {
+      id: "budget",
+      label: "Budget Saver",
+      total: Math.max(900, total - 260),
+      description: "Substitutes premium dairy and shifts Food to a simpler bowl.",
+      tradeoff: "Lower spend, slightly less variety.",
+    },
+    {
+      id: "protein",
+      label: "Protein Max",
+      total: total + 180,
+      description: "Adds extra tofu, yogurt, and protein-heavy sides.",
+      tradeoff: "Higher spend, better macro density.",
+    },
+    {
+      id: "social",
+      label: "Social Evening",
+      total: total + 320,
+      description: "Prioritizes the Dineout experience and keeps groceries lean.",
+      tradeoff: "Best for guests, less optimized for weekly prep.",
+    },
+  ];
+}
+
 export async function createMealPlan(
   request: UserPlanningRequest,
   client: SwiggyPlanningClient = defaultClient,
+  profile?: UserProfile,
 ): Promise<MealPlan> {
   const sessionId = makeSessionId();
   const locations = await client.getSavedLocations();
@@ -93,12 +128,16 @@ export async function createMealPlan(
     id: sessionId,
     summary: `A ${request.diet} plan for ${request.city} with lunch, dinner groceries, and a ${request.day} Dineout option.`,
     total,
+    budgetLimit: request.budget,
     budgetFit: budgetFit(total, request.budget),
     callCount: auditTrail.length,
     healthScore: request.diet.includes("high-protein") ? 92 : 84,
     recommendations,
     auditTrail,
     insights: createInsights(request, recommendations),
+    variants: createVariants(total),
+    tracking: [],
+    profileSnapshot: profile,
   };
 }
 
@@ -121,6 +160,95 @@ export function confirmRecommendation(plan: MealPlan, recommendationId: string):
         status: "needs_user_confirmation",
         durationMs: 0,
         detail: "User explicitly confirmed the commercial action in MealPilot UI.",
+        sessionId: plan.id,
+      },
+      ...plan.auditTrail,
+    ],
+  };
+}
+
+export function applyItemSubstitution(plan: MealPlan, recommendationId: string, alternativeId: string): MealPlan {
+  let applied = false;
+  const recommendations = plan.recommendations.map((recommendation) => {
+    if (recommendation.id !== recommendationId || recommendation.status !== "prepared") return recommendation;
+
+    const alternative = recommendation.alternatives.find((item) => item.id === alternativeId);
+    if (!alternative) return recommendation;
+
+    applied = true;
+    const replaced = recommendation.items.find((item) => item.id === alternative.replaces);
+    const items = recommendation.items.map((item) =>
+      item.id === alternative.replaces
+        ? {
+            id: alternative.id,
+            name: alternative.name,
+            quantity: alternative.quantity,
+            price: alternative.price,
+            nutrition: alternative.nutrition,
+          }
+        : item,
+    );
+    const total = items.reduce((sum, item) => sum + item.price, 0);
+
+    return {
+      ...recommendation,
+      items,
+      total,
+      reason: `${recommendation.reason} Substituted ${replaced?.name ?? "item"}: ${alternative.reason}`,
+    };
+  });
+
+  if (!applied) return plan;
+
+  const total = recommendations.reduce((sum, recommendation) => sum + recommendation.total, 0);
+  return {
+    ...plan,
+    total,
+    budgetFit: budgetFit(total, plan.budgetLimit),
+    recommendations,
+    variants: createVariants(total),
+    auditTrail: [
+      {
+        id: `substitute_${recommendationId}_${Date.now()}`,
+        server: recommendations.find((item) => item.id === recommendationId)?.server ?? "food",
+        tool: "apply_substitution",
+        status: "ok",
+        durationMs: 42,
+        detail: "User applied a visible item substitution before checkout or booking.",
+        sessionId: plan.id,
+      },
+      ...plan.auditTrail,
+    ],
+  };
+}
+
+export function removePlanItem(plan: MealPlan, recommendationId: string, itemId: string): MealPlan {
+  const recommendations = plan.recommendations.map((recommendation) => {
+    if (recommendation.id !== recommendationId || recommendation.status !== "prepared") return recommendation;
+    const items = recommendation.items.filter((item) => item.id !== itemId);
+    return {
+      ...recommendation,
+      items,
+      total: items.reduce((sum, item) => sum + item.price, 0),
+      reason: `${recommendation.reason} Removed one item at the user's request.`,
+    };
+  });
+  const total = recommendations.reduce((sum, recommendation) => sum + recommendation.total, 0);
+
+  return {
+    ...plan,
+    total,
+    budgetFit: budgetFit(total, plan.budgetLimit),
+    recommendations,
+    variants: createVariants(total),
+    auditTrail: [
+      {
+        id: `remove_${recommendationId}_${Date.now()}`,
+        server: recommendations.find((item) => item.id === recommendationId)?.server ?? "food",
+        tool: "remove_item",
+        status: "ok",
+        durationMs: 39,
+        detail: "User removed a prepared item before any commercial action.",
         sessionId: plan.id,
       },
       ...plan.auditTrail,

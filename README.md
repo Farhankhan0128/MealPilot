@@ -35,7 +35,13 @@ Planned MCP servers:
 - Mock Swiggy MCP JSON-RPC endpoint for localhost demos before credentials are issued.
 - Swiggy staging/production endpoint map for the eventual MCP swap.
 - OAuth 2.1 PKCE helper for the Swiggy authorization flow.
+- Server-backed household profile with consent-aware preference storage.
+- Plan variants for balanced, budget, protein, and social evening strategies.
+- Cart editing with visible item removal and smart substitutions before confirmation.
 - Confirmation modals for Food, Instamart, and Dineout actions.
+- Confirm-all workflow for demo speed while preserving per-action audit entries.
+- Simulated post-confirmation tracking for Food, Instamart, and Dineout.
+- Builder Access package endpoint with readiness evidence.
 - Audit timeline with tool names, session IDs, and redacted details.
 - Vitest coverage for planner behavior, API behavior, UI/API integration, and retry safety.
 

@@ -4,6 +4,23 @@ export type CommerceAction = "place_food_order" | "checkout" | "book_table";
 
 export type RecommendationStatus = "prepared" | "confirmed" | "blocked";
 
+export type SpicePreference = "mild" | "medium" | "hot";
+
+export interface UserProfile {
+  id: string;
+  name: string;
+  householdSize: number;
+  defaultCity: UserPlanningRequest["city"];
+  defaultBudget: number;
+  diet: UserPlanningRequest["diet"];
+  allergies: string[];
+  dislikes: string[];
+  favoriteCuisines: string[];
+  spicePreference: SpicePreference;
+  addressLabel: SavedLocation["label"];
+  consentToStorePreferences: boolean;
+}
+
 export interface UserPlanningRequest {
   prompt: string;
   city: "Bengaluru" | "Delhi NCR" | "Mumbai";
@@ -24,9 +41,20 @@ export interface ToolCallEvent {
 }
 
 export interface PlanItem {
+  id?: string;
   name: string;
   quantity: string;
   price: number;
+  nutrition?: string;
+}
+
+export interface ItemAlternative {
+  id: string;
+  replaces: string;
+  name: string;
+  quantity: string;
+  price: number;
+  reason: string;
   nutrition?: string;
 }
 
@@ -45,18 +73,47 @@ export interface Recommendation {
   confirmationAction: CommerceAction;
   status: RecommendationStatus;
   guardrails: string[];
+  alternatives: ItemAlternative[];
+}
+
+export interface PlanVariant {
+  id: "balanced" | "budget" | "protein" | "social";
+  label: string;
+  total: number;
+  description: string;
+  tradeoff: string;
+}
+
+export interface TrackingEvent {
+  id: string;
+  recommendationId: string;
+  server: SwiggyServer;
+  label: string;
+  status: "queued" | "accepted" | "preparing" | "on_the_way" | "ready" | "completed";
+  timestamp: string;
+}
+
+export interface BuilderReadinessItem {
+  id: string;
+  label: string;
+  status: "ready" | "needs_credentials" | "manual_review";
+  evidence: string;
 }
 
 export interface MealPlan {
   id: string;
   summary: string;
   total: number;
+  budgetLimit: number;
   budgetFit: "under_budget" | "at_risk" | "over_budget";
   callCount: number;
   healthScore: number;
   recommendations: Recommendation[];
   auditTrail: ToolCallEvent[];
   insights: string[];
+  variants: PlanVariant[];
+  tracking: TrackingEvent[];
+  profileSnapshot?: UserProfile;
 }
 
 export interface SavedLocation {

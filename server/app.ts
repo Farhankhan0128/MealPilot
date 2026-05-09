@@ -5,10 +5,17 @@ import cors from "cors";
 import express, { type NextFunction, type Request, type Response } from "express";
 import { z } from "zod";
 import { createMealPlan } from "../src/domain/planner.js";
+import { defaultUserProfile } from "../src/domain/profile.js";
 import type { SwiggyServer, UserPlanningRequest } from "../src/domain/types.js";
 import { readConfig, type ServerConfig } from "./config.js";
 import { handleMockJsonRpc } from "./mock/swiggyToolRouter.js";
-import { executeConfirmedRecommendation } from "./services/confirmationService.js";
+import { executeAllPreparedRecommendations, executeConfirmedRecommendation } from "./services/confirmationService.js";
+import {
+  buildReadinessChecklist,
+  buildTrackingEvents,
+  removeRecommendationItem,
+  substitutePlanItem,
+} from "./services/planOperations.js";
 import { createPkcePair, createState } from "./services/pkce.js";
 import { createMemorySessionStore, type SessionStore } from "./store/sessionStore.js";
 
@@ -26,6 +33,33 @@ const planningRequestSchema = z.object({
 const confirmSchema = z.object({
   sessionId: z.string().min(4),
   recommendationId: z.string().min(4),
+});
+
+const substitutionSchema = z.object({
+  sessionId: z.string().min(4),
+  recommendationId: z.string().min(4),
+  alternativeId: z.string().min(4),
+});
+
+const removeItemSchema = z.object({
+  sessionId: z.string().min(4),
+  recommendationId: z.string().min(4),
+  itemId: z.string().min(2),
+});
+
+const profileSchema = z.object({
+  id: z.string().min(2),
+  name: z.string().min(1),
+  householdSize: z.number().int().min(1).max(12),
+  defaultCity: z.enum(["Bengaluru", "Delhi NCR", "Mumbai"]),
+  defaultBudget: z.number().int().min(500).max(10000),
+  diet: z.enum(["vegetarian", "high-protein vegetarian", "balanced"]),
+  allergies: z.array(z.string().min(1)).max(12),
+  dislikes: z.array(z.string().min(1)).max(12),
+  favoriteCuisines: z.array(z.string().min(1)).max(12),
+  spicePreference: z.enum(["mild", "medium", "hot"]),
+  addressLabel: z.enum(["Home", "Office"]),
+  consentToStorePreferences: z.boolean(),
 });
 
 const mcpServerSchema = z.enum(["food", "instamart", "dineout"]);
@@ -74,11 +108,23 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
     });
   });
 
+  app.get("/api/profile", (_req, res) => {
+    res.json({ profile: store.getProfile() });
+  });
+
+  app.put("/api/profile", (req, res) => {
+    const profile = profileSchema.parse({
+      ...defaultUserProfile,
+      ...req.body,
+    });
+    res.json({ profile: store.updateProfile(profile) });
+  });
+
   app.post(
     "/api/plan",
     asyncRoute(async (req, res) => {
       const request = planningRequestSchema.parse(req.body) satisfies UserPlanningRequest;
-      const plan = await createMealPlan(request);
+      const plan = await createMealPlan(request, undefined, store.getProfile());
       store.savePlan(plan);
 
       res.status(201).json({
@@ -113,10 +159,89 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
       }
 
       const updatedPlan = await executeConfirmedRecommendation(plan, body.recommendationId);
+      const finalPlan = { ...updatedPlan, tracking: buildTrackingEvents(updatedPlan) };
+      store.updatePlan(finalPlan);
+      res.json({ plan: finalPlan });
+    }),
+  );
+
+  app.post(
+    "/api/confirm-all",
+    asyncRoute(async (req, res) => {
+      const body = z.object({ sessionId: z.string().min(4) }).parse(req.body);
+      const plan = store.getPlan(body.sessionId);
+
+      if (!plan) {
+        res.status(404).json({ error: { message: "Session not found." } });
+        return;
+      }
+
+      const updatedPlan = await executeAllPreparedRecommendations(plan);
+      const finalPlan = { ...updatedPlan, tracking: buildTrackingEvents(updatedPlan) };
+      store.updatePlan(finalPlan);
+      res.json({ plan: finalPlan });
+    }),
+  );
+
+  app.post(
+    "/api/substitute",
+    asyncRoute(async (req, res) => {
+      const body = substitutionSchema.parse(req.body);
+      const plan = store.getPlan(body.sessionId);
+
+      if (!plan) {
+        res.status(404).json({ error: { message: "Session not found." } });
+        return;
+      }
+
+      const updatedPlan = substitutePlanItem(plan, body.recommendationId, body.alternativeId);
       store.updatePlan(updatedPlan);
       res.json({ plan: updatedPlan });
     }),
   );
+
+  app.post(
+    "/api/remove-item",
+    asyncRoute(async (req, res) => {
+      const body = removeItemSchema.parse(req.body);
+      const plan = store.getPlan(body.sessionId);
+
+      if (!plan) {
+        res.status(404).json({ error: { message: "Session not found." } });
+        return;
+      }
+
+      const updatedPlan = removeRecommendationItem(plan, body.recommendationId, body.itemId);
+      store.updatePlan(updatedPlan);
+      res.json({ plan: updatedPlan });
+    }),
+  );
+
+  app.get("/api/tracking/:sessionId", (req, res) => {
+    const plan = store.getPlan(req.params.sessionId);
+    if (!plan) {
+      res.status(404).json({ error: { message: "Session not found." } });
+      return;
+    }
+
+    const tracking = buildTrackingEvents(plan);
+    const updatedPlan = { ...plan, tracking };
+    store.updatePlan(updatedPlan);
+    res.json({ tracking, plan: updatedPlan });
+  });
+
+  app.get("/api/builder-package", (_req, res) => {
+    res.json({
+      readiness: buildReadinessChecklist(store.getProfile()),
+      application: {
+        integrationName: "MealPilot India",
+        requestedServers: ["food", "instamart", "dineout"],
+        expectedVolume: "100 pilot users, below 1 QPS peak, about 1,600-3,000 MCP tool calls per week.",
+        useCase:
+          "A privacy-first AI commerce assistant that composes Food, Instamart, and Dineout for Indian household meal planning with explicit confirmation gates.",
+      },
+    });
+  });
 
   app.post(
     "/api/mcp/:server",

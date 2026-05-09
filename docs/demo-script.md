@@ -59,6 +59,12 @@ Show the plan adjusting:
 - Food item substitution.
 - Dineout recommendation still available but not automatically booked.
 
+Then show:
+
+- Household profile preferences.
+- Plan variants: balanced, budget, protein, social.
+- Smart substitution before confirmation.
+
 ### 5. Confirm One Safe Action
 
 Click confirm for the Food cart only.
@@ -73,6 +79,8 @@ Show:
 
 Do not show a real payment or production order unless staging credentials explicitly allow it.
 
+Optional faster demo path: click confirm all prepared and show that MealPilot still records separate audit entries for Food, Instamart, and Dineout.
+
 ### 6. Show Safety Logs
 
 Show the in-app audit timeline with:
@@ -82,6 +90,8 @@ Show the in-app audit timeline with:
 - Trace IDs.
 - No raw PII.
 - 401 and 429 handling notes.
+- Simulated tracking events after confirmation.
+- Builder Access readiness evidence.
 
 Then mention the tested retry policy:
 

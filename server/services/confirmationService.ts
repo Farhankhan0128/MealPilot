@@ -40,3 +40,13 @@ export async function executeConfirmedRecommendation(plan: MealPlan, recommendat
     auditTrail: [executionEvent, ...confirmed.auditTrail],
   };
 }
+
+export async function executeAllPreparedRecommendations(plan: MealPlan): Promise<MealPlan> {
+  let currentPlan = plan;
+  for (const recommendation of plan.recommendations) {
+    if (recommendation.status === "prepared") {
+      currentPlan = await executeConfirmedRecommendation(currentPlan, recommendation.id);
+    }
+  }
+  return currentPlan;
+}

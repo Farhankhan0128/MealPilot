@@ -83,14 +83,20 @@ export function createMockSwiggyClient(): SwiggyPlanningClient {
       const lean = isLeanBudget(request);
       const items = lean
         ? [
-            { name: "Rajma brown rice bowl", quantity: "1", price: 260, nutrition: "22g protein" },
-            { name: "Curd side", quantity: "1", price: 55, nutrition: "probiotic" },
-            { name: "Platform estimate", quantity: "1", price: 25 },
+            { id: "rajma_bowl", name: "Rajma brown rice bowl", quantity: "1", price: 260, nutrition: "22g protein" },
+            { id: "curd_side", name: "Curd side", quantity: "1", price: 55, nutrition: "probiotic" },
+            { id: "platform_estimate", name: "Platform estimate", quantity: "1", price: 25 },
           ]
         : [
-            { name: "Paneer millet protein bowl", quantity: "1", price: 320, nutrition: "31g protein" },
-            { name: "Greek yogurt side", quantity: "1", price: 70, nutrition: "11g protein" },
-            { name: "Platform estimate", quantity: "1", price: 30 },
+            {
+              id: "paneer_millet_bowl",
+              name: "Paneer millet protein bowl",
+              quantity: "1",
+              price: 320,
+              nutrition: "31g protein",
+            },
+            { id: "greek_yogurt_side", name: "Greek yogurt side", quantity: "1", price: 70, nutrition: "11g protein" },
+            { id: "platform_estimate", name: "Platform estimate", quantity: "1", price: 30 },
           ];
 
       return {
@@ -114,6 +120,17 @@ export function createMockSwiggyClient(): SwiggyPlanningClient {
         confirmationAction: "place_food_order",
         status: "prepared",
         guardrails: ["COD-only ready", "Below Rs 1,000 food cap", "No blind retry on placement"],
+        alternatives: [
+          {
+            id: "alt_food_1",
+            replaces: lean ? "rajma_bowl" : "paneer_millet_bowl",
+            name: lean ? "Chole quinoa bowl" : "Tofu soba protein bowl",
+            quantity: "1",
+            price: lean ? 250 : 300,
+            reason: "Keeps protein high while lowering saturated fat.",
+            nutrition: "28g protein",
+          },
+        ],
       };
     },
 
@@ -121,16 +138,16 @@ export function createMockSwiggyClient(): SwiggyPlanningClient {
       const lean = isLeanBudget(request);
       const items = lean
         ? [
-            { name: "Soya chunks", quantity: "500g", price: 130, nutrition: "52g protein/100g" },
-            { name: "Moong dal", quantity: "1kg", price: 180, nutrition: "plant protein" },
-            { name: "Curd", quantity: "500g", price: 80, nutrition: "calcium" },
-            { name: "Spinach and vegetables", quantity: "1 basket", price: 300, nutrition: "fiber" },
+            { id: "soya_chunks", name: "Soya chunks", quantity: "500g", price: 130, nutrition: "52g protein/100g" },
+            { id: "moong_dal", name: "Moong dal", quantity: "1kg", price: 180, nutrition: "plant protein" },
+            { id: "curd", name: "Curd", quantity: "500g", price: 80, nutrition: "calcium" },
+            { id: "spinach_veg", name: "Spinach and vegetables", quantity: "1 basket", price: 300, nutrition: "fiber" },
           ]
         : [
-            { name: "Tofu", quantity: "200g", price: 160, nutrition: "24g protein" },
-            { name: "Moong dal", quantity: "1kg", price: 180, nutrition: "plant protein" },
-            { name: "Greek yogurt", quantity: "400g", price: 210, nutrition: "22g protein" },
-            { name: "Spinach and vegetables", quantity: "1 basket", price: 240, nutrition: "fiber" },
+            { id: "tofu", name: "Tofu", quantity: "200g", price: 160, nutrition: "24g protein" },
+            { id: "moong_dal", name: "Moong dal", quantity: "1kg", price: 180, nutrition: "plant protein" },
+            { id: "greek_yogurt", name: "Greek yogurt", quantity: "400g", price: 210, nutrition: "22g protein" },
+            { id: "spinach_veg", name: "Spinach and vegetables", quantity: "1 basket", price: 240, nutrition: "fiber" },
           ];
 
       return {
@@ -148,15 +165,31 @@ export function createMockSwiggyClient(): SwiggyPlanningClient {
         confirmationAction: "checkout",
         status: "prepared",
         guardrails: ["Substitutions visible", "Checkout locked", "No payment data stored"],
+        alternatives: [
+          {
+            id: "alt_im_1",
+            replaces: lean ? "curd" : "greek_yogurt",
+            name: "Low-fat curd family pack",
+            quantity: "1kg",
+            price: 145,
+            reason: "Lowers basket total and supports two meals.",
+            nutrition: "calcium",
+          },
+        ],
       };
     },
 
     async findDineoutSlot(request): Promise<Recommendation> {
       const slot = dineoutSlot(request);
       const items = [
-        { name: slot.restaurantName, quantity: `${slot.rating} rating`, price: 0 },
-        { name: `${slot.area} table`, quantity: `${slot.guests} guests`, price: 0 },
-        { name: `${slot.cuisine} vegetarian mains`, quantity: slot.time, price: slot.estimatedSpendPerPerson },
+        { id: "dineout_restaurant", name: slot.restaurantName, quantity: `${slot.rating} rating`, price: 0 },
+        { id: "dineout_table", name: `${slot.area} table`, quantity: `${slot.guests} guests`, price: 0 },
+        {
+          id: "dineout_mains",
+          name: `${slot.cuisine} vegetarian mains`,
+          quantity: slot.time,
+          price: slot.estimatedSpendPerPerson,
+        },
       ];
 
       return {
@@ -174,6 +207,16 @@ export function createMockSwiggyClient(): SwiggyPlanningClient {
         confirmationAction: "book_table",
         status: "prepared",
         guardrails: ["Separate booking confirmation", "Uses lat/lng search, not Food addressId", "No surprise reservation"],
+        alternatives: [
+          {
+            id: "alt_dineout_1",
+            replaces: "dineout_mains",
+            name: "Earlier 7:00 PM table",
+            quantity: `${slot.guests} guests`,
+            price: Math.max(350, slot.estimatedSpendPerPerson - 100),
+            reason: "Cheaper table window with lower wait risk.",
+          },
+        ],
       };
     },
   };

@@ -17,7 +17,8 @@ Status: in progress.
 - Connect UI to structured planning state. Complete.
 - Add explicit confirmation modals for all risky actions. Complete.
 - Add audit timeline and redacted log shape. Complete.
-- Add OAuth callback screen and token exchange path. Next.
+- Add profile, variants, substitutions, confirm-all, and tracking. Complete.
+- Add OAuth callback screen and token exchange path. In progress.
 - Add real MCP transport behind a staging flag. Next.
 
 ## Phase 2: Swiggy Staging

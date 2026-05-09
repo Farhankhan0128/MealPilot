@@ -65,4 +65,50 @@ describe("MealPilot API", () => {
     expect(response.body.result.success).toBe(true);
     expect(response.body.result.data[0].label).toBe("Home");
   });
+
+  it("updates profile, substitutes items, confirms all, and returns tracking", async () => {
+    const { app } = createMealPilotServer();
+
+    await request(app)
+      .put("/api/profile")
+      .send({
+        id: "profile_demo",
+        name: "Farhan",
+        householdSize: 3,
+        defaultCity: "Delhi NCR",
+        defaultBudget: 2200,
+        diet: "vegetarian",
+        allergies: ["peanut"],
+        dislikes: ["mushroom"],
+        favoriteCuisines: ["Italian"],
+        spicePreference: "medium",
+        addressLabel: "Home",
+        consentToStorePreferences: true,
+      })
+      .expect(200);
+
+    const created = await request(app).post("/api/plan").send(planningRequest).expect(201);
+    const sessionId = created.body.plan.id as string;
+
+    const substituted = await request(app)
+      .post("/api/substitute")
+      .send({ sessionId, recommendationId: "rec_food", alternativeId: "alt_food_1" })
+      .expect(200);
+
+    expect(substituted.body.plan.recommendations[0].items[0].name).toContain("Tofu");
+
+    const confirmed = await request(app).post("/api/confirm-all").send({ sessionId }).expect(200);
+    expect(confirmed.body.plan.recommendations.every((item: { status: string }) => item.status === "confirmed")).toBe(true);
+
+    const tracking = await request(app).get(`/api/tracking/${sessionId}`).expect(200);
+    expect(tracking.body.tracking.length).toBeGreaterThan(0);
+  });
+
+  it("returns a builder access package", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/builder-package").expect(200);
+
+    expect(response.body.application.requestedServers).toEqual(["food", "instamart", "dineout"]);
+    expect(response.body.readiness.some((item: { id: string }) => item.id === "oauth")).toBe(true);
+  });
 });
