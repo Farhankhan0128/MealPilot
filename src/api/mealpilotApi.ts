@@ -2,17 +2,21 @@ import type {
   AgentSurface,
   AgentSurfaceResponse,
   BuilderReadinessItem,
+  CartPreflightReport,
+  DemoStudioStep,
   GoLiveCheck,
   GroupMember,
   GroupPlan,
   IncidentReport,
   MealPlan,
   McpServerCoverage,
+  McpReplayStep,
   ObservabilityMetric,
   OpsStatus,
   PantryItem,
   Reminder,
   RestockSuggestion,
+  SubmissionPackage,
   TrackingEvent,
   UserPlanningRequest,
   UserProfile,
@@ -153,6 +157,14 @@ export function fetchAgentSurface(sessionId: string, surface: AgentSurface) {
   return requestJson<{ response: AgentSurfaceResponse }>(`/api/sessions/${sessionId}/surface?${params.toString()}`);
 }
 
+export function fetchCartPreflight(sessionId: string) {
+  return requestJson<{ preflight: CartPreflightReport }>(`/api/sessions/${sessionId}/preflight`);
+}
+
+export function fetchMcpReplay(sessionId: string) {
+  return requestJson<{ replay: McpReplayStep[] }>(`/api/sessions/${sessionId}/replay`);
+}
+
 export function fetchPantry() {
   return requestJson<{ pantry: PantryItem[]; suggestions: RestockSuggestion[] }>("/api/pantry");
 }
@@ -195,6 +207,14 @@ export function createSupportReport(sessionId?: string) {
     method: "POST",
     body: JSON.stringify({ sessionId }),
   });
+}
+
+export function fetchDemoStudio() {
+  return requestJson<{ steps: DemoStudioStep[] }>("/api/demo-studio");
+}
+
+export function fetchSubmissionPackage() {
+  return requestJson<{ package: SubmissionPackage }>("/api/submission-package");
 }
 
 export function exportPrivacyData() {

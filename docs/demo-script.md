@@ -108,7 +108,17 @@ Open the Launch Center and show:
 - Observability metrics with traceable session IDs.
 - Support report generation with a pre-filled `builders@swiggy.in` escalation.
 
-### 8. Close
+### 8. Show Demo Studio
+
+Open Demo Studio and show:
+
+- Cart Preflight status before any risky action.
+- Offer opportunities for Food, Instamart, and Dineout.
+- MCP Replay with JSON-RPC `tools/call` requests.
+- Demo Run status.
+- Submission Package readiness and remaining manual fields.
+
+### 9. Close
 
 Voiceover:
 

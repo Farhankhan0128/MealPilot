@@ -35,13 +35,17 @@ import {
   fetchAgentSurface,
   fetchBuilderPackage,
   fetchBuilderPackageMarkdown,
+  fetchCartPreflight,
+  fetchDemoStudio,
   fetchGoLive,
   fetchGroupPlan,
   fetchHealth,
   fetchMcpCatalog,
+  fetchMcpReplay,
   fetchOpsStatus,
   fetchPantry,
   fetchProfile,
+  fetchSubmissionPackage,
   fetchTracking,
   removeRecommendationItem,
   schedulePlan,
@@ -58,16 +62,20 @@ import { buildConfirmationMessage } from "./domain/safety";
 import type {
   AgentSurface,
   AgentSurfaceResponse,
+  CartPreflightReport,
+  DemoStudioStep,
   GoLiveCheck,
   GroupPlan,
   IncidentReport,
   MealPlan,
+  McpReplayStep,
   ObservabilityMetric,
   OpsStatus,
   PantryItem,
   Recommendation,
   Reminder,
   RestockSuggestion,
+  SubmissionPackage,
   SwiggyServer,
   ToolCallEvent,
   UserPlanningRequest,
@@ -157,6 +165,10 @@ function App() {
   const [observabilityMetrics, setObservabilityMetrics] = useState<ObservabilityMetric[]>([]);
   const [rollout, setRollout] = useState<GoLiveResponse["rollout"] | null>(null);
   const [incidentReport, setIncidentReport] = useState<IncidentReport | null>(null);
+  const [preflight, setPreflight] = useState<CartPreflightReport | null>(null);
+  const [mcpReplay, setMcpReplay] = useState<McpReplayStep[]>([]);
+  const [demoSteps, setDemoSteps] = useState<DemoStudioStep[]>([]);
+  const [submissionPackage, setSubmissionPackage] = useState<SubmissionPackage | null>(null);
   const [exportText, setExportText] = useState<string | null>(null);
   const [authUrl, setAuthUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -184,6 +196,7 @@ function App() {
         .then((surfaceResponse) => setAgentSurface(surfaceResponse.response))
         .catch(() => setAgentSurface(null));
       void refreshLaunchCenter().catch(() => undefined);
+      void loadPlanDiagnostics(response.plan.id).catch(() => undefined);
     } catch (buildError) {
       setError(buildError instanceof Error ? buildError.message : "Unable to build MealPilot plan.");
     } finally {
@@ -211,12 +224,22 @@ function App() {
   }
 
   async function loadAdvancedWorkflows() {
-    const [pantryResponse, groupResponse, opsResponse, catalogResponse, goLiveResponse] = await Promise.all([
+    const [
+      pantryResponse,
+      groupResponse,
+      opsResponse,
+      catalogResponse,
+      goLiveResponse,
+      demoStudioResponse,
+      submissionResponse,
+    ] = await Promise.all([
       fetchPantry(),
       fetchGroupPlan(),
       fetchOpsStatus(),
       fetchMcpCatalog(),
       fetchGoLive(),
+      fetchDemoStudio(),
+      fetchSubmissionPackage(),
     ]);
     setPantry(pantryResponse.pantry);
     setRestock(pantryResponse.suggestions);
@@ -226,14 +249,29 @@ function App() {
     setGoLiveChecks(goLiveResponse.checks);
     setObservabilityMetrics(goLiveResponse.metrics);
     setRollout(goLiveResponse.rollout);
+    setDemoSteps(demoStudioResponse.steps);
+    setSubmissionPackage(submissionResponse.package);
   }
 
   async function refreshLaunchCenter() {
-    const [catalogResponse, goLiveResponse] = await Promise.all([fetchMcpCatalog(), fetchGoLive()]);
+    const [catalogResponse, goLiveResponse, demoStudioResponse, submissionResponse] = await Promise.all([
+      fetchMcpCatalog(),
+      fetchGoLive(),
+      fetchDemoStudio(),
+      fetchSubmissionPackage(),
+    ]);
     setMcpCatalog(catalogResponse);
     setGoLiveChecks(goLiveResponse.checks);
     setObservabilityMetrics(goLiveResponse.metrics);
     setRollout(goLiveResponse.rollout);
+    setDemoSteps(demoStudioResponse.steps);
+    setSubmissionPackage(submissionResponse.package);
+  }
+
+  async function loadPlanDiagnostics(sessionId: string) {
+    const [preflightResponse, replayResponse] = await Promise.all([fetchCartPreflight(sessionId), fetchMcpReplay(sessionId)]);
+    setPreflight(preflightResponse.preflight);
+    setMcpReplay(replayResponse.replay);
   }
 
   async function confirmEverything() {
@@ -243,7 +281,7 @@ function App() {
     try {
       const response = await confirmAllRecommendations(plan.id);
       setPlan(response.plan);
-      await refreshLaunchCenter();
+      await Promise.all([refreshLaunchCenter(), loadPlanDiagnostics(response.plan.id)]);
     } catch (confirmError) {
       setError(confirmError instanceof Error ? confirmError.message : "Unable to confirm all actions.");
     } finally {
@@ -257,7 +295,7 @@ function App() {
     try {
       const response = await fetchTracking(plan.id);
       setPlan(response.plan);
-      await refreshLaunchCenter();
+      await Promise.all([refreshLaunchCenter(), loadPlanDiagnostics(response.plan.id)]);
     } catch (trackingError) {
       setError(trackingError instanceof Error ? trackingError.message : "Unable to refresh tracking.");
     }
@@ -310,6 +348,8 @@ function App() {
     await deletePrivacyData();
     setPlan(null);
     setReminders([]);
+    setPreflight(null);
+    setMcpReplay([]);
     setExportText("Local profile, plans, pantry, group plan, and reminders were deleted.");
     await loadAdvancedWorkflows();
   }
@@ -318,12 +358,14 @@ function App() {
     if (!plan) return;
     const response = await substituteRecommendationItem(plan.id, recommendationId, alternativeId);
     setPlan(response.plan);
+    await loadPlanDiagnostics(response.plan.id);
   }
 
   async function removeItem(recommendationId: string, itemId: string) {
     if (!plan) return;
     const response = await removeRecommendationItem(plan.id, recommendationId, itemId);
     setPlan(response.plan);
+    await loadPlanDiagnostics(response.plan.id);
   }
 
   function updateRequest<K extends keyof UserPlanningRequest>(key: K, value: UserPlanningRequest[K]) {
@@ -343,7 +385,7 @@ function App() {
       const response = await confirmServerRecommendation(plan.id, selectedRecommendation.id);
       setPlan(response.plan);
       setSelectedRecommendation(null);
-      await refreshLaunchCenter();
+      await Promise.all([refreshLaunchCenter(), loadPlanDiagnostics(response.plan.id)]);
     } catch (confirmError) {
       setError(confirmError instanceof Error ? confirmError.message : "Unable to confirm action.");
     } finally {
@@ -382,6 +424,11 @@ function App() {
       .then((response) => setAgentSurface(response.response))
       .catch(() => setAgentSurface(null));
   }, [plan?.id, surfaceMode]);
+
+  useEffect(() => {
+    if (!plan) return;
+    void loadPlanDiagnostics(plan.id).catch(() => undefined);
+  }, [plan?.id]);
 
   return (
     <main className="app-shell">
@@ -635,6 +682,12 @@ function App() {
                 incidentReport={incidentReport}
                 onSurfaceModeChange={setSurfaceMode}
                 onCreateReport={() => void createIncidentReport()}
+              />
+              <DemoStudioPanel
+                preflight={preflight}
+                replay={mcpReplay}
+                steps={demoSteps}
+                submissionPackage={submissionPackage}
               />
             </section>
           </>
@@ -1083,6 +1136,114 @@ function LaunchCenterPanel({
               Email builders@swiggy.in
             </a>
           ) : null}
+        </article>
+      </div>
+    </section>
+  );
+}
+
+function DemoStudioPanel({
+  preflight,
+  replay,
+  steps,
+  submissionPackage,
+}: {
+  preflight: CartPreflightReport | null;
+  replay: McpReplayStep[];
+  steps: DemoStudioStep[];
+  submissionPackage: SubmissionPackage | null;
+}) {
+  const readyFields = submissionPackage?.fields.filter((field) => field.status === "ready").length ?? 0;
+  const totalFields = submissionPackage?.fields.length ?? 0;
+
+  return (
+    <section className="analysis-panel demo-studio-panel">
+      <div className="section-heading">
+        <ClipboardCheck aria-hidden="true" />
+        <h2>Demo Studio</h2>
+      </div>
+
+      <div className="demo-studio-grid">
+        <article>
+          <div className="mini-heading">
+            <ShieldCheck aria-hidden="true" />
+            <strong>Cart Preflight</strong>
+          </div>
+          <span>{preflight ? `${preflight.overall.replace("_", " ")} - ${formatMoney(preflight.total)}` : "No active plan"}</span>
+          <ul className="compact-status-list">
+            {(preflight?.checks ?? []).slice(0, 5).map((check) => (
+              <li key={check.id} data-status={check.status === "pass" ? "healthy" : "watch"}>
+                <span>{check.label}</span>
+                <strong>{check.status}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article>
+          <div className="mini-heading">
+            <Sparkles aria-hidden="true" />
+            <strong>Offers</strong>
+          </div>
+          <ul className="offer-list">
+            {(preflight?.offers ?? []).map((offer) => (
+              <li key={offer.id}>
+                <strong>{offer.code}</strong>
+                <span>
+                  {offer.status} - {formatMoney(offer.estimatedSavings)}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article>
+          <div className="mini-heading">
+            <Database aria-hidden="true" />
+            <strong>MCP Replay</strong>
+          </div>
+          <span>{replay.length} JSON-RPC step(s)</span>
+          <ol className="replay-list">
+            {replay.slice(0, 5).map((step) => (
+              <li key={step.id}>
+                <strong>{step.tool}</strong>
+                <span>{serverLabel(step.server)} - {step.retryPolicy}</span>
+              </li>
+            ))}
+          </ol>
+        </article>
+
+        <article>
+          <div className="mini-heading">
+            <Play aria-hidden="true" />
+            <strong>Demo Run</strong>
+          </div>
+          <ul className="compact-status-list">
+            {steps.slice(0, 6).map((step) => (
+              <li key={step.id} data-status={step.status === "done" ? "healthy" : "watch"}>
+                <span>{step.label}</span>
+                <strong>{step.status}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="submission-card">
+          <div className="mini-heading">
+            <FileWarning aria-hidden="true" />
+            <strong>Submission Package</strong>
+          </div>
+          <span>
+            {readyFields}/{totalFields} fields ready
+          </span>
+          <div className="submission-grid">
+            {(submissionPackage?.fields ?? []).slice(0, 8).map((field) => (
+              <div key={field.id} data-status={field.status}>
+                <strong>{field.label}</strong>
+                <span>{field.value}</span>
+              </div>
+            ))}
+          </div>
         </article>
       </div>
     </section>
