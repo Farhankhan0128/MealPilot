@@ -16,10 +16,23 @@ describe("MealPilot API", () => {
   it("serves health and config", async () => {
     const { app } = createMealPilotServer();
     const health = await request(app).get("/api/health").expect(200);
+    const ready = await request(app).get("/api/ready").expect(200);
     const config = await request(app).get("/api/config").expect(200);
 
     expect(health.body.ok).toBe(true);
+    expect(ready.body.checks.mcpCoverage).toBe("35/35");
     expect(config.body.requestedServers).toEqual(["food", "instamart", "dineout"]);
+  });
+
+  it("serves security headers and OpenAPI contract", async () => {
+    const { app } = createMealPilotServer();
+    const health = await request(app).get("/api/health").expect(200);
+    const openApi = await request(app).get("/api/openapi.json").expect(200);
+
+    expect(health.headers["x-content-type-options"]).toBe("nosniff");
+    expect(health.headers["x-mealpilot-request-id"]).toBeTruthy();
+    expect(openApi.body.openapi).toBe("3.1.0");
+    expect(openApi.body.paths["/api/plan"].post.summary).toContain("MealPilot plan");
   });
 
   it("creates a server-side plan session", async () => {

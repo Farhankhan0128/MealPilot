@@ -63,6 +63,8 @@ Implementation:
 - Generates a submission package that mirrors Swiggy access fields and manual-input gaps.
 - Generates Swiggy widget contracts with iframe sizing, postMessage events, sandbox policy, origin verification, and semantic fallbacks.
 - Generates rate-limit, versioning, and compliance evidence aligned with Swiggy's Operate documentation.
+- Serves OpenAPI 3.1 at `/api/openapi.json`, readiness checks at `/api/ready`, and request IDs on every API response.
+- Ships with Docker, Render blueprint, GitHub Actions CI, and an automated production smoke verifier.
 - Exposes an MCP-shaped local JSON-RPC route for Swiggy tool demos.
 - Starts the Swiggy OAuth flow with server-stored PKCE verifier and state.
 

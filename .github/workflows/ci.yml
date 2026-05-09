@@ -1,0 +1,40 @@
+name: MealPilot CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm test -- --run
+
+      - name: Build
+        run: npm run build
+
+      - name: Production smoke
+        run: |
+          npm start &
+          SERVER_PID=$!
+          trap "kill $SERVER_PID" EXIT
+          node -e "let tries=0; const check=()=>fetch('http://localhost:8787/api/ready').then(r=>r.ok?process.exit(0):Promise.reject()).catch(()=>{if(++tries>30)process.exit(1); setTimeout(check,1000)}); check();"
+          npm run verify:production

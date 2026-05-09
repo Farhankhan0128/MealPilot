@@ -67,6 +67,8 @@ Scale-up after staging:
 - Rate-limit plan for per-user, write-tool, client-day, and tracking-poll budgets.
 - Version/deprecation monitor for v1 route pinning, 180-day deprecation windows, and `_meta.swiggy.deprecation` alerts.
 - DPDP-oriented compliance evidence for consent, minimization, deletion, audit logging, and no model-training use of Swiggy-originated data.
+- OpenAPI 3.1 contract, readiness probe, request IDs, and security headers.
+- GitHub Actions CI, Dockerfile, Render blueprint, and production smoke verification script.
 - Confirmation gates before `place_food_order`, Instamart checkout, or `book_table`.
 - Safe retry policy: no blind retries for non-idempotent order or booking actions.
 - 401 handling: re-run OAuth once and refresh all MCP clients.
@@ -95,7 +97,8 @@ The application will include a 2-3 minute Loom or unlisted YouTube demo showing:
 6. Launch Center shows 35-tool coverage, chat/voice behavior, go-live gates, and observability metrics.
 7. Demo Studio shows cart preflight, MCP replay, and submission readiness.
 8. Production Evidence shows widgets, rate limits, versioning, compliance, and reviewer proof score.
-9. Logs show trace IDs, no raw PII, and safe error handling.
+9. Show `/api/ready`, `/api/openapi.json`, and `npm run verify:production`.
+10. Logs show trace IDs, no raw PII, and safe error handling.
 
 ## Primary Technical Contact
 
