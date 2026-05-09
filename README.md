@@ -41,7 +41,13 @@ Planned MCP servers:
 - Confirmation modals for Food, Instamart, and Dineout actions.
 - Confirm-all workflow for demo speed while preserving per-action audit entries.
 - Simulated post-confirmation tracking for Food, Instamart, and Dineout.
+- Pantry Autopilot with restock suggestions.
+- Group planning with member-level budget, diet, and allergy constraints.
+- Reminder scheduling for food, grocery, and Dineout follow-ups.
+- Privacy export and local data deletion endpoints.
+- Ops status dashboard for API, MCP mode, sessions, and reminders.
 - Builder Access package endpoint with readiness evidence.
+- Markdown export for the Builder Access packet.
 - Audit timeline with tool names, session IDs, and redacted details.
 - Vitest coverage for planner behavior, API behavior, UI/API integration, and retry safety.
 

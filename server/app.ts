@@ -6,10 +6,17 @@ import express, { type NextFunction, type Request, type Response } from "express
 import { z } from "zod";
 import { createMealPlan } from "../src/domain/planner.js";
 import { defaultUserProfile } from "../src/domain/profile.js";
-import type { SwiggyServer, UserPlanningRequest } from "../src/domain/types.js";
+import type { GroupMember, PantryItem, SwiggyServer, UserPlanningRequest } from "../src/domain/types.js";
 import { readConfig, type ServerConfig } from "./config.js";
 import { handleMockJsonRpc } from "./mock/swiggyToolRouter.js";
 import { executeAllPreparedRecommendations, executeConfirmedRecommendation } from "./services/confirmationService.js";
+import {
+  buildApplicationMarkdown,
+  buildGroupPlan,
+  buildOpsStatus,
+  buildPlanReminders,
+  buildRestockSuggestions,
+} from "./services/advancedWorkflows.js";
 import {
   buildReadinessChecklist,
   buildTrackingEvents,
@@ -60,6 +67,24 @@ const profileSchema = z.object({
   spicePreference: z.enum(["mild", "medium", "hot"]),
   addressLabel: z.enum(["Home", "Office"]),
   consentToStorePreferences: z.boolean(),
+});
+
+const pantryItemSchema = z.object({
+  id: z.string().min(2),
+  name: z.string().min(1),
+  category: z.enum(["protein", "staple", "dairy", "produce", "snack"]),
+  currentQty: z.number().min(0),
+  targetQty: z.number().min(0),
+  unit: z.string().min(1),
+  estimatedPrice: z.number().min(0),
+});
+
+const groupMemberSchema = z.object({
+  id: z.string().min(2),
+  name: z.string().min(1),
+  diet: z.enum(["vegetarian", "high-protein vegetarian", "balanced"]),
+  allergies: z.array(z.string()).max(12),
+  budget: z.number().int().min(100).max(5000),
 });
 
 const mcpServerSchema = z.enum(["food", "instamart", "dineout"]);
@@ -231,8 +256,9 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
   });
 
   app.get("/api/builder-package", (_req, res) => {
+    const readiness = buildReadinessChecklist(store.getProfile());
     res.json({
-      readiness: buildReadinessChecklist(store.getProfile()),
+      readiness,
       application: {
         integrationName: "MealPilot India",
         requestedServers: ["food", "instamart", "dineout"],
@@ -241,6 +267,80 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
           "A privacy-first AI commerce assistant that composes Food, Instamart, and Dineout for Indian household meal planning with explicit confirmation gates.",
       },
     });
+  });
+
+  app.get("/api/builder-package.md", (_req, res) => {
+    const markdown = buildApplicationMarkdown({
+      profile: store.getProfile(),
+      readiness: buildReadinessChecklist(store.getProfile()),
+    });
+    res.type("text/markdown").send(markdown);
+  });
+
+  app.get("/api/pantry", (_req, res) => {
+    const pantry = store.getPantry();
+    res.json({ pantry, suggestions: buildRestockSuggestions(pantry) });
+  });
+
+  app.put("/api/pantry", (req, res) => {
+    const pantry = z.array(pantryItemSchema).parse(req.body.pantry) satisfies PantryItem[];
+    res.json({ pantry: store.updatePantry(pantry), suggestions: buildRestockSuggestions(pantry) });
+  });
+
+  app.get("/api/group", (_req, res) => {
+    res.json({ groupPlan: store.getGroupPlan() });
+  });
+
+  app.post("/api/group/members", (req, res) => {
+    const member = groupMemberSchema.parse(req.body) satisfies GroupMember;
+    const current = store.getGroupPlan();
+    const members = [...current.members.filter((item) => item.id !== member.id), member];
+    const groupPlan = buildGroupPlan(members);
+    res.status(201).json({ groupPlan: store.updateGroupPlan(groupPlan) });
+  });
+
+  app.post("/api/schedule", (req, res) => {
+    const body = z.object({ sessionId: z.string().min(4) }).parse(req.body);
+    const plan = store.getPlan(body.sessionId);
+
+    if (!plan) {
+      res.status(404).json({ error: { message: "Session not found." } });
+      return;
+    }
+
+    const reminders = buildPlanReminders(plan);
+    reminders.forEach(store.saveReminder);
+    res.status(201).json({ reminders });
+  });
+
+  app.get("/api/schedule", (req, res) => {
+    const sessionId = typeof req.query.sessionId === "string" ? req.query.sessionId : undefined;
+    res.json({ reminders: store.getReminders(sessionId) });
+  });
+
+  app.get("/api/ops", (_req, res) => {
+    res.json({
+      status: buildOpsStatus({
+        hasClientId: config.swiggyClientId !== "replace_after_builder_access",
+        planCount: store.getAllPlans().length,
+        reminderCount: store.getReminders().length,
+      }),
+    });
+  });
+
+  app.get("/api/privacy/export", (_req, res) => {
+    res.json({
+      profile: store.getProfile(),
+      pantry: store.getPantry(),
+      groupPlan: store.getGroupPlan(),
+      plans: store.getAllPlans(),
+      reminders: store.getReminders(),
+    });
+  });
+
+  app.delete("/api/privacy", (_req, res) => {
+    store.clearUserData();
+    res.json({ ok: true });
   });
 
   app.post(

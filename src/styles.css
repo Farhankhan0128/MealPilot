@@ -762,6 +762,66 @@ select:focus {
   border-left: 4px solid var(--gold);
 }
 
+.advanced-panel {
+  grid-column: 1 / -1;
+}
+
+.workflow-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.workflow-grid article {
+  display: grid;
+  gap: 8px;
+  min-height: 160px;
+  border-radius: 8px;
+  padding: 12px;
+  background: var(--surface-strong);
+}
+
+.workflow-grid span,
+.workflow-grid p,
+.workflow-grid li {
+  color: var(--muted);
+}
+
+.workflow-grid ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.workflow-grid button,
+.privacy-actions button {
+  min-height: 34px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0 10px;
+  color: var(--green-dark);
+  background: #eef7f1;
+  font-weight: 900;
+}
+
+.privacy-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.export-preview {
+  max-height: 260px;
+  overflow: auto;
+  margin: 14px 0 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  color: #2c3b32;
+  background: #f8fbf6;
+  white-space: pre-wrap;
+}
+
 .timeline-server {
   border-radius: 999px;
   padding: 6px 8px;
@@ -847,7 +907,8 @@ select:focus {
   .recommendations,
   .planner-grid,
   .lower-grid,
-  .variant-strip {
+  .variant-strip,
+  .workflow-grid {
     grid-template-columns: 1fr;
   }
 

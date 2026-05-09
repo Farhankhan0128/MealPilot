@@ -1,4 +1,16 @@
-import type { BuilderReadinessItem, MealPlan, TrackingEvent, UserPlanningRequest, UserProfile } from "../domain/types";
+import type {
+  BuilderReadinessItem,
+  GroupMember,
+  GroupPlan,
+  MealPlan,
+  OpsStatus,
+  PantryItem,
+  Reminder,
+  RestockSuggestion,
+  TrackingEvent,
+  UserPlanningRequest,
+  UserProfile,
+} from "../domain/types";
 
 export interface HealthResponse {
   ok: boolean;
@@ -101,8 +113,71 @@ export function fetchBuilderPackage() {
   return requestJson<BuilderPackageResponse>("/api/builder-package");
 }
 
+export function fetchBuilderPackageMarkdown() {
+  return fetch("/api/builder-package.md").then(async (response) => {
+    if (!response.ok) throw new Error(`MealPilot API failed with ${response.status}`);
+    return response.text();
+  });
+}
+
+export function fetchPantry() {
+  return requestJson<{ pantry: PantryItem[]; suggestions: RestockSuggestion[] }>("/api/pantry");
+}
+
+export function updatePantry(pantry: PantryItem[]) {
+  return requestJson<{ pantry: PantryItem[]; suggestions: RestockSuggestion[] }>("/api/pantry", {
+    method: "PUT",
+    body: JSON.stringify({ pantry }),
+  });
+}
+
+export function fetchGroupPlan() {
+  return requestJson<{ groupPlan: GroupPlan }>("/api/group");
+}
+
+export function addGroupMember(member: GroupMember) {
+  return requestJson<{ groupPlan: GroupPlan }>("/api/group/members", {
+    method: "POST",
+    body: JSON.stringify(member),
+  });
+}
+
+export function schedulePlan(sessionId: string) {
+  return requestJson<{ reminders: Reminder[] }>("/api/schedule", {
+    method: "POST",
+    body: JSON.stringify({ sessionId }),
+  });
+}
+
+export function fetchOpsStatus() {
+  return requestJson<{ status: OpsStatus[] }>("/api/ops");
+}
+
+export function exportPrivacyData() {
+  return requestJson<{
+    profile: UserProfile;
+    pantry: PantryItem[];
+    groupPlan: GroupPlan;
+    plans: MealPlan[];
+    reminders: Reminder[];
+  }>("/api/privacy/export");
+}
+
+export function deletePrivacyData() {
+  return requestJson<{ ok: true }>("/api/privacy", {
+    method: "DELETE",
+  });
+}
+
 export function startSwiggyAuth() {
   return requestJson<{ authorizationUrl: string; mode: string; state: string }>("/api/auth/swiggy/start", {
     method: "POST",
   });
+}
+
+export function completeSwiggyAuth(code: string, state: string) {
+  const params = new URLSearchParams({ code, state });
+  return requestJson<{ ok: boolean; mode: string; tokenExchange: string; state: string }>(
+    `/api/auth/swiggy/callback?${params.toString()}`,
+  );
 }

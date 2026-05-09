@@ -18,6 +18,7 @@ Status: in progress.
 - Add explicit confirmation modals for all risky actions. Complete.
 - Add audit timeline and redacted log shape. Complete.
 - Add profile, variants, substitutions, confirm-all, and tracking. Complete.
+- Add pantry, group planning, reminders, privacy controls, ops status, and markdown export. Complete.
 - Add OAuth callback screen and token exchange path. In progress.
 - Add real MCP transport behind a staging flag. Next.
 

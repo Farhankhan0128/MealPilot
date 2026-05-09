@@ -100,6 +100,56 @@ export interface BuilderReadinessItem {
   evidence: string;
 }
 
+export interface PantryItem {
+  id: string;
+  name: string;
+  category: "protein" | "staple" | "dairy" | "produce" | "snack";
+  currentQty: number;
+  targetQty: number;
+  unit: string;
+  estimatedPrice: number;
+}
+
+export interface RestockSuggestion {
+  id: string;
+  itemId: string;
+  name: string;
+  quantity: string;
+  price: number;
+  reason: string;
+}
+
+export interface GroupMember {
+  id: string;
+  name: string;
+  diet: UserPlanningRequest["diet"];
+  allergies: string[];
+  budget: number;
+}
+
+export interface GroupPlan {
+  members: GroupMember[];
+  combinedBudget: number;
+  constraints: string[];
+  recommendation: string;
+}
+
+export interface Reminder {
+  id: string;
+  sessionId: string;
+  label: string;
+  channel: "in_app" | "email_draft";
+  scheduledFor: string;
+  status: "scheduled" | "sent" | "cancelled";
+}
+
+export interface OpsStatus {
+  id: string;
+  label: string;
+  status: "healthy" | "warning" | "blocked";
+  detail: string;
+}
+
 export interface MealPlan {
   id: string;
   summary: string;

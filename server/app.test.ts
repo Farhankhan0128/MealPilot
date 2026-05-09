@@ -111,4 +111,50 @@ describe("MealPilot API", () => {
     expect(response.body.application.requestedServers).toEqual(["food", "instamart", "dineout"]);
     expect(response.body.readiness.some((item: { id: string }) => item.id === "oauth")).toBe(true);
   });
+
+  it("supports pantry, group planning, scheduling, ops, and privacy workflows", async () => {
+    const { app } = createMealPilotServer();
+    const pantry = await request(app).get("/api/pantry").expect(200);
+    expect(pantry.body.suggestions.length).toBeGreaterThan(0);
+
+    const group = await request(app)
+      .post("/api/group/members")
+      .send({
+        id: "member_asha",
+        name: "Asha",
+        diet: "vegetarian",
+        allergies: ["none"],
+        budget: 550,
+      })
+      .expect(201);
+    expect(group.body.groupPlan.members.some((member: { id: string }) => member.id === "member_asha")).toBe(true);
+
+    const created = await request(app).post("/api/plan").send(planningRequest).expect(201);
+    const schedule = await request(app).post("/api/schedule").send({ sessionId: created.body.plan.id }).expect(201);
+    expect(schedule.body.reminders).toHaveLength(3);
+
+    const ops = await request(app).get("/api/ops").expect(200);
+    expect(ops.body.status.some((item: { id: string }) => item.id === "api")).toBe(true);
+
+    const privacy = await request(app).get("/api/privacy/export").expect(200);
+    expect(privacy.body.profile.id).toBe("profile_demo");
+
+    await request(app).delete("/api/privacy").expect(200);
+    const afterDelete = await request(app).get("/api/privacy/export").expect(200);
+    expect(afterDelete.body.plans).toHaveLength(0);
+  });
+
+  it("exports a markdown builder package and completes mock OAuth callback", async () => {
+    const { app } = createMealPilotServer();
+    const start = await request(app).post("/api/auth/swiggy/start").expect(200);
+
+    const callback = await request(app)
+      .get("/api/auth/swiggy/callback")
+      .query({ code: "mock_code", state: start.body.state })
+      .expect(200);
+    expect(callback.body.tokenExchange).toBe("mocked");
+
+    const markdown = await request(app).get("/api/builder-package.md").expect(200);
+    expect(markdown.text).toContain("MealPilot India - Swiggy Builder Access Packet");
+  });
 });

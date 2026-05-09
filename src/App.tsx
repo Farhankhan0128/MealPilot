@@ -22,13 +22,22 @@ import type { ReactNode } from "react";
 import { useEffect, useMemo, useState } from "react";
 import {
   buildServerPlan,
+  completeSwiggyAuth,
+  addGroupMember,
   confirmAllRecommendations,
   confirmServerRecommendation,
+  deletePrivacyData,
+  exportPrivacyData,
   fetchBuilderPackage,
+  fetchBuilderPackageMarkdown,
+  fetchGroupPlan,
   fetchHealth,
+  fetchOpsStatus,
+  fetchPantry,
   fetchProfile,
   fetchTracking,
   removeRecommendationItem,
+  schedulePlan,
   startSwiggyAuth,
   substituteRecommendationItem,
   updateProfile,
@@ -37,7 +46,19 @@ import {
 } from "./api/mealpilotApi";
 import { defaultUserProfile, normalizeListInput } from "./domain/profile";
 import { buildConfirmationMessage } from "./domain/safety";
-import type { MealPlan, Recommendation, SwiggyServer, ToolCallEvent, UserPlanningRequest, UserProfile } from "./domain/types";
+import type {
+  GroupPlan,
+  MealPlan,
+  OpsStatus,
+  PantryItem,
+  Recommendation,
+  Reminder,
+  RestockSuggestion,
+  SwiggyServer,
+  ToolCallEvent,
+  UserPlanningRequest,
+  UserProfile,
+} from "./domain/types";
 
 const initialRequest: UserPlanningRequest = {
   prompt:
@@ -110,6 +131,12 @@ function App() {
   const [health, setHealth] = useState<HealthResponse | null>(null);
   const [profile, setProfile] = useState<UserProfile>(defaultUserProfile);
   const [builderPackage, setBuilderPackage] = useState<BuilderPackageResponse | null>(null);
+  const [pantry, setPantry] = useState<PantryItem[]>([]);
+  const [restock, setRestock] = useState<RestockSuggestion[]>([]);
+  const [groupPlan, setGroupPlan] = useState<GroupPlan | null>(null);
+  const [reminders, setReminders] = useState<Reminder[]>([]);
+  const [opsStatus, setOpsStatus] = useState<OpsStatus[]>([]);
+  const [exportText, setExportText] = useState<string | null>(null);
   const [authUrl, setAuthUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const confirmedCount = plan?.recommendations.filter((item) => item.status === "confirmed").length ?? 0;
@@ -158,6 +185,18 @@ function App() {
     }
   }
 
+  async function loadAdvancedWorkflows() {
+    const [pantryResponse, groupResponse, opsResponse] = await Promise.all([
+      fetchPantry(),
+      fetchGroupPlan(),
+      fetchOpsStatus(),
+    ]);
+    setPantry(pantryResponse.pantry);
+    setRestock(pantryResponse.suggestions);
+    setGroupPlan(groupResponse.groupPlan);
+    setOpsStatus(opsResponse.status);
+  }
+
   async function confirmEverything() {
     if (!plan) return;
     setIsConfirming(true);
@@ -191,6 +230,42 @@ function App() {
     } catch (authError) {
       setError(authError instanceof Error ? authError.message : "Unable to start Swiggy OAuth.");
     }
+  }
+
+  async function scheduleCurrentPlan() {
+    if (!plan) return;
+    const response = await schedulePlan(plan.id);
+    setReminders(response.reminders);
+    const opsResponse = await fetchOpsStatus();
+    setOpsStatus(opsResponse.status);
+  }
+
+  async function addDemoGroupMember() {
+    const response = await addGroupMember({
+      id: `member_${Date.now()}`,
+      name: "Asha",
+      diet: "vegetarian",
+      allergies: ["none"],
+      budget: 550,
+    });
+    setGroupPlan(response.groupPlan);
+  }
+
+  async function exportBuilderMarkdown() {
+    setExportText(await fetchBuilderPackageMarkdown());
+  }
+
+  async function exportPrivacy() {
+    const response = await exportPrivacyData();
+    setExportText(JSON.stringify(response, null, 2));
+  }
+
+  async function clearPrivacyData() {
+    await deletePrivacyData();
+    setPlan(null);
+    setReminders([]);
+    setExportText("Local profile, plans, pantry, group plan, and reminders were deleted.");
+    await loadAdvancedWorkflows();
   }
 
   async function substituteItem(recommendationId: string, alternativeId: string) {
@@ -240,6 +315,18 @@ function App() {
     void fetchBuilderPackage()
       .then(setBuilderPackage)
       .catch(() => setBuilderPackage(null));
+    void loadAdvancedWorkflows().catch(() => undefined);
+
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get("code");
+    const state = params.get("state");
+    if (window.location.pathname === "/auth/swiggy/callback" && code && state) {
+      void completeSwiggyAuth(code, state)
+        .then((response) => setAuthUrl(`OAuth callback ${response.tokenExchange}`))
+        .catch((authError: unknown) =>
+          setError(authError instanceof Error ? authError.message : "Unable to complete OAuth callback."),
+        );
+    }
   }, []);
 
   return (
@@ -340,6 +427,14 @@ function App() {
           <button className="ghost-button" type="button" onClick={() => void beginOAuth()}>
             <LockKeyhole aria-hidden="true" />
             Start Swiggy OAuth
+          </button>
+          <button className="ghost-button" type="button" onClick={() => void scheduleCurrentPlan()} disabled={!plan}>
+            <CalendarCheck aria-hidden="true" />
+            Schedule reminders
+          </button>
+          <button className="ghost-button" type="button" onClick={() => void exportBuilderMarkdown()}>
+            <ClipboardCheck aria-hidden="true" />
+            Export packet
           </button>
           {authUrl ? (
             <a className="auth-url" href={authUrl} target="_blank" rel="noreferrer">
@@ -465,6 +560,17 @@ function App() {
               <AuditPanel events={plan.auditTrail} />
               <TrackingPanel plan={plan} />
               <ReadinessPanel readiness={builderPackage?.readiness ?? []} />
+              <AdvancedWorkflowPanel
+                pantry={pantry}
+                restock={restock}
+                groupPlan={groupPlan}
+                reminders={reminders}
+                opsStatus={opsStatus}
+                exportText={exportText}
+                onAddGroupMember={() => void addDemoGroupMember()}
+                onExportPrivacy={() => void exportPrivacy()}
+                onClearPrivacy={() => void clearPrivacyData()}
+              />
             </section>
           </>
         ) : (
@@ -684,6 +790,92 @@ function ReadinessPanel({ readiness }: { readiness: BuilderPackageResponse["read
           </li>
         ))}
       </ul>
+    </section>
+  );
+}
+
+function AdvancedWorkflowPanel({
+  pantry,
+  restock,
+  groupPlan,
+  reminders,
+  opsStatus,
+  exportText,
+  onAddGroupMember,
+  onExportPrivacy,
+  onClearPrivacy,
+}: {
+  pantry: PantryItem[];
+  restock: RestockSuggestion[];
+  groupPlan: GroupPlan | null;
+  reminders: Reminder[];
+  opsStatus: OpsStatus[];
+  exportText: string | null;
+  onAddGroupMember: () => void;
+  onExportPrivacy: () => void;
+  onClearPrivacy: () => void;
+}) {
+  return (
+    <section className="analysis-panel advanced-panel">
+      <div className="section-heading">
+        <Database aria-hidden="true" />
+        <h2>Operating System</h2>
+      </div>
+
+      <div className="workflow-grid">
+        <article>
+          <strong>Pantry Autopilot</strong>
+          <span>{pantry.length} tracked items</span>
+          <ul>
+            {restock.slice(0, 3).map((item) => (
+              <li key={item.id}>
+                {item.name} - {item.quantity}
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article>
+          <strong>Group Planning</strong>
+          <span>{groupPlan?.members.length ?? 0} members, {formatMoney(groupPlan?.combinedBudget ?? 0)}</span>
+          <p>{groupPlan?.recommendation ?? "No group plan yet."}</p>
+          <button type="button" onClick={onAddGroupMember}>
+            Add demo member
+          </button>
+        </article>
+
+        <article>
+          <strong>Reminder Queue</strong>
+          <span>{reminders.length} scheduled</span>
+          <ul>
+            {reminders.slice(0, 3).map((reminder) => (
+              <li key={reminder.id}>{reminder.label}</li>
+            ))}
+          </ul>
+        </article>
+
+        <article>
+          <strong>Ops Status</strong>
+          <ul>
+            {opsStatus.map((item) => (
+              <li key={item.id}>
+                {item.label}: {item.status}
+              </li>
+            ))}
+          </ul>
+        </article>
+      </div>
+
+      <div className="privacy-actions">
+        <button type="button" onClick={onExportPrivacy}>
+          Export privacy data
+        </button>
+        <button type="button" onClick={onClearPrivacy}>
+          Delete local data
+        </button>
+      </div>
+
+      {exportText ? <pre className="export-preview">{exportText.slice(0, 1400)}</pre> : null}
     </section>
   );
 }
