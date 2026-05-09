@@ -48,6 +48,7 @@ import {
   fetchProfile,
   fetchRateLimitPlan,
   fetchReviewerProof,
+  fetchResilience,
   fetchSubmissionPackage,
   fetchTracking,
   fetchVersionMonitor,
@@ -81,6 +82,8 @@ import type {
   RateLimitPlan,
   Recommendation,
   Reminder,
+  ResilienceDrill,
+  ResilienceRunbook,
   ReviewerProof,
   RestockSuggestion,
   SubmissionPackage,
@@ -187,6 +190,8 @@ function App() {
   const [versionMonitor, setVersionMonitor] = useState<VersionMonitor | null>(null);
   const [complianceEvidence, setComplianceEvidence] = useState<ComplianceEvidence | null>(null);
   const [reviewerProof, setReviewerProof] = useState<ReviewerProof | null>(null);
+  const [resilienceDrills, setResilienceDrills] = useState<ResilienceDrill[]>([]);
+  const [resilienceRunbook, setResilienceRunbook] = useState<ResilienceRunbook | null>(null);
   const [exportText, setExportText] = useState<string | null>(null);
   const [authUrl, setAuthUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -254,6 +259,7 @@ function App() {
       versionResponse,
       complianceResponse,
       proofResponse,
+      resilienceResponse,
     ] = await Promise.all([
       fetchPantry(),
       fetchGroupPlan(),
@@ -266,6 +272,7 @@ function App() {
       fetchVersionMonitor(),
       fetchComplianceEvidence(),
       fetchReviewerProof(),
+      fetchResilience(),
     ]);
     setPantry(pantryResponse.pantry);
     setRestock(pantryResponse.suggestions);
@@ -281,6 +288,8 @@ function App() {
     setVersionMonitor(versionResponse.version);
     setComplianceEvidence(complianceResponse.compliance);
     setReviewerProof(proofResponse.proof);
+    setResilienceDrills(resilienceResponse.drills);
+    setResilienceRunbook(resilienceResponse.runbook);
   }
 
   async function refreshLaunchCenter() {
@@ -293,6 +302,7 @@ function App() {
       versionResponse,
       complianceResponse,
       proofResponse,
+      resilienceResponse,
     ] = await Promise.all([
       fetchMcpCatalog(),
       fetchGoLive(),
@@ -302,6 +312,7 @@ function App() {
       fetchVersionMonitor(),
       fetchComplianceEvidence(),
       fetchReviewerProof(),
+      fetchResilience(),
     ]);
     setMcpCatalog(catalogResponse);
     setGoLiveChecks(goLiveResponse.checks);
@@ -313,6 +324,8 @@ function App() {
     setVersionMonitor(versionResponse.version);
     setComplianceEvidence(complianceResponse.compliance);
     setReviewerProof(proofResponse.proof);
+    setResilienceDrills(resilienceResponse.drills);
+    setResilienceRunbook(resilienceResponse.runbook);
   }
 
   async function loadPlanDiagnostics(sessionId: string) {
@@ -751,6 +764,8 @@ function App() {
                 versionMonitor={versionMonitor}
                 complianceEvidence={complianceEvidence}
                 reviewerProof={reviewerProof}
+                resilienceDrills={resilienceDrills}
+                resilienceRunbook={resilienceRunbook}
               />
             </section>
           </>
@@ -1320,6 +1335,8 @@ function ProductionEvidencePanel({
   versionMonitor,
   complianceEvidence,
   reviewerProof,
+  resilienceDrills,
+  resilienceRunbook,
 }: {
   widgets: SwiggyWidget[];
   widgetBridge: { origin: string; sandbox: string; verifyOrigin: boolean } | null;
@@ -1327,7 +1344,11 @@ function ProductionEvidencePanel({
   versionMonitor: VersionMonitor | null;
   complianceEvidence: ComplianceEvidence | null;
   reviewerProof: ReviewerProof | null;
+  resilienceDrills: ResilienceDrill[];
+  resilienceRunbook: ResilienceRunbook | null;
 }) {
+  const passedDrills = resilienceDrills.filter((drill) => drill.status === "pass").length;
+
   return (
     <section className="analysis-panel production-evidence-panel">
       <div className="section-heading">
@@ -1416,6 +1437,26 @@ function ProductionEvidencePanel({
               </div>
             ))}
           </div>
+        </article>
+
+        <article className="resilience-card">
+          <div className="mini-heading">
+            <FileWarning aria-hidden="true" />
+            <strong>Resilience Lab</strong>
+          </div>
+          <span>
+            {resilienceRunbook
+              ? `${resilienceRunbook.score}/100 drill score, ${passedDrills}/${resilienceDrills.length} passing`
+              : "Loading failure drills"}
+          </span>
+          <ul className="compact-status-list">
+            {resilienceDrills.slice(0, 5).map((drill) => (
+              <li key={drill.id} data-status={drill.status === "pass" ? "healthy" : "watch"}>
+                <span>{drill.label}</span>
+                <strong>{drill.status}</strong>
+              </li>
+            ))}
+          </ul>
         </article>
       </div>
     </section>

@@ -38,6 +38,7 @@ describe("MealPilot API", () => {
     expect(openApi.body.openapi).toBe("3.1.0");
     expect(openApi.body.paths["/api/plan"].post.summary).toContain("MealPilot plan");
     expect(openApi.body.paths["/api/storage/status"].get.summary).toContain("Storage");
+    expect(openApi.body.paths["/api/resilience"].get.summary).toContain("resilience");
   });
 
   it("creates a server-side plan session", async () => {
@@ -263,5 +264,18 @@ describe("MealPilot API", () => {
     const proof = await request(app).get("/api/reviewer-proof").expect(200);
     expect(proof.body.proof.score).toBeGreaterThanOrEqual(80);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Widget contracts")).toBe(true);
+  });
+
+  it("returns executable resilience drills and support runbook evidence", async () => {
+    const { app } = createMealPilotServer();
+    const created = await request(app).post("/api/plan").send(planningRequest).expect(201);
+    await request(app).post("/api/confirm").send({ sessionId: created.body.plan.id, recommendationId: "rec_food" }).expect(200);
+
+    const resilience = await request(app).get("/api/resilience").expect(200);
+
+    expect(resilience.body.drills.length).toBeGreaterThanOrEqual(5);
+    expect(resilience.body.drills.some((drill: { id: string }) => drill.id === "non_idempotent_check_then_retry")).toBe(true);
+    expect(resilience.body.runbook.nonBlindRetryTools).toContain("place_food_order");
+    expect(resilience.body.runbook.supportPayload.latestSessionId).toBe(created.body.plan.id);
   });
 });

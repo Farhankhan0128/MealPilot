@@ -107,6 +107,7 @@ Open the Launch Center and show:
 - Go-Live Gates for credentials, OAuth, confirmation, idempotency, observability, rollout, and privacy.
 - Observability metrics with traceable session IDs.
 - Support report generation with a pre-filled `builders@swiggy.in` escalation.
+- Resilience Lab evidence for 5xx retries, 429 Retry-After, 401 reauth, non-idempotent check-then-retry, and deprecation metadata.
 
 ### 8. Show Demo Studio
 
@@ -126,6 +127,7 @@ Open Production Evidence and show:
 - Rate-limit budgets under planned developer-tier ceilings.
 - Version monitor with v1 route pinning and deprecation alert readiness.
 - Compliance controls for consent, PII minimization, deletion, audit logging, and training-data exclusion.
+- Resilience Lab drill score and support runbook payload.
 - Reviewer Proof score and artifact links.
 
 ### 10. Close
@@ -136,6 +138,7 @@ Briefly show production readiness:
 - `/api/openapi.json`
 - `/api/storage/status`
 - `/api/storage/export`
+- `/api/resilience`
 - GitHub Actions workflow
 - Dockerfile
 - `npm run verify:production`

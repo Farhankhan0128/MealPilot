@@ -131,6 +131,13 @@ export function buildOpenApiDocument(config: ServerConfig) {
           responses: { "200": { description: "Score, highlights, blockers, and artifact links" } },
         },
       },
+      "/api/resilience": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Executable resilience drills and Swiggy support runbook",
+          responses: { "200": { description: "Retry, rate-limit, auth, idempotency, and deprecation drills" } },
+        },
+      },
       "/api/privacy/export": {
         get: {
           tags: ["Operations"],

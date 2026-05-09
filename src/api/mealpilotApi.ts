@@ -17,6 +17,8 @@ import type {
   PantryItem,
   RateLimitPlan,
   Reminder,
+  ResilienceDrill,
+  ResilienceRunbook,
   ReviewerProof,
   RestockSuggestion,
   SubmissionPackage,
@@ -243,6 +245,10 @@ export function fetchComplianceEvidence() {
 
 export function fetchReviewerProof() {
   return requestJson<{ proof: ReviewerProof }>("/api/reviewer-proof");
+}
+
+export function fetchResilience() {
+  return requestJson<{ drills: ResilienceDrill[]; runbook: ResilienceRunbook }>("/api/resilience");
 }
 
 export function exportPrivacyData() {

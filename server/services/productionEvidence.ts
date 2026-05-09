@@ -263,6 +263,7 @@ export function buildReviewerProof(options: {
       { label: "Rate-limit plan", path: "/api/rate-limit-plan" },
       { label: "Compliance evidence", path: "/api/compliance-evidence" },
       { label: "Version monitor", path: "/api/version-monitor" },
+      { label: "Resilience drills", path: "/api/resilience" },
     ],
   };
 }

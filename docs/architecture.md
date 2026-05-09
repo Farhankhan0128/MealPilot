@@ -32,7 +32,7 @@ flowchart LR
 - Pantry, group planning, reminders, privacy export/delete, and ops status panels.
 - Launch Center with MCP coverage, chat/voice response contracts, go-live checks, observability metrics, rollout plan, and support report generation.
 - Demo Studio with cart preflight checks, offer opportunities, MCP replay transcripts, demo progress, and submission readiness.
-- Production Evidence panel with Swiggy widget contracts, rate-limit budgets, version/deprecation monitoring, compliance controls, and reviewer proof score.
+- Production Evidence panel with Swiggy widget contracts, rate-limit budgets, version/deprecation monitoring, compliance controls, Resilience Lab drills, and reviewer proof score.
 - No checkout, order, or booking call is hidden inside a generic "continue" button.
 
 ### Planner Domain Service
@@ -63,6 +63,7 @@ Implementation:
 - Generates a submission package that mirrors Swiggy access fields and manual-input gaps.
 - Generates Swiggy widget contracts with iframe sizing, postMessage events, sandbox policy, origin verification, and semantic fallbacks.
 - Generates rate-limit, versioning, and compliance evidence aligned with Swiggy's Operate documentation.
+- Generates resilience drills for safe 5xx retries, 429 Retry-After handling, 401 reauth, non-idempotent check-then-retry, and deprecation alerts.
 - Serves OpenAPI 3.1 at `/api/openapi.json`, readiness checks at `/api/ready`, and request IDs on every API response.
 - Ships with Docker, Render blueprint, GitHub Actions CI, and an automated production smoke verifier.
 - Supports optional file-backed persistence through `MEALPILOT_DATA_FILE`, with versioned snapshots, restore, compaction, and storage diagnostics.
