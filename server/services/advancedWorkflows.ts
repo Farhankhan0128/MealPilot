@@ -316,6 +316,12 @@ export function buildGoLiveChecks(options: {
       evidence: "/api/resilience exercises 5xx, 429, 401, non-idempotent recovery, and deprecation handling.",
     },
     {
+      id: "evaluation_lab",
+      label: "Scenario evaluation",
+      status: "ready",
+      evidence: "/api/evaluation-lab runs persona, city, budget, voice, preflight, and privacy regression checks.",
+    },
+    {
       id: "observability",
       label: "Session observability",
       status: options.hasPlan ? "ready" : "manual_review",

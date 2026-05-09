@@ -38,6 +38,7 @@ import {
   fetchCartPreflight,
   fetchComplianceEvidence,
   fetchDemoStudio,
+  fetchEvaluationLab,
   fetchGoLive,
   fetchGroupPlan,
   fetchHealth,
@@ -71,6 +72,7 @@ import type {
   CartPreflightReport,
   ComplianceEvidence,
   DemoStudioStep,
+  EvaluationLab,
   GoLiveCheck,
   GroupPlan,
   IncidentReport,
@@ -181,6 +183,7 @@ function App() {
   const [preflight, setPreflight] = useState<CartPreflightReport | null>(null);
   const [mcpReplay, setMcpReplay] = useState<McpReplayStep[]>([]);
   const [demoSteps, setDemoSteps] = useState<DemoStudioStep[]>([]);
+  const [evaluationLab, setEvaluationLab] = useState<EvaluationLab | null>(null);
   const [submissionPackage, setSubmissionPackage] = useState<SubmissionPackage | null>(null);
   const [widgets, setWidgets] = useState<SwiggyWidget[]>([]);
   const [widgetBridge, setWidgetBridge] = useState<{ origin: string; sandbox: string; verifyOrigin: boolean } | null>(
@@ -254,6 +257,7 @@ function App() {
       catalogResponse,
       goLiveResponse,
       demoStudioResponse,
+      evaluationResponse,
       submissionResponse,
       rateLimitResponse,
       versionResponse,
@@ -267,6 +271,7 @@ function App() {
       fetchMcpCatalog(),
       fetchGoLive(),
       fetchDemoStudio(),
+      fetchEvaluationLab(),
       fetchSubmissionPackage(),
       fetchRateLimitPlan(),
       fetchVersionMonitor(),
@@ -283,6 +288,7 @@ function App() {
     setObservabilityMetrics(goLiveResponse.metrics);
     setRollout(goLiveResponse.rollout);
     setDemoSteps(demoStudioResponse.steps);
+    setEvaluationLab(evaluationResponse.evaluation);
     setSubmissionPackage(submissionResponse.package);
     setRateLimit(rateLimitResponse.rateLimit);
     setVersionMonitor(versionResponse.version);
@@ -297,6 +303,7 @@ function App() {
       catalogResponse,
       goLiveResponse,
       demoStudioResponse,
+      evaluationResponse,
       submissionResponse,
       rateLimitResponse,
       versionResponse,
@@ -307,6 +314,7 @@ function App() {
       fetchMcpCatalog(),
       fetchGoLive(),
       fetchDemoStudio(),
+      fetchEvaluationLab(),
       fetchSubmissionPackage(),
       fetchRateLimitPlan(),
       fetchVersionMonitor(),
@@ -319,6 +327,7 @@ function App() {
     setObservabilityMetrics(goLiveResponse.metrics);
     setRollout(goLiveResponse.rollout);
     setDemoSteps(demoStudioResponse.steps);
+    setEvaluationLab(evaluationResponse.evaluation);
     setSubmissionPackage(submissionResponse.package);
     setRateLimit(rateLimitResponse.rateLimit);
     setVersionMonitor(versionResponse.version);
@@ -766,6 +775,7 @@ function App() {
                 reviewerProof={reviewerProof}
                 resilienceDrills={resilienceDrills}
                 resilienceRunbook={resilienceRunbook}
+                evaluationLab={evaluationLab}
               />
             </section>
           </>
@@ -1337,6 +1347,7 @@ function ProductionEvidencePanel({
   reviewerProof,
   resilienceDrills,
   resilienceRunbook,
+  evaluationLab,
 }: {
   widgets: SwiggyWidget[];
   widgetBridge: { origin: string; sandbox: string; verifyOrigin: boolean } | null;
@@ -1346,6 +1357,7 @@ function ProductionEvidencePanel({
   reviewerProof: ReviewerProof | null;
   resilienceDrills: ResilienceDrill[];
   resilienceRunbook: ResilienceRunbook | null;
+  evaluationLab: EvaluationLab | null;
 }) {
   const passedDrills = resilienceDrills.filter((drill) => drill.status === "pass").length;
 
@@ -1454,6 +1466,26 @@ function ProductionEvidencePanel({
               <li key={drill.id} data-status={drill.status === "pass" ? "healthy" : "watch"}>
                 <span>{drill.label}</span>
                 <strong>{drill.status}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="evaluation-card">
+          <div className="mini-heading">
+            <Bot aria-hidden="true" />
+            <strong>Evaluation Lab</strong>
+          </div>
+          <span>
+            {evaluationLab
+              ? `${evaluationLab.score}/100 eval score, ${evaluationLab.passCount}/${evaluationLab.scenarios.length} clean passes`
+              : "Running persona QA"}
+          </span>
+          <ul className="compact-status-list">
+            {(evaluationLab?.scenarios ?? []).slice(0, 4).map((scenario) => (
+              <li key={scenario.id} data-status={scenario.status === "pass" ? "healthy" : "watch"}>
+                <span>{scenario.persona}</span>
+                <strong>{scenario.score}/100</strong>
               </li>
             ))}
           </ul>

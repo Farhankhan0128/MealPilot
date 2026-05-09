@@ -39,6 +39,7 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/plan"].post.summary).toContain("MealPilot plan");
     expect(openApi.body.paths["/api/storage/status"].get.summary).toContain("Storage");
     expect(openApi.body.paths["/api/resilience"].get.summary).toContain("resilience");
+    expect(openApi.body.paths["/api/evaluation-lab"].get.summary).toContain("evaluation");
   });
 
   it("creates a server-side plan session", async () => {
@@ -277,5 +278,20 @@ describe("MealPilot API", () => {
     expect(resilience.body.drills.some((drill: { id: string }) => drill.id === "non_idempotent_check_then_retry")).toBe(true);
     expect(resilience.body.runbook.nonBlindRetryTools).toContain("place_food_order");
     expect(resilience.body.runbook.supportPayload.latestSessionId).toBe(created.body.plan.id);
+  });
+
+  it("runs multi-scenario evaluation lab checks", async () => {
+    const { app } = createMealPilotServer();
+    const evaluation = await request(app).get("/api/evaluation-lab").expect(200);
+
+    expect(evaluation.body.evaluation.scenarios).toHaveLength(4);
+    expect(evaluation.body.evaluation.score).toBeGreaterThanOrEqual(90);
+    expect(evaluation.body.evaluation.blockedCount).toBe(0);
+    expect(
+      evaluation.body.evaluation.scenarios.some((scenario: { surface: string }) => scenario.surface === "voice"),
+    ).toBe(true);
+    expect(
+      evaluation.body.evaluation.aggregateChecks.some((check: { id: string }) => check.id === "voice_contract"),
+    ).toBe(true);
   });
 });

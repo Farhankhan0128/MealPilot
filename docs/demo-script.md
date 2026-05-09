@@ -116,6 +116,7 @@ Open Demo Studio and show:
 - Cart Preflight status before any risky action.
 - Offer opportunities for Food, Instamart, and Dineout.
 - MCP Replay with JSON-RPC `tools/call` requests.
+- Evaluation Lab score across Bengaluru, Delhi NCR, Mumbai, chat, voice, budget, confirmation, and privacy scenarios.
 - Demo Run status.
 - Submission Package readiness and remaining manual fields.
 
@@ -128,6 +129,7 @@ Open Production Evidence and show:
 - Version monitor with v1 route pinning and deprecation alert readiness.
 - Compliance controls for consent, PII minimization, deletion, audit logging, and training-data exclusion.
 - Resilience Lab drill score and support runbook payload.
+- Evaluation Lab persona QA score and scenario list.
 - Reviewer Proof score and artifact links.
 
 ### 10. Close
@@ -139,6 +141,7 @@ Briefly show production readiness:
 - `/api/storage/status`
 - `/api/storage/export`
 - `/api/resilience`
+- `/api/evaluation-lab`
 - GitHub Actions workflow
 - Dockerfile
 - `npm run verify:production`

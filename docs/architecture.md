@@ -32,7 +32,7 @@ flowchart LR
 - Pantry, group planning, reminders, privacy export/delete, and ops status panels.
 - Launch Center with MCP coverage, chat/voice response contracts, go-live checks, observability metrics, rollout plan, and support report generation.
 - Demo Studio with cart preflight checks, offer opportunities, MCP replay transcripts, demo progress, and submission readiness.
-- Production Evidence panel with Swiggy widget contracts, rate-limit budgets, version/deprecation monitoring, compliance controls, Resilience Lab drills, and reviewer proof score.
+- Production Evidence panel with Swiggy widget contracts, rate-limit budgets, version/deprecation monitoring, compliance controls, Resilience Lab drills, Evaluation Lab persona QA, and reviewer proof score.
 - No checkout, order, or booking call is hidden inside a generic "continue" button.
 
 ### Planner Domain Service
@@ -61,6 +61,7 @@ Implementation:
 - Generates preflight reports before commercial actions, including budget, address, payment scope, item, confirmation, and substitution checks.
 - Generates replayable JSON-RPC transcripts for the Swiggy MCP tool path.
 - Generates a submission package that mirrors Swiggy access fields and manual-input gaps.
+- Generates Evaluation Lab results across personas, cities, budgets, chat/voice surfaces, confirmation locks, and privacy checks.
 - Generates Swiggy widget contracts with iframe sizing, postMessage events, sandbox policy, origin verification, and semantic fallbacks.
 - Generates rate-limit, versioning, and compliance evidence aligned with Swiggy's Operate documentation.
 - Generates resilience drills for safe 5xx retries, 429 Retry-After handling, 401 reauth, non-idempotent check-then-retry, and deprecation alerts.

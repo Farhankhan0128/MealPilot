@@ -264,6 +264,7 @@ export function buildReviewerProof(options: {
       { label: "Compliance evidence", path: "/api/compliance-evidence" },
       { label: "Version monitor", path: "/api/version-monitor" },
       { label: "Resilience drills", path: "/api/resilience" },
+      { label: "Evaluation Lab", path: "/api/evaluation-lab" },
     ],
   };
 }

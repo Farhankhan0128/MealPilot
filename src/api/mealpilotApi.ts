@@ -5,6 +5,7 @@ import type {
   CartPreflightReport,
   ComplianceEvidence,
   DemoStudioStep,
+  EvaluationLab,
   GoLiveCheck,
   GroupMember,
   GroupPlan,
@@ -225,6 +226,10 @@ export function createSupportReport(sessionId?: string) {
 
 export function fetchDemoStudio() {
   return requestJson<{ steps: DemoStudioStep[] }>("/api/demo-studio");
+}
+
+export function fetchEvaluationLab() {
+  return requestJson<{ evaluation: EvaluationLab }>("/api/evaluation-lab");
 }
 
 export function fetchSubmissionPackage() {
