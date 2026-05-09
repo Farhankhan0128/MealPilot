@@ -408,6 +408,33 @@ export interface EvaluationLab {
   aggregateChecks: EvaluationCheck[];
 }
 
+export interface McpGatewayCheck {
+  id: string;
+  label: string;
+  status: "ready" | "watch" | "blocked";
+  evidence: string;
+}
+
+export interface McpGatewayStatus {
+  generatedAt: string;
+  mode: "mock" | "staging" | "production";
+  activeTransport: "local_mock" | "swiggy_streamable_http";
+  readinessScore: number;
+  baseUrl: string;
+  requestedServers: Array<{ server: SwiggyServer; endpoint: string; status: "mocked" | "routable" | "blocked" }>;
+  auth: {
+    clientIdConfigured: boolean;
+    tokenSource: "runtime" | "environment" | "none";
+    tokenPreview?: string;
+    expiresAt?: string;
+    scope: string;
+  };
+  checks: McpGatewayCheck[];
+  cutoverPlan: string[];
+  fallbackPlan: string[];
+  canaryPlan: string[];
+}
+
 export interface MealPlan {
   id: string;
   summary: string;

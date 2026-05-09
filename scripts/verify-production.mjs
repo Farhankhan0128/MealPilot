@@ -49,6 +49,10 @@ const catalog = await request("/api/mcp/catalog");
 assert(catalog.totalTools === 35, "MCP catalog must include 35 tools");
 assert(catalog.planned === 0, "MCP catalog should have no planned gaps");
 
+const gateway = await request("/api/mcp-gateway");
+assert(gateway.gateway.readinessScore >= 90, "MCP gateway readiness score is below target");
+assert(gateway.gateway.requestedServers.length === 3, "MCP gateway server map is incomplete");
+
 const preflight = await request(`/api/sessions/${sessionId}/preflight`);
 assert(preflight.preflight.checks.length >= 15, "preflight checks are incomplete");
 
@@ -93,6 +97,7 @@ console.log(
       baseUrl,
       sessionId,
       toolCoverage: `${catalog.demoReady + catalog.guarded}/${catalog.totalTools}`,
+      gatewayScore: gateway.gateway.readinessScore,
       preflightChecks: preflight.preflight.checks.length,
       replaySteps: replay.replay.length,
       widgets: widgets.widgets.length,

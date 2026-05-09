@@ -104,6 +104,7 @@ Open the Launch Center and show:
 
 - Chat versus Voice response mode.
 - MCP Coverage showing all 35 Swiggy tools mapped across Food, Instamart, and Dineout.
+- MCP Gateway showing mock transport now and the exact staging/production endpoint cutover path.
 - Go-Live Gates for credentials, OAuth, confirmation, idempotency, observability, rollout, and privacy.
 - Observability metrics with traceable session IDs.
 - Support report generation with a pre-filled `builders@swiggy.in` escalation.
@@ -138,6 +139,7 @@ Briefly show production readiness:
 
 - `/api/ready`
 - `/api/openapi.json`
+- `/api/mcp-gateway`
 - `/api/storage/status`
 - `/api/storage/export`
 - `/api/resilience`

@@ -58,6 +58,7 @@ Scale-up after staging:
 
 - OAuth 2.1 PKCE flow with HTTPS redirect URI in production.
 - Separate MCP clients for Food, Instamart, and Dineout.
+- MCP Gateway that keeps mock demos local, fails closed without staging auth, and routes to Swiggy streamable HTTP once OAuth provides a bearer token.
 - Local 35-tool MCP coverage map aligned to Food, Instamart, and Dineout reference docs.
 - Chat and voice surface response contracts to avoid long spoken lists or exposed internal IDs.
 - Cart preflight checks for budget, location label, payment scope, item readiness, confirmation status, and substitutions.
@@ -97,7 +98,7 @@ The application will include a 2-3 minute Loom or unlisted YouTube demo showing:
 3. User asks for a weekly meal plan under budget.
 4. Agent composes Food, Instamart, and Dineout recommendations.
 5. Cart and booking actions pause for explicit confirmation.
-6. Launch Center shows 35-tool coverage, chat/voice behavior, go-live gates, and observability metrics.
+6. Launch Center shows 35-tool coverage, MCP Gateway cutover, chat/voice behavior, go-live gates, and observability metrics.
 7. Demo Studio shows cart preflight, MCP replay, and submission readiness.
 8. Production Evidence shows widgets, rate limits, versioning, compliance, resilience drills, Evaluation Lab, and reviewer proof score.
 9. Show `/api/ready`, `/api/openapi.json`, and `npm run verify:production`.

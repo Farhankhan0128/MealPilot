@@ -12,6 +12,7 @@ flowchart LR
   Planner --> Safety["Safety policy"]
   API --> Mock["Local MCP JSON-RPC mock"]
   API --> Auth["OAuth 2.1 PKCE helper"]
+  API --> Gateway["MCP Gateway"]
   Mock --> Food["Swiggy MCP shape: food"]
   Mock --> IM["Swiggy MCP shape: im"]
   Mock --> Dineout["Swiggy MCP shape: dineout"]
@@ -56,6 +57,7 @@ Implementation:
 - Supports item substitution, item removal, confirm-all, profile updates, tracking, and builder package export.
 - Supports pantry restock suggestions, group constraints, schedule reminders, privacy export/delete, and operational status.
 - Exposes the 35-tool Swiggy MCP catalog with demo-ready or guarded status for each Food, Instamart, and Dineout tool.
+- Exposes `/api/mcp-gateway` for mock, staging, and production routing status, token posture, cutover steps, fallback behavior, and canary rollout.
 - Generates chat-safe and voice-safe response payloads from the same plan session.
 - Generates Swiggy-ready support reports with session IDs for escalation.
 - Generates preflight reports before commercial actions, including budget, address, payment scope, item, confirmation, and substitution checks.
@@ -109,6 +111,15 @@ Implementation:
 - `src/integrations/swiggy/client.ts`
 - `src/integrations/swiggy/oauth.ts`
 - `src/integrations/swiggy/retry.ts`
+
+### MCP Gateway
+
+The API keeps localhost demos on the deterministic mock router, but staging and production modes can route `/api/mcp/:server` to Swiggy's streamable HTTP endpoints when a bearer token is present. Tokens are held in process memory after OAuth callback or injected through a secure runtime variable for staging smoke tests; the full token is never returned in API responses.
+
+Implementation:
+
+- `server/services/mcpGateway.ts`
+- `src/integrations/swiggy/client.ts`
 
 ### Swiggy MCP Clients
 

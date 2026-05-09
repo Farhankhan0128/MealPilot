@@ -260,6 +260,7 @@ export function buildReviewerProof(options: {
     artifacts: [
       { label: "Builder packet", path: "/api/builder-package.md" },
       { label: "Widget contracts", path: latest ? `/api/sessions/${latest.id}/widgets` : "/api/widgets/latest" },
+      { label: "MCP Gateway", path: "/api/mcp-gateway" },
       { label: "Rate-limit plan", path: "/api/rate-limit-plan" },
       { label: "Compliance evidence", path: "/api/compliance-evidence" },
       { label: "Version monitor", path: "/api/version-monitor" },

@@ -36,6 +36,11 @@ import {
 } from "./services/demoStudio.js";
 import { buildEvaluationLab } from "./services/evaluationLab.js";
 import {
+  buildMcpGatewayStatus,
+  callConfiguredSwiggyTool,
+  exchangeSwiggyAuthorizationCode,
+} from "./services/mcpGateway.js";
+import {
   buildComplianceEvidence,
   buildRateLimitPlan,
   buildReviewerProof,
@@ -160,6 +165,9 @@ function requestContext(req: Request, res: Response, next: NextFunction) {
 export function createMealPilotServer(options: MealPilotServerOptions = {}) {
   const config = options.config ?? readConfig();
   const store = options.store ?? createMemorySessionStore();
+  let runtimeAccessToken = config.swiggyAccessToken;
+  let runtimeTokenExpiresAt = config.swiggyTokenExpiresAt;
+  let runtimeTokenSource: "runtime" | "environment" | "none" = config.swiggyAccessToken ? "environment" : "none";
   const app = express();
 
   app.disable("x-powered-by");
@@ -212,6 +220,21 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
       scope: config.swiggyScope,
       requestedServers: ["food", "instamart", "dineout"],
       storage: store.getDiagnostics(),
+      gateway: buildMcpGatewayStatus(config, {
+        accessToken: runtimeAccessToken,
+        expiresAt: runtimeTokenExpiresAt,
+        tokenSource: runtimeTokenSource,
+      }),
+    });
+  });
+
+  app.get("/api/mcp-gateway", (_req, res) => {
+    res.json({
+      gateway: buildMcpGatewayStatus(config, {
+        accessToken: runtimeAccessToken,
+        expiresAt: runtimeTokenExpiresAt,
+        tokenSource: runtimeTokenSource,
+      }),
     });
   });
 
@@ -629,7 +652,33 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
     "/api/mcp/:server",
     asyncRoute(async (req, res) => {
       const server = mcpServerSchema.parse(req.params.server) as SwiggyServer;
-      res.json(await handleMockJsonRpc(server, req.body));
+      if (config.swiggyMode === "mock") {
+        res.json(await handleMockJsonRpc(server, req.body));
+        return;
+      }
+
+      if (!runtimeAccessToken) {
+        res.status(401).json({
+          error: {
+            message: "Swiggy OAuth token is required before staging or production MCP calls.",
+          },
+          gateway: buildMcpGatewayStatus(config, {
+            accessToken: runtimeAccessToken,
+            expiresAt: runtimeTokenExpiresAt,
+            tokenSource: runtimeTokenSource,
+          }),
+        });
+        return;
+      }
+
+      res.json(
+        await callConfiguredSwiggyTool({
+          config,
+          server,
+          request: req.body,
+          accessToken: runtimeAccessToken,
+        }),
+      );
     }),
   );
 
@@ -661,23 +710,48 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
     });
   });
 
-  app.get("/api/auth/swiggy/callback", (req, res) => {
-    const code = String(req.query.code ?? "");
-    const state = String(req.query.state ?? "");
-    const session = store.consumeAuthSession(state);
+  app.get(
+    "/api/auth/swiggy/callback",
+    asyncRoute(async (req, res) => {
+      const code = String(req.query.code ?? "");
+      const state = String(req.query.state ?? "");
+      const session = store.consumeAuthSession(state);
 
-    if (!code || !state || !session) {
-      res.status(400).json({ error: { message: "Invalid OAuth callback." } });
-      return;
-    }
+      if (!code || !state || !session) {
+        res.status(400).json({ error: { message: "Invalid OAuth callback." } });
+        return;
+      }
 
-    res.json({
-      ok: true,
-      mode: config.swiggyMode,
-      tokenExchange: config.swiggyMode === "mock" ? "mocked" : "ready_for_staging_exchange",
-      state,
-    });
-  });
+      if (config.swiggyMode !== "mock") {
+        const exchanged = await exchangeSwiggyAuthorizationCode({
+          config,
+          code,
+          verifier: session.verifier,
+        });
+        runtimeAccessToken = exchanged.accessToken;
+        runtimeTokenExpiresAt = exchanged.expiresAt;
+        runtimeTokenSource = "runtime";
+
+        res.json({
+          ok: true,
+          mode: config.swiggyMode,
+          tokenExchange: "exchanged",
+          tokenType: exchanged.tokenType,
+          expiresAt: exchanged.expiresAt,
+          scope: exchanged.scope,
+          state,
+        });
+        return;
+      }
+
+      res.json({
+        ok: true,
+        mode: config.swiggyMode,
+        tokenExchange: "mocked",
+        state,
+      });
+    }),
+  );
 
   if (options.serveStatic) {
     const distPath = path.resolve(__dirname, "../../dist");

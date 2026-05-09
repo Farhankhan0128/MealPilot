@@ -11,6 +11,7 @@ import type {
   GroupPlan,
   IncidentReport,
   MealPlan,
+  McpGatewayStatus,
   McpServerCoverage,
   McpReplayStep,
   ObservabilityMetric,
@@ -158,6 +159,10 @@ export function fetchBuilderPackageMarkdown() {
 
 export function fetchMcpCatalog() {
   return requestJson<McpCatalogResponse>("/api/mcp/catalog");
+}
+
+export function fetchMcpGateway() {
+  return requestJson<{ gateway: McpGatewayStatus }>("/api/mcp-gateway");
 }
 
 export function fetchAgentSurface(sessionId: string, surface: AgentSurface) {

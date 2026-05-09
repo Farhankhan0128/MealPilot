@@ -103,6 +103,13 @@ export function buildOpenApiDocument(config: ServerConfig) {
           responses: { "200": { description: "Food, Instamart, and Dineout coverage" } },
         },
       },
+      "/api/mcp-gateway": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy MCP gateway cutover status",
+          responses: { "200": { description: "Transport mode, auth posture, endpoint routing, and cutover plan" } },
+        },
+      },
       "/api/go-live": {
         get: {
           tags: ["Builder Access"],

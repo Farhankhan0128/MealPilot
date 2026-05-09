@@ -40,6 +40,7 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/storage/status"].get.summary).toContain("Storage");
     expect(openApi.body.paths["/api/resilience"].get.summary).toContain("resilience");
     expect(openApi.body.paths["/api/evaluation-lab"].get.summary).toContain("evaluation");
+    expect(openApi.body.paths["/api/mcp-gateway"].get.summary).toContain("gateway");
   });
 
   it("creates a server-side plan session", async () => {
@@ -106,6 +107,37 @@ describe("MealPilot API", () => {
 
     expect(response.body.result.success).toBe(true);
     expect(response.body.result.data[0].label).toBe("Home");
+  });
+
+  it("reports MCP gateway cutover status and fails closed without staging token", async () => {
+    const { app } = createMealPilotServer({
+      config: {
+        appName: "MealPilot India",
+        port: 8787,
+        swiggyMode: "staging",
+        swiggyClientId: "client_staging",
+        swiggyRedirectUri: "https://mealpilot.app/auth/swiggy/callback",
+        swiggyScope: "mcp:tools mcp:resources mcp:prompts",
+        swiggyBaseUrl: "https://mcp-staging.swiggy.com",
+        planRetentionDays: 14,
+      },
+    });
+
+    const gateway = await request(app).get("/api/mcp-gateway").expect(200);
+    expect(gateway.body.gateway.activeTransport).toBe("swiggy_streamable_http");
+    expect(gateway.body.gateway.requestedServers.every((server: { status: string }) => server.status === "blocked")).toBe(true);
+
+    const blocked = await request(app)
+      .post("/api/mcp/food")
+      .send({
+        jsonrpc: "2.0",
+        id: "blocked",
+        method: "tools/call",
+        params: { name: "get_addresses", arguments: {} },
+      })
+      .expect(401);
+
+    expect(blocked.body.error.message).toContain("OAuth token");
   });
 
   it("updates profile, substitutes items, confirms all, and returns tracking", async () => {

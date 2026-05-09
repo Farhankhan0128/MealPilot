@@ -113,6 +113,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/schedule`
 - `GET /api/ops`
 - `GET /api/go-live`
+- `GET /api/mcp-gateway`
 - `GET /api/demo-studio`
 - `GET /api/evaluation-lab`
 - `GET /api/submission-package`
@@ -181,12 +182,15 @@ SWIGGY_REDIRECT_URI=http://localhost:5173/auth/swiggy/callback
 
 Production should use an HTTPS redirect URI with exact-match allowlisting.
 
+`SWIGGY_ACCESS_TOKEN` can be injected by a secure runtime for staging smoke tests, but normal OAuth callback stores the exchanged token in process memory. `/api/mcp-gateway` shows whether each server is using local mock routing, routable Swiggy streamable HTTP, or blocked fail-closed mode.
+
 ## Safety Tests
 
 The test suite checks that:
 
 - MealPilot composes Food, Instamart, and Dineout recommendations.
 - `/api/plan`, `/api/confirm`, and `/api/mcp/:server` work end to end.
+- MCP Gateway reports mock/staging/production cutover status and staging calls fail closed without a bearer token.
 - Profile, substitution, confirm-all, tracking, and Builder Access package routes work end to end.
 - Pantry, group planning, scheduling, ops, privacy, markdown export, and OAuth callback routes work end to end.
 - Readiness, OpenAPI, preflight, replay, widgets, submission, rate-limit, version, compliance, and reviewer proof routes work end to end.
