@@ -34,6 +34,13 @@ import {
   buildMcpReplay,
   buildSubmissionPackage,
 } from "./services/demoStudio.js";
+import {
+  buildComplianceEvidence,
+  buildRateLimitPlan,
+  buildReviewerProof,
+  buildVersionMonitor,
+  buildWidgets,
+} from "./services/productionEvidence.js";
 import { createPkcePair, createState } from "./services/pkce.js";
 import { createMemorySessionStore, type SessionStore } from "./store/sessionStore.js";
 
@@ -341,6 +348,23 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
     res.json({ replay: buildMcpReplay(plan) });
   });
 
+  app.get("/api/sessions/:sessionId/widgets", (req, res) => {
+    const plan = store.getPlan(req.params.sessionId);
+    if (!plan) {
+      res.status(404).json({ error: { message: "Session not found." } });
+      return;
+    }
+
+    res.json({
+      widgets: buildWidgets(plan),
+      bridge: {
+        origin: "https://mcp.swiggy.com",
+        sandbox: "allow-scripts allow-same-origin allow-popups",
+        verifyOrigin: true,
+      },
+    });
+  });
+
   app.get("/api/pantry", (_req, res) => {
     const pantry = store.getPantry();
     res.json({ pantry, suggestions: buildRestockSuggestions(pantry) });
@@ -439,6 +463,37 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
         profile: store.getProfile(),
         coverage: buildMcpCoverage(),
         latestPlan: store.getAllPlans().at(-1),
+      }),
+    });
+  });
+
+  app.get("/api/rate-limit-plan", (_req, res) => {
+    res.json({ rateLimit: buildRateLimitPlan(store.getAllPlans()) });
+  });
+
+  app.get("/api/version-monitor", (_req, res) => {
+    res.json({ version: buildVersionMonitor() });
+  });
+
+  app.get("/api/compliance-evidence", (_req, res) => {
+    res.json({ compliance: buildComplianceEvidence(store.getProfile()) });
+  });
+
+  app.get("/api/reviewer-proof", (_req, res) => {
+    const plans = store.getAllPlans();
+    const latestPlan = plans.at(-1);
+    const widgets = latestPlan ? buildWidgets(latestPlan) : [];
+    const rateLimit = buildRateLimitPlan(plans);
+    const compliance = buildComplianceEvidence(store.getProfile());
+    const version = buildVersionMonitor();
+
+    res.json({
+      proof: buildReviewerProof({
+        plans,
+        widgets,
+        rateLimit,
+        compliance,
+        version,
       }),
     });
   });

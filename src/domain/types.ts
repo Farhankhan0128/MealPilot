@@ -272,6 +272,70 @@ export interface SubmissionPackage {
   residualRisks: string[];
 }
 
+export interface SwiggyWidget {
+  id: string;
+  type: "restaurant-card" | "menu-item" | "cart-widget" | "product-card" | "slot-picker";
+  server: SwiggyServer;
+  title: string;
+  src: string;
+  fallback: string;
+  width: string;
+  height: number;
+  events: string[];
+  status: "contract_ready" | "semantic_fallback";
+}
+
+export interface RateLimitBudget {
+  scope: string;
+  plannedLimit: string;
+  mealPilotEstimate: string;
+  status: "under_limit" | "watch" | "needs_upgrade";
+  mitigation: string;
+}
+
+export interface RateLimitPlan {
+  generatedAt: string;
+  estimatedToolCallsPerSession: number;
+  projectedDailyToolCalls: number;
+  budgets: RateLimitBudget[];
+  upgradeEmail: string;
+}
+
+export interface VersionAlert {
+  id: string;
+  label: string;
+  status: "ready" | "watch" | "blocked";
+  evidence: string;
+}
+
+export interface VersionMonitor {
+  currentMajor: string;
+  pinnedRoutes: Record<SwiggyServer, string>;
+  deprecationWindowDays: number;
+  alerts: VersionAlert[];
+}
+
+export interface ComplianceControl {
+  id: string;
+  label: string;
+  status: "implemented" | "manual_review";
+  evidence: string;
+}
+
+export interface ComplianceEvidence {
+  residency: string;
+  dataRole: string;
+  retainedFields: string[];
+  controls: ComplianceControl[];
+}
+
+export interface ReviewerProof {
+  score: number;
+  highlights: string[];
+  blockers: string[];
+  artifacts: Array<{ label: string; path: string }>;
+}
+
 export interface MealPlan {
   id: string;
   summary: string;

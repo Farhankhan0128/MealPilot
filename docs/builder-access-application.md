@@ -63,6 +63,10 @@ Scale-up after staging:
 - Cart preflight checks for budget, location label, payment scope, item readiness, confirmation status, and substitutions.
 - MCP replay transcripts that expose the JSON-RPC `tools/call` shape for local review and staging migration.
 - Submission package generator for access-form fields, application links, and manual-input gaps.
+- Widget contract generator for Food, Instamart, and Dineout surfaces with iframe sizing, sandbox policy, origin verification, and semantic fallbacks.
+- Rate-limit plan for per-user, write-tool, client-day, and tracking-poll budgets.
+- Version/deprecation monitor for v1 route pinning, 180-day deprecation windows, and `_meta.swiggy.deprecation` alerts.
+- DPDP-oriented compliance evidence for consent, minimization, deletion, audit logging, and no model-training use of Swiggy-originated data.
 - Confirmation gates before `place_food_order`, Instamart checkout, or `book_table`.
 - Safe retry policy: no blind retries for non-idempotent order or booking actions.
 - 401 handling: re-run OAuth once and refresh all MCP clients.
@@ -90,7 +94,8 @@ The application will include a 2-3 minute Loom or unlisted YouTube demo showing:
 5. Cart and booking actions pause for explicit confirmation.
 6. Launch Center shows 35-tool coverage, chat/voice behavior, go-live gates, and observability metrics.
 7. Demo Studio shows cart preflight, MCP replay, and submission readiness.
-8. Logs show trace IDs, no raw PII, and safe error handling.
+8. Production Evidence shows widgets, rate limits, versioning, compliance, and reviewer proof score.
+9. Logs show trace IDs, no raw PII, and safe error handling.
 
 ## Primary Technical Contact
 

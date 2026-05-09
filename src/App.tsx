@@ -36,6 +36,7 @@ import {
   fetchBuilderPackage,
   fetchBuilderPackageMarkdown,
   fetchCartPreflight,
+  fetchComplianceEvidence,
   fetchDemoStudio,
   fetchGoLive,
   fetchGroupPlan,
@@ -45,8 +46,12 @@ import {
   fetchOpsStatus,
   fetchPantry,
   fetchProfile,
+  fetchRateLimitPlan,
+  fetchReviewerProof,
   fetchSubmissionPackage,
   fetchTracking,
+  fetchVersionMonitor,
+  fetchWidgets,
   removeRecommendationItem,
   schedulePlan,
   startSwiggyAuth,
@@ -63,6 +68,7 @@ import type {
   AgentSurface,
   AgentSurfaceResponse,
   CartPreflightReport,
+  ComplianceEvidence,
   DemoStudioStep,
   GoLiveCheck,
   GroupPlan,
@@ -72,14 +78,18 @@ import type {
   ObservabilityMetric,
   OpsStatus,
   PantryItem,
+  RateLimitPlan,
   Recommendation,
   Reminder,
+  ReviewerProof,
   RestockSuggestion,
   SubmissionPackage,
+  SwiggyWidget,
   SwiggyServer,
   ToolCallEvent,
   UserPlanningRequest,
   UserProfile,
+  VersionMonitor,
 } from "./domain/types";
 
 const initialRequest: UserPlanningRequest = {
@@ -169,6 +179,14 @@ function App() {
   const [mcpReplay, setMcpReplay] = useState<McpReplayStep[]>([]);
   const [demoSteps, setDemoSteps] = useState<DemoStudioStep[]>([]);
   const [submissionPackage, setSubmissionPackage] = useState<SubmissionPackage | null>(null);
+  const [widgets, setWidgets] = useState<SwiggyWidget[]>([]);
+  const [widgetBridge, setWidgetBridge] = useState<{ origin: string; sandbox: string; verifyOrigin: boolean } | null>(
+    null,
+  );
+  const [rateLimit, setRateLimit] = useState<RateLimitPlan | null>(null);
+  const [versionMonitor, setVersionMonitor] = useState<VersionMonitor | null>(null);
+  const [complianceEvidence, setComplianceEvidence] = useState<ComplianceEvidence | null>(null);
+  const [reviewerProof, setReviewerProof] = useState<ReviewerProof | null>(null);
   const [exportText, setExportText] = useState<string | null>(null);
   const [authUrl, setAuthUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -232,6 +250,10 @@ function App() {
       goLiveResponse,
       demoStudioResponse,
       submissionResponse,
+      rateLimitResponse,
+      versionResponse,
+      complianceResponse,
+      proofResponse,
     ] = await Promise.all([
       fetchPantry(),
       fetchGroupPlan(),
@@ -240,6 +262,10 @@ function App() {
       fetchGoLive(),
       fetchDemoStudio(),
       fetchSubmissionPackage(),
+      fetchRateLimitPlan(),
+      fetchVersionMonitor(),
+      fetchComplianceEvidence(),
+      fetchReviewerProof(),
     ]);
     setPantry(pantryResponse.pantry);
     setRestock(pantryResponse.suggestions);
@@ -251,14 +277,31 @@ function App() {
     setRollout(goLiveResponse.rollout);
     setDemoSteps(demoStudioResponse.steps);
     setSubmissionPackage(submissionResponse.package);
+    setRateLimit(rateLimitResponse.rateLimit);
+    setVersionMonitor(versionResponse.version);
+    setComplianceEvidence(complianceResponse.compliance);
+    setReviewerProof(proofResponse.proof);
   }
 
   async function refreshLaunchCenter() {
-    const [catalogResponse, goLiveResponse, demoStudioResponse, submissionResponse] = await Promise.all([
+    const [
+      catalogResponse,
+      goLiveResponse,
+      demoStudioResponse,
+      submissionResponse,
+      rateLimitResponse,
+      versionResponse,
+      complianceResponse,
+      proofResponse,
+    ] = await Promise.all([
       fetchMcpCatalog(),
       fetchGoLive(),
       fetchDemoStudio(),
       fetchSubmissionPackage(),
+      fetchRateLimitPlan(),
+      fetchVersionMonitor(),
+      fetchComplianceEvidence(),
+      fetchReviewerProof(),
     ]);
     setMcpCatalog(catalogResponse);
     setGoLiveChecks(goLiveResponse.checks);
@@ -266,12 +309,22 @@ function App() {
     setRollout(goLiveResponse.rollout);
     setDemoSteps(demoStudioResponse.steps);
     setSubmissionPackage(submissionResponse.package);
+    setRateLimit(rateLimitResponse.rateLimit);
+    setVersionMonitor(versionResponse.version);
+    setComplianceEvidence(complianceResponse.compliance);
+    setReviewerProof(proofResponse.proof);
   }
 
   async function loadPlanDiagnostics(sessionId: string) {
-    const [preflightResponse, replayResponse] = await Promise.all([fetchCartPreflight(sessionId), fetchMcpReplay(sessionId)]);
+    const [preflightResponse, replayResponse, widgetsResponse] = await Promise.all([
+      fetchCartPreflight(sessionId),
+      fetchMcpReplay(sessionId),
+      fetchWidgets(sessionId),
+    ]);
     setPreflight(preflightResponse.preflight);
     setMcpReplay(replayResponse.replay);
+    setWidgets(widgetsResponse.widgets);
+    setWidgetBridge(widgetsResponse.bridge);
   }
 
   async function confirmEverything() {
@@ -350,6 +403,8 @@ function App() {
     setReminders([]);
     setPreflight(null);
     setMcpReplay([]);
+    setWidgets([]);
+    setWidgetBridge(null);
     setExportText("Local profile, plans, pantry, group plan, and reminders were deleted.");
     await loadAdvancedWorkflows();
   }
@@ -688,6 +743,14 @@ function App() {
                 replay={mcpReplay}
                 steps={demoSteps}
                 submissionPackage={submissionPackage}
+              />
+              <ProductionEvidencePanel
+                widgets={widgets}
+                widgetBridge={widgetBridge}
+                rateLimit={rateLimit}
+                versionMonitor={versionMonitor}
+                complianceEvidence={complianceEvidence}
+                reviewerProof={reviewerProof}
               />
             </section>
           </>
@@ -1241,6 +1304,115 @@ function DemoStudioPanel({
               <div key={field.id} data-status={field.status}>
                 <strong>{field.label}</strong>
                 <span>{field.value}</span>
+              </div>
+            ))}
+          </div>
+        </article>
+      </div>
+    </section>
+  );
+}
+
+function ProductionEvidencePanel({
+  widgets,
+  widgetBridge,
+  rateLimit,
+  versionMonitor,
+  complianceEvidence,
+  reviewerProof,
+}: {
+  widgets: SwiggyWidget[];
+  widgetBridge: { origin: string; sandbox: string; verifyOrigin: boolean } | null;
+  rateLimit: RateLimitPlan | null;
+  versionMonitor: VersionMonitor | null;
+  complianceEvidence: ComplianceEvidence | null;
+  reviewerProof: ReviewerProof | null;
+}) {
+  return (
+    <section className="analysis-panel production-evidence-panel">
+      <div className="section-heading">
+        <ShieldCheck aria-hidden="true" />
+        <h2>Production Evidence</h2>
+      </div>
+
+      <div className="production-evidence-grid">
+        <article className="widget-card">
+          <div className="mini-heading">
+            <MessageSquare aria-hidden="true" />
+            <strong>Widget Contracts</strong>
+          </div>
+          <span>
+            {widgets.length} contract(s), origin {widgetBridge?.origin ?? "pending"}
+          </span>
+          <ul className="widget-list">
+            {widgets.slice(0, 5).map((widget) => (
+              <li key={widget.id}>
+                <strong>{widget.type}</strong>
+                <span>{widget.title}</span>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article>
+          <div className="mini-heading">
+            <Gauge aria-hidden="true" />
+            <strong>Rate Plan</strong>
+          </div>
+          <span>{rateLimit ? `${rateLimit.projectedDailyToolCalls.toLocaleString("en-IN")} projected calls/day` : "Loading"}</span>
+          <ul className="compact-status-list">
+            {(rateLimit?.budgets ?? []).slice(0, 4).map((budget) => (
+              <li key={budget.scope} data-status={budget.status === "under_limit" ? "healthy" : "watch"}>
+                <span>{budget.scope}</span>
+                <strong>{budget.status.replace("_", " ")}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article>
+          <div className="mini-heading">
+            <RefreshCw aria-hidden="true" />
+            <strong>Version Monitor</strong>
+          </div>
+          <span>{versionMonitor ? `${versionMonitor.currentMajor}, ${versionMonitor.deprecationWindowDays} day window` : "Loading"}</span>
+          <ul className="compact-status-list">
+            {(versionMonitor?.alerts ?? []).map((alert) => (
+              <li key={alert.id} data-status={alert.status === "ready" ? "healthy" : "watch"}>
+                <span>{alert.label}</span>
+                <strong>{alert.status}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article>
+          <div className="mini-heading">
+            <LockKeyhole aria-hidden="true" />
+            <strong>Compliance</strong>
+          </div>
+          <span>{complianceEvidence?.residency ?? "Loading compliance posture"}</span>
+          <ul className="compact-status-list">
+            {(complianceEvidence?.controls ?? []).slice(0, 5).map((control) => (
+              <li key={control.id} data-status={control.status === "implemented" ? "healthy" : "watch"}>
+                <span>{control.label}</span>
+                <strong>{control.status.replace("_", " ")}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="proof-card">
+          <div className="mini-heading">
+            <ClipboardCheck aria-hidden="true" />
+            <strong>Reviewer Proof</strong>
+          </div>
+          <span>{reviewerProof ? `${reviewerProof.score}/100 readiness score` : "Loading proof score"}</span>
+          <div className="proof-grid">
+            {(reviewerProof?.highlights ?? []).slice(0, 4).map((highlight) => (
+              <div key={highlight}>
+                <strong>Evidence</strong>
+                <span>{highlight}</span>
               </div>
             ))}
           </div>

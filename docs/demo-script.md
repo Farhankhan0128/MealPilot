@@ -118,7 +118,17 @@ Open Demo Studio and show:
 - Demo Run status.
 - Submission Package readiness and remaining manual fields.
 
-### 9. Close
+### 9. Show Production Evidence
+
+Open Production Evidence and show:
+
+- Swiggy widget contracts with semantic fallbacks.
+- Rate-limit budgets under planned developer-tier ceilings.
+- Version monitor with v1 route pinning and deprecation alert readiness.
+- Compliance controls for consent, PII minimization, deletion, audit logging, and training-data exclusion.
+- Reviewer Proof score and artifact links.
+
+### 10. Close
 
 Voiceover:
 
