@@ -1,4 +1,4 @@
-import type { CommerceAction, Recommendation, ToolCallEvent } from "./types";
+import type { CommerceAction, Recommendation, ToolCallEvent } from "./types.js";
 
 const nonIdempotentActions: CommerceAction[] = ["place_food_order", "checkout", "book_table"];
 

@@ -1,11 +1,11 @@
-import { createMockSwiggyClient } from "../integrations/swiggy/mockClient";
+import { createMockSwiggyClient } from "../integrations/swiggy/mockClient.js";
 import type {
   MealPlan,
   Recommendation,
   SwiggyPlanningClient,
   ToolCallEvent,
   UserPlanningRequest,
-} from "./types";
+} from "./types.js";
 
 const defaultClient = createMockSwiggyClient();
 

@@ -3,7 +3,7 @@ import tseslint from "typescript-eslint";
 
 export default tseslint.config(
   {
-    ignores: ["dist", "node_modules", "prototype"],
+    ignores: ["dist", "dist-server", "node_modules", "prototype"],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,
@@ -18,6 +18,17 @@ export default tseslint.config(
     rules: {
       "@typescript-eslint/consistent-type-imports": "error",
       "@typescript-eslint/no-floating-promises": "error",
+    },
+  },
+  {
+    files: ["**/*.test.ts"],
+    languageOptions: {
+      parserOptions: {
+        projectService: false,
+      },
+    },
+    rules: {
+      "@typescript-eslint/no-floating-promises": "off",
     },
   },
 );

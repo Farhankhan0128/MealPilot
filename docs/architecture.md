@@ -1,19 +1,21 @@
 # Architecture
 
-MealPilot is designed as an agentic commerce application with strict confirmation gates. The current implementation is a Vite + React + TypeScript app backed by a local Swiggy MCP-style adapter. Once Swiggy staging credentials are issued, the adapter can call the staging MCP endpoints without rewriting the product surface.
+MealPilot is designed as an agentic commerce application with strict confirmation gates. The current implementation is a Vite + React + TypeScript app backed by an Express API and a local Swiggy MCP-style JSON-RPC mock. Once Swiggy staging credentials are issued, the server-side adapter can call the staging MCP endpoints without rewriting the product surface.
 
 ## Target Architecture
 
 ```mermaid
 flowchart LR
   U["User"] --> UI["MealPilot web app"]
-  UI --> Planner["Planner domain service"]
+  UI --> API["Express API"]
+  API --> Planner["Planner domain service"]
   Planner --> Safety["Safety policy"]
-  Planner --> Mock["Local MCP stub"]
-  Planner --> Auth["OAuth 2.1 PKCE helper"]
+  API --> Mock["Local MCP JSON-RPC mock"]
+  API --> Auth["OAuth 2.1 PKCE helper"]
   Mock --> Food["Swiggy MCP shape: food"]
   Mock --> IM["Swiggy MCP shape: im"]
   Mock --> Dineout["Swiggy MCP shape: dineout"]
+  API --> Store["In-memory session store"]
   Planner --> Obs["Audit timeline"]
 ```
 
@@ -39,6 +41,22 @@ Implementation:
 - `src/domain/safety.ts`
 - `src/domain/types.ts`
 
+### Express API
+
+- Owns plan sessions instead of keeping commerce state only in the browser.
+- Validates requests with Zod.
+- Executes confirmation actions through a server-side service.
+- Exposes an MCP-shaped local JSON-RPC route for Swiggy tool demos.
+- Starts the Swiggy OAuth flow with server-stored PKCE verifier and state.
+
+Implementation:
+
+- `server/app.ts`
+- `server/index.ts`
+- `server/services/confirmationService.ts`
+- `server/services/pkce.ts`
+- `server/store/sessionStore.ts`
+
 ### Local MCP Stub
 
 The localhost demo uses deterministic seeded data with the same domain boundaries that the real Swiggy MCP calls will need:
@@ -55,6 +73,7 @@ The localhost demo uses deterministic seeded data with the same domain boundarie
 
 Implementation:
 
+- `server/mock/swiggyToolRouter.ts`
 - `src/integrations/swiggy/mockClient.ts`
 - `src/integrations/swiggy/client.ts`
 - `src/integrations/swiggy/oauth.ts`
@@ -83,11 +102,12 @@ export const swiggyEndpoints = {
 
 1. Run `npm run dev`.
 2. Use the app on `http://localhost:5173`.
-3. Show Food, Instamart, and Dineout cards created from the local MCP stub.
-4. Confirm each action separately and show audit timeline entries.
-5. Record the Builder Access video.
-6. Once staging access is granted, swap the adapter to Swiggy staging.
-7. Record a second demo against staging before requesting production.
+3. Show Food, Instamart, and Dineout cards created through `/api/plan`.
+4. Confirm each action separately through `/api/confirm`.
+5. Show audit timeline entries produced by the server.
+6. Record the Builder Access video.
+7. Once staging access is granted, swap the adapter to Swiggy staging.
+8. Record a second demo against staging before requesting production.
 
 ## Production Path
 

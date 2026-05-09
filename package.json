@@ -8,9 +8,12 @@
     "doc": "docs"
   },
   "scripts": {
-    "dev": "vite --host 0.0.0.0",
+    "dev": "concurrently -k -n api,web -c green,blue \"npm:dev:api\" \"npm:dev:web\"",
+    "dev:api": "tsx watch server/index.ts",
+    "dev:web": "vite --host 0.0.0.0",
     "build": "tsc -b && vite build",
-    "preview": "vite preview --host 0.0.0.0",
+    "start": "NODE_ENV=production node dist-server/server/index.js",
+    "preview": "npm run build && npm start",
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "eslint ."
@@ -33,21 +36,30 @@
   },
   "homepage": "https://github.com/Farhankhan0128/MealPilot#readme",
   "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
     "lucide-react": "^1.14.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
-    "vite": "^8.0.11"
+    "vite": "^8.0.11",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
     "@types/node": "^25.6.2",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
+    "@types/supertest": "^7.2.0",
     "@vitejs/plugin-react": "^6.0.1",
+    "concurrently": "^9.2.1",
     "eslint": "^10.3.0",
     "jsdom": "^29.1.1",
+    "supertest": "^7.2.2",
+    "tsx": "^4.21.0",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.59.2",
     "vitest": "^4.1.5"

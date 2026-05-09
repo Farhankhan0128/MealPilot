@@ -1,4 +1,4 @@
-import type { SwiggyServer } from "../../domain/types";
+import type { SwiggyServer } from "../../domain/types.js";
 
 export type SwiggyEnvironment = "mock" | "staging" | "production";
 

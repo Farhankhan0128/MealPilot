@@ -5,7 +5,7 @@ import type {
   SavedLocation,
   SwiggyPlanningClient,
   UserPlanningRequest,
-} from "../../domain/types";
+} from "../../domain/types.js";
 
 const locations: SavedLocation[] = [
   {

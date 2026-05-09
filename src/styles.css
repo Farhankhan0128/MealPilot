@@ -429,6 +429,17 @@ select:focus {
   color: #9d2d21;
 }
 
+.error-strip {
+  margin-top: 16px;
+  border: 1px solid #f3b3aa;
+  border-radius: 8px;
+  padding: 12px 14px;
+  color: #8f261a;
+  background: #fff0ee;
+  font-weight: 800;
+  box-shadow: var(--shadow);
+}
+
 .recommendations {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

@@ -5,6 +5,7 @@ import {
   Check,
   ChevronRight,
   ClipboardCheck,
+  Database,
   Gauge,
   GitBranch,
   Loader2,
@@ -18,8 +19,8 @@ import {
 } from "lucide-react";
 import type { ReactNode } from "react";
 import { useEffect, useMemo, useState } from "react";
+import { buildServerPlan, confirmServerRecommendation, fetchHealth, type HealthResponse } from "./api/mealpilotApi";
 import { buildConfirmationMessage } from "./domain/safety";
-import { confirmRecommendation, createMealPlan } from "./domain/planner";
 import type { MealPlan, Recommendation, SwiggyServer, ToolCallEvent, UserPlanningRequest } from "./domain/types";
 
 const initialRequest: UserPlanningRequest = {
@@ -89,6 +90,9 @@ function App() {
   const [plan, setPlan] = useState<MealPlan | null>(null);
   const [selectedRecommendation, setSelectedRecommendation] = useState<Recommendation | null>(null);
   const [isPlanning, setIsPlanning] = useState(false);
+  const [isConfirming, setIsConfirming] = useState(false);
+  const [health, setHealth] = useState<HealthResponse | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const confirmedCount = plan?.recommendations.filter((item) => item.status === "confirmed").length ?? 0;
 
   const readiness = useMemo(
@@ -105,9 +109,12 @@ function App() {
 
   async function buildPlan(nextRequest = request) {
     setIsPlanning(true);
+    setError(null);
     try {
-      const nextPlan = await createMealPlan(nextRequest);
-      setPlan(nextPlan);
+      const response = await buildServerPlan(nextRequest);
+      setPlan(response.plan);
+    } catch (buildError) {
+      setError(buildError instanceof Error ? buildError.message : "Unable to build MealPilot plan.");
     } finally {
       setIsPlanning(false);
     }
@@ -122,14 +129,26 @@ function App() {
     void buildPlan(nextRequest);
   }
 
-  function confirmSelected() {
+  async function confirmSelected() {
     if (!plan || !selectedRecommendation) return;
-    setPlan(confirmRecommendation(plan, selectedRecommendation.id));
-    setSelectedRecommendation(null);
+    setIsConfirming(true);
+    setError(null);
+    try {
+      const response = await confirmServerRecommendation(plan.id, selectedRecommendation.id);
+      setPlan(response.plan);
+      setSelectedRecommendation(null);
+    } catch (confirmError) {
+      setError(confirmError instanceof Error ? confirmError.message : "Unable to confirm action.");
+    } finally {
+      setIsConfirming(false);
+    }
   }
 
   useEffect(() => {
     void buildPlan(initialRequest);
+    void fetchHealth()
+      .then(setHealth)
+      .catch(() => setHealth(null));
   }, []);
 
   return (
@@ -151,8 +170,8 @@ function App() {
             <span>Access Mode</span>
           </div>
           <div className="mode-card">
-            <strong>Local stub</strong>
-            <span>Staging-ready adapter</span>
+            <strong>{health?.mode === "mock" ? "Local API + MCP stub" : `${health?.mode ?? "API"} mode`}</strong>
+            <span>{health?.ok ? "Backend connected" : "Checking backend"}</span>
           </div>
         </section>
 
@@ -260,9 +279,15 @@ function App() {
             <Metric icon={<Gauge aria-hidden="true" />} label="Budget" value={plan ? formatMoney(plan.total) : "..."} />
             <Metric icon={<Bot aria-hidden="true" />} label="MCP calls" value={String(plan?.callCount ?? "...")} />
             <Metric icon={<ShieldCheck aria-hidden="true" />} label="Confirmed" value={`${confirmedCount}/3`} />
-            <Metric icon={<Activity aria-hidden="true" />} label="Health score" value={`${plan?.healthScore ?? "--"}`} />
+            <Metric icon={<Database aria-hidden="true" />} label="Backend" value={health?.ok ? "Live" : "..."} />
           </div>
         </section>
+
+        {error ? (
+          <section className="error-strip" role="alert">
+            {error}
+          </section>
+        ) : null}
 
         {plan ? (
           <>
@@ -307,9 +332,9 @@ function App() {
               <button type="button" className="ghost-button" onClick={() => setSelectedRecommendation(null)}>
                 Cancel
               </button>
-              <button type="button" className="icon-button primary" onClick={confirmSelected}>
-                <ShieldCheck aria-hidden="true" />
-                <span>Confirm action</span>
+              <button type="button" className="icon-button primary" onClick={() => void confirmSelected()} disabled={isConfirming}>
+                {isConfirming ? <Loader2 className="spin" aria-hidden="true" /> : <ShieldCheck aria-hidden="true" />}
+                <span>{isConfirming ? "Confirming" : "Confirm action"}</span>
               </button>
             </div>
           </section>
