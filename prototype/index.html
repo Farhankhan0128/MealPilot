@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MealPilot</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="planner">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">MealPilot India</p>
+            <h1>Household meal planning</h1>
+          </div>
+          <button class="ghost" type="button" id="resetButton">Reset</button>
+        </header>
+
+        <section class="composer" aria-label="Meal planning request">
+          <textarea id="promptInput" rows="4">Plan my high-protein vegetarian week under Rs 2,000. I need lunch today, dinner groceries for tonight, and a Dineout option for Saturday evening.</textarea>
+          <div class="controls">
+            <label>
+              City
+              <select id="citySelect">
+                <option>Bengaluru</option>
+                <option>Delhi NCR</option>
+                <option>Mumbai</option>
+              </select>
+            </label>
+            <label>
+              Budget
+              <input id="budgetInput" type="number" min="500" step="100" value="2000" />
+            </label>
+            <button class="primary" type="button" id="planButton">Build plan</button>
+          </div>
+        </section>
+
+        <section class="summary" aria-label="Plan summary">
+          <div>
+            <span class="metric-label">Total estimate</span>
+            <strong id="totalEstimate">Rs 1,860</strong>
+          </div>
+          <div>
+            <span class="metric-label">MCP calls</span>
+            <strong id="callCount">11</strong>
+          </div>
+          <div>
+            <span class="metric-label">Risky actions</span>
+            <strong id="riskCount">0 completed</strong>
+          </div>
+        </section>
+      </section>
+
+      <section class="board" aria-label="Swiggy workflow cards">
+        <article class="card" data-channel="food">
+          <div class="card-head">
+            <span>Food</span>
+            <small>Cart ready</small>
+          </div>
+          <h2 id="foodTitle">Paneer protein bowl</h2>
+          <p id="foodMeta">Green Bowl Co. - lunch delivery to Home</p>
+          <ul id="foodItems"></ul>
+          <div class="card-foot">
+            <strong id="foodTotal">Rs 420</strong>
+            <button type="button" class="confirm" data-confirm="food">Confirm food order</button>
+          </div>
+        </article>
+
+        <article class="card" data-channel="instamart">
+          <div class="card-head">
+            <span>Instamart</span>
+            <small>Basket ready</small>
+          </div>
+          <h2 id="groceryTitle">Dinner groceries</h2>
+          <p id="groceryMeta">High-protein vegetarian dinner for tonight</p>
+          <ul id="groceryItems"></ul>
+          <div class="card-foot">
+            <strong id="groceryTotal">Rs 790</strong>
+            <button type="button" class="confirm" data-confirm="instamart">Confirm grocery basket</button>
+          </div>
+        </article>
+
+        <article class="card" data-channel="dineout">
+          <div class="card-head">
+            <span>Dineout</span>
+            <small>Slot found</small>
+          </div>
+          <h2 id="dineoutTitle">Italian table for Saturday</h2>
+          <p id="dineoutMeta">Indiranagar - 4 guests - 8:00 PM</p>
+          <ul id="dineoutItems"></ul>
+          <div class="card-foot">
+            <strong id="dineoutTotal">Rs 650 est.</strong>
+            <button type="button" class="confirm" data-confirm="dineout">Confirm table booking</button>
+          </div>
+        </article>
+      </section>
+
+      <section class="audit" aria-label="Safety events">
+        <div class="audit-head">
+          <h2>Safety events</h2>
+          <span id="sessionId">session: mp_demo_2048</span>
+        </div>
+        <ol id="auditLog"></ol>
+      </section>
+    </main>
+
+    <dialog id="confirmDialog">
+      <form method="dialog">
+        <h2 id="dialogTitle">Confirm action</h2>
+        <p id="dialogBody"></p>
+        <menu>
+          <button value="cancel" class="ghost">Cancel</button>
+          <button value="confirm" class="primary">Confirm</button>
+        </menu>
+      </form>
+    </dialog>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
