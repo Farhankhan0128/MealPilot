@@ -53,6 +53,14 @@ The `/api/resilience` endpoint turns this policy into executable demo evidence:
 - Check-then-retry for `place_food_order`, `checkout`, and `book_table`.
 - Version/deprecation alerting through `_meta.swiggy.deprecation`.
 
+The `/api/evaluation-lab` endpoint regression-tests the product against multiple user scenarios before review:
+
+- Chat and voice response shaping.
+- Budget fit across Bengaluru, Delhi NCR, and Mumbai.
+- Confirmation gates for all commercial actions.
+- Preflight checks before cart, checkout, or booking actions.
+- Redacted audit detail with no token, payment, phone, or full-address leakage.
+
 ## Rate Limits And Traffic
 
 Initial pilot target:

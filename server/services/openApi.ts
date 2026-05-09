@@ -117,6 +117,13 @@ export function buildOpenApiDocument(config: ServerConfig) {
           responses: { "200": { description: "Demo steps and evidence links" } },
         },
       },
+      "/api/evaluation-lab": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Multi-scenario agent evaluation lab",
+          responses: { "200": { description: "Persona, budget, voice, and safety evaluation results" } },
+        },
+      },
       "/api/submission-package": {
         get: {
           tags: ["Builder Access"],

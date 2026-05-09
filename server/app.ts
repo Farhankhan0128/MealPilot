@@ -34,6 +34,7 @@ import {
   buildMcpReplay,
   buildSubmissionPackage,
 } from "./services/demoStudio.js";
+import { buildEvaluationLab } from "./services/evaluationLab.js";
 import {
   buildComplianceEvidence,
   buildRateLimitPlan,
@@ -517,6 +518,13 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
       }),
     });
   });
+
+  app.get(
+    "/api/evaluation-lab",
+    asyncRoute(async (_req, res) => {
+      res.json({ evaluation: await buildEvaluationLab(store.getProfile()) });
+    }),
+  );
 
   app.get("/api/submission-package", (_req, res) => {
     res.json({

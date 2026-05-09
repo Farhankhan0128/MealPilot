@@ -62,6 +62,7 @@ Scale-up after staging:
 - Chat and voice surface response contracts to avoid long spoken lists or exposed internal IDs.
 - Cart preflight checks for budget, location label, payment scope, item readiness, confirmation status, and substitutions.
 - MCP replay transcripts that expose the JSON-RPC `tools/call` shape for local review and staging migration.
+- Evaluation Lab that runs multi-scenario checks for persona breadth, city coverage, voice-safe output, budget fit, confirmation locks, preflight safety, and PII minimization.
 - Submission package generator for access-form fields, application links, and manual-input gaps.
 - Widget contract generator for Food, Instamart, and Dineout surfaces with iframe sizing, sandbox policy, origin verification, and semantic fallbacks.
 - Rate-limit plan for per-user, write-tool, client-day, and tracking-poll budgets.
@@ -98,11 +99,12 @@ The application will include a 2-3 minute Loom or unlisted YouTube demo showing:
 5. Cart and booking actions pause for explicit confirmation.
 6. Launch Center shows 35-tool coverage, chat/voice behavior, go-live gates, and observability metrics.
 7. Demo Studio shows cart preflight, MCP replay, and submission readiness.
-8. Production Evidence shows widgets, rate limits, versioning, compliance, resilience drills, and reviewer proof score.
+8. Production Evidence shows widgets, rate limits, versioning, compliance, resilience drills, Evaluation Lab, and reviewer proof score.
 9. Show `/api/ready`, `/api/openapi.json`, and `npm run verify:production`.
 10. Show storage diagnostics and snapshot export in `/api/storage/status` and `/api/storage/export`.
 11. Show `/api/resilience` with the order-placement recovery runbook.
-12. Logs show trace IDs, no raw PII, and safe error handling.
+12. Show `/api/evaluation-lab` with persona QA across chat and voice surfaces.
+13. Logs show trace IDs, no raw PII, and safe error handling.
 
 ## Primary Technical Contact
 

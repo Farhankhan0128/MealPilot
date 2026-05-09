@@ -74,7 +74,7 @@ npm start
 npm run verify:production
 ```
 
-The verifier creates a plan, checks 35-tool coverage, validates preflight/replay/widgets/submission evidence, runs resilience-drill assertions, and asserts reviewer proof remains above target.
+The verifier creates a plan, checks 35-tool coverage, validates preflight/replay/widgets/submission evidence, runs resilience-drill and evaluation-lab assertions, and asserts reviewer proof remains above target.
 
 Durable local persistence:
 
@@ -114,6 +114,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/ops`
 - `GET /api/go-live`
 - `GET /api/demo-studio`
+- `GET /api/evaluation-lab`
 - `GET /api/submission-package`
 - `GET /api/rate-limit-plan`
 - `GET /api/version-monitor`
@@ -190,6 +191,7 @@ The test suite checks that:
 - Pantry, group planning, scheduling, ops, privacy, markdown export, and OAuth callback routes work end to end.
 - Readiness, OpenAPI, preflight, replay, widgets, submission, rate-limit, version, compliance, and reviewer proof routes work end to end.
 - Resilience drills cover safe 5xx retries, 429 Retry-After handling, 401 reauth, non-idempotent check-then-retry, and deprecation monitoring.
+- Evaluation Lab checks multi-persona city coverage, voice-safe responses, budget fit, preflight gates, confirmation locks, and PII minimization.
 - File-backed storage persists plans across server instances and exposes export/compaction diagnostics.
 - The React UI loads server-generated plans and confirms through the API.
 - All commercial actions require explicit confirmation.

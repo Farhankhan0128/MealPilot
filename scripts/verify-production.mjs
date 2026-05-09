@@ -71,6 +71,15 @@ assert(
 assert(resilience.runbook.nonBlindRetryTools.includes("place_food_order"), "order retry runbook is missing");
 assert(resilience.runbook.score >= 90, "resilience drill score is below target");
 
+const evaluation = await request("/api/evaluation-lab");
+assert(evaluation.evaluation.scenarios.length >= 4, "evaluation scenarios are incomplete");
+assert(evaluation.evaluation.score >= 90, "evaluation score is below target");
+assert(evaluation.evaluation.blockedCount === 0, "evaluation lab has blocked scenarios");
+assert(
+  evaluation.evaluation.scenarios.some((scenario) => scenario.surface === "voice"),
+  "voice evaluation scenario is missing",
+);
+
 const submission = await request("/api/submission-package");
 assert(submission.package.fields.length >= 10, "submission package is incomplete");
 
@@ -89,6 +98,8 @@ console.log(
       widgets: widgets.widgets.length,
       reviewerScore: proof.proof.score,
       resilienceScore: resilience.runbook.score,
+      evaluationScore: evaluation.evaluation.score,
+      evaluationScenarios: evaluation.evaluation.scenarios.length,
       submissionFields: submission.package.fields.length,
       storage: storage.storage.kind,
     },

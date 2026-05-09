@@ -373,6 +373,41 @@ export interface ResilienceRunbook {
   supportPayload: Record<string, string>;
 }
 
+export type EvaluationStatus = "pass" | "watch" | "blocked";
+
+export interface EvaluationCheck {
+  id: string;
+  label: string;
+  status: EvaluationStatus;
+  evidence: string;
+}
+
+export interface EvaluationScenario {
+  id: string;
+  persona: string;
+  surface: AgentSurface;
+  goal: string;
+  request: UserPlanningRequest;
+  score: number;
+  status: EvaluationStatus;
+  planTotal: number;
+  budgetFit: MealPlan["budgetFit"];
+  toolCalls: number;
+  recommendationCount: number;
+  checks: EvaluationCheck[];
+  risks: string[];
+}
+
+export interface EvaluationLab {
+  generatedAt: string;
+  score: number;
+  passCount: number;
+  watchCount: number;
+  blockedCount: number;
+  scenarios: EvaluationScenario[];
+  aggregateChecks: EvaluationCheck[];
+}
+
 export interface MealPlan {
   id: string;
   summary: string;

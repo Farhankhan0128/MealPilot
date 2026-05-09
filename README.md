@@ -50,6 +50,7 @@ Planned MCP servers:
 - Observability metrics for tool latency, success rate, confirmed actions, traceable sessions, reminder queue, and credential mode.
 - Support report generator that creates a Swiggy-ready `builders@swiggy.in` escalation mail with session IDs.
 - Demo Studio with cart preflight checks, offer opportunities, MCP replay transcripts, demo progress, and submission-field readiness.
+- Evaluation Lab with multi-scenario persona QA across Bengaluru, Delhi NCR, Mumbai, chat, voice, lean budgets, and same-day cart-safety turns.
 - JSON-RPC replay endpoint that shows the exact tool-call shape MealPilot will use when Swiggy staging credentials are issued.
 - Builder Access submission package endpoint that mirrors Swiggy's requested application fields and highlights manual inputs.
 - Production Evidence panel with widget contracts, rate-limit budgets, version/deprecation monitoring, compliance controls, and reviewer proof score.
@@ -154,6 +155,7 @@ GET  /api/sessions/:sessionId/surface?surface=voice
 GET  /api/sessions/:sessionId/preflight
 GET  /api/sessions/:sessionId/replay
 GET  /api/demo-studio
+GET  /api/evaluation-lab
 GET  /api/submission-package
 GET  /api/sessions/:sessionId/widgets
 GET  /api/rate-limit-plan
@@ -176,7 +178,7 @@ GET  /api/builder-package.md
 3. Open MCP Coverage and show all 35 documented tools mapped across the three Swiggy servers.
 4. Confirm one action, refresh tracking, and show the audit timeline with session IDs.
 5. Open Demo Studio and show cart preflight, coupon opportunities, MCP replay, and submission readiness.
-6. Open Production Evidence and show widgets, rate limits, version monitor, compliance controls, Resilience Lab, and reviewer proof score.
+6. Open Production Evidence and show widgets, rate limits, version monitor, compliance controls, Resilience Lab, Evaluation Lab, and reviewer proof score.
 7. Schedule reminders, open Go-Live Gates, then export the Builder Access packet.
 8. Generate a support report to show how a production issue would be escalated with traceable session context.
 
@@ -201,7 +203,7 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 
 ## Current Status
 
-Runnable full-stack localhost app, optional durable persistence, 35-tool Swiggy MCP coverage map, builder access proposal, technical packet, safety plan, launch readiness dashboard, demo studio, production evidence center, executable resilience drills, submission package, support workflow, and tests are ready. Next step: record the 2-3 minute demo and submit the Swiggy Builders Club access form with the GitHub repo and packet export.
+Runnable full-stack localhost app, optional durable persistence, 35-tool Swiggy MCP coverage map, builder access proposal, technical packet, safety plan, launch readiness dashboard, demo studio, production evidence center, executable resilience drills, multi-scenario evaluation lab, submission package, support workflow, and tests are ready. Next step: record the 2-3 minute demo and submit the Swiggy Builders Club access form with the GitHub repo and packet export.
 
 CI/CD and deploy assets are included: GitHub Actions runs lint, tests, build, and production smoke verification; Docker serves the built frontend and API from one container; Render can deploy from `render.yaml` after Swiggy credentials are issued.
 
