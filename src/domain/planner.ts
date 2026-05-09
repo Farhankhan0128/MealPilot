@@ -118,7 +118,7 @@ export async function createMealPlan(
     event("food", "get_restaurant_menu", `Selected ${openRestaurant.name} because it is open and high confidence.`, sessionId, 3),
     event("food", "update_food_cart", "Prepared food cart; no order placed.", sessionId, 4),
     event("food", "get_food_cart", "Validated total below Rs 1,000 food-order cap.", sessionId, 5),
-    event("instamart", "search_items", "Found high-protein vegetarian grocery substitutes.", sessionId, 6),
+    event("instamart", "search_products", "Found high-protein vegetarian grocery substitutes.", sessionId, 6),
     event("instamart", "update_cart", "Prepared Instamart basket; checkout remains locked.", sessionId, 7),
     event("dineout", "search_restaurants_dineout", "Found table options near the selected area.", sessionId, 8),
     event("dineout", "get_available_slots", "Selected a weekend table slot; booking remains locked.", sessionId, 9),

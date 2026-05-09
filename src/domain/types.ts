@@ -6,6 +6,8 @@ export type RecommendationStatus = "prepared" | "confirmed" | "blocked";
 
 export type SpicePreference = "mild" | "medium" | "hot";
 
+export type AgentSurface = "chat" | "voice";
+
 export interface UserProfile {
   id: string;
   name: string;
@@ -148,6 +150,65 @@ export interface OpsStatus {
   label: string;
   status: "healthy" | "warning" | "blocked";
   detail: string;
+}
+
+export interface McpToolCoverage {
+  server: SwiggyServer;
+  endpoint: string;
+  tool: string;
+  stage: string;
+  status: "demo_ready" | "guarded" | "planned";
+  evidence: string;
+}
+
+export interface McpServerCoverage {
+  server: SwiggyServer;
+  endpoint: string;
+  totalTools: number;
+  demoReady: number;
+  guarded: number;
+  planned: number;
+  tools: McpToolCoverage[];
+}
+
+export interface AgentSurfaceResponse {
+  surface: AgentSurface;
+  headline: string;
+  shortSummary: string;
+  recommendationIds: string[];
+  cards: Array<{
+    title: string;
+    provider: string;
+    total: number;
+    eta: string;
+  }>;
+  confirmationPrompt: string;
+  constraints: string[];
+}
+
+export interface GoLiveCheck {
+  id: string;
+  label: string;
+  status: "ready" | "needs_credentials" | "manual_review";
+  evidence: string;
+}
+
+export interface ObservabilityMetric {
+  id: string;
+  label: string;
+  value: string;
+  status: "healthy" | "watch" | "blocked";
+  detail: string;
+}
+
+export interface IncidentReport {
+  id: string;
+  severity: "S0" | "S1" | "S2" | "S3";
+  subject: string;
+  summary: string;
+  mailto: string;
+  sessionIds: string[];
+  nextSteps: string[];
 }
 
 export interface MealPlan {

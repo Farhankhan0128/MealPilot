@@ -762,17 +762,20 @@ select:focus {
   border-left: 4px solid var(--gold);
 }
 
-.advanced-panel {
+.advanced-panel,
+.launch-panel {
   grid-column: 1 / -1;
 }
 
-.workflow-grid {
+.workflow-grid,
+.launch-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
 }
 
-.workflow-grid article {
+.workflow-grid article,
+.launch-grid article {
   display: grid;
   gap: 8px;
   min-height: 160px;
@@ -783,17 +786,24 @@ select:focus {
 
 .workflow-grid span,
 .workflow-grid p,
-.workflow-grid li {
+.workflow-grid li,
+.launch-grid span,
+.launch-grid p,
+.launch-grid li {
   color: var(--muted);
 }
 
-.workflow-grid ul {
+.workflow-grid ul,
+.launch-grid ul,
+.launch-grid ol {
   margin: 0;
   padding-left: 18px;
 }
 
 .workflow-grid button,
-.privacy-actions button {
+.privacy-actions button,
+.launch-grid button,
+.support-link {
   min-height: 34px;
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -801,6 +811,93 @@ select:focus {
   color: var(--green-dark);
   background: #eef7f1;
   font-weight: 900;
+}
+
+.launch-grid button,
+.support-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: max-content;
+}
+
+.surface-card {
+  grid-column: span 2;
+}
+
+.mini-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mini-heading svg {
+  width: 17px;
+  height: 17px;
+  color: var(--green);
+}
+
+.segmented-control {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  width: min(260px, 100%);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.segmented-control button {
+  width: 100%;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.segmented-control button.active {
+  color: #fff;
+  background: var(--green);
+}
+
+.coverage-stack {
+  display: grid;
+  gap: 8px;
+}
+
+.coverage-stack div,
+.compact-status-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-radius: 8px;
+  padding: 9px;
+  background: #fff;
+}
+
+.compact-status-list {
+  display: grid;
+  gap: 8px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.compact-status-list strong {
+  flex: 0 0 auto;
+  font-size: 0.78rem;
+  text-transform: capitalize;
+}
+
+.compact-status-list li[data-status="ready"],
+.compact-status-list li[data-status="healthy"] {
+  border-left: 4px solid var(--green);
+}
+
+.compact-status-list li[data-status="needs_credentials"],
+.compact-status-list li[data-status="manual_review"],
+.compact-status-list li[data-status="watch"] {
+  border-left: 4px solid var(--gold);
 }
 
 .privacy-actions {
@@ -908,8 +1005,13 @@ select:focus {
   .planner-grid,
   .lower-grid,
   .variant-strip,
-  .workflow-grid {
+  .workflow-grid,
+  .launch-grid {
     grid-template-columns: 1fr;
+  }
+
+  .surface-card {
+    grid-column: auto;
   }
 
   .recommendation {

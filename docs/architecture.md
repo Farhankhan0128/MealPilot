@@ -30,6 +30,7 @@ flowchart LR
 - Separate confirmation panels for Food, Instamart, and Dineout.
 - Simulated tracking after confirmation.
 - Pantry, group planning, reminders, privacy export/delete, and ops status panels.
+- Launch Center with MCP coverage, chat/voice response contracts, go-live checks, observability metrics, rollout plan, and support report generation.
 - No checkout, order, or booking call is hidden inside a generic "continue" button.
 
 ### Planner Domain Service
@@ -52,6 +53,9 @@ Implementation:
 - Executes confirmation actions through a server-side service.
 - Supports item substitution, item removal, confirm-all, profile updates, tracking, and builder package export.
 - Supports pantry restock suggestions, group constraints, schedule reminders, privacy export/delete, and operational status.
+- Exposes the 35-tool Swiggy MCP catalog with demo-ready or guarded status for each Food, Instamart, and Dineout tool.
+- Generates chat-safe and voice-safe response payloads from the same plan session.
+- Generates Swiggy-ready support reports with session IDs for escalation.
 - Exposes an MCP-shaped local JSON-RPC route for Swiggy tool demos.
 - Starts the Swiggy OAuth flow with server-stored PKCE verifier and state.
 
@@ -72,10 +76,19 @@ The localhost demo uses deterministic seeded data with the same domain boundarie
 - `get_restaurant_menu`
 - `update_food_cart`
 - `get_food_cart`
-- `search_items`
+- `search_products`
+- `your_go_to_items`
 - `update_cart`
+- `get_cart`
+- `checkout`
+- `track_order`
 - `search_restaurants_dineout`
+- `get_restaurant_details`
 - `get_available_slots`
+- `book_table`
+- `get_booking_status`
+
+The Launch Center maps every documented Swiggy MCP tool: 14 Food tools, 13 Instamart tools, and 8 Dineout tools.
 
 Implementation:
 

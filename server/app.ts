@@ -11,8 +11,13 @@ import { readConfig, type ServerConfig } from "./config.js";
 import { handleMockJsonRpc } from "./mock/swiggyToolRouter.js";
 import { executeAllPreparedRecommendations, executeConfirmedRecommendation } from "./services/confirmationService.js";
 import {
+  buildAgentSurfaceResponse,
   buildApplicationMarkdown,
+  buildGoLiveChecks,
   buildGroupPlan,
+  buildIncidentReport,
+  buildMcpCoverage,
+  buildObservabilityMetrics,
   buildOpsStatus,
   buildPlanReminders,
   buildRestockSuggestions,
@@ -88,6 +93,7 @@ const groupMemberSchema = z.object({
 });
 
 const mcpServerSchema = z.enum(["food", "instamart", "dineout"]);
+const agentSurfaceSchema = z.enum(["chat", "voice"]);
 
 export interface MealPilotServerOptions {
   config?: ServerConfig;
@@ -270,11 +276,43 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
   });
 
   app.get("/api/builder-package.md", (_req, res) => {
+    const plans = store.getAllPlans();
+    const latestPlan = plans.at(-1);
     const markdown = buildApplicationMarkdown({
       profile: store.getProfile(),
       readiness: buildReadinessChecklist(store.getProfile()),
+      coverage: buildMcpCoverage(),
+      goLive: buildGoLiveChecks({
+        hasClientId: config.swiggyClientId !== "replace_after_builder_access",
+        hasPlan: plans.length > 0,
+        hasReminders: store.getReminders().length > 0,
+        hasConfirmedAction:
+          latestPlan?.recommendations.some((recommendation) => recommendation.status === "confirmed") ?? false,
+      }),
     });
     res.type("text/markdown").send(markdown);
+  });
+
+  app.get("/api/mcp/catalog", (_req, res) => {
+    const coverage = buildMcpCoverage();
+    res.json({
+      totalTools: coverage.reduce((sum, server) => sum + server.totalTools, 0),
+      demoReady: coverage.reduce((sum, server) => sum + server.demoReady, 0),
+      guarded: coverage.reduce((sum, server) => sum + server.guarded, 0),
+      planned: coverage.reduce((sum, server) => sum + server.planned, 0),
+      servers: coverage,
+    });
+  });
+
+  app.get("/api/sessions/:sessionId/surface", (req, res) => {
+    const plan = store.getPlan(req.params.sessionId);
+    if (!plan) {
+      res.status(404).json({ error: { message: "Session not found." } });
+      return;
+    }
+
+    const surface = agentSurfaceSchema.parse(req.query.surface ?? "chat");
+    res.json({ response: buildAgentSurfaceResponse(plan, surface) });
   });
 
   app.get("/api/pantry", (_req, res) => {
@@ -326,6 +364,35 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
         reminderCount: store.getReminders().length,
       }),
     });
+  });
+
+  app.get("/api/go-live", (_req, res) => {
+    const plans = store.getAllPlans();
+    const latestPlan = plans.at(-1);
+    res.json({
+      checks: buildGoLiveChecks({
+        hasClientId: config.swiggyClientId !== "replace_after_builder_access",
+        hasPlan: plans.length > 0,
+        hasReminders: store.getReminders().length > 0,
+        hasConfirmedAction:
+          latestPlan?.recommendations.some((recommendation) => recommendation.status === "confirmed") ?? false,
+      }),
+      metrics: buildObservabilityMetrics({
+        plans,
+        reminderCount: store.getReminders().length,
+        hasClientId: config.swiggyClientId !== "replace_after_builder_access",
+      }),
+      rollout: {
+        pilotUsers: 100,
+        ramp: ["1% private pilot", "10% friend-and-family", "50% staged city cohort", "100% after 48h green"],
+        expectedPeakQps: "<1 QPS",
+      },
+    });
+  });
+
+  app.post("/api/support/report", (req, res) => {
+    const body = z.object({ sessionId: z.string().optional() }).parse(req.body ?? {});
+    res.status(201).json({ report: buildIncidentReport({ plans: store.getAllPlans(), sessionId: body.sessionId }) });
   });
 
   app.get("/api/privacy/export", (_req, res) => {

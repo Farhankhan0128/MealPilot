@@ -44,6 +44,11 @@ Planned MCP servers:
 - Pantry Autopilot with restock suggestions.
 - Group planning with member-level budget, diet, and allergy constraints.
 - Reminder scheduling for food, grocery, and Dineout follow-ups.
+- Launch Center with the full 35-tool Swiggy MCP coverage matrix across Food, Instamart, and Dineout.
+- Chat and voice response simulator that applies separate contracts for card-rich UI and spoken assistant flows.
+- Go-live command center with credential, OAuth, confirmation, idempotency, observability, rollout, and privacy checks.
+- Observability metrics for tool latency, success rate, confirmed actions, traceable sessions, reminder queue, and credential mode.
+- Support report generator that creates a Swiggy-ready `builders@swiggy.in` escalation mail with session IDs.
 - Privacy export and local data deletion endpoints.
 - Ops status dashboard for API, MCP mode, sessions, and reminders.
 - Builder Access package endpoint with readiness evidence.
@@ -108,6 +113,26 @@ Then visit:
 http://localhost:8787
 ```
 
+Useful demo endpoints:
+
+```text
+GET  /api/mcp/catalog
+GET  /api/go-live
+GET  /api/sessions/:sessionId/surface?surface=chat
+GET  /api/sessions/:sessionId/surface?surface=voice
+POST /api/support/report
+GET  /api/builder-package.md
+```
+
+## Builder Access Demo Flow
+
+1. Run a plan from the workspace and show Food, Instamart, and Dineout recommendations.
+2. Switch the Launch Center between Chat and Voice to prove surface-specific response shaping.
+3. Open MCP Coverage and show all 35 documented tools mapped across the three Swiggy servers.
+4. Confirm one action, refresh tracking, and show the audit timeline with session IDs.
+5. Schedule reminders, open Go-Live Gates, then export the Builder Access packet.
+6. Generate a support report to show how a production issue would be escalated with traceable session context.
+
 ## Environment
 
 Copy `.env.example` to `.env.local` when credentials are issued:
@@ -125,7 +150,7 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 
 ## Current Status
 
-Runnable full-stack localhost app, builder access proposal, technical packet, safety plan, and tests are ready. Next step: record the 2-3 minute demo and submit the Swiggy Builders Club access form.
+Runnable full-stack localhost app, 35-tool Swiggy MCP coverage map, builder access proposal, technical packet, safety plan, launch readiness dashboard, support workflow, and tests are ready. Next step: record the 2-3 minute demo and submit the Swiggy Builders Club access form with the GitHub repo and packet export.
 
 ## Official References
 
