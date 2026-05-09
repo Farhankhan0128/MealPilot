@@ -8,6 +8,8 @@ export interface ServerConfig {
   swiggyRedirectUri: string;
   swiggyScope: string;
   swiggyBaseUrl: string;
+  swiggyAccessToken?: string;
+  swiggyTokenExpiresAt?: string;
   dataFile?: string;
   planRetentionDays: number;
 }
@@ -33,6 +35,8 @@ export function readConfig(): ServerConfig {
     swiggyScope: process.env.SWIGGY_SCOPE ?? process.env.VITE_SWIGGY_SCOPE ?? "mcp:tools mcp:resources mcp:prompts",
     swiggyBaseUrl:
       swiggyMode === "production" ? "https://mcp.swiggy.com" : "https://mcp-staging.swiggy.com",
+    swiggyAccessToken: process.env.SWIGGY_ACCESS_TOKEN,
+    swiggyTokenExpiresAt: process.env.SWIGGY_TOKEN_EXPIRES_AT,
     dataFile: process.env.MEALPILOT_DATA_FILE,
     planRetentionDays: Number(process.env.MEALPILOT_PLAN_RETENTION_DAYS ?? 14),
   };

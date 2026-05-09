@@ -27,6 +27,8 @@ Confirmations must show:
 - Keep `http://localhost` only for local development.
 - Re-authenticate once when a Swiggy MCP server returns 401.
 - Treat a 401 from one Swiggy MCP server as session expiry for all connected Swiggy servers.
+- Route staging and production tool calls through `/api/mcp-gateway`; without a bearer token, the gateway fails closed instead of silently using mock data.
+- Keep exchanged bearer tokens in process memory or managed secret storage, and only expose redacted token previews in diagnostics.
 
 ## Retry Policy
 

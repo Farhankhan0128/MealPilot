@@ -42,6 +42,7 @@ import {
   fetchGoLive,
   fetchGroupPlan,
   fetchHealth,
+  fetchMcpGateway,
   fetchMcpCatalog,
   fetchMcpReplay,
   fetchOpsStatus,
@@ -77,6 +78,7 @@ import type {
   GroupPlan,
   IncidentReport,
   MealPlan,
+  McpGatewayStatus,
   McpReplayStep,
   ObservabilityMetric,
   OpsStatus,
@@ -173,6 +175,7 @@ function App() {
   const [groupPlan, setGroupPlan] = useState<GroupPlan | null>(null);
   const [reminders, setReminders] = useState<Reminder[]>([]);
   const [opsStatus, setOpsStatus] = useState<OpsStatus[]>([]);
+  const [mcpGateway, setMcpGateway] = useState<McpGatewayStatus | null>(null);
   const [mcpCatalog, setMcpCatalog] = useState<McpCatalogResponse | null>(null);
   const [surfaceMode, setSurfaceMode] = useState<AgentSurface>("chat");
   const [agentSurface, setAgentSurface] = useState<AgentSurfaceResponse | null>(null);
@@ -254,6 +257,7 @@ function App() {
       pantryResponse,
       groupResponse,
       opsResponse,
+      gatewayResponse,
       catalogResponse,
       goLiveResponse,
       demoStudioResponse,
@@ -268,6 +272,7 @@ function App() {
       fetchPantry(),
       fetchGroupPlan(),
       fetchOpsStatus(),
+      fetchMcpGateway(),
       fetchMcpCatalog(),
       fetchGoLive(),
       fetchDemoStudio(),
@@ -283,6 +288,7 @@ function App() {
     setRestock(pantryResponse.suggestions);
     setGroupPlan(groupResponse.groupPlan);
     setOpsStatus(opsResponse.status);
+    setMcpGateway(gatewayResponse.gateway);
     setMcpCatalog(catalogResponse);
     setGoLiveChecks(goLiveResponse.checks);
     setObservabilityMetrics(goLiveResponse.metrics);
@@ -301,6 +307,7 @@ function App() {
   async function refreshLaunchCenter() {
     const [
       catalogResponse,
+      gatewayResponse,
       goLiveResponse,
       demoStudioResponse,
       evaluationResponse,
@@ -312,6 +319,7 @@ function App() {
       resilienceResponse,
     ] = await Promise.all([
       fetchMcpCatalog(),
+      fetchMcpGateway(),
       fetchGoLive(),
       fetchDemoStudio(),
       fetchEvaluationLab(),
@@ -323,6 +331,7 @@ function App() {
       fetchResilience(),
     ]);
     setMcpCatalog(catalogResponse);
+    setMcpGateway(gatewayResponse.gateway);
     setGoLiveChecks(goLiveResponse.checks);
     setObservabilityMetrics(goLiveResponse.metrics);
     setRollout(goLiveResponse.rollout);
@@ -751,6 +760,7 @@ function App() {
               />
               <LaunchCenterPanel
                 catalog={mcpCatalog}
+                gateway={mcpGateway}
                 surfaceMode={surfaceMode}
                 agentSurface={agentSurface}
                 goLiveChecks={goLiveChecks}
@@ -1088,6 +1098,7 @@ function AdvancedWorkflowPanel({
 
 function LaunchCenterPanel({
   catalog,
+  gateway,
   surfaceMode,
   agentSurface,
   goLiveChecks,
@@ -1098,6 +1109,7 @@ function LaunchCenterPanel({
   onCreateReport,
 }: {
   catalog: McpCatalogResponse | null;
+  gateway: McpGatewayStatus | null;
   surfaceMode: AgentSurface;
   agentSurface: AgentSurfaceResponse | null;
   goLiveChecks: GoLiveCheck[];
@@ -1165,6 +1177,26 @@ function LaunchCenterPanel({
               </div>
             ))}
           </div>
+        </article>
+
+        <article>
+          <div className="mini-heading">
+            <Radio aria-hidden="true" />
+            <strong>MCP Gateway</strong>
+          </div>
+          <span>
+            {gateway
+              ? `${gateway.readinessScore}/100, ${gateway.activeTransport.replace("_", " ")}`
+              : "Loading transport"}
+          </span>
+          <ul className="compact-status-list">
+            {(gateway?.requestedServers ?? []).map((server) => (
+              <li key={server.server} data-status={server.status === "blocked" ? "watch" : "healthy"}>
+                <span>{serverLabel(server.server)}</span>
+                <strong>{server.status}</strong>
+              </li>
+            ))}
+          </ul>
         </article>
 
         <article>

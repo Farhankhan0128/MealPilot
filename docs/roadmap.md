@@ -20,6 +20,7 @@ Status: in progress.
 - Add profile, variants, substitutions, confirm-all, and tracking. Complete.
 - Add pantry, group planning, reminders, privacy controls, ops status, and markdown export. Complete.
 - Add Demo Studio, Production Evidence, durable storage, Resilience Lab, and Evaluation Lab evidence. Complete.
+- Add MCP Gateway for mock-to-staging-to-production routing and fail-closed auth behavior. Complete.
 - Add OAuth callback screen and token exchange path. In progress.
 - Add real MCP transport behind a staging flag. Next.
 
