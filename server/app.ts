@@ -172,6 +172,7 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
       appName: config.appName,
       mode: config.swiggyMode,
       hasClientId: config.swiggyClientId !== "replace_after_builder_access",
+      storage: store.getDiagnostics(),
       time: new Date().toISOString(),
     });
   });
@@ -192,6 +193,7 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
         mcpCoverage: `${mappedTools}/${totalTools}`,
         scope: config.swiggyScope,
         sessions: plans.length,
+        storage: store.getDiagnostics().durable ? "durable" : "memory",
       },
     });
   });
@@ -207,6 +209,7 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
       redirectUri: config.swiggyRedirectUri,
       scope: config.swiggyScope,
       requestedServers: ["food", "instamart", "dineout"],
+      storage: store.getDiagnostics(),
     });
   });
 
@@ -563,6 +566,35 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
       groupPlan: store.getGroupPlan(),
       plans: store.getAllPlans(),
       reminders: store.getReminders(),
+    });
+  });
+
+  app.get("/api/storage/status", (_req, res) => {
+    res.json({ storage: store.getDiagnostics() });
+  });
+
+  app.get("/api/storage/export", (_req, res) => {
+    res.json({ snapshot: store.getSnapshot() });
+  });
+
+  app.post("/api/storage/restore", (req, res) => {
+    const body = z.object({ snapshot: z.object({ version: z.literal(1) }).passthrough() }).parse(req.body);
+    res.json({ snapshot: store.replaceSnapshot(body.snapshot as unknown as ReturnType<typeof store.getSnapshot>) });
+  });
+
+  app.post("/api/storage/compact", (req, res) => {
+    const body = z
+      .object({
+        planRetentionDays: z.number().int().min(1).max(365).optional(),
+        authTtlMinutes: z.number().int().min(1).max(1440).optional(),
+      })
+      .parse(req.body ?? {});
+    res.json({
+      result: store.compact({
+        planRetentionDays: body.planRetentionDays ?? config.planRetentionDays,
+        authTtlMinutes: body.authTtlMinutes,
+      }),
+      storage: store.getDiagnostics(),
     });
   });
 

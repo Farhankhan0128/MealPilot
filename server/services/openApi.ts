@@ -145,6 +145,34 @@ export function buildOpenApiDocument(config: ServerConfig) {
           responses: { "200": { description: "Local data deleted" } },
         },
       },
+      "/api/storage/status": {
+        get: {
+          tags: ["Operations"],
+          summary: "Storage diagnostics",
+          responses: { "200": { description: "Persistence mode, counts, and data file path when enabled" } },
+        },
+      },
+      "/api/storage/export": {
+        get: {
+          tags: ["Operations"],
+          summary: "Export a complete local store snapshot",
+          responses: { "200": { description: "Versioned snapshot for backup or local migration" } },
+        },
+      },
+      "/api/storage/restore": {
+        post: {
+          tags: ["Operations"],
+          summary: "Restore a complete local store snapshot",
+          responses: { "200": { description: "Restored snapshot" } },
+        },
+      },
+      "/api/storage/compact": {
+        post: {
+          tags: ["Operations"],
+          summary: "Compact expired plans, reminders, and OAuth sessions",
+          responses: { "200": { description: "Compaction result and storage diagnostics" } },
+        },
+      },
       "/api/openapi.json": {
         get: {
           tags: ["Operations"],

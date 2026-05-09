@@ -15,3 +15,11 @@ services:
         sync: false
       - key: SWIGGY_SCOPE
         value: mcp:tools mcp:resources mcp:prompts
+      - key: MEALPILOT_DATA_FILE
+        value: /var/data/mealpilot-store.json
+      - key: MEALPILOT_PLAN_RETENTION_DAYS
+        value: 14
+    disk:
+      name: mealpilot-data
+      mountPath: /var/data
+      sizeGB: 1

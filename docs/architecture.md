@@ -65,6 +65,7 @@ Implementation:
 - Generates rate-limit, versioning, and compliance evidence aligned with Swiggy's Operate documentation.
 - Serves OpenAPI 3.1 at `/api/openapi.json`, readiness checks at `/api/ready`, and request IDs on every API response.
 - Ships with Docker, Render blueprint, GitHub Actions CI, and an automated production smoke verifier.
+- Supports optional file-backed persistence through `MEALPILOT_DATA_FILE`, with versioned snapshots, restore, compaction, and storage diagnostics.
 - Exposes an MCP-shaped local JSON-RPC route for Swiggy tool demos.
 - Starts the Swiggy OAuth flow with server-stored PKCE verifier and state.
 

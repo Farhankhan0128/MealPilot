@@ -1,6 +1,10 @@
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 import request from "supertest";
 import { describe, expect, it } from "vitest";
 import { createMealPilotServer } from "./app.js";
+import { createFileSessionStore } from "./store/sessionStore.js";
 
 const planningRequest = {
   prompt:
@@ -33,6 +37,7 @@ describe("MealPilot API", () => {
     expect(health.headers["x-mealpilot-request-id"]).toBeTruthy();
     expect(openApi.body.openapi).toBe("3.1.0");
     expect(openApi.body.paths["/api/plan"].post.summary).toContain("MealPilot plan");
+    expect(openApi.body.paths["/api/storage/status"].get.summary).toContain("Storage");
   });
 
   it("creates a server-side plan session", async () => {
@@ -42,6 +47,28 @@ describe("MealPilot API", () => {
     expect(response.body.plan.id).toMatch(/^mp_/);
     expect(response.body.plan.recommendations).toHaveLength(3);
     expect(response.body.meta.storedServerSide).toBe(true);
+  });
+
+  it("persists plans in a file-backed store and exposes storage operations", async () => {
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "mealpilot-store-"));
+    const dataFile = path.join(tempDir, "store.json");
+    const first = createMealPilotServer({ store: createFileSessionStore(dataFile) });
+    const created = await request(first.app).post("/api/plan").send(planningRequest).expect(201);
+    const sessionId = created.body.plan.id as string;
+
+    const status = await request(first.app).get("/api/storage/status").expect(200);
+    expect(status.body.storage.kind).toBe("file");
+    expect(status.body.storage.durable).toBe(true);
+
+    const second = createMealPilotServer({ store: createFileSessionStore(dataFile) });
+    const restored = await request(second.app).get(`/api/sessions/${sessionId}`).expect(200);
+    expect(restored.body.plan.id).toBe(sessionId);
+
+    const exported = await request(second.app).get("/api/storage/export").expect(200);
+    expect(exported.body.snapshot.version).toBe(1);
+
+    const compacted = await request(second.app).post("/api/storage/compact").send({ planRetentionDays: 14 }).expect(200);
+    expect(compacted.body.storage.kind).toBe("file");
   });
 
   it("executes confirmation through the API and only updates one recommendation", async () => {

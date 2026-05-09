@@ -8,6 +8,8 @@ export interface ServerConfig {
   swiggyRedirectUri: string;
   swiggyScope: string;
   swiggyBaseUrl: string;
+  dataFile?: string;
+  planRetentionDays: number;
 }
 
 function readMode(value: string | undefined): SwiggyRuntimeMode {
@@ -31,5 +33,7 @@ export function readConfig(): ServerConfig {
     swiggyScope: process.env.SWIGGY_SCOPE ?? process.env.VITE_SWIGGY_SCOPE ?? "mcp:tools mcp:resources mcp:prompts",
     swiggyBaseUrl:
       swiggyMode === "production" ? "https://mcp.swiggy.com" : "https://mcp-staging.swiggy.com",
+    dataFile: process.env.MEALPILOT_DATA_FILE,
+    planRetentionDays: Number(process.env.MEALPILOT_PLAN_RETENTION_DAYS ?? 14),
   };
 }
