@@ -59,6 +59,7 @@ Planned MCP servers:
 - DPDP-oriented compliance evidence for consent, PII minimization, deletion, audit logging, and training-data exclusion.
 - OpenAPI 3.1 contract, readiness probe, security headers, and request IDs for production review.
 - Dockerfile, Render blueprint, GitHub Actions CI, and automated production smoke verification.
+- Optional file-backed persistence with snapshot export, restore, compaction, retention, and storage diagnostics.
 - Privacy export and local data deletion endpoints.
 - Ops status dashboard for API, MCP mode, sessions, and reminders.
 - Builder Access package endpoint with readiness evidence.
@@ -158,6 +159,10 @@ GET  /api/rate-limit-plan
 GET  /api/version-monitor
 GET  /api/compliance-evidence
 GET  /api/reviewer-proof
+GET  /api/storage/status
+GET  /api/storage/export
+POST /api/storage/restore
+POST /api/storage/compact
 POST /api/support/report
 GET  /api/builder-package.md
 ```
@@ -182,15 +187,19 @@ SWIGGY_ENV=mock
 SWIGGY_CLIENT_ID=replace_after_builder_access
 SWIGGY_REDIRECT_URI=http://localhost:5173/auth/swiggy/callback
 SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
+MEALPILOT_DATA_FILE=.mealpilot/mealpilot-store.json
+MEALPILOT_PLAN_RETENTION_DAYS=14
 VITE_SWIGGY_ENV=mock
 VITE_SWIGGY_CLIENT_ID=replace_after_builder_access
 VITE_SWIGGY_REDIRECT_URI=http://localhost:5173/auth/swiggy/callback
 VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 ```
 
+`MEALPILOT_DATA_FILE` enables durable local JSON persistence. If it is omitted, MealPilot runs with the in-memory store for fast demos and tests.
+
 ## Current Status
 
-Runnable full-stack localhost app, 35-tool Swiggy MCP coverage map, builder access proposal, technical packet, safety plan, launch readiness dashboard, demo studio, production evidence center, submission package, support workflow, and tests are ready. Next step: record the 2-3 minute demo and submit the Swiggy Builders Club access form with the GitHub repo and packet export.
+Runnable full-stack localhost app, optional durable persistence, 35-tool Swiggy MCP coverage map, builder access proposal, technical packet, safety plan, launch readiness dashboard, demo studio, production evidence center, submission package, support workflow, and tests are ready. Next step: record the 2-3 minute demo and submit the Swiggy Builders Club access form with the GitHub repo and packet export.
 
 CI/CD and deploy assets are included: GitHub Actions runs lint, tests, build, and production smoke verification; Docker serves the built frontend and API from one container; Render can deploy from `render.yaml` after Swiggy credentials are issued.
 

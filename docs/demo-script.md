@@ -134,6 +134,8 @@ Briefly show production readiness:
 
 - `/api/ready`
 - `/api/openapi.json`
+- `/api/storage/status`
+- `/api/storage/export`
 - GitHub Actions workflow
 - Dockerfile
 - `npm run verify:production`

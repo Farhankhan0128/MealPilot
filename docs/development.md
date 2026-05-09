@@ -76,6 +76,14 @@ npm run verify:production
 
 The verifier creates a plan, checks 35-tool coverage, validates preflight/replay/widgets/submission evidence, and asserts reviewer proof remains above target.
 
+Durable local persistence:
+
+```bash
+MEALPILOT_DATA_FILE=.mealpilot/mealpilot-store.json npm start
+```
+
+When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, OAuth sessions, and profile data are persisted to a versioned JSON snapshot. Omit it for in-memory demo mode.
+
 ## API
 
 - `GET /api/health`
@@ -111,6 +119,10 @@ The verifier creates a plan, checks 35-tool coverage, validates preflight/replay
 - `GET /api/version-monitor`
 - `GET /api/compliance-evidence`
 - `GET /api/reviewer-proof`
+- `GET /api/storage/status`
+- `GET /api/storage/export`
+- `POST /api/storage/restore`
+- `POST /api/storage/compact`
 - `GET /api/privacy/export`
 - `DELETE /api/privacy`
 - `POST /api/mcp/:server`
@@ -147,6 +159,7 @@ render.yaml
 ```
 
 Fill `SWIGGY_CLIENT_ID` and `SWIGGY_REDIRECT_URI` after Builder Access credentials are issued.
+`MEALPILOT_DATA_FILE` is set in the Render blueprint so app state survives restarts when the platform has persistent disk mounted at `/var/data`.
 
 ## Swiggy Modes
 
@@ -175,6 +188,7 @@ The test suite checks that:
 - Profile, substitution, confirm-all, tracking, and Builder Access package routes work end to end.
 - Pantry, group planning, scheduling, ops, privacy, markdown export, and OAuth callback routes work end to end.
 - Readiness, OpenAPI, preflight, replay, widgets, submission, rate-limit, version, compliance, and reviewer proof routes work end to end.
+- File-backed storage persists plans across server instances and exposes export/compaction diagnostics.
 - The React UI loads server-generated plans and confirms through the API.
 - All commercial actions require explicit confirmation.
 - Confirming one recommendation does not silently confirm the others.

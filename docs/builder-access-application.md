@@ -69,6 +69,7 @@ Scale-up after staging:
 - DPDP-oriented compliance evidence for consent, minimization, deletion, audit logging, and no model-training use of Swiggy-originated data.
 - OpenAPI 3.1 contract, readiness probe, request IDs, and security headers.
 - GitHub Actions CI, Dockerfile, Render blueprint, and production smoke verification script.
+- Optional file-backed persistence with versioned snapshots, restore, compaction, retention, and storage diagnostics.
 - Confirmation gates before `place_food_order`, Instamart checkout, or `book_table`.
 - Safe retry policy: no blind retries for non-idempotent order or booking actions.
 - 401 handling: re-run OAuth once and refresh all MCP clients.
@@ -98,7 +99,8 @@ The application will include a 2-3 minute Loom or unlisted YouTube demo showing:
 7. Demo Studio shows cart preflight, MCP replay, and submission readiness.
 8. Production Evidence shows widgets, rate limits, versioning, compliance, and reviewer proof score.
 9. Show `/api/ready`, `/api/openapi.json`, and `npm run verify:production`.
-10. Logs show trace IDs, no raw PII, and safe error handling.
+10. Show storage diagnostics and snapshot export in `/api/storage/status` and `/api/storage/export`.
+11. Logs show trace IDs, no raw PII, and safe error handling.
 
 ## Primary Technical Contact
 

@@ -35,6 +35,9 @@ assert(ready.ok, "readiness probe is not ok");
 const openApi = await request("/api/openapi.json");
 assert(openApi.openapi === "3.1.0", "OpenAPI contract is missing");
 
+const storage = await request("/api/storage/status");
+assert(storage.storage.planCount >= 0, "storage diagnostics are missing");
+
 const created = await request("/api/plan", {
   method: "POST",
   body: JSON.stringify(planRequest),
@@ -62,6 +65,9 @@ assert(proof.proof.score >= 90, "reviewer proof score is below target");
 const submission = await request("/api/submission-package");
 assert(submission.package.fields.length >= 10, "submission package is incomplete");
 
+const snapshot = await request("/api/storage/export");
+assert(snapshot.snapshot.version === 1, "storage snapshot is missing version");
+
 console.log(
   JSON.stringify(
     {
@@ -74,6 +80,7 @@ console.log(
       widgets: widgets.widgets.length,
       reviewerScore: proof.proof.score,
       submissionFields: submission.package.fields.length,
+      storage: storage.storage.kind,
     },
     null,
     2,

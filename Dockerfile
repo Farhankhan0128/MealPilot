@@ -13,10 +13,12 @@ FROM node:22-alpine AS runtime
 WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=8787
+ENV MEALPILOT_DATA_FILE=/app/data/mealpilot-store.json
 COPY package*.json ./
 RUN npm ci --omit=dev
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/dist-server ./dist-server
+RUN mkdir -p /app/data
 EXPOSE 8787
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
   CMD node -e "fetch('http://localhost:8787/api/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"

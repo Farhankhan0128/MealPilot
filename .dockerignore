@@ -5,6 +5,8 @@ dist-server
 .github
 .env
 .env.local
+.mealpilot
+.mealpilot-test
 npm-debug.log
 coverage
 *.tsbuildinfo
