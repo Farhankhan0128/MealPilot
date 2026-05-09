@@ -179,4 +179,25 @@ describe("MealPilot API", () => {
     expect(report.body.report.mailto).toContain("builders@swiggy.in");
     expect(report.body.report.sessionIds).toEqual([sessionId]);
   });
+
+  it("returns cart preflight, replay, demo studio, and submission package evidence", async () => {
+    const { app } = createMealPilotServer();
+    const created = await request(app).post("/api/plan").send(planningRequest).expect(201);
+    const sessionId = created.body.plan.id as string;
+
+    const preflight = await request(app).get(`/api/sessions/${sessionId}/preflight`).expect(200);
+    expect(preflight.body.preflight.checks.some((check: { id: string }) => check.id === "payment")).toBe(true);
+    expect(preflight.body.preflight.offers.length).toBe(3);
+
+    const replay = await request(app).get(`/api/sessions/${sessionId}/replay`).expect(200);
+    expect(replay.body.replay.length).toBeGreaterThanOrEqual(10);
+    expect(replay.body.replay[0].request.method).toBe("tools/call");
+
+    const demoStudio = await request(app).get("/api/demo-studio").expect(200);
+    expect(demoStudio.body.steps.some((step: { id: string }) => step.id === "coverage")).toBe(true);
+
+    const submission = await request(app).get("/api/submission-package").expect(200);
+    expect(submission.body.package.fields.some((field: { id: string }) => field.id === "tool_coverage")).toBe(true);
+    expect(submission.body.package.links.some((link: { label: string }) => link.label === "GitHub")).toBe(true);
+  });
 });

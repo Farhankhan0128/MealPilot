@@ -28,6 +28,12 @@ import {
   removeRecommendationItem,
   substitutePlanItem,
 } from "./services/planOperations.js";
+import {
+  buildCartPreflightReport,
+  buildDemoStudio,
+  buildMcpReplay,
+  buildSubmissionPackage,
+} from "./services/demoStudio.js";
 import { createPkcePair, createState } from "./services/pkce.js";
 import { createMemorySessionStore, type SessionStore } from "./store/sessionStore.js";
 
@@ -315,6 +321,26 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
     res.json({ response: buildAgentSurfaceResponse(plan, surface) });
   });
 
+  app.get("/api/sessions/:sessionId/preflight", (req, res) => {
+    const plan = store.getPlan(req.params.sessionId);
+    if (!plan) {
+      res.status(404).json({ error: { message: "Session not found." } });
+      return;
+    }
+
+    res.json({ preflight: buildCartPreflightReport(plan) });
+  });
+
+  app.get("/api/sessions/:sessionId/replay", (req, res) => {
+    const plan = store.getPlan(req.params.sessionId);
+    if (!plan) {
+      res.status(404).json({ error: { message: "Session not found." } });
+      return;
+    }
+
+    res.json({ replay: buildMcpReplay(plan) });
+  });
+
   app.get("/api/pantry", (_req, res) => {
     const pantry = store.getPantry();
     res.json({ pantry, suggestions: buildRestockSuggestions(pantry) });
@@ -393,6 +419,28 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
   app.post("/api/support/report", (req, res) => {
     const body = z.object({ sessionId: z.string().optional() }).parse(req.body ?? {});
     res.status(201).json({ report: buildIncidentReport({ plans: store.getAllPlans(), sessionId: body.sessionId }) });
+  });
+
+  app.get("/api/demo-studio", (_req, res) => {
+    res.json({
+      steps: buildDemoStudio({
+        plans: store.getAllPlans(),
+        coverage: buildMcpCoverage(),
+        reminders: store.getReminders(),
+        hasClientId: config.swiggyClientId !== "replace_after_builder_access",
+      }),
+    });
+  });
+
+  app.get("/api/submission-package", (_req, res) => {
+    res.json({
+      package: buildSubmissionPackage({
+        config,
+        profile: store.getProfile(),
+        coverage: buildMcpCoverage(),
+        latestPlan: store.getAllPlans().at(-1),
+      }),
+    });
   });
 
   app.get("/api/privacy/export", (_req, res) => {

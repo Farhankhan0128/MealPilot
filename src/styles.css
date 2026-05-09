@@ -763,19 +763,22 @@ select:focus {
 }
 
 .advanced-panel,
-.launch-panel {
+.launch-panel,
+.demo-studio-panel {
   grid-column: 1 / -1;
 }
 
 .workflow-grid,
-.launch-grid {
+.launch-grid,
+.demo-studio-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
 }
 
 .workflow-grid article,
-.launch-grid article {
+.launch-grid article,
+.demo-studio-grid article {
   display: grid;
   gap: 8px;
   min-height: 160px;
@@ -789,13 +792,18 @@ select:focus {
 .workflow-grid li,
 .launch-grid span,
 .launch-grid p,
-.launch-grid li {
+.launch-grid li,
+.demo-studio-grid span,
+.demo-studio-grid p,
+.demo-studio-grid li {
   color: var(--muted);
 }
 
 .workflow-grid ul,
 .launch-grid ul,
-.launch-grid ol {
+.launch-grid ol,
+.demo-studio-grid ul,
+.demo-studio-grid ol {
   margin: 0;
   padding-left: 18px;
 }
@@ -896,8 +904,48 @@ select:focus {
 
 .compact-status-list li[data-status="needs_credentials"],
 .compact-status-list li[data-status="manual_review"],
+.compact-status-list li[data-status="warn"],
 .compact-status-list li[data-status="watch"] {
   border-left: 4px solid var(--gold);
+}
+
+.offer-list,
+.replay-list {
+  display: grid;
+  gap: 8px;
+}
+
+.offer-list li,
+.replay-list li,
+.submission-grid div {
+  border-radius: 8px;
+  padding: 10px;
+  background: #fff;
+}
+
+.offer-list strong,
+.replay-list strong,
+.submission-grid strong {
+  display: block;
+  color: var(--ink);
+}
+
+.submission-card {
+  grid-column: span 2;
+}
+
+.submission-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.submission-grid div[data-status="manual_input"] {
+  border-left: 4px solid var(--gold);
+}
+
+.submission-grid div[data-status="ready"] {
+  border-left: 4px solid var(--green);
 }
 
 .privacy-actions {
@@ -1006,11 +1054,13 @@ select:focus {
   .lower-grid,
   .variant-strip,
   .workflow-grid,
-  .launch-grid {
+  .launch-grid,
+  .demo-studio-grid {
     grid-template-columns: 1fr;
   }
 
-  .surface-card {
+  .surface-card,
+  .submission-card {
     grid-column: auto;
   }
 
@@ -1036,7 +1086,8 @@ select:focus {
   }
 
   .input-grid,
-  .metrics-card {
+  .metrics-card,
+  .submission-grid {
     grid-template-columns: 1fr;
   }
 

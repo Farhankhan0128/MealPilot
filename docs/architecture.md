@@ -31,6 +31,7 @@ flowchart LR
 - Simulated tracking after confirmation.
 - Pantry, group planning, reminders, privacy export/delete, and ops status panels.
 - Launch Center with MCP coverage, chat/voice response contracts, go-live checks, observability metrics, rollout plan, and support report generation.
+- Demo Studio with cart preflight checks, offer opportunities, MCP replay transcripts, demo progress, and submission readiness.
 - No checkout, order, or booking call is hidden inside a generic "continue" button.
 
 ### Planner Domain Service
@@ -56,6 +57,9 @@ Implementation:
 - Exposes the 35-tool Swiggy MCP catalog with demo-ready or guarded status for each Food, Instamart, and Dineout tool.
 - Generates chat-safe and voice-safe response payloads from the same plan session.
 - Generates Swiggy-ready support reports with session IDs for escalation.
+- Generates preflight reports before commercial actions, including budget, address, payment scope, item, confirmation, and substitution checks.
+- Generates replayable JSON-RPC transcripts for the Swiggy MCP tool path.
+- Generates a submission package that mirrors Swiggy access fields and manual-input gaps.
 - Exposes an MCP-shaped local JSON-RPC route for Swiggy tool demos.
 - Starts the Swiggy OAuth flow with server-stored PKCE verifier and state.
 

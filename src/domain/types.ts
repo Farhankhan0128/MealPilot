@@ -211,6 +211,67 @@ export interface IncidentReport {
   nextSteps: string[];
 }
 
+export interface OfferOpportunity {
+  id: string;
+  server: SwiggyServer;
+  code: string;
+  label: string;
+  estimatedSavings: number;
+  appliesTo: string;
+  status: "available" | "applied" | "not_applicable";
+}
+
+export interface CartPreflightCheck {
+  id: string;
+  label: string;
+  status: "pass" | "warn" | "blocked";
+  evidence: string;
+  recommendationId?: string;
+  server?: SwiggyServer;
+}
+
+export interface CartPreflightReport {
+  sessionId: string;
+  overall: "ready" | "needs_review" | "blocked";
+  total: number;
+  checks: CartPreflightCheck[];
+  offers: OfferOpportunity[];
+}
+
+export interface McpReplayStep {
+  id: string;
+  sequence: number;
+  server: SwiggyServer;
+  endpoint: string;
+  tool: string;
+  request: Record<string, unknown>;
+  response: Record<string, unknown>;
+  durationMs: number;
+  retryPolicy: string;
+}
+
+export interface DemoStudioStep {
+  id: string;
+  label: string;
+  status: "done" | "active" | "pending";
+  evidence: string;
+  artifactUrl?: string;
+}
+
+export interface SubmissionField {
+  id: string;
+  label: string;
+  value: string;
+  status: "ready" | "manual_input";
+}
+
+export interface SubmissionPackage {
+  generatedAt: string;
+  fields: SubmissionField[];
+  links: Array<{ label: string; url: string }>;
+  residualRisks: string[];
+}
+
 export interface MealPlan {
   id: string;
   summary: string;

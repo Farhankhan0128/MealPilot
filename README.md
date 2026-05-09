@@ -49,6 +49,9 @@ Planned MCP servers:
 - Go-live command center with credential, OAuth, confirmation, idempotency, observability, rollout, and privacy checks.
 - Observability metrics for tool latency, success rate, confirmed actions, traceable sessions, reminder queue, and credential mode.
 - Support report generator that creates a Swiggy-ready `builders@swiggy.in` escalation mail with session IDs.
+- Demo Studio with cart preflight checks, offer opportunities, MCP replay transcripts, demo progress, and submission-field readiness.
+- JSON-RPC replay endpoint that shows the exact tool-call shape MealPilot will use when Swiggy staging credentials are issued.
+- Builder Access submission package endpoint that mirrors Swiggy's requested application fields and highlights manual inputs.
 - Privacy export and local data deletion endpoints.
 - Ops status dashboard for API, MCP mode, sessions, and reminders.
 - Builder Access package endpoint with readiness evidence.
@@ -120,6 +123,10 @@ GET  /api/mcp/catalog
 GET  /api/go-live
 GET  /api/sessions/:sessionId/surface?surface=chat
 GET  /api/sessions/:sessionId/surface?surface=voice
+GET  /api/sessions/:sessionId/preflight
+GET  /api/sessions/:sessionId/replay
+GET  /api/demo-studio
+GET  /api/submission-package
 POST /api/support/report
 GET  /api/builder-package.md
 ```
@@ -130,8 +137,9 @@ GET  /api/builder-package.md
 2. Switch the Launch Center between Chat and Voice to prove surface-specific response shaping.
 3. Open MCP Coverage and show all 35 documented tools mapped across the three Swiggy servers.
 4. Confirm one action, refresh tracking, and show the audit timeline with session IDs.
-5. Schedule reminders, open Go-Live Gates, then export the Builder Access packet.
-6. Generate a support report to show how a production issue would be escalated with traceable session context.
+5. Open Demo Studio and show cart preflight, coupon opportunities, MCP replay, and submission readiness.
+6. Schedule reminders, open Go-Live Gates, then export the Builder Access packet.
+7. Generate a support report to show how a production issue would be escalated with traceable session context.
 
 ## Environment
 
@@ -150,7 +158,7 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 
 ## Current Status
 
-Runnable full-stack localhost app, 35-tool Swiggy MCP coverage map, builder access proposal, technical packet, safety plan, launch readiness dashboard, support workflow, and tests are ready. Next step: record the 2-3 minute demo and submit the Swiggy Builders Club access form with the GitHub repo and packet export.
+Runnable full-stack localhost app, 35-tool Swiggy MCP coverage map, builder access proposal, technical packet, safety plan, launch readiness dashboard, demo studio, submission package, support workflow, and tests are ready. Next step: record the 2-3 minute demo and submit the Swiggy Builders Club access form with the GitHub repo and packet export.
 
 ## Official References
 
