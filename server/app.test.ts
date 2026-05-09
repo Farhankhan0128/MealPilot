@@ -136,6 +136,9 @@ describe("MealPilot API", () => {
     const ops = await request(app).get("/api/ops").expect(200);
     expect(ops.body.status.some((item: { id: string }) => item.id === "api")).toBe(true);
 
+    const goLive = await request(app).get("/api/go-live").expect(200);
+    expect(goLive.body.metrics.some((item: { id: string }) => item.id === "tool_latency")).toBe(true);
+
     const privacy = await request(app).get("/api/privacy/export").expect(200);
     expect(privacy.body.profile.id).toBe("profile_demo");
 
@@ -156,5 +159,24 @@ describe("MealPilot API", () => {
 
     const markdown = await request(app).get("/api/builder-package.md").expect(200);
     expect(markdown.text).toContain("MealPilot India - Swiggy Builder Access Packet");
+    expect(markdown.text).toContain("MCP Tool Coverage");
+  });
+
+  it("shows full MCP coverage, surface responses, and support reports", async () => {
+    const { app } = createMealPilotServer();
+    const created = await request(app).post("/api/plan").send(planningRequest).expect(201);
+    const sessionId = created.body.plan.id as string;
+
+    const catalog = await request(app).get("/api/mcp/catalog").expect(200);
+    expect(catalog.body.totalTools).toBe(35);
+    expect(catalog.body.servers).toHaveLength(3);
+
+    const voice = await request(app).get(`/api/sessions/${sessionId}/surface`).query({ surface: "voice" }).expect(200);
+    expect(voice.body.response.surface).toBe("voice");
+    expect(voice.body.response.constraints).toContain("Maximum three options spoken");
+
+    const report = await request(app).post("/api/support/report").send({ sessionId }).expect(201);
+    expect(report.body.report.mailto).toContain("builders@swiggy.in");
+    expect(report.body.report.sessionIds).toEqual([sessionId]);
   });
 });

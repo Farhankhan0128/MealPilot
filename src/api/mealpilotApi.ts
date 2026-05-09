@@ -1,8 +1,14 @@
 import type {
+  AgentSurface,
+  AgentSurfaceResponse,
   BuilderReadinessItem,
+  GoLiveCheck,
   GroupMember,
   GroupPlan,
+  IncidentReport,
   MealPlan,
+  McpServerCoverage,
+  ObservabilityMetric,
   OpsStatus,
   PantryItem,
   Reminder,
@@ -35,6 +41,24 @@ export interface BuilderPackageResponse {
     requestedServers: string[];
     expectedVolume: string;
     useCase: string;
+  };
+}
+
+export interface McpCatalogResponse {
+  totalTools: number;
+  demoReady: number;
+  guarded: number;
+  planned: number;
+  servers: McpServerCoverage[];
+}
+
+export interface GoLiveResponse {
+  checks: GoLiveCheck[];
+  metrics: ObservabilityMetric[];
+  rollout: {
+    pilotUsers: number;
+    ramp: string[];
+    expectedPeakQps: string;
   };
 }
 
@@ -120,6 +144,15 @@ export function fetchBuilderPackageMarkdown() {
   });
 }
 
+export function fetchMcpCatalog() {
+  return requestJson<McpCatalogResponse>("/api/mcp/catalog");
+}
+
+export function fetchAgentSurface(sessionId: string, surface: AgentSurface) {
+  const params = new URLSearchParams({ surface });
+  return requestJson<{ response: AgentSurfaceResponse }>(`/api/sessions/${sessionId}/surface?${params.toString()}`);
+}
+
 export function fetchPantry() {
   return requestJson<{ pantry: PantryItem[]; suggestions: RestockSuggestion[] }>("/api/pantry");
 }
@@ -151,6 +184,17 @@ export function schedulePlan(sessionId: string) {
 
 export function fetchOpsStatus() {
   return requestJson<{ status: OpsStatus[] }>("/api/ops");
+}
+
+export function fetchGoLive() {
+  return requestJson<GoLiveResponse>("/api/go-live");
+}
+
+export function createSupportReport(sessionId?: string) {
+  return requestJson<{ report: IncidentReport }>("/api/support/report", {
+    method: "POST",
+    body: JSON.stringify({ sessionId }),
+  });
 }
 
 export function exportPrivacyData() {

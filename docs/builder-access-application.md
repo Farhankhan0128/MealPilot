@@ -58,11 +58,14 @@ Scale-up after staging:
 
 - OAuth 2.1 PKCE flow with HTTPS redirect URI in production.
 - Separate MCP clients for Food, Instamart, and Dineout.
+- Local 35-tool MCP coverage map aligned to Food, Instamart, and Dineout reference docs.
+- Chat and voice surface response contracts to avoid long spoken lists or exposed internal IDs.
 - Confirmation gates before `place_food_order`, Instamart checkout, or `book_table`.
 - Safe retry policy: no blind retries for non-idempotent order or booking actions.
 - 401 handling: re-run OAuth once and refresh all MCP clients.
 - 429 handling: backoff, degrade gracefully, and respect Swiggy rate limits.
 - OpenTelemetry traces with Swiggy session IDs treated as support identifiers only.
+- Support report generator for `builders@swiggy.in` with session IDs and timestamps.
 
 ## Security And Privacy Summary
 
@@ -82,7 +85,8 @@ The application will include a 2-3 minute Loom or unlisted YouTube demo showing:
 3. User asks for a weekly meal plan under budget.
 4. Agent composes Food, Instamart, and Dineout recommendations.
 5. Cart and booking actions pause for explicit confirmation.
-6. Logs show trace IDs, no raw PII, and safe error handling.
+6. Launch Center shows 35-tool coverage, chat/voice behavior, go-live gates, and observability metrics.
+7. Logs show trace IDs, no raw PII, and safe error handling.
 
 ## Primary Technical Contact
 

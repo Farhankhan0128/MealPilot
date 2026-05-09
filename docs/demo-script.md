@@ -98,7 +98,17 @@ Then mention the tested retry policy:
 - Reads and cart mutations may retry with backoff.
 - `place_food_order`, `checkout`, and `book_table` are not blindly retried.
 
-### 7. Close
+### 7. Show Launch Readiness
+
+Open the Launch Center and show:
+
+- Chat versus Voice response mode.
+- MCP Coverage showing all 35 Swiggy tools mapped across Food, Instamart, and Dineout.
+- Go-Live Gates for credentials, OAuth, confirmation, idempotency, observability, rollout, and privacy.
+- Observability metrics with traceable session IDs.
+- Support report generation with a pre-filled `builders@swiggy.in` escalation.
+
+### 8. Close
 
 Voiceover:
 

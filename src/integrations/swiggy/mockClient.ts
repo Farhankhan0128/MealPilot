@@ -161,7 +161,7 @@ export function createMockSwiggyClient(): SwiggyPlanningClient {
         confidence: lean ? 89 : 93,
         reason: "Basket covers dinner ingredients and leaves enough budget for Food and Dineout planning.",
         items,
-        toolChain: ["search_items", "get_item_details", "update_cart", "get_cart"],
+        toolChain: ["search_products", "update_cart", "get_cart"],
         confirmationAction: "checkout",
         status: "prepared",
         guardrails: ["Substitutions visible", "Checkout locked", "No payment data stored"],

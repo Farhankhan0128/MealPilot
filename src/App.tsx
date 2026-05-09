@@ -6,12 +6,15 @@ import {
   ChevronRight,
   ClipboardCheck,
   Database,
+  FileWarning,
   Gauge,
   GitBranch,
   Loader2,
   LockKeyhole,
   MapPin,
+  MessageSquare,
   Play,
+  Radio,
   RefreshCw,
   ShieldCheck,
   ShoppingBasket,
@@ -26,12 +29,16 @@ import {
   addGroupMember,
   confirmAllRecommendations,
   confirmServerRecommendation,
+  createSupportReport,
   deletePrivacyData,
   exportPrivacyData,
+  fetchAgentSurface,
   fetchBuilderPackage,
   fetchBuilderPackageMarkdown,
+  fetchGoLive,
   fetchGroupPlan,
   fetchHealth,
+  fetchMcpCatalog,
   fetchOpsStatus,
   fetchPantry,
   fetchProfile,
@@ -42,13 +49,20 @@ import {
   substituteRecommendationItem,
   updateProfile,
   type BuilderPackageResponse,
+  type GoLiveResponse,
   type HealthResponse,
+  type McpCatalogResponse,
 } from "./api/mealpilotApi";
 import { defaultUserProfile, normalizeListInput } from "./domain/profile";
 import { buildConfirmationMessage } from "./domain/safety";
 import type {
+  AgentSurface,
+  AgentSurfaceResponse,
+  GoLiveCheck,
   GroupPlan,
+  IncidentReport,
   MealPlan,
+  ObservabilityMetric,
   OpsStatus,
   PantryItem,
   Recommendation,
@@ -136,6 +150,13 @@ function App() {
   const [groupPlan, setGroupPlan] = useState<GroupPlan | null>(null);
   const [reminders, setReminders] = useState<Reminder[]>([]);
   const [opsStatus, setOpsStatus] = useState<OpsStatus[]>([]);
+  const [mcpCatalog, setMcpCatalog] = useState<McpCatalogResponse | null>(null);
+  const [surfaceMode, setSurfaceMode] = useState<AgentSurface>("chat");
+  const [agentSurface, setAgentSurface] = useState<AgentSurfaceResponse | null>(null);
+  const [goLiveChecks, setGoLiveChecks] = useState<GoLiveCheck[]>([]);
+  const [observabilityMetrics, setObservabilityMetrics] = useState<ObservabilityMetric[]>([]);
+  const [rollout, setRollout] = useState<GoLiveResponse["rollout"] | null>(null);
+  const [incidentReport, setIncidentReport] = useState<IncidentReport | null>(null);
   const [exportText, setExportText] = useState<string | null>(null);
   const [authUrl, setAuthUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -159,6 +180,10 @@ function App() {
     try {
       const response = await buildServerPlan(nextRequest);
       setPlan(response.plan);
+      void fetchAgentSurface(response.plan.id, surfaceMode)
+        .then((surfaceResponse) => setAgentSurface(surfaceResponse.response))
+        .catch(() => setAgentSurface(null));
+      void refreshLaunchCenter().catch(() => undefined);
     } catch (buildError) {
       setError(buildError instanceof Error ? buildError.message : "Unable to build MealPilot plan.");
     } finally {
@@ -186,15 +211,29 @@ function App() {
   }
 
   async function loadAdvancedWorkflows() {
-    const [pantryResponse, groupResponse, opsResponse] = await Promise.all([
+    const [pantryResponse, groupResponse, opsResponse, catalogResponse, goLiveResponse] = await Promise.all([
       fetchPantry(),
       fetchGroupPlan(),
       fetchOpsStatus(),
+      fetchMcpCatalog(),
+      fetchGoLive(),
     ]);
     setPantry(pantryResponse.pantry);
     setRestock(pantryResponse.suggestions);
     setGroupPlan(groupResponse.groupPlan);
     setOpsStatus(opsResponse.status);
+    setMcpCatalog(catalogResponse);
+    setGoLiveChecks(goLiveResponse.checks);
+    setObservabilityMetrics(goLiveResponse.metrics);
+    setRollout(goLiveResponse.rollout);
+  }
+
+  async function refreshLaunchCenter() {
+    const [catalogResponse, goLiveResponse] = await Promise.all([fetchMcpCatalog(), fetchGoLive()]);
+    setMcpCatalog(catalogResponse);
+    setGoLiveChecks(goLiveResponse.checks);
+    setObservabilityMetrics(goLiveResponse.metrics);
+    setRollout(goLiveResponse.rollout);
   }
 
   async function confirmEverything() {
@@ -204,6 +243,7 @@ function App() {
     try {
       const response = await confirmAllRecommendations(plan.id);
       setPlan(response.plan);
+      await refreshLaunchCenter();
     } catch (confirmError) {
       setError(confirmError instanceof Error ? confirmError.message : "Unable to confirm all actions.");
     } finally {
@@ -217,6 +257,7 @@ function App() {
     try {
       const response = await fetchTracking(plan.id);
       setPlan(response.plan);
+      await refreshLaunchCenter();
     } catch (trackingError) {
       setError(trackingError instanceof Error ? trackingError.message : "Unable to refresh tracking.");
     }
@@ -236,7 +277,7 @@ function App() {
     if (!plan) return;
     const response = await schedulePlan(plan.id);
     setReminders(response.reminders);
-    const opsResponse = await fetchOpsStatus();
+    const [opsResponse] = await Promise.all([fetchOpsStatus(), refreshLaunchCenter()]);
     setOpsStatus(opsResponse.status);
   }
 
@@ -258,6 +299,11 @@ function App() {
   async function exportPrivacy() {
     const response = await exportPrivacyData();
     setExportText(JSON.stringify(response, null, 2));
+  }
+
+  async function createIncidentReport() {
+    const response = await createSupportReport(plan?.id);
+    setIncidentReport(response.report);
   }
 
   async function clearPrivacyData() {
@@ -297,6 +343,7 @@ function App() {
       const response = await confirmServerRecommendation(plan.id, selectedRecommendation.id);
       setPlan(response.plan);
       setSelectedRecommendation(null);
+      await refreshLaunchCenter();
     } catch (confirmError) {
       setError(confirmError instanceof Error ? confirmError.message : "Unable to confirm action.");
     } finally {
@@ -328,6 +375,13 @@ function App() {
         );
     }
   }, []);
+
+  useEffect(() => {
+    if (!plan) return;
+    void fetchAgentSurface(plan.id, surfaceMode)
+      .then((response) => setAgentSurface(response.response))
+      .catch(() => setAgentSurface(null));
+  }, [plan?.id, surfaceMode]);
 
   return (
     <main className="app-shell">
@@ -570,6 +624,17 @@ function App() {
                 onAddGroupMember={() => void addDemoGroupMember()}
                 onExportPrivacy={() => void exportPrivacy()}
                 onClearPrivacy={() => void clearPrivacyData()}
+              />
+              <LaunchCenterPanel
+                catalog={mcpCatalog}
+                surfaceMode={surfaceMode}
+                agentSurface={agentSurface}
+                goLiveChecks={goLiveChecks}
+                observabilityMetrics={observabilityMetrics}
+                rollout={rollout}
+                incidentReport={incidentReport}
+                onSurfaceModeChange={setSurfaceMode}
+                onCreateReport={() => void createIncidentReport()}
               />
             </section>
           </>
@@ -876,6 +941,150 @@ function AdvancedWorkflowPanel({
       </div>
 
       {exportText ? <pre className="export-preview">{exportText.slice(0, 1400)}</pre> : null}
+    </section>
+  );
+}
+
+function LaunchCenterPanel({
+  catalog,
+  surfaceMode,
+  agentSurface,
+  goLiveChecks,
+  observabilityMetrics,
+  rollout,
+  incidentReport,
+  onSurfaceModeChange,
+  onCreateReport,
+}: {
+  catalog: McpCatalogResponse | null;
+  surfaceMode: AgentSurface;
+  agentSurface: AgentSurfaceResponse | null;
+  goLiveChecks: GoLiveCheck[];
+  observabilityMetrics: ObservabilityMetric[];
+  rollout: GoLiveResponse["rollout"] | null;
+  incidentReport: IncidentReport | null;
+  onSurfaceModeChange: (surface: AgentSurface) => void;
+  onCreateReport: () => void;
+}) {
+  return (
+    <section className="analysis-panel launch-panel">
+      <div className="section-heading">
+        <Radio aria-hidden="true" />
+        <h2>Launch Center</h2>
+      </div>
+
+      <div className="launch-grid">
+        <article className="surface-card">
+          <div className="mini-heading">
+            <MessageSquare aria-hidden="true" />
+            <strong>Agent Surface</strong>
+          </div>
+          <div className="segmented-control" aria-label="Agent surface mode">
+            <button
+              type="button"
+              className={surfaceMode === "chat" ? "active" : ""}
+              onClick={() => onSurfaceModeChange("chat")}
+            >
+              Chat
+            </button>
+            <button
+              type="button"
+              className={surfaceMode === "voice" ? "active" : ""}
+              onClick={() => onSurfaceModeChange("voice")}
+            >
+              Voice
+            </button>
+          </div>
+          <strong>{agentSurface?.headline ?? "Run a plan to generate response contracts."}</strong>
+          <p>{agentSurface?.shortSummary ?? "MealPilot will shape different outputs for rich cards and spoken UX."}</p>
+          <ul>
+            {(agentSurface?.constraints ?? []).map((constraint) => (
+              <li key={constraint}>{constraint}</li>
+            ))}
+          </ul>
+        </article>
+
+        <article>
+          <div className="mini-heading">
+            <Database aria-hidden="true" />
+            <strong>MCP Coverage</strong>
+          </div>
+          <span>
+            {catalog
+              ? `${catalog.demoReady}/${catalog.totalTools} demo-ready, ${catalog.guarded} guarded`
+              : "Loading coverage"}
+          </span>
+          <div className="coverage-stack">
+            {catalog?.servers.map((server) => (
+              <div key={server.server}>
+                <strong>{serverLabel(server.server)}</strong>
+                <span>
+                  {server.demoReady}/{server.totalTools} ready
+                </span>
+              </div>
+            ))}
+          </div>
+        </article>
+
+        <article>
+          <div className="mini-heading">
+            <ShieldCheck aria-hidden="true" />
+            <strong>Go-Live Gates</strong>
+          </div>
+          <ul className="compact-status-list">
+            {goLiveChecks.slice(0, 5).map((check) => (
+              <li key={check.id} data-status={check.status}>
+                <span>{check.label}</span>
+                <strong>{check.status.replace("_", " ")}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article>
+          <div className="mini-heading">
+            <Activity aria-hidden="true" />
+            <strong>Observability</strong>
+          </div>
+          <ul className="compact-status-list">
+            {observabilityMetrics.slice(0, 4).map((metric) => (
+              <li key={metric.id} data-status={metric.status}>
+                <span>{metric.label}</span>
+                <strong>{metric.value}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article>
+          <div className="mini-heading">
+            <Gauge aria-hidden="true" />
+            <strong>Rollout</strong>
+          </div>
+          <span>{rollout ? `${rollout.pilotUsers} pilot users, ${rollout.expectedPeakQps}` : "Pilot plan loading"}</span>
+          <ol>
+            {(rollout?.ramp ?? []).map((step) => (
+              <li key={step}>{step}</li>
+            ))}
+          </ol>
+        </article>
+
+        <article>
+          <div className="mini-heading">
+            <FileWarning aria-hidden="true" />
+            <strong>Support Report</strong>
+          </div>
+          <p>{incidentReport?.summary ?? "Generate a Swiggy-ready support report with session ids and next steps."}</p>
+          <button type="button" onClick={onCreateReport}>
+            Generate report
+          </button>
+          {incidentReport ? (
+            <a className="support-link" href={incidentReport.mailto}>
+              Email builders@swiggy.in
+            </a>
+          ) : null}
+        </article>
+      </div>
     </section>
   );
 }
