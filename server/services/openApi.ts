@@ -255,6 +255,30 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-staging-replay": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Credentialed Staging Replay Center",
+          responses: {
+            "200": {
+              description:
+                "Token-aware staging replay dashboard with safe read/support probes, dry-run evidence, blocked commercial actions, wave readiness, server readiness, replay commands, redaction assertions, and builders@swiggy.in handoff packet",
+            },
+          },
+        },
+      },
+      "/api/swiggy-staging-replay/run": {
+        post: {
+          tags: ["Builder Access"],
+          summary: "Execute a safe Swiggy staging replay probe",
+          responses: {
+            "200": {
+              description:
+                "Runs an allowlisted read/tracking/support replay through local mock or credentialed Swiggy staging, fails closed without bearer token, blocks commercial tools, and returns response hash plus redaction telemetry",
+            },
+          },
+        },
+      },
       "/api/mcp/commercial-action-guard": {
         get: {
           tags: ["Builder Access"],

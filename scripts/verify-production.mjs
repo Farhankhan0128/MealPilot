@@ -318,6 +318,12 @@ assert(
   "OpenAPI private pilot control room is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-staging-replay"]?.get?.summary?.includes("Staging Replay") &&
+    openApi.paths["/api/swiggy-staging-replay/run"]?.post?.summary?.includes("safe Swiggy staging replay") &&
+    openApi.paths["/api/swiggy-staging-replay/run"]?.post?.responses?.["200"]?.description?.includes("blocks commercial"),
+  "OpenAPI staging replay center is missing",
+);
+assert(
   openApi.paths["/api/mcp/commercial-action-guard"].get.summary.includes("commercial action"),
   "OpenAPI commercial action guard is missing",
 );
@@ -2191,7 +2197,7 @@ const reviewerArtifactVault = await request("/api/reviewer-artifact-vault");
 assert(reviewerArtifactVault.reviewerArtifactVault.score >= 90, "reviewer artifact vault score is below target");
 assert(reviewerArtifactVault.reviewerArtifactVault.totalArtifacts >= 30, "reviewer artifact vault artifacts are incomplete");
 assert(reviewerArtifactVault.reviewerArtifactVault.readyArtifacts >= 30, "reviewer artifact vault ready artifacts are incomplete");
-assert(reviewerArtifactVault.reviewerArtifactVault.totalScreenshotTargets === 16, "reviewer artifact vault screenshot targets are incomplete");
+assert(reviewerArtifactVault.reviewerArtifactVault.totalScreenshotTargets === 17, "reviewer artifact vault screenshot targets are incomplete");
 assert(reviewerArtifactVault.reviewerArtifactVault.readyScreenshotTargets >= 5, "reviewer artifact vault ready screenshots are incomplete");
 assert(reviewerArtifactVault.reviewerArtifactVault.totalCommands === 7, "reviewer artifact vault commands are incomplete");
 assert(reviewerArtifactVault.reviewerArtifactVault.readyCommands >= 6, "reviewer artifact vault ready commands are incomplete");
@@ -2358,6 +2364,17 @@ assert(
   "reviewer artifact vault private pilot control room artifact is missing",
 );
 assert(
+  reviewerArtifactVault.reviewerArtifactVault.artifactSections.some((section) =>
+    section.artifacts.some(
+      (artifact) =>
+        artifact.id === "staging_replay_center" &&
+        artifact.label === "Swiggy Staging Replay Center" &&
+        artifact.path === "/api/swiggy-staging-replay",
+    ),
+  ),
+  "reviewer artifact vault staging replay center artifact is missing",
+);
+assert(
   reviewerArtifactVault.reviewerArtifactVault.screenshotTargets.some(
     (target) =>
       target.id === "luxury_workspace_card" &&
@@ -2410,6 +2427,15 @@ assert(
       target.status === "ready",
   ),
   "reviewer artifact vault private pilot screenshot target is missing",
+);
+assert(
+  reviewerArtifactVault.reviewerArtifactVault.screenshotTargets.some(
+    (target) =>
+      target.id === "staging_replay_card" &&
+      target.selector === ".staging-replay-card" &&
+      target.status === "ready",
+  ),
+  "reviewer artifact vault staging replay screenshot target is missing",
 );
 assert(
   reviewerArtifactVault.reviewerArtifactVault.screenshotTargets.some(
@@ -2512,8 +2538,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 62, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 62, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 63, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 63, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -2825,6 +2851,12 @@ assert(
     group.targets.some((target) => target.id === "private_pilot_control_room" && target.selector === ".private-pilot-card"),
   ),
   "visual QA private pilot control room target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some((target) => target.id === "staging_replay_card" && target.selector === ".staging-replay-card"),
+  ),
+  "visual QA staging replay target is missing",
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
@@ -4770,6 +4802,66 @@ assert(
   "private pilot participant external gate is missing",
 );
 
+const stagingReplay = await request("/api/swiggy-staging-replay");
+assert(stagingReplay.stagingReplay.score >= 80, "staging replay score is below target");
+assert(stagingReplay.stagingReplay.mode === "mock", "staging replay mock mode is missing");
+assert(stagingReplay.stagingReplay.activeTransport === "local_mock", "staging replay local transport is missing");
+assert(stagingReplay.stagingReplay.totals.totalTools === 35, "staging replay tool coverage is incomplete");
+assert(stagingReplay.stagingReplay.totals.safeReplayTools >= 18, "staging replay safe tool coverage is incomplete");
+assert(
+  stagingReplay.stagingReplay.totals.dryRunTools === stagingReplay.stagingReplay.totals.safeReplayTools &&
+    stagingReplay.stagingReplay.totals.commercialTools === 3 &&
+    stagingReplay.stagingReplay.totals.supportTools === 3,
+  "staging replay dry-run, commercial, or support totals are incomplete",
+);
+assert(
+  ["read_tools", "cart_mutations", "commercial_actions", "support_reporting"].every((id) =>
+    stagingReplay.stagingReplay.waveReadiness.some((wave) => wave.id === id),
+  ),
+  "staging replay wave readiness is incomplete",
+);
+assert(
+  stagingReplay.stagingReplay.serverReadiness.some(
+    (server) => server.server === "food" && server.status === "dry_run" && server.firstSafeTool === "get_addresses",
+  ),
+  "staging replay Food first safe tool is missing",
+);
+assert(
+  stagingReplay.stagingReplay.replayProbes.some(
+    (probe) => probe.server === "food" && probe.tool === "get_addresses" && probe.routeClass === "read" && probe.status === "dry_run",
+  ),
+  "staging replay get_addresses probe is missing",
+);
+assert(
+  stagingReplay.stagingReplay.handoffPacket.to === "builders@swiggy.in" &&
+    stagingReplay.stagingReplay.externalGates.some((gate) => gate.includes("staging OAuth credentials")),
+  "staging replay handoff or credential gates are missing",
+);
+
+const stagingReplayExecution = await request("/api/swiggy-staging-replay/run", {
+  method: "POST",
+  body: JSON.stringify({ server: "food", tool: "get_addresses" }),
+});
+assert(stagingReplayExecution.replayExecution.decision === "executed_mock", "staging replay safe probe did not execute in mock");
+assert(stagingReplayExecution.replayExecution.responseAvailable, "staging replay safe probe response is missing");
+assert(/^[a-f0-9]{16}$/.test(stagingReplayExecution.replayExecution.responseHash), "staging replay response hash is invalid");
+assert(
+  stagingReplayExecution.replayExecution.telemetry.some(
+    (field) => field.field === "raw_token_logged" && field.value === "false",
+  ),
+  "staging replay token redaction telemetry is missing",
+);
+
+const stagingReplayBlocked = await request("/api/swiggy-staging-replay/run", {
+  method: "POST",
+  body: JSON.stringify({ server: "food", tool: "place_food_order" }),
+});
+assert(
+  stagingReplayBlocked.replayExecution.decision === "blocked_unsafe_tool" &&
+    stagingReplayBlocked.replayExecution.responseAvailable === false,
+  "staging replay commercial action block is missing",
+);
+
 const commercialActionGuard = await request("/api/mcp/commercial-action-guard");
 assert(commercialActionGuard.commercialActionGuard.score >= 95, "commercial action guard score is below target");
 assert(commercialActionGuard.commercialActionGuard.totalLanes === 4, "commercial action guard lanes are incomplete");
@@ -6286,7 +6378,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 62, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 63, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -6300,7 +6392,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("62")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("63")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -6399,6 +6491,7 @@ assert(
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Widget Experience Composer") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Agent Experience Benchmark") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Private Pilot Control Room") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Staging Replay Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Commercial Action Guard") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Staging Cutover Rehearsal") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Staging Credential Drill Center") &&
@@ -6654,6 +6747,10 @@ assert(
   "launch bundle private pilot control room handoff link is missing",
 );
 assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-staging-replay"),
+  "launch bundle staging replay handoff link is missing",
+);
+assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/mcp/commercial-action-guard"),
   "launch bundle commercial action guard handoff link is missing",
 );
@@ -6848,6 +6945,10 @@ console.log(
       privatePilotScore: privatePilot.privatePilot.score,
       privatePilotCohorts: privatePilot.privatePilot.totals.cohorts,
       privatePilotTargetUsers: privatePilot.privatePilot.totals.targetUsers,
+      stagingReplayScore: stagingReplay.stagingReplay.score,
+      stagingReplayDryRunTools: stagingReplay.stagingReplay.totals.dryRunTools,
+      stagingReplayExecutionDecision: stagingReplayExecution.replayExecution.decision,
+      stagingReplayBlockedDecision: stagingReplayBlocked.replayExecution.decision,
       commercialActionGuardScore: commercialActionGuard.commercialActionGuard.score,
       commercialActionLanes: commercialActionGuard.commercialActionGuard.totalLanes,
       capabilityRegistryScore: capabilityRegistry.registry.score,

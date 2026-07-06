@@ -3985,6 +3985,104 @@ export interface StagingCertificationMatrix {
   externalGates: string[];
 }
 
+export type SwiggyStagingReplayStatus = "ready" | "dry_run" | "blocked" | "swiggy_gate";
+
+export type SwiggyStagingReplayDecision =
+  | "executed_mock"
+  | "executed_staging"
+  | "blocked_missing_token"
+  | "blocked_unsafe_tool";
+
+export interface SwiggyStagingReplayProbe {
+  id: string;
+  server: SwiggyServer;
+  tool: string;
+  waveId: StagingCertificationWaveId;
+  routeClass: StagingCertificationTool["routeClass"];
+  status: SwiggyStagingReplayStatus;
+  dryRunRequest: {
+    jsonrpc: "2.0";
+    method: "tools/call";
+    params: {
+      name: string;
+      arguments: Record<string, unknown>;
+    };
+  };
+  expectedEvidence: string;
+  proofLinks: string[];
+}
+
+export interface SwiggyStagingReplayWave {
+  id: StagingCertificationWaveId;
+  label: string;
+  status: SwiggyStagingReplayStatus;
+  tools: number;
+  executableNow: number;
+  nextAction: string;
+}
+
+export interface SwiggyStagingReplayCenter {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  mode: McpGatewayStatus["mode"];
+  activeTransport: McpGatewayStatus["activeTransport"];
+  totals: {
+    waves: number;
+    totalTools: number;
+    dryRunTools: number;
+    credentialedTools: number;
+    blockedLiveTools: number;
+    safeReplayTools: number;
+    commercialTools: number;
+    supportTools: number;
+    servers: number;
+    routableServers: number;
+  };
+  waveReadiness: SwiggyStagingReplayWave[];
+  serverReadiness: Array<{
+    server: SwiggyServer;
+    endpoint: string;
+    status: SwiggyStagingReplayStatus;
+    tools: number;
+    firstSafeTool: string;
+    nextAction: string;
+  }>;
+  replayProbes: SwiggyStagingReplayProbe[];
+  replayCommands: Array<{ id: string; command: string; proves: string }>;
+  handoffPacket: {
+    to: string;
+    subject: string;
+    body: string;
+    proofLinks: string[];
+  };
+  assertions: string[];
+  externalGates: string[];
+}
+
+export interface SwiggyStagingReplayExecution {
+  generatedAt: string;
+  decision: SwiggyStagingReplayDecision;
+  server: SwiggyServer;
+  tool: string;
+  waveId?: StagingCertificationWaveId;
+  routeClass?: StagingCertificationTool["routeClass"];
+  request: {
+    jsonrpc: "2.0";
+    method: "tools/call";
+    params: {
+      name: string;
+      arguments: Record<string, unknown>;
+    };
+  };
+  responseHash?: string;
+  responseAvailable: boolean;
+  latencyMs: number;
+  telemetry: Array<{ field: string; value: string; redaction: string }>;
+  nextAction: string;
+  assertions: string[];
+}
+
 export interface AgentSurfaceResponse {
   surface: AgentSurface;
   headline: string;

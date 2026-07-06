@@ -143,6 +143,8 @@ import type {
   SwiggyStagingCredentialDrillReport,
   SwiggyStagingSeedSmokeCenter,
   SwiggyStagingCutoverRehearsal,
+  SwiggyStagingReplayCenter,
+  SwiggyStagingReplayExecution,
   SwiggyLiveSignalCalibrationReport,
   SwiggySurfaceContractRehearsal,
   SwiggySurfaceRehearsalTarget,
@@ -368,6 +370,21 @@ export function fetchSwiggyAgentExperienceBenchmark() {
 
 export function fetchSwiggyPrivatePilotControlRoom() {
   return requestJson<{ privatePilot: SwiggyPrivatePilotControlRoom }>("/api/swiggy-private-pilot-control-room");
+}
+
+export function fetchSwiggyStagingReplayCenter() {
+  return requestJson<{ stagingReplay: SwiggyStagingReplayCenter }>("/api/swiggy-staging-replay");
+}
+
+export function runSwiggyStagingReplay(input: {
+  server: "food" | "instamart" | "dineout";
+  tool: string;
+  arguments?: Record<string, unknown>;
+}) {
+  return requestJson<{ replayExecution: SwiggyStagingReplayExecution }>("/api/swiggy-staging-replay/run", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
 }
 
 export function fetchCommercialActionGuard() {

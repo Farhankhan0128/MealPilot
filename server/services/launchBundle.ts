@@ -648,6 +648,15 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
         "Turns benchmark journeys into private-pilot cohorts, consent artifacts, telemetry metrics, support paths, traffic gates, and staging credential handoff actions.",
     },
     {
+      id: "staging_replay_center",
+      label: "Swiggy Staging Replay Center",
+      path: "/api/swiggy-staging-replay",
+      category: "runtime",
+      status: "ready",
+      evidence:
+        "Executes allowlisted safe replay probes in mock or credentialed staging mode, blocks commercial tools, records response hashes, and prepares builders@swiggy.in handoff proof.",
+    },
+    {
       id: "commercial_action_guard",
       label: "Commercial Action Guard",
       path: "/api/mcp/commercial-action-guard",
@@ -1165,6 +1174,7 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- Swiggy Widget Experience Composer: /api/swiggy-widget-experience-composer",
     "- Swiggy Agent Experience Benchmark: /api/swiggy-agent-experience-benchmark",
     "- Swiggy Private Pilot Control Room: /api/swiggy-private-pilot-control-room",
+    "- Swiggy Staging Replay Center: /api/swiggy-staging-replay",
     "- Commercial Action Guard: /api/mcp/commercial-action-guard",
     "- Staging Cutover Rehearsal: /api/mcp/staging-cutover",
     "- Swiggy Staging Credential Drill Center: /api/swiggy-staging-credential-drill",

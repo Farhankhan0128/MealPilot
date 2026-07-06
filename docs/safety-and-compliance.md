@@ -122,6 +122,8 @@ The `/api/premium-use-case-studio` endpoint turns product innovation into audita
 
 The `/api/staging-certification-matrix` endpoint turns launch safety into staged evidence. It assigns all 35 official Swiggy tools to credentialed smoke waves, keeps `place_food_order`, `checkout`, and `book_table` behind non-blind retry evidence, and preserves staging credentials, 48-hour soak, and production approval as external gates.
 
+The `/api/swiggy-staging-replay` and `/api/swiggy-staging-replay/run` endpoints enforce the same boundary at execution time. Only allowlisted read, tracking, cart-read, and `report_error` probes can run; mock responses are labelled dry-run; non-mock mode requires OAuth bearer state; commercial actions are blocked; and responses are represented with hashes plus redaction telemetry instead of raw credential or user payload data.
+
 The `/api/swiggy-live-signal-calibration` endpoint prevents local personalization fixtures from being mistaken for live Swiggy data. It requires read-only Food, Instamart, and Dineout staging probes, privacy redaction, drift thresholds, fallback rules, and 48-hour green soak before real user order, pantry, location, booking, discovery, or offer signals can influence production claims.
 
 The `/api/sessions/:sessionId/staging-transcript` endpoint exports one session as Swiggy-ready JSONL and Markdown with request IDs, session IDs, hashed user identifiers, certification-wave mapping, redaction manifest, and support envelope. It is designed to be safe to attach to `builders@swiggy.in` because raw tokens, payment credentials, full addresses, phone, email, and full tool payloads are excluded.

@@ -63,6 +63,7 @@ Planned MCP servers:
 - Swiggy Widget Experience Composer that turns those runtime surfaces into premium desktop, tablet, mobile, voice, and reviewer placements with gallery states, event-handler safety gates, and hosted-widget activation runbooks.
 - Swiggy Agent Experience Benchmark at `/api/swiggy-agent-experience-benchmark` that scores best-in-class Food, Instamart, Dineout, voice, widget, support, route-optimization, safety, and innovation journeys against UX acceptance criteria and competitive moats.
 - Swiggy Private Pilot Control Room at `/api/swiggy-private-pilot-control-room` that turns benchmark journeys into real-user cohorts, consent artifacts, success metrics, telemetry targets, support paths, operator runbooks, and Swiggy staging replay gates.
+- Swiggy Staging Replay Center at `/api/swiggy-staging-replay` and `/api/swiggy-staging-replay/run` that executes allowlisted safe replay probes in mock or credentialed staging mode, returns response hashes and redaction telemetry, and blocks commercial tools until seeded staging gates pass.
 - Commercial Action Guard that locks Food `place_food_order`, Instamart `checkout`, Dineout `book_table`, and combined journeys behind fresh reads, explicit confirmations, check-then-retry drills, telemetry, and support packets.
 - Swiggy Visual Dish Capture Center at `/api/swiggy-visual-dish-capture` plus `/api/swiggy-visual-dish-capture/analyze` that turns a dish photo, menu screenshot, pantry image, or chat image caption into Food menu, Instamart ingredient, Dineout discovery, or combined route plans with no raw-image retention and confirmation-first safety.
 - Swiggy Voice Commerce Rehearsal Center at `/api/swiggy-voice-commerce-center` plus `/api/swiggy-voice-commerce-center/rehearse` that turns spoken Food, Instamart, Dineout, and combined requests into short TTS scripts, visual card fallbacks, no-raw-id readbacks, no-raw-audio telemetry, and confirmation-locked route plans.
@@ -335,6 +336,8 @@ GET  /api/mcp/widget-runtime
 GET  /api/swiggy-widget-experience-composer
 GET  /api/swiggy-agent-experience-benchmark
 GET  /api/swiggy-private-pilot-control-room
+GET  /api/swiggy-staging-replay
+POST /api/swiggy-staging-replay/run
 GET  /api/mcp/backpressure-governor
 GET  /api/mcp/handshake-doctor
 GET  /api/swiggy-handshake-doctor
@@ -613,6 +616,8 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 `GET /api/swiggy-route-optimizer` is the official-recipe optimization ledger: it compares baseline and optimized Food, Instamart, Dineout, and combined routes, exposes optimizer profiles, explicit parallel read batches, cross-server handoffs, cache windows, retry ownership, redaction rules, call savings, and commercial confirmation boundaries.
 
 `GET /api/staging-certification-matrix` is the credentialed launch map: all 35 Swiggy tools assigned to staging smoke waves, OAuth/DCR prerequisites, 48-hour soak requirements, telemetry/redaction expectations, rollback policy, and production-promotion gates.
+
+`GET /api/swiggy-staging-replay` and `POST /api/swiggy-staging-replay/run` are the credentialed replay bridge: local mock calls are marked dry-run, live calls require OAuth bearer state, response bodies are reduced to hashes and redaction telemetry, and `place_food_order`, `checkout`, and `book_table` stay blocked until Swiggy staging approval and seeded data are ready.
 
 `GET /api/sessions/:sessionId/staging-transcript` exports a Swiggy-ready transcript for one plan session: JSONL log lines, Markdown replay, request IDs, hashed user id, redaction manifest, non-blind retry evidence, support envelope, and certification-wave links.
 

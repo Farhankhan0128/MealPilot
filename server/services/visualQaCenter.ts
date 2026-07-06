@@ -751,6 +751,17 @@ const targetGroups = [
         "artifacts/visual-qa/private-pilot-control-room.png",
       ),
       target(
+        "staging_replay_card",
+        "Swiggy Staging Replay Center",
+        "/",
+        ".staging-replay-card",
+        "desktop",
+        1280,
+        900,
+        "Credentialed replay score, safe probe count, dry-run/live counts, blocked commercial tools, and server readiness are visible.",
+        "artifacts/visual-qa/staging-replay-card.png",
+      ),
+      target(
         "food_cart_widget_fallback",
         "Food cart fallback",
         "/",

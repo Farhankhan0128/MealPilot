@@ -103,6 +103,7 @@ The verifier creates a plan, checks 35-tool coverage, verifies Website Atlas cov
 The verifier also validates Commercial Action Guard for Food order placement, Instamart checkout, Dineout booking, combined-flow confirmation locks, non-blind retry drills, telemetry, and support packet fields.
 
 The verifier also validates `/api/swiggy-private-pilot-control-room` for real-user cohort readiness, assigned benchmark journeys, consent artifact counts, telemetry fields, operator runbooks, support paths, Swiggy staging replay gates, and copy-ready `builders@swiggy.in` handoff evidence.
+The verifier also validates `/api/swiggy-staging-replay` and `/api/swiggy-staging-replay/run` for safe replay probes, dry-run versus credentialed execution state, response hashes, redaction telemetry, missing-token fail-closed behavior, commercial-action blocking, and Swiggy handoff copy.
 
 The verifier also validates `/api/swiggy-route-optimizer` for official source links, call-saving rollups, optimizer profiles, explicit parallel batches, commercial-action exclusion from parallel batches, cross-server handoff redaction, and source-linked route assertions.
 
@@ -274,6 +275,8 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/premium-use-case-studio`
 - `GET /api/premium-concierge-itinerary`
 - `GET /api/staging-certification-matrix`
+- `GET /api/swiggy-staging-replay`
+- `POST /api/swiggy-staging-replay/run`
 - `GET /api/sessions/:sessionId/staging-transcript`
 - `GET /api/mcp/tool-lab`
 - `GET /api/mcp/tool-contract-matrix`
@@ -505,6 +508,7 @@ The test suite checks that:
 - `/api/plan`, `/api/confirm`, and `/api/mcp/:server` work end to end.
 - MCP Gateway reports mock/staging/production cutover status and staging calls fail closed without a bearer token.
 - Staging Cutover Rehearsal records first real MCP probes, OAuth and token gates, fail-closed behavior, support packet fields, retry branches, and 48-hour promotion checks.
+- Swiggy Staging Replay Center turns the staging certification matrix into executable safe probes: mock mode is labelled dry-run, staging and production require OAuth bearer state, commercial tools are blocked, and responses are represented by hashes plus redaction telemetry.
 - Website Atlas covers global header, docs subnav, footer groups, production access page, launch blog, rendered-page crawl evidence, page modules, CTAs, resource links, and legal links.
 - Swiggy Builders Page Mesh Auditor fetches every non-external Website Atlas page live and reconciles page reachability, anchor counts, module signals, CTA matches, and safe-origin drift.
 - Swiggy Builders Module Intelligence Center maps each Website Atlas module into owner, product promise, proof links, route optimization, risk boundary, module journeys, and external gates.

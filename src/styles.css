@@ -1079,6 +1079,10 @@ select:focus {
   grid-column: span 2;
 }
 
+.staging-replay-card {
+  grid-column: span 2;
+}
+
 .commercial-guard-card {
   grid-column: span 2;
 }
@@ -1404,6 +1408,10 @@ select:focus {
   grid-column: span 2;
 }
 
+.staging-replay-card {
+  grid-column: span 2;
+}
+
 .brand-compliance-card {
   grid-column: span 2;
 }
@@ -1576,6 +1584,7 @@ select:focus {
 .widget-experience-grid,
 .agent-benchmark-grid,
 .private-pilot-grid,
+  .staging-replay-grid,
   .commercial-guard-grid,
   .staging-cutover-grid,
   .staging-credential-drill-grid,
@@ -1640,6 +1649,7 @@ select:focus {
 .widget-experience-grid div,
 .agent-benchmark-grid div,
 .private-pilot-grid div,
+  .staging-replay-grid div,
   .commercial-guard-grid div,
   .staging-cutover-grid div,
   .staging-credential-drill-grid div,
@@ -1705,6 +1715,7 @@ select:focus {
 .widget-experience-grid strong,
 .agent-benchmark-grid strong,
 .private-pilot-grid strong,
+  .staging-replay-grid strong,
   .commercial-guard-grid strong,
   .staging-cutover-grid strong,
   .staging-credential-drill-grid strong,
@@ -1769,6 +1780,7 @@ select:focus {
 .widget-experience-grid span,
 .agent-benchmark-grid span,
 .private-pilot-grid span,
+  .staging-replay-grid span,
   .commercial-guard-grid span,
   .staging-cutover-grid span,
   .staging-credential-drill-grid span,
@@ -2509,6 +2521,7 @@ select:focus {
   .widget-experience-card,
   .agent-benchmark-card,
   .private-pilot-card,
+  .staging-replay-card,
   .commercial-guard-card,
   .staging-cutover-card,
   .staging-credential-drill-card,
@@ -2650,6 +2663,7 @@ select:focus {
   .widget-experience-grid,
   .agent-benchmark-grid,
   .private-pilot-grid,
+  .staging-replay-grid,
   .commercial-guard-grid,
   .staging-cutover-grid,
   .staging-credential-drill-grid,
@@ -3277,6 +3291,7 @@ select:focus {
 .widget-experience-card,
 .agent-benchmark-card,
 .private-pilot-card,
+.staging-replay-card,
 .commercial-guard-card,
 .staging-cutover-card,
 .staging-credential-drill-card,
@@ -3387,6 +3402,7 @@ select:focus {
 .widget-experience-grid div,
 .agent-benchmark-grid div,
 .private-pilot-grid div,
+.staging-replay-grid div,
 .commercial-guard-grid div,
 .staging-cutover-grid div,
 .staging-credential-drill-grid div,
@@ -3610,6 +3626,7 @@ select:focus {
   .widget-experience-card,
   .agent-benchmark-card,
   .private-pilot-card,
+  .staging-replay-card,
   .commercial-guard-card,
   .staging-cutover-card,
   .tool-lab-card,
@@ -3806,6 +3823,7 @@ select:focus {
   .widget-experience-grid,
   .agent-benchmark-grid,
   .private-pilot-grid,
+  .staging-replay-grid,
   .commercial-guard-grid,
   .voice-commerce-grid,
   .quality-loop-grid,
@@ -3860,6 +3878,7 @@ select:focus {
   .widget-experience-card,
   .agent-benchmark-card,
   .private-pilot-card,
+  .staging-replay-card,
   .commercial-guard-card,
   .staging-cutover-card,
   .tool-lab-card,

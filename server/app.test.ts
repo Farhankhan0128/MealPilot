@@ -154,6 +154,9 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/swiggy-widget-experience-composer"].get.summary).toContain("Widget Experience Composer");
     expect(openApi.body.paths["/api/swiggy-agent-experience-benchmark"].get.summary).toContain("Agent Experience Benchmark");
     expect(openApi.body.paths["/api/swiggy-private-pilot-control-room"].get.summary).toContain("Private Pilot Control Room");
+    expect(openApi.body.paths["/api/swiggy-staging-replay"].get.summary).toContain("Staging Replay");
+    expect(openApi.body.paths["/api/swiggy-staging-replay/run"].post.summary).toContain("safe Swiggy staging replay");
+    expect(openApi.body.paths["/api/swiggy-staging-replay/run"].post.responses["200"].description).toContain("blocks commercial");
     expect(openApi.body.paths["/api/mcp/commercial-action-guard"].get.summary).toContain("commercial action");
     expect(openApi.body.paths["/api/mcp/backpressure-governor"].get.summary).toContain("backpressure");
     expect(openApi.body.paths["/api/mcp/staging-cutover"].get.summary).toContain("staging cutover");
@@ -1572,7 +1575,7 @@ describe("MealPilot API", () => {
     expect(packet.totals.formFields).toBeGreaterThanOrEqual(10);
     expect(packet.totals.requiredAttachments).toBeGreaterThanOrEqual(10);
     expect(packet.totals.launchArtifacts).toBeGreaterThanOrEqual(50);
-    expect(packet.totals.visualTargets).toBe(62);
+    expect(packet.totals.visualTargets).toBe(63);
     expect(packet.files.map((file: { id: string }) => file.id)).toEqual(
       expect.arrayContaining(["packet_json", "packet_markdown", "visual_report", "production_summary"]),
     );
@@ -1584,7 +1587,7 @@ describe("MealPilot API", () => {
     ).toBe(true);
     expect(
       packet.commands.some(
-        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("62"),
+        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("63"),
       ),
     ).toBe(true);
     expect(packet.copyBlocks.formFields).toContain("Redirect URI(s)");
@@ -2686,7 +2689,7 @@ describe("MealPilot API", () => {
     expect(vault.score).toBeGreaterThanOrEqual(90);
     expect(vault.totalArtifacts).toBeGreaterThanOrEqual(30);
     expect(vault.readyArtifacts).toBeGreaterThanOrEqual(30);
-    expect(vault.totalScreenshotTargets).toBe(16);
+    expect(vault.totalScreenshotTargets).toBe(17);
     expect(vault.readyScreenshotTargets).toBeGreaterThanOrEqual(5);
     expect(vault.totalCommands).toBe(7);
     expect(vault.readyCommands).toBeGreaterThanOrEqual(6);
@@ -2845,6 +2848,16 @@ describe("MealPilot API", () => {
       ),
     ).toBe(true);
     expect(
+      vault.artifactSections.some((section: { artifacts: Array<{ id: string; label: string; path: string }> }) =>
+        section.artifacts.some(
+          (artifact) =>
+            artifact.id === "staging_replay_center" &&
+            artifact.label === "Swiggy Staging Replay Center" &&
+            artifact.path === "/api/swiggy-staging-replay",
+        ),
+      ),
+    ).toBe(true);
+    expect(
       vault.screenshotTargets.some(
         (target: { id: string; selector: string; status: string }) =>
           target.id === "luxury_workspace_card" &&
@@ -2970,6 +2983,14 @@ describe("MealPilot API", () => {
       ),
     ).toBe(true);
     expect(
+      vault.screenshotTargets.some(
+        (target: { id: string; selector: string; status: string }) =>
+          target.id === "staging_replay_card" &&
+          target.selector === ".staging-replay-card" &&
+          target.status === "ready",
+      ),
+    ).toBe(true);
+    expect(
       vault.artifactSections.some((section: { artifacts: Array<{ id: string; path: string }> }) =>
         section.artifacts.some(
           (artifact) =>
@@ -2993,8 +3014,8 @@ describe("MealPilot API", () => {
     const visualQa = response.body.visualQa;
 
     expect(visualQa.score).toBe(100);
-    expect(visualQa.totalTargets).toBe(62);
-    expect(visualQa.readyTargets).toBe(62);
+    expect(visualQa.totalTargets).toBe(63);
+    expect(visualQa.readyTargets).toBe(63);
     expect(visualQa.totalRules).toBe(7);
     expect(visualQa.readyRules).toBe(7);
     expect(visualQa.totalCommands).toBe(5);
@@ -3128,6 +3149,16 @@ describe("MealPilot API", () => {
           (target) =>
             target.id === "private_pilot_control_room" &&
             target.selector === ".private-pilot-card" &&
+            target.viewport === "desktop",
+        ),
+      ),
+    ).toBe(true);
+    expect(
+      visualQa.targetGroups.some((group: { targets: Array<{ id: string; selector: string; viewport: string }> }) =>
+        group.targets.some(
+          (target) =>
+            target.id === "staging_replay_card" &&
+            target.selector === ".staging-replay-card" &&
             target.viewport === "desktop",
         ),
       ),
@@ -4923,6 +4954,64 @@ describe("MealPilot API", () => {
     expect(pilot.externalGates.some((gate: string) => gate.includes("participant identities"))).toBe(true);
   });
 
+  it("returns and executes a credential-aware Swiggy Staging Replay Center", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/swiggy-staging-replay").expect(200);
+    const replay = response.body.stagingReplay;
+
+    expect(replay.score).toBeGreaterThanOrEqual(80);
+    expect(replay.mode).toBe("mock");
+    expect(replay.activeTransport).toBe("local_mock");
+    expect(replay.totals.totalTools).toBe(35);
+    expect(replay.totals.waves).toBeGreaterThanOrEqual(8);
+    expect(replay.totals.safeReplayTools).toBeGreaterThanOrEqual(18);
+    expect(replay.totals.dryRunTools).toBe(replay.totals.safeReplayTools);
+    expect(replay.totals.commercialTools).toBe(3);
+    expect(replay.totals.supportTools).toBe(3);
+    expect(replay.waveReadiness.map((wave: { id: string }) => wave.id)).toEqual(
+      expect.arrayContaining(["read_tools", "cart_mutations", "commercial_actions", "support_reporting"]),
+    );
+    expect(
+      replay.serverReadiness.some(
+        (server: { server: string; status: string; firstSafeTool: string }) =>
+          server.server === "food" && server.status === "dry_run" && server.firstSafeTool === "get_addresses",
+      ),
+    ).toBe(true);
+    expect(
+      replay.replayProbes.some(
+        (probe: { server: string; tool: string; routeClass: string; status: string }) =>
+          probe.server === "food" &&
+          probe.tool === "get_addresses" &&
+          probe.routeClass === "read" &&
+          probe.status === "dry_run",
+      ),
+    ).toBe(true);
+    expect(replay.handoffPacket.to).toBe("builders@swiggy.in");
+    expect(replay.externalGates.some((gate: string) => gate.includes("staging OAuth credentials"))).toBe(true);
+    expect(replay.assertions.some((assertion: string) => assertion.includes("Commercial actions remain blocked"))).toBe(true);
+
+    const executed = await request(app)
+      .post("/api/swiggy-staging-replay/run")
+      .send({ server: "food", tool: "get_addresses" })
+      .expect(200);
+    expect(executed.body.replayExecution.decision).toBe("executed_mock");
+    expect(executed.body.replayExecution.responseAvailable).toBe(true);
+    expect(executed.body.replayExecution.responseHash).toMatch(/^[a-f0-9]{16}$/);
+    expect(
+      executed.body.replayExecution.telemetry.some(
+        (field: { field: string; value: string }) => field.field === "raw_token_logged" && field.value === "false",
+      ),
+    ).toBe(true);
+
+    const blocked = await request(app)
+      .post("/api/swiggy-staging-replay/run")
+      .send({ server: "food", tool: "place_food_order" })
+      .expect(200);
+    expect(blocked.body.replayExecution.decision).toBe("blocked_unsafe_tool");
+    expect(blocked.body.replayExecution.responseAvailable).toBe(false);
+    expect(blocked.body.replayExecution.assertions.some((assertion: string) => assertion.includes("blocked"))).toBe(true);
+  });
+
   it("returns commercial action guards for confirmations and non-blind retries", async () => {
     const { app } = createMealPilotServer();
     const created = await request(app).post("/api/plan").send(planningRequest).expect(201);
@@ -6087,6 +6176,7 @@ describe("MealPilot API", () => {
         "Swiggy Widget Experience Composer",
         "Swiggy Agent Experience Benchmark",
         "Swiggy Private Pilot Control Room",
+        "Swiggy Staging Replay Center",
         "Staging Cutover Rehearsal",
         "Swiggy Staging Credential Drill Center",
         "Swiggy Live Signal Calibration Center",
@@ -6148,6 +6238,7 @@ describe("MealPilot API", () => {
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-widget-experience-composer");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-agent-experience-benchmark");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-private-pilot-control-room");
+    expect(bundle.handoffEmail.body).toContain("/api/swiggy-staging-replay");
     expect(bundle.handoffEmail.body).toContain("/api/mcp/backpressure-governor");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-load-lab");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-quota-negotiation-center");

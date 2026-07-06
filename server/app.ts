@@ -133,6 +133,10 @@ import { createPkcePair, createState } from "./services/pkce.js";
 import { buildMcpResourcePromptStudio, executeMcpResourcePrompt } from "./services/resourcePromptStudio.js";
 import { buildSwiggyStagingCredentialDrill } from "./services/stagingCredentialDrill.js";
 import { buildSwiggyStagingCutoverRehearsal } from "./services/stagingCutover.js";
+import {
+  buildSwiggyStagingReplayCenter,
+  buildSwiggyStagingReplayExecution,
+} from "./services/stagingReplayCenter.js";
 import { buildSwiggyStagingSeedSmokeCenter } from "./services/stagingSeedSmokeCenter.js";
 import { buildStagingCertificationMatrix } from "./services/stagingCertification.js";
 import { buildStagingTranscriptExport } from "./services/stagingTranscript.js";
@@ -412,6 +416,11 @@ const developerFirstCallSchema = z.object({
 });
 
 const mcpServerSchema = z.enum(["food", "instamart", "dineout"]);
+const stagingReplayRunSchema = z.object({
+  server: mcpServerSchema,
+  tool: z.string().trim().min(1).max(120),
+  arguments: z.record(z.string(), z.unknown()).default({}),
+});
 const agentSurfaceSchema = z.enum(["chat", "voice"]);
 const surfaceContractRehearsalSchema = z.object({
   sessionId: z.string().min(4),
@@ -603,6 +612,53 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
       }),
     });
   });
+
+  app.get("/api/swiggy-staging-replay", (_req, res) => {
+    const runtimeConfig = {
+      ...config,
+      swiggyAccessToken: runtimeAccessToken,
+      swiggyTokenExpiresAt: runtimeTokenExpiresAt,
+    };
+    res.json({
+      stagingReplay: buildSwiggyStagingReplayCenter({
+        config: runtimeConfig,
+        credentials: runtimeCredentials(),
+        certification: buildStagingCertificationMatrix(runtimeConfig),
+      }),
+    });
+  });
+
+  app.post(
+    "/api/swiggy-staging-replay/run",
+    asyncRoute(async (req, res) => {
+      const body = stagingReplayRunSchema.parse(req.body);
+      const runtimeConfig = {
+        ...config,
+        swiggyAccessToken: runtimeAccessToken,
+        swiggyTokenExpiresAt: runtimeTokenExpiresAt,
+      };
+      const replayExecution = await buildSwiggyStagingReplayExecution({
+        config: runtimeConfig,
+        credentials: runtimeCredentials(),
+        server: body.server,
+        tool: body.tool,
+        toolArguments: body.arguments,
+        executeTool: async (server, request) => {
+          if (runtimeConfig.swiggyMode === "mock") {
+            return handleMockJsonRpc(server, request);
+          }
+          return callConfiguredSwiggyTool({
+            config: runtimeConfig,
+            server,
+            request,
+            accessToken: runtimeAccessToken,
+          });
+        },
+      });
+
+      res.json({ replayExecution });
+    }),
+  );
 
   app.get("/api/swiggy-staging-credential-drill", (_req, res) => {
     const runtimeConfig = {

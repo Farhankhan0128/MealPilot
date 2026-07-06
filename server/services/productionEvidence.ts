@@ -286,6 +286,7 @@ export function buildReviewerProof(options: {
       { label: "Swiggy Widget Experience Composer", path: "/api/swiggy-widget-experience-composer" },
       { label: "Swiggy Agent Experience Benchmark", path: "/api/swiggy-agent-experience-benchmark" },
       { label: "Swiggy Private Pilot Control Room", path: "/api/swiggy-private-pilot-control-room" },
+      { label: "Swiggy Staging Replay Center", path: "/api/swiggy-staging-replay" },
       { label: "Staging Cutover Rehearsal", path: "/api/mcp/staging-cutover" },
       { label: "Swiggy Staging Credential Drill Center", path: "/api/swiggy-staging-credential-drill" },
       { label: "Swiggy Live Signal Calibration Center", path: "/api/swiggy-live-signal-calibration" },

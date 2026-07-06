@@ -157,6 +157,7 @@ import {
   fetchSwiggyWidgetExperienceComposer,
   fetchSwiggyAgentExperienceBenchmark,
   fetchSwiggyPrivatePilotControlRoom,
+  fetchSwiggyStagingReplayCenter,
   fetchSwiggyWidgetRuntime,
   fetchSwiggyUpstreamWatch,
   fetchSwiggyWebsiteAtlas,
@@ -311,6 +312,7 @@ import type {
   SwiggyStagingCredentialDrillReport,
   SwiggyStagingSeedSmokeCenter,
   SwiggyStagingCutoverRehearsal,
+  SwiggyStagingReplayCenter,
   SwiggyLiveSignalCalibrationReport,
   SwiggyStateOrchestratorReport,
   SwiggyToolContractMatrix,
@@ -469,6 +471,7 @@ function App() {
   const [widgetExperience, setWidgetExperience] = useState<SwiggyWidgetExperienceComposer | null>(null);
   const [agentBenchmark, setAgentBenchmark] = useState<SwiggyAgentExperienceBenchmark | null>(null);
   const [privatePilot, setPrivatePilot] = useState<SwiggyPrivatePilotControlRoom | null>(null);
+  const [stagingReplay, setStagingReplay] = useState<SwiggyStagingReplayCenter | null>(null);
   const [commercialActionGuard, setCommercialActionGuard] = useState<CommercialActionGuardReport | null>(null);
   const [stagingCutover, setStagingCutover] = useState<SwiggyStagingCutoverRehearsal | null>(null);
   const [stagingCredentialDrill, setStagingCredentialDrill] =
@@ -692,6 +695,7 @@ function App() {
       widgetExperienceResponse,
       agentBenchmarkResponse,
       privatePilotResponse,
+      stagingReplayResponse,
       commercialActionGuardResponse,
       stagingCutoverResponse,
       stagingCredentialDrillResponse,
@@ -813,6 +817,7 @@ function App() {
       fetchSwiggyWidgetExperienceComposer(),
       fetchSwiggyAgentExperienceBenchmark(),
       fetchSwiggyPrivatePilotControlRoom(),
+      fetchSwiggyStagingReplayCenter(),
       fetchCommercialActionGuard(),
       fetchSwiggyStagingCutover(),
       fetchSwiggyStagingCredentialDrill(),
@@ -935,6 +940,7 @@ function App() {
     setWidgetExperience(widgetExperienceResponse.widgetExperience);
     setAgentBenchmark(agentBenchmarkResponse.agentBenchmark);
     setPrivatePilot(privatePilotResponse.privatePilot);
+    setStagingReplay(stagingReplayResponse.stagingReplay);
     setCommercialActionGuard(commercialActionGuardResponse.commercialActionGuard);
     setStagingCutover(stagingCutoverResponse.stagingCutover);
     setStagingCredentialDrill(stagingCredentialDrillResponse.stagingCredentialDrill);
@@ -1060,6 +1066,7 @@ function App() {
       widgetExperienceResponse,
       agentBenchmarkResponse,
       privatePilotResponse,
+      stagingReplayResponse,
       commercialActionGuardResponse,
       stagingCutoverResponse,
       stagingCredentialDrillResponse,
@@ -1178,6 +1185,7 @@ function App() {
       fetchSwiggyWidgetExperienceComposer(),
       fetchSwiggyAgentExperienceBenchmark(),
       fetchSwiggyPrivatePilotControlRoom(),
+      fetchSwiggyStagingReplayCenter(),
       fetchCommercialActionGuard(),
       fetchSwiggyStagingCutover(),
       fetchSwiggyStagingCredentialDrill(),
@@ -1296,6 +1304,7 @@ function App() {
     setWidgetExperience(widgetExperienceResponse.widgetExperience);
     setAgentBenchmark(agentBenchmarkResponse.agentBenchmark);
     setPrivatePilot(privatePilotResponse.privatePilot);
+    setStagingReplay(stagingReplayResponse.stagingReplay);
     setCommercialActionGuard(commercialActionGuardResponse.commercialActionGuard);
     setStagingCutover(stagingCutoverResponse.stagingCutover);
     setStagingCredentialDrill(stagingCredentialDrillResponse.stagingCredentialDrill);
@@ -1989,6 +1998,7 @@ function App() {
                 widgetExperience={widgetExperience}
                 agentBenchmark={agentBenchmark}
                 privatePilot={privatePilot}
+                stagingReplay={stagingReplay}
                 commercialActionGuard={commercialActionGuard}
                 stagingCutover={stagingCutover}
                 stagingCredentialDrill={stagingCredentialDrill}
@@ -2597,6 +2607,7 @@ function LaunchCenterPanel({
   widgetExperience,
   agentBenchmark,
   privatePilot,
+  stagingReplay,
   commercialActionGuard,
   stagingCutover,
   stagingCredentialDrill,
@@ -2688,6 +2699,7 @@ function LaunchCenterPanel({
   widgetExperience: SwiggyWidgetExperienceComposer | null;
   agentBenchmark: SwiggyAgentExperienceBenchmark | null;
   privatePilot: SwiggyPrivatePilotControlRoom | null;
+  stagingReplay: SwiggyStagingReplayCenter | null;
   commercialActionGuard: CommercialActionGuardReport | null;
   stagingCutover: SwiggyStagingCutoverRehearsal | null;
   stagingCredentialDrill: SwiggyStagingCredentialDrillReport | null;
@@ -3209,6 +3221,56 @@ function LaunchCenterPanel({
               <li key={cohort.id} data-status={cohort.status === "swiggy_gate" ? "watch" : "healthy"}>
                 <span>{cohort.label}</span>
                 <strong>{cohort.targetUsers} users</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="staging-replay-card">
+          <div className="mini-heading">
+            <RefreshCw aria-hidden="true" />
+            <strong>Staging Replay</strong>
+          </div>
+          <span>
+            {stagingReplay
+              ? `${stagingReplay.score}/100, ${stagingReplay.totals.safeReplayTools}/${stagingReplay.totals.totalTools} safe probes`
+              : "Preparing credentialed staging replay"}
+          </span>
+          <div className="staging-replay-grid">
+            <div>
+              <strong>{stagingReplay?.totals.dryRunTools ?? 0}</strong>
+              <span>Dry-run</span>
+            </div>
+            <div>
+              <strong>{stagingReplay?.totals.credentialedTools ?? 0}</strong>
+              <span>Live-ready</span>
+            </div>
+            <div>
+              <strong>{stagingReplay?.totals.commercialTools ?? 0}</strong>
+              <span>Blocked</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(stagingReplay?.serverReadiness ?? []).map((server) => (
+              <li
+                key={server.server}
+                data-status={server.status === "ready" || server.status === "dry_run" ? "healthy" : "watch"}
+              >
+                <span>{serverLabel(server.server)}</span>
+                <strong>{server.firstSafeTool}</strong>
+              </li>
+            ))}
+          </ul>
+          <ul className="compact-status-list">
+            {(stagingReplay?.waveReadiness ?? []).slice(0, 4).map((wave) => (
+              <li
+                key={wave.id}
+                data-status={wave.status === "ready" || wave.status === "dry_run" ? "healthy" : "watch"}
+              >
+                <span>{wave.id.replaceAll("_", " ")}</span>
+                <strong>
+                  {wave.executableNow}/{wave.tools}
+                </strong>
               </li>
             ))}
           </ul>
