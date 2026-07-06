@@ -8,7 +8,7 @@ import { createMealPlan } from "../src/domain/planner.js";
 import { defaultUserProfile } from "../src/domain/profile.js";
 import type { GroupMember, PantryItem, SwiggyServer, UserPlanningRequest } from "../src/domain/types.js";
 import { readConfig, type ServerConfig } from "./config.js";
-import { handleMockJsonRpc } from "./mock/swiggyToolRouter.js";
+import { handleMockJsonRpc, type JsonRpcRequest } from "./mock/swiggyToolRouter.js";
 import { executeAllPreparedRecommendations, executeConfirmedRecommendation } from "./services/confirmationService.js";
 import {
   buildAgentSurfaceResponse,
@@ -31,7 +31,7 @@ import { buildSwiggyBuildersLaunchStoryCenter } from "./services/buildersLaunchS
 import { buildBuilderPacketExport, buildBuilderPacketMarkdown } from "./services/builderPacketExport.js";
 import { buildMcpBackpressureGovernor } from "./services/backpressureGovernor.js";
 import { buildSwiggyBuilderIntakeCommandCenter } from "./services/builderIntake.js";
-import { buildSwiggyCartMutationWorkbench } from "./services/cartMutationWorkbench.js";
+import { buildSwiggyCartMutationWorkbench, mutateSwiggyCartWithReadback } from "./services/cartMutationWorkbench.js";
 import { buildSwiggyChannelMultimodalStudio } from "./services/channelMultimodalStudio.js";
 import { buildCodingAgentGovernance } from "./services/codingAgentGovernance.js";
 import { buildCommercialActionGuard } from "./services/commercialActionGuard.js";
@@ -289,6 +289,15 @@ const orderLifecycleProbeSchema = z.object({
   statusAgeSeconds: z.number().int().min(0).max(86400),
   orderOrBookingId: z.string().min(1).max(120).optional(),
   userConfirmedRetry: z.boolean(),
+});
+
+const cartMutationExecutionSchema = z.object({
+  server: z.enum(["food", "instamart", "dineout"]),
+  mutationTool: z.enum(["update_food_cart", "flush_food_cart", "update_cart", "clear_cart", "create_cart"]),
+  toolArguments: z.record(z.string(), z.unknown()).default({}),
+  contextFresh: z.boolean(),
+  userConfirmed: z.boolean(),
+  commercialActionRequested: z.boolean(),
 });
 
 const mcpServerSchema = z.enum(["food", "instamart", "dineout"]);
@@ -1318,6 +1327,44 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
   app.get("/api/swiggy-cart-mutation-workbench", (_req, res) => {
     res.json({ cartMutation: buildSwiggyCartMutationWorkbench({ plans: store.getAllPlans(), config }) });
   });
+
+  app.post(
+    "/api/swiggy-cart-mutation-workbench/mutate",
+    asyncRoute(async (req, res) => {
+      const body = cartMutationExecutionSchema.parse(req.body);
+      const executeTool = async (server: SwiggyServer, tool: string, toolArguments: Record<string, unknown>) => {
+        const request: JsonRpcRequest = {
+          jsonrpc: "2.0",
+          id: `cart-${Date.now().toString(36)}`,
+          method: "tools/call",
+          params: {
+            name: tool,
+            arguments: toolArguments,
+          },
+        };
+
+        if (config.swiggyMode === "mock") {
+          return handleMockJsonRpc(server, request);
+        }
+
+        return callConfiguredSwiggyTool({
+          config,
+          server,
+          request,
+          accessToken: runtimeAccessToken,
+        });
+      };
+
+      res.json({
+        cartMutation: await mutateSwiggyCartWithReadback({
+          config,
+          ...body,
+          liveCredentialReady: Boolean(runtimeAccessToken),
+          executeTool,
+        }),
+      });
+    }),
+  );
 
   app.get("/api/swiggy-discovery-freshness", (_req, res) => {
     res.json({ discoveryFreshness: buildSwiggyDiscoveryFreshness({ plans: store.getAllPlans(), config }) });

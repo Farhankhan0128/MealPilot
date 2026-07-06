@@ -114,7 +114,7 @@ The verifier also validates `/api/swiggy-location-trust` and `/api/swiggy-locati
 
 The MCP gateway test suite covers staging/production forwarding for `tools/call`, `resources/list`, `resources/read`, `prompts/list`, and `prompts/get`; unsupported methods stay fail-closed with JSON-RPC errors, and missing live tokens still return 401.
 
-The verifier also validates `/api/swiggy-cart-mutation-workbench` for Food cart readback, Instamart full-cart replacement, Dineout create_cart gates, payment-method truth, add-on confirmation, commercial single-flight rules, and staging cart-write gates.
+The verifier also validates `/api/swiggy-cart-mutation-workbench` and `/api/swiggy-cart-mutation-workbench/mutate` for Food cart readback, Instamart full-cart replacement, Dineout create_cart gates, executable readback-after-write decisions, payment-method truth, add-on confirmation, no-commercial-action telemetry, commercial single-flight rules, and staging cart-write gates.
 
 The verifier also validates `/api/swiggy-discovery-freshness` for Food restaurant/menu discovery, Instamart product and go-to item variants, Dineout restaurant details and slots, pagination truth, coordinate consistency, freshness invalidation, and staging discovery gates.
 
@@ -268,6 +268,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/swiggy-location-trust`
 - `POST /api/swiggy-location-trust/select`
 - `GET /api/swiggy-cart-mutation-workbench`
+- `POST /api/swiggy-cart-mutation-workbench/mutate`
 - `GET /api/swiggy-discovery-freshness`
 - `GET /api/swiggy-confirmation-command-center`
 - `GET /api/swiggy-cancellation-care-center`

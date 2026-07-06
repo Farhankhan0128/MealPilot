@@ -236,6 +236,10 @@ assert(
   "OpenAPI Swiggy Cart Mutation Workbench is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-cart-mutation-workbench/mutate"].post.summary.includes("cart mutation"),
+  "OpenAPI Swiggy Cart Mutation execution route is missing",
+);
+assert(
   openApi.paths["/api/swiggy-discovery-freshness"].get.summary.includes("Discovery Freshness") &&
     openApi.paths["/api/swiggy-discovery-freshness"].get.responses["200"].description.includes("variant"),
   "OpenAPI Swiggy Discovery Freshness is missing",
@@ -3767,6 +3771,31 @@ assert(
   cartMutation.cartMutation.assertions.some((assertion) => assertion.includes("update_food_cart is followed by get_food_cart")),
   "Cart Mutation Workbench readback assertion is missing",
 );
+const cartMutationExecution = await request("/api/swiggy-cart-mutation-workbench/mutate", {
+  method: "POST",
+  body: JSON.stringify({
+    server: "food",
+    mutationTool: "update_food_cart",
+    toolArguments: { restaurantId: "rest_green_bowl", itemId: "paneer_bowl", quantity: 1 },
+    contextFresh: true,
+    userConfirmed: true,
+    commercialActionRequested: false,
+  }),
+});
+assert(cartMutationExecution.cartMutation.decision === "mutated_with_readback", "Cart Mutation execution did not read back");
+assert(
+  cartMutationExecution.cartMutation.executedTools.join(",") === "update_food_cart,get_food_cart",
+  "Cart Mutation execution tool chain is wrong",
+);
+assert(cartMutationExecution.cartMutation.readback.available === true, "Cart Mutation readback is unavailable");
+assert(
+  cartMutationExecution.cartMutation.telemetry.some((field) => field.field === "commercial_action_executed" && field.value === "false"),
+  "Cart Mutation commercial-action telemetry invariant is missing",
+);
+assert(
+  cartMutationExecution.cartMutation.assertions.some((assertion) => assertion.includes("never calls place_food_order")),
+  "Cart Mutation no-commercial-action assertion is missing",
+);
 
 const discoveryFreshness = await request("/api/swiggy-discovery-freshness");
 assert(discoveryFreshness.discoveryFreshness.score >= 85, "Discovery Freshness score is below target");
@@ -4751,6 +4780,7 @@ console.log(
       cartMutationScore: cartMutation.cartMutation.score,
       cartMutationTools: cartMutation.cartMutation.totals.toolsCovered,
       cartMutationReadbacks: cartMutation.cartMutation.totals.readbackLanes,
+      cartMutationDecision: cartMutationExecution.cartMutation.decision,
       discoveryFreshnessScore: discoveryFreshness.discoveryFreshness.score,
       discoveryFreshnessTools: discoveryFreshness.discoveryFreshness.totals.toolsCovered,
       discoveryFreshnessChecks: discoveryFreshness.discoveryFreshness.totals.freshnessChecks,

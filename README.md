@@ -302,6 +302,7 @@ POST /api/swiggy-order-lifecycle/probe
 GET  /api/swiggy-location-trust
 POST /api/swiggy-location-trust/select
 GET  /api/swiggy-cart-mutation-workbench
+POST /api/swiggy-cart-mutation-workbench/mutate
 GET  /api/swiggy-discovery-freshness
 GET  /api/swiggy-confirmation-command-center
 GET  /api/swiggy-cancellation-care-center
@@ -515,7 +516,7 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 
 `GET /api/swiggy-location-trust` plus `POST /api/swiggy-location-trust/select` is the saved-address and location trust center: it covers shared Food/Instamart `get_addresses`, Instamart `create_address` and `delete_address`, Dineout `get_saved_locations`, address-choice pauses, executable ready/pause/block/mutation decisions, address switch refresh guards, raw-address redaction, and staging credential gates.
 
-`GET /api/swiggy-cart-mutation-workbench` is the cart mutation control room: it covers Food `get_food_cart`, `update_food_cart`, and `flush_food_cart`, Instamart `get_cart`, `update_cart`, and `clear_cart`, Dineout `create_cart`, readback-after-write rules, payment-method truth, add-on confirmation, and live cart-write gates.
+`GET /api/swiggy-cart-mutation-workbench` plus `POST /api/swiggy-cart-mutation-workbench/mutate` is the cart mutation control room: it covers Food `get_food_cart`, `update_food_cart`, and `flush_food_cart`, Instamart `get_cart`, `update_cart`, and `clear_cart`, Dineout `create_cart`, executable readback-after-write decisions, payment-method truth, add-on confirmation, no-commercial-action guarantees, and live cart-write gates.
 
 `GET /api/swiggy-discovery-freshness` is the search and availability workbench: it covers Food `search_restaurants`, `get_restaurant_menu`, and `search_menu`, Instamart `search_products` and `your_go_to_items`, Dineout `search_restaurants_dineout`, `get_restaurant_details`, and `get_available_slots`, with pagination truth, variant selection, coordinate consistency, and stale-result invalidation.
 

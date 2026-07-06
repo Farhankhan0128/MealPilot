@@ -1102,6 +1102,20 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-cart-mutation-workbench/mutate": {
+        post: {
+          tags: ["Commerce"],
+          summary: "Execute a safe Swiggy cart mutation and immediate readback",
+          description:
+            "Cart mutation decision, safe tool execution, required readback tool, redacted cart summary, no-commercial-action telemetry, and raw-payload retention assertions",
+          responses: {
+            "200": {
+              description:
+                "Food or Instamart cart mutation with immediate get_food_cart/get_cart readback, or a blocked/external-gate decision for unsafe contexts",
+            },
+          },
+        },
+      },
       "/api/swiggy-discovery-freshness": {
         get: {
           tags: ["Commerce"],

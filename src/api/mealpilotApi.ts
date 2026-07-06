@@ -66,6 +66,7 @@ import type {
   SwiggyAccessEvidenceMatrix,
   SwiggyBuilderIntakeCommandCenter,
   SwiggyCancellationCareCenterReport,
+  SwiggyCartMutationExecution,
   SwiggyCartMutationReport,
   SwiggyChannelMultimodalStudio,
   SwiggyConfirmationCommandCenterReport,
@@ -768,6 +769,20 @@ export function selectSwiggyLocation(input: {
 
 export function fetchSwiggyCartMutationWorkbench() {
   return requestJson<{ cartMutation: SwiggyCartMutationReport }>("/api/swiggy-cart-mutation-workbench");
+}
+
+export function mutateSwiggyCart(input: {
+  server: "food" | "instamart" | "dineout";
+  mutationTool: "update_food_cart" | "flush_food_cart" | "update_cart" | "clear_cart" | "create_cart";
+  toolArguments?: Record<string, unknown>;
+  contextFresh: boolean;
+  userConfirmed: boolean;
+  commercialActionRequested: boolean;
+}) {
+  return requestJson<{ cartMutation: SwiggyCartMutationExecution }>("/api/swiggy-cart-mutation-workbench/mutate", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
 }
 
 export function fetchSwiggyDiscoveryFreshness() {

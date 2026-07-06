@@ -5439,6 +5439,10 @@ function ProductionEvidencePanel({
               <strong>{cartMutation?.totals.externalGates ?? 0}</strong>
               <span>Live gates</span>
             </div>
+            <div>
+              <strong>{cartMutation ? "POST" : "-"}</strong>
+              <span>Readback gate</span>
+            </div>
           </div>
           <ul className="compact-status-list">
             {(cartMutation?.lanes ?? []).slice(0, 4).map((lane) => (
@@ -5451,6 +5455,14 @@ function ProductionEvidencePanel({
               </li>
             ))}
           </ul>
+          <div className="source-links">
+            <a href="/api/swiggy-cart-mutation-workbench" target="_blank" rel="noreferrer">
+              Cart API
+            </a>
+            <a href="/api/openapi.json" target="_blank" rel="noreferrer">
+              Mutation schema
+            </a>
+          </div>
         </article>
 
         <article className="discovery-freshness-card">

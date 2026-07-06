@@ -4112,6 +4112,41 @@ export interface SwiggyCartMutationReport {
   externalGates: string[];
 }
 
+export interface SwiggyCartMutationExecution {
+  generatedAt: string;
+  requestId: string;
+  mode: "mock" | "staging" | "production";
+  input: {
+    server: SwiggyServer;
+    mutationTool: "update_food_cart" | "flush_food_cart" | "update_cart" | "clear_cart" | "create_cart";
+    contextFresh: boolean;
+    userConfirmed: boolean;
+    commercialActionRequested: boolean;
+  };
+  decision:
+    | "mutated_with_readback"
+    | "blocked_until_refresh"
+    | "blocked_for_confirmation"
+    | "blocked_commercial_action"
+    | "external_gate";
+  requiredReadbackTool: "get_food_cart" | "get_cart" | "get_available_slots";
+  executedTools: string[];
+  readback: {
+    available: boolean;
+    status: string;
+    totalBucket: string;
+    paymentMethodLabel: string;
+  };
+  userFacingCopy: string;
+  riskFlags: string[];
+  telemetry: Array<{
+    field: string;
+    value: string;
+    redaction: string;
+  }>;
+  assertions: string[];
+}
+
 export type SwiggyDiscoveryFreshnessStatus = "ready" | "watch" | "external_gate";
 
 export interface SwiggyDiscoveryFreshnessLane {

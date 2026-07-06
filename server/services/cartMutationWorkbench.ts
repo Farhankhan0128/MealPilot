@@ -1,12 +1,15 @@
+import crypto from "node:crypto";
 import type { ServerConfig } from "../config.js";
 import type {
   MealPlan,
+  SwiggyCartMutationExecution,
   SwiggyCartMutationGuardrail,
   SwiggyCartMutationLane,
   SwiggyCartMutationReport,
   SwiggyCartMutationScenario,
   SwiggyCartMutationStatus,
   SwiggyCartMutationTelemetry,
+  SwiggyServer,
 } from "../../src/domain/types.js";
 
 const officialSources = [
@@ -28,6 +31,50 @@ function statusWeight(status: SwiggyCartMutationStatus) {
   if (status === "ready") return 1;
   if (status === "watch") return 0.78;
   return 0.48;
+}
+
+function requiredReadbackTool(server: SwiggyServer): SwiggyCartMutationExecution["requiredReadbackTool"] {
+  if (server === "food") return "get_food_cart";
+  if (server === "instamart") return "get_cart";
+  return "get_available_slots";
+}
+
+function isToolServerMatch(server: SwiggyServer, tool: SwiggyCartMutationExecution["input"]["mutationTool"]) {
+  if (server === "food") return tool === "update_food_cart" || tool === "flush_food_cart";
+  if (server === "instamart") return tool === "update_cart" || tool === "clear_cart";
+  return tool === "create_cart";
+}
+
+function hashArguments(args: Record<string, unknown>) {
+  return crypto.createHash("sha256").update(JSON.stringify(args)).digest("hex").slice(0, 16);
+}
+
+function dataFromToolResponse(response: unknown): Record<string, unknown> {
+  if (!response || typeof response !== "object") return {};
+  const result = (response as { result?: unknown }).result;
+  if (result && typeof result === "object") {
+    const data = (result as { data?: unknown }).data;
+    if (data && typeof data === "object" && !Array.isArray(data)) return data as Record<string, unknown>;
+  }
+  return {};
+}
+
+function totalBucket(total: unknown) {
+  if (typeof total !== "number") return "unknown";
+  if (total === 0) return "zero";
+  if (total <= 500) return "under_500";
+  if (total <= 1000) return "under_1000";
+  return "over_1000";
+}
+
+function readbackSummary(response: unknown): SwiggyCartMutationExecution["readback"] {
+  const data = dataFromToolResponse(response);
+  return {
+    available: Object.keys(data).length > 0,
+    status: typeof data.status === "string" ? data.status : "unknown",
+    totalBucket: totalBucket(data.total),
+    paymentMethodLabel: typeof data.paymentMethod === "string" ? data.paymentMethod : "not_returned",
+  };
 }
 
 export function buildSwiggyCartMutationWorkbench(options: {
@@ -247,5 +294,93 @@ export function buildSwiggyCartMutationWorkbench(options: {
       "Dineout create_cart stays gated to valid standalone booking or bill-payment contexts.",
     ],
     externalGates,
+  };
+}
+
+export async function mutateSwiggyCartWithReadback(input: {
+  config: ServerConfig;
+  server: SwiggyServer;
+  mutationTool: SwiggyCartMutationExecution["input"]["mutationTool"];
+  toolArguments: Record<string, unknown>;
+  contextFresh: boolean;
+  userConfirmed: boolean;
+  commercialActionRequested: boolean;
+  liveCredentialReady: boolean;
+  executeTool: (server: SwiggyServer, tool: string, args: Record<string, unknown>) => Promise<unknown>;
+}): Promise<SwiggyCartMutationExecution> {
+  const riskFlags: string[] = [];
+  const requiredTool = requiredReadbackTool(input.server);
+  const toolServerMatch = isToolServerMatch(input.server, input.mutationTool);
+  const executedTools: string[] = [];
+
+  if (!toolServerMatch) riskFlags.push("mutation_tool_server_mismatch");
+  if (!input.contextFresh) riskFlags.push("fresh_cart_or_selection_required_before_write");
+  if (!input.userConfirmed) riskFlags.push("cart_mutation_requires_user_confirmation");
+  if (input.commercialActionRequested) riskFlags.push("commercial_action_must_use_confirmation_command_center");
+  if (input.server === "dineout") riskFlags.push("dineout_create_cart_requires_policy_and_slot_readback_review");
+  if (input.config.swiggyMode !== "mock" && !input.liveCredentialReady) riskFlags.push("live_swiggy_token_required_for_cart_write");
+
+  let decision: SwiggyCartMutationExecution["decision"];
+  let mutationResponse: unknown;
+  let readbackResponse: unknown;
+
+  if (input.commercialActionRequested) {
+    decision = "blocked_commercial_action";
+  } else if (!toolServerMatch || !input.contextFresh) {
+    decision = "blocked_until_refresh";
+  } else if (!input.userConfirmed) {
+    decision = "blocked_for_confirmation";
+  } else if (input.server === "dineout" || (input.config.swiggyMode !== "mock" && !input.liveCredentialReady)) {
+    decision = "external_gate";
+  } else {
+    mutationResponse = await input.executeTool(input.server, input.mutationTool, input.toolArguments);
+    executedTools.push(input.mutationTool);
+    readbackResponse = await input.executeTool(input.server, requiredTool, input.server === "food" ? input.toolArguments : {});
+    executedTools.push(requiredTool);
+    decision = "mutated_with_readback";
+  }
+
+  const readback = readbackSummary(readbackResponse ?? mutationResponse);
+
+  return {
+    generatedAt: new Date().toISOString(),
+    requestId: `cart_${Date.now().toString(36)}`,
+    mode: input.config.swiggyMode,
+    input: {
+      server: input.server,
+      mutationTool: input.mutationTool,
+      contextFresh: input.contextFresh,
+      userConfirmed: input.userConfirmed,
+      commercialActionRequested: input.commercialActionRequested,
+    },
+    decision,
+    requiredReadbackTool: requiredTool,
+    executedTools,
+    readback,
+    userFacingCopy:
+      decision === "mutated_with_readback"
+        ? "I updated the cart and immediately refreshed the official cart readback before showing the result."
+        : decision === "blocked_for_confirmation"
+          ? "I need explicit confirmation before changing your Swiggy cart."
+          : decision === "blocked_commercial_action"
+            ? "Cart mutation cannot include order placement, checkout, or table booking. Use the final confirmation command center."
+            : decision === "external_gate"
+              ? "This cart write is gated until Swiggy staging credentials or Dineout policy review are available."
+              : "I need fresh cart, address, restaurant, product, or slot truth before writing to this cart.",
+    riskFlags,
+    telemetry: [
+      { field: "server", value: input.server, redaction: "safe enum" },
+      { field: "mutation_tool", value: input.mutationTool, redaction: "tool name only" },
+      { field: "required_readback_tool", value: requiredTool, redaction: "tool name only" },
+      { field: "tool_argument_hash", value: hashArguments(input.toolArguments), redaction: "sha256 prefix only" },
+      { field: "raw_cart_payload_retained", value: "false", redaction: "hard-coded privacy invariant" },
+      { field: "commercial_action_executed", value: "false", redaction: "hard-coded safety invariant" },
+    ],
+    assertions: [
+      "Cart mutation execution never calls place_food_order, checkout, or book_table.",
+      "Food cart writes are followed by get_food_cart before success copy.",
+      "Instamart cart writes are followed by get_cart before checkout copy.",
+      "Raw cart payloads, payment instruments, address ids, and full item identifiers are not retained in telemetry.",
+    ],
   };
 }

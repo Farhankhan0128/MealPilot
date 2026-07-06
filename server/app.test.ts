@@ -136,6 +136,7 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/swiggy-location-trust/select"].post.summary).toContain("Select");
     expect(openApi.body.paths["/api/swiggy-cart-mutation-workbench"].get.summary).toContain("Cart Mutation");
     expect(openApi.body.paths["/api/swiggy-cart-mutation-workbench"].get.responses["200"].description).toContain("readback");
+    expect(openApi.body.paths["/api/swiggy-cart-mutation-workbench/mutate"].post.summary).toContain("cart mutation");
     expect(openApi.body.paths["/api/swiggy-discovery-freshness"].get.summary).toContain("Discovery Freshness");
     expect(openApi.body.paths["/api/swiggy-discovery-freshness"].get.responses["200"].description).toContain("variant");
     expect(openApi.body.paths["/api/swiggy-confirmation-command-center"].get.summary).toContain("Confirmation Command");
@@ -4000,6 +4001,55 @@ describe("MealPilot API", () => {
     expect(cart.telemetry.some((field: { field: string }) => field.field === "cart_id_hash")).toBe(true);
     expect(cart.assertions.some((assertion: string) => assertion.includes("update_food_cart is followed by get_food_cart"))).toBe(true);
     expect(cart.externalGates.some((gate: string) => gate.includes("Staging credentials"))).toBe(true);
+
+    const mutationResponse = await request(app)
+      .post("/api/swiggy-cart-mutation-workbench/mutate")
+      .send({
+        server: "food",
+        mutationTool: "update_food_cart",
+        toolArguments: { restaurantId: "rest_green_bowl", itemId: "paneer_bowl", quantity: 1 },
+        contextFresh: true,
+        userConfirmed: true,
+        commercialActionRequested: false,
+      })
+      .expect(200);
+    const mutation = mutationResponse.body.cartMutation;
+    expect(mutation.decision).toBe("mutated_with_readback");
+    expect(mutation.executedTools).toEqual(["update_food_cart", "get_food_cart"]);
+    expect(mutation.requiredReadbackTool).toBe("get_food_cart");
+    expect(mutation.readback.available).toBe(true);
+    expect(mutation.readback.paymentMethodLabel).toBe("COD");
+    expect(
+      mutation.telemetry.some((field: { field: string; value: string }) => field.field === "commercial_action_executed" && field.value === "false"),
+    ).toBe(true);
+    expect(mutation.assertions.some((assertion: string) => assertion.includes("never calls place_food_order"))).toBe(true);
+
+    const staleResponse = await request(app)
+      .post("/api/swiggy-cart-mutation-workbench/mutate")
+      .send({
+        server: "instamart",
+        mutationTool: "update_cart",
+        toolArguments: { items: [{ spinId: "spin_moong_dal", quantity: 1 }] },
+        contextFresh: false,
+        userConfirmed: true,
+        commercialActionRequested: false,
+      })
+      .expect(200);
+    expect(staleResponse.body.cartMutation.decision).toBe("blocked_until_refresh");
+    expect(staleResponse.body.cartMutation.executedTools).toEqual([]);
+
+    const commercialResponse = await request(app)
+      .post("/api/swiggy-cart-mutation-workbench/mutate")
+      .send({
+        server: "food",
+        mutationTool: "update_food_cart",
+        contextFresh: true,
+        userConfirmed: true,
+        commercialActionRequested: true,
+      })
+      .expect(200);
+    expect(commercialResponse.body.cartMutation.decision).toBe("blocked_commercial_action");
+    expect(commercialResponse.body.cartMutation.executedTools).toEqual([]);
   });
 
   it("returns Swiggy Discovery Freshness for search, menu, product, and slot truth", async () => {
