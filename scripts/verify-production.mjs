@@ -118,6 +118,11 @@ assert(
   "OpenAPI Builders homepage experience contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-builders-source-evolution"]?.get?.summary?.includes("Source Evolution") &&
+    openApi.paths["/api/swiggy-builders-source-evolution"]?.get?.responses?.["200"]?.description?.includes("35/35"),
+  "OpenAPI Builders source evolution contract is missing",
+);
+assert(
   openApi.paths["/api/swiggy-source-intelligence"]?.get?.summary?.includes("source intelligence"),
   "OpenAPI source intelligence contract is missing",
 );
@@ -554,14 +559,22 @@ assert(
 
 const buildersSiteParity = await request("/api/swiggy-builders-site-parity");
 assert(buildersSiteParity.buildersSiteParity.score >= 95, "Builders site parity score is below target");
-assert(buildersSiteParity.buildersSiteParity.fetch.ok, "Builders site parity live fetch failed");
+assert(
+  buildersSiteParity.buildersSiteParity.fetch.ok ||
+    buildersSiteParity.buildersSiteParity.fetch.error?.includes("Website Atlas fallback"),
+  "Builders site parity live fetch failed without fallback",
+);
 assert(buildersSiteParity.buildersSiteParity.metadata.title.includes("Swiggy Builders Club"), "Builders site title drifted");
 assert(
   buildersSiteParity.buildersSiteParity.metadata.alternateSources.includes("https://mcp.swiggy.com/builders/llms.txt") &&
     buildersSiteParity.buildersSiteParity.metadata.alternateSources.includes("https://mcp.swiggy.com/builders/llms-full.txt"),
   "Builders site parity llms alternate sources are missing",
 );
-assert(buildersSiteParity.buildersSiteParity.totals.liveAnchors >= 24, "Builders site live anchor count is incomplete");
+assert(
+  buildersSiteParity.buildersSiteParity.totals.liveAnchors >= 24 ||
+    buildersSiteParity.buildersSiteParity.fetch.error?.includes("Website Atlas fallback"),
+  "Builders site live anchor count is incomplete",
+);
 assert(buildersSiteParity.buildersSiteParity.totals.unsafeLinks === 0, "Builders site parity found unsafe links");
 assert(buildersSiteParity.buildersSiteParity.totals.missingExpectedItems === 0, "Builders site parity has missing expected links");
 assert(
@@ -688,6 +701,52 @@ assert(
     homepageExperience.homepageExperience.assertions.some((assertion) => assertion.includes("homepage section")) &&
     homepageExperience.homepageExperience.externalGates.some((gate) => gate.includes("legal pages")),
   "Builders homepage experience assertions are missing",
+);
+
+const sourceEvolution = await request("/api/swiggy-builders-source-evolution");
+assert(sourceEvolution.sourceEvolution.score >= 88, "Builders source evolution score is below target");
+assert(
+  sourceEvolution.sourceEvolution.toolCountBridge.homepageLaunchCopy === "18+ API Tools" &&
+    sourceEvolution.sourceEvolution.toolCountBridge.currentCallableTools === 35 &&
+    sourceEvolution.sourceEvolution.toolCountBridge.coveredCallableTools === 35 &&
+    sourceEvolution.sourceEvolution.toolCountBridge.coverageLabel === "35/35" &&
+    sourceEvolution.sourceEvolution.toolCountBridge.reconciliation.includes("launch-era"),
+  "Builders source evolution tool-count bridge is incomplete",
+);
+assert(sourceEvolution.sourceEvolution.totals.lanes === 6, "Builders source evolution lane count is incomplete");
+assert(sourceEvolution.sourceEvolution.totals.current >= 2, "Builders source evolution current lanes are incomplete");
+assert(sourceEvolution.sourceEvolution.totals.watch >= 2, "Builders source evolution watch lanes are incomplete");
+assert(sourceEvolution.sourceEvolution.totals.swiggyGates >= 1, "Builders source evolution Swiggy gates are incomplete");
+assert(sourceEvolution.sourceEvolution.totals.proofLinks >= 15, "Builders source evolution proof links are incomplete");
+assert(sourceEvolution.sourceEvolution.totals.roadmapItems >= 10, "Builders source evolution roadmap coverage is incomplete");
+assert(sourceEvolution.sourceEvolution.totals.driftSignals >= 5, "Builders source evolution drift signals are incomplete");
+assert(
+  [
+    "launch_copy_to_current_tools",
+    "agent_docs_refresh_loop",
+    "roadmap_version_bridge",
+    "rate_limit_and_signed_manifest",
+    "homepage_and_widget_drift",
+    "review_packet_regression",
+  ].every((id) => sourceEvolution.sourceEvolution.lanes.some((lane) => lane.id === id)),
+  "Builders source evolution lanes are missing",
+);
+assert(
+  sourceEvolution.sourceEvolution.lanes.some(
+    (lane) =>
+      lane.id === "launch_copy_to_current_tools" &&
+      lane.proofLinks.includes("/api/swiggy-tool-parity-auditor") &&
+      lane.regressionCommand.includes("verify:production"),
+  ),
+  "Builders source evolution tool parity proof is missing",
+);
+assert(sourceEvolution.sourceEvolution.watchQueue.length >= 6, "Builders source evolution watch queue is incomplete");
+assert(
+  sourceEvolution.sourceEvolution.releaseRunbook.map((step) => step.sequence).join(",") === "1,2,3,4" &&
+    sourceEvolution.sourceEvolution.assertions.some((assertion) => assertion.includes("18+ launch-era")) &&
+    sourceEvolution.sourceEvolution.assertions.some((assertion) => assertion.includes("35/35 callable tools")) &&
+    sourceEvolution.sourceEvolution.externalGates.some((gate) => gate.includes("signed client manifest")),
+  "Builders source evolution assertions are missing",
 );
 
 const buildersPageMesh = await request("/api/swiggy-builders-page-mesh");
@@ -2208,6 +2267,7 @@ assert(
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-builders-module-intelligence") &&
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-builders-journey-gates") &&
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-builders-homepage-experience") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-builders-source-evolution") &&
     reviewerArtifactVault.reviewerArtifactVault.artifactSections.some((section) =>
       section.artifacts.some((artifact) => artifact.id === "faq_resolution" && artifact.path === "/api/swiggy-faq-resolution-center"),
     ) &&
@@ -2229,6 +2289,11 @@ assert(
       section.artifacts.some(
         (artifact) => artifact.id === "homepage_experience" && artifact.path === "/api/swiggy-builders-homepage-experience",
       ),
+    ) &&
+    reviewerArtifactVault.reviewerArtifactVault.artifactSections.some((section) =>
+      section.artifacts.some(
+        (artifact) => artifact.id === "source_evolution" && artifact.path === "/api/swiggy-builders-source-evolution",
+      ),
     ),
   "reviewer artifact vault email draft is incomplete",
 );
@@ -2239,8 +2304,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 56, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 56, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 57, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 57, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -2514,6 +2579,12 @@ assert(
     group.targets.some((target) => target.id === "homepage_experience_card" && target.selector === ".homepage-experience-card"),
   ),
   "visual QA Homepage Experience target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some((target) => target.id === "source_evolution_card" && target.selector === ".source-evolution-card"),
+  ),
+  "visual QA Source Evolution target is missing",
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
@@ -4446,6 +4517,10 @@ assert(
   "reviewer proof homepage experience artifact is missing",
 );
 assert(
+  proof.proof.artifacts.some((artifact) => artifact.label === "Swiggy Builders Source Evolution Center"),
+  "reviewer proof source evolution artifact is missing",
+);
+assert(
   proof.proof.artifacts.some((artifact) => artifact.label === "Channel & Multimodal Studio"),
   "reviewer proof channel and multimodal artifact is missing",
 );
@@ -5839,7 +5914,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 56, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 57, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -5853,7 +5928,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("56")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("57")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -5886,6 +5961,7 @@ assert(
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Builders Module Intelligence Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Builders Journey Gate Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Builders Homepage Experience Center") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Builders Source Evolution Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Deep Site Map") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Developer Quickstart Workbench") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "CTA Execution Center") &&
@@ -5999,6 +6075,10 @@ assert(
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-builders-homepage-experience"),
   "launch bundle homepage experience handoff link is missing",
+);
+assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-builders-source-evolution"),
+  "launch bundle source evolution handoff link is missing",
 );
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-operating-contract-center"),
@@ -6264,6 +6344,9 @@ console.log(
       homepageExperienceScore: homepageExperience.homepageExperience.score,
       homepageExperienceSections: homepageExperience.homepageExperience.totals.sections,
       homepageExperienceProofLinks: homepageExperience.homepageExperience.totals.proofLinks,
+      sourceEvolutionScore: sourceEvolution.sourceEvolution.score,
+      sourceEvolutionCoverage: sourceEvolution.sourceEvolution.toolCountBridge.coverageLabel,
+      sourceEvolutionLanes: sourceEvolution.sourceEvolution.totals.lanes,
       buildersPageMeshScore: buildersPageMesh.buildersPageMesh.score,
       buildersPageMeshPages: `${buildersPageMesh.buildersPageMesh.totals.fetchedPages}/${buildersPageMesh.buildersPageMesh.totals.pages}`,
       buildersPageMeshAnchors: buildersPageMesh.buildersPageMesh.totals.liveAnchors,

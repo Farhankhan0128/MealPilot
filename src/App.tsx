@@ -118,6 +118,7 @@ import {
   fetchSwiggyBuildersModuleIntelligence,
   fetchSwiggyBuildersJourneyGates,
   fetchSwiggyBuildersHomepageExperience,
+  fetchSwiggyBuildersSourceEvolution,
   fetchSwiggyBenefitsActivationCenter,
   fetchSwiggyOperatingContractCenter,
   fetchSwiggyFaqPolicyCenter,
@@ -253,6 +254,7 @@ import type {
   SwiggyBuildersLaunchStoryCenterReport,
   SwiggyBuildersJourneyGateCenter,
   SwiggyBuildersModuleIntelligenceCenter,
+  SwiggyBuildersSourceEvolutionCenter,
   SwiggyBuildersPageMeshAuditor,
   SwiggyBuildersSiteParityAuditor,
   SwiggyBuilderIntakeCommandCenter,
@@ -470,6 +472,7 @@ function App() {
   const [moduleIntelligence, setModuleIntelligence] = useState<SwiggyBuildersModuleIntelligenceCenter | null>(null);
   const [journeyGates, setJourneyGates] = useState<SwiggyBuildersJourneyGateCenter | null>(null);
   const [homepageExperience, setHomepageExperience] = useState<SwiggyBuildersHomepageExperienceCenter | null>(null);
+  const [sourceEvolution, setSourceEvolution] = useState<SwiggyBuildersSourceEvolutionCenter | null>(null);
   const [operatingContract, setOperatingContract] = useState<SwiggyOperatingContractCenterReport | null>(null);
   const [swiggyDeepSiteMap, setSwiggyDeepSiteMap] = useState<SwiggyDeepSiteMap | null>(null);
   const [swiggyBuilderIntake, setSwiggyBuilderIntake] = useState<SwiggyBuilderIntakeCommandCenter | null>(null);
@@ -684,6 +687,7 @@ function App() {
       moduleIntelligenceResponse,
       journeyGatesResponse,
       homepageExperienceResponse,
+      sourceEvolutionResponse,
       operatingContractResponse,
       deepSiteMapResponse,
       builderIntakeResponse,
@@ -799,6 +803,7 @@ function App() {
       fetchSwiggyBuildersModuleIntelligence(),
       fetchSwiggyBuildersJourneyGates(),
       fetchSwiggyBuildersHomepageExperience(),
+      fetchSwiggyBuildersSourceEvolution(),
       fetchSwiggyOperatingContractCenter(),
       fetchSwiggyDeepSiteMap(),
       fetchSwiggyBuilderIntake(),
@@ -915,6 +920,7 @@ function App() {
     setModuleIntelligence(moduleIntelligenceResponse.moduleIntelligence);
     setJourneyGates(journeyGatesResponse.journeyGates);
     setHomepageExperience(homepageExperienceResponse.homepageExperience);
+    setSourceEvolution(sourceEvolutionResponse.sourceEvolution);
     setOperatingContract(operatingContractResponse.operatingContract);
     setSwiggyDeepSiteMap(deepSiteMapResponse.deepSiteMap);
     setSwiggyBuilderIntake(builderIntakeResponse.intake);
@@ -1034,6 +1040,7 @@ function App() {
       moduleIntelligenceResponse,
       journeyGatesResponse,
       homepageExperienceResponse,
+      sourceEvolutionResponse,
       operatingContractResponse,
       deepSiteMapResponse,
       builderIntakeResponse,
@@ -1146,6 +1153,7 @@ function App() {
       fetchSwiggyBuildersModuleIntelligence(),
       fetchSwiggyBuildersJourneyGates(),
       fetchSwiggyBuildersHomepageExperience(),
+      fetchSwiggyBuildersSourceEvolution(),
       fetchSwiggyOperatingContractCenter(),
       fetchSwiggyDeepSiteMap(),
       fetchSwiggyBuilderIntake(),
@@ -1258,6 +1266,7 @@ function App() {
     setModuleIntelligence(moduleIntelligenceResponse.moduleIntelligence);
     setJourneyGates(journeyGatesResponse.journeyGates);
     setHomepageExperience(homepageExperienceResponse.homepageExperience);
+    setSourceEvolution(sourceEvolutionResponse.sourceEvolution);
     setOperatingContract(operatingContractResponse.operatingContract);
     setSwiggyDeepSiteMap(deepSiteMapResponse.deepSiteMap);
     setSwiggyBuilderIntake(builderIntakeResponse.intake);
@@ -1945,6 +1954,7 @@ function App() {
                 moduleIntelligence={moduleIntelligence}
                 journeyGates={journeyGates}
                 homepageExperience={homepageExperience}
+                sourceEvolution={sourceEvolution}
                 operatingContract={operatingContract}
                 deepSiteMap={swiggyDeepSiteMap}
                 builderIntake={swiggyBuilderIntake}
@@ -2547,6 +2557,7 @@ function LaunchCenterPanel({
   moduleIntelligence,
   journeyGates,
   homepageExperience,
+  sourceEvolution,
   operatingContract,
   deepSiteMap,
   builderIntake,
@@ -2632,6 +2643,7 @@ function LaunchCenterPanel({
   moduleIntelligence: SwiggyBuildersModuleIntelligenceCenter | null;
   journeyGates: SwiggyBuildersJourneyGateCenter | null;
   homepageExperience: SwiggyBuildersHomepageExperienceCenter | null;
+  sourceEvolution: SwiggyBuildersSourceEvolutionCenter | null;
   operatingContract: SwiggyOperatingContractCenterReport | null;
   deepSiteMap: SwiggyDeepSiteMap | null;
   builderIntake: SwiggyBuilderIntakeCommandCenter | null;
@@ -3702,6 +3714,64 @@ function LaunchCenterPanel({
             </a>
             <a href="/api/swiggy-cta-execution-center" target="_blank" rel="noreferrer">
               CTAs
+            </a>
+          </div>
+        </article>
+
+        <article className="source-evolution-card">
+          <div className="mini-heading">
+            <ScrollText aria-hidden="true" />
+            <strong>Source Evolution</strong>
+          </div>
+          <span>
+            {sourceEvolution
+              ? `${sourceEvolution.score}/100, ${sourceEvolution.toolCountBridge.coverageLabel} current tools`
+              : "Reconciling Builders source drift, roadmap gates, and packet regressions"}
+          </span>
+          <div className="source-evolution-grid">
+            <div>
+              <strong>{sourceEvolution?.toolCountBridge.homepageLaunchCopy ?? "18+"}</strong>
+              <span>Launch copy</span>
+            </div>
+            <div>
+              <strong>{sourceEvolution?.toolCountBridge.coverageLabel ?? "0/0"}</strong>
+              <span>Current</span>
+            </div>
+            <div>
+              <strong>{sourceEvolution?.totals.roadmapItems ?? 0}</strong>
+              <span>Roadmap</span>
+            </div>
+            <div>
+              <strong>{sourceEvolution?.totals.proofLinks ?? 0}</strong>
+              <span>Proofs</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(sourceEvolution?.lanes ?? []).slice(0, 5).map((laneItem) => (
+              <li
+                key={laneItem.id}
+                data-status={
+                  laneItem.status === "current"
+                    ? "healthy"
+                    : laneItem.status === "swiggy_gate"
+                      ? "blocked"
+                      : "watch"
+                }
+              >
+                <span>{laneItem.label}</span>
+                <strong>{laneItem.owner}</strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-intelligence-actions" aria-label="Source evolution links">
+            <a href="/api/swiggy-builders-source-evolution" target="_blank" rel="noreferrer">
+              Evolution API
+            </a>
+            <a href="/api/swiggy-source-intelligence" target="_blank" rel="noreferrer">
+              Source
+            </a>
+            <a href="/api/swiggy-upstream-watch" target="_blank" rel="noreferrer">
+              Upstream
             </a>
           </div>
         </article>

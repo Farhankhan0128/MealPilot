@@ -1000,6 +1000,55 @@ export interface SwiggyBuildersHomepageExperienceCenter {
   externalGates: string[];
 }
 
+export type SwiggyBuildersSourceEvolutionStatus = "current" | "watch" | "operator_gate" | "swiggy_gate";
+export type SwiggyBuildersSourceEvolutionOwner = "MealPilot" | "Operator" | "Swiggy" | "Joint";
+
+export interface SwiggyBuildersSourceEvolutionLane {
+  id: string;
+  sequence: number;
+  label: string;
+  sourceSignal: string;
+  mealPilotControl: string;
+  status: SwiggyBuildersSourceEvolutionStatus;
+  owner: SwiggyBuildersSourceEvolutionOwner;
+  updateTrigger: string;
+  regressionCommand: string;
+  proofLinks: string[];
+  riskBoundary: string;
+  nextAction: string;
+}
+
+export interface SwiggyBuildersSourceEvolutionCenter {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  toolCountBridge: {
+    homepageLaunchCopy: string;
+    currentCallableTools: number;
+    coveredCallableTools: number;
+    coverageLabel: string;
+    sourceOfTruth: string;
+    reconciliation: string;
+  };
+  totals: {
+    lanes: number;
+    current: number;
+    watch: number;
+    operatorGates: number;
+    swiggyGates: number;
+    proofLinks: number;
+    currentDocsTools: number;
+    coveredTools: number;
+    roadmapItems: number;
+    driftSignals: number;
+  };
+  lanes: SwiggyBuildersSourceEvolutionLane[];
+  watchQueue: Array<{ id: string; label: string; trigger: string; owner: SwiggyBuildersSourceEvolutionOwner; proofLinks: string[] }>;
+  releaseRunbook: Array<{ sequence: number; label: string; action: string; proofLinks: string[] }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type SwiggyBuildersPageMeshStatus = "covered" | "watch" | "blocked";
 
 export interface SwiggyBuildersPageMeshRow {

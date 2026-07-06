@@ -64,6 +64,8 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/swiggy-builders-journey-gates"].get.responses["200"].description).toContain("Quick Review");
     expect(openApi.body.paths["/api/swiggy-builders-homepage-experience"].get.summary).toContain("Homepage Experience");
     expect(openApi.body.paths["/api/swiggy-builders-homepage-experience"].get.responses["200"].description).toContain("footer");
+    expect(openApi.body.paths["/api/swiggy-builders-source-evolution"].get.summary).toContain("Source Evolution");
+    expect(openApi.body.paths["/api/swiggy-builders-source-evolution"].get.responses["200"].description).toContain("35/35");
     expect(openApi.body.paths["/api/swiggy-operating-contract-center"].get.summary).toContain("Operating Contract");
     expect(openApi.body.paths["/api/swiggy-operating-contract-center"].get.responses["200"].description).toContain("99.9%");
     expect(openApi.body.paths["/api/swiggy-builder-intake"].get.summary).toContain("Builder Intake");
@@ -1563,7 +1565,7 @@ describe("MealPilot API", () => {
     expect(packet.totals.formFields).toBeGreaterThanOrEqual(10);
     expect(packet.totals.requiredAttachments).toBeGreaterThanOrEqual(10);
     expect(packet.totals.launchArtifacts).toBeGreaterThanOrEqual(50);
-    expect(packet.totals.visualTargets).toBe(56);
+    expect(packet.totals.visualTargets).toBe(57);
     expect(packet.files.map((file: { id: string }) => file.id)).toEqual(
       expect.arrayContaining(["packet_json", "packet_markdown", "visual_report", "production_summary"]),
     );
@@ -1575,7 +1577,7 @@ describe("MealPilot API", () => {
     ).toBe(true);
     expect(
       packet.commands.some(
-        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("56"),
+        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("57"),
       ),
     ).toBe(true);
     expect(packet.copyBlocks.formFields).toContain("Redirect URI(s)");
@@ -2898,6 +2900,13 @@ describe("MealPilot API", () => {
         ),
       ),
     ).toBe(true);
+    expect(
+      vault.artifactSections.some((section: { artifacts: Array<{ id: string; path: string }> }) =>
+        section.artifacts.some(
+          (artifact) => artifact.id === "source_evolution" && artifact.path === "/api/swiggy-builders-source-evolution",
+        ),
+      ),
+    ).toBe(true);
     expect(vault.externalGates.some((gate: string) => gate.includes("staging credentials"))).toBe(true);
   });
 
@@ -2907,8 +2916,8 @@ describe("MealPilot API", () => {
     const visualQa = response.body.visualQa;
 
     expect(visualQa.score).toBe(100);
-    expect(visualQa.totalTargets).toBe(56);
-    expect(visualQa.readyTargets).toBe(56);
+    expect(visualQa.totalTargets).toBe(57);
+    expect(visualQa.readyTargets).toBe(57);
     expect(visualQa.totalRules).toBe(7);
     expect(visualQa.readyRules).toBe(7);
     expect(visualQa.totalCommands).toBe(5);
@@ -2982,6 +2991,16 @@ describe("MealPilot API", () => {
           (target) =>
             target.id === "homepage_experience_card" &&
             target.selector === ".homepage-experience-card" &&
+            target.viewport === "desktop",
+        ),
+      ),
+    ).toBe(true);
+    expect(
+      visualQa.targetGroups.some((group: { targets: Array<{ id: string; selector: string; viewport: string }> }) =>
+        group.targets.some(
+          (target) =>
+            target.id === "source_evolution_card" &&
+            target.selector === ".source-evolution-card" &&
             target.viewport === "desktop",
         ),
       ),
@@ -3482,6 +3501,49 @@ describe("MealPilot API", () => {
     expect(center.reviewerRunbook.map((step: { sequence: number }) => step.sequence)).toEqual([1, 2, 3]);
     expect(center.assertions.some((assertion: string) => assertion.includes("homepage section"))).toBe(true);
     expect(center.externalGates.some((gate: string) => gate.includes("legal pages"))).toBe(true);
+  });
+
+  it("returns Swiggy Builders Source Evolution for live source drift and 35-tool reconciliation", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/swiggy-builders-source-evolution").expect(200);
+    const center = response.body.sourceEvolution;
+
+    expect(center.score).toBeGreaterThanOrEqual(88);
+    expect(center.toolCountBridge.homepageLaunchCopy).toBe("18+ API Tools");
+    expect(center.toolCountBridge.currentCallableTools).toBe(35);
+    expect(center.toolCountBridge.coveredCallableTools).toBe(35);
+    expect(center.toolCountBridge.coverageLabel).toBe("35/35");
+    expect(center.toolCountBridge.reconciliation).toContain("launch-era");
+    expect(center.totals.lanes).toBe(6);
+    expect(center.totals.current).toBeGreaterThanOrEqual(2);
+    expect(center.totals.watch).toBeGreaterThanOrEqual(2);
+    expect(center.totals.swiggyGates).toBeGreaterThanOrEqual(1);
+    expect(center.totals.proofLinks).toBeGreaterThanOrEqual(15);
+    expect(center.totals.roadmapItems).toBeGreaterThanOrEqual(10);
+    expect(center.totals.driftSignals).toBeGreaterThanOrEqual(5);
+    expect(center.lanes.map((lane: { id: string }) => lane.id)).toEqual(
+      expect.arrayContaining([
+        "launch_copy_to_current_tools",
+        "agent_docs_refresh_loop",
+        "roadmap_version_bridge",
+        "rate_limit_and_signed_manifest",
+        "homepage_and_widget_drift",
+        "review_packet_regression",
+      ]),
+    );
+    expect(
+      center.lanes.some(
+        (lane: { id: string; proofLinks: string[]; regressionCommand: string }) =>
+          lane.id === "launch_copy_to_current_tools" &&
+          lane.proofLinks.includes("/api/swiggy-tool-parity-auditor") &&
+          lane.regressionCommand.includes("verify:production"),
+      ),
+    ).toBe(true);
+    expect(center.watchQueue.length).toBeGreaterThanOrEqual(6);
+    expect(center.releaseRunbook.map((step: { sequence: number }) => step.sequence)).toEqual([1, 2, 3, 4]);
+    expect(center.assertions.some((assertion: string) => assertion.includes("18+ launch-era"))).toBe(true);
+    expect(center.assertions.some((assertion: string) => assertion.includes("35/35 callable tools"))).toBe(true);
+    expect(center.externalGates.some((gate: string) => gate.includes("signed client manifest"))).toBe(true);
   });
 
   it("returns source intelligence that reconciles website, docs, API tools, and drift signals", async () => {
@@ -4944,6 +5006,9 @@ describe("MealPilot API", () => {
     expect(
       proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Swiggy Builders Homepage Experience Center"),
     ).toBe(true);
+    expect(
+      proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Swiggy Builders Source Evolution Center"),
+    ).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Premium Concierge Itinerary")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Tool Contract Matrix")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Scenario Runner")).toBe(true);
@@ -5664,6 +5729,7 @@ describe("MealPilot API", () => {
         "Swiggy Builders Module Intelligence Center",
         "Swiggy Builders Journey Gate Center",
         "Swiggy Builders Homepage Experience Center",
+        "Swiggy Builders Source Evolution Center",
         "Swiggy Operating Contract Center",
         "Swiggy Deep Site Map",
         "Developer Quickstart Workbench",
@@ -5723,6 +5789,7 @@ describe("MealPilot API", () => {
     expect(bundle.handoffEmail.body).toContain("/api/enterprise-platform-center");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-builders-launch-story");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-builders-module-intelligence");
+    expect(bundle.handoffEmail.body).toContain("/api/swiggy-builders-source-evolution");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-operating-contract-center");
     expect(bundle.handoffEmail.body).toContain("/api/auth/swiggy/status");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-auth-lifecycle-center");

@@ -211,6 +211,17 @@ const targetGroups = [
         "artifacts/visual-qa/homepage-experience-card.png",
       ),
       target(
+        "source_evolution_card",
+        "Source Evolution card",
+        "/",
+        ".source-evolution-card",
+        "desktop",
+        1280,
+        900,
+        "Source Evolution shows 18+ launch-copy reconciliation, current 35/35 tool coverage, upstream drift lanes, roadmap gates, and proof links.",
+        "artifacts/visual-qa/source-evolution-card.png",
+      ),
+      target(
         "builders_page_mesh_card",
         "Builders Page Mesh card",
         "/",

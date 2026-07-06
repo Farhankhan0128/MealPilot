@@ -1147,6 +1147,10 @@ select:focus {
   grid-column: span 2;
 }
 
+.source-evolution-card {
+  grid-column: span 2;
+}
+
 .journey-gates-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -1155,6 +1159,13 @@ select:focus {
 }
 
 .homepage-experience-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.source-evolution-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 8px;
@@ -1179,6 +1190,15 @@ select:focus {
   background: #fff;
 }
 
+.source-evolution-grid div {
+  display: grid;
+  gap: 3px;
+  min-height: 64px;
+  border-radius: 8px;
+  padding: 9px;
+  background: #fff;
+}
+
 .journey-gates-grid strong {
   color: var(--green-dark);
   font-size: 1.18rem;
@@ -1186,6 +1206,12 @@ select:focus {
 }
 
 .homepage-experience-grid strong {
+  color: var(--green-dark);
+  font-size: 1.18rem;
+  overflow-wrap: anywhere;
+}
+
+.source-evolution-grid strong {
   color: var(--green-dark);
   font-size: 1.18rem;
   overflow-wrap: anywhere;
@@ -1199,6 +1225,13 @@ select:focus {
 }
 
 .homepage-experience-grid span {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.source-evolution-grid span {
   color: var(--muted);
   font-size: 0.78rem;
   font-weight: 800;
@@ -2379,11 +2412,19 @@ select:focus {
     grid-column: auto;
   }
 
+  .source-evolution-card {
+    grid-column: auto;
+  }
+
   .journey-gates-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .homepage-experience-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .source-evolution-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -2496,6 +2537,10 @@ select:focus {
   }
 
   .homepage-experience-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .source-evolution-grid {
     grid-template-columns: 1fr;
   }
 

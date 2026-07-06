@@ -73,6 +73,7 @@ import type {
   SwiggyBuildersLaunchStoryCenterReport,
   SwiggyBuildersJourneyGateCenter,
   SwiggyBuildersModuleIntelligenceCenter,
+  SwiggyBuildersSourceEvolutionCenter,
   SwiggyBuildersPageMeshAuditor,
   SwiggyBuildersSiteParityAuditor,
   SwiggyAccessDossier,
@@ -413,6 +414,12 @@ export function fetchSwiggyBuildersJourneyGates() {
 export function fetchSwiggyBuildersHomepageExperience() {
   return requestJson<{ homepageExperience: SwiggyBuildersHomepageExperienceCenter }>(
     "/api/swiggy-builders-homepage-experience",
+  );
+}
+
+export function fetchSwiggyBuildersSourceEvolution() {
+  return requestJson<{ sourceEvolution: SwiggyBuildersSourceEvolutionCenter }>(
+    "/api/swiggy-builders-source-evolution",
   );
 }
 

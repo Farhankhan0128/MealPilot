@@ -389,6 +389,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-builders-source-evolution": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Builders Source Evolution Center for 18+ to 35-tool reconciliation and upstream drift gates",
+          responses: {
+            "200": {
+              description:
+                "Homepage 18+ launch copy reconciled with current 35/35 callable-tool coverage, llms and docs refresh loops, roadmap version watch, rate-limit and signed-manifest gates, homepage/widget drift, reviewer packet regression, proof links, runbook, assertions, and external Swiggy gates",
+            },
+          },
+        },
+      },
       "/api/swiggy-builder-intake": {
         get: {
           tags: ["Builder Access"],

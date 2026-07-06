@@ -51,6 +51,15 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
         "Maps header, hero, how-it-works, benefits, guidelines, FAQ, final CTA, and footer sections into proof, mobile checks, reviewer checks, and external gates.",
     },
     {
+      id: "source_evolution",
+      label: "Swiggy Builders Source Evolution Center",
+      path: "/api/swiggy-builders-source-evolution",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Reconciles homepage 18+ launch copy with current 35/35 callable-tool coverage, upstream roadmap drift, docs refresh loops, source gates, and reviewer packet regression.",
+    },
+    {
       id: "builders_launch_story",
       label: "Swiggy Builders Launch Story Center",
       path: "/api/swiggy-builders-launch-story",
@@ -1059,6 +1068,7 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- Swiggy Builders Module Intelligence Center: /api/swiggy-builders-module-intelligence",
     "- Swiggy Builders Journey Gate Center: /api/swiggy-builders-journey-gates",
     "- Swiggy Builders Homepage Experience Center: /api/swiggy-builders-homepage-experience",
+    "- Swiggy Builders Source Evolution Center: /api/swiggy-builders-source-evolution",
     "- Swiggy Builders Launch Story Center: /api/swiggy-builders-launch-story",
     "- Deep Site Map: /api/swiggy-deep-site-map",
     "- Developer Quickstart Workbench: /api/swiggy-developer-quickstart",

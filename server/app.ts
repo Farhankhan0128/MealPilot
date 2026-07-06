@@ -30,6 +30,7 @@ import { buildSwiggyBenefitsActivationCenter } from "./services/benefitsActivati
 import { buildBrandComplianceKit } from "./services/brandCompliance.js";
 import { buildSwiggyBuildersLaunchStoryCenter } from "./services/buildersLaunchStoryCenter.js";
 import { buildSwiggyBuildersModuleIntelligenceCenter } from "./services/moduleIntelligence.js";
+import { buildSwiggyBuildersSourceEvolutionCenter } from "./services/sourceEvolutionCenter.js";
 import { buildSwiggyBuildersPageMeshAuditor } from "./services/buildersPageMeshAuditor.js";
 import { buildSwiggyBuildersSiteParityAuditor } from "./services/buildersSiteParityAuditor.js";
 import { buildBuilderPacketExport, buildBuilderPacketMarkdown } from "./services/builderPacketExport.js";
@@ -1034,6 +1035,19 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
         config,
         profile: store.getProfile(),
         coverage: buildMcpCoverage(),
+        latestPlan: store.getAllPlans().at(-1),
+        plans: store.getAllPlans(),
+        telemetry: telemetry.buildReport(),
+        handoffState: store.getAccessSubmissionState(),
+      }),
+    });
+  });
+
+  app.get("/api/swiggy-builders-source-evolution", (_req, res) => {
+    res.json({
+      sourceEvolution: buildSwiggyBuildersSourceEvolutionCenter({
+        config,
+        profile: store.getProfile(),
         latestPlan: store.getAllPlans().at(-1),
         plans: store.getAllPlans(),
         telemetry: telemetry.buildReport(),

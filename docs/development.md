@@ -502,6 +502,7 @@ The test suite checks that:
 - Swiggy Builders Module Intelligence Center maps each Website Atlas module into owner, product promise, proof links, route optimization, risk boundary, module journeys, and external gates.
 - Swiggy Builders Journey Gate Center maps the official Start Building, Apply for Prod Access, Quick Review, Go Live, and Show Us What You Built path into owner gates, criteria, proof links, telemetry, blockers, and external Swiggy approvals.
 - Swiggy Builders Homepage Experience Center maps header, hero, how-it-works, benefits, guidelines, FAQ, final CTA, and footer into section proof, mobile checks, reviewer checks, continuity, and external gates.
+- Swiggy Builders Source Evolution Center reconciles homepage 18+ launch copy with current 35/35 callable-tool coverage, llms/docs refresh loops, v1.0/v1.1/v1.2/v2 roadmap drift, signed-manifest/rate-limit gates, visual proof, and reviewer packet regression.
 - CTA Live Audit probes official Builders/docs click targets, keeps form/email/legal CTAs manual, and fails smoke on unsafe or blocked CTA drift.
 - Swiggy Builders Launch Story Center converts the launch blog into a reviewer-ready story, reconciles the launch-era 18+ signal with the current 35-tool docs snapshot, and packages demo journey, showcase assets, ecosystem lanes, CTA paths, and co-marketing guardrails.
 - Swiggy Operating Contract Center joins SLA, rate limits, support, versioning, changelog, and ship-to-production sources into pillars, runbooks, readiness gates, and external approval gates.
