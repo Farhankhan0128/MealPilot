@@ -131,6 +131,7 @@ const artifactSections = [
       artifact("guest_collaboration", "Guest Collaboration & Calendar", "api", "/api/guest-collaboration-calendar", "Guest votes, occasion templates, calendar handoffs, Slack/Teams gates, and voice briefs.", "Votes-only artifacts omit Swiggy ids, payment data, and full addresses."),
       artifact("luxury_experience", "Luxury Experience Workspace", "api", "/api/luxury-experience-workspace", "Premium reservation, Food cart, Instamart basket, combined evening, and recovery workspaces across all 35 tools.", "Widget fallbacks and voice briefs suppress raw identifiers."),
       artifact("docs_twin_explorer", "Swiggy Docs Twin Explorer", "api", "/api/swiggy-docs-twin-explorer", "All official llms.txt markdown twins paired with rendered pages, retrieval lanes, proof routes, and drift gates.", "Public docs only; no credentials or live customer data."),
+      artifact("access_evidence_matrix", "Swiggy Access Evidence Matrix", "api", "/api/swiggy-access-evidence-matrix", "Every official access field, proof attachment, runbook step, owner, and Swiggy gate reconciled into one reviewer ledger.", "Manual inputs and external gates are labelled rather than fabricated."),
     ],
   },
   {
@@ -168,6 +169,7 @@ const artifactSections = [
 const screenshotTargets = [
   screenshot("workspace_planner", "Planner workspace", "/", ".workspace-panel", "desktop", "Shows real meal-planning request controls, profile context, and three-server recommendation cards.", "Use README screenshots if browser automation is unavailable."),
   screenshot("launch_center", "Launch Center", "/", ".launch-panel", "desktop", "Shows MCP coverage, proof cards, luxury workspace, and launch gates in one reviewer surface.", "Use /api/production-launch-bundle proof links if screenshot capture is manual."),
+  screenshot("access_evidence_card", "Access Evidence Matrix card", "/", ".access-evidence-card", "desktop", "Shows official access evidence row coverage, operator inputs, and Swiggy gates.", "Use /api/swiggy-access-evidence-matrix JSON readback."),
   screenshot("docs_twin_card", "Docs Twin Explorer card", "/", ".docs-twin-card", "desktop", "Shows markdown twin count, official reference tool coverage, and retrieval lanes.", "Use /api/swiggy-docs-twin-explorer JSON readback."),
   screenshot("deep_site_map_card", "Deep Site Map card", "/", ".deep-site-map-card", "desktop", "Shows page/module/CTA/header/footer proof coverage for the complete Swiggy Builders website audit.", "Use /api/swiggy-deep-site-map JSON readback."),
   screenshot("developer_quickstart_card", "Developer Quickstart card", "/", ".developer-quickstart-card", "desktop", "Shows first-call drills, framework adapters, OAuth gates, and official quickstart proof.", "Use /api/swiggy-developer-quickstart JSON readback."),
@@ -293,7 +295,7 @@ export function buildReviewerArtifactVault(): ReviewerArtifactVault {
     assertions: [
       "The vault packages Swiggy's requested demo video, production-readiness evidence, session/log posture, support context, and proof links in one route.",
       "Every artifact has an explicit redaction rule so the reviewer packet stays safe to share.",
-      "Screenshot targets cover the planner, Launch Center, Docs Twin Explorer, Deep Site Map, Developer Quickstart, CTA Execution, Luxury Experience Workspace, Production Evidence, Demo Studio, mobile layout, and widget fallbacks.",
+      "Screenshot targets cover the planner, Launch Center, Access Evidence Matrix, Docs Twin Explorer, Deep Site Map, Developer Quickstart, CTA Execution, Luxury Experience Workspace, Production Evidence, Demo Studio, mobile layout, and widget fallbacks.",
       "Production commands prove lint, build, tests, server start, and the end-to-end verifier before submitting to Swiggy.",
     ],
     externalGates: [

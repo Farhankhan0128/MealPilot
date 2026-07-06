@@ -2725,6 +2725,73 @@ export interface AccessSubmissionStudio {
   externalGates: string[];
 }
 
+export type SwiggyAccessEvidenceStatus = "ready" | "operator_input" | "external_gate" | "watch";
+export type SwiggyAccessEvidenceOwner = "MealPilot" | "Operator" | "Swiggy";
+export type SwiggyAccessEvidenceKind =
+  | "application_field"
+  | "review_check"
+  | "ground_rule"
+  | "legal"
+  | "track"
+  | "attachment"
+  | "runbook"
+  | "proof";
+
+export interface SwiggyAccessEvidenceRow {
+  id: string;
+  label: string;
+  kind: SwiggyAccessEvidenceKind;
+  status: SwiggyAccessEvidenceStatus;
+  owner: SwiggyAccessEvidenceOwner;
+  officialSource: string;
+  officialRequirement: string;
+  mealPilotEvidence: string;
+  nextAction: string;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyAccessEvidenceSection {
+  id: string;
+  label: string;
+  description: string;
+  readyRows: number;
+  operatorRows: number;
+  externalGateRows: number;
+  totalRows: number;
+  rows: SwiggyAccessEvidenceRow[];
+}
+
+export interface SwiggyAccessEvidenceCommand {
+  id: string;
+  command: string;
+  proves: string;
+  expectedSignal: string;
+}
+
+export interface SwiggyAccessEvidenceMatrix {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  recommendedTrack: "developer" | "enterprise";
+  totals: {
+    rows: number;
+    readyRows: number;
+    operatorRows: number;
+    externalGateRows: number;
+    sections: number;
+    requiredApplicationFields: number;
+    readyRequiredApplicationFields: number;
+    requiredAttachments: number;
+    readyRequiredAttachments: number;
+    proofCommands: number;
+  };
+  sections: SwiggyAccessEvidenceSection[];
+  commands: SwiggyAccessEvidenceCommand[];
+  submissionReadiness: string[];
+  assertions: string[];
+  externalGates: string[];
+}
+
 export interface SwiggyWidget {
   id: string;
   type: "restaurant-card" | "menu-item" | "cart-widget" | "product-card" | "slot-picker";

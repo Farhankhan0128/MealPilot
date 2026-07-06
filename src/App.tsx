@@ -103,6 +103,7 @@ import {
   fetchSwiggyFaqPolicyCenter,
   fetchSwiggyGrowthPartnershipCenter,
   fetchSwiggyAccessDossier,
+  fetchSwiggyAccessEvidenceMatrix,
   fetchSwiggyDocsCoverage,
   fetchSwiggyDocsTwinExplorer,
   fetchSwiggyDeepSiteMap,
@@ -196,6 +197,7 @@ import type {
   SupportBridgeReport,
   SwiggyAuthStatusReport,
   SwiggyAccessDossier,
+  SwiggyAccessEvidenceMatrix,
   SwiggyBuilderIntakeCommandCenter,
   SwiggyChannelMultimodalStudio,
   SwiggyCtaExecutionCenter,
@@ -388,6 +390,7 @@ function App() {
   const [brandCompliance, setBrandCompliance] = useState<BrandComplianceKit | null>(null);
   const [swiggyJourneyCompiler, setSwiggyJourneyCompiler] = useState<SwiggyJourneyCompilerReport | null>(null);
   const [swiggyAccessDossier, setSwiggyAccessDossier] = useState<SwiggyAccessDossier | null>(null);
+  const [accessEvidenceMatrix, setAccessEvidenceMatrix] = useState<SwiggyAccessEvidenceMatrix | null>(null);
   const [premiumUseCaseStudio, setPremiumUseCaseStudio] = useState<PremiumUseCaseStudio | null>(null);
   const [premiumConciergeItinerary, setPremiumConciergeItinerary] =
     useState<PremiumConciergeItineraryReport | null>(null);
@@ -502,6 +505,8 @@ function App() {
       const response = await updateAccessSubmissionState(nextState);
       setAccessSubmissionStudio(response.accessSubmissionStudio);
       setAccessSubmissionForm(response.accessSubmissionStudio.handoffState);
+      const matrixResponse = await fetchSwiggyAccessEvidenceMatrix();
+      setAccessEvidenceMatrix(matrixResponse.accessEvidenceMatrix);
       setActionNotice("Swiggy access handoff state saved locally.");
     } catch (handoffError) {
       setError(handoffError instanceof Error ? handoffError.message : "Unable to save access handoff state.");
@@ -549,6 +554,7 @@ function App() {
       brandComplianceResponse,
       journeyCompilerResponse,
       accessDossierResponse,
+      accessEvidenceResponse,
       useCaseStudioResponse,
       conciergeResponse,
       stagingCertificationResponse,
@@ -618,6 +624,7 @@ function App() {
       fetchBrandComplianceKit(),
       fetchSwiggyJourneyCompiler(),
       fetchSwiggyAccessDossier(),
+      fetchSwiggyAccessEvidenceMatrix(),
       fetchPremiumUseCaseStudio(),
       fetchPremiumConciergeItinerary(),
       fetchStagingCertificationMatrix(),
@@ -688,6 +695,7 @@ function App() {
     setBrandCompliance(brandComplianceResponse.brandCompliance);
     setSwiggyJourneyCompiler(journeyCompilerResponse.journeyCompiler);
     setSwiggyAccessDossier(accessDossierResponse.dossier);
+    setAccessEvidenceMatrix(accessEvidenceResponse.accessEvidenceMatrix);
     setPremiumUseCaseStudio(useCaseStudioResponse.studio);
     setPremiumConciergeItinerary(conciergeResponse.concierge);
     setStagingCertification(stagingCertificationResponse.matrix);
@@ -761,6 +769,7 @@ function App() {
       brandComplianceResponse,
       journeyCompilerResponse,
       accessDossierResponse,
+      accessEvidenceResponse,
       useCaseStudioResponse,
       conciergeResponse,
       stagingCertificationResponse,
@@ -827,6 +836,7 @@ function App() {
       fetchBrandComplianceKit(),
       fetchSwiggyJourneyCompiler(),
       fetchSwiggyAccessDossier(),
+      fetchSwiggyAccessEvidenceMatrix(),
       fetchPremiumUseCaseStudio(),
       fetchPremiumConciergeItinerary(),
       fetchStagingCertificationMatrix(),
@@ -893,6 +903,7 @@ function App() {
     setBrandCompliance(brandComplianceResponse.brandCompliance);
     setSwiggyJourneyCompiler(journeyCompilerResponse.journeyCompiler);
     setSwiggyAccessDossier(accessDossierResponse.dossier);
+    setAccessEvidenceMatrix(accessEvidenceResponse.accessEvidenceMatrix);
     setPremiumUseCaseStudio(useCaseStudioResponse.studio);
     setPremiumConciergeItinerary(conciergeResponse.concierge);
     setStagingCertification(stagingCertificationResponse.matrix);
@@ -1533,6 +1544,7 @@ function App() {
                 brandCompliance={brandCompliance}
                 journeyCompiler={swiggyJourneyCompiler}
                 accessDossier={swiggyAccessDossier}
+                accessEvidenceMatrix={accessEvidenceMatrix}
                 useCaseStudio={premiumUseCaseStudio}
                 stagingCertification={stagingCertification}
                 credentialOnboarding={credentialOnboarding}
@@ -2089,6 +2101,7 @@ function LaunchCenterPanel({
   brandCompliance,
   journeyCompiler,
   accessDossier,
+  accessEvidenceMatrix,
   useCaseStudio,
   stagingCertification,
   credentialOnboarding,
@@ -2140,6 +2153,7 @@ function LaunchCenterPanel({
   brandCompliance: BrandComplianceKit | null;
   journeyCompiler: SwiggyJourneyCompilerReport | null;
   accessDossier: SwiggyAccessDossier | null;
+  accessEvidenceMatrix: SwiggyAccessEvidenceMatrix | null;
   useCaseStudio: PremiumUseCaseStudio | null;
   stagingCertification: StagingCertificationMatrix | null;
   credentialOnboarding: CredentialOnboardingReport | null;
@@ -2606,6 +2620,55 @@ function LaunchCenterPanel({
               </li>
             ))}
           </ul>
+        </article>
+
+        <article className="access-evidence-card">
+          <div className="mini-heading">
+            <ShieldCheck aria-hidden="true" />
+            <strong>Access Evidence Matrix</strong>
+          </div>
+          <span>
+            {accessEvidenceMatrix
+              ? `${accessEvidenceMatrix.score}/100, ${accessEvidenceMatrix.totals.rows} evidence rows`
+              : "Reconciling Swiggy access evidence"}
+          </span>
+          <div className="access-evidence-grid">
+            <div>
+              <strong>
+                {accessEvidenceMatrix
+                  ? `${accessEvidenceMatrix.totals.readyRows}/${accessEvidenceMatrix.totals.rows}`
+                  : "0/0"}
+              </strong>
+              <span>Ready rows</span>
+            </div>
+            <div>
+              <strong>{accessEvidenceMatrix?.totals.operatorRows ?? 0}</strong>
+              <span>Operator</span>
+            </div>
+            <div>
+              <strong>{accessEvidenceMatrix?.totals.externalGateRows ?? 0}</strong>
+              <span>Swiggy gates</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(accessEvidenceMatrix?.sections ?? []).map((section) => (
+              <li
+                key={section.id}
+                data-status={section.externalGateRows > 0 ? "watch" : section.operatorRows > 0 ? "watch" : "healthy"}
+              >
+                <span>{section.label}</span>
+                <strong>{section.readyRows}/{section.totalRows}</strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-links">
+            <a href="/api/swiggy-access-evidence-matrix" target="_blank" rel="noreferrer">
+              Matrix API
+            </a>
+            <a href="https://mcp.swiggy.com/builders/access/" target="_blank" rel="noreferrer">
+              Access page
+            </a>
+          </div>
         </article>
 
         <article className="use-case-studio-card">

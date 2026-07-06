@@ -162,6 +162,10 @@ assert(
   openApi.paths["/api/submission-console"].get.summary.includes("submission console"),
   "OpenAPI submission console is missing",
 );
+assert(
+  openApi.paths["/api/swiggy-access-evidence-matrix"].get.summary.includes("access evidence matrix"),
+  "OpenAPI access evidence matrix is missing",
+);
 
 const storage = await request("/api/storage/status");
 assert(storage.storage.planCount >= 0, "storage diagnostics are missing");
@@ -784,7 +788,7 @@ const reviewerArtifactVault = await request("/api/reviewer-artifact-vault");
 assert(reviewerArtifactVault.reviewerArtifactVault.score >= 90, "reviewer artifact vault score is below target");
 assert(reviewerArtifactVault.reviewerArtifactVault.totalArtifacts >= 30, "reviewer artifact vault artifacts are incomplete");
 assert(reviewerArtifactVault.reviewerArtifactVault.readyArtifacts >= 30, "reviewer artifact vault ready artifacts are incomplete");
-assert(reviewerArtifactVault.reviewerArtifactVault.totalScreenshotTargets === 11, "reviewer artifact vault screenshot targets are incomplete");
+assert(reviewerArtifactVault.reviewerArtifactVault.totalScreenshotTargets === 12, "reviewer artifact vault screenshot targets are incomplete");
 assert(reviewerArtifactVault.reviewerArtifactVault.readyScreenshotTargets >= 5, "reviewer artifact vault ready screenshots are incomplete");
 assert(reviewerArtifactVault.reviewerArtifactVault.totalCommands === 7, "reviewer artifact vault commands are incomplete");
 assert(reviewerArtifactVault.reviewerArtifactVault.readyCommands >= 6, "reviewer artifact vault ready commands are incomplete");
@@ -852,6 +856,17 @@ assert(
   "reviewer artifact vault docs twin explorer artifact is missing",
 );
 assert(
+  reviewerArtifactVault.reviewerArtifactVault.artifactSections.some((section) =>
+    section.artifacts.some(
+      (artifact) =>
+        artifact.id === "access_evidence_matrix" &&
+        artifact.label === "Swiggy Access Evidence Matrix" &&
+        artifact.path === "/api/swiggy-access-evidence-matrix",
+    ),
+  ),
+  "reviewer artifact vault access evidence matrix artifact is missing",
+);
+assert(
   reviewerArtifactVault.reviewerArtifactVault.screenshotTargets.some(
     (target) =>
       target.id === "luxury_workspace_card" &&
@@ -888,6 +903,15 @@ assert(
   "reviewer artifact vault docs twin screenshot target is missing",
 );
 assert(
+  reviewerArtifactVault.reviewerArtifactVault.screenshotTargets.some(
+    (target) =>
+      target.id === "access_evidence_card" &&
+      target.selector === ".access-evidence-card" &&
+      target.status === "ready",
+  ),
+  "reviewer artifact vault access evidence screenshot target is missing",
+);
+assert(
   reviewerArtifactVault.reviewerArtifactVault.commands.some(
     (command) =>
       command.id === "verify_production" &&
@@ -913,8 +937,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 18, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 18, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 19, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 19, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -985,6 +1009,12 @@ assert(
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some((target) => target.id === "access_evidence_card" && target.selector === ".access-evidence-card"),
+  ),
+  "visual QA access evidence matrix target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
     group.targets.some((target) => target.id === "coding_agent_card" && target.selector === ".coding-agent-card"),
   ),
   "visual QA coding agent governance target is missing",
@@ -1021,7 +1051,7 @@ assert(
     (command) =>
       command.id === "visual_capture_harness" &&
       command.command === "npm run verify:visual" &&
-      command.expectedSignal.includes("targetCount >= 18"),
+      command.expectedSignal.includes("targetCount >= 19"),
   ),
   "visual QA Playwright command is missing",
 );
@@ -1533,6 +1563,48 @@ assert(
 assert(
   accessDossier.dossier.externalGates.some((gate) => gate.includes("Google Form")),
   "Swiggy access dossier must preserve form submission as a gate",
+);
+
+const accessEvidenceMatrix = await request("/api/swiggy-access-evidence-matrix");
+assert(accessEvidenceMatrix.accessEvidenceMatrix.score >= 80, "access evidence matrix score is below target");
+assert(accessEvidenceMatrix.accessEvidenceMatrix.recommendedTrack === "developer", "access evidence matrix developer track is missing");
+assert(accessEvidenceMatrix.accessEvidenceMatrix.totals.sections === 5, "access evidence matrix sections are incomplete");
+assert(accessEvidenceMatrix.accessEvidenceMatrix.totals.requiredApplicationFields === 9, "access evidence matrix required fields are incomplete");
+assert(accessEvidenceMatrix.accessEvidenceMatrix.totals.readyRequiredApplicationFields >= 4, "access evidence matrix ready required fields are too low");
+assert(accessEvidenceMatrix.accessEvidenceMatrix.totals.requiredAttachments >= 10, "access evidence matrix attachments are incomplete");
+assert(accessEvidenceMatrix.accessEvidenceMatrix.totals.readyRequiredAttachments >= 8, "access evidence matrix ready attachments are too low");
+assert(accessEvidenceMatrix.accessEvidenceMatrix.totals.rows >= 40, "access evidence matrix rows are incomplete");
+assert(accessEvidenceMatrix.accessEvidenceMatrix.totals.readyRows >= 25, "access evidence matrix ready rows are too low");
+assert(accessEvidenceMatrix.accessEvidenceMatrix.totals.operatorRows >= 5, "access evidence matrix operator rows are missing");
+assert(accessEvidenceMatrix.accessEvidenceMatrix.totals.externalGateRows >= 3, "access evidence matrix external gates are missing");
+assert(
+  ["application_fields", "review_and_rules", "legal_and_tracks", "attachments_and_runbook", "reviewer_proof_commands"].every((id) =>
+    accessEvidenceMatrix.accessEvidenceMatrix.sections.some((section) => section.id === id),
+  ),
+  "access evidence matrix section ids are missing",
+);
+assert(
+  accessEvidenceMatrix.accessEvidenceMatrix.sections.some((section) =>
+    section.rows.some((row) => row.id === "field_terms_acknowledgement" && row.owner === "Operator" && row.status === "operator_input"),
+  ),
+  "access evidence matrix terms operator gate is missing",
+);
+assert(
+  accessEvidenceMatrix.accessEvidenceMatrix.sections.some((section) =>
+    section.rows.some((row) => row.id === "runbook_await_credentials" && row.owner === "Swiggy" && row.status === "external_gate"),
+  ),
+  "access evidence matrix Swiggy credential gate is missing",
+);
+assert(
+  ["matrix_readback", "production_verifier", "submission_state"].every((id) =>
+    accessEvidenceMatrix.accessEvidenceMatrix.commands.some((command) => command.id === id),
+  ),
+  "access evidence matrix proof commands are missing",
+);
+assert(
+  accessEvidenceMatrix.accessEvidenceMatrix.assertions.some((assertion) => assertion.includes("Every official access-page")) &&
+    accessEvidenceMatrix.accessEvidenceMatrix.externalGates.some((gate) => gate.includes("staging credentials")),
+  "access evidence matrix assertions or external gates are incomplete",
 );
 
 const useCaseStudio = await request("/api/premium-use-case-studio");
@@ -2310,6 +2382,12 @@ assert(
   "reviewer proof artifact vault is missing",
 );
 assert(
+  proof.proof.artifacts.some(
+    (artifact) => artifact.label === "Swiggy Access Evidence Matrix" && artifact.path === "/api/swiggy-access-evidence-matrix",
+  ),
+  "reviewer proof access evidence matrix artifact is missing",
+);
+assert(
   proof.proof.artifacts.some((artifact) => artifact.label === "Visual QA Center"),
   "reviewer proof visual QA center is missing",
 );
@@ -2869,7 +2947,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 18, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 19, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -2883,7 +2961,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("18")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("19")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -2925,6 +3003,7 @@ assert(
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Guest Collaboration & Calendar Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Luxury Experience Workspace") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Reviewer Artifact Vault") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Access Evidence Matrix") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Visual QA Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Docs Coverage") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Docs Twin Explorer") &&
@@ -3020,6 +3099,10 @@ assert(
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/reviewer-artifact-vault"),
   "launch bundle reviewer artifact vault handoff link is missing",
+);
+assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-access-evidence-matrix"),
+  "launch bundle access evidence matrix handoff link is missing",
 );
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/visual-qa-center"),
@@ -3150,6 +3233,9 @@ console.log(
       compiledJourneys: journeyCompiler.journeyCompiler.totalJourneys,
       accessDossierScore: accessDossier.dossier.score,
       accessApplicationFields: accessDossier.dossier.applicationFields.length,
+      accessEvidenceScore: accessEvidenceMatrix.accessEvidenceMatrix.score,
+      accessEvidenceRows: accessEvidenceMatrix.accessEvidenceMatrix.totals.rows,
+      accessEvidenceReadyRows: accessEvidenceMatrix.accessEvidenceMatrix.totals.readyRows,
       premiumUseCaseScore: useCaseStudio.studio.score,
       premiumUseCases: useCaseStudio.studio.totalUseCases,
       premiumConciergeScore: concierge.concierge.score,

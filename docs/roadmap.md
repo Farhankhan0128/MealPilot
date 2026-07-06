@@ -45,6 +45,7 @@ Status: in progress.
 - Add Staging Cutover Rehearsal for real MCP transport, first-call probes, fail-closed token behavior, retry branches, support packet fields, and 48-hour promotion gates. Complete.
 - Add Audit Ledger Center for redacted session/tool events, support correlation, retention posture, DSR routing, and support packet fields. Complete.
 - Add Submission Console for developer/enterprise form targets, official fields, proof attachments, runbook steps, blockers, and handoff drafts. Complete.
+- Add Swiggy Access Evidence Matrix for official access fields, proof attachments, runbook steps, proof commands, owner assignment, operator inputs, and Swiggy gates. Complete.
 - Add FAQ & Policy Center for homepage, developer, enterprise, access-guideline, footer-resource, allowed/restricted/prohibited, operating-principle, and legal evidence. Complete.
 - Add Growth Partnership Center for get-noticed, hiring, co-marketing, analytics, strategic guidance, launch experiments, metrics, proof assets, and partner asks. Complete.
 - Add Resource & Prompt Studio for Food, Instamart, and Dineout resources/list, resources/read, prompts/list, and prompts/get proof. Complete.

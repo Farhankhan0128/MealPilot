@@ -122,6 +122,7 @@ Open the Launch Center and show:
 - Brand Compliance Kit showing Powered by Swiggy attribution, co-branding asset gates, palette audit, and no-endorsement copy.
 - Journey Compiler showing official recipe routes, all 35 tools, confirmation gates, recovery reads, and call savings.
 - Access Dossier showing Swiggy application fields, review checks, ground rules, legal readiness, and the developer-track submission path.
+- Access Evidence Matrix showing field coverage, required attachments, browser runbook steps, proof commands, owner assignment, operator inputs, and Swiggy approval gates.
 - Premium Use Case Studio showing ten differentiated MealPilot playbooks, all 35 tools placed, cross-server routes, surfaces, saved calls, and launch stages.
 - Premium Concierge showing lunch, pantry reset, Dineout evening, dessert reminder, and Sunday recovery slots with official recipe routes, saved-call optimization, and separate confirmations.
 - Luxury Experience Workspace showing lean, premium, family, social, and training modes plus reservation, Food cart, Instamart basket, combined evening, and recovery review surfaces with all 35 Swiggy tools, widget fallbacks, voice contracts, and telemetry.
@@ -153,6 +154,7 @@ Open Demo Studio and show:
 - Offer opportunities for Food, Instamart, and Dineout.
 - MCP Replay with JSON-RPC `tools/call` requests.
 - Submission Console with developer/enterprise form targets, prepared attachments, runbook steps, blockers, and handoff drafts.
+- Access Evidence Matrix with the same submission evidence reconciled into one reviewer ledger.
 - Evaluation Lab score across Bengaluru, Delhi NCR, Mumbai, chat, voice, budget, confirmation, and privacy scenarios.
 - Demo Run status.
 - Submission Package readiness and remaining manual fields.
@@ -197,11 +199,12 @@ Open Production Evidence and show:
 - Guest Collaboration & Calendar Center for guest votes, date-night and guests-at-home templates, Dineout slot checks, Food reminder handoffs, Instamart prep, ICS artifacts, Slack/Teams gates, and voice-safe briefs.
 - Luxury Experience Workspace for polished reservation, Food cart, Instamart basket, combined evening, and recovery review surfaces with all-tool coverage and separate confirmations.
 - Reviewer Artifact Vault for proof links, screenshot targets, verification commands, redaction rules, and access-review handoff email.
-- Visual QA Center for reviewer screenshot selectors, viewport coverage, Deep Site Map card proof, no-overlap/text-fit rules, widget fallback checks, and screenshot automation gates.
+- Visual QA Center for reviewer screenshot selectors, viewport coverage, Deep Site Map and Access Evidence Matrix card proof, no-overlap/text-fit rules, widget fallback checks, and screenshot automation gates.
 - AI Client Connect Kit artifact for consumer AI-client, coding-agent, SDK, and delegated-auth readiness.
 - Brand Compliance Kit artifact for attribution, co-branding, palette, and external asset gates.
 - Swiggy Journey Compiler artifact for official recipe routes and all-tool coverage.
 - Swiggy Access Dossier artifact for access-page fields, ground rules, and manual inputs.
+- Swiggy Access Evidence Matrix artifact for access-page fields, proof attachments, runbook steps, proof commands, owners, and external gates.
 - Premium Use Case Studio artifact for innovation depth and differentiated premium product lanes.
 - Premium Concierge Itinerary artifact for official route-to-product execution, all-server coverage, and scheduling gates.
 - Staging Certification Matrix artifact for credentialed smoke waves, all-tool staging coverage, and 48-hour soak readiness.
@@ -225,6 +228,8 @@ Briefly show production readiness:
 - `/api/swiggy-cta-execution-center`
 - `/api/swiggy-innovation-radar`
 - `/api/swiggy-builder-intake`
+- `/api/swiggy-access-dossier`
+- `/api/swiggy-access-evidence-matrix`
 - `/api/swiggy-faq-policy`
 - `/api/swiggy-growth-partnership`
 - `/api/channel-multimodal-studio`

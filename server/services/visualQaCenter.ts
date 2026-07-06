@@ -156,6 +156,17 @@ const targetGroups = [
         "artifacts/visual-qa/docs-twin-card.png",
       ),
       target(
+        "access_evidence_card",
+        "Access Evidence Matrix card",
+        "/",
+        ".access-evidence-card",
+        "desktop",
+        1280,
+        900,
+        "Access Evidence Matrix shows access row coverage, operator inputs, proof commands, and Swiggy gates.",
+        "artifacts/visual-qa/access-evidence-card.png",
+      ),
+      target(
         "deep_site_map_card",
         "Deep Site Map card",
         "/",
@@ -350,7 +361,7 @@ const commands = [
     "visual_capture_harness",
     "npm run verify:visual",
     "Playwright captures every Visual QA target at desktop, tablet, and mobile sizes and writes report.json.",
-        "ok true with targetCount >= 18 and PNG files under artifacts/visual-qa.",
+        "ok true with targetCount >= 19 and PNG files under artifacts/visual-qa.",
   ),
   command(
     "desktop_capture",
@@ -414,7 +425,7 @@ export function buildVisualQaCenter(): VisualQaCenter {
       },
     ],
     assertions: [
-      "Visual QA targets cover planner, Launch Center, Docs Twin Explorer, Deep Site Map, Developer Quickstart, CTA Execution, Coding Agent Governance, Luxury Experience Workspace, Reviewer Artifact Vault, Production Evidence, Demo Studio, and widget fallbacks.",
+      "Visual QA targets cover planner, Launch Center, Access Evidence Matrix, Docs Twin Explorer, Deep Site Map, Developer Quickstart, CTA Execution, Coding Agent Governance, Luxury Experience Workspace, Reviewer Artifact Vault, Production Evidence, Demo Studio, and widget fallbacks.",
       "Desktop, tablet, and mobile viewports are represented with explicit selectors and artifact paths.",
       "UI rules encode no-overlap, text-fit, widget-security, redaction, confirmation-visibility, and mobile single-column checks.",
       "Playwright screenshot automation captures every manifest target and writes local PNG evidence plus report.json.",

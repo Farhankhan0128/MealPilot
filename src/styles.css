@@ -1146,6 +1146,10 @@ select:focus {
   grid-column: span 2;
 }
 
+.access-evidence-card {
+  grid-column: span 2;
+}
+
 .use-case-studio-card {
   grid-column: span 2;
 }
@@ -1327,6 +1331,7 @@ select:focus {
 .reviewer-artifact-grid,
 .visual-qa-grid,
 .access-dossier-grid,
+.access-evidence-grid,
 .use-case-studio-grid,
 .staging-certification-grid,
 .upstream-watch-grid,
@@ -1361,6 +1366,7 @@ select:focus {
 .reviewer-artifact-grid div,
 .visual-qa-grid div,
 .access-dossier-grid div,
+.access-evidence-grid div,
 .use-case-studio-grid div,
 .staging-certification-grid div,
 .upstream-watch-grid div,
@@ -1398,6 +1404,7 @@ select:focus {
 .reviewer-artifact-grid strong,
 .visual-qa-grid strong,
 .access-dossier-grid strong,
+.access-evidence-grid strong,
 .use-case-studio-grid strong,
 .staging-certification-grid strong,
 .upstream-watch-grid strong,
@@ -1432,6 +1439,7 @@ select:focus {
 .reviewer-artifact-grid span,
 .visual-qa-grid span,
 .access-dossier-grid span,
+.access-evidence-grid span,
 .use-case-studio-grid span,
 .staging-certification-grid span,
 .upstream-watch-grid span,
@@ -1581,6 +1589,7 @@ select:focus {
 .widget-list li,
 .submission-grid div,
 .access-submission-grid div,
+.access-evidence-grid div,
 .submission-console-grid div,
 .proof-grid div {
   border-radius: 8px;
@@ -1593,6 +1602,7 @@ select:focus {
 .widget-list strong,
 .submission-grid strong,
 .access-submission-grid strong,
+.access-evidence-grid strong,
 .submission-console-grid strong,
 .docs-coverage-grid strong,
 .source-intelligence-grid strong,
@@ -1614,6 +1624,7 @@ select:focus {
 .submission-card,
 .submission-console-card,
 .access-submission-card,
+.access-evidence-card,
 .builder-packet-card,
 .staging-transcript-card,
 .widget-card,
@@ -1704,6 +1715,7 @@ select:focus {
 
 .submission-grid,
 .access-submission-grid,
+.access-evidence-grid,
 .submission-console-grid,
 .staging-transcript-grid,
 .traffic-readiness-grid,
@@ -1736,6 +1748,7 @@ select:focus {
 .client-connect-grid,
 .journey-compiler-grid,
 .access-submission-grid,
+.access-evidence-grid,
 .staging-transcript-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   margin-top: 10px;
@@ -1751,6 +1764,7 @@ select:focus {
 .client-connect-grid div,
 .journey-compiler-grid div,
 .access-submission-grid div,
+.access-evidence-grid div,
 .staging-transcript-grid div,
 .traffic-readiness-grid div,
 .backpressure-grid div,
@@ -1768,6 +1782,7 @@ select:focus {
 .data-governance-grid,
 .audit-ledger-grid,
 .access-submission-grid,
+.access-evidence-grid,
 .submission-console-grid,
 .slo-grid {
   margin: 10px 0;
@@ -1941,6 +1956,7 @@ select:focus {
   .brand-compliance-card,
   .support-bridge-card,
   .access-dossier-card,
+  .access-evidence-card,
   .use-case-studio-card,
   .staging-certification-card,
   .submission-card,
@@ -2701,6 +2717,7 @@ select:focus {
 .reviewer-artifact-grid div,
 .visual-qa-grid div,
 .access-dossier-grid div,
+.access-evidence-grid div,
 .use-case-studio-grid div,
 .staging-certification-grid div,
 .upstream-watch-grid div,
@@ -2892,6 +2909,7 @@ select:focus {
   .reviewer-artifact-card,
   .visual-qa-card,
   .access-dossier-card,
+  .access-evidence-card,
   .use-case-studio-card,
   .staging-certification-card,
   .brand-compliance-card,
@@ -3088,6 +3106,7 @@ select:focus {
   .visual-qa-card,
   .coding-agent-card,
   .access-dossier-card,
+  .access-evidence-card,
   .use-case-studio-card,
   .staging-certification-card,
   .brand-compliance-card,

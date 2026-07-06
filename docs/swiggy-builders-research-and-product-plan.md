@@ -42,7 +42,7 @@ MealPilot should not be a thin order bot. The best product direction is a premiu
 | --- | --- | --- |
 | Homepage hero | Build AI agents, apps, and integrations on Swiggy Food, Instamart, and Dineout. Localhost development is allowed before production access. | README, runnable local app, mock MCP gateway, Docker, Render blueprint, CI, demo script |
 | What is Builders Club | Real products, AI-native agents, experimentation, support, and visibility. | MealPilot is positioned as a real Indian household assistant with privacy, confirmation, production evidence, and a Premium Use Case Studio |
-| How it works | Start building, apply for production access, review, go live, show demo. | `/api/demo-studio`, `/api/submission-package`, `/api/swiggy-access-dossier`, `/api/builder-package.md`, `docs/demo-script.md` |
+| How it works | Start building, apply for production access, review, go live, show demo. | `/api/demo-studio`, `/api/submission-package`, `/api/swiggy-access-dossier`, `/api/swiggy-access-evidence-matrix`, `/api/builder-package.md`, `docs/demo-script.md` |
 | What you get | Live APIs, rate limits, support, co-branding, direct support, hiring visibility, and growth partnership. | Rate-limit plan, Support Bridge, Growth Partnership Center, support report, product positioning, reviewer proof |
 | FAQ | Program fit, application, rate limits, breakage, demos, developer setup, enterprise onboarding, compliance, white-label limits, and support. | `/api/swiggy-faq-policy` maps FAQ themes and policy categories to MealPilot evidence |
 | Start | Developer, enterprise, consumer, coding-agent, and AI-client paths. | Developer path implemented; AI Client Connect Kit covers consumer clients, coding-agent rules, SDK auth modes, and enterprise delegated-auth gates |
@@ -54,7 +54,7 @@ MealPilot should not be a thin order bot. The best product direction is a premiu
 | Widgets | Planned widget registry and iframe/postMessage contract. | Semantic widget fallbacks, sandbox policy, origin verification, Capability Registry resource inventory |
 | Ship to production | Retries, observability, idempotency, go-live checklist. | Request IDs, trace spans, route optimizer, resilience drills, Error Intelligence, Support Bridge, SLO Incident Command, Data Governance Center, support report, Traffic Readiness Plan, Production Launch Bundle, non-blind commercial action policy |
 | Reference | Every tool grouped by server and journey stage, plus current error envelope guidance. | 35-tool catalog plus executable Tool Lab, `/api/swiggy-docs-coverage`, `/api/swiggy-docs-twin-explorer`, `/api/swiggy-upstream-watch`, `/api/swiggy-source-intelligence`, `/api/swiggy-deep-site-map`, `/api/swiggy-developer-quickstart`, `/api/swiggy-cta-execution-center`, `/api/swiggy-innovation-radar`, and `/api/error-intelligence` in API and UI |
-| Operate | Access, SLA, rate limits, compliance, versioning, changelog, support. | Launch Center, Production Evidence, Innovation Radar, Data Governance Center, compliance evidence, version monitor, rate-limit plan, Traffic Readiness Plan, SLO Incident Command |
+| Operate | Access, SLA, rate limits, compliance, versioning, changelog, support. | Launch Center, Access Evidence Matrix, Production Evidence, Innovation Radar, Data Governance Center, compliance evidence, version monitor, rate-limit plan, Traffic Readiness Plan, SLO Incident Command |
 | Blog | Launch and ecosystem narrative. | Product strategy aligns with Swiggy-native, India-first agent commerce |
 | Footer | Developers, enterprises, guidelines, FAQ, apply, llms, legal, builders email. | Website Atlas, FAQ & Policy Center, README/docs, and support/reporting artifacts cover these links |
 
@@ -64,9 +64,9 @@ MealPilot should not be a thin order bot. The best product direction is a premiu
 | --- | --- | --- |
 | Start Building | Begin locally without production approval. | `npm run dev`, local MCP mock, API routes, Docker, Render blueprint |
 | See What's Possible | Understand what can be built. | Demo scenarios, plan variants, pantry, group planning, reminders, widgets, evaluation lab |
-| Request access / Apply | Submit for production access. | Builder access package, submission package, markdown export, demo script |
-| Apply as Developer | Submit the developer access form. | Access Dossier developer track, Production Launch Bundle, and builder-access application docs |
-| Apply as Enterprise | Submit the enterprise access form. | Access Dossier enterprise track, delegated-auth notes, co-branding gates, and enterprise support posture |
+| Request access / Apply | Submit for production access. | Builder access package, submission package, Access Evidence Matrix, markdown export, demo script |
+| Apply as Developer | Submit the developer access form. | Access Dossier developer track, Access Evidence Matrix, Production Launch Bundle, and builder-access application docs |
+| Apply as Enterprise | Submit the enterprise access form. | Access Dossier enterprise track, Access Evidence Matrix, delegated-auth notes, co-branding gates, and enterprise support posture |
 | Apply now | Convert launch-blog interest into access review. | Launch Bundle packages the blog journey into proof links and manual attachments |
 | Read the docs | Move from marketing or blog content into implementation. | Docs Coverage, Docs Twin Explorer, Tool Lab, Journey Compiler, and Launch Center |
 | Send Us a Demo | Show evidence to Swiggy. | Demo Studio, MCP replay, preflight, submission fields |
@@ -185,6 +185,7 @@ MealPilot should become a luxury-grade food and meal intelligence product with t
 | Enterprise Delegated Auth Center | `server/services/enterpriseDelegatedAuth.ts` |
 | Swiggy Journey Compiler | `server/services/journeyCompiler.ts` |
 | Swiggy Access Dossier | `server/services/swiggyAccessDossier.ts` |
+| Swiggy Access Evidence Matrix | `server/services/accessEvidenceMatrix.ts` |
 | Premium Use Case Studio | `server/services/premiumUseCaseStudio.ts` |
 | Premium Concierge Itinerary | `server/services/premiumConciergeItinerary.ts` |
 | Staging Certification Matrix | `server/services/stagingCertification.ts` |
@@ -221,13 +222,14 @@ MealPilot should become a luxury-grade food and meal intelligence product with t
 | Planner workspace | `src/App.tsx` |
 | Recommendation cards | Food, Instamart, and Dineout cards with item controls |
 | Premium Concierge | Lunch, pantry reset, Dineout evening, dessert reminder, and recovery itinerary slots with official Swiggy route plans |
-| Launch Center | Tool coverage, Tool Contract Matrix, Scenario Runner, State Orchestrator, Widget Runtime Center, Commercial Action Guard, Staging Cutover Rehearsal, Capability Registry, Resource & Prompt Studio, Website Atlas, Builder Intake, FAQ & Policy Center, Growth Partnership Center, Channel & Multimodal Studio, Nutrition & Budget Intelligence, Household Preference Graph, Guest Collaboration & Calendar Center, Luxury Experience Workspace, Reviewer Artifact Vault, Visual QA Center, Docs Coverage, Docs Twin Explorer, Upstream Watch, Source Intelligence, Deep Site Map, Developer Quickstart, CTA Execution, Innovation Radar, Tool Lab, gateway, OAuth Status, Credential Cockpit, Delegated Auth Center, Builders map, Support Bridge, go-live, observability, support |
+| Launch Center | Tool coverage, Tool Contract Matrix, Scenario Runner, State Orchestrator, Widget Runtime Center, Commercial Action Guard, Staging Cutover Rehearsal, Capability Registry, Resource & Prompt Studio, Website Atlas, Builder Intake, FAQ & Policy Center, Growth Partnership Center, Channel & Multimodal Studio, Nutrition & Budget Intelligence, Household Preference Graph, Guest Collaboration & Calendar Center, Luxury Experience Workspace, Reviewer Artifact Vault, Visual QA Center, Access Evidence Matrix, Docs Coverage, Docs Twin Explorer, Upstream Watch, Source Intelligence, Deep Site Map, Developer Quickstart, CTA Execution, Innovation Radar, Tool Lab, gateway, OAuth Status, Credential Cockpit, Delegated Auth Center, Builders map, Support Bridge, go-live, observability, support |
 | Guest Collaboration & Calendar | Guest votes, occasion templates, Dineout-first date nights, guests-at-home prep, office lunch, weekday reset, recovery meal, ICS artifacts, Slack/Teams gates, and voice-safe briefs |
 | Luxury Experience Workspace | Lean, premium, family, social, and training modes plus polished Dineout reservation, Food cart, Instamart basket, combined evening, and recovery review surfaces |
 | Reviewer Artifact Vault | Proof links, OpenAPI, smoke commands, screenshot targets, demo-video checklist, logs, traces, redaction rules, support context, and handoff copy |
 | Visual QA Center | Viewport targets, selector manifests, artifact paths, no-overlap rules, text-fit rules, widget fallback checks, mobile layout checks, redaction visibility, and screenshot automation gates |
 | Demo Studio | Preflight, offers, replay, demo progress, submission package |
 | Submission Console | Developer/enterprise form targets, official access requirements, prepared fields, proof attachments, packet order, runbook steps, blockers, and handoff drafts |
+| Access Evidence Matrix | Official access fields, review checks, rules, legal terms, required attachments, browser runbook steps, proof commands, owners, operator inputs, and Swiggy gates |
 | Production Evidence | Widgets, rate limits, Traffic Readiness, SLO Incident Command, Data Governance, Source Intelligence, Deep Site Map, Developer Quickstart, CTA Execution, Innovation Radar, Audit Ledger, versioning, compliance, Production Launch Bundle, Error Intelligence, reviewer proof, resilience, telemetry, evaluation |
 | Trace Monitor | Span-level MCP traces, log contract, and redaction evidence |
 | Runtime Telemetry | Live API/MCP request events, status classes, request IDs, session correlation, and redaction contract |
@@ -272,6 +274,7 @@ Coverage targets:
 - Data Governance Center coverage for DPDP roles, India/Singapore residency, PII flow inventory, DSR routing, 90-day audit retention, token redaction, security contacts, and signed-manifest watch
 - Enterprise Delegated Auth Center coverage for platform DCR preregistration, per-user PKCE, token exchange, token storage, logout, redirect schemes, 401/419/403 recovery, capacity backoff, and architecture review
 - Access Dossier coverage for production-access fields, review checks, rules, legal readiness, developer/enterprise tracks, proof links, and manual inputs
+- Access Evidence Matrix coverage for official access fields, proof attachments, browser runbook steps, proof commands, owners, operator inputs, and Swiggy approval gates
 - Premium Use Case Studio coverage for ten differentiated product lanes, all 35 tools placed into routes, saved calls, safety gates, and launch stages
 - Premium Concierge Itinerary coverage for official recipe sources, all-server tool coverage, saved-call optimizations, cart refresh rules, separate confirmations, and Food scheduling external gates
 - Staging Certification Matrix coverage for all 35 tools assigned to credentialed smoke waves, 48-hour soak, OAuth/DCR gates, telemetry requirements, rollback, and production promotion
@@ -295,6 +298,7 @@ Coverage targets:
 - Widget Runtime, Staging Cutover, widget contracts, rate-limit, traffic readiness, SLO command, data governance, version, compliance, reviewer proof
 - Audit Ledger Center coverage for redacted session/tool events, support correlation, retention posture, DSR routing, and support packet fields
 - Submission Console coverage for developer/enterprise access targets, official access requirements, official fields, proof attachments, packet order, runbook gates, and handoff drafts
+- Access Evidence Matrix coverage for reconciling Access Dossier, Submission Console, Access Submission Studio, Reviewer Artifact Vault, and production verifier proof into one ledger
 - Production Launch Bundle proof artifacts, access application fields, commands, go-live gates, and handoff email
 - Support Bridge report_error request shapes, toolContext identifiers, SLA routing, redaction rules, and escalation checklist
 - Error Intelligence buckets, planned core codes, terminal domain failures, retry ceilings, and non-blind commercial action policy
@@ -332,6 +336,7 @@ MealPilot must keep mock evidence clearly labeled as simulated until these gates
 - Keep `/api/brand-compliance-kit` as source-of-truth evidence for Powered by Swiggy attribution, co-branding guardrails, brand asset gates, and palette usage.
 - Keep `/api/swiggy-journey-compiler` as source-of-truth evidence for official recipe routes, premium three-server orchestration, confirmation gates, and all-tool indexing.
 - Keep `/api/swiggy-access-dossier` as source-of-truth evidence for the Swiggy production-access application packet and ground-rule compliance.
+- Keep `/api/swiggy-access-evidence-matrix` as source-of-truth evidence for official access fields, proof attachments, runbook steps, proof commands, owner assignment, operator inputs, and Swiggy gates.
 - Keep `/api/premium-use-case-studio` as source-of-truth evidence for differentiated MealPilot product lanes and all-tool use-case coverage.
 - Keep `/api/premium-concierge-itinerary` as source-of-truth evidence for the productized luxury itinerary, official recipe route execution, saved-call optimizations, reminders, and confirmation gates.
 - Keep `/api/staging-certification-matrix` as source-of-truth evidence for credentialed staging waves, all-tool smoke assignments, 48-hour soak, telemetry, rollback, and production-promotion gates.

@@ -33,6 +33,7 @@ import { buildSwiggyChannelMultimodalStudio } from "./services/channelMultimodal
 import { buildCodingAgentGovernance } from "./services/codingAgentGovernance.js";
 import { buildCommercialActionGuard } from "./services/commercialActionGuard.js";
 import { buildSwiggyCtaExecutionCenter } from "./services/ctaExecutionCenter.js";
+import { buildSwiggyAccessEvidenceMatrix } from "./services/accessEvidenceMatrix.js";
 import { buildSwiggyAccessDossier } from "./services/swiggyAccessDossier.js";
 import {
   buildReadinessChecklist,
@@ -691,6 +692,18 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/swiggy-access-dossier", (_req, res) => {
     res.json({ dossier: buildSwiggyAccessDossier(config) });
+  });
+
+  app.get("/api/swiggy-access-evidence-matrix", (_req, res) => {
+    res.json({
+      accessEvidenceMatrix: buildSwiggyAccessEvidenceMatrix({
+        config,
+        profile: store.getProfile(),
+        coverage: buildMcpCoverage(),
+        latestPlan: store.getAllPlans().at(-1),
+        handoffState: store.getAccessSubmissionState(),
+      }),
+    });
   });
 
   app.get("/api/premium-use-case-studio", (_req, res) => {

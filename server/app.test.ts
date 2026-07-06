@@ -69,6 +69,7 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/brand-compliance-kit"].get.summary).toContain("brand");
     expect(openApi.body.paths["/api/swiggy-journey-compiler"].get.summary).toContain("journey compiler");
     expect(openApi.body.paths["/api/swiggy-access-dossier"].get.summary).toContain("access application dossier");
+    expect(openApi.body.paths["/api/swiggy-access-evidence-matrix"].get.summary).toContain("access evidence matrix");
     expect(openApi.body.paths["/api/premium-use-case-studio"].get.summary).toContain("premium Swiggy use-case studio");
     expect(openApi.body.paths["/api/premium-concierge-itinerary"].get.summary).toContain("Premium concierge itinerary");
     expect(openApi.body.paths["/api/staging-certification-matrix"].get.summary).toContain("staging certification");
@@ -882,7 +883,7 @@ describe("MealPilot API", () => {
     expect(packet.totals.formFields).toBeGreaterThanOrEqual(10);
     expect(packet.totals.requiredAttachments).toBeGreaterThanOrEqual(10);
     expect(packet.totals.launchArtifacts).toBeGreaterThanOrEqual(50);
-    expect(packet.totals.visualTargets).toBe(18);
+    expect(packet.totals.visualTargets).toBe(19);
     expect(packet.files.map((file: { id: string }) => file.id)).toEqual(
       expect.arrayContaining(["packet_json", "packet_markdown", "visual_report", "production_summary"]),
     );
@@ -894,7 +895,7 @@ describe("MealPilot API", () => {
     ).toBe(true);
     expect(
       packet.commands.some(
-        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("18"),
+        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("19"),
       ),
     ).toBe(true);
     expect(packet.copyBlocks.formFields).toContain("Redirect URI(s)");
@@ -1321,7 +1322,7 @@ describe("MealPilot API", () => {
     expect(vault.score).toBeGreaterThanOrEqual(90);
     expect(vault.totalArtifacts).toBeGreaterThanOrEqual(30);
     expect(vault.readyArtifacts).toBeGreaterThanOrEqual(30);
-    expect(vault.totalScreenshotTargets).toBe(11);
+    expect(vault.totalScreenshotTargets).toBe(12);
     expect(vault.readyScreenshotTargets).toBeGreaterThanOrEqual(5);
     expect(vault.totalCommands).toBe(7);
     expect(vault.readyCommands).toBeGreaterThanOrEqual(6);
@@ -1346,6 +1347,16 @@ describe("MealPilot API", () => {
             artifact.id === "source_intelligence" &&
             artifact.label === "Swiggy Source Intelligence" &&
             artifact.path === "/api/swiggy-source-intelligence",
+        ),
+      ),
+    ).toBe(true);
+    expect(
+      vault.artifactSections.some((section: { artifacts: Array<{ id: string; label: string; path: string }> }) =>
+        section.artifacts.some(
+          (artifact) =>
+            artifact.id === "access_evidence_matrix" &&
+            artifact.label === "Swiggy Access Evidence Matrix" &&
+            artifact.path === "/api/swiggy-access-evidence-matrix",
         ),
       ),
     ).toBe(true);
@@ -1432,6 +1443,14 @@ describe("MealPilot API", () => {
       ),
     ).toBe(true);
     expect(
+      vault.screenshotTargets.some(
+        (target: { id: string; selector: string; status: string }) =>
+          target.id === "access_evidence_card" &&
+          target.selector === ".access-evidence-card" &&
+          target.status === "ready",
+      ),
+    ).toBe(true);
+    expect(
       vault.commands.some(
         (command: { id: string; command: string; expectedSignal: string }) =>
           command.id === "verify_production" &&
@@ -1452,8 +1471,8 @@ describe("MealPilot API", () => {
     const visualQa = response.body.visualQa;
 
     expect(visualQa.score).toBe(100);
-    expect(visualQa.totalTargets).toBe(18);
-    expect(visualQa.readyTargets).toBe(18);
+    expect(visualQa.totalTargets).toBe(19);
+    expect(visualQa.readyTargets).toBe(19);
     expect(visualQa.totalRules).toBe(7);
     expect(visualQa.readyRules).toBe(7);
     expect(visualQa.totalCommands).toBe(5);
@@ -1513,6 +1532,11 @@ describe("MealPilot API", () => {
     ).toBe(true);
     expect(
       visualQa.targetGroups.some((group: { targets: Array<{ id: string; selector: string }> }) =>
+        group.targets.some((target) => target.id === "access_evidence_card" && target.selector === ".access-evidence-card"),
+      ),
+    ).toBe(true);
+    expect(
+      visualQa.targetGroups.some((group: { targets: Array<{ id: string; selector: string }> }) =>
         group.targets.some((target) => target.id === "coding_agent_card" && target.selector === ".coding-agent-card"),
       ),
     ).toBe(true);
@@ -1545,7 +1569,7 @@ describe("MealPilot API", () => {
         (command: { id: string; command: string; expectedSignal: string }) =>
           command.id === "visual_capture_harness" &&
           command.command === "npm run verify:visual" &&
-          command.expectedSignal.includes("targetCount >= 18"),
+          command.expectedSignal.includes("targetCount >= 19"),
       ),
     ).toBe(true);
     expect(visualQa.externalGates.some((gate: string) => gate.includes("Selected PNG screenshots"))).toBe(true);
@@ -2066,6 +2090,82 @@ describe("MealPilot API", () => {
     ).toBe(true);
     expect(dossier.externalGates.some((gate: string) => gate.includes("Google Form"))).toBe(true);
     expect(dossier.proofLinks.some((link: { path: string }) => link.path === "/api/production-launch-bundle")).toBe(true);
+  });
+
+  it("returns a Swiggy access evidence matrix across fields, proof, owners, and gates", async () => {
+    const { app } = createMealPilotServer();
+    await request(app).post("/api/plan").send(planningRequest).expect(201);
+    const response = await request(app).get("/api/swiggy-access-evidence-matrix").expect(200);
+    const matrix = response.body.accessEvidenceMatrix;
+
+    expect(matrix.score).toBeGreaterThanOrEqual(80);
+    expect(matrix.recommendedTrack).toBe("developer");
+    expect(matrix.officialSources).toEqual(
+      expect.arrayContaining([
+        "https://mcp.swiggy.com/builders/",
+        "https://mcp.swiggy.com/builders/developers/",
+        "https://mcp.swiggy.com/builders/enterprises/",
+        "https://mcp.swiggy.com/builders/access/",
+      ]),
+    );
+    expect(matrix.totals.sections).toBe(5);
+    expect(matrix.totals.requiredApplicationFields).toBe(9);
+    expect(matrix.totals.readyRequiredApplicationFields).toBeGreaterThanOrEqual(4);
+    expect(matrix.totals.requiredAttachments).toBeGreaterThanOrEqual(10);
+    expect(matrix.totals.readyRequiredAttachments).toBeGreaterThanOrEqual(8);
+    expect(matrix.totals.rows).toBeGreaterThanOrEqual(40);
+    expect(matrix.totals.readyRows).toBeGreaterThanOrEqual(25);
+    expect(matrix.totals.operatorRows).toBeGreaterThanOrEqual(5);
+    expect(matrix.totals.externalGateRows).toBeGreaterThanOrEqual(3);
+    expect(matrix.sections.map((section: { id: string }) => section.id)).toEqual(
+      expect.arrayContaining([
+        "application_fields",
+        "review_and_rules",
+        "legal_and_tracks",
+        "attachments_and_runbook",
+        "reviewer_proof_commands",
+      ]),
+    );
+    expect(
+      matrix.sections.some((section: { id: string; rows: Array<{ id: string; owner: string; status: string }> }) =>
+        section.id === "application_fields" &&
+        section.rows.some(
+          (row) =>
+            row.id === "field_terms_acknowledgement" &&
+            row.owner === "Operator" &&
+            row.status === "operator_input",
+        ),
+      ),
+    ).toBe(true);
+    expect(
+      matrix.sections.some((section: { rows: Array<{ id: string; owner: string; status: string; evidenceLinks: string[] }> }) =>
+        section.rows.some(
+          (row) =>
+            row.id === "target_request_access" &&
+            row.owner === "Operator" &&
+            row.evidenceLinks.includes("https://mcp.swiggy.com/builders/access/"),
+        ),
+      ),
+    ).toBe(true);
+    expect(
+      matrix.sections.some((section: { rows: Array<{ id: string; owner: string; status: string }> }) =>
+        section.rows.some(
+          (row) => row.id === "runbook_await_credentials" && row.owner === "Swiggy" && row.status === "external_gate",
+        ),
+      ),
+    ).toBe(true);
+    expect(matrix.commands.map((command: { id: string }) => command.id)).toEqual(
+      expect.arrayContaining(["matrix_readback", "production_verifier", "submission_state"]),
+    );
+    expect(
+      matrix.commands.some(
+        (command: { id: string; expectedSignal: string }) =>
+          command.id === "matrix_readback" && command.expectedSignal.includes("requiredApplicationFields === 9"),
+      ),
+    ).toBe(true);
+    expect(matrix.submissionReadiness.some((item: string) => item.includes("required application fields"))).toBe(true);
+    expect(matrix.assertions.some((assertion: string) => assertion.includes("Every official access-page"))).toBe(true);
+    expect(matrix.externalGates.some((gate: string) => gate.includes("staging credentials"))).toBe(true);
   });
 
   it("builds premium MealPilot use cases across every Swiggy tool", async () => {
@@ -2754,6 +2854,7 @@ describe("MealPilot API", () => {
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Household Preference Graph")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Luxury Experience Workspace")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Reviewer Artifact Vault")).toBe(true);
+    expect(proof.body.proof.artifacts.some((artifact: { label: string; path: string }) => artifact.label === "Swiggy Access Evidence Matrix" && artifact.path === "/api/swiggy-access-evidence-matrix")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Visual QA Center")).toBe(true);
   });
 
@@ -2825,6 +2926,7 @@ describe("MealPilot API", () => {
         "Household Preference Graph",
         "Luxury Experience Workspace",
         "Reviewer Artifact Vault",
+        "Swiggy Access Evidence Matrix",
         "Visual QA Center",
         "Swiggy Website Atlas",
         "Swiggy Deep Site Map",

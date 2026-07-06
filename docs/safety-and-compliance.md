@@ -68,6 +68,8 @@ The `/api/mcp/state-orchestrator` endpoint turns Swiggy's multi-turn state and v
 
 The `/api/swiggy-access-dossier` endpoint maps Swiggy's production-access application fields, review checks, ground rules, legal readiness, and developer/enterprise tracks to MealPilot proof artifacts. It also keeps official form submission, final contact details, static IP details, live credentials, and terms acknowledgement marked as manual or external gates.
 
+The `/api/swiggy-access-evidence-matrix` endpoint reconciles that access evidence with Submission Console, Access Submission Studio, and Reviewer Artifact Vault proof. It keeps operator-owned inputs, staging credentials, legal acceptance, handoff email, form submission, and Swiggy approval labelled as manual or external gates instead of pretending repository evidence can complete them.
+
 The `/api/swiggy-faq-policy` endpoint maps Swiggy public FAQ and policy signals into reviewable controls. It ties homepage, developer, enterprise, access-guideline, footer-resource, allowed/restricted/prohibited, operating-principle, legal, and support-contact themes to MealPilot proof routes while keeping enterprise contracts, co-branding, support channels, staging credentials, and production credentials as external gates.
 
 The `/api/swiggy-growth-partnership` endpoint keeps growth ambition inside the safety boundary. Co-marketing experiments, feature/showcase asks, hiring narrative, partner analytics, and strategic launch support are mapped to local evidence, metrics, and guardrails; Swiggy approval remains mandatory for public claims, Slack access, partner-manager assignment, analytics dashboards, higher rate limits, and any co-branded launch.

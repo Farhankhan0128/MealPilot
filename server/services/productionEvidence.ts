@@ -295,6 +295,7 @@ export function buildReviewerProof(options: {
       { label: "Luxury Experience Workspace", path: "/api/luxury-experience-workspace" },
       { label: "Reviewer Artifact Vault", path: "/api/reviewer-artifact-vault" },
       { label: "Visual QA Center", path: "/api/visual-qa-center" },
+      { label: "Swiggy Access Evidence Matrix", path: "/api/swiggy-access-evidence-matrix" },
       { label: "Swiggy Docs Coverage", path: "/api/swiggy-docs-coverage" },
       { label: "Swiggy Docs Twin Explorer", path: "/api/swiggy-docs-twin-explorer" },
       { label: "Swiggy Upstream Watch", path: "/api/swiggy-upstream-watch" },

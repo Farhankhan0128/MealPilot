@@ -132,6 +132,15 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
         "Packages proof links, OpenAPI, smoke commands, screenshot targets, demo-video checklist, logs, traces, redaction rules, support context, and Swiggy handoff copy into one reviewer manifest.",
     },
     {
+      id: "access_evidence_matrix",
+      label: "Swiggy Access Evidence Matrix",
+      path: "/api/swiggy-access-evidence-matrix",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Ties every official access field, review check, ground rule, legal item, attachment, browser step, proof command, owner, and external gate to MealPilot evidence.",
+    },
+    {
       id: "visual_qa_center",
       label: "Visual QA Center",
       path: "/api/visual-qa-center",
@@ -550,6 +559,7 @@ function buildPhases(config: ServerConfig, latestPlan: MealPlan | undefined, art
         artifact("guest_collaboration_calendar"),
         artifact("luxury_experience_workspace"),
         artifact("reviewer_artifact_vault"),
+        artifact("access_evidence_matrix"),
         artifact("visual_qa_center"),
         artifact("submission_console"),
         artifact("docs_twin_explorer"),
@@ -736,6 +746,7 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- Guest Collaboration & Calendar Center: /api/guest-collaboration-calendar",
     "- Luxury Experience Workspace: /api/luxury-experience-workspace",
     "- Reviewer Artifact Vault: /api/reviewer-artifact-vault",
+    "- Swiggy Access Evidence Matrix: /api/swiggy-access-evidence-matrix",
     "- Visual QA Center: /api/visual-qa-center",
     "- Submission Console: /api/submission-console",
     "- Swiggy Docs Coverage: /api/swiggy-docs-coverage",

@@ -521,6 +521,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-access-evidence-matrix": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy access evidence matrix for every application field, proof artifact, and gate",
+          responses: {
+            "200": {
+              description:
+                "Reviewer-ready evidence matrix tying official Swiggy access requirements, review checks, ground rules, legal terms, attachments, browser runbook steps, proof commands, owners, and external gates to MealPilot routes",
+            },
+          },
+        },
+      },
       "/api/premium-use-case-studio": {
         get: {
           tags: ["Builder Access"],

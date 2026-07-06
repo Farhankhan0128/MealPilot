@@ -60,6 +60,7 @@ import type {
   SupportBridgeReport,
   SwiggyAuthStatusReport,
   SwiggyAccessDossier,
+  SwiggyAccessEvidenceMatrix,
   SwiggyBuilderIntakeCommandCenter,
   SwiggyChannelMultimodalStudio,
   SwiggyDeepSiteMap,
@@ -356,6 +357,10 @@ export function fetchSwiggyJourneyCompiler() {
 
 export function fetchSwiggyAccessDossier() {
   return requestJson<{ dossier: SwiggyAccessDossier }>("/api/swiggy-access-dossier");
+}
+
+export function fetchSwiggyAccessEvidenceMatrix() {
+  return requestJson<{ accessEvidenceMatrix: SwiggyAccessEvidenceMatrix }>("/api/swiggy-access-evidence-matrix");
 }
 
 export function fetchPremiumUseCaseStudio() {
