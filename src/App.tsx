@@ -118,6 +118,7 @@ import {
   fetchSwiggyUpstreamWatch,
   fetchSwiggyWebsiteAtlas,
   fetchSwiggyLoadLab,
+  fetchSwiggyLocationTrust,
   fetchSwiggyOfferIntelligence,
   fetchSwiggyOrderLifecycle,
   fetchSwiggyRouteOptimizer,
@@ -214,6 +215,7 @@ import type {
   SwiggyInnovationRadarReport,
   SwiggyJourneyCompilerReport,
   SwiggyLoadLabReport,
+  SwiggyLocationTrustReport,
   SwiggyOfferIntelligenceReport,
   SwiggyOrderLifecycleReport,
   SwiggyScenarioRunnerReport,
@@ -445,6 +447,7 @@ function App() {
   const [loadLab, setLoadLab] = useState<SwiggyLoadLabReport | null>(null);
   const [offerIntelligence, setOfferIntelligence] = useState<SwiggyOfferIntelligenceReport | null>(null);
   const [orderLifecycle, setOrderLifecycle] = useState<SwiggyOrderLifecycleReport | null>(null);
+  const [locationTrust, setLocationTrust] = useState<SwiggyLocationTrustReport | null>(null);
   const [routeOptimizer, setRouteOptimizer] = useState<SwiggyRouteOptimizationReport | null>(null);
   const [exportText, setExportText] = useState<string | null>(null);
   const [authUrl, setAuthUrl] = useState<string | null>(null);
@@ -595,6 +598,7 @@ function App() {
       loadLabResponse,
       offerIntelligenceResponse,
       orderLifecycleResponse,
+      locationTrustResponse,
       routeOptimizerResponse,
     ] = await Promise.all([
       fetchPantry(),
@@ -668,6 +672,7 @@ function App() {
       fetchSwiggyLoadLab(),
       fetchSwiggyOfferIntelligence(),
       fetchSwiggyOrderLifecycle(),
+      fetchSwiggyLocationTrust(),
       fetchSwiggyRouteOptimizer(),
     ]);
     setPantry(pantryResponse.pantry);
@@ -746,6 +751,7 @@ function App() {
     setLoadLab(loadLabResponse.loadLab);
     setOfferIntelligence(offerIntelligenceResponse.offerIntelligence);
     setOrderLifecycle(orderLifecycleResponse.orderLifecycle);
+    setLocationTrust(locationTrustResponse.locationTrust);
     setRouteOptimizer(routeOptimizerResponse.routeOptimizer);
   }
 
@@ -819,6 +825,7 @@ function App() {
       loadLabResponse,
       offerIntelligenceResponse,
       orderLifecycleResponse,
+      locationTrustResponse,
       routeOptimizerResponse,
     ] = await Promise.all([
       fetchMcpCatalog(),
@@ -889,6 +896,7 @@ function App() {
       fetchSwiggyLoadLab(),
       fetchSwiggyOfferIntelligence(),
       fetchSwiggyOrderLifecycle(),
+      fetchSwiggyLocationTrust(),
       fetchSwiggyRouteOptimizer(),
     ]);
     setMcpCatalog(catalogResponse);
@@ -963,6 +971,7 @@ function App() {
     setLoadLab(loadLabResponse.loadLab);
     setOfferIntelligence(offerIntelligenceResponse.offerIntelligence);
     setOrderLifecycle(orderLifecycleResponse.orderLifecycle);
+    setLocationTrust(locationTrustResponse.locationTrust);
     setRouteOptimizer(routeOptimizerResponse.routeOptimizer);
   }
 
@@ -1621,6 +1630,7 @@ function App() {
                 loadLab={loadLab}
                 offerIntelligence={offerIntelligence}
                 orderLifecycle={orderLifecycle}
+                locationTrust={locationTrust}
                 routeOptimizer={routeOptimizer}
                 evaluationLab={evaluationLab}
               />
@@ -4335,6 +4345,7 @@ function ProductionEvidencePanel({
   loadLab,
   offerIntelligence,
   orderLifecycle,
+  locationTrust,
   routeOptimizer,
   evaluationLab,
 }: {
@@ -4358,6 +4369,7 @@ function ProductionEvidencePanel({
   loadLab: SwiggyLoadLabReport | null;
   offerIntelligence: SwiggyOfferIntelligenceReport | null;
   orderLifecycle: SwiggyOrderLifecycleReport | null;
+  locationTrust: SwiggyLocationTrustReport | null;
   routeOptimizer: SwiggyRouteOptimizationReport | null;
   evaluationLab: EvaluationLab | null;
 }) {
@@ -4609,6 +4621,47 @@ function ProductionEvidencePanel({
               >
                 <span>{timeline.label}</span>
                 <strong>{timeline.state.replaceAll("_", " ")}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="location-trust-card">
+          <div className="mini-heading">
+            <MapPin aria-hidden="true" />
+            <strong>Location Trust</strong>
+          </div>
+          <span>
+            {locationTrust
+              ? `${locationTrust.score}/100, ${locationTrust.totals.toolsCovered} address tools, ${locationTrust.totals.readyControls} controls`
+              : "Loading address trust center"}
+          </span>
+          <div className="location-trust-grid">
+            <div>
+              <strong>{locationTrust?.totals.lanes ?? 0}</strong>
+              <span>Lanes</span>
+            </div>
+            <div>
+              <strong>{locationTrust?.totals.scenarios ?? 0}</strong>
+              <span>Scenarios</span>
+            </div>
+            <div>
+              <strong>{locationTrust?.totals.redactedFields ?? 0}</strong>
+              <span>Redactions</span>
+            </div>
+            <div>
+              <strong>{locationTrust?.totals.externalGates ?? 0}</strong>
+              <span>Live gates</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(locationTrust?.lanes ?? []).slice(0, 4).map((lane) => (
+              <li
+                key={lane.id}
+                data-status={lane.status === "ready" ? "healthy" : lane.status === "external_gate" ? "blocked" : "watch"}
+              >
+                <span>{lane.label}</span>
+                <strong>{lane.status.replace("_", " ")}</strong>
               </li>
             ))}
           </ul>

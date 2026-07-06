@@ -159,6 +159,11 @@ assert(
   "OpenAPI Swiggy Order Lifecycle is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-location-trust"].get.summary.includes("Location Trust") &&
+    openApi.paths["/api/swiggy-location-trust"].get.responses["200"].description.includes("address"),
+  "OpenAPI Swiggy Location Trust is missing",
+);
+assert(
   openApi.paths["/api/mcp/resource-prompt-studio"].get.summary.includes("Resource and Prompt Studio"),
   "OpenAPI resource and prompt studio is missing",
 );
@@ -2765,6 +2770,48 @@ assert(
   "Order Lifecycle non-blind retry assertion is missing",
 );
 
+const locationTrust = await request("/api/swiggy-location-trust");
+assert(locationTrust.locationTrust.score >= 85, "Location Trust score is below target");
+assert(locationTrust.locationTrust.totals.toolsCovered >= 4, "Location Trust address tools are incomplete");
+assert(locationTrust.locationTrust.totals.readyControls >= 5, "Location Trust ready controls are incomplete");
+assert(
+  locationTrust.locationTrust.officialSources.includes("https://mcp.swiggy.com/builders/llms.txt") &&
+    locationTrust.locationTrust.officialSources.some((source) => source.includes("/reference/food/get_addresses/")) &&
+    locationTrust.locationTrust.officialSources.some((source) => source.includes("/reference/instamart/create_address/")) &&
+    locationTrust.locationTrust.officialSources.some((source) => source.includes("/reference/instamart/delete_address/")) &&
+    locationTrust.locationTrust.officialSources.some((source) => source.includes("/reference/dineout/get_saved_locations/")),
+  "Location Trust official sources are incomplete",
+);
+assert(
+  ["shared_address_read", "instamart_address_create", "instamart_address_delete", "dineout_saved_location"].every((id) =>
+    locationTrust.locationTrust.lanes.some((lane) => lane.id === id),
+  ),
+  "Location Trust lanes are incomplete",
+);
+assert(
+  locationTrust.locationTrust.controls.some((control) => control.id === "raw_address_redaction" && control.status === "ready") &&
+    locationTrust.locationTrust.controls.some((control) => control.id === "address_switch_refresh" && control.status === "ready"),
+  "Location Trust privacy and switch controls are missing",
+);
+assert(
+  ["delete_saved_address", "temporary_guest_location"].every((id) =>
+    locationTrust.locationTrust.scenarios.some((scenario) => scenario.id === id),
+  ),
+  "Location Trust scenarios are incomplete",
+);
+assert(
+  locationTrust.locationTrust.telemetry.some((field) => field.field === "address_id_hash" && field.status === "ready"),
+  "Location Trust telemetry redaction is missing",
+);
+assert(
+  locationTrust.locationTrust.assertions.some((assertion) => assertion.includes("Raw addresses never leave")),
+  "Location Trust raw-address assertion is missing",
+);
+assert(
+  locationTrust.locationTrust.externalGates.some((gate) => gate.includes("staging credentials")),
+  "Location Trust staging credential gate is missing",
+);
+
 const sloIncident = await request("/api/slo-incident-command");
 assert(sloIncident.sloIncident.score >= 90, "SLO incident command score is below target");
 assert(
@@ -3385,6 +3432,10 @@ assert(
   "launch bundle Order Lifecycle handoff link is missing",
 );
 assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-location-trust"),
+  "launch bundle Location Trust handoff link is missing",
+);
+assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/mcp/staging-cutover"),
   "launch bundle staging cutover handoff link is missing",
 );
@@ -3501,6 +3552,9 @@ console.log(
       orderLifecycleScore: orderLifecycle.orderLifecycle.score,
       orderLifecycleTools: orderLifecycle.orderLifecycle.totals.toolsCovered,
       orderLifecycleRecoveries: orderLifecycle.orderLifecycle.totals.recoveryDrills,
+      locationTrustScore: locationTrust.locationTrust.score,
+      locationTrustTools: locationTrust.locationTrust.totals.toolsCovered,
+      locationTrustScenarios: locationTrust.locationTrust.totals.scenarios,
       sloIncidentScore: sloIncident.sloIncident.score,
       sloUptimeTargets: sloIncident.sloIncident.uptimeTargets.length,
       resilienceScore: resilience.runbook.score,

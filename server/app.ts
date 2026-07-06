@@ -58,6 +58,7 @@ import { buildSwiggyInnovationRadar } from "./services/innovationRadar.js";
 import { buildSwiggyJourneyCompiler } from "./services/journeyCompiler.js";
 import { buildLaunchBundle } from "./services/launchBundle.js";
 import { buildSwiggyLoadLab } from "./services/loadLab.js";
+import { buildSwiggyLocationTrust } from "./services/locationTrust.js";
 import { buildLuxuryExperienceWorkspace } from "./services/luxuryExperienceWorkspace.js";
 import {
   buildMcpGatewayStatus,
@@ -1006,6 +1007,10 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/swiggy-order-lifecycle", (_req, res) => {
     res.json({ orderLifecycle: buildSwiggyOrderLifecycle({ plans: store.getAllPlans(), config }) });
+  });
+
+  app.get("/api/swiggy-location-trust", (_req, res) => {
+    res.json({ locationTrust: buildSwiggyLocationTrust({ plans: store.getAllPlans(), config }) });
   });
 
   app.get("/api/version-monitor", (_req, res) => {

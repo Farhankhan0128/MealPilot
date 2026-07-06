@@ -172,6 +172,7 @@ Open Production Evidence and show:
 - Swiggy Load Lab at `/api/swiggy-load-lab` with synthetic launch-load scenarios, 1% to 100% cohort ramps, Retry-After drill proof, commercial serialization, and campaign capacity gates.
 - Swiggy Offer Intelligence at `/api/swiggy-offer-intelligence` with Food coupon sequencing, Dineout deal validation, Instamart value substitutions, no-blind-discount guardrails, and live-offer gates.
 - Swiggy Order Lifecycle at `/api/swiggy-order-lifecycle` with order-history/status tools, 10-second tracking cadence, non-blind retry probes, and support-safe timeline telemetry.
+- Swiggy Location Trust at `/api/swiggy-location-trust` with Food/Instamart saved-address reads, Instamart create/delete address intent, Dineout saved locations, address-choice pauses, switch refresh guards, and raw-address redaction.
 - MCP Backpressure Governor artifact at `/api/mcp/backpressure-governor` with current upstream-shedder handling, future 429/header readiness, token buckets, tracking floor, voice burst shaping, and background-job gates.
 - SLO Command score, uptime targets, commercial p95 latency, maintenance windows, and status-page external gate.
 - Data Governance Center with DPDP roles, India/Singapore residency, data-flow inventory, DSR routing, 90-day Swiggy audit retention, token redaction, and signed-manifest watch.
@@ -256,6 +257,7 @@ Briefly show production readiness:
 - `/api/swiggy-load-lab`
 - `/api/swiggy-offer-intelligence`
 - `/api/swiggy-order-lifecycle`
+- `/api/swiggy-location-trust`
 - `/api/slo-incident-command`
 - `/api/audit-ledger`
 - `/api/submission-console`

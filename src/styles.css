@@ -1753,6 +1753,28 @@ select:focus {
   gap: 8px;
 }
 
+.location-trust-card {
+  grid-column: span 6;
+}
+
+.location-trust-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.location-trust-grid div {
+  border-radius: 8px;
+  padding: 10px;
+  background: #fff;
+}
+
+.location-trust-grid strong {
+  display: block;
+  color: var(--ink);
+}
+
 .docs-coverage-grid,
 .docs-twin-grid,
 .source-intelligence-grid,
@@ -2046,6 +2068,7 @@ select:focus {
   .load-lab-grid,
   .offer-intelligence-grid,
   .order-lifecycle-grid,
+  .location-trust-grid,
   .data-governance-grid,
   .audit-ledger-grid,
   .route-optimizer-grid,

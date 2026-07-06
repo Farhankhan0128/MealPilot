@@ -75,6 +75,7 @@ import type {
   SwiggyInnovationRadarReport,
   SwiggyJourneyCompilerReport,
   SwiggyLoadLabReport,
+  SwiggyLocationTrustReport,
   SwiggyOfferIntelligenceReport,
   SwiggyOrderLifecycleReport,
   SwiggyScenarioRunnerReport,
@@ -530,6 +531,10 @@ export function fetchSwiggyOfferIntelligence() {
 
 export function fetchSwiggyOrderLifecycle() {
   return requestJson<{ orderLifecycle: SwiggyOrderLifecycleReport }>("/api/swiggy-order-lifecycle");
+}
+
+export function fetchSwiggyLocationTrust() {
+  return requestJson<{ locationTrust: SwiggyLocationTrustReport }>("/api/swiggy-location-trust");
 }
 
 export function fetchVersionMonitor() {

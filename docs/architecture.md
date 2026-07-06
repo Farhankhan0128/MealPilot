@@ -114,6 +114,7 @@ Implementation:
 - Exposes `/api/swiggy-load-lab` as the capacity simulation workbench for synthetic pilot/campaign scenarios, lane ceilings, Retry-After drills, cohort ramps, operator actions, and external Swiggy gates.
 - Exposes `/api/swiggy-offer-intelligence` as the coupon/deal/value workbench for Food coupon sequencing, Dineout deal validation, Instamart variant savings, offer drills, and no-blind-discount guardrails.
 - Exposes `/api/swiggy-order-lifecycle` as the post-confirmation command center for Food, Instamart, and Dineout status tools, timeline states, non-blind retry probes, tracking cadence, telemetry, and support recovery.
+- Exposes `/api/swiggy-location-trust` as the saved-address and location trust center for Food/Instamart `get_addresses`, Instamart address create/delete, Dineout saved locations, user-choice pauses, address switch refresh, and raw-address redaction.
 - Exposes `/api/slo-incident-command` as the SLA and incident artifact for 99.9% uptime targets, latency bands, status-page fallback, incident comms, maintenance windows, measurement exclusions, and remediation evidence.
 - Exposes `/api/mcp-gateway` for mock, staging, and production routing status, token posture, cutover steps, fallback behavior, and canary rollout.
 - Exposes `/api/auth/swiggy/status` for Swiggy OAuth lifecycle status, authorize/token/logout endpoints, pending PKCE verifier count, callback outcome, token source, expiry, and storage policy without exposing bearer values.

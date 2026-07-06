@@ -316,6 +316,15 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
         "Maps Food, Instamart, and Dineout status tools into post-confirmation timelines, non-blind retry probes, tracking cadence, telemetry, and support-ready recovery.",
     },
     {
+      id: "location_trust",
+      label: "Swiggy Location Trust",
+      path: "/api/swiggy-location-trust",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Covers Food and Instamart saved-address tools, Dineout saved locations, user-choice pauses, address switch refresh guards, raw-address redaction, and staging credential gates.",
+    },
+    {
       id: "slo_incident_command",
       label: "SLO Incident Command Center",
       path: "/api/slo-incident-command",
@@ -810,6 +819,7 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- Swiggy Load Lab: /api/swiggy-load-lab",
     "- Swiggy Offer Intelligence: /api/swiggy-offer-intelligence",
     "- Swiggy Order Lifecycle: /api/swiggy-order-lifecycle",
+    "- Swiggy Location Trust: /api/swiggy-location-trust",
     "- SLO Incident Command Center: /api/slo-incident-command",
     "- MCP Tool Lab: /api/mcp/tool-lab",
     "- MCP Capability Registry: /api/mcp/capability-registry",

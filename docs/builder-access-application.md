@@ -174,7 +174,8 @@ The application will include a 2-3 minute Loom or unlisted YouTube demo showing:
 28. Show `/api/swiggy-load-lab` with synthetic pilot/campaign load scenarios, cohort ramps, Retry-After drills, commercial single-flight proof, and external capacity gates.
 29. Show `/api/swiggy-offer-intelligence` with Food coupon sequencing, Dineout deal validation, Instamart value substitutions, savings disclaimers, and no-blind-discount drills.
 30. Show `/api/swiggy-order-lifecycle` with Food/Instamart/Dineout status tools, tracking cadence, non-blind retry probes, and support-safe lifecycle telemetry.
-31. Show `/api/production-launch-bundle` with proof artifacts, verification commands, external Swiggy gates, and the review email draft.
+31. Show `/api/swiggy-location-trust` with Food/Instamart saved-address tools, Dineout saved locations, address-choice pauses, address switch refresh, and raw-address redaction.
+32. Show `/api/production-launch-bundle` with proof artifacts, verification commands, external Swiggy gates, and the review email draft.
 
 ## Primary Technical Contact
 
@@ -231,6 +232,7 @@ Email: add primary engineering email before submission.
 - Swiggy Load Lab: `/api/swiggy-load-lab`
 - Swiggy Offer Intelligence: `/api/swiggy-offer-intelligence`
 - Swiggy Order Lifecycle: `/api/swiggy-order-lifecycle`
+- Swiggy Location Trust: `/api/swiggy-location-trust`
 - SLO Incident Command Center: `/api/slo-incident-command`
 - Support Bridge: `/api/support/bridge`
 - Error Intelligence: `/api/error-intelligence`

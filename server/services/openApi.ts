@@ -774,6 +774,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-location-trust": {
+        get: {
+          tags: ["Commerce"],
+          summary: "Swiggy Location Trust Center for address choice, privacy, and refresh guards",
+          responses: {
+            "200": {
+              description:
+                "Food and Instamart address tools, Dineout saved locations, address-choice pauses, address switch refresh guards, raw-address redaction, and staging credential gates",
+            },
+          },
+        },
+      },
       "/api/support/bridge": {
         get: {
           tags: ["Operations"],

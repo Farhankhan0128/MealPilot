@@ -3338,6 +3338,73 @@ export interface SwiggyOrderLifecycleReport {
   externalGates: string[];
 }
 
+export type SwiggyLocationTrustStatus = "ready" | "watch" | "external_gate";
+
+export interface SwiggyLocationTrustLane {
+  id: string;
+  server: SwiggyServer | "combined";
+  label: string;
+  officialTools: string[];
+  purpose: string;
+  userGate: string;
+  refreshPolicy: string;
+  privacyPosture: string;
+  status: SwiggyLocationTrustStatus;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyLocationTrustControl {
+  id: string;
+  label: string;
+  policy: string;
+  status: SwiggyLocationTrustStatus;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyLocationTrustScenario {
+  id: string;
+  label: string;
+  trigger: string;
+  expectedDecision: string;
+  protectedFields: string[];
+  status: SwiggyLocationTrustStatus;
+}
+
+export interface SwiggyLocationTrustTelemetry {
+  field: string;
+  source: string;
+  redaction: string;
+  status: SwiggyLocationTrustStatus;
+}
+
+export interface SwiggyLocationTrustReport {
+  generatedAt: string;
+  score: number;
+  mode: "mock" | "staging" | "production";
+  officialSources: string[];
+  totals: {
+    lanes: number;
+    toolsCovered: number;
+    readyControls: number;
+    scenarios: number;
+    redactedFields: number;
+    externalGates: number;
+  };
+  lanes: SwiggyLocationTrustLane[];
+  controls: SwiggyLocationTrustControl[];
+  scenarios: SwiggyLocationTrustScenario[];
+  telemetry: SwiggyLocationTrustTelemetry[];
+  operatorActions: Array<{
+    id: string;
+    label: string;
+    owner: "MealPilot" | "Operator" | "Swiggy";
+    status: SwiggyLocationTrustStatus;
+    evidence: string;
+  }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export interface VersionAlert {
   id: string;
   label: string;
