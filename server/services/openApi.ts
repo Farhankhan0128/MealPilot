@@ -761,6 +761,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-cta-live-audit": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Live Swiggy CTA auditor for safe click target verification",
+          responses: {
+            "200": {
+              description:
+                "Safe live probes for Swiggy Builders CTA targets, manual gates for forms, mail, and legal links, approved-origin checks, drift signals, and reviewer runbook evidence",
+            },
+          },
+        },
+      },
       "/api/swiggy-innovation-radar": {
         get: {
           tags: ["Builder Access"],

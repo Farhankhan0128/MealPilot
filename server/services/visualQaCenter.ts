@@ -354,6 +354,17 @@ const targetGroups = [
         "artifacts/visual-qa/cta-execution-card.png",
       ),
       target(
+        "cta_live_audit_card",
+        "CTA Live Audit card",
+        "/",
+        ".cta-live-audit-card",
+        "desktop",
+        1280,
+        900,
+        "CTA Live Audit shows safe live probes, manual gates, unsafe-link drift, and reviewer runbook evidence.",
+        "artifacts/visual-qa/cta-live-audit-card.png",
+      ),
+      target(
         "innovation_radar_card",
         "Innovation Radar card",
         "/",

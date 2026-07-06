@@ -119,6 +119,11 @@ assert(
   "OpenAPI CTA execution contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-cta-live-audit"]?.get?.summary?.includes("Live Swiggy CTA auditor") &&
+    openApi.paths["/api/swiggy-cta-live-audit"]?.get?.responses?.["200"]?.description?.includes("Safe live probes"),
+  "OpenAPI CTA live audit contract is missing",
+);
+assert(
   openApi.paths["/api/swiggy-innovation-radar"]?.get?.summary?.includes("innovation radar"),
   "OpenAPI innovation radar contract is missing",
 );
@@ -1600,8 +1605,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 38, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 38, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 39, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 39, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -1735,6 +1740,12 @@ assert(
     group.targets.some((target) => target.id === "cta_execution_card" && target.selector === ".cta-execution-card"),
   ),
   "visual QA CTA execution target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some((target) => target.id === "cta_live_audit_card" && target.selector === ".cta-live-audit-card"),
+  ),
+  "visual QA CTA live audit target is missing",
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
@@ -2262,6 +2273,26 @@ assert(
   ctaExecution.ctaExecution.assertions.some((assertion) => assertion.includes("Global header")) &&
     ctaExecution.ctaExecution.externalGates.some((gate) => gate.includes("Google Forms")),
   "CTA execution assertions or external gates are missing",
+);
+
+const ctaLiveAudit = await request("/api/swiggy-cta-live-audit");
+assert(ctaLiveAudit.ctaLiveAudit.score >= 85, "CTA live audit score is below target");
+assert(ctaLiveAudit.ctaLiveAudit.totals.targets >= 28, "CTA live audit target coverage is incomplete");
+assert(ctaLiveAudit.ctaLiveAudit.totals.probed >= 12, "CTA live audit safe probes are incomplete");
+assert(ctaLiveAudit.ctaLiveAudit.totals.reachable >= 12, "CTA live audit reachable target count is incomplete");
+assert(ctaLiveAudit.ctaLiveAudit.totals.manualGates > 0, "CTA live audit manual gates are missing");
+assert(ctaLiveAudit.ctaLiveAudit.totals.unsafe === 0, "CTA live audit found unsafe targets");
+assert(ctaLiveAudit.ctaLiveAudit.totals.blocked === 0, "CTA live audit found blocked targets");
+assert(
+  ctaLiveAudit.ctaLiveAudit.rows.some((row) => row.id === "cta_start_building" && row.status === "reachable") &&
+    ctaLiveAudit.ctaLiveAudit.rows.some((row) => row.id === "cta_apply_developer" && row.status === "manual_gate") &&
+    ctaLiveAudit.ctaLiveAudit.rows.some((row) => row.label === "Privacy Policy" && row.status === "manual_gate"),
+  "CTA live audit key target statuses are incomplete",
+);
+assert(
+  ctaLiveAudit.ctaLiveAudit.assertions.some((assertion) => assertion.includes("user-supplied URLs are never accepted")) &&
+    ctaLiveAudit.ctaLiveAudit.externalGates.some((gate) => gate.includes("Google Forms")),
+  "CTA live audit assertions or gates are missing",
 );
 
 const innovationRadar = await request("/api/swiggy-innovation-radar");
@@ -4839,7 +4870,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 38, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 39, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -4853,7 +4884,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("38")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("39")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -5237,6 +5268,9 @@ console.log(
       ctaExecutionScore: ctaExecution.ctaExecution.score,
       ctaExecutionTargets: ctaExecution.ctaExecution.totals.targets,
       ctaExecutionOperatorActions: ctaExecution.ctaExecution.totals.operatorActions,
+      ctaLiveAuditScore: ctaLiveAudit.ctaLiveAudit.score,
+      ctaLiveAuditReachable: `${ctaLiveAudit.ctaLiveAudit.totals.reachable}/${ctaLiveAudit.ctaLiveAudit.totals.probed}`,
+      ctaLiveAuditManualGates: ctaLiveAudit.ctaLiveAudit.totals.manualGates,
       innovationRadarScore: innovationRadar.innovationRadar.score,
       innovationRadarLanes: innovationRadar.innovationRadar.opportunityCount,
       enterpriseDelegatedAuthScore: enterpriseAuth.enterpriseAuth.score,

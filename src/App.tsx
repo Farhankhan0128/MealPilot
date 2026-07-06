@@ -127,6 +127,7 @@ import {
   fetchSwiggyDineoutPrecisionCenter,
   fetchSwiggyDiscoveryFreshness,
   fetchSwiggyCtaExecutionCenter,
+  fetchSwiggyCtaLiveAudit,
   fetchSwiggyInnovationRadar,
   fetchSwiggyJourneyCompiler,
   fetchSwiggyScenarioRunner,
@@ -239,6 +240,7 @@ import type {
   SwiggyConfirmationCommandCenterReport,
   SwiggyCustomizationStudio,
   SwiggyCtaExecutionCenter,
+  SwiggyCtaLiveAuditor,
   SwiggyDeepSiteMap,
   SwiggyDineoutPrecisionCenterReport,
   SwiggyDiscoveryFreshnessReport,
@@ -458,6 +460,7 @@ function App() {
     useState<SwiggySourceIntelligenceReport | null>(null);
   const [developerQuickstart, setDeveloperQuickstart] = useState<DeveloperQuickstartWorkbench | null>(null);
   const [ctaExecution, setCtaExecution] = useState<SwiggyCtaExecutionCenter | null>(null);
+  const [ctaLiveAudit, setCtaLiveAudit] = useState<SwiggyCtaLiveAuditor | null>(null);
   const [swiggyInnovationRadar, setSwiggyInnovationRadar] = useState<SwiggyInnovationRadarReport | null>(null);
   const [aiClientConnectKit, setAiClientConnectKit] = useState<AiClientConnectKit | null>(null);
   const [codingAgentGovernance, setCodingAgentGovernance] = useState<CodingAgentGovernance | null>(null);
@@ -652,6 +655,7 @@ function App() {
       sourceIntelligenceResponse,
       developerQuickstartResponse,
       ctaExecutionResponse,
+      ctaLiveAuditResponse,
       innovationRadarResponse,
       aiClientConnectResponse,
       codingAgentGovernanceResponse,
@@ -749,6 +753,7 @@ function App() {
       fetchSourceIntelligenceOptional(),
       fetchDeveloperQuickstartWorkbench(),
       fetchSwiggyCtaExecutionCenter(),
+      fetchSwiggyCtaLiveAudit(),
       fetchInnovationRadarOptional(),
       fetchAiClientConnectKit(),
       fetchCodingAgentGovernance(),
@@ -847,6 +852,7 @@ function App() {
     setSwiggySourceIntelligence(sourceIntelligenceResponse.sourceIntelligence);
     setDeveloperQuickstart(developerQuickstartResponse.quickstartWorkbench);
     setCtaExecution(ctaExecutionResponse.ctaExecution);
+    setCtaLiveAudit(ctaLiveAuditResponse.ctaLiveAudit);
     setSwiggyInnovationRadar(innovationRadarResponse.innovationRadar);
     setAiClientConnectKit(aiClientConnectResponse.connectKit);
     setCodingAgentGovernance(codingAgentGovernanceResponse.codingAgentGovernance);
@@ -948,6 +954,7 @@ function App() {
       sourceIntelligenceResponse,
       developerQuickstartResponse,
       ctaExecutionResponse,
+      ctaLiveAuditResponse,
       innovationRadarResponse,
       aiClientConnectResponse,
       codingAgentGovernanceResponse,
@@ -1042,6 +1049,7 @@ function App() {
       fetchSourceIntelligenceOptional(),
       fetchDeveloperQuickstartWorkbench(),
       fetchSwiggyCtaExecutionCenter(),
+      fetchSwiggyCtaLiveAudit(),
       fetchInnovationRadarOptional(),
       fetchAiClientConnectKit(),
       fetchCodingAgentGovernance(),
@@ -1136,6 +1144,7 @@ function App() {
     setSwiggySourceIntelligence(sourceIntelligenceResponse.sourceIntelligence);
     setDeveloperQuickstart(developerQuickstartResponse.quickstartWorkbench);
     setCtaExecution(ctaExecutionResponse.ctaExecution);
+    setCtaLiveAudit(ctaLiveAuditResponse.ctaLiveAudit);
     setSwiggyInnovationRadar(innovationRadarResponse.innovationRadar);
     setAiClientConnectKit(aiClientConnectResponse.connectKit);
     setCodingAgentGovernance(codingAgentGovernanceResponse.codingAgentGovernance);
@@ -1804,6 +1813,7 @@ function App() {
                 sourceIntelligence={swiggySourceIntelligence}
                 developerQuickstart={developerQuickstart}
                 ctaExecution={ctaExecution}
+                ctaLiveAudit={ctaLiveAudit}
                 innovationRadar={swiggyInnovationRadar}
                 aiClientConnectKit={aiClientConnectKit}
                 codingAgentGovernance={codingAgentGovernance}
@@ -2388,6 +2398,7 @@ function LaunchCenterPanel({
   sourceIntelligence,
   developerQuickstart,
   ctaExecution,
+  ctaLiveAudit,
   innovationRadar,
   aiClientConnectKit,
   codingAgentGovernance,
@@ -2456,6 +2467,7 @@ function LaunchCenterPanel({
   sourceIntelligence: SwiggySourceIntelligenceReport | null;
   developerQuickstart: DeveloperQuickstartWorkbench | null;
   ctaExecution: SwiggyCtaExecutionCenter | null;
+  ctaLiveAudit: SwiggyCtaLiveAuditor | null;
   innovationRadar: SwiggyInnovationRadarReport | null;
   aiClientConnectKit: AiClientConnectKit | null;
   codingAgentGovernance: CodingAgentGovernance | null;
@@ -4478,6 +4490,54 @@ function LaunchCenterPanel({
             </a>
             <a href="mailto:builders@swiggy.in" target="_blank" rel="noreferrer">
               Email
+            </a>
+          </div>
+        </article>
+
+        <article className="cta-live-audit-card">
+          <div className="mini-heading">
+            <ShieldCheck aria-hidden="true" />
+            <strong>CTA Live Audit</strong>
+          </div>
+          <span>
+            {ctaLiveAudit
+              ? `${ctaLiveAudit.score}/100, ${ctaLiveAudit.totals.reachable}/${ctaLiveAudit.totals.probed} safe probes`
+              : "Checking Swiggy CTA reachability and manual gates"}
+          </span>
+          <div className="cta-live-audit-grid">
+            <div>
+              <strong>{ctaLiveAudit?.totals.reachable ?? 0}</strong>
+              <span>Reachable</span>
+            </div>
+            <div>
+              <strong>{ctaLiveAudit?.totals.manualGates ?? 0}</strong>
+              <span>Manual</span>
+            </div>
+            <div>
+              <strong>{ctaLiveAudit?.totals.unsafe ?? 0}</strong>
+              <span>Unsafe</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(ctaLiveAudit?.rows ?? []).slice(0, 5).map((row) => (
+              <li
+                key={row.id}
+                data-status={row.status === "reachable" ? "healthy" : row.status === "manual_gate" ? "watch" : "blocked"}
+              >
+                <span>{row.label}</span>
+                <strong>{row.status.replace("_", " ")}</strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-intelligence-actions" aria-label="CTA live audit links">
+            <a href="/api/swiggy-cta-live-audit" target="_blank" rel="noreferrer">
+              Live audit
+            </a>
+            <a href="/api/swiggy-cta-execution-center" target="_blank" rel="noreferrer">
+              Matrix
+            </a>
+            <a href="/api/swiggy-builders-page-mesh" target="_blank" rel="noreferrer">
+              Pages
             </a>
           </div>
         </article>

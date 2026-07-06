@@ -198,6 +198,7 @@ MealPilot should become a luxury-grade food and meal intelligence product with t
 | Swiggy Deep Site Map | `server/services/deepSiteMap.ts` |
 | Developer Quickstart Workbench | `server/services/developerQuickstartWorkbench.ts` |
 | CTA Execution Center | `server/services/ctaExecutionCenter.ts` |
+| CTA Live Auditor | `server/services/ctaLiveAuditor.ts` |
 | Swiggy Innovation Radar | `server/services/innovationRadar.ts` |
 | AI Client Connect Kit | `server/services/aiClientConnect.ts` |
 | Brand Compliance Kit | `server/services/brandCompliance.ts` |
@@ -284,6 +285,7 @@ Coverage targets:
 - Swiggy Deep Site Map for page rows, rendered module signals, CTA gates, header/docs/footer links, source sections, proof links, assertions, and external gates
 - Developer Quickstart Workbench for official first-call readiness, SDK/framework adapters, `get_addresses` JSON-RPC drills, OAuth gates, commands, and recipe handoffs
 - CTA Execution Center for official CTAs, header/docs/footer links, browser actions, keyboard paths, proof bundles, and manual form/email/legal gates
+- CTA Live Auditor for safe live Builders/docs URL probes, manual form/email/legal gates, approved-origin checks, blocked-link drift, and reviewer runbook evidence
 - Swiggy Innovation Radar for developer ideas, enterprise signals, access rules, support model, MCP references, premium opportunity lanes, route optimizations, build phases, and partner gates
 - Credential onboarding and Dynamic Client Registration preview
 - Tool Lab probes for all 35 tools

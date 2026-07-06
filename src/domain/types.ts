@@ -1104,6 +1104,43 @@ export interface SwiggyCtaExecutionCenter {
   externalGates: string[];
 }
 
+export type SwiggyCtaLiveAuditStatus = "reachable" | "manual_gate" | "watch" | "blocked";
+
+export interface SwiggyCtaLiveAuditRow {
+  id: string;
+  label: string;
+  kind: SwiggyCtaExecutionKind;
+  officialUrl: string;
+  normalizedUrl: string;
+  sourcePages: string[];
+  statusCode?: number;
+  durationMs: number;
+  redirectLocation?: string;
+  evidence: string;
+  nextAction: string;
+  status: SwiggyCtaLiveAuditStatus;
+}
+
+export interface SwiggyCtaLiveAuditor {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  totals: {
+    targets: number;
+    probed: number;
+    reachable: number;
+    manualGates: number;
+    watch: number;
+    blocked: number;
+    unsafe: number;
+  };
+  rows: SwiggyCtaLiveAuditRow[];
+  driftSignals: string[];
+  operatorRunbook: Array<{ sequence: number; command: string; proves: string }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type SwiggyDocsSection = "start" | "build" | "operate" | "reference" | "blog";
 export type SwiggyDocsCoverageStatus = "implemented" | "documented" | "requires_credentials";
 

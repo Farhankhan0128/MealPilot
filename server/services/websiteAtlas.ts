@@ -48,7 +48,7 @@ const globalHeader: SwiggyWebsiteNavLink[] = [
   {
     id: "faq",
     label: "FAQ",
-    url: `${source}faq/`,
+    url: `${source}#faq`,
     location: "global_header",
     mealPilotCoverage: "Builder packet, access application, and Website Atlas answer program-fit and demo questions.",
   },
@@ -357,14 +357,14 @@ const footerGroups: SwiggyWebsiteAtlas["footerGroups"] = [
       {
         id: "guidelines",
         label: "Guidelines",
-        url: `${source}guidelines/`,
+        url: `${source}access/#guidelines`,
         location: "footer_resources",
         mealPilotCoverage: "Safety and compliance docs implement responsible builder guidelines.",
       },
       {
         id: "faq",
         label: "FAQ",
-        url: `${source}faq/`,
+        url: `${source}#faq`,
         location: "footer_resources",
         mealPilotCoverage: "Builder packet and Website Atlas answer FAQ themes.",
       },

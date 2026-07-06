@@ -40,6 +40,7 @@ import { buildCommercialActionGuard } from "./services/commercialActionGuard.js"
 import { buildSwiggyCancellationCareCenter } from "./services/cancellationCareCenter.js";
 import { buildSwiggyConfirmationCommandCenter, executeSwiggyConfirmationCommand } from "./services/confirmationCommandCenter.js";
 import { buildSwiggyCtaExecutionCenter } from "./services/ctaExecutionCenter.js";
+import { buildSwiggyCtaLiveAuditor } from "./services/ctaLiveAuditor.js";
 import { buildSwiggyCustomizationStudio, validateSwiggyCustomization } from "./services/customizationStudio.js";
 import { buildSwiggyAccessEvidenceMatrix } from "./services/accessEvidenceMatrix.js";
 import { buildSwiggyAccessDossier } from "./services/swiggyAccessDossier.js";
@@ -1175,6 +1176,18 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
       }),
     });
   });
+
+  app.get(
+    "/api/swiggy-cta-live-audit",
+    asyncRoute(async (_req, res) => {
+      res.json({
+        ctaLiveAudit: await buildSwiggyCtaLiveAuditor({
+          config,
+          latestPlan: store.getAllPlans().at(-1),
+        }),
+      });
+    }),
+  );
 
   app.get("/api/swiggy-innovation-radar", (_req, res) => {
     res.json({ innovationRadar: buildSwiggyInnovationRadar() });

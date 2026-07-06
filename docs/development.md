@@ -104,6 +104,8 @@ The verifier also validates Commercial Action Guard for Food order placement, In
 
 The verifier also validates `/api/swiggy-route-optimizer` for official source links, call-saving rollups, optimizer profiles, explicit parallel batches, commercial-action exclusion from parallel batches, cross-server handoff redaction, and source-linked route assertions.
 
+The verifier also validates `/api/swiggy-cta-live-audit` for safe live Builders/docs CTA probes, manual form/email/legal gates, approved-origin checks, blocked-link drift, and reviewer runbook evidence.
+
 The verifier also validates `/api/swiggy-load-lab` for synthetic launch-load scenarios, Retry-After readiness, cohort ramp math, background-job gating, commercial serialization assertions, and external Swiggy capacity actions.
 
 The verifier also validates `/api/swiggy-offer-intelligence` and `/api/swiggy-offer-intelligence/decide` for Food coupon tool sequencing, Dineout deal validation, Instamart value substitutions, no-blind-discount guardrails, apply/surface/block decisions, no-cart-mutation telemetry, offer recovery drills, live-inventory external gates, and launch-bundle handoff coverage.
@@ -193,6 +195,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/swiggy-website-atlas`
 - `GET /api/swiggy-builders-site-parity`
 - `GET /api/swiggy-builders-page-mesh`
+- `GET /api/swiggy-cta-live-audit`
 - `GET /api/swiggy-builders-launch-story`
 - `GET /api/swiggy-operating-contract-center`
 - `GET /api/swiggy-builder-intake`
@@ -413,6 +416,8 @@ Production should use an HTTPS redirect URI with exact-match allowlisting.
 
 `/api/swiggy-cta-execution-center` shows the click-readiness workbench for every official Swiggy Builders CTA, global header link, docs subnav item, footer resource, mailto, Google Form, and legal link. Each target includes a browser action, keyboard path, proof links, completion gate, assertion coverage, and an operator-vs-Swiggy external gate.
 
+`/api/swiggy-cta-live-audit` verifies the click-readiness workbench against live public targets: Builders/docs URLs are safely probed, form/email/legal links remain manual browser gates, and unsafe or blocked targets become production-smoke failures.
+
 `/api/coding-agent-governance` reads the root `AGENTS.md` and scores the rules future coding agents must follow before editing Swiggy integrations: fetch official docs first, prefer page `.md` twins, never invent tools or parameters, preserve commercial confirmation gates, and keep sensitive data out of logs.
 
 `/api/access-submission-studio` is the final operator room before Swiggy submission. It joins official Start Building, Request access, and Send Us a Demo targets with copy-ready form values, required attachments, browser runbook steps, generated builders@swiggy.in mailto draft, blockers, and external gates. `PATCH /api/access-submission-studio/state` saves the local handoff fields for demo URL, contact, production redirect, static egress, environment, terms, form submission, handoff email, and notes; it never submits the official Swiggy form or sends email during local tests.
@@ -439,6 +444,7 @@ The test suite checks that:
 - Staging Cutover Rehearsal records first real MCP probes, OAuth and token gates, fail-closed behavior, support packet fields, retry branches, and 48-hour promotion checks.
 - Website Atlas covers global header, docs subnav, footer groups, production access page, launch blog, rendered-page crawl evidence, page modules, CTAs, resource links, and legal links.
 - Swiggy Builders Page Mesh Auditor fetches every non-external Website Atlas page live and reconciles page reachability, anchor counts, module signals, CTA matches, and safe-origin drift.
+- CTA Live Audit probes official Builders/docs click targets, keeps form/email/legal CTAs manual, and fails smoke on unsafe or blocked CTA drift.
 - Swiggy Builders Launch Story Center converts the launch blog into a reviewer-ready story, reconciles the launch-era 18+ signal with the current 35-tool docs snapshot, and packages demo journey, showcase assets, ecosystem lanes, CTA paths, and co-marketing guardrails.
 - Swiggy Operating Contract Center joins SLA, rate limits, support, versioning, changelog, and ship-to-production sources into pillars, runbooks, readiness gates, and external approval gates.
 - Builder Intake Command Center turns all 11 signup, apply, demo, contact, docs, and footer CTA paths into locally prepared action ownership, form values, demo storyboard steps, copy-ready drafts, and explicit external gates for final form/email submission and Swiggy approval.

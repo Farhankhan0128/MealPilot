@@ -6,6 +6,7 @@ import { describe, expect, it, vi } from "vitest";
 import { createMealPilotServer } from "./app.js";
 import { buildSwiggyBuildersPageMeshAuditor } from "./services/buildersPageMeshAuditor.js";
 import { buildSwiggyBuildersSiteParityAuditor } from "./services/buildersSiteParityAuditor.js";
+import { buildSwiggyCtaLiveAuditor } from "./services/ctaLiveAuditor.js";
 import { buildSwiggyLlmsManifestVerifier } from "./services/llmsManifestVerifier.js";
 import { buildSwiggyToolParityAuditor } from "./services/toolParityAuditor.js";
 import { buildSwiggyHandshakeDoctor } from "./services/swiggyHandshakeDoctor.js";
@@ -96,6 +97,7 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/swiggy-developer-quickstart/run-first-call"].post.summary).toContain("first-call");
     expect(openApi.body.paths["/api/swiggy-developer-quickstart/run-first-call"].post.responses["200"].description).toContain("raw address");
     expect(openApi.body.paths["/api/swiggy-cta-execution-center"].get.summary).toContain("CTA execution");
+    expect(openApi.body.paths["/api/swiggy-cta-live-audit"].get.summary).toContain("Live Swiggy CTA auditor");
     expect(openApi.body.paths["/api/swiggy-innovation-radar"].get.summary).toContain("innovation radar");
     expect(openApi.body.paths["/api/ai-client-connect-kit"].get.summary).toContain("AI client");
     expect(openApi.body.paths["/api/ai-client-connect-kit/validate-config"].post.summary).toContain("Validate");
@@ -1431,7 +1433,7 @@ describe("MealPilot API", () => {
     expect(packet.totals.formFields).toBeGreaterThanOrEqual(10);
     expect(packet.totals.requiredAttachments).toBeGreaterThanOrEqual(10);
     expect(packet.totals.launchArtifacts).toBeGreaterThanOrEqual(50);
-    expect(packet.totals.visualTargets).toBe(38);
+    expect(packet.totals.visualTargets).toBe(39);
     expect(packet.files.map((file: { id: string }) => file.id)).toEqual(
       expect.arrayContaining(["packet_json", "packet_markdown", "visual_report", "production_summary"]),
     );
@@ -1443,7 +1445,7 @@ describe("MealPilot API", () => {
     ).toBe(true);
     expect(
       packet.commands.some(
-        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("38"),
+        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("39"),
       ),
     ).toBe(true);
     expect(packet.copyBlocks.formFields).toContain("Redirect URI(s)");
@@ -2386,8 +2388,8 @@ describe("MealPilot API", () => {
     const visualQa = response.body.visualQa;
 
     expect(visualQa.score).toBe(100);
-    expect(visualQa.totalTargets).toBe(38);
-    expect(visualQa.readyTargets).toBe(38);
+    expect(visualQa.totalTargets).toBe(39);
+    expect(visualQa.readyTargets).toBe(39);
     expect(visualQa.totalRules).toBe(7);
     expect(visualQa.readyRules).toBe(7);
     expect(visualQa.totalCommands).toBe(5);
@@ -2499,6 +2501,11 @@ describe("MealPilot API", () => {
     expect(
       visualQa.targetGroups.some((group: { targets: Array<{ id: string; selector: string }> }) =>
         group.targets.some((target) => target.id === "cta_execution_card" && target.selector === ".cta-execution-card"),
+      ),
+    ).toBe(true);
+    expect(
+      visualQa.targetGroups.some((group: { targets: Array<{ id: string; selector: string }> }) =>
+        group.targets.some((target) => target.id === "cta_live_audit_card" && target.selector === ".cta-live-audit-card"),
       ),
     ).toBe(true);
     expect(
@@ -2947,6 +2954,28 @@ describe("MealPilot API", () => {
     expect(center.commands.some((command: { id: string; expectedSignal: string }) => command.id === "production_gate" && command.expectedSignal.includes("ctaExecutionScore"))).toBe(true);
     expect(center.assertions.some((assertion: string) => assertion.includes("Global header"))).toBe(true);
     expect(center.externalGates.some((gate: string) => gate.includes("Google Forms"))).toBe(true);
+  });
+
+  it("audits live Swiggy CTA targets with safe probes and manual gates", async () => {
+    const { config } = createMealPilotServer();
+    const fixture = await buildSwiggyCtaLiveAuditor({
+      config,
+      probeTarget: async (url) => ({
+        ok: url.startsWith("https://mcp.swiggy.com/builders/"),
+        statusCode: url.startsWith("https://mcp.swiggy.com/builders/") ? 200 : 404,
+        durationMs: 7,
+      }),
+    });
+
+    expect(fixture.score).toBeGreaterThanOrEqual(90);
+    expect(fixture.totals.targets).toBeGreaterThanOrEqual(28);
+    expect(fixture.totals.reachable).toBeGreaterThanOrEqual(10);
+    expect(fixture.totals.manualGates).toBeGreaterThan(0);
+    expect(fixture.totals.unsafe).toBe(0);
+    expect(fixture.rows.some((row) => row.id === "cta_start_building" && row.status === "reachable")).toBe(true);
+    expect(fixture.rows.some((row) => row.id === "cta_apply_developer" && row.status === "manual_gate")).toBe(true);
+    expect(fixture.assertions.some((assertion) => assertion.includes("user-supplied URLs are never accepted"))).toBe(true);
+    expect(fixture.externalGates.some((gate: string) => gate.includes("Google Forms"))).toBe(true);
   });
 
   it("returns innovation radar that turns Swiggy signals into premium product lanes", async () => {

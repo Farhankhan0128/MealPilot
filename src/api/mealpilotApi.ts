@@ -86,6 +86,7 @@ import type {
   SwiggyDiscoveryFreshnessReport,
   DeveloperQuickstartWorkbench,
   SwiggyCtaExecutionCenter,
+  SwiggyCtaLiveAuditor,
   SwiggyWidget,
   SwiggyBuildersMap,
   SwiggyCustomizationStudio,
@@ -585,6 +586,10 @@ export function runDeveloperQuickstartFirstCall(input: {
 
 export function fetchSwiggyCtaExecutionCenter() {
   return requestJson<{ ctaExecution: SwiggyCtaExecutionCenter }>("/api/swiggy-cta-execution-center");
+}
+
+export function fetchSwiggyCtaLiveAudit() {
+  return requestJson<{ ctaLiveAudit: SwiggyCtaLiveAuditor }>("/api/swiggy-cta-live-audit");
 }
 
 export function fetchSwiggyInnovationRadar() {
