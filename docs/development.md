@@ -116,6 +116,8 @@ The verifier also validates `/api/swiggy-partner-success-desk` for access handof
 
 The verifier also validates `/api/swiggy-partner-support-room` for report_error readiness, builders@swiggy.in support email drafts, S0-S3 incident lanes, redacted evidence attachments, capacity escalation, runtime/audit proof, and enterprise Slack/partner-manager gates.
 
+The verifier also validates `/api/swiggy-benefits-activation-center` for live API access, quota expansion, technical support, Powered by Swiggy attribution, showcase visibility, hiring visibility, growth partnership, enterprise support, activation CTAs, proof links, and explicit Swiggy/operator gates.
+
 The verifier also validates `/api/swiggy-interaction-qa-center` for planner, confirmation, support-report, privacy, packet-export, first-call, access-submission, and partner-support CTA contracts with automated proof and explicit Swiggy/operator gates.
 
 The verifier also validates `/api/swiggy-staging-seed-smoke-center` for Food, Instamart, and Dineout seeded fixtures, read/mutation/commercial/support smoke waves, no-blind-retry stop rules, telemetry evidence, and Swiggy staging credential gates.
@@ -454,6 +456,8 @@ Production should use an HTTPS redirect URI with exact-match allowlisting.
 `/api/swiggy-partner-success-desk` composes the post-access operator room: access handoff, support bridge, SLO incidents, capacity review, backpressure, growth showcase asks, and enterprise Slack/partner-manager gates are pulled into one reviewer surface with proof links and escalation email drafts.
 
 `/api/swiggy-partner-support-room` prepares the support operating room after access: contact channels, report_error readiness, S0-S3 incident lanes, redacted evidence attachments, escalation runbook steps, builders@swiggy.in drafts, capacity escalation, and enterprise support gates are packaged without sending email or requesting Slack locally.
+
+`/api/swiggy-benefits-activation-center` turns Swiggy Builders benefits into an activation room: live APIs, quota expansion, technical support, co-branding, showcase visibility, hiring visibility, growth partnership, and enterprise support each have an owner, proof route, CTA, next action, and external gate.
 
 `/api/swiggy-interaction-qa-center` composes the clickable portal contract: every locally executable CTA maps to a route, feedback expectation, automated proof, and Swiggy relevance, while access form submission, Slack, partner manager, production credentials, and co-marketing remain manual or external gates.
 

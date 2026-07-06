@@ -389,6 +389,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-benefits-activation-center": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Benefits Activation Center for live APIs, quotas, support, co-branding, visibility, and growth",
+          responses: {
+            "200": {
+              description:
+                "Owner-assigned activation map for Builders benefits including live API access, quota expansion, technical support, Powered by Swiggy attribution, showcase visibility, hiring visibility, growth partnership, enterprise support, CTAs, proof links, and external Swiggy gates",
+            },
+          },
+        },
+      },
       "/api/swiggy-showcase-submission-center": {
         get: {
           tags: ["Builder Access"],

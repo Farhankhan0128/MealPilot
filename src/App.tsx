@@ -114,6 +114,7 @@ import {
   fetchSwiggyBuildersSiteParity,
   fetchSwiggyBuilderIntake,
   fetchSwiggyBuildersLaunchStory,
+  fetchSwiggyBenefitsActivationCenter,
   fetchSwiggyOperatingContractCenter,
   fetchSwiggyFaqPolicyCenter,
   fetchSwiggyGrowthPartnershipCenter,
@@ -238,6 +239,7 @@ import type {
   SupportBridgeReport,
   SwiggyAuthLifecycleCenterReport,
   SwiggyAuthStatusReport,
+  SwiggyBenefitsActivationCenter,
   SwiggyAccessDossier,
   SwiggyAccessEvidenceMatrix,
   SwiggyBuildersLaunchStoryCenterReport,
@@ -457,6 +459,7 @@ function App() {
   const [swiggyBuilderIntake, setSwiggyBuilderIntake] = useState<SwiggyBuilderIntakeCommandCenter | null>(null);
   const [swiggyFaqPolicy, setSwiggyFaqPolicy] = useState<SwiggyFaqPolicyCenter | null>(null);
   const [swiggyGrowthPartnership, setSwiggyGrowthPartnership] = useState<SwiggyGrowthPartnershipCenter | null>(null);
+  const [benefitsActivation, setBenefitsActivation] = useState<SwiggyBenefitsActivationCenter | null>(null);
   const [showcaseSubmission, setShowcaseSubmission] = useState<SwiggyShowcaseSubmissionCenter | null>(null);
   const [demoEvidence, setDemoEvidence] = useState<SwiggyDemoEvidenceDirector | null>(null);
   const [submissionTimeline, setSubmissionTimeline] = useState<SwiggySubmissionTimelineCenter | null>(null);
@@ -664,6 +667,7 @@ function App() {
       builderIntakeResponse,
       faqPolicyResponse,
       growthPartnershipResponse,
+      benefitsActivationResponse,
       showcaseSubmissionResponse,
       demoEvidenceResponse,
       submissionTimelineResponse,
@@ -772,6 +776,7 @@ function App() {
       fetchSwiggyBuilderIntake(),
       fetchSwiggyFaqPolicyCenter(),
       fetchSwiggyGrowthPartnershipCenter(),
+      fetchSwiggyBenefitsActivationCenter(),
       fetchSwiggyShowcaseSubmissionCenter(),
       fetchSwiggyDemoEvidenceDirector(),
       fetchSwiggySubmissionTimelineCenter(),
@@ -881,6 +886,7 @@ function App() {
     setSwiggyBuilderIntake(builderIntakeResponse.intake);
     setSwiggyFaqPolicy(faqPolicyResponse.faqPolicy);
     setSwiggyGrowthPartnership(growthPartnershipResponse.growthPartnership);
+    setBenefitsActivation(benefitsActivationResponse.benefitsActivation);
     setShowcaseSubmission(showcaseSubmissionResponse.showcaseSubmission);
     setDemoEvidence(demoEvidenceResponse.demoEvidence);
     setSubmissionTimeline(submissionTimelineResponse.submissionTimeline);
@@ -993,6 +999,7 @@ function App() {
       builderIntakeResponse,
       faqPolicyResponse,
       growthPartnershipResponse,
+      benefitsActivationResponse,
       showcaseSubmissionResponse,
       demoEvidenceResponse,
       submissionTimelineResponse,
@@ -1098,6 +1105,7 @@ function App() {
       fetchSwiggyBuilderIntake(),
       fetchSwiggyFaqPolicyCenter(),
       fetchSwiggyGrowthPartnershipCenter(),
+      fetchSwiggyBenefitsActivationCenter(),
       fetchSwiggyShowcaseSubmissionCenter(),
       fetchSwiggyDemoEvidenceDirector(),
       fetchSwiggySubmissionTimelineCenter(),
@@ -1203,6 +1211,7 @@ function App() {
     setSwiggyBuilderIntake(builderIntakeResponse.intake);
     setSwiggyFaqPolicy(faqPolicyResponse.faqPolicy);
     setSwiggyGrowthPartnership(growthPartnershipResponse.growthPartnership);
+    setBenefitsActivation(benefitsActivationResponse.benefitsActivation);
     setShowcaseSubmission(showcaseSubmissionResponse.showcaseSubmission);
     setDemoEvidence(demoEvidenceResponse.demoEvidence);
     setSubmissionTimeline(submissionTimelineResponse.submissionTimeline);
@@ -1883,6 +1892,7 @@ function App() {
                 builderIntake={swiggyBuilderIntake}
                 faqPolicy={swiggyFaqPolicy}
                 growthPartnership={swiggyGrowthPartnership}
+                benefitsActivation={benefitsActivation}
                 showcaseSubmission={showcaseSubmission}
                 demoEvidence={demoEvidence}
                 submissionTimeline={submissionTimeline}
@@ -2478,6 +2488,7 @@ function LaunchCenterPanel({
   builderIntake,
   faqPolicy,
   growthPartnership,
+  benefitsActivation,
   showcaseSubmission,
   demoEvidence,
   submissionTimeline,
@@ -2556,6 +2567,7 @@ function LaunchCenterPanel({
   builderIntake: SwiggyBuilderIntakeCommandCenter | null;
   faqPolicy: SwiggyFaqPolicyCenter | null;
   growthPartnership: SwiggyGrowthPartnershipCenter | null;
+  benefitsActivation: SwiggyBenefitsActivationCenter | null;
   showcaseSubmission: SwiggyShowcaseSubmissionCenter | null;
   demoEvidence: SwiggyDemoEvidenceDirector | null;
   submissionTimeline: SwiggySubmissionTimelineCenter | null;
@@ -3796,6 +3808,60 @@ function LaunchCenterPanel({
               </li>
             ))}
           </ul>
+        </article>
+
+        <article className="benefits-activation-card">
+          <div className="mini-heading">
+            <Sparkles aria-hidden="true" />
+            <strong>Benefits Activation</strong>
+          </div>
+          <span>
+            {benefitsActivation
+              ? `${benefitsActivation.score}/100, ${benefitsActivation.totals.ready}/${benefitsActivation.totals.benefits} benefits ready`
+              : "Activating live APIs, quotas, support, co-branding, and growth"}
+          </span>
+          <div className="benefits-activation-grid">
+            <div>
+              <strong>{benefitsActivation?.totals.operatorInputs ?? 0}</strong>
+              <span>Operator</span>
+            </div>
+            <div>
+              <strong>{benefitsActivation?.totals.swiggyGates ?? 0}</strong>
+              <span>Swiggy gates</span>
+            </div>
+            <div>
+              <strong>{benefitsActivation?.totals.activationCtas ?? 0}</strong>
+              <span>CTAs</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(benefitsActivation?.lanes ?? []).slice(0, 5).map((laneItem) => (
+              <li
+                key={laneItem.id}
+                data-status={
+                  laneItem.status === "ready"
+                    ? "healthy"
+                    : laneItem.status === "swiggy_gate"
+                      ? "blocked"
+                      : "watch"
+                }
+              >
+                <span>{laneItem.label}</span>
+                <strong>{laneItem.owner}</strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-intelligence-actions" aria-label="Benefits activation links">
+            <a href="/api/swiggy-benefits-activation-center" target="_blank" rel="noreferrer">
+              Activation API
+            </a>
+            <a href="/api/swiggy-growth-partnership" target="_blank" rel="noreferrer">
+              Growth
+            </a>
+            <a href="/api/swiggy-quota-negotiation-center" target="_blank" rel="noreferrer">
+              Quotas
+            </a>
+          </div>
         </article>
 
         <article className="showcase-submission-card">

@@ -187,6 +187,7 @@ MealPilot should become a luxury-grade food and meal intelligence product with t
 | Builder Intake Command Center | `server/services/builderIntake.ts` |
 | FAQ & Policy Center | `server/services/faqPolicyCenter.ts` |
 | Growth Partnership Center | `server/services/growthPartnership.ts` |
+| Benefits Activation Center | `server/services/benefitsActivationCenter.ts` |
 | Showcase Submission Center | `server/services/showcaseSubmissionCenter.ts` |
 | Demo Evidence Director | `server/services/demoEvidenceDirector.ts` |
 | Submission Timeline Center | `server/services/submissionTimelineCenter.ts` |
@@ -288,6 +289,7 @@ Coverage targets:
 - Swiggy Builders Page Mesh Auditor for live public page reachability, title/anchor extraction, module signal parity, CTA matching, and safe-origin drift checks across every non-external Website Atlas page
 - FAQ & Policy Center for homepage/developer/enterprise FAQ themes, access ground rules, footer resources, allowed/restricted/prohibited policy categories, legal signals, and support contact
 - Growth Partnership Center for get-noticed, hiring, co-branding, direct support, co-marketing, analytics dashboards, strategic guidance, launch experiments, metrics, assets, and partner asks
+- Benefits Activation Center for live API access, quota expansion, support, co-branding, showcase visibility, hiring visibility, growth partnership, enterprise support, CTAs, owners, and proof links
 - Showcase Submission Center for demo video readiness, pitch blocks, metric packs, visual proof, outreach email, operator inputs, and co-branding/feature approval gates
 - Submission Timeline Center for access-form, demo-handoff, DCR, staging, 48-hour soak, and production-promotion sequencing with proof links and explicit operator/Swiggy gates
 - Credential Handoff Center for localhost proof, DCR, OAuth PKCE, exact redirect URI, secret vault, staging credentials, seeded smoke, 48-hour soak, and production promotion in one owner-assigned reviewer room
@@ -371,6 +373,7 @@ MealPilot must keep mock evidence clearly labeled as simulated until these gates
 - Keep `/api/swiggy-builders-launch-story` as source-of-truth evidence for launch-blog narrative, current 35-tool reconciliation, reviewer demo story, showcase assets, ecosystem lanes, CTA paths, and co-marketing gates.
 - Keep `/api/swiggy-faq-policy` as source-of-truth evidence for FAQ themes, access ground rules, footer resources, policy categories, legal signals, support contact, and external policy gates.
 - Keep `/api/swiggy-growth-partnership` as source-of-truth evidence for Swiggy growth-partnership signals, GTM experiments, proof assets, metrics, partner asks, and co-marketing gates.
+- Keep `/api/swiggy-benefits-activation-center` as source-of-truth evidence for turning Builders benefits into owner-assigned activation lanes, CTAs, proof routes, and external Swiggy/operator gates.
 - Keep `/api/swiggy-docs-coverage` as source-of-truth evidence for all 69 Swiggy `llms.txt` pages and their implementation or external-gate status.
 - Keep `/api/swiggy-docs-twin-explorer` as source-of-truth evidence for every official markdown twin, rendered page URL, retrieval lane, proof route, assertion, and drift gate.
 - Keep `/api/swiggy-upstream-watch` as source-of-truth evidence for Swiggy docs retrieval contracts, changelog limitations, roadmap watches, signed-manifest readiness, and release-drift action queues.

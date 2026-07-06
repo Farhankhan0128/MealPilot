@@ -26,6 +26,7 @@ import { buildAiClientConnectKit, validateAiClientConfig } from "./services/aiCl
 import { buildAccessSubmissionStudio } from "./services/accessSubmissionStudio.js";
 import { buildSwiggyAuthLifecycleCenter } from "./services/authLifecycleCenter.js";
 import { buildAuditLedgerCenter } from "./services/auditLedger.js";
+import { buildSwiggyBenefitsActivationCenter } from "./services/benefitsActivationCenter.js";
 import { buildBrandComplianceKit } from "./services/brandCompliance.js";
 import { buildSwiggyBuildersLaunchStoryCenter } from "./services/buildersLaunchStoryCenter.js";
 import { buildSwiggyBuildersPageMeshAuditor } from "./services/buildersPageMeshAuditor.js";
@@ -1020,6 +1021,18 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/swiggy-growth-partnership", (_req, res) => {
     res.json({ growthPartnership: buildSwiggyGrowthPartnershipCenter() });
+  });
+
+  app.get("/api/swiggy-benefits-activation-center", (_req, res) => {
+    res.json({
+      benefitsActivation: buildSwiggyBenefitsActivationCenter({
+        config,
+        profile: store.getProfile(),
+        coverage: buildMcpCoverage(),
+        plans: store.getAllPlans(),
+        telemetry: telemetry.buildReport(),
+      }),
+    });
   });
 
   app.get("/api/swiggy-showcase-submission-center", (_req, res) => {

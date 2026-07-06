@@ -420,6 +420,17 @@ const targetGroups = [
         "artifacts/visual-qa/partner-success-card.png",
       ),
       target(
+        "benefits_activation_card",
+        "Benefits Activation card",
+        "/",
+        ".benefits-activation-card",
+        "desktop",
+        1280,
+        900,
+        "Benefits Activation shows live API, quota, support, co-branding, visibility, growth, hiring, and enterprise benefit gates.",
+        "artifacts/visual-qa/benefits-activation-card.png",
+      ),
+      target(
         "partner_support_card",
         "Partner Support Room card",
         "/",

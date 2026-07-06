@@ -207,6 +207,7 @@ Email: add primary engineering email before submission.
 - Builder Intake Command Center: `/api/swiggy-builder-intake`
 - FAQ & Policy Center: `/api/swiggy-faq-policy`
 - Growth Partnership Center: `/api/swiggy-growth-partnership`
+- Benefits Activation Center: `/api/swiggy-benefits-activation-center`
 - Channel & Multimodal Studio: `/api/channel-multimodal-studio`
 - Visual Dish Capture Center: `/api/swiggy-visual-dish-capture`
 - Voice Commerce Rehearsal Center: `/api/swiggy-voice-commerce-center`

@@ -135,6 +135,7 @@ Open the Launch Center and show:
 - Coding Agent Governance showing the root `AGENTS.md` file, official Swiggy source rules, tool-count smoke tests, and future-agent guardrails.
 - Staging Cutover Rehearsal showing first read-only MCP probes, fail-closed bearer-token behavior, retry branches, support packet fields, and 48-hour green gates.
 - Credential Handoff Center showing localhost proof, DCR, OAuth PKCE, vault storage, staging credentials, seeded smoke, and production promotion ownership.
+- Benefits Activation Center showing live API, quota, support, co-branding, showcase, hiring, growth, and enterprise benefit activation gates.
 - Staging Certification Matrix showing all 35 tools assigned to staging smoke waves, 48-hour soak, telemetry, rollback, and production-promotion gates.
 - Staging Transcript Export showing session-scoped JSONL, Markdown replay, redaction manifest, support envelope, and non-blind retry evidence.
 - Local MCP resources/prompts calls: `resources/list`, `resources/read`, `prompts/list`, and `prompts/get`, including executable redacted summaries.

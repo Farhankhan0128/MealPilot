@@ -140,6 +140,11 @@ assert(
   "OpenAPI growth partnership contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-benefits-activation-center"].get.summary.includes("Benefits Activation") &&
+    openApi.paths["/api/swiggy-benefits-activation-center"].get.responses["200"].description.includes("live API access"),
+  "OpenAPI benefits activation center contract is missing",
+);
+assert(
   openApi.paths["/api/swiggy-showcase-submission-center"].get.summary.includes("Showcase Submission"),
   "OpenAPI showcase submission center contract is missing",
 );
@@ -801,6 +806,53 @@ assert(
 assert(
   growthPartnership.growthPartnership.externalGates.some((gate) => gate.includes("co-marketing")),
   "growth partnership co-marketing gate is missing",
+);
+
+const benefitsActivation = await request("/api/swiggy-benefits-activation-center");
+assert(benefitsActivation.benefitsActivation.score >= 80, "benefits activation score is below target");
+assert(
+  benefitsActivation.benefitsActivation.totals.benefits === 8 &&
+    benefitsActivation.benefitsActivation.totals.activationCtas === 6 &&
+    benefitsActivation.benefitsActivation.totals.proofLinks >= 18,
+  "benefits activation totals are incomplete",
+);
+for (const laneId of [
+  "live_api_access",
+  "quota_expansion",
+  "technical_support",
+  "co_branding",
+  "growth_partnership",
+  "showcase_visibility",
+  "hiring_visibility",
+  "enterprise_support",
+]) {
+  assert(
+    benefitsActivation.benefitsActivation.lanes.some((lane) => lane.id === laneId),
+    `benefits activation lane ${laneId} is missing`,
+  );
+}
+for (const ctaId of ["request_access", "send_demo", "ask_quota", "ask_support", "ask_growth", "ask_cobranding"]) {
+  assert(
+    benefitsActivation.benefitsActivation.activationCtas.some((cta) => cta.id === ctaId),
+    `benefits activation CTA ${ctaId} is missing`,
+  );
+}
+assert(
+  benefitsActivation.benefitsActivation.lanes.some(
+    (lane) =>
+      lane.id === "quota_expansion" &&
+      lane.proofLinks.includes("/api/swiggy-quota-negotiation-center") &&
+      lane.status === "swiggy_gate",
+  ),
+  "benefits activation quota lane is incomplete",
+);
+assert(
+  benefitsActivation.benefitsActivation.partnerEmail.to === "builders@swiggy.in" &&
+    benefitsActivation.benefitsActivation.assertions.some((assertion) =>
+      assertion.includes("Every Builders benefit maps"),
+    ) &&
+    benefitsActivation.benefitsActivation.externalGates.some((gate) => gate.includes("rate-limit increase")),
+  "benefits activation email, assertion, or external gate is missing",
 );
 
 const showcaseSubmission = await request("/api/swiggy-showcase-submission-center");
@@ -1821,6 +1873,17 @@ assert(
   reviewerArtifactVault.reviewerArtifactVault.artifactSections.some((section) =>
     section.artifacts.some(
       (artifact) =>
+        artifact.id === "benefits_activation" &&
+        artifact.label === "Swiggy Benefits Activation Center" &&
+        artifact.path === "/api/swiggy-benefits-activation-center",
+    ),
+  ),
+  "reviewer artifact vault benefits activation artifact is missing",
+);
+assert(
+  reviewerArtifactVault.reviewerArtifactVault.artifactSections.some((section) =>
+    section.artifacts.some(
+      (artifact) =>
         artifact.id === "credential_handoff_center" &&
         artifact.label === "Swiggy Credential Handoff Center" &&
         artifact.path === "/api/swiggy-credential-handoff-center",
@@ -1891,7 +1954,8 @@ assert(
   reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.to === "builders@swiggy.in" &&
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/reviewer-artifact-vault") &&
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-demo-evidence-director") &&
-    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-partner-support-room"),
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-partner-support-room") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-benefits-activation-center"),
   "reviewer artifact vault email draft is incomplete",
 );
 assert(
@@ -1901,8 +1965,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 49, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 49, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 50, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 50, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -2083,6 +2147,12 @@ assert(
     group.targets.some((target) => target.id === "partner_success_card" && target.selector === ".partner-success-card"),
   ),
   "visual QA Partner Success target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some((target) => target.id === "benefits_activation_card" && target.selector === ".benefits-activation-card"),
+  ),
+  "visual QA Benefits Activation target is missing",
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
@@ -5420,7 +5490,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 49, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 50, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -5434,7 +5504,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("49")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("50")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -5598,6 +5668,10 @@ assert(
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-growth-partnership"),
   "launch bundle growth partnership handoff link is missing",
+);
+assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-benefits-activation-center"),
+  "launch bundle benefits activation handoff link is missing",
 );
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/channel-multimodal-studio"),
@@ -6005,6 +6079,9 @@ console.log(
       faqPolicyQuestions: faqPolicy.faqPolicy.totalQuestions,
       growthPartnershipScore: growthPartnership.growthPartnership.score,
       growthExperiments: growthPartnership.growthPartnership.totalExperiments,
+      benefitsActivationScore: benefitsActivation.benefitsActivation.score,
+      benefitsActivationLanes: benefitsActivation.benefitsActivation.totals.benefits,
+      benefitsActivationCtas: benefitsActivation.benefitsActivation.totals.activationCtas,
       showcaseSubmissionScore: showcaseSubmission.showcaseSubmission.score,
       showcaseSubmissionAssets: showcaseSubmission.showcaseSubmission.totals.assets,
       showcaseSubmissionGates: showcaseSubmission.showcaseSubmission.totals.swiggyGates,

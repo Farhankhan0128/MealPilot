@@ -96,6 +96,15 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
         "Turns Swiggy's get-noticed, co-branding, direct-support, hiring, co-marketing, analytics, and growth-partnership promises into experiments, assets, metrics, and external partner asks.",
     },
     {
+      id: "benefits_activation",
+      label: "Swiggy Benefits Activation Center",
+      path: "/api/swiggy-benefits-activation-center",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Turns Builders benefits into owner-assigned activation lanes for live APIs, quotas, support, co-branding, visibility, growth, hiring, and enterprise gates.",
+    },
+    {
       id: "channel_multimodal_studio",
       label: "Channel & Multimodal Studio",
       path: "/api/channel-multimodal-studio",
@@ -787,6 +796,7 @@ function buildPhases(config: ServerConfig, latestPlan: MealPlan | undefined, art
         artifact("builder_intake"),
         artifact("faq_policy"),
         artifact("growth_partnership"),
+        artifact("benefits_activation"),
         artifact("channel_multimodal_studio"),
         artifact("visual_dish_capture"),
         artifact("voice_commerce_center"),
@@ -993,6 +1003,7 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- Builder Intake Command Center: /api/swiggy-builder-intake",
     "- FAQ & Policy Center: /api/swiggy-faq-policy",
     "- Growth Partnership Center: /api/swiggy-growth-partnership",
+    "- Swiggy Benefits Activation Center: /api/swiggy-benefits-activation-center",
     "- Channel & Multimodal Studio: /api/channel-multimodal-studio",
     "- Swiggy Visual Dish Capture Center: /api/swiggy-visual-dish-capture",
     "- Swiggy Voice Commerce Rehearsal Center: /api/swiggy-voice-commerce-center",

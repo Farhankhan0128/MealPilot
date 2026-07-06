@@ -67,6 +67,7 @@ import type {
   SwiggyHandshakeDoctor,
   SwiggyAuthStatusReport,
   SwiggyAuthLifecycleCenterReport,
+  SwiggyBenefitsActivationCenter,
   EnterprisePlatformCenterReport,
   SwiggyBuildersLaunchStoryCenterReport,
   SwiggyBuildersPageMeshAuditor,
@@ -407,6 +408,12 @@ export function fetchSwiggyFaqPolicyCenter() {
 
 export function fetchSwiggyGrowthPartnershipCenter() {
   return requestJson<{ growthPartnership: SwiggyGrowthPartnershipCenter }>("/api/swiggy-growth-partnership");
+}
+
+export function fetchSwiggyBenefitsActivationCenter() {
+  return requestJson<{ benefitsActivation: SwiggyBenefitsActivationCenter }>(
+    "/api/swiggy-benefits-activation-center",
+  );
 }
 
 export function fetchSwiggyShowcaseSubmissionCenter() {

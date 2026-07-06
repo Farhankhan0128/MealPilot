@@ -1395,6 +1395,59 @@ export interface SwiggyGrowthPartnershipCenter {
   externalGates: string[];
 }
 
+export type SwiggyBenefitsActivationStatus = "ready" | "operator_input" | "swiggy_gate";
+export type SwiggyBenefitsActivationOwner = "MealPilot" | "Operator" | "Swiggy" | "Joint";
+
+export interface SwiggyBenefitsActivationLane {
+  id: string;
+  label: string;
+  officialBenefit: string;
+  owner: SwiggyBenefitsActivationOwner;
+  status: SwiggyBenefitsActivationStatus;
+  mealPilotActivation: string;
+  proofLinks: string[];
+  nextAction: string;
+}
+
+export interface SwiggyBenefitsActivationCta {
+  id: string;
+  label: string;
+  cta: string;
+  owner: SwiggyBenefitsActivationOwner;
+  status: SwiggyBenefitsActivationStatus;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyBenefitsActivationCenter {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  totals: {
+    benefits: number;
+    ready: number;
+    operatorInputs: number;
+    swiggyGates: number;
+    activationCtas: number;
+    proofLinks: number;
+  };
+  lanes: SwiggyBenefitsActivationLane[];
+  activationCtas: SwiggyBenefitsActivationCta[];
+  launchReadiness: {
+    growthExperimentsReady: string;
+    quotaAsksReady: string;
+    brandRulesReady: string;
+    supportChannelsReady: string;
+    partnerSuccessReady: string;
+  };
+  partnerEmail: {
+    to: string;
+    subject: string;
+    bodyPreview: string;
+  };
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type SwiggyShowcaseSubmissionStatus = "ready" | "operator_input" | "swiggy_gate";
 
 export interface SwiggyShowcaseSubmissionAsset {
