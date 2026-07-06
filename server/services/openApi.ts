@@ -876,6 +876,30 @@ export function buildOpenApiDocument(config: ServerConfig) {
           responses: { "200": { description: "Transport mode, auth posture, endpoint routing, and cutover plan" } },
         },
       },
+      "/api/swiggy-handshake-doctor": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy MCP OAuth and endpoint handshake doctor",
+          responses: {
+            "200": {
+              description:
+                "Safe live GET/OPTIONS probes for OAuth metadata, Food /food, Instamart /im, and Dineout /dineout endpoints without bearer tokens, tools/call payloads, or commercial actions",
+            },
+          },
+        },
+      },
+      "/api/mcp/handshake-doctor": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy MCP handshake doctor alias",
+          responses: {
+            "200": {
+              description:
+                "Alias for the Swiggy handshake doctor, returning safe OAuth metadata and Food /food, Instamart /im, Dineout /dineout endpoint probes without tools/call execution",
+            },
+          },
+        },
+      },
       "/api/credential-onboarding": {
         get: {
           tags: ["Builder Access"],

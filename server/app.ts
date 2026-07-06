@@ -115,6 +115,7 @@ import { buildSwiggyStateOrchestrator, rehearseSwiggySurfaceContract } from "./s
 import { buildSwiggyWidgetRuntime } from "./services/widgetRuntime.js";
 import { buildSwiggyBuildersMap } from "./services/swiggyBuildersMap.js";
 import { buildSwiggyAuthStatusReport, type AuthLifecycleEvent } from "./services/swiggyAuthStatus.js";
+import { buildSwiggyHandshakeDoctor } from "./services/swiggyHandshakeDoctor.js";
 import { buildSupportBridgeReport, executeSupportBridgeReport } from "./services/supportBridge.js";
 import { buildSwiggyScenarioRunner } from "./services/scenarioRunner.js";
 import { buildSwiggyToolContractMatrix } from "./services/toolContractMatrix.js";
@@ -557,6 +558,13 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
   app.get("/api/mcp-gateway", (_req, res) => {
     res.json({ gateway: buildRuntimeGatewayStatus() });
   });
+
+  const handshakeDoctorHandler = asyncRoute(async (_req: Request, res: Response) => {
+    res.json({ handshakeDoctor: await buildSwiggyHandshakeDoctor(config) });
+  });
+
+  app.get("/api/swiggy-handshake-doctor", handshakeDoctorHandler);
+  app.get("/api/mcp/handshake-doctor", handshakeDoctorHandler);
 
   app.get("/api/mcp/staging-cutover", (_req, res) => {
     res.json({

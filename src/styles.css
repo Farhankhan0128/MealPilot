@@ -1430,6 +1430,7 @@ select:focus {
 .cta-execution-grid,
 .innovation-radar-grid,
 .coding-agent-grid,
+.handshake-doctor-grid,
 .brand-compliance-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1521,6 +1522,7 @@ select:focus {
 .cta-execution-grid strong,
 .innovation-radar-grid strong,
 .coding-agent-grid strong,
+.handshake-doctor-grid strong,
 .brand-compliance-grid strong {
   color: var(--green-dark);
   font-size: 1.18rem;
@@ -1565,6 +1567,7 @@ select:focus {
 .cta-execution-grid span,
 .innovation-radar-grid span,
 .coding-agent-grid span,
+.handshake-doctor-grid span,
 .brand-compliance-grid span {
   font-size: 0.75rem;
   font-weight: 900;
@@ -1865,6 +1868,7 @@ select:focus {
 .innovation-radar-grid,
 .coding-agent-grid,
 .client-connect-grid,
+.handshake-doctor-grid,
 .journey-compiler-grid,
 .proof-grid {
   display: grid;
@@ -2002,6 +2006,7 @@ select:focus {
 .innovation-radar-grid,
 .coding-agent-grid,
 .client-connect-grid,
+.handshake-doctor-grid,
 .journey-compiler-grid,
 .access-submission-grid,
 .access-evidence-grid,
@@ -2018,6 +2023,7 @@ select:focus {
 .innovation-radar-grid div,
 .coding-agent-grid div,
 .client-connect-grid div,
+.handshake-doctor-grid div,
 .journey-compiler-grid div,
 .access-submission-grid div,
 .access-evidence-grid div,
@@ -3049,6 +3055,7 @@ select:focus {
 .innovation-radar-grid div,
 .coding-agent-grid div,
 .brand-compliance-grid div,
+.handshake-doctor-grid div,
 .website-atlas-grid div,
 .docs-coverage-grid div,
 .docs-twin-grid div,

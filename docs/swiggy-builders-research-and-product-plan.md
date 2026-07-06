@@ -205,6 +205,7 @@ MealPilot should become a luxury-grade food and meal intelligence product with t
 | Premium Use Case Studio | `server/services/premiumUseCaseStudio.ts` |
 | Premium Concierge Itinerary | `server/services/premiumConciergeItinerary.ts` |
 | Staging Certification Matrix | `server/services/stagingCertification.ts` |
+| Swiggy Handshake Doctor | `server/services/swiggyHandshakeDoctor.ts` |
 | Staging Transcript Export | `server/services/stagingTranscript.ts` |
 | Traffic Readiness Plan | `server/services/trafficReadiness.ts` |
 | SLO Incident Command Center | `server/services/sloIncidentCommand.ts` |
@@ -238,7 +239,7 @@ MealPilot should become a luxury-grade food and meal intelligence product with t
 | Planner workspace | `src/App.tsx` |
 | Recommendation cards | Food, Instamart, and Dineout cards with item controls |
 | Premium Concierge | Lunch, pantry reset, Dineout evening, dessert reminder, and recovery itinerary slots with official Swiggy route plans |
-| Launch Center | Tool coverage, Tool Contract Matrix, Scenario Runner, State Orchestrator, Widget Runtime Center, Commercial Action Guard, Staging Cutover Rehearsal, Capability Registry, Resource & Prompt Studio, Website Atlas, Builder Intake, FAQ & Policy Center, Growth Partnership Center, Channel & Multimodal Studio, Nutrition & Budget Intelligence, Household Preference Graph, Guest Collaboration & Calendar Center, Luxury Experience Workspace, Reviewer Artifact Vault, Visual QA Center, Access Evidence Matrix, Docs Coverage, Docs Twin Explorer, Upstream Watch, Source Intelligence, Deep Site Map, Developer Quickstart, CTA Execution, Innovation Radar, Tool Lab, gateway, OAuth Status, Credential Cockpit, Delegated Auth Center, Builders map, Support Bridge, go-live, observability, support |
+| Launch Center | Tool coverage, Tool Contract Matrix, Scenario Runner, State Orchestrator, Widget Runtime Center, Commercial Action Guard, Staging Cutover Rehearsal, Swiggy Handshake Doctor, Capability Registry, Resource & Prompt Studio, Website Atlas, Builder Intake, FAQ & Policy Center, Growth Partnership Center, Channel & Multimodal Studio, Nutrition & Budget Intelligence, Household Preference Graph, Guest Collaboration & Calendar Center, Luxury Experience Workspace, Reviewer Artifact Vault, Visual QA Center, Access Evidence Matrix, Docs Coverage, Docs Twin Explorer, Upstream Watch, Source Intelligence, Deep Site Map, Developer Quickstart, CTA Execution, Innovation Radar, Tool Lab, gateway, OAuth Status, Credential Cockpit, Delegated Auth Center, Builders map, Support Bridge, go-live, observability, support |
 | Guest Collaboration & Calendar | Guest votes, occasion templates, Dineout-first date nights, guests-at-home prep, office lunch, weekday reset, recovery meal, ICS artifacts, Slack/Teams gates, and voice-safe briefs |
 | Luxury Experience Workspace | Lean, premium, family, social, and training modes plus polished Dineout reservation, Food cart, Instamart basket, combined evening, and recovery review surfaces |
 | Reviewer Artifact Vault | Proof links, OpenAPI, smoke commands, screenshot targets, demo-video checklist, logs, traces, redaction rules, support context, and handoff copy |
@@ -293,6 +294,7 @@ Coverage targets:
 - Access Evidence Matrix coverage for official access fields, proof attachments, browser runbook steps, proof commands, owners, operator inputs, and Swiggy approval gates
 - Premium Use Case Studio coverage for ten differentiated product lanes, all 35 tools placed into routes, saved calls, safety gates, and launch stages
 - Premium Concierge Itinerary coverage for official recipe sources, all-server tool coverage, saved-call optimizations, cart refresh rules, separate confirmations, and Food scheduling external gates
+- Swiggy Handshake Doctor coverage for OAuth authorization metadata, protected-resource watch state, Food `/food`, Instamart `/im`, Dineout `/dineout`, GET/OPTIONS-only safety, no bearer-token disclosure, and no `tools/call` execution
 - Staging Certification Matrix coverage for all 35 tools assigned to credentialed smoke waves, 48-hour soak, OAuth/DCR gates, telemetry requirements, rollback, and production promotion
 - Staging Transcript Export coverage for JSONL, Markdown, redaction, support envelope, session ids, request ids, and non-blind retry evidence
 - Traffic Readiness coverage for expected sessions, projected tool calls, peak QPS, per-lane budgets, Retry-After behavior, seven-day traffic notice, capacity email, and 1% to 100% rollout

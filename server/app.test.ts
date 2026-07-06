@@ -4,6 +4,7 @@ import path from "node:path";
 import request from "supertest";
 import { describe, expect, it, vi } from "vitest";
 import { createMealPilotServer } from "./app.js";
+import { buildSwiggyHandshakeDoctor } from "./services/swiggyHandshakeDoctor.js";
 import { createFileSessionStore } from "./store/sessionStore.js";
 
 const planningRequest = {
@@ -44,6 +45,8 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/builder-packet-export"].get.summary).toContain("packet export");
     expect(openApi.body.paths["/api/builder-packet-export.md"].get.summary).toContain("Markdown");
     expect(openApi.body.paths["/api/mcp-gateway"].get.summary).toContain("gateway");
+    expect(openApi.body.paths["/api/swiggy-handshake-doctor"].get.summary).toContain("handshake doctor");
+    expect(openApi.body.paths["/api/mcp/handshake-doctor"].get.responses["200"].description).toContain("Instamart /im");
     expect(openApi.body.paths["/api/swiggy-builders-map"].get.summary).toContain("Swiggy Builders");
     expect(openApi.body.paths["/api/swiggy-website-atlas"].get.summary).toContain("website header");
     expect(openApi.body.paths["/api/swiggy-builders-launch-story"].get.summary).toContain("Launch Story");
@@ -2972,6 +2975,59 @@ describe("MealPilot API", () => {
       })
       .expect(200);
     expect(wrongShape.body.validation.issues).toContain("invalid_claude_mcp_remote_shape");
+  });
+
+  it("builds a safe Swiggy handshake doctor report without tool execution", async () => {
+    const calls: Array<{ url: string; method: string }> = [];
+    const doctor = await buildSwiggyHandshakeDoctor(
+      {
+        appName: "MealPilot India",
+        port: 8787,
+        swiggyMode: "mock",
+        swiggyClientId: "replace_after_builder_access",
+        swiggyRedirectUri: "http://localhost:5173/auth/swiggy/callback",
+        swiggyScope: "mcp:tools mcp:resources mcp:prompts",
+        swiggyBaseUrl: "https://mcp-staging.swiggy.com",
+        planRetentionDays: 14,
+      },
+      async (url, method) => {
+        calls.push({ url, method });
+        if (url.endsWith("/.well-known/oauth-authorization-server")) {
+          return {
+            statusCode: 200,
+            contentType: "application/json",
+            durationMs: 12,
+            ok: true,
+            bodyPreview: {
+              issuer: "https://mcp.swiggy.com/auth",
+              authorization_endpoint: "https://mcp.swiggy.com/auth/authorize",
+              token_endpoint: "https://mcp.swiggy.com/auth/token",
+              registration_endpoint: "https://mcp.swiggy.com/auth/register",
+              scopes_supported: ["mcp:tools", "mcp:resources", "mcp:prompts"],
+              code_challenge_methods_supported: ["S256"],
+            },
+          };
+        }
+        if (url.endsWith("/.well-known/oauth-protected-resource")) {
+          return { statusCode: 404, contentType: "text/html", durationMs: 8, ok: false };
+        }
+        return { statusCode: 401, contentType: "application/json", durationMs: 10, ok: false };
+      },
+    );
+
+    expect(doctor.score).toBeGreaterThanOrEqual(90);
+    expect(doctor.authMetadata.pkceS256).toBe(true);
+    expect(doctor.authMetadata.scopes).toEqual(["mcp:tools", "mcp:resources", "mcp:prompts"]);
+    expect(doctor.serverEndpoints.map((endpoint) => [endpoint.server, endpoint.expectedPath])).toEqual([
+      ["food", "/food"],
+      ["instamart", "/im"],
+      ["dineout", "/dineout"],
+    ]);
+    expect(doctor.probes.every((probe) => probe.method === "GET" || probe.method === "OPTIONS")).toBe(true);
+    expect(doctor.credentialBoundaries.some((boundary) => boundary.includes("never sends bearer tokens"))).toBe(true);
+    expect(JSON.stringify(doctor)).not.toContain("Bearer live_secret");
+    expect(JSON.stringify(doctor)).not.toContain("access_token");
+    expect(calls.map((call) => call.method)).not.toContain("POST");
   });
 
   it("returns coding-agent governance grounded in the root AGENTS.md file", async () => {

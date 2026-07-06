@@ -64,6 +64,7 @@ import type {
   TrafficReadinessPlan,
   SupportBridgeReport,
   SupportBridgeExecution,
+  SwiggyHandshakeDoctor,
   SwiggyAuthStatusReport,
   SwiggyAuthLifecycleCenterReport,
   EnterprisePlatformCenterReport,
@@ -267,6 +268,10 @@ export function fetchMcpCatalog() {
 
 export function fetchMcpGateway() {
   return requestJson<{ gateway: McpGatewayStatus }>("/api/mcp-gateway");
+}
+
+export function fetchSwiggyHandshakeDoctor() {
+  return requestJson<{ handshakeDoctor: SwiggyHandshakeDoctor }>("/api/mcp/handshake-doctor");
 }
 
 export function fetchMcpToolLab() {

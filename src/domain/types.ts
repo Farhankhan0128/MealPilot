@@ -5412,6 +5412,57 @@ export interface CredentialOnboardingReport {
   externalGates: string[];
 }
 
+export type SwiggyHandshakeProbeStatus = "ready" | "watch" | "blocked";
+
+export interface SwiggyHandshakeProbe {
+  id: string;
+  label: string;
+  server?: SwiggyServer;
+  url: string;
+  method: "GET" | "OPTIONS";
+  status: SwiggyHandshakeProbeStatus;
+  statusCode?: number;
+  durationMs: number;
+  contentType?: string;
+  expectedSignal: string;
+  userSafeEvidence: string;
+  nextAction: string;
+}
+
+export interface SwiggyHandshakeDoctor {
+  generatedAt: string;
+  mode: "mock" | "staging" | "production";
+  score: number;
+  officialSources: string[];
+  baseUrl: string;
+  totals: {
+    probes: number;
+    ready: number;
+    watch: number;
+    blocked: number;
+    liveHttpCalls: number;
+  };
+  authMetadata: {
+    url: string;
+    status: SwiggyHandshakeProbeStatus;
+    issuer?: string;
+    scopes: string[];
+    pkceS256: boolean;
+    dynamicClientRegistration: boolean;
+  };
+  serverEndpoints: Array<{
+    server: SwiggyServer;
+    endpoint: string;
+    expectedPath: "/food" | "/im" | "/dineout";
+    status: SwiggyHandshakeProbeStatus;
+    safeProbe: "OPTIONS";
+  }>;
+  probes: SwiggyHandshakeProbe[];
+  credentialBoundaries: string[];
+  operatorRunbook: Array<{ sequence: number; label: string; command: string; proves: string }>;
+  assertions: string[];
+}
+
 export type SandboxCredentialStatus = "ready" | "operator_input" | "swiggy_gate" | "blocked";
 
 export interface SandboxCredentialLane {

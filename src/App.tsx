@@ -72,6 +72,7 @@ import {
   fetchGuestCollaborationCenter,
   fetchHealth,
   fetchHouseholdPreferenceGraph,
+  fetchSwiggyHandshakeDoctor,
   fetchLuxuryExperienceWorkspace,
   fetchMcpGateway,
   fetchMcpBackpressureGovernor,
@@ -241,6 +242,7 @@ import type {
   SwiggyDocsTwinExplorer,
   SwiggyFaqPolicyCenter,
   SwiggyGrowthPartnershipCenter,
+  SwiggyHandshakeDoctor,
   SwiggyInnovationRadarReport,
   SwiggyJourneyCompilerReport,
   SwiggyLoadLabReport,
@@ -399,6 +401,7 @@ function App() {
   const [reminders, setReminders] = useState<Reminder[]>([]);
   const [opsStatus, setOpsStatus] = useState<OpsStatus[]>([]);
   const [mcpGateway, setMcpGateway] = useState<McpGatewayStatus | null>(null);
+  const [handshakeDoctor, setHandshakeDoctor] = useState<SwiggyHandshakeDoctor | null>(null);
   const [mcpCatalog, setMcpCatalog] = useState<McpCatalogResponse | null>(null);
   const [mcpCapabilityRegistry, setMcpCapabilityRegistry] = useState<McpCapabilityRegistry | null>(null);
   const [mcpResourcePromptStudio, setMcpResourcePromptStudio] = useState<McpResourcePromptStudio | null>(null);
@@ -592,6 +595,7 @@ function App() {
       groupResponse,
       opsResponse,
       gatewayResponse,
+      handshakeDoctorResponse,
       catalogResponse,
       capabilityRegistryResponse,
       resourcePromptStudioResponse,
@@ -684,6 +688,7 @@ function App() {
       fetchGroupPlan(),
       fetchOpsStatus(),
       fetchMcpGateway(),
+      fetchSwiggyHandshakeDoctor(),
       fetchMcpCatalog(),
       fetchMcpCapabilityRegistry(),
       fetchMcpResourcePromptStudio(),
@@ -777,6 +782,7 @@ function App() {
     setGroupPlan(groupResponse.groupPlan);
     setOpsStatus(opsResponse.status);
     setMcpGateway(gatewayResponse.gateway);
+    setHandshakeDoctor(handshakeDoctorResponse.handshakeDoctor);
     setMcpCatalog(catalogResponse);
     setMcpCapabilityRegistry(capabilityRegistryResponse.registry);
     setMcpResourcePromptStudio(resourcePromptStudioResponse.resourcePromptStudio);
@@ -874,6 +880,7 @@ function App() {
     const [
       catalogResponse,
       gatewayResponse,
+      handshakeDoctorResponse,
       capabilityRegistryResponse,
       resourcePromptStudioResponse,
       contractMatrixResponse,
@@ -963,6 +970,7 @@ function App() {
     ] = await Promise.all([
       fetchMcpCatalog(),
       fetchMcpGateway(),
+      fetchSwiggyHandshakeDoctor(),
       fetchMcpCapabilityRegistry(),
       fetchMcpResourcePromptStudio(),
       fetchSwiggyToolContractMatrix(),
@@ -1052,6 +1060,7 @@ function App() {
     ]);
     setMcpCatalog(catalogResponse);
     setMcpGateway(gatewayResponse.gateway);
+    setHandshakeDoctor(handshakeDoctorResponse.handshakeDoctor);
     setMcpCapabilityRegistry(capabilityRegistryResponse.registry);
     setMcpResourcePromptStudio(resourcePromptStudioResponse.resourcePromptStudio);
     setToolContractMatrix(contractMatrixResponse.matrix);
@@ -1715,6 +1724,7 @@ function App() {
               <LaunchCenterPanel
                 catalog={mcpCatalog}
                 gateway={mcpGateway}
+                handshakeDoctor={handshakeDoctor}
                 capabilityRegistry={mcpCapabilityRegistry}
                 resourcePromptStudio={mcpResourcePromptStudio}
                 contractMatrix={toolContractMatrix}
@@ -2294,6 +2304,7 @@ function PremiumConciergePanel({ concierge }: { concierge: PremiumConciergeItine
 function LaunchCenterPanel({
   catalog,
   gateway,
+  handshakeDoctor,
   capabilityRegistry,
   resourcePromptStudio,
   contractMatrix,
@@ -2357,6 +2368,7 @@ function LaunchCenterPanel({
 }: {
   catalog: McpCatalogResponse | null;
   gateway: McpGatewayStatus | null;
+  handshakeDoctor: SwiggyHandshakeDoctor | null;
   capabilityRegistry: McpCapabilityRegistry | null;
   resourcePromptStudio: McpResourcePromptStudio | null;
   contractMatrix: SwiggyToolContractMatrix | null;
@@ -4590,6 +4602,56 @@ function LaunchCenterPanel({
               </li>
             ))}
           </ul>
+        </article>
+
+        <article className="handshake-doctor-card">
+          <div className="mini-heading">
+            <Terminal aria-hidden="true" />
+            <strong>Handshake Doctor</strong>
+          </div>
+          <span>
+            {handshakeDoctor
+              ? `${handshakeDoctor.score}/100, ${handshakeDoctor.totals.ready}/${handshakeDoctor.totals.probes} probes ready`
+              : "Running safe OAuth and endpoint probes"}
+          </span>
+          <div className="handshake-doctor-grid">
+            <div>
+              <strong>{handshakeDoctor?.authMetadata.pkceS256 ? "S256" : "Pending"}</strong>
+              <span>PKCE</span>
+            </div>
+            <div>
+              <strong>{handshakeDoctor?.authMetadata.scopes.length ?? 0}/3</strong>
+              <span>Scopes</span>
+            </div>
+            <div>
+              <strong>{handshakeDoctor?.totals.liveHttpCalls ?? 0}</strong>
+              <span>Safe probes</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(handshakeDoctor?.serverEndpoints ?? []).map((endpoint) => (
+              <li
+                key={endpoint.server}
+                data-status={
+                  endpoint.status === "ready" ? "healthy" : endpoint.status === "blocked" ? "blocked" : "watch"
+                }
+              >
+                <span>{serverLabel(endpoint.server)}</span>
+                <strong>{endpoint.expectedPath}</strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-intelligence-actions" aria-label="Handshake doctor links">
+            <a href="/api/mcp/handshake-doctor" target="_blank" rel="noreferrer">
+              Doctor API
+            </a>
+            <a href="/api/swiggy-handshake-doctor" target="_blank" rel="noreferrer">
+              Product API
+            </a>
+            <a href="https://mcp.swiggy.com/builders/docs/start/authenticate/" target="_blank" rel="noreferrer">
+              OAuth docs
+            </a>
+          </div>
         </article>
 
         <article>

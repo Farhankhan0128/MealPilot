@@ -311,6 +311,11 @@ assert(
   "OpenAPI staging cutover is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-handshake-doctor"]?.get?.summary?.includes("handshake doctor") &&
+    openApi.paths["/api/mcp/handshake-doctor"]?.get?.responses?.["200"]?.description?.includes("Instamart /im"),
+  "OpenAPI Swiggy handshake doctor contract is missing",
+);
+assert(
   openApi.paths["/api/swiggy-staging-credential-drill"].get.summary.includes("Staging Credential Drill"),
   "OpenAPI Staging Credential Drill Center contract is missing",
 );
@@ -2762,6 +2767,26 @@ const gateway = await request("/api/mcp-gateway");
 assert(gateway.gateway.readinessScore >= 90, "MCP gateway readiness score is below target");
 assert(gateway.gateway.requestedServers.length === 3, "MCP gateway server map is incomplete");
 
+const handshakeDoctor = await request("/api/mcp/handshake-doctor");
+assert(handshakeDoctor.handshakeDoctor.probes.length === 5, "Swiggy handshake doctor probe count is incomplete");
+assert(
+  handshakeDoctor.handshakeDoctor.serverEndpoints.map((endpoint) => `${endpoint.server}:${endpoint.expectedPath}`).join(",") ===
+    "food:/food,instamart:/im,dineout:/dineout",
+  "Swiggy handshake doctor endpoint paths are wrong",
+);
+assert(
+  handshakeDoctor.handshakeDoctor.probes.every((probe) => probe.method === "GET" || probe.method === "OPTIONS"),
+  "Swiggy handshake doctor must only use safe GET/OPTIONS probes",
+);
+assert(
+  handshakeDoctor.handshakeDoctor.credentialBoundaries.some((boundary) => boundary.includes("never sends bearer tokens")),
+  "Swiggy handshake doctor credential boundary is missing",
+);
+assert(
+  !JSON.stringify(handshakeDoctor.handshakeDoctor).includes("access_token"),
+  "Swiggy handshake doctor must not expose raw token fields",
+);
+
 const stagingCutover = await request("/api/mcp/staging-cutover");
 assert(stagingCutover.stagingCutover.score >= 85, "staging cutover score is below target");
 assert(stagingCutover.stagingCutover.totalServers === 3, "staging cutover server coverage is incomplete");
@@ -5058,6 +5083,8 @@ console.log(
       aiClientTargets: aiClientConnect.connectKit.clientTargets.length,
       aiClientValidationScore: genericClientValidation.validation.score,
       aiClientSubmittedIssues: submittedClientValidation.validation.issues.length,
+      handshakeDoctorScore: handshakeDoctor.handshakeDoctor.score,
+      handshakeDoctorWatch: handshakeDoctor.handshakeDoctor.totals.watch,
       codingAgentGovernanceScore: codingAgentGovernance.codingAgentGovernance.score,
       codingAgentSignals: codingAgentGovernance.codingAgentGovernance.ruleFile.totalSignals,
       brandComplianceScore: brandCompliance.brandCompliance.score,

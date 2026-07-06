@@ -241,6 +241,8 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/mcp/resource-prompt-studio`
 - `POST /api/mcp/resource-prompt-studio/execute`
 - `GET /api/mcp-gateway`
+- `GET /api/mcp/handshake-doctor`
+- `GET /api/swiggy-handshake-doctor`
 - `GET /api/auth/swiggy/status`
 - `GET /api/swiggy-auth-lifecycle-center`
 - `GET /api/credential-onboarding`
@@ -348,6 +350,8 @@ SWIGGY_REDIRECT_URI=http://localhost:5173/auth/swiggy/callback
 Production should use an HTTPS redirect URI with exact-match allowlisting.
 
 `SWIGGY_ACCESS_TOKEN` can be injected by a secure runtime for staging smoke tests, but normal OAuth callback stores the exchanged token in process memory. `/api/mcp-gateway` shows whether each server is using local mock routing, routable Swiggy streamable HTTP, or blocked fail-closed mode.
+
+`/api/mcp/handshake-doctor` and `/api/swiggy-handshake-doctor` run safe live GET/OPTIONS probes against Swiggy OAuth metadata and the Food `/food`, Instamart `/im`, and Dineout `/dineout` MCP endpoints. They never send bearer tokens, never invoke `tools/call`, never accept arbitrary probe URLs, and classify protected-resource metadata or endpoint auth responses as watch signals rather than local build failures.
 
 `/api/auth/swiggy/status` shows the reviewer-safe OAuth lifecycle: Swiggy authorize/token/logout endpoints, redirect URI, scope, pending PKCE verifier count, latest callback event, token source, expiry, callback checklist, and secure token storage rules. The frontend OAuth Status panel calls this endpoint after auth start and callback completion.
 
