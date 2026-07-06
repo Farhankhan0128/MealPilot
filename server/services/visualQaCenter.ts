@@ -718,6 +718,17 @@ const targetGroups = [
         "artifacts/visual-qa/widget-runtime-fallback.png",
       ),
       target(
+        "widget_experience_composer",
+        "Swiggy Widget Experience Composer",
+        "/",
+        ".widget-experience-card",
+        "desktop",
+        1280,
+        900,
+        "Premium Swiggy widget placements, gallery states, event handlers, and hosted-widget gates are visible.",
+        "artifacts/visual-qa/widget-experience-composer.png",
+      ),
+      target(
         "food_cart_widget_fallback",
         "Food cart fallback",
         "/",

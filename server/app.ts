@@ -136,6 +136,7 @@ import { buildStagingCertificationMatrix } from "./services/stagingCertification
 import { buildStagingTranscriptExport } from "./services/stagingTranscript.js";
 import { buildSubmissionConsole } from "./services/submissionConsole.js";
 import { buildSwiggyStateOrchestrator, rehearseSwiggySurfaceContract } from "./services/stateOrchestrator.js";
+import { buildSwiggyWidgetExperienceComposer } from "./services/widgetExperienceComposer.js";
 import { buildSwiggyWidgetRuntime } from "./services/widgetRuntime.js";
 import { buildSwiggyBuildersMap } from "./services/swiggyBuildersMap.js";
 import { buildSwiggyAuthStatusReport, type AuthLifecycleEvent } from "./services/swiggyAuthStatus.js";
@@ -979,6 +980,10 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/mcp/widget-runtime", (_req, res) => {
     res.json({ widgetRuntime: buildSwiggyWidgetRuntime(store.getAllPlans().at(-1)) });
+  });
+
+  app.get("/api/swiggy-widget-experience-composer", (_req, res) => {
+    res.json({ widgetExperience: buildSwiggyWidgetExperienceComposer(store.getAllPlans().at(-1)) });
   });
 
   app.get("/api/mcp/commercial-action-guard", (_req, res) => {

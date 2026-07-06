@@ -106,6 +106,7 @@ Open the Launch Center and show:
 - MCP Coverage showing all 35 Swiggy tools mapped across Food, Instamart, and Dineout.
 - Tool Contract Matrix showing parameter contracts, response envelopes, confirmation gates, retry posture, fixture previews, and planned error codes for all 35 tools.
 - Widget Runtime Center showing iframe sandbox policy, origin checks, postMessage handlers, semantic fallbacks, voice exclusions, and hosted-widget gates.
+- Swiggy Widget Experience Composer showing premium widget placements, responsive gallery states, event-handler safety gates, and hosted-widget activation runbook.
 - Commercial Action Guard showing fresh-read requirements, chat/voice confirmations, non-blind retry drills, telemetry fields, and support packets for Food orders, Instamart checkout, Dineout bookings, and combined journeys.
 - Capability Registry and Resource & Prompt Studio showing `mcp:tools`, `mcp:resources`, `mcp:prompts`, metadata, widgets, prompt contracts, sample reads, and prompt messages.
 - FAQ & Policy Center showing homepage/developer/enterprise FAQ coverage, footer resources, access ground rules, legal signals, and external gates.
@@ -172,6 +173,7 @@ Open Production Evidence and show:
 - The premium portal shell, MealPilot logo, sticky header, mobile navigation, footer, visible CTA feedback, and `docs/design-language.md` as the design-system proof.
 - Swiggy widget contracts with semantic fallbacks.
 - Widget Runtime Center artifact at `/api/mcp/widget-runtime` with secure iframe, postMessage, and fallback behavior.
+- Swiggy Widget Experience Composer artifact at `/api/swiggy-widget-experience-composer` with responsive placements, gallery states, and activation proof.
 - Commercial Action Guard artifact at `/api/mcp/commercial-action-guard` with confirmation locks, check-then-retry recovery, and support-safe telemetry.
 - Rate-limit budgets under planned developer-tier ceilings.
 - Traffic Readiness Plan with per-lane budgets, capacity upgrade email, and major-event notification gates.
@@ -284,6 +286,7 @@ Briefly show production readiness:
 - `/api/mcp/scenario-runner`
 - `/api/mcp/state-orchestrator`
 - `/api/mcp/state-orchestrator/rehearse-surface`
+- `/api/swiggy-widget-experience-composer`
 - `/api/mcp/resource-prompt-studio`
 - `/api/mcp/resource-prompt-studio/execute`
 - `/api/mcp/staging-cutover`

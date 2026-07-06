@@ -1066,7 +1066,8 @@ select:focus {
   grid-column: span 2;
 }
 
-.widget-runtime-card {
+.widget-runtime-card,
+.widget-experience-card {
   grid-column: span 2;
 }
 
@@ -1564,6 +1565,7 @@ select:focus {
 .state-orchestrator-grid,
 .resource-prompt-grid,
 .widget-runtime-grid,
+.widget-experience-grid,
   .commercial-guard-grid,
   .staging-cutover-grid,
   .staging-credential-drill-grid,
@@ -1625,6 +1627,7 @@ select:focus {
 .state-orchestrator-grid div,
 .resource-prompt-grid div,
 .widget-runtime-grid div,
+.widget-experience-grid div,
   .commercial-guard-grid div,
   .staging-cutover-grid div,
   .staging-credential-drill-grid div,
@@ -1687,6 +1690,7 @@ select:focus {
 .state-orchestrator-grid strong,
 .resource-prompt-grid strong,
 .widget-runtime-grid strong,
+.widget-experience-grid strong,
   .commercial-guard-grid strong,
   .staging-cutover-grid strong,
   .staging-credential-drill-grid strong,
@@ -1748,6 +1752,7 @@ select:focus {
 .state-orchestrator-grid span,
 .resource-prompt-grid span,
 .widget-runtime-grid span,
+.widget-experience-grid span,
   .commercial-guard-grid span,
   .staging-cutover-grid span,
   .staging-credential-drill-grid span,
@@ -2485,6 +2490,7 @@ select:focus {
   .scenario-runner-card,
   .state-orchestrator-card,
   .widget-runtime-card,
+  .widget-experience-card,
   .commercial-guard-card,
   .staging-cutover-card,
   .staging-credential-drill-card,
@@ -2623,6 +2629,7 @@ select:focus {
   .enterprise-auth-grid,
   .resource-prompt-grid,
   .widget-runtime-grid,
+  .widget-experience-grid,
   .commercial-guard-grid,
   .staging-cutover-grid,
   .staging-credential-drill-grid,
@@ -3247,6 +3254,7 @@ select:focus {
 .scenario-runner-card,
 .state-orchestrator-card,
 .widget-runtime-card,
+.widget-experience-card,
 .commercial-guard-card,
 .staging-cutover-card,
 .staging-credential-drill-card,
@@ -3354,6 +3362,7 @@ select:focus {
 .state-orchestrator-grid div,
 .resource-prompt-grid div,
 .widget-runtime-grid div,
+.widget-experience-grid div,
 .commercial-guard-grid div,
 .staging-cutover-grid div,
 .staging-credential-drill-grid div,
@@ -3574,6 +3583,7 @@ select:focus {
   .scenario-runner-card,
   .state-orchestrator-card,
   .widget-runtime-card,
+  .widget-experience-card,
   .commercial-guard-card,
   .staging-cutover-card,
   .tool-lab-card,
@@ -3767,6 +3777,7 @@ select:focus {
   .enterprise-auth-grid,
   .resource-prompt-grid,
   .widget-runtime-grid,
+  .widget-experience-grid,
   .commercial-guard-grid,
   .voice-commerce-grid,
   .quality-loop-grid,
@@ -3818,6 +3829,7 @@ select:focus {
   .scenario-runner-card,
   .state-orchestrator-card,
   .widget-runtime-card,
+  .widget-experience-card,
   .commercial-guard-card,
   .staging-cutover-card,
   .tool-lab-card,

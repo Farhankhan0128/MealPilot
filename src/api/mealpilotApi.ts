@@ -98,6 +98,7 @@ import type {
   SwiggyCtaExecutionCenter,
   SwiggyCtaLiveAuditor,
   SwiggyWidget,
+  SwiggyWidgetExperienceComposer,
   SwiggyBuildersMap,
   SwiggyCustomizationStudio,
   SwiggyCustomizationValidation,
@@ -353,6 +354,10 @@ export function rehearseSwiggySurfaceContract(input: {
 
 export function fetchSwiggyWidgetRuntime() {
   return requestJson<{ widgetRuntime: SwiggyWidgetRuntimeReport }>("/api/mcp/widget-runtime");
+}
+
+export function fetchSwiggyWidgetExperienceComposer() {
+  return requestJson<{ widgetExperience: SwiggyWidgetExperienceComposer }>("/api/swiggy-widget-experience-composer");
 }
 
 export function fetchCommercialActionGuard() {

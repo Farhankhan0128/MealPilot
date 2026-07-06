@@ -283,6 +283,7 @@ export function buildReviewerProof(options: {
       { label: "Staging Transcript Export", path: latest ? `/api/sessions/${latest.id}/staging-transcript` : "/api/sessions/:sessionId/staging-transcript" },
       { label: "Widget contracts", path: latest ? `/api/sessions/${latest.id}/widgets` : "/api/widgets/latest" },
       { label: "Widget Runtime Center", path: "/api/mcp/widget-runtime" },
+      { label: "Swiggy Widget Experience Composer", path: "/api/swiggy-widget-experience-composer" },
       { label: "Staging Cutover Rehearsal", path: "/api/mcp/staging-cutover" },
       { label: "Swiggy Staging Credential Drill Center", path: "/api/swiggy-staging-credential-drill" },
       { label: "Swiggy Live Signal Calibration Center", path: "/api/swiggy-live-signal-calibration" },

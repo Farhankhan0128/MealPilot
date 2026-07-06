@@ -219,6 +219,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-widget-experience-composer": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Widget Experience Composer for premium widget placements and semantic fallbacks",
+          responses: {
+            "200": {
+              description:
+                "User-facing widget composition proof with mobile, tablet, desktop, voice, and review gallery states, Swiggy tool coverage, postMessage handlers, fallback renderers, safety gates, and hosted-widget activation runbook",
+            },
+          },
+        },
+      },
       "/api/mcp/commercial-action-guard": {
         get: {
           tags: ["Builder Access"],

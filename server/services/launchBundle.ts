@@ -621,6 +621,15 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
         "Models Swiggy widget iframe contracts, sandboxing, origin verification, postMessage handlers, voice exclusions, opt-in gates, and semantic fallbacks.",
     },
     {
+      id: "widget_experience_composer",
+      label: "Swiggy Widget Experience Composer",
+      path: "/api/swiggy-widget-experience-composer",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Composes Swiggy widget runtime surfaces into premium desktop, tablet, mobile, voice, and reviewer placements with fallback galleries and activation runbooks.",
+    },
+    {
       id: "commercial_action_guard",
       label: "Commercial Action Guard",
       path: "/api/mcp/commercial-action-guard",
@@ -1135,6 +1144,7 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- Scenario Runner: /api/mcp/scenario-runner",
     "- State Orchestrator: /api/mcp/state-orchestrator",
     "- Widget Runtime Center: /api/mcp/widget-runtime",
+    "- Swiggy Widget Experience Composer: /api/swiggy-widget-experience-composer",
     "- Commercial Action Guard: /api/mcp/commercial-action-guard",
     "- Staging Cutover Rehearsal: /api/mcp/staging-cutover",
     "- Swiggy Staging Credential Drill Center: /api/swiggy-staging-credential-drill",

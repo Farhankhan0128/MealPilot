@@ -154,6 +154,7 @@ import {
   fetchSwiggySourceIntelligence,
   fetchSwiggyStagingCutover,
   fetchSwiggyStateOrchestrator,
+  fetchSwiggyWidgetExperienceComposer,
   fetchSwiggyWidgetRuntime,
   fetchSwiggyUpstreamWatch,
   fetchSwiggyWebsiteAtlas,
@@ -314,6 +315,7 @@ import type {
   SwiggyToolParityAuditor,
   SwiggyWebsiteAtlas,
   SwiggyUpstreamWatchReport,
+  SwiggyWidgetExperienceComposer,
   SwiggyWidgetRuntimeReport,
   SwiggyVisualDishCaptureCenter,
   SwiggyVoiceCommerceCenter,
@@ -460,6 +462,7 @@ function App() {
   const [scenarioRunner, setScenarioRunner] = useState<SwiggyScenarioRunnerReport | null>(null);
   const [stateOrchestrator, setStateOrchestrator] = useState<SwiggyStateOrchestratorReport | null>(null);
   const [widgetRuntime, setWidgetRuntime] = useState<SwiggyWidgetRuntimeReport | null>(null);
+  const [widgetExperience, setWidgetExperience] = useState<SwiggyWidgetExperienceComposer | null>(null);
   const [commercialActionGuard, setCommercialActionGuard] = useState<CommercialActionGuardReport | null>(null);
   const [stagingCutover, setStagingCutover] = useState<SwiggyStagingCutoverRehearsal | null>(null);
   const [stagingCredentialDrill, setStagingCredentialDrill] =
@@ -680,6 +683,7 @@ function App() {
       scenarioRunnerResponse,
       stateOrchestratorResponse,
       widgetRuntimeResponse,
+      widgetExperienceResponse,
       commercialActionGuardResponse,
       stagingCutoverResponse,
       stagingCredentialDrillResponse,
@@ -798,6 +802,7 @@ function App() {
       fetchSwiggyScenarioRunner(),
       fetchSwiggyStateOrchestrator(),
       fetchSwiggyWidgetRuntime(),
+      fetchSwiggyWidgetExperienceComposer(),
       fetchCommercialActionGuard(),
       fetchSwiggyStagingCutover(),
       fetchSwiggyStagingCredentialDrill(),
@@ -917,6 +922,7 @@ function App() {
     setScenarioRunner(scenarioRunnerResponse.scenarioRunner);
     setStateOrchestrator(stateOrchestratorResponse.stateOrchestrator);
     setWidgetRuntime(widgetRuntimeResponse.widgetRuntime);
+    setWidgetExperience(widgetExperienceResponse.widgetExperience);
     setCommercialActionGuard(commercialActionGuardResponse.commercialActionGuard);
     setStagingCutover(stagingCutoverResponse.stagingCutover);
     setStagingCredentialDrill(stagingCredentialDrillResponse.stagingCredentialDrill);
@@ -1039,6 +1045,7 @@ function App() {
       scenarioRunnerResponse,
       stateOrchestratorResponse,
       widgetRuntimeResponse,
+      widgetExperienceResponse,
       commercialActionGuardResponse,
       stagingCutoverResponse,
       stagingCredentialDrillResponse,
@@ -1154,6 +1161,7 @@ function App() {
       fetchSwiggyScenarioRunner(),
       fetchSwiggyStateOrchestrator(),
       fetchSwiggyWidgetRuntime(),
+      fetchSwiggyWidgetExperienceComposer(),
       fetchCommercialActionGuard(),
       fetchSwiggyStagingCutover(),
       fetchSwiggyStagingCredentialDrill(),
@@ -1269,6 +1277,7 @@ function App() {
     setScenarioRunner(scenarioRunnerResponse.scenarioRunner);
     setStateOrchestrator(stateOrchestratorResponse.stateOrchestrator);
     setWidgetRuntime(widgetRuntimeResponse.widgetRuntime);
+    setWidgetExperience(widgetExperienceResponse.widgetExperience);
     setCommercialActionGuard(commercialActionGuardResponse.commercialActionGuard);
     setStagingCutover(stagingCutoverResponse.stagingCutover);
     setStagingCredentialDrill(stagingCredentialDrillResponse.stagingCredentialDrill);
@@ -1959,6 +1968,7 @@ function App() {
                 scenarioRunner={scenarioRunner}
                 stateOrchestrator={stateOrchestrator}
                 widgetRuntime={widgetRuntime}
+                widgetExperience={widgetExperience}
                 commercialActionGuard={commercialActionGuard}
                 stagingCutover={stagingCutover}
                 stagingCredentialDrill={stagingCredentialDrill}
@@ -2564,6 +2574,7 @@ function LaunchCenterPanel({
   scenarioRunner,
   stateOrchestrator,
   widgetRuntime,
+  widgetExperience,
   commercialActionGuard,
   stagingCutover,
   stagingCredentialDrill,
@@ -2652,6 +2663,7 @@ function LaunchCenterPanel({
   scenarioRunner: SwiggyScenarioRunnerReport | null;
   stateOrchestrator: SwiggyStateOrchestratorReport | null;
   widgetRuntime: SwiggyWidgetRuntimeReport | null;
+  widgetExperience: SwiggyWidgetExperienceComposer | null;
   commercialActionGuard: CommercialActionGuardReport | null;
   stagingCutover: SwiggyStagingCutoverRehearsal | null;
   stagingCredentialDrill: SwiggyStagingCredentialDrillReport | null;
@@ -3071,6 +3083,40 @@ function LaunchCenterPanel({
               <li key={surface.id} data-status={surface.status === "external_gate" ? "watch" : "healthy"}>
                 <span>{surface.type.replaceAll("-", " ")}</span>
                 <strong>{serverLabel(surface.server)}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="widget-experience-card">
+          <div className="mini-heading">
+            <Grid3X3 aria-hidden="true" />
+            <strong>Widget Experience</strong>
+          </div>
+          <span>
+            {widgetExperience
+              ? `${widgetExperience.score}/100, ${widgetExperience.totals.semanticFallbacks + widgetExperience.totals.ready}/${widgetExperience.totals.placements} placements, ${widgetExperience.galleryStates.length} gallery states`
+              : "Composing premium widget placements"}
+          </span>
+          <div className="widget-experience-grid">
+            <div>
+              <strong>{widgetExperience?.totals.toolsCovered ?? 0}</strong>
+              <span>Tools</span>
+            </div>
+            <div>
+              <strong>{widgetExperience?.totals.eventHandlers ?? 0}</strong>
+              <span>Handlers</span>
+            </div>
+            <div>
+              <strong>{widgetExperience?.totals.externalGates ?? 0}</strong>
+              <span>Gates</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(widgetExperience?.placements ?? []).slice(0, 5).map((placement) => (
+              <li key={placement.id} data-status={placement.status === "external_gate" ? "watch" : "healthy"}>
+                <span>{placement.label}</span>
+                <strong>{placement.placement.replaceAll("_", " ")}</strong>
               </li>
             ))}
           </ul>

@@ -4740,6 +4740,72 @@ export interface SwiggyWidgetRuntimeReport {
   externalGates: string[];
 }
 
+export type SwiggyWidgetExperienceStatus = "ready" | "semantic_fallback" | "external_gate" | "watch";
+
+export type SwiggyWidgetExperiencePlacementName =
+  | "planner"
+  | "recommendation_card"
+  | "launch_center"
+  | "mobile_sheet"
+  | "voice_companion"
+  | "ops_review";
+
+export interface SwiggyWidgetExperiencePlacement {
+  id: string;
+  sequence: number;
+  label: string;
+  server: SwiggyServer;
+  widgetType: SwiggyWidget["type"];
+  sourceSurfaceId: string;
+  placement: SwiggyWidgetExperiencePlacementName;
+  status: SwiggyWidgetExperienceStatus;
+  swiggyTools: string[];
+  uiContract: string;
+  fallbackRenderer: string;
+  eventHandlers: string[];
+  safetyGate: string;
+  proofLinks: string[];
+  nextAction: string;
+}
+
+export interface SwiggyWidgetExperienceGalleryState {
+  id: string;
+  label: string;
+  status: SwiggyWidgetExperienceStatus;
+  viewport: "desktop" | "tablet" | "mobile" | "voice" | "review";
+  evidenceLinks: string[];
+  fallbackSummary: string;
+}
+
+export interface SwiggyWidgetExperienceRunbookStep {
+  sequence: number;
+  label: string;
+  owner: "MealPilot" | "Operator" | "Swiggy";
+  action: string;
+  proofLinks: string[];
+}
+
+export interface SwiggyWidgetExperienceComposer {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  totals: {
+    placements: number;
+    ready: number;
+    semanticFallbacks: number;
+    externalGates: number;
+    watch: number;
+    toolsCovered: number;
+    eventHandlers: number;
+    proofLinks: number;
+  };
+  placements: SwiggyWidgetExperiencePlacement[];
+  galleryStates: SwiggyWidgetExperienceGalleryState[];
+  activationRunbook: SwiggyWidgetExperienceRunbookStep[];
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type CommercialActionGuardStatus = "ready" | "watch" | "external_gate";
 export type CommercialActionLaneId = "food_order" | "instamart_checkout" | "dineout_booking" | "combined_evening";
 export type CommercialActionRouteClass = "commercial_action" | "cart_mutation" | "tracking_read";
