@@ -131,6 +131,15 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
         "Tracks llms.txt, llms-full.txt, v1.0 changelog, v1.1/v1.2/v2 roadmap, signed manifest watch, and action queue for future Swiggy MCP changes.",
     },
     {
+      id: "source_intelligence",
+      label: "Swiggy Source Intelligence",
+      path: "/api/swiggy-source-intelligence",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Reconciles Swiggy website pages, CTAs, llms docs, markdown twins, 35 MCP tools, source drift signals, build queue, and external credential gates in one reviewer surface.",
+    },
+    {
       id: "ai_client_connect",
       label: "AI Client Connect Kit",
       path: "/api/ai-client-connect-kit",
@@ -478,6 +487,7 @@ function buildPhases(config: ServerConfig, latestPlan: MealPlan | undefined, art
         artifact("visual_qa_center"),
         artifact("submission_console"),
         artifact("upstream_watch"),
+        artifact("source_intelligence"),
         artifact("premium_concierge_itinerary"),
         artifact("tool_lab"),
         artifact("tool_contract_matrix"),
@@ -657,6 +667,7 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- Submission Console: /api/submission-console",
     "- Swiggy Docs Coverage: /api/swiggy-docs-coverage",
     "- Swiggy Upstream Watch: /api/swiggy-upstream-watch",
+    "- Swiggy Source Intelligence: /api/swiggy-source-intelligence",
     "- AI Client Connect Kit: /api/ai-client-connect-kit",
     "- Swiggy Journey Compiler: /api/swiggy-journey-compiler",
     "- Swiggy Access Dossier: /api/swiggy-access-dossier",

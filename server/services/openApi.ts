@@ -389,6 +389,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-source-intelligence": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy source intelligence center for website, docs, CTA, API, and drift reconciliation",
+          responses: {
+            "200": {
+              description:
+                "Unified source-to-product map covering llms.txt, llms-full.txt, rendered pages, markdown twins, 35 MCP tools, website CTAs, source drift signals, build queue items, and external credential gates",
+            },
+          },
+        },
+      },
       "/api/ai-client-connect-kit": {
         get: {
           tags: ["Builder Access"],

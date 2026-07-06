@@ -117,6 +117,7 @@ const artifactSections = [
     label: "Product depth evidence",
     artifacts: [
       artifact("website_atlas", "Website Atlas", "api", "/api/swiggy-website-atlas", "Header, footer, page modules, CTAs, launch blog, and access page coverage.", "Public docs only; no user data."),
+      artifact("source_intelligence", "Swiggy Source Intelligence", "api", "/api/swiggy-source-intelligence", "Source-to-product reconciliation for Swiggy website, docs, CTAs, API tools, source drift, and build queue.", "Public docs and local evidence only; no user data."),
       artifact("builder_intake", "Builder Intake", "api", "/api/swiggy-builder-intake", "Every signup/apply/demo/contact/docs CTA converted into owner-assigned actions.", "Manual contact values stay labelled."),
       artifact("faq_policy", "FAQ & Policy Center", "api", "/api/swiggy-faq-policy", "FAQ, policy, legal, support, and access-ground-rule coverage.", "Legal interpretation is reviewer-facing evidence, not legal advice."),
       artifact("growth_partnership", "Growth Partnership Center", "api", "/api/swiggy-growth-partnership", "Get-noticed, co-marketing, analytics, launch experiments, and partner asks.", "Co-branding and dashboards remain external gates."),

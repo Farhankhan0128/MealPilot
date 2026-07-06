@@ -98,6 +98,7 @@ import {
   fetchSwiggyDocsCoverage,
   fetchSwiggyJourneyCompiler,
   fetchSwiggyScenarioRunner,
+  fetchSwiggySourceIntelligence,
   fetchSwiggyStagingCutover,
   fetchSwiggyStateOrchestrator,
   fetchSwiggyWidgetRuntime,
@@ -185,6 +186,7 @@ import type {
   SwiggyGrowthPartnershipCenter,
   SwiggyJourneyCompilerReport,
   SwiggyScenarioRunnerReport,
+  SwiggySourceIntelligenceReport,
   SwiggyStagingCutoverRehearsal,
   SwiggyStateOrchestratorReport,
   SwiggyToolContractMatrix,
@@ -272,6 +274,14 @@ function statusCopy(status: Recommendation["status"]) {
   return "Prepared";
 }
 
+async function fetchSourceIntelligenceOptional(): Promise<{ sourceIntelligence: SwiggySourceIntelligenceReport | null }> {
+  try {
+    return await fetchSwiggySourceIntelligence();
+  } catch {
+    return { sourceIntelligence: null };
+  }
+}
+
 function MealPilotLogo({ compact = false }: { compact?: boolean }) {
   return (
     <span className={compact ? "mealpilot-logo compact" : "mealpilot-logo"}>
@@ -324,6 +334,8 @@ function App() {
   const [visualQa, setVisualQa] = useState<VisualQaCenter | null>(null);
   const [swiggyDocsCoverage, setSwiggyDocsCoverage] = useState<SwiggyDocsCoverageReport | null>(null);
   const [swiggyUpstreamWatch, setSwiggyUpstreamWatch] = useState<SwiggyUpstreamWatchReport | null>(null);
+  const [swiggySourceIntelligence, setSwiggySourceIntelligence] =
+    useState<SwiggySourceIntelligenceReport | null>(null);
   const [aiClientConnectKit, setAiClientConnectKit] = useState<AiClientConnectKit | null>(null);
   const [brandCompliance, setBrandCompliance] = useState<BrandComplianceKit | null>(null);
   const [swiggyJourneyCompiler, setSwiggyJourneyCompiler] = useState<SwiggyJourneyCompilerReport | null>(null);
@@ -459,6 +471,7 @@ function App() {
       visualQaResponse,
       docsCoverageResponse,
       upstreamWatchResponse,
+      sourceIntelligenceResponse,
       aiClientConnectResponse,
       brandComplianceResponse,
       journeyCompilerResponse,
@@ -518,6 +531,7 @@ function App() {
       fetchVisualQaCenter(),
       fetchSwiggyDocsCoverage(),
       fetchSwiggyUpstreamWatch(),
+      fetchSourceIntelligenceOptional(),
       fetchAiClientConnectKit(),
       fetchBrandComplianceKit(),
       fetchSwiggyJourneyCompiler(),
@@ -578,6 +592,7 @@ function App() {
     setVisualQa(visualQaResponse.visualQa);
     setSwiggyDocsCoverage(docsCoverageResponse.docsCoverage);
     setSwiggyUpstreamWatch(upstreamWatchResponse.upstreamWatch);
+    setSwiggySourceIntelligence(sourceIntelligenceResponse.sourceIntelligence);
     setAiClientConnectKit(aiClientConnectResponse.connectKit);
     setBrandCompliance(brandComplianceResponse.brandCompliance);
     setSwiggyJourneyCompiler(journeyCompilerResponse.journeyCompiler);
@@ -640,6 +655,7 @@ function App() {
       visualQaResponse,
       docsCoverageResponse,
       upstreamWatchResponse,
+      sourceIntelligenceResponse,
       aiClientConnectResponse,
       brandComplianceResponse,
       journeyCompilerResponse,
@@ -696,6 +712,7 @@ function App() {
       fetchVisualQaCenter(),
       fetchSwiggyDocsCoverage(),
       fetchSwiggyUpstreamWatch(),
+      fetchSourceIntelligenceOptional(),
       fetchAiClientConnectKit(),
       fetchBrandComplianceKit(),
       fetchSwiggyJourneyCompiler(),
@@ -752,6 +769,7 @@ function App() {
     setVisualQa(visualQaResponse.visualQa);
     setSwiggyDocsCoverage(docsCoverageResponse.docsCoverage);
     setSwiggyUpstreamWatch(upstreamWatchResponse.upstreamWatch);
+    setSwiggySourceIntelligence(sourceIntelligenceResponse.sourceIntelligence);
     setAiClientConnectKit(aiClientConnectResponse.connectKit);
     setBrandCompliance(brandComplianceResponse.brandCompliance);
     setSwiggyJourneyCompiler(journeyCompilerResponse.journeyCompiler);
@@ -1381,6 +1399,7 @@ function App() {
                 visualQa={visualQa}
                 docsCoverage={swiggyDocsCoverage}
                 upstreamWatch={swiggyUpstreamWatch}
+                sourceIntelligence={swiggySourceIntelligence}
                 aiClientConnectKit={aiClientConnectKit}
                 brandCompliance={brandCompliance}
                 journeyCompiler={swiggyJourneyCompiler}
@@ -1924,6 +1943,7 @@ function LaunchCenterPanel({
   visualQa,
   docsCoverage,
   upstreamWatch,
+  sourceIntelligence,
   aiClientConnectKit,
   brandCompliance,
   journeyCompiler,
@@ -1967,6 +1987,7 @@ function LaunchCenterPanel({
   visualQa: VisualQaCenter | null;
   docsCoverage: SwiggyDocsCoverageReport | null;
   upstreamWatch: SwiggyUpstreamWatchReport | null;
+  sourceIntelligence: SwiggySourceIntelligenceReport | null;
   aiClientConnectKit: AiClientConnectKit | null;
   brandCompliance: BrandComplianceKit | null;
   journeyCompiler: SwiggyJourneyCompilerReport | null;
@@ -1999,6 +2020,10 @@ function LaunchCenterPanel({
     stagingCertification?.waves.filter((waveItem) => waveItem.status === "requires_staging_credentials").length ?? 0;
   const certificationGateWaves =
     stagingCertification?.waves.filter((waveItem) => waveItem.status === "production_gate").length ?? 0;
+  const sourceEvidenceLinks = Array.from(
+    new Set((sourceIntelligence?.buildQueue ?? []).flatMap((item) => item.evidenceLinks)),
+  ).slice(0, 3);
+  const officialSourceLinks = (sourceIntelligence?.officialSources ?? []).slice(0, 2);
 
   return (
     <section className="analysis-panel launch-panel" id="launch-center">
@@ -2971,6 +2996,58 @@ function LaunchCenterPanel({
               </li>
             ))}
           </ul>
+        </article>
+
+        <article className="source-intelligence-card">
+          <div className="mini-heading">
+            <FileWarning aria-hidden="true" />
+            <strong>Source Intelligence</strong>
+          </div>
+          <span>
+            {sourceIntelligence
+              ? `${sourceIntelligence.score}/100, ${sourceIntelligence.clusters.length} source clusters`
+              : "Reconciling Swiggy website, docs, CTAs, APIs, and drift signals"}
+          </span>
+          <div className="source-intelligence-grid">
+            <div>
+              <strong>{sourceIntelligence?.inventory.toolReferenceTools ?? 0}</strong>
+              <span>Tool refs</span>
+            </div>
+            <div>
+              <strong>{sourceIntelligence?.driftSignals.length ?? 0}</strong>
+              <span>Drift signals</span>
+            </div>
+            <div>
+              <strong>{sourceIntelligence?.buildQueue.length ?? 0}</strong>
+              <span>Queue</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(sourceIntelligence?.driftSignals ?? []).slice(0, 5).map((signal) => (
+              <li
+                key={signal.id}
+                data-status={signal.severity === "blocking" ? "blocked" : signal.severity === "watch" ? "watch" : "healthy"}
+              >
+                <span>{signal.label}</span>
+                <strong>{signal.severity}</strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-intelligence-actions" aria-label="Source intelligence links">
+            <a href="/api/swiggy-source-intelligence" target="_blank" rel="noreferrer">
+              Open report
+            </a>
+            {sourceEvidenceLinks.slice(0, 2).map((link) => (
+              <a key={link} href={link} target="_blank" rel="noreferrer">
+                {link.replace("/api/", "")}
+              </a>
+            ))}
+            {officialSourceLinks.slice(0, 1).map((link) => (
+              <a key={link} href={link} target="_blank" rel="noreferrer">
+                Official source
+              </a>
+            ))}
+          </div>
         </article>
 
         <article className="upstream-watch-card">

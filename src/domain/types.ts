@@ -1388,6 +1388,74 @@ export interface SwiggyUpstreamWatchReport {
   externalGates: string[];
 }
 
+export type SwiggySourceIntelligenceStatus = "covered" | "watch" | "external_gate";
+export type SwiggySourceDriftSeverity = "info" | "watch" | "blocking";
+
+export interface SwiggySourceInventory {
+  sourceOfTruth: string;
+  llmsLinkedPages: number;
+  markdownTwinPattern: string;
+  marketingPages: number;
+  docsSections: number;
+  headerLinks: number;
+  footerLinks: number;
+  ctas: number;
+  toolReferenceTools: number;
+}
+
+export interface SwiggySourceServerInventory {
+  server: SwiggyServer;
+  endpoint: string;
+  tools: number;
+  docsReference: string;
+  mealPilotProof: string[];
+  status: SwiggySourceIntelligenceStatus;
+}
+
+export interface SwiggySourceCoverageCluster {
+  id: string;
+  label: string;
+  officialSignal: string;
+  coveredSources: string[];
+  mealPilotEvidence: string[];
+  status: SwiggySourceIntelligenceStatus;
+  score: number;
+  nextAction: string;
+}
+
+export interface SwiggySourceDriftSignal {
+  id: string;
+  label: string;
+  severity: SwiggySourceDriftSeverity;
+  officialSignal: string;
+  mealPilotInterpretation: string;
+  action: string;
+  evidenceLinks: string[];
+}
+
+export interface SwiggySourceBuildQueueItem {
+  id: string;
+  label: string;
+  owner: "MealPilot" | "Operator" | "Swiggy" | "Joint";
+  status: SwiggySourceIntelligenceStatus;
+  trigger: string;
+  nextBuild: string;
+  evidenceLinks: string[];
+}
+
+export interface SwiggySourceIntelligenceReport {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  inventory: SwiggySourceInventory;
+  serverInventory: SwiggySourceServerInventory[];
+  clusters: SwiggySourceCoverageCluster[];
+  driftSignals: SwiggySourceDriftSignal[];
+  buildQueue: SwiggySourceBuildQueueItem[];
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type AiClientTarget = "claude_desktop" | "chatgpt" | "cursor" | "vs_code" | "windsurf" | "generic_mcp";
 export type AiClientInstallStatus = "ready_to_copy" | "external_client" | "requires_oauth";
 export type AgentSdkAuthMode = "native_auth_provider" | "bearer_header" | "mixed";

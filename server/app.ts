@@ -91,6 +91,7 @@ import { buildSwiggyToolContractMatrix } from "./services/toolContractMatrix.js"
 import { buildMcpToolLabReport } from "./services/toolLab.js";
 import { buildTrafficReadinessPlan } from "./services/trafficReadiness.js";
 import { buildSloIncidentCommandCenter } from "./services/sloIncidentCommand.js";
+import { buildSwiggySourceIntelligence } from "./services/sourceIntelligence.js";
 import { buildSwiggyUpstreamWatch } from "./services/upstreamWatch.js";
 import { buildVisualQaCenter } from "./services/visualQaCenter.js";
 import { buildSwiggyWebsiteAtlas } from "./services/websiteAtlas.js";
@@ -615,6 +616,10 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/swiggy-upstream-watch", (_req, res) => {
     res.json({ upstreamWatch: buildSwiggyUpstreamWatch() });
+  });
+
+  app.get("/api/swiggy-source-intelligence", (_req, res) => {
+    res.json({ sourceIntelligence: buildSwiggySourceIntelligence() });
   });
 
   app.get("/api/ai-client-connect-kit", (_req, res) => {

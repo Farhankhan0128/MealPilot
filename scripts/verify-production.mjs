@@ -51,6 +51,10 @@ assert(
   "OpenAPI upstream watch contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-source-intelligence"]?.get?.summary?.includes("source intelligence"),
+  "OpenAPI source intelligence contract is missing",
+);
+assert(
   openApi.paths["/api/swiggy-builder-intake"].get.summary.includes("Builder Intake"),
   "OpenAPI builder intake contract is missing",
 );
@@ -920,6 +924,52 @@ assert(
   "Swiggy upstream watch action queue is incomplete",
 );
 
+const sourceIntelligence = await request("/api/swiggy-source-intelligence");
+assert(sourceIntelligence.sourceIntelligence.score >= 92, "Swiggy source intelligence score is below target");
+assert(sourceIntelligence.sourceIntelligence.inventory.llmsLinkedPages === 69, "source intelligence llms inventory is incomplete");
+assert(sourceIntelligence.sourceIntelligence.inventory.toolReferenceTools === 35, "source intelligence tool reference count is incomplete");
+assert(sourceIntelligence.sourceIntelligence.inventory.ctas >= 11, "source intelligence CTA inventory is incomplete");
+assert(
+  [
+    ["food", 14],
+    ["instamart", 13],
+    ["dineout", 8],
+  ].every(([server, tools]) =>
+    sourceIntelligence.sourceIntelligence.serverInventory.some((item) => item.server === server && item.tools === tools),
+  ),
+  "source intelligence server inventory is incomplete",
+);
+assert(
+  ["marketing_site", "start_tracks", "build_recipes", "reference_tools", "operate_contract", "source_refresh_loop"].every(
+    (id) => sourceIntelligence.sourceIntelligence.clusters.some((cluster) => cluster.id === id),
+  ),
+  "source intelligence coverage clusters are incomplete",
+);
+assert(
+  sourceIntelligence.sourceIntelligence.driftSignals.some(
+    (signal) =>
+      signal.id === "homepage_tool_count_language" &&
+      signal.severity === "info" &&
+      signal.mealPilotInterpretation.includes("35-tool contract"),
+  ),
+  "source intelligence homepage tool-count drift signal is missing",
+);
+assert(
+  sourceIntelligence.sourceIntelligence.driftSignals.some(
+    (signal) => signal.id === "live_credential_gate" && signal.severity === "blocking",
+  ),
+  "source intelligence live credential gate signal is missing",
+);
+assert(
+  sourceIntelligence.sourceIntelligence.buildQueue.some(
+    (item) =>
+      item.id === "staging_credential_replay" &&
+      item.status === "external_gate" &&
+      item.evidenceLinks.includes("/api/mcp/staging-cutover"),
+  ),
+  "source intelligence staging replay queue is missing",
+);
+
 const aiClientConnect = await request("/api/ai-client-connect-kit");
 assert(aiClientConnect.connectKit.score >= 95, "AI client connect kit score is below target");
 assert(aiClientConnect.connectKit.clientTargets.length === 6, "AI client connect kit must cover six official clients");
@@ -1743,6 +1793,10 @@ assert(
   "reviewer proof backpressure governor artifact is missing",
 );
 assert(
+  proof.proof.artifacts.some((artifact) => artifact.label === "Swiggy Source Intelligence"),
+  "reviewer proof source intelligence artifact is missing",
+);
+assert(
   proof.proof.artifacts.some((artifact) => artifact.label === "Staging Cutover Rehearsal"),
   "reviewer proof staging cutover artifact is missing",
 );
@@ -2171,6 +2225,7 @@ assert(
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Visual QA Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Docs Coverage") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Upstream Watch") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Source Intelligence") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "AI Client Connect Kit") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Brand Compliance Kit") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Data Governance Center") &&
@@ -2269,6 +2324,10 @@ assert(
   "launch bundle upstream watch handoff link is missing",
 );
 assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-source-intelligence"),
+  "launch bundle source intelligence handoff link is missing",
+);
+assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/premium-concierge-itinerary"),
   "launch bundle premium concierge handoff link is missing",
 );
@@ -2332,6 +2391,8 @@ console.log(
       docsCoveragePages: docsCoverage.docsCoverage.totalPages,
       upstreamWatchScore: upstreamWatch.upstreamWatch.score,
       upstreamRoadmapItems: upstreamWatch.upstreamWatch.roadmapItems.length,
+      sourceIntelligenceScore: sourceIntelligence.sourceIntelligence.score,
+      sourceDriftSignals: sourceIntelligence.sourceIntelligence.driftSignals.length,
       enterpriseDelegatedAuthScore: enterpriseAuth.enterpriseAuth.score,
       aiClientConnectScore: aiClientConnect.connectKit.score,
       aiClientTargets: aiClientConnect.connectKit.clientTargets.length,

@@ -56,6 +56,7 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/visual-qa-center"].get.summary).toContain("Visual QA Center");
     expect(openApi.body.paths["/api/swiggy-docs-coverage"].get.summary).toContain("llms.txt");
     expect(openApi.body.paths["/api/swiggy-upstream-watch"].get.summary).toContain("upstream docs");
+    expect(openApi.body.paths["/api/swiggy-source-intelligence"].get.summary).toContain("source intelligence");
     expect(openApi.body.paths["/api/ai-client-connect-kit"].get.summary).toContain("AI client");
     expect(openApi.body.paths["/api/brand-compliance-kit"].get.summary).toContain("brand");
     expect(openApi.body.paths["/api/swiggy-journey-compiler"].get.summary).toContain("journey compiler");
@@ -1079,6 +1080,16 @@ describe("MealPilot API", () => {
       ),
     ).toBe(true);
     expect(
+      vault.artifactSections.some((section: { artifacts: Array<{ id: string; label: string; path: string }> }) =>
+        section.artifacts.some(
+          (artifact) =>
+            artifact.id === "source_intelligence" &&
+            artifact.label === "Swiggy Source Intelligence" &&
+            artifact.path === "/api/swiggy-source-intelligence",
+        ),
+      ),
+    ).toBe(true);
+    expect(
       vault.screenshotTargets.some(
         (target: { id: string; selector: string; status: string }) =>
           target.id === "luxury_workspace_card" &&
@@ -1222,6 +1233,56 @@ describe("MealPilot API", () => {
     expect(report.signedManifestWatch.targetVersion).toContain("v");
     expect(report.actionQueue.some((action: { id: string }) => action.id === "weekly_llms_refresh")).toBe(true);
     expect(report.externalGates.some((gate: string) => gate.includes("Signed manifest"))).toBe(true);
+  });
+
+  it("returns source intelligence that reconciles website, docs, API tools, and drift signals", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/swiggy-source-intelligence").expect(200);
+    const report = response.body.sourceIntelligence;
+
+    expect(report.score).toBeGreaterThanOrEqual(92);
+    expect(report.inventory.llmsLinkedPages).toBe(69);
+    expect(report.inventory.toolReferenceTools).toBe(35);
+    expect(report.inventory.ctas).toBeGreaterThanOrEqual(11);
+    expect(report.serverInventory.map((server: { server: string; tools: number }) => [server.server, server.tools])).toEqual(
+      expect.arrayContaining([
+        ["food", 14],
+        ["instamart", 13],
+        ["dineout", 8],
+      ]),
+    );
+    expect(report.clusters.map((cluster: { id: string }) => cluster.id)).toEqual(
+      expect.arrayContaining([
+        "marketing_site",
+        "start_tracks",
+        "build_recipes",
+        "reference_tools",
+        "operate_contract",
+        "source_refresh_loop",
+      ]),
+    );
+    expect(
+      report.driftSignals.some(
+        (signal: { id: string; severity: string; mealPilotInterpretation: string }) =>
+          signal.id === "homepage_tool_count_language" &&
+          signal.severity === "info" &&
+          signal.mealPilotInterpretation.includes("35-tool contract"),
+      ),
+    ).toBe(true);
+    expect(
+      report.driftSignals.some(
+        (signal: { id: string; severity: string }) => signal.id === "live_credential_gate" && signal.severity === "blocking",
+      ),
+    ).toBe(true);
+    expect(
+      report.buildQueue.some(
+        (item: { id: string; status: string; evidenceLinks: string[] }) =>
+          item.id === "staging_credential_replay" &&
+          item.status === "external_gate" &&
+          item.evidenceLinks.includes("/api/mcp/staging-cutover"),
+      ),
+    ).toBe(true);
+    expect(report.assertions.some((assertion: string) => assertion.includes("source-intelligence"))).toBe(true);
   });
 
   it("returns AI client and coding-agent connection kit", async () => {
@@ -1998,6 +2059,7 @@ describe("MealPilot API", () => {
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "SLO Incident Command Center")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Data Governance Center")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Swiggy Upstream Watch")).toBe(true);
+    expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Swiggy Source Intelligence")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Premium Concierge Itinerary")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Tool Contract Matrix")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Scenario Runner")).toBe(true);
@@ -2090,6 +2152,7 @@ describe("MealPilot API", () => {
         "Builder Intake Command Center",
         "Swiggy Docs Coverage",
         "Swiggy Upstream Watch",
+        "Swiggy Source Intelligence",
         "AI Client Connect Kit",
         "Brand Compliance Kit",
         "Data Governance Center",
@@ -2133,6 +2196,7 @@ describe("MealPilot API", () => {
     expect(bundle.handoffEmail.body).toContain("/api/visual-qa-center");
     expect(bundle.handoffEmail.body).toContain("/api/submission-console");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-upstream-watch");
+    expect(bundle.handoffEmail.body).toContain("/api/swiggy-source-intelligence");
     expect(bundle.handoffEmail.body).toContain("/api/premium-concierge-itinerary");
     expect(bundle.handoffEmail.body).toContain("/api/mcp/tool-contract-matrix");
     expect(bundle.handoffEmail.body).toContain("/api/mcp/scenario-runner");

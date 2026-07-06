@@ -64,6 +64,7 @@ import type {
   SwiggyGrowthPartnershipCenter,
   SwiggyJourneyCompilerReport,
   SwiggyScenarioRunnerReport,
+  SwiggySourceIntelligenceReport,
   SwiggyStagingCutoverRehearsal,
   SwiggyStateOrchestratorReport,
   SwiggyToolContractMatrix,
@@ -301,6 +302,10 @@ export function fetchSwiggyDocsCoverage() {
 
 export function fetchSwiggyUpstreamWatch() {
   return requestJson<{ upstreamWatch: SwiggyUpstreamWatchReport }>("/api/swiggy-upstream-watch");
+}
+
+export function fetchSwiggySourceIntelligence() {
+  return requestJson<{ sourceIntelligence: SwiggySourceIntelligenceReport }>("/api/swiggy-source-intelligence");
 }
 
 export function fetchAiClientConnectKit() {

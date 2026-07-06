@@ -297,6 +297,7 @@ export function buildReviewerProof(options: {
       { label: "Visual QA Center", path: "/api/visual-qa-center" },
       { label: "Swiggy Docs Coverage", path: "/api/swiggy-docs-coverage" },
       { label: "Swiggy Upstream Watch", path: "/api/swiggy-upstream-watch" },
+      { label: "Swiggy Source Intelligence", path: "/api/swiggy-source-intelligence" },
       { label: "AI Client Connect Kit", path: "/api/ai-client-connect-kit" },
       { label: "Brand Compliance Kit", path: "/api/brand-compliance-kit" },
       { label: "Swiggy Journey Compiler", path: "/api/swiggy-journey-compiler" },

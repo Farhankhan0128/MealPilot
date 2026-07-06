@@ -112,6 +112,7 @@ Open the Launch Center and show:
 - Growth Partnership Center showing launch experiments, co-marketing assets, metric targets, partner asks, and external Swiggy approvals.
 - Docs Coverage showing all 69 Swiggy `llms.txt` pages mapped to MealPilot evidence and external gates.
 - Upstream Watch showing `llms.txt`, `llms-full.txt`, v1.0 limitations, v1.1/v1.2/v2 roadmap items, signed-manifest watch, and new-tool action queues.
+- Source Intelligence showing official website pages, CTA inventory, `llms` docs, markdown twins, 35-tool reference counts, drift signals, and build-queue actions.
 - AI Client Connect Kit showing Claude Desktop, ChatGPT, Cursor, VS Code, Windsurf, generic MCP config, coding-agent rules, and SDK auth modes.
 - Brand Compliance Kit showing Powered by Swiggy attribution, co-branding asset gates, palette audit, and no-endorsement copy.
 - Journey Compiler showing official recipe routes, all 35 tools, confirmation gates, recovery reads, and call savings.
@@ -170,6 +171,7 @@ Open Production Evidence and show:
 - Support Bridge redaction rules, SLA matrix, and escalation checklist.
 - Swiggy Docs Coverage artifact in reviewer proof and launch handoff.
 - Swiggy Upstream Watch artifact for changelog, coding-agent docs, roadmap, signed-manifest, and release-drift control.
+- Swiggy Source Intelligence artifact for website/docs/API drift reconciliation, 35-tool count alignment, and external gate tracking.
 - Tool Contract Matrix artifact for all-tool schema, response envelope, retry, confirmation, and error-bucket evidence.
 - State Orchestrator artifact for official multi-turn cart state, switch guards, stale-cart recovery, and voice/chat response contracts.
 - Commercial Action Guard artifact for non-idempotent Food, Instamart, Dineout, and combined commercial-action safety.
@@ -204,6 +206,7 @@ Briefly show production readiness:
 - `/api/ready`
 - `/api/openapi.json`
 - `/api/swiggy-upstream-watch`
+- `/api/swiggy-source-intelligence`
 - `/api/swiggy-builder-intake`
 - `/api/swiggy-faq-policy`
 - `/api/swiggy-growth-partnership`
