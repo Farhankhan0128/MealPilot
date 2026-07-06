@@ -468,6 +468,15 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
         "Combines credential signal, first-call JSON-RPC drills, seeded-data requirements, operator runbook, handoff email, and Swiggy-owned promotion gates.",
     },
     {
+      id: "live_signal_calibration",
+      label: "Swiggy Live Signal Calibration Center",
+      path: "/api/swiggy-live-signal-calibration",
+      category: "runtime",
+      status: "ready",
+      evidence:
+        "Reconciles local personalization, discovery, offer, order, location, and support signals against future Food, Instamart, and Dineout staging reads with privacy and drift gates.",
+    },
+    {
       id: "capability_registry",
       label: "MCP Capability Registry",
       path: "/api/mcp/capability-registry",
@@ -699,6 +708,7 @@ function buildPhases(config: ServerConfig, latestPlan: MealPlan | undefined, art
         artifact("state_orchestrator"),
         artifact("widget_runtime"),
         artifact("commercial_action_guard"),
+        artifact("live_signal_calibration"),
         artifact("backpressure_governor"),
         artifact("load_lab"),
         artifact("offer_intelligence"),
@@ -733,6 +743,7 @@ function buildPhases(config: ServerConfig, latestPlan: MealPlan | undefined, art
         artifact("order_lifecycle"),
         artifact("demo_video"),
         artifact("staging_credential_drill"),
+        artifact("live_signal_calibration"),
       ],
     },
     {
@@ -748,6 +759,7 @@ function buildPhases(config: ServerConfig, latestPlan: MealPlan | undefined, art
         artifact("staging_certification"),
         artifact("staging_cutover"),
         artifact("staging_credential_drill"),
+        artifact("live_signal_calibration"),
         "/api/mcp-gateway",
         "/api/telemetry/runtime",
         artifact("audit_ledger"),
@@ -906,6 +918,7 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- Commercial Action Guard: /api/mcp/commercial-action-guard",
     "- Staging Cutover Rehearsal: /api/mcp/staging-cutover",
     "- Swiggy Staging Credential Drill Center: /api/swiggy-staging-credential-drill",
+    "- Swiggy Live Signal Calibration Center: /api/swiggy-live-signal-calibration",
     "- Data Governance Center: /api/data-governance-center",
     "- Enterprise Delegated Auth Center: /api/enterprise-delegated-auth",
     "- Traffic Readiness Plan: /api/traffic-readiness-plan",

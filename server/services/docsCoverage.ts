@@ -101,13 +101,14 @@ const staticDocs: StaticDoc[] = [
     markdownPath: "docs/build/ship-to-production.md",
     officialSummary: "Retries, observability, idempotency, support escalation, and go-live checklist.",
     mealPilotSurface:
-      "Resilience Lab, Error Intelligence, Support Bridge, SLO Incident Command, Runtime Telemetry, Traffic Readiness, Staging Credential Drill, Staging Certification Matrix, Staging Transcript Export, and Launch Bundle cover shipping proof.",
+      "Resilience Lab, Error Intelligence, Support Bridge, SLO Incident Command, Runtime Telemetry, Traffic Readiness, Staging Credential Drill, Live Signal Calibration, Staging Certification Matrix, Staging Transcript Export, and Launch Bundle cover shipping proof.",
     evidenceLinks: [
       "/api/resilience",
       "/api/error-intelligence",
       "/api/slo-incident-command",
       "/api/traffic-readiness-plan",
       "/api/swiggy-staging-credential-drill",
+      "/api/swiggy-live-signal-calibration",
       "/api/staging-certification-matrix",
       "/api/sessions/:sessionId/staging-transcript",
       "/api/production-launch-bundle",
@@ -131,12 +132,13 @@ const staticDocs: StaticDoc[] = [
     markdownPath: "docs/operate/access.md",
     officialSummary: "Apply for production access and provide demo, security, and use-case details.",
     mealPilotSurface:
-      "Access Dossier, Submission Package, Credential Cockpit, Staging Credential Drill, Data Governance Center, Traffic Readiness, Brand Compliance Kit, Builder Packet, and Launch Bundle prepare access review fields, volume, checks, rules, DPDP posture, legal readiness, and gates.",
+      "Access Dossier, Submission Package, Credential Cockpit, Staging Credential Drill, Live Signal Calibration, Data Governance Center, Traffic Readiness, Brand Compliance Kit, Builder Packet, and Launch Bundle prepare access review fields, volume, checks, rules, DPDP posture, legal readiness, and gates.",
     evidenceLinks: [
       "/api/swiggy-access-dossier",
       "/api/submission-package",
       "/api/credential-onboarding",
       "/api/swiggy-staging-credential-drill",
+      "/api/swiggy-live-signal-calibration",
       "/api/data-governance-center",
       "/api/traffic-readiness-plan",
       "/api/brand-compliance-kit",
@@ -318,11 +320,12 @@ const staticDocs: StaticDoc[] = [
     markdownPath: "docs/start/authenticate.md",
     officialSummary: "OAuth 2.1 with PKCE, credential flow, expired-token handling, and scopes.",
     mealPilotSurface:
-      "Credential Cockpit, OAuth Status, Staging Credential Drill, Data Governance Center, PKCE start/callback, fail-closed gateway, and error intelligence cover auth posture and token redaction.",
+      "Credential Cockpit, OAuth Status, Staging Credential Drill, Live Signal Calibration, Data Governance Center, PKCE start/callback, fail-closed gateway, and error intelligence cover auth posture and token redaction.",
     evidenceLinks: [
       "/api/credential-onboarding",
       "/api/auth/swiggy/status",
       "/api/swiggy-staging-credential-drill",
+      "/api/swiggy-live-signal-calibration",
       "/api/data-governance-center",
       "/api/auth/swiggy/start",
       "/api/mcp-gateway",

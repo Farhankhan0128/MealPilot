@@ -113,6 +113,7 @@ Open the Launch Center and show:
 - Builders Launch Story Center showing the April 2026 launch narrative, current 35-tool docs reconciliation, reviewer demo journey, showcase assets, CTA paths, and co-marketing gates.
 - Operating Contract Center showing SLA, rate-limit/backpressure, traffic rollout, support escalation, version/deprecation, readiness gates, and Swiggy external approvals in one reviewer contract.
 - Staging Credential Drill Center showing credential signal, first read-only JSON-RPC probes, seeded-data needs, operator runbook, handoff email, and promotion gates before live staging credentials arrive.
+- Live Signal Calibration Center showing Food, Instamart, and Dineout signal lanes, read-only staging probes, privacy redaction, drift thresholds, fallback rules, and credential gates before live personalization claims.
 - Docs Coverage showing all 69 Swiggy `llms.txt` pages mapped to MealPilot evidence and external gates.
 - Docs Twin Explorer showing markdown twins, rendered URLs, retrieval lanes, section groups, proof links, and drift gates.
 - Upstream Watch showing `llms.txt`, `llms-full.txt`, v1.0 limitations, v1.1/v1.2/v2 roadmap items, signed-manifest watch, and new-tool action queues.

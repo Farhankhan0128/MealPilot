@@ -4524,6 +4524,73 @@ export interface SwiggyStagingCredentialDrillReport {
   externalGates: string[];
 }
 
+export type SwiggyLiveSignalCalibrationStatus = "ready" | "watch" | "staging_gate" | "privacy_gate";
+
+export interface SwiggyLiveSignalCalibrationLane {
+  id: string;
+  label: string;
+  server: SwiggyServer | "combined";
+  status: SwiggyLiveSignalCalibrationStatus;
+  officialTools: string[];
+  localSignal: string;
+  liveCalibration: string;
+  privacyControl: string;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyLiveSignalServerCalibration {
+  server: SwiggyServer;
+  readOnlyTools: string[];
+  seededDataNeed: string;
+  driftThreshold: string;
+  redactionRule: string;
+  status: SwiggyLiveSignalCalibrationStatus;
+}
+
+export interface SwiggyLiveSignalCalibrationWave {
+  id: string;
+  sequence: number;
+  label: string;
+  status: SwiggyLiveSignalCalibrationStatus;
+  tools: string[];
+  exitCriteria: string[];
+}
+
+export interface SwiggyLiveSignalProbe {
+  id: string;
+  server: SwiggyServer | "combined";
+  signal: string;
+  sourceTools: string[];
+  currentEvidence: string;
+  stagingProof: string;
+  failureStopRule: string;
+  status: SwiggyLiveSignalCalibrationStatus;
+}
+
+export interface SwiggyLiveSignalCalibrationReport {
+  generatedAt: string;
+  mode: "mock" | "staging" | "production";
+  score: number;
+  officialSources: string[];
+  totals: {
+    lanes: number;
+    readyLanes: number;
+    probes: number;
+    stagingWaves: number;
+    privacyControls: number;
+    externalGates: number;
+  };
+  signalLanes: SwiggyLiveSignalCalibrationLane[];
+  serverCalibration: SwiggyLiveSignalServerCalibration[];
+  stagingWaves: SwiggyLiveSignalCalibrationWave[];
+  probes: SwiggyLiveSignalProbe[];
+  privacyControls: Array<{ id: string; label: string; control: string; status: SwiggyLiveSignalCalibrationStatus }>;
+  fallbackRules: Array<{ id: string; trigger: string; action: string; evidence: string }>;
+  operatorRunbook: Array<{ sequence: number; label: string; command: string; proves: string }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type EnterpriseDelegatedAuthStatus = "ready" | "watch" | "external_gate";
 
 export interface EnterpriseDelegatedAuthStep {

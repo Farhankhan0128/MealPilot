@@ -62,6 +62,7 @@ import { buildHouseholdPreferenceGraph } from "./services/householdPreferenceGra
 import { buildSwiggyInnovationRadar } from "./services/innovationRadar.js";
 import { buildSwiggyJourneyCompiler } from "./services/journeyCompiler.js";
 import { buildLaunchBundle } from "./services/launchBundle.js";
+import { buildSwiggyLiveSignalCalibration } from "./services/liveSignalCalibration.js";
 import { buildSwiggyLoadLab } from "./services/loadLab.js";
 import { buildSwiggyLocationTrust } from "./services/locationTrust.js";
 import { buildLuxuryExperienceWorkspace } from "./services/luxuryExperienceWorkspace.js";
@@ -395,6 +396,43 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
         onboarding: buildCredentialOnboardingReport(runtimeConfig),
         sandbox: buildSandboxCredentialWorkbench(runtimeConfig),
         certification: buildStagingCertificationMatrix(runtimeConfig),
+      }),
+    });
+  });
+
+  app.get("/api/swiggy-live-signal-calibration", (_req, res) => {
+    const runtimeConfig = {
+      ...config,
+      swiggyAccessToken: runtimeAccessToken,
+      swiggyTokenExpiresAt: runtimeTokenExpiresAt,
+    };
+    const plans = store.getAllPlans();
+    const latestPlan = plans.at(-1);
+    const cutover = buildSwiggyStagingCutoverRehearsal({
+      config,
+      credentials: runtimeCredentials(),
+      latestPlan,
+    });
+    const certification = buildStagingCertificationMatrix(runtimeConfig);
+    const stagingCredentialDrill = buildSwiggyStagingCredentialDrill({
+      config: runtimeConfig,
+      cutover,
+      onboarding: buildCredentialOnboardingReport(runtimeConfig),
+      sandbox: buildSandboxCredentialWorkbench(runtimeConfig),
+      certification,
+    });
+
+    res.json({
+      liveSignalCalibration: buildSwiggyLiveSignalCalibration({
+        config: runtimeConfig,
+        latestPlan,
+        household: buildHouseholdPreferenceGraph(),
+        offer: buildSwiggyOfferIntelligence({ plans, config: runtimeConfig }),
+        orderLifecycle: buildSwiggyOrderLifecycle({ plans, config: runtimeConfig }),
+        locationTrust: buildSwiggyLocationTrust({ plans, config: runtimeConfig }),
+        discovery: buildSwiggyDiscoveryFreshness({ plans, config: runtimeConfig }),
+        stagingCredentialDrill,
+        certification,
       }),
     });
   });

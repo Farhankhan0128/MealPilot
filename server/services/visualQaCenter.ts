@@ -211,6 +211,17 @@ const targetGroups = [
         "artifacts/visual-qa/staging-credential-drill-card.png",
       ),
       target(
+        "live_signal_calibration_card",
+        "Live Signal Calibration card",
+        "/",
+        ".live-signal-calibration-card",
+        "desktop",
+        1280,
+        900,
+        "Live Signal Calibration shows Swiggy Food, Instamart, and Dineout signal probes, drift gates, privacy controls, and staging calibration waves.",
+        "artifacts/visual-qa/live-signal-calibration-card.png",
+      ),
+      target(
         "developer_quickstart_card",
         "Developer Quickstart card",
         "/",
@@ -449,7 +460,7 @@ const commands = [
     "visual_capture_harness",
     "npm run verify:visual",
     "Playwright captures every Visual QA target at desktop, tablet, and mobile sizes and writes report.json.",
-    "ok true with targetCount >= 27 and PNG files under artifacts/visual-qa.",
+    "ok true with targetCount >= 28 and PNG files under artifacts/visual-qa.",
   ),
   command(
     "desktop_capture",

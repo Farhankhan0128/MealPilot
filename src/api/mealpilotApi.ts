@@ -91,6 +91,7 @@ import type {
   SwiggySourceIntelligenceReport,
   SwiggyStagingCredentialDrillReport,
   SwiggyStagingCutoverRehearsal,
+  SwiggyLiveSignalCalibrationReport,
   SwiggyStateOrchestratorReport,
   SwiggyToolContractMatrix,
   SwiggyUpstreamWatchReport,
@@ -276,6 +277,12 @@ export function fetchSwiggyStagingCutover() {
 export function fetchSwiggyStagingCredentialDrill() {
   return requestJson<{ stagingCredentialDrill: SwiggyStagingCredentialDrillReport }>(
     "/api/swiggy-staging-credential-drill",
+  );
+}
+
+export function fetchSwiggyLiveSignalCalibration() {
+  return requestJson<{ liveSignalCalibration: SwiggyLiveSignalCalibrationReport }>(
+    "/api/swiggy-live-signal-calibration",
   );
 }
 

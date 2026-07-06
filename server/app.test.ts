@@ -88,6 +88,8 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/mcp/staging-cutover"].get.summary).toContain("staging cutover");
     expect(openApi.body.paths["/api/swiggy-staging-credential-drill"].get.summary).toContain("Staging Credential Drill");
     expect(openApi.body.paths["/api/swiggy-staging-credential-drill"].get.responses["200"].description).toContain("first read-only probes");
+    expect(openApi.body.paths["/api/swiggy-live-signal-calibration"].get.summary).toContain("Live Signal Calibration");
+    expect(openApi.body.paths["/api/swiggy-live-signal-calibration"].get.responses["200"].description).toContain("privacy controls");
     expect(openApi.body.paths["/api/mcp/capability-registry"].get.summary).toContain("capability registry");
     expect(openApi.body.paths["/api/mcp/resource-prompt-studio"].get.summary).toContain("Resource and Prompt Studio");
     expect(openApi.body.paths["/api/credential-onboarding"].get.summary).toContain("Dynamic Client Registration");
@@ -368,6 +370,50 @@ describe("MealPilot API", () => {
     ).toBe(true);
     expect(drill.handoffEmail.to).toBe("builders@swiggy.in");
     expect(drill.externalGates.some((gate: string) => gate.includes("staging credentials"))).toBe(true);
+  });
+
+  it("returns a Swiggy live signal calibration center for staging personalization proof", async () => {
+    const { app } = createMealPilotServer();
+    await request(app).post("/api/plan").send(planningRequest).expect(201);
+    const response = await request(app).get("/api/swiggy-live-signal-calibration").expect(200);
+    const calibration = response.body.liveSignalCalibration;
+
+    expect(calibration.score).toBeGreaterThanOrEqual(74);
+    expect(calibration.totals.lanes).toBe(6);
+    expect(calibration.totals.probes).toBe(4);
+    expect(calibration.totals.stagingWaves).toBe(5);
+    expect(calibration.totals.privacyControls).toBe(4);
+    expect(calibration.signalLanes.map((lane: { id: string }) => lane.id)).toEqual(
+      expect.arrayContaining([
+        "food_active_order_memory",
+        "instamart_pantries_and_go_to",
+        "dineout_location_booking_truth",
+        "offer_cart_truth",
+      ]),
+    );
+    expect(
+      calibration.serverCalibration.map((server: { server: string; readOnlyTools: string[] }) => [
+        server.server,
+        server.readOnlyTools.length,
+      ]),
+    ).toEqual([
+      ["food", 4],
+      ["instamart", 5],
+      ["dineout", 4],
+    ]);
+    expect(
+      calibration.probes.some(
+        (probe: { id: string; failureStopRule: string }) =>
+          probe.id === "combined_offer_drift_probe" && probe.failureStopRule.includes("coupon rejection"),
+      ),
+    ).toBe(true);
+    expect(
+      calibration.operatorRunbook.some(
+        (step: { command: string; proves: string }) =>
+          step.command.includes("/api/swiggy-live-signal-calibration") && step.proves.includes("staging"),
+      ),
+    ).toBe(true);
+    expect(calibration.externalGates.some((gate: string) => gate.includes("seeded Food"))).toBe(true);
   });
 
   it("returns a sandbox credential workbench for localhost-to-staging readiness", async () => {
@@ -1072,7 +1118,7 @@ describe("MealPilot API", () => {
     expect(packet.totals.formFields).toBeGreaterThanOrEqual(10);
     expect(packet.totals.requiredAttachments).toBeGreaterThanOrEqual(10);
     expect(packet.totals.launchArtifacts).toBeGreaterThanOrEqual(50);
-    expect(packet.totals.visualTargets).toBe(27);
+    expect(packet.totals.visualTargets).toBe(28);
     expect(packet.files.map((file: { id: string }) => file.id)).toEqual(
       expect.arrayContaining(["packet_json", "packet_markdown", "visual_report", "production_summary"]),
     );
@@ -1660,8 +1706,8 @@ describe("MealPilot API", () => {
     const visualQa = response.body.visualQa;
 
     expect(visualQa.score).toBe(100);
-    expect(visualQa.totalTargets).toBe(27);
-    expect(visualQa.readyTargets).toBe(27);
+    expect(visualQa.totalTargets).toBe(28);
+    expect(visualQa.readyTargets).toBe(28);
     expect(visualQa.totalRules).toBe(7);
     expect(visualQa.readyRules).toBe(7);
     expect(visualQa.totalCommands).toBe(5);
@@ -1718,6 +1764,13 @@ describe("MealPilot API", () => {
       visualQa.targetGroups.some((group: { targets: Array<{ id: string; selector: string }> }) =>
         group.targets.some(
           (target) => target.id === "staging_credential_drill_card" && target.selector === ".staging-credential-drill-card",
+        ),
+      ),
+    ).toBe(true);
+    expect(
+      visualQa.targetGroups.some((group: { targets: Array<{ id: string; selector: string }> }) =>
+        group.targets.some(
+          (target) => target.id === "live_signal_calibration_card" && target.selector === ".live-signal-calibration-card",
         ),
       ),
     ).toBe(true);
@@ -1802,7 +1855,7 @@ describe("MealPilot API", () => {
         (command: { id: string; command: string; expectedSignal: string }) =>
           command.id === "visual_capture_harness" &&
           command.command === "npm run verify:visual" &&
-          command.expectedSignal.includes("targetCount >= 27"),
+          command.expectedSignal.includes("targetCount >= 28"),
       ),
     ).toBe(true);
     expect(visualQa.externalGates.some((gate: string) => gate.includes("Selected PNG screenshots"))).toBe(true);
@@ -3587,6 +3640,7 @@ describe("MealPilot API", () => {
         "Widget Runtime Center",
         "Staging Cutover Rehearsal",
         "Swiggy Staging Credential Drill Center",
+        "Swiggy Live Signal Calibration Center",
         "Staging Transcript Export",
       ]),
     );
@@ -3639,6 +3693,7 @@ describe("MealPilot API", () => {
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-dineout-precision-center");
     expect(bundle.handoffEmail.body).toContain("/api/mcp/staging-cutover");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-staging-credential-drill");
+    expect(bundle.handoffEmail.body).toContain("/api/swiggy-live-signal-calibration");
     expect(bundle.handoffEmail.body).toContain("/api/audit-ledger");
     expect(bundle.commands.some((command: { command: string }) => command.command.includes("npm run verify:production"))).toBe(
       true,

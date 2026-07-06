@@ -629,6 +629,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-live-signal-calibration": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Live Signal Calibration Center",
+          responses: {
+            "200": {
+              description:
+                "Food, Instamart, and Dineout live-signal calibration lanes, read-only probes, privacy controls, drift thresholds, fallback rules, operator runbook, and staging credential gates",
+            },
+          },
+        },
+      },
       "/api/mcp-gateway": {
         get: {
           tags: ["Builder Access"],

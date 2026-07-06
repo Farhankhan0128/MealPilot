@@ -97,6 +97,7 @@ import {
   fetchSloIncidentCommand,
   fetchStagingCertificationMatrix,
   fetchSwiggyStagingCredentialDrill,
+  fetchSwiggyLiveSignalCalibration,
   fetchStagingTranscript,
   fetchSubmissionConsole,
   fetchSubmissionPackage,
@@ -242,6 +243,7 @@ import type {
   SwiggySourceIntelligenceReport,
   SwiggyStagingCredentialDrillReport,
   SwiggyStagingCutoverRehearsal,
+  SwiggyLiveSignalCalibrationReport,
   SwiggyStateOrchestratorReport,
   SwiggyToolContractMatrix,
   SwiggyWebsiteAtlas,
@@ -393,6 +395,8 @@ function App() {
   const [stagingCutover, setStagingCutover] = useState<SwiggyStagingCutoverRehearsal | null>(null);
   const [stagingCredentialDrill, setStagingCredentialDrill] =
     useState<SwiggyStagingCredentialDrillReport | null>(null);
+  const [liveSignalCalibration, setLiveSignalCalibration] =
+    useState<SwiggyLiveSignalCalibrationReport | null>(null);
   const [mcpToolLab, setMcpToolLab] = useState<McpToolLabReport | null>(null);
   const [swiggyBuildersMap, setSwiggyBuildersMap] = useState<SwiggyBuildersMap | null>(null);
   const [swiggyWebsiteAtlas, setSwiggyWebsiteAtlas] = useState<SwiggyWebsiteAtlas | null>(null);
@@ -576,6 +580,7 @@ function App() {
       commercialActionGuardResponse,
       stagingCutoverResponse,
       stagingCredentialDrillResponse,
+      liveSignalCalibrationResponse,
       toolLabResponse,
       buildersMapResponse,
       websiteAtlasResponse,
@@ -660,6 +665,7 @@ function App() {
       fetchCommercialActionGuard(),
       fetchSwiggyStagingCutover(),
       fetchSwiggyStagingCredentialDrill(),
+      fetchSwiggyLiveSignalCalibration(),
       fetchMcpToolLab(),
       fetchSwiggyBuildersMap(),
       fetchSwiggyWebsiteAtlas(),
@@ -745,6 +751,7 @@ function App() {
     setCommercialActionGuard(commercialActionGuardResponse.commercialActionGuard);
     setStagingCutover(stagingCutoverResponse.stagingCutover);
     setStagingCredentialDrill(stagingCredentialDrillResponse.stagingCredentialDrill);
+    setLiveSignalCalibration(liveSignalCalibrationResponse.liveSignalCalibration);
     setMcpToolLab(toolLabResponse.toolLab);
     setSwiggyBuildersMap(buildersMapResponse.map);
     setSwiggyWebsiteAtlas(websiteAtlasResponse.atlas);
@@ -833,6 +840,7 @@ function App() {
       commercialActionGuardResponse,
       stagingCutoverResponse,
       stagingCredentialDrillResponse,
+      liveSignalCalibrationResponse,
       toolLabResponse,
       buildersMapResponse,
       websiteAtlasResponse,
@@ -914,6 +922,7 @@ function App() {
       fetchCommercialActionGuard(),
       fetchSwiggyStagingCutover(),
       fetchSwiggyStagingCredentialDrill(),
+      fetchSwiggyLiveSignalCalibration(),
       fetchMcpToolLab(),
       fetchSwiggyBuildersMap(),
       fetchSwiggyWebsiteAtlas(),
@@ -995,6 +1004,7 @@ function App() {
     setCommercialActionGuard(commercialActionGuardResponse.commercialActionGuard);
     setStagingCutover(stagingCutoverResponse.stagingCutover);
     setStagingCredentialDrill(stagingCredentialDrillResponse.stagingCredentialDrill);
+    setLiveSignalCalibration(liveSignalCalibrationResponse.liveSignalCalibration);
     setMcpToolLab(toolLabResponse.toolLab);
     setSwiggyBuildersMap(buildersMapResponse.map);
     setSwiggyWebsiteAtlas(websiteAtlasResponse.atlas);
@@ -1650,6 +1660,7 @@ function App() {
                 commercialActionGuard={commercialActionGuard}
                 stagingCutover={stagingCutover}
                 stagingCredentialDrill={stagingCredentialDrill}
+                liveSignalCalibration={liveSignalCalibration}
                 toolLab={mcpToolLab}
                 buildersMap={swiggyBuildersMap}
                 websiteAtlas={swiggyWebsiteAtlas}
@@ -2221,6 +2232,7 @@ function LaunchCenterPanel({
   commercialActionGuard,
   stagingCutover,
   stagingCredentialDrill,
+  liveSignalCalibration,
   toolLab,
   buildersMap,
   websiteAtlas,
@@ -2276,6 +2288,7 @@ function LaunchCenterPanel({
   commercialActionGuard: CommercialActionGuardReport | null;
   stagingCutover: SwiggyStagingCutoverRehearsal | null;
   stagingCredentialDrill: SwiggyStagingCredentialDrillReport | null;
+  liveSignalCalibration: SwiggyLiveSignalCalibrationReport | null;
   toolLab: McpToolLabReport | null;
   buildersMap: SwiggyBuildersMap | null;
   websiteAtlas: SwiggyWebsiteAtlas | null;
@@ -2718,6 +2731,51 @@ function LaunchCenterPanel({
             </a>
             <a href="https://mcp.swiggy.com/builders/docs/operate/access/" target="_blank" rel="noreferrer">
               Access docs
+            </a>
+          </div>
+        </article>
+
+        <article className="live-signal-calibration-card">
+          <div className="mini-heading">
+            <Gauge aria-hidden="true" />
+            <strong>Live Signal Calibration</strong>
+          </div>
+          <span>
+            {liveSignalCalibration
+              ? `${liveSignalCalibration.score}/100, ${liveSignalCalibration.totals.readyLanes}/${liveSignalCalibration.totals.lanes} lanes live-ready`
+              : "Reconciling local signals with future staging reads"}
+          </span>
+          <div className="live-signal-calibration-grid">
+            <div>
+              <strong>{liveSignalCalibration?.totals.probes ?? 0}</strong>
+              <span>Probes</span>
+            </div>
+            <div>
+              <strong>{liveSignalCalibration?.totals.stagingWaves ?? 0}</strong>
+              <span>Waves</span>
+            </div>
+            <div>
+              <strong>{liveSignalCalibration?.totals.privacyControls ?? 0}</strong>
+              <span>Privacy</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(liveSignalCalibration?.signalLanes ?? []).slice(0, 5).map((laneItem) => (
+              <li
+                key={laneItem.id}
+                data-status={laneItem.status === "ready" ? "healthy" : laneItem.status === "privacy_gate" ? "watch" : "watch"}
+              >
+                <span>{laneItem.label}</span>
+                <strong>{laneItem.server === "combined" ? "Combined" : serverLabel(laneItem.server)}</strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-links">
+            <a href="/api/swiggy-live-signal-calibration" target="_blank" rel="noreferrer">
+              Calibration API
+            </a>
+            <a href="https://mcp.swiggy.com/builders/docs/operate/data-and-compliance/" target="_blank" rel="noreferrer">
+              Data docs
             </a>
           </div>
         </article>

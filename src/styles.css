@@ -1082,6 +1082,10 @@ select:focus {
   grid-column: span 2;
 }
 
+.live-signal-calibration-card {
+  grid-column: span 2;
+}
+
 .tool-lab-card {
   grid-column: span 2;
 }
@@ -1369,6 +1373,7 @@ select:focus {
   .commercial-guard-grid,
   .staging-cutover-grid,
   .staging-credential-drill-grid,
+  .live-signal-calibration-grid,
   .builder-intake-grid,
 .faq-policy-grid,
 .growth-partnership-grid,
@@ -1405,6 +1410,7 @@ select:focus {
   .commercial-guard-grid div,
   .staging-cutover-grid div,
   .staging-credential-drill-grid div,
+  .live-signal-calibration-grid div,
   .builder-intake-grid div,
 .faq-policy-grid div,
 .growth-partnership-grid div,
@@ -1444,6 +1450,7 @@ select:focus {
   .commercial-guard-grid strong,
   .staging-cutover-grid strong,
   .staging-credential-drill-grid strong,
+  .live-signal-calibration-grid strong,
   .builder-intake-grid strong,
 .faq-policy-grid strong,
 .growth-partnership-grid strong,
@@ -1480,6 +1487,7 @@ select:focus {
   .commercial-guard-grid span,
   .staging-cutover-grid span,
   .staging-credential-drill-grid span,
+  .live-signal-calibration-grid span,
   .builder-intake-grid span,
 .faq-policy-grid span,
 .growth-partnership-grid span,
@@ -2128,6 +2136,7 @@ select:focus {
   .commercial-guard-card,
   .staging-cutover-card,
   .staging-credential-drill-card,
+  .live-signal-calibration-card,
   .tool-lab-card,
   .contract-matrix-card,
   .builder-intake-card,
@@ -2230,6 +2239,7 @@ select:focus {
   .commercial-guard-grid,
   .staging-cutover-grid,
   .staging-credential-drill-grid,
+  .live-signal-calibration-grid,
   .faq-policy-grid,
   .growth-partnership-grid,
   .channel-multimodal-grid,
@@ -2833,6 +2843,7 @@ select:focus {
 .commercial-guard-card,
 .staging-cutover-card,
 .staging-credential-drill-card,
+.live-signal-calibration-card,
 .tool-lab-card,
 .contract-matrix-card,
 .builder-intake-card,
@@ -2921,6 +2932,7 @@ select:focus {
 .commercial-guard-grid div,
 .staging-cutover-grid div,
 .staging-credential-drill-grid div,
+.live-signal-calibration-grid div,
 .builder-intake-grid div,
 .faq-policy-grid div,
 .growth-partnership-grid div,
@@ -3292,6 +3304,7 @@ select:focus {
   .widget-runtime-grid,
   .commercial-guard-grid,
   .staging-cutover-grid,
+  .live-signal-calibration-grid,
   .faq-policy-grid,
   .growth-partnership-grid,
   .channel-multimodal-grid,

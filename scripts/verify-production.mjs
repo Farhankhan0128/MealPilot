@@ -227,6 +227,11 @@ assert(
   "OpenAPI Staging Credential Drill Center contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-live-signal-calibration"].get.summary.includes("Live Signal Calibration") &&
+    openApi.paths["/api/swiggy-live-signal-calibration"].get.responses["200"].description.includes("privacy controls"),
+  "OpenAPI Live Signal Calibration Center contract is missing",
+);
+assert(
   openApi.paths["/api/audit-ledger"].get.summary.includes("audit ledger"),
   "OpenAPI audit ledger is missing",
 );
@@ -1093,8 +1098,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 27, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 27, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 28, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 28, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -1164,6 +1169,14 @@ assert(
     ),
   ),
   "visual QA staging credential drill target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some(
+      (target) => target.id === "live_signal_calibration_card" && target.selector === ".live-signal-calibration-card",
+    ),
+  ),
+  "visual QA live signal calibration target is missing",
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
@@ -1257,7 +1270,7 @@ assert(
     (command) =>
       command.id === "visual_capture_harness" &&
       command.command === "npm run verify:visual" &&
-      command.expectedSignal.includes("targetCount >= 27"),
+      command.expectedSignal.includes("targetCount >= 28"),
   ),
   "visual QA Playwright command is missing",
 );
@@ -2320,6 +2333,40 @@ assert(
   stagingCredentialDrill.stagingCredentialDrill.handoffEmail.to === "builders@swiggy.in" &&
     stagingCredentialDrill.stagingCredentialDrill.externalGates.some((gate) => gate.includes("staging credentials")),
   "staging credential drill handoff or external gate is missing",
+);
+
+const liveSignalCalibration = await request("/api/swiggy-live-signal-calibration");
+assert(liveSignalCalibration.liveSignalCalibration.score >= 74, "live signal calibration score is below target");
+assert(
+  liveSignalCalibration.liveSignalCalibration.totals.lanes === 6 &&
+    liveSignalCalibration.liveSignalCalibration.totals.probes === 4 &&
+    liveSignalCalibration.liveSignalCalibration.totals.stagingWaves === 5 &&
+    liveSignalCalibration.liveSignalCalibration.totals.privacyControls === 4,
+  "live signal calibration totals are incomplete",
+);
+assert(
+  ["food_active_order_memory", "instamart_pantries_and_go_to", "dineout_location_booking_truth", "offer_cart_truth"].every(
+    (id) => liveSignalCalibration.liveSignalCalibration.signalLanes.some((lane) => lane.id === id),
+  ),
+  "live signal calibration lanes are incomplete",
+);
+assert(
+  liveSignalCalibration.liveSignalCalibration.serverCalibration.map((server) => `${server.server}:${server.readOnlyTools.length}`).join(",") ===
+    "food:4,instamart:5,dineout:4",
+  "live signal calibration server calibration is incomplete",
+);
+assert(
+  liveSignalCalibration.liveSignalCalibration.probes.some(
+    (probe) => probe.id === "combined_offer_drift_probe" && probe.failureStopRule.includes("coupon rejection"),
+  ),
+  "live signal calibration offer drift probe is missing",
+);
+assert(
+  liveSignalCalibration.liveSignalCalibration.operatorRunbook.some(
+    (step) => step.command.includes("/api/swiggy-live-signal-calibration") && step.proves.includes("staging"),
+  ) &&
+    liveSignalCalibration.liveSignalCalibration.externalGates.some((gate) => gate.includes("seeded Food")),
+  "live signal calibration runbook or external gate is missing",
 );
 
 const authStatusBefore = await request("/api/auth/swiggy/status");
@@ -3699,7 +3746,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 27, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 28, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -3793,6 +3840,7 @@ assert(
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Commercial Action Guard") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Staging Cutover Rehearsal") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Staging Credential Drill Center") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Live Signal Calibration Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Staging Certification Matrix") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Staging Transcript Export"),
   "launch bundle proof artifacts are incomplete",
@@ -3846,6 +3894,10 @@ assert(
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-staging-credential-drill"),
   "launch bundle staging credential drill handoff link is missing",
+);
+assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-live-signal-calibration"),
+  "launch bundle live signal calibration handoff link is missing",
 );
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-builder-intake"),
@@ -4173,6 +4225,9 @@ console.log(
       builderPacketScore: builderPacket.packet.score,
       builderPacketFiles: builderPacket.packet.totals.packetFiles,
       builderPacketVisualTargets: builderPacket.packet.totals.visualTargets,
+      liveSignalCalibrationScore: liveSignalCalibration.liveSignalCalibration.score,
+      liveSignalCalibrationLanes: liveSignalCalibration.liveSignalCalibration.totals.lanes,
+      liveSignalCalibrationProbes: liveSignalCalibration.liveSignalCalibration.totals.probes,
       faqPolicyScore: faqPolicy.faqPolicy.score,
       faqPolicyQuestions: faqPolicy.faqPolicy.totalQuestions,
       growthPartnershipScore: growthPartnership.growthPartnership.score,

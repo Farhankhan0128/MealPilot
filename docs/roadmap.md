@@ -63,6 +63,7 @@ Status: in progress.
 - Add Carbon-inspired premium portal design language, MealPilot logo, sticky header, mobile navigation, footer, visible CTA feedback, and expanded UI CTA tests. Complete.
 - Add MCP Backpressure Governor for Swiggy v1.0 upstream-shedder mode, future 429/header readiness, token buckets, tracking cadence, voice bursts, and background-job gates. Complete.
 - Add Swiggy Staging Credential Drill Center for first-live-credential signal, JSON-RPC read probes, seeded-data requirements, operator runbook, handoff email, and promotion gates. Complete.
+- Add Swiggy Live Signal Calibration Center for Food, Instamart, and Dineout personalization probes, privacy controls, drift thresholds, fallback rules, and staging gates. Complete.
 - Validate real MCP transport against Swiggy staging credentials. Next.
 
 ## Phase 2: Swiggy Staging
