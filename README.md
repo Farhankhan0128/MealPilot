@@ -87,6 +87,7 @@ Planned MCP servers:
 - FAQ & Policy Center that maps homepage, developer, enterprise, access-guideline, footer-resource, allowed/restricted/prohibited, operating-principle, and legal policy signals to MealPilot evidence.
 - Growth Partnership Center that turns Swiggy's get-noticed, co-branding, direct-support, hiring, co-marketing, analytics, and strategic-growth signals into launch experiments, proof assets, metrics, and partner asks.
 - Partner Success Desk at `/api/swiggy-partner-success-desk` that composes access handoff, developer support, SLO incidents, capacity review, backpressure, growth showcase asks, and enterprise Slack/partner-manager gates into one reviewer surface.
+- Swiggy Interaction QA Center at `/api/swiggy-interaction-qa-center` that proves portal CTAs map to executable routes, visible feedback, automated tests, and explicit Swiggy/operator gates.
 - Channel & Multimodal Studio that turns Swiggy's developer-page ideas into voice, web chat, Slack/Teams, mobile camera, enterprise, and screenshot-to-order contracts with local execution packets for route plans, response rules, confirmation gates, and telemetry.
 - Nutrition & Budget Intelligence that optimizes protein-per-rupee, coupon-safe Food carts, Instamart pantry gaps, group budgets, and Dineout balance routes without medical claims.
 - Household Preference Graph that turns consented Food active orders, Instamart go-to items/order history, Dineout saved-location signals, group weights, and support failures into privacy-safe personalization.
@@ -257,6 +258,7 @@ GET  /api/swiggy-builder-intake
 GET  /api/swiggy-faq-policy
 GET  /api/swiggy-growth-partnership
 GET  /api/swiggy-partner-success-desk
+GET  /api/swiggy-interaction-qa-center
 GET  /api/channel-multimodal-studio
 GET  /api/swiggy-visual-dish-capture
 GET  /api/swiggy-voice-commerce-center
@@ -489,6 +491,8 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 `GET /api/swiggy-growth-partnership` is the growth partnership center: official get-noticed, hiring, co-branding, direct-support, enterprise analytics, and joint go-to-market signals become MealPilot launch experiments, proof assets, metric targets, and explicit partner asks while Swiggy feature placement, co-marketing approval, Slack, partner manager, dashboard access, and higher limits remain external gates.
 
 `GET /api/swiggy-partner-success-desk` is the post-access operator room: access handoff, developer support, SLO incident readiness, capacity review, backpressure controls, growth showcase asks, and enterprise Slack/partner-manager gates are composed from existing verified proof routes with escalation email drafts.
+
+`GET /api/swiggy-interaction-qa-center` is the clickable-portal contract: planner, confirmation, packet export, support, privacy, first-call, access submission, and partner-support CTAs are mapped to routes, visible feedback, automation coverage, manual gates, and Swiggy-owned external gates.
 
 `GET /api/channel-multimodal-studio` is the developer-lane innovation center: voice ordering, auto-restock, group ordering, dietary planning, reservation planning, and screenshot-to-order become channel contracts, MCP toolchains, local execution packets, response rules, data boundaries, telemetry contracts, and external gates for Slack/Teams, mobile camera, vision/OCR, and enterprise embedding.
 

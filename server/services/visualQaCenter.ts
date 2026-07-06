@@ -376,6 +376,17 @@ const targetGroups = [
         "artifacts/visual-qa/partner-success-card.png",
       ),
       target(
+        "interaction_qa_card",
+        "Interaction QA card",
+        "/",
+        ".interaction-qa-card",
+        "desktop",
+        1280,
+        900,
+        "Interaction QA Center shows executable CTAs, POST/PATCH routes, manual gates, and external Swiggy gates.",
+        "artifacts/visual-qa/interaction-qa-card.png",
+      ),
+      target(
         "innovation_radar_card",
         "Innovation Radar card",
         "/",

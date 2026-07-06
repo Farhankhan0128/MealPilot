@@ -401,6 +401,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-interaction-qa-center": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Interaction QA Center for clickable portal CTAs and external gates",
+          responses: {
+            "200": {
+              description:
+                "Reviewer-visible CTA contract matrix covering executable MealPilot actions, Swiggy access/manual gates, visible feedback, automation coverage, and regression runbooks",
+            },
+          },
+        },
+      },
       "/api/channel-multimodal-studio": {
         get: {
           tags: ["Builder Access"],

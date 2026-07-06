@@ -1426,6 +1426,41 @@ export interface SwiggyPartnerSuccessDesk {
   externalGates: string[];
 }
 
+export type SwiggyInteractionQaStatus = "working" | "manual_gate" | "external_gate";
+export type SwiggyInteractionQaSurface = "planner" | "launch_center" | "production_evidence" | "settings";
+
+export interface SwiggyInteractionQaLane {
+  id: string;
+  label: string;
+  surface: SwiggyInteractionQaSurface;
+  ctaLabel: string;
+  endpoint: string;
+  method: "GET" | "POST" | "PATCH" | "PUT" | "DELETE";
+  status: SwiggyInteractionQaStatus;
+  swiggyRelevance: string;
+  expectedFeedback: string;
+  automationCoverage: string[];
+  evidenceLinks: string[];
+}
+
+export interface SwiggyInteractionQaCenter {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  totals: {
+    lanes: number;
+    working: number;
+    manualGates: number;
+    externalGates: number;
+    automatedProofs: number;
+    postActions: number;
+  };
+  lanes: SwiggyInteractionQaLane[];
+  regressionRunbook: Array<{ sequence: number; label: string; command: string; expectedSignal: string }>;
+  clickAssertions: string[];
+  externalGates: string[];
+}
+
 export type SwiggyChannelMultimodalStatus = "ready" | "manual_input" | "external_gate";
 export type SwiggyChannelTarget =
   | "web_chat"

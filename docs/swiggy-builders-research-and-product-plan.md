@@ -187,6 +187,7 @@ MealPilot should become a luxury-grade food and meal intelligence product with t
 | FAQ & Policy Center | `server/services/faqPolicyCenter.ts` |
 | Growth Partnership Center | `server/services/growthPartnership.ts` |
 | Partner Success Desk | `server/services/partnerSuccessDesk.ts` |
+| Interaction QA Center | `server/services/interactionQaCenter.ts` |
 | Swiggy Builders map | `server/services/swiggyBuildersMap.ts` |
 | Swiggy Docs Coverage | `server/services/docsCoverage.ts` |
 | Swiggy Docs Twin Explorer | `server/services/docsTwinExplorer.ts` |
@@ -245,7 +246,7 @@ MealPilot should become a luxury-grade food and meal intelligence product with t
 | Planner workspace | `src/App.tsx` |
 | Recommendation cards | Food, Instamart, and Dineout cards with item controls |
 | Premium Concierge | Lunch, pantry reset, Dineout evening, dessert reminder, and recovery itinerary slots with official Swiggy route plans |
-| Launch Center | Tool coverage, Tool Contract Matrix, Scenario Runner, State Orchestrator, Widget Runtime Center, Commercial Action Guard, Staging Cutover Rehearsal, Swiggy Handshake Doctor, Capability Registry, Resource & Prompt Studio, Website Atlas, Builder Intake, FAQ & Policy Center, Growth Partnership Center, Channel & Multimodal Studio, Nutrition & Budget Intelligence, Household Preference Graph, Guest Collaboration & Calendar Center, Luxury Experience Workspace, Reviewer Artifact Vault, Visual QA Center, Access Evidence Matrix, Docs Coverage, Docs Twin Explorer, llms Manifest Verifier, Upstream Watch, Source Intelligence, Deep Site Map, Developer Quickstart, CTA Execution, Innovation Radar, Tool Lab, gateway, OAuth Status, Credential Cockpit, Delegated Auth Center, Builders map, Support Bridge, go-live, observability, support |
+| Launch Center | Tool coverage, Tool Contract Matrix, Scenario Runner, State Orchestrator, Widget Runtime Center, Commercial Action Guard, Staging Cutover Rehearsal, Swiggy Handshake Doctor, Capability Registry, Resource & Prompt Studio, Website Atlas, Builder Intake, FAQ & Policy Center, Growth Partnership Center, Partner Success Desk, Interaction QA Center, Channel & Multimodal Studio, Nutrition & Budget Intelligence, Household Preference Graph, Guest Collaboration & Calendar Center, Luxury Experience Workspace, Reviewer Artifact Vault, Visual QA Center, Access Evidence Matrix, Docs Coverage, Docs Twin Explorer, llms Manifest Verifier, Upstream Watch, Source Intelligence, Deep Site Map, Developer Quickstart, CTA Execution, Innovation Radar, Tool Lab, gateway, OAuth Status, Credential Cockpit, Delegated Auth Center, Builders map, Support Bridge, go-live, observability, support |
 | Guest Collaboration & Calendar | Guest votes, occasion templates, Dineout-first date nights, guests-at-home prep, office lunch, weekday reset, recovery meal, ICS artifacts, Slack/Teams gates, and voice-safe briefs |
 | Luxury Experience Workspace | Lean, premium, family, social, and training modes plus polished Dineout reservation, Food cart, Instamart basket, combined evening, and recovery review surfaces |
 | Reviewer Artifact Vault | Proof links, OpenAPI, smoke commands, screenshot targets, demo-video checklist, logs, traces, redaction rules, support context, and handoff copy |
@@ -281,6 +282,7 @@ Coverage targets:
 - FAQ & Policy Center for homepage/developer/enterprise FAQ themes, access ground rules, footer resources, allowed/restricted/prohibited policy categories, legal signals, and support contact
 - Growth Partnership Center for get-noticed, hiring, co-branding, direct support, co-marketing, analytics dashboards, strategic guidance, launch experiments, metrics, assets, and partner asks
 - Partner Success Desk for access handoff, support, SLO incidents, capacity review, backpressure, growth showcase, escalation emails, and enterprise Slack/partner-manager external gates
+- Interaction QA Center for clickable portal CTAs, route contracts, visible feedback expectations, automation proof, and explicit Swiggy/operator gates
 - Swiggy Upstream Watch for `llms.txt`, `llms-full.txt`, changelog limitations, v1.1/v1.2/v2 roadmap items, signed manifests, and new-tool action queues
 - Swiggy Source Intelligence for website, CTA, `llms`, markdown twin, reference count, drift signal, external gate, and build-queue reconciliation
 - Swiggy Docs Twin Explorer for all 69 official markdown/rendered page pairs, retrieval lanes, proof routes, assertions, and drift gates

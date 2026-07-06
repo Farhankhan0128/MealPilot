@@ -140,6 +140,14 @@ assert(
   "OpenAPI growth partnership contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-partner-success-desk"].get.summary.includes("Partner Success"),
+  "OpenAPI partner success desk contract is missing",
+);
+assert(
+  openApi.paths["/api/swiggy-interaction-qa-center"].get.summary.includes("Interaction QA"),
+  "OpenAPI interaction QA center contract is missing",
+);
+assert(
   openApi.paths["/api/channel-multimodal-studio"].get.summary.includes("Channel and Multimodal"),
   "OpenAPI channel and multimodal studio contract is missing",
 );
@@ -788,6 +796,35 @@ assert(
   partnerSuccess.partnerSuccess.assertions.some((assertion) => assertion.includes("existing verified support")) &&
     partnerSuccess.partnerSuccess.externalGates.some((gate) => gate.includes("Slack")),
   "Partner Success Desk assertions or external gates are missing",
+);
+
+const interactionQa = await request("/api/swiggy-interaction-qa-center");
+assert(interactionQa.interactionQa.score >= 90, "Interaction QA Center score is below target");
+assert(interactionQa.interactionQa.totals.lanes >= 10, "Interaction QA Center lane coverage is incomplete");
+assert(interactionQa.interactionQa.totals.working >= 8, "Interaction QA Center working CTA coverage is incomplete");
+assert(interactionQa.interactionQa.totals.manualGates >= 1, "Interaction QA Center manual gates are missing");
+assert(interactionQa.interactionQa.totals.externalGates >= 1, "Interaction QA Center external gates are missing");
+assert(interactionQa.interactionQa.totals.postActions >= 5, "Interaction QA Center POST/PATCH coverage is incomplete");
+assert(
+  ["plan_submit", "single_confirmation", "bulk_confirmation", "support_report", "builder_packet_export", "developer_first_call", "access_submission", "enterprise_slack"].every((id) =>
+    interactionQa.interactionQa.lanes.some((lane) => lane.id === id),
+  ),
+  "Interaction QA Center lanes are incomplete",
+);
+assert(
+  interactionQa.interactionQa.lanes.some(
+    (lane) =>
+      lane.id === "support_report" &&
+      lane.status === "working" &&
+      lane.endpoint === "/api/support/report" &&
+      lane.expectedFeedback.includes("builders@swiggy.in"),
+  ),
+  "Interaction QA Center support-report CTA contract is missing",
+);
+assert(
+  interactionQa.interactionQa.clickAssertions.some((assertion) => assertion.includes("Every locally executable CTA")) &&
+    interactionQa.interactionQa.externalGates.some((gate) => gate.includes("Slack")),
+  "Interaction QA Center assertions or external gates are missing",
 );
 
 const channelMultimodal = await request("/api/channel-multimodal-studio");
@@ -1635,8 +1672,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 40, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 40, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 41, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 41, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -1782,6 +1819,12 @@ assert(
     group.targets.some((target) => target.id === "partner_success_card" && target.selector === ".partner-success-card"),
   ),
   "visual QA Partner Success target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some((target) => target.id === "interaction_qa_card" && target.selector === ".interaction-qa-card"),
+  ),
+  "visual QA Interaction QA target is missing",
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
@@ -4906,7 +4949,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 40, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 41, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -4920,7 +4963,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("40")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("41")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -5463,6 +5506,9 @@ console.log(
       partnerSuccessScore: partnerSuccess.partnerSuccess.score,
       partnerSuccessLanes: partnerSuccess.partnerSuccess.totals.lanes,
       partnerSuccessExternalGates: partnerSuccess.partnerSuccess.totals.externalGates,
+      interactionQaScore: interactionQa.interactionQa.score,
+      interactionQaWorking: interactionQa.interactionQa.totals.working,
+      interactionQaGates: interactionQa.interactionQa.totals.manualGates + interactionQa.interactionQa.totals.externalGates,
       channelMultimodalScore: channelMultimodal.channelMultimodalStudio.score,
       channelMultimodalLanes: channelMultimodal.channelMultimodalStudio.totalLanes,
       channelExecutionPackets: channelMultimodal.channelMultimodalStudio.totalExecutionPackets,

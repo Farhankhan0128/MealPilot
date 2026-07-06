@@ -114,6 +114,7 @@ import {
   fetchSwiggyOperatingContractCenter,
   fetchSwiggyFaqPolicyCenter,
   fetchSwiggyGrowthPartnershipCenter,
+  fetchSwiggyInteractionQaCenter,
   fetchSwiggyAccessDossier,
   fetchSwiggyAccessEvidenceMatrix,
   fetchSwiggyDocsCoverage,
@@ -251,6 +252,7 @@ import type {
   SwiggyDocsTwinExplorer,
   SwiggyFaqPolicyCenter,
   SwiggyGrowthPartnershipCenter,
+  SwiggyInteractionQaCenter,
   SwiggyPartnerSuccessDesk,
   SwiggyHandshakeDoctor,
   SwiggyLlmsManifestVerifier,
@@ -439,6 +441,7 @@ function App() {
   const [swiggyFaqPolicy, setSwiggyFaqPolicy] = useState<SwiggyFaqPolicyCenter | null>(null);
   const [swiggyGrowthPartnership, setSwiggyGrowthPartnership] = useState<SwiggyGrowthPartnershipCenter | null>(null);
   const [partnerSuccess, setPartnerSuccess] = useState<SwiggyPartnerSuccessDesk | null>(null);
+  const [interactionQa, setInteractionQa] = useState<SwiggyInteractionQaCenter | null>(null);
   const [channelMultimodalStudio, setChannelMultimodalStudio] =
     useState<SwiggyChannelMultimodalStudio | null>(null);
   const [visualDishCapture, setVisualDishCapture] = useState<SwiggyVisualDishCaptureCenter | null>(null);
@@ -637,6 +640,7 @@ function App() {
       faqPolicyResponse,
       growthPartnershipResponse,
       partnerSuccessResponse,
+      interactionQaResponse,
       channelMultimodalResponse,
       visualDishCaptureResponse,
       voiceCommerceResponse,
@@ -736,6 +740,7 @@ function App() {
       fetchSwiggyFaqPolicyCenter(),
       fetchSwiggyGrowthPartnershipCenter(),
       fetchSwiggyPartnerSuccessDesk(),
+      fetchSwiggyInteractionQaCenter(),
       fetchChannelMultimodalStudio(),
       fetchSwiggyVisualDishCapture(),
       fetchSwiggyVoiceCommerceCenter(),
@@ -836,6 +841,7 @@ function App() {
     setSwiggyFaqPolicy(faqPolicyResponse.faqPolicy);
     setSwiggyGrowthPartnership(growthPartnershipResponse.growthPartnership);
     setPartnerSuccess(partnerSuccessResponse.partnerSuccess);
+    setInteractionQa(interactionQaResponse.interactionQa);
     setChannelMultimodalStudio(channelMultimodalResponse.channelMultimodalStudio);
     setVisualDishCapture(visualDishCaptureResponse.visualDishCapture);
     setVoiceCommerce(voiceCommerceResponse.voiceCommerce);
@@ -939,6 +945,7 @@ function App() {
       faqPolicyResponse,
       growthPartnershipResponse,
       partnerSuccessResponse,
+      interactionQaResponse,
       channelMultimodalResponse,
       visualDishCaptureResponse,
       voiceCommerceResponse,
@@ -1035,6 +1042,7 @@ function App() {
       fetchSwiggyFaqPolicyCenter(),
       fetchSwiggyGrowthPartnershipCenter(),
       fetchSwiggyPartnerSuccessDesk(),
+      fetchSwiggyInteractionQaCenter(),
       fetchChannelMultimodalStudio(),
       fetchSwiggyVisualDishCapture(),
       fetchSwiggyVoiceCommerceCenter(),
@@ -1131,6 +1139,7 @@ function App() {
     setSwiggyFaqPolicy(faqPolicyResponse.faqPolicy);
     setSwiggyGrowthPartnership(growthPartnershipResponse.growthPartnership);
     setPartnerSuccess(partnerSuccessResponse.partnerSuccess);
+    setInteractionQa(interactionQaResponse.interactionQa);
     setChannelMultimodalStudio(channelMultimodalResponse.channelMultimodalStudio);
     setVisualDishCapture(visualDishCaptureResponse.visualDishCapture);
     setVoiceCommerce(voiceCommerceResponse.voiceCommerce);
@@ -1802,6 +1811,7 @@ function App() {
                 faqPolicy={swiggyFaqPolicy}
                 growthPartnership={swiggyGrowthPartnership}
                 partnerSuccess={partnerSuccess}
+                interactionQa={interactionQa}
                 channelMultimodalStudio={channelMultimodalStudio}
                 visualDishCapture={visualDishCapture}
                 voiceCommerce={voiceCommerce}
@@ -2388,6 +2398,7 @@ function LaunchCenterPanel({
   faqPolicy,
   growthPartnership,
   partnerSuccess,
+  interactionQa,
   channelMultimodalStudio,
   visualDishCapture,
   voiceCommerce,
@@ -2458,6 +2469,7 @@ function LaunchCenterPanel({
   faqPolicy: SwiggyFaqPolicyCenter | null;
   growthPartnership: SwiggyGrowthPartnershipCenter | null;
   partnerSuccess: SwiggyPartnerSuccessDesk | null;
+  interactionQa: SwiggyInteractionQaCenter | null;
   channelMultimodalStudio: SwiggyChannelMultimodalStudio | null;
   visualDishCapture: SwiggyVisualDishCaptureCenter | null;
   voiceCommerce: SwiggyVoiceCommerceCenter | null;
@@ -3691,6 +3703,54 @@ function LaunchCenterPanel({
             </a>
             <a href="/api/traffic-readiness-plan" target="_blank" rel="noreferrer">
               Capacity
+            </a>
+          </div>
+        </article>
+
+        <article className="interaction-qa-card">
+          <div className="mini-heading">
+            <MousePointerClick aria-hidden="true" />
+            <strong>Interaction QA</strong>
+          </div>
+          <span>
+            {interactionQa
+              ? `${interactionQa.score}/100, ${interactionQa.totals.working}/${interactionQa.totals.lanes} CTAs working`
+              : "Mapping portal clicks to executable routes and Swiggy gates"}
+          </span>
+          <div className="interaction-qa-grid">
+            <div>
+              <strong>{interactionQa?.totals.postActions ?? 0}</strong>
+              <span>POST/PATCH</span>
+            </div>
+            <div>
+              <strong>{interactionQa?.totals.manualGates ?? 0}</strong>
+              <span>Manual</span>
+            </div>
+            <div>
+              <strong>{interactionQa?.totals.externalGates ?? 0}</strong>
+              <span>External</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(interactionQa?.lanes ?? []).slice(0, 5).map((lane) => (
+              <li
+                key={lane.id}
+                data-status={lane.status === "working" ? "healthy" : lane.status === "external_gate" ? "blocked" : "watch"}
+              >
+                <span>{lane.ctaLabel}</span>
+                <strong>{lane.method}</strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-intelligence-actions" aria-label="Interaction QA links">
+            <a href="/api/swiggy-interaction-qa-center" target="_blank" rel="noreferrer">
+              QA API
+            </a>
+            <a href="/api/openapi.json" target="_blank" rel="noreferrer">
+              OpenAPI
+            </a>
+            <a href="/api/swiggy-cta-live-audit" target="_blank" rel="noreferrer">
+              Live CTAs
             </a>
           </div>
         </article>

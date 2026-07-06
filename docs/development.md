@@ -108,6 +108,8 @@ The verifier also validates `/api/swiggy-cta-live-audit` for safe live Builders/
 
 The verifier also validates `/api/swiggy-partner-success-desk` for access handoff, developer support, SLO incidents, capacity review, backpressure controls, growth showcase asks, escalation emails, and enterprise Slack/partner-manager gates.
 
+The verifier also validates `/api/swiggy-interaction-qa-center` for planner, confirmation, support-report, privacy, packet-export, first-call, access-submission, and partner-support CTA contracts with automated proof and explicit Swiggy/operator gates.
+
 The verifier also validates `/api/swiggy-load-lab` for synthetic launch-load scenarios, Retry-After readiness, cohort ramp math, background-job gating, commercial serialization assertions, and external Swiggy capacity actions.
 
 The verifier also validates `/api/swiggy-offer-intelligence` and `/api/swiggy-offer-intelligence/decide` for Food coupon tool sequencing, Dineout deal validation, Instamart value substitutions, no-blind-discount guardrails, apply/surface/block decisions, no-cart-mutation telemetry, offer recovery drills, live-inventory external gates, and launch-bundle handoff coverage.
@@ -204,6 +206,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/swiggy-faq-policy`
 - `GET /api/swiggy-growth-partnership`
 - `GET /api/swiggy-partner-success-desk`
+- `GET /api/swiggy-interaction-qa-center`
 - `GET /api/channel-multimodal-studio`
 - `GET /api/swiggy-visual-dish-capture`
 - `GET /api/swiggy-voice-commerce-center`
@@ -423,6 +426,8 @@ Production should use an HTTPS redirect URI with exact-match allowlisting.
 
 `/api/swiggy-partner-success-desk` composes the post-access operator room: access handoff, support bridge, SLO incidents, capacity review, backpressure, growth showcase asks, and enterprise Slack/partner-manager gates are pulled into one reviewer surface with proof links and escalation email drafts.
 
+`/api/swiggy-interaction-qa-center` composes the clickable portal contract: every locally executable CTA maps to a route, feedback expectation, automated proof, and Swiggy relevance, while access form submission, Slack, partner manager, production credentials, and co-marketing remain manual or external gates.
+
 `/api/coding-agent-governance` reads the root `AGENTS.md` and scores the rules future coding agents must follow before editing Swiggy integrations: fetch official docs first, prefer page `.md` twins, never invent tools or parameters, preserve commercial confirmation gates, and keep sensitive data out of logs.
 
 `/api/access-submission-studio` is the final operator room before Swiggy submission. It joins official Start Building, Request access, and Send Us a Demo targets with copy-ready form values, required attachments, browser runbook steps, generated builders@swiggy.in mailto draft, blockers, and external gates. `PATCH /api/access-submission-studio/state` saves the local handoff fields for demo URL, contact, production redirect, static egress, environment, terms, form submission, handoff email, and notes; it never submits the official Swiggy form or sends email during local tests.
@@ -456,6 +461,7 @@ The test suite checks that:
 - FAQ & Policy Center maps homepage, developer, enterprise, access-guideline, footer-resource, allowed/restricted/prohibited, operating-principle, and legal signals to MealPilot evidence links.
 - Growth Partnership Center maps get-noticed, hiring, co-branding, direct support, co-marketing, analytics, strategic guidance, launch experiments, metrics, proof assets, and external partner asks.
 - Partner Success Desk composes access handoff, developer support, SLO incident readiness, traffic capacity, backpressure controls, growth showcase asks, escalation emails, and Swiggy-owned Slack/partner-manager gates.
+- Interaction QA Center maps portal CTAs to executable MealPilot routes, visible feedback, regression commands, automation coverage, and explicit Swiggy/operator gates.
 - Channel & Multimodal Studio maps voice, web chat, Slack/Teams, mobile camera, enterprise, and screenshot-to-order channels to Swiggy MCP toolchains, local execution packets, response contracts, telemetry, and external platform gates.
 - Swiggy Voice Commerce Rehearsal Center validates spoken Swiggy route planning with no raw-audio retention, no raw ids in TTS, short scripts, visual fallbacks, and confirmation readbacks before live execution.
 - Swiggy Quality Loop Center validates consented post-experience learning, support-safe feedback analysis, repeat optimization, and no raw Swiggy payload storage.

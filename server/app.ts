@@ -63,6 +63,7 @@ import { buildSwiggyFaqPolicyCenter } from "./services/faqPolicyCenter.js";
 import { buildGuestCollaborationCenter } from "./services/guestCollaborationCenter.js";
 import { buildSwiggyGrowthPartnershipCenter } from "./services/growthPartnership.js";
 import { buildHouseholdPreferenceGraph } from "./services/householdPreferenceGraph.js";
+import { buildSwiggyInteractionQaCenter } from "./services/interactionQaCenter.js";
 import { buildSwiggyInnovationRadar } from "./services/innovationRadar.js";
 import { buildSwiggyJourneyCompiler } from "./services/journeyCompiler.js";
 import { buildLaunchBundle } from "./services/launchBundle.js";
@@ -972,6 +973,10 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
         telemetry: telemetry.buildReport(),
       }),
     });
+  });
+
+  app.get("/api/swiggy-interaction-qa-center", (_req, res) => {
+    res.json({ interactionQa: buildSwiggyInteractionQaCenter() });
   });
 
   app.get("/api/channel-multimodal-studio", (_req, res) => {
