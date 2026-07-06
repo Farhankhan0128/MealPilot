@@ -114,6 +114,8 @@ The verifier also validates `/api/swiggy-submission-timeline-center` for the eig
 
 The verifier also validates `/api/swiggy-conversion-center` for the final What Will You Cook CTA funnel, Start Building, See What's Possible, Request Access, Send Us a Demo, builders@swiggy.in, `llms.txt`, `llms-full.txt`, proof bundles, operator runbook, and go-live gates.
 
+The verifier also validates `/api/swiggy-builders-module-intelligence` for every Website Atlas module, page grouping, owner, audience, product promise, route optimization, risk boundary, proof links, module journeys, and external operator or Swiggy gates.
+
 The verifier also validates `/api/swiggy-partner-success-desk` for access handoff, developer support, SLO incidents, capacity review, backpressure controls, growth showcase asks, escalation emails, and enterprise Slack/partner-manager gates.
 
 The verifier also validates `/api/swiggy-partner-support-room` for report_error readiness, builders@swiggy.in support email drafts, S0-S3 incident lanes, redacted evidence attachments, capacity escalation, runtime/audit proof, and enterprise Slack/partner-manager gates.
@@ -213,6 +215,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/swiggy-website-atlas`
 - `GET /api/swiggy-builders-site-parity`
 - `GET /api/swiggy-builders-page-mesh`
+- `GET /api/swiggy-builders-module-intelligence`
 - `GET /api/swiggy-cta-live-audit`
 - `GET /api/swiggy-builders-launch-story`
 - `GET /api/swiggy-operating-contract-center`
@@ -444,6 +447,8 @@ Production should use an HTTPS redirect URI with exact-match allowlisting.
 
 `/api/swiggy-builders-page-mesh` fetches every non-external Website Atlas Builders page from the live public site, extracts anchors and titles, reconciles module/CTA coverage, rejects user-supplied URLs, and fails production smoke when public pages become unreachable or links leave approved Builders, legal, `forms.gle`, official MCP reference, or builders email contact origins.
 
+`/api/swiggy-builders-module-intelligence` converts Website Atlas modules into product-readiness rows with owner, audience, official signal, product promise, Swiggy surface, MealPilot proof, route optimization, risk boundary, CTA mapping, journey placement, and explicit external gates.
+
 `/api/swiggy-builders-launch-story` turns the April 2026 Builders Club launch blog into a reviewer-ready story center. It reconciles the launch-era 18+ API-tool narrative with the current 35-tool docs snapshot and packages story beats, the demo journey, showcase assets, ecosystem lanes, CTA paths, and co-marketing guardrails.
 
 `/api/swiggy-operating-contract-center` consolidates official operate and ship-to-production guidance into one reviewer contract: SLA and latency targets, current/future rate-limit behavior, traffic rollout, support escalation, version/deprecation watch, runbooks, readiness gates, and Swiggy external approvals.
@@ -494,6 +499,7 @@ The test suite checks that:
 - Staging Cutover Rehearsal records first real MCP probes, OAuth and token gates, fail-closed behavior, support packet fields, retry branches, and 48-hour promotion checks.
 - Website Atlas covers global header, docs subnav, footer groups, production access page, launch blog, rendered-page crawl evidence, page modules, CTAs, resource links, and legal links.
 - Swiggy Builders Page Mesh Auditor fetches every non-external Website Atlas page live and reconciles page reachability, anchor counts, module signals, CTA matches, and safe-origin drift.
+- Swiggy Builders Module Intelligence Center maps each Website Atlas module into owner, product promise, proof links, route optimization, risk boundary, module journeys, and external gates.
 - CTA Live Audit probes official Builders/docs click targets, keeps form/email/legal CTAs manual, and fails smoke on unsafe or blocked CTA drift.
 - Swiggy Builders Launch Story Center converts the launch blog into a reviewer-ready story, reconciles the launch-era 18+ signal with the current 35-tool docs snapshot, and packages demo journey, showcase assets, ecosystem lanes, CTA paths, and co-marketing guardrails.
 - Swiggy Operating Contract Center joins SLA, rate limits, support, versioning, changelog, and ship-to-production sources into pillars, runbooks, readiness gates, and external approval gates.

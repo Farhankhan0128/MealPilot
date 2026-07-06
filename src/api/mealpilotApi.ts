@@ -70,6 +70,7 @@ import type {
   SwiggyBenefitsActivationCenter,
   EnterprisePlatformCenterReport,
   SwiggyBuildersLaunchStoryCenterReport,
+  SwiggyBuildersModuleIntelligenceCenter,
   SwiggyBuildersPageMeshAuditor,
   SwiggyBuildersSiteParityAuditor,
   SwiggyAccessDossier,
@@ -393,6 +394,12 @@ export function fetchSwiggyBuildersPageMesh() {
 
 export function fetchSwiggyBuildersLaunchStory() {
   return requestJson<{ launchStory: SwiggyBuildersLaunchStoryCenterReport }>("/api/swiggy-builders-launch-story");
+}
+
+export function fetchSwiggyBuildersModuleIntelligence() {
+  return requestJson<{ moduleIntelligence: SwiggyBuildersModuleIntelligenceCenter }>(
+    "/api/swiggy-builders-module-intelligence",
+  );
 }
 
 export function fetchSwiggyOperatingContractCenter() {

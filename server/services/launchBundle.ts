@@ -24,6 +24,15 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
       evidence: "Maps Builders header, docs subnav, footer, page modules, CTAs, and legal/resource links.",
     },
     {
+      id: "module_intelligence",
+      label: "Swiggy Builders Module Intelligence Center",
+      path: "/api/swiggy-builders-module-intelligence",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Turns every Builders website module into owner, audience, product promise, route optimization, risk boundary, proof links, and module journeys.",
+    },
+    {
       id: "builders_launch_story",
       label: "Swiggy Builders Launch Story Center",
       path: "/api/swiggy-builders-launch-story",
@@ -817,6 +826,7 @@ function buildPhases(config: ServerConfig, latestPlan: MealPlan | undefined, art
         artifact("latest_plan"),
         artifact("staging_transcript"),
         artifact("website_atlas"),
+        artifact("module_intelligence"),
         artifact("deep_site_map"),
         artifact("developer_quickstart"),
         artifact("cta_execution"),
@@ -1026,6 +1036,7 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- Executable packet export: /api/builder-packet-export",
     "- Packet Markdown export: /api/builder-packet-export.md",
     "- Website Atlas: /api/swiggy-website-atlas",
+    "- Swiggy Builders Module Intelligence Center: /api/swiggy-builders-module-intelligence",
     "- Swiggy Builders Launch Story Center: /api/swiggy-builders-launch-story",
     "- Deep Site Map: /api/swiggy-deep-site-map",
     "- Developer Quickstart Workbench: /api/swiggy-developer-quickstart",

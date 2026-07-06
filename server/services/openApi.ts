@@ -353,6 +353,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-builders-module-intelligence": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Builders Module Intelligence Center for page-module product readiness",
+          responses: {
+            "200": {
+              description:
+                "Every Builders website module mapped to owner, audience, official signal, product promise, Swiggy surface, MealPilot proof, route optimization, risk boundary, CTA links, module journeys, and external gates",
+            },
+          },
+        },
+      },
       "/api/swiggy-builder-intake": {
         get: {
           tags: ["Builder Access"],

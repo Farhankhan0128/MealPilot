@@ -178,6 +178,17 @@ const targetGroups = [
         "artifacts/visual-qa/builders-site-parity-card.png",
       ),
       target(
+        "module_intelligence_card",
+        "Module Intelligence card",
+        "/",
+        ".module-intelligence-card",
+        "desktop",
+        1280,
+        900,
+        "Module Intelligence shows page-module owners, readiness gates, journeys, route optimization, and proof links.",
+        "artifacts/visual-qa/module-intelligence-card.png",
+      ),
+      target(
         "builders_page_mesh_card",
         "Builders Page Mesh card",
         "/",

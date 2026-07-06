@@ -847,6 +847,73 @@ export interface SwiggyBuildersSiteParityAuditor {
   externalGates: string[];
 }
 
+export type SwiggyBuildersModuleIntelligenceStatus = "ready" | "watch" | "operator_gate" | "swiggy_gate";
+
+export interface SwiggyBuildersModuleIntelligenceItem {
+  id: string;
+  pageId: string;
+  pageTitle: string;
+  title: string;
+  moduleType: SwiggyWebsiteModule["moduleType"];
+  officialSignal: string;
+  audience: SwiggyWebsitePageAtlas["primaryAudience"];
+  sourceUrl: string;
+  owner: "MealPilot" | "Operator" | "Swiggy" | "Joint";
+  status: SwiggyBuildersModuleIntelligenceStatus;
+  productPromise: string;
+  swiggySurface: string;
+  mealPilotSurface: string;
+  routeOptimization: string;
+  riskBoundary: string;
+  ctaIds: string[];
+  proofLinks: string[];
+  nextAction: string;
+}
+
+export interface SwiggyBuildersModuleJourney {
+  id: string;
+  label: string;
+  moduleIds: string[];
+  promise: string;
+  proofLinks: string[];
+  status: SwiggyBuildersModuleIntelligenceStatus;
+  nextAction: string;
+}
+
+export interface SwiggyBuildersModulePageGroup {
+  pageId: string;
+  title: string;
+  sourceUrl: string;
+  modules: number;
+  ready: number;
+  operatorGates: number;
+  swiggyGates: number;
+  proofLinks: string[];
+}
+
+export interface SwiggyBuildersModuleIntelligenceCenter {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  totals: {
+    pages: number;
+    modules: number;
+    ready: number;
+    watch: number;
+    operatorGates: number;
+    swiggyGates: number;
+    ctaMappedModules: number;
+    proofLinks: number;
+    journeys: number;
+  };
+  modules: SwiggyBuildersModuleIntelligenceItem[];
+  pageGroups: SwiggyBuildersModulePageGroup[];
+  journeys: SwiggyBuildersModuleJourney[];
+  operatorRunbook: Array<{ sequence: number; label: string; action: string; proofLinks: string[] }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type SwiggyBuildersPageMeshStatus = "covered" | "watch" | "blocked";
 
 export interface SwiggyBuildersPageMeshRow {

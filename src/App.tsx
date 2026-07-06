@@ -114,6 +114,7 @@ import {
   fetchSwiggyBuildersSiteParity,
   fetchSwiggyBuilderIntake,
   fetchSwiggyBuildersLaunchStory,
+  fetchSwiggyBuildersModuleIntelligence,
   fetchSwiggyBenefitsActivationCenter,
   fetchSwiggyOperatingContractCenter,
   fetchSwiggyFaqPolicyCenter,
@@ -246,6 +247,7 @@ import type {
   SwiggyAccessDossier,
   SwiggyAccessEvidenceMatrix,
   SwiggyBuildersLaunchStoryCenterReport,
+  SwiggyBuildersModuleIntelligenceCenter,
   SwiggyBuildersPageMeshAuditor,
   SwiggyBuildersSiteParityAuditor,
   SwiggyBuilderIntakeCommandCenter,
@@ -460,6 +462,7 @@ function App() {
   const [buildersSiteParity, setBuildersSiteParity] = useState<SwiggyBuildersSiteParityAuditor | null>(null);
   const [buildersPageMesh, setBuildersPageMesh] = useState<SwiggyBuildersPageMeshAuditor | null>(null);
   const [buildersLaunchStory, setBuildersLaunchStory] = useState<SwiggyBuildersLaunchStoryCenterReport | null>(null);
+  const [moduleIntelligence, setModuleIntelligence] = useState<SwiggyBuildersModuleIntelligenceCenter | null>(null);
   const [operatingContract, setOperatingContract] = useState<SwiggyOperatingContractCenterReport | null>(null);
   const [swiggyDeepSiteMap, setSwiggyDeepSiteMap] = useState<SwiggyDeepSiteMap | null>(null);
   const [swiggyBuilderIntake, setSwiggyBuilderIntake] = useState<SwiggyBuilderIntakeCommandCenter | null>(null);
@@ -671,6 +674,7 @@ function App() {
       buildersSiteParityResponse,
       buildersPageMeshResponse,
       buildersLaunchStoryResponse,
+      moduleIntelligenceResponse,
       operatingContractResponse,
       deepSiteMapResponse,
       builderIntakeResponse,
@@ -783,6 +787,7 @@ function App() {
       fetchSwiggyBuildersSiteParity(),
       fetchSwiggyBuildersPageMesh(),
       fetchSwiggyBuildersLaunchStory(),
+      fetchSwiggyBuildersModuleIntelligence(),
       fetchSwiggyOperatingContractCenter(),
       fetchSwiggyDeepSiteMap(),
       fetchSwiggyBuilderIntake(),
@@ -896,6 +901,7 @@ function App() {
     setBuildersSiteParity(buildersSiteParityResponse.buildersSiteParity);
     setBuildersPageMesh(buildersPageMeshResponse.buildersPageMesh);
     setBuildersLaunchStory(buildersLaunchStoryResponse.launchStory);
+    setModuleIntelligence(moduleIntelligenceResponse.moduleIntelligence);
     setOperatingContract(operatingContractResponse.operatingContract);
     setSwiggyDeepSiteMap(deepSiteMapResponse.deepSiteMap);
     setSwiggyBuilderIntake(builderIntakeResponse.intake);
@@ -1012,6 +1018,7 @@ function App() {
       buildersSiteParityResponse,
       buildersPageMeshResponse,
       buildersLaunchStoryResponse,
+      moduleIntelligenceResponse,
       operatingContractResponse,
       deepSiteMapResponse,
       builderIntakeResponse,
@@ -1121,6 +1128,7 @@ function App() {
       fetchSwiggyBuildersSiteParity(),
       fetchSwiggyBuildersPageMesh(),
       fetchSwiggyBuildersLaunchStory(),
+      fetchSwiggyBuildersModuleIntelligence(),
       fetchSwiggyOperatingContractCenter(),
       fetchSwiggyDeepSiteMap(),
       fetchSwiggyBuilderIntake(),
@@ -1230,6 +1238,7 @@ function App() {
     setBuildersSiteParity(buildersSiteParityResponse.buildersSiteParity);
     setBuildersPageMesh(buildersPageMeshResponse.buildersPageMesh);
     setBuildersLaunchStory(buildersLaunchStoryResponse.launchStory);
+    setModuleIntelligence(moduleIntelligenceResponse.moduleIntelligence);
     setOperatingContract(operatingContractResponse.operatingContract);
     setSwiggyDeepSiteMap(deepSiteMapResponse.deepSiteMap);
     setSwiggyBuilderIntake(builderIntakeResponse.intake);
@@ -1914,6 +1923,7 @@ function App() {
                 buildersSiteParity={buildersSiteParity}
                 buildersPageMesh={buildersPageMesh}
                 buildersLaunchStory={buildersLaunchStory}
+                moduleIntelligence={moduleIntelligence}
                 operatingContract={operatingContract}
                 deepSiteMap={swiggyDeepSiteMap}
                 builderIntake={swiggyBuilderIntake}
@@ -2513,6 +2523,7 @@ function LaunchCenterPanel({
   buildersSiteParity,
   buildersPageMesh,
   buildersLaunchStory,
+  moduleIntelligence,
   operatingContract,
   deepSiteMap,
   builderIntake,
@@ -2595,6 +2606,7 @@ function LaunchCenterPanel({
   buildersSiteParity: SwiggyBuildersSiteParityAuditor | null;
   buildersPageMesh: SwiggyBuildersPageMeshAuditor | null;
   buildersLaunchStory: SwiggyBuildersLaunchStoryCenterReport | null;
+  moduleIntelligence: SwiggyBuildersModuleIntelligenceCenter | null;
   operatingContract: SwiggyOperatingContractCenterReport | null;
   deepSiteMap: SwiggyDeepSiteMap | null;
   builderIntake: SwiggyBuilderIntakeCommandCenter | null;
@@ -3506,6 +3518,57 @@ function LaunchCenterPanel({
               </li>
             ))}
           </ul>
+        </article>
+
+        <article className="module-intelligence-card">
+          <div className="mini-heading">
+            <Grid3X3 aria-hidden="true" />
+            <strong>Module Intelligence</strong>
+          </div>
+          <span>
+            {moduleIntelligence
+              ? `${moduleIntelligence.score}/100, ${moduleIntelligence.totals.ready}/${moduleIntelligence.totals.modules} modules ready`
+              : "Turning every Builders module into product, risk, and proof intelligence"}
+          </span>
+          <div className="module-intelligence-grid">
+            <div>
+              <strong>{moduleIntelligence?.totals.pages ?? 0}</strong>
+              <span>Pages</span>
+            </div>
+            <div>
+              <strong>{moduleIntelligence?.totals.operatorGates ?? 0}</strong>
+              <span>Operator</span>
+            </div>
+            <div>
+              <strong>{moduleIntelligence?.totals.swiggyGates ?? 0}</strong>
+              <span>Swiggy</span>
+            </div>
+            <div>
+              <strong>{moduleIntelligence?.totals.journeys ?? 0}</strong>
+              <span>Journeys</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(moduleIntelligence?.pageGroups ?? []).slice(0, 5).map((group) => (
+              <li key={group.pageId} data-status={group.swiggyGates > 0 ? "blocked" : group.operatorGates > 0 ? "watch" : "healthy"}>
+                <span>{group.title}</span>
+                <strong>
+                  {group.ready}/{group.modules}
+                </strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-intelligence-actions" aria-label="Module intelligence links">
+            <a href="/api/swiggy-builders-module-intelligence" target="_blank" rel="noreferrer">
+              Module API
+            </a>
+            <a href="/api/swiggy-deep-site-map" target="_blank" rel="noreferrer">
+              Deep Map
+            </a>
+            <a href="https://mcp.swiggy.com/builders/" target="_blank" rel="noreferrer">
+              Builders
+            </a>
+          </div>
         </article>
 
         <article className="builders-site-parity-card">
