@@ -124,6 +124,8 @@ The verifier also validates `/api/swiggy-cancellation-care-center` for Food and 
 
 The verifier also validates `/api/swiggy-dineout-precision-center` for the Dineout free-booking and bill-payment split: `book_table` only follows free slot evidence, `create_cart` bill payment uses `cartType: "DINEOUT"`, paid deals are blocked from the free booking path, `get_booking_status` guards retries, and live payment proof stays credential-gated.
 
+The verifier also validates `/api/swiggy-visual-dish-capture` and `/api/swiggy-visual-dish-capture/analyze` for camera-to-commerce routing: dish photos, menu screenshots, pantry photos, and chat images resolve to confirmed labels before Food, Instamart, Dineout, or combined route plans; raw images are not retained; and vision, staging, and confirmation gates remain visible.
+
 The verifier also validates `/api/swiggy-auth-lifecycle-center` for Swiggy OAuth token lifecycle: PKCE S256, 120-second single-use codes, 5-day access tokens, no refresh-token assumption in v1.0, 401/419/403 recovery, exact redirect allowlisting, delegated per-user token boundaries, logout handling, secure storage, and no-token logging.
 
 The verifier also validates `/api/swiggy-source-intelligence` for Builders website inventory, CTA coverage, `llms` and markdown documentation counts, 35-tool reference alignment, drift signals, external gates, and build-queue readiness.
@@ -331,6 +333,8 @@ Production should use an HTTPS redirect URI with exact-match allowlisting.
 
 `/api/channel-multimodal-studio` shows the developer-page build lanes as concrete channel contracts: voice ordering, auto-restock, group ordering, dietary planning, reservation planning, and screenshot-to-order, with Swiggy toolchains, local execution packets, response rules, confirmation gates, telemetry contracts, and Slack/Teams, mobile camera, vision/OCR, and enterprise gates.
 
+`/api/swiggy-visual-dish-capture` is the productized screenshot-to-order proof surface. It maps dish photos, menu screenshots, pantry photos, and chat images into safe Food menu search, Instamart ingredient rescue, Dineout discovery, or combined evening routes; `/api/swiggy-visual-dish-capture/analyze` returns deterministic label, confidence, route, confirmation, telemetry, and no-raw-image-retention evidence for reviewer smoke tests.
+
 `/api/nutrition-budget-intelligence` shows premium nutrition and budget planning routes: protein-per-rupee Food search, COD-safe coupons, Instamart go-to and product search, group-budget allocation, Dineout evening balance, and camera-label macro planning with no medical claims.
 
 `/api/household-preference-graph` shows consent-aware personalization routes: Food active-order taste signals, Instamart go-to items and order history, Dineout saved-location memory, household member weights, pantry forecasts, failure memory, retention rules, and DPDP controls.
@@ -412,6 +416,7 @@ The test suite checks that:
 - Staging Transcript Export converts one plan session into Swiggy-ready JSONL, Markdown replay, redaction manifest, support envelope, certification-wave mapping, and non-blind retry evidence.
 - MCP Capability Registry maps `mcp:tools`, `mcp:resources`, `mcp:prompts`, OAuth metadata, widget registry, static metadata, prompt templates, and external gates.
 - Resource & Prompt Studio exercises all local `resources/list`, `resources/read`, `prompts/list`, and `prompts/get` paths across Food, Instamart, and Dineout.
+- Swiggy Visual Dish Capture Center validates the camera-to-commerce lane with no raw-image retention, user-confirmed labels, Food/Instamart/Dineout route plans, and vision or staging gates before live execution.
 - Local MCP JSON-RPC supports `resources/list`, `resources/read`, `prompts/list`, and `prompts/get` for review-time evidence before live Swiggy credentials.
 - Submission Console consolidates developer/enterprise access targets, official access requirements, prepared form fields, required attachments, packet order, demo-video gate, runbook steps, blockers, and builders@swiggy.in drafts.
 - Access Submission Studio validates official CTA targets, copy blocks, required proof attachments, browser runbook, generated mailto handoff, and non-auto-submission gates.

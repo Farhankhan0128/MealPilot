@@ -105,6 +105,15 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
         "Turns Swiggy's developer-page ideas into voice, web chat, Slack/Teams, mobile camera, enterprise, and screenshot-to-order contracts with MCP toolchains and gates.",
     },
     {
+      id: "visual_dish_capture",
+      label: "Swiggy Visual Dish Capture Center",
+      path: "/api/swiggy-visual-dish-capture",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Productizes screenshot-to-order with Food menu matches, Instamart ingredient rescue, Dineout place discovery, sample capture analysis, privacy guardrails, and confirmation gates.",
+    },
+    {
       id: "nutrition_budget_intelligence",
       label: "Nutrition & Budget Intelligence",
       path: "/api/nutrition-budget-intelligence",
@@ -689,6 +698,7 @@ function buildPhases(config: ServerConfig, latestPlan: MealPlan | undefined, art
         artifact("faq_policy"),
         artifact("growth_partnership"),
         artifact("channel_multimodal_studio"),
+        artifact("visual_dish_capture"),
         artifact("nutrition_budget_intelligence"),
         artifact("household_preference_graph"),
         artifact("guest_collaboration_calendar"),
@@ -891,6 +901,7 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- FAQ & Policy Center: /api/swiggy-faq-policy",
     "- Growth Partnership Center: /api/swiggy-growth-partnership",
     "- Channel & Multimodal Studio: /api/channel-multimodal-studio",
+    "- Swiggy Visual Dish Capture Center: /api/swiggy-visual-dish-capture",
     "- Nutrition & Budget Intelligence: /api/nutrition-budget-intelligence",
     "- Household Preference Graph: /api/household-preference-graph",
     "- Guest Collaboration & Calendar Center: /api/guest-collaboration-calendar",

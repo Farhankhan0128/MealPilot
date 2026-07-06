@@ -29,6 +29,7 @@ flowchart LR
   API --> Support["Support Bridge"]
   API --> Errors["Error Intelligence"]
   API --> ConfirmCmd["Confirmation Command Center"]
+  API --> DishCapture["Visual Dish Capture"]
   Mock --> Food["Swiggy MCP shape: food"]
   Mock --> IM["Swiggy MCP shape: im"]
   Mock --> Dineout["Swiggy MCP shape: dineout"]
@@ -48,7 +49,7 @@ flowchart LR
 - Separate confirmation panels for Food, Instamart, and Dineout.
 - Simulated tracking after confirmation.
 - Pantry, group planning, reminders, privacy export/delete, and ops status panels.
-- Launch Center with MCP coverage, Journey Compiler, Access Dossier, Access Evidence Matrix, Growth Partnership Center, Channel & Multimodal Studio, Nutrition & Budget Intelligence, Household Preference Graph, Guest Collaboration & Calendar Center, Luxury Experience Workspace, Reviewer Artifact Vault, Visual QA Center, Premium Use Case Studio, Staging Cutover Rehearsal, Swiggy Staging Credential Drill Center, Staging Certification Matrix, Brand Compliance Kit, Capability Registry, Resource & Prompt Studio, Tool Contract Matrix, Widget Runtime Center, Commercial Action Guard, Website Atlas with access-page and launch-blog coverage, Builders Launch Story Center, Docs Coverage, Docs Twin Explorer, Upstream Watch, Source Intelligence, Deep Site Map, Developer Quickstart, CTA Execution, Innovation Radar, Tool Lab, Credential Cockpit, Support Bridge, chat/voice response contracts, go-live checks, observability metrics, rollout plan, and support report generation.
+- Launch Center with MCP coverage, Journey Compiler, Access Dossier, Access Evidence Matrix, Growth Partnership Center, Channel & Multimodal Studio, Visual Dish Capture Center, Nutrition & Budget Intelligence, Household Preference Graph, Guest Collaboration & Calendar Center, Luxury Experience Workspace, Reviewer Artifact Vault, Visual QA Center, Premium Use Case Studio, Staging Cutover Rehearsal, Swiggy Staging Credential Drill Center, Staging Certification Matrix, Brand Compliance Kit, Capability Registry, Resource & Prompt Studio, Tool Contract Matrix, Widget Runtime Center, Commercial Action Guard, Website Atlas with access-page and launch-blog coverage, Builders Launch Story Center, Docs Coverage, Docs Twin Explorer, Upstream Watch, Source Intelligence, Deep Site Map, Developer Quickstart, CTA Execution, Innovation Radar, Tool Lab, Credential Cockpit, Support Bridge, chat/voice response contracts, go-live checks, observability metrics, rollout plan, and support report generation.
 - Demo Studio with cart preflight checks, offer opportunities, MCP replay transcripts, staging transcript export, demo progress, and submission readiness.
 - Production Evidence panel with Swiggy widget contracts, rate-limit budgets, version/deprecation monitoring, compliance controls, Source Intelligence, Deep Site Map, Developer Quickstart, CTA Execution, and Innovation Radar artifact links, Data Governance Center, Production Launch Bundle, Error Intelligence, Resilience Lab drills, Evaluation Lab persona QA, and reviewer proof score.
 - No checkout, order, or booking call is hidden inside a generic "continue" button.
@@ -90,6 +91,7 @@ Implementation:
 - Exposes `/api/swiggy-faq-policy` as the FAQ and policy coverage center for homepage, developer, enterprise, access-guideline, footer-resource, allowed/restricted/prohibited, operating-principle, legal, and support-contact signals.
 - Exposes `/api/swiggy-growth-partnership` as the launch-growth layer for get-noticed, hiring, co-branding, direct support, co-marketing, analytics, strategic guidance, experiments, metrics, proof assets, and partner asks.
 - Exposes `/api/channel-multimodal-studio` as the developer-lane layer for voice, auto-restock, group bot, dietary planner, reservation, and screenshot-to-order builds, including local execution packets with route plans, response rules, confirmation gates, and telemetry contracts.
+- Exposes `/api/swiggy-visual-dish-capture` and `/api/swiggy-visual-dish-capture/analyze` as the productized visual capture layer for dish photos, menu screenshots, pantry photos, and chat images, with label confirmation, no raw-image retention, Food/Instamart/Dineout route plans, telemetry, and vision or staging gates.
 - Exposes `/api/nutrition-budget-intelligence` as the protein-per-rupee, coupon-safe cart, pantry-gap, group-budget, and Dineout balance layer for premium nutrition planning.
 - Exposes `/api/household-preference-graph` as the consented personalization layer for Food active orders, Instamart go-to items/order history, Dineout saved-location signals, household weights, forecasts, and retention rules.
 - Exposes `/api/guest-collaboration-calendar` as the group planning layer for guest votes, occasion templates, Dineout-first date nights, Food reminders, Instamart prep, calendar/share handoffs, and Slack/Teams gates.
@@ -172,6 +174,7 @@ Implementation:
 - `server/services/dataGovernance.ts`
 - `server/services/capabilityRegistry.ts`
 - `server/services/channelMultimodalStudio.ts`
+- `server/services/visualDishCapture.ts`
 - `server/services/nutritionBudgetIntelligence.ts`
 - `server/services/householdPreferenceGraph.ts`
 - `server/services/guestCollaborationCenter.ts`

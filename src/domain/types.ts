@@ -1140,6 +1140,85 @@ export interface SwiggyChannelMultimodalStudio {
   externalGates: string[];
 }
 
+export type SwiggyVisualDishCaptureStatus = "ready" | "needs_confirmation" | "vision_gate" | "staging_gate";
+export type SwiggyVisualDishCaptureIntent = "dish_photo" | "menu_screenshot" | "pantry_photo" | "chat_image";
+
+export interface SwiggyVisualDishRoute {
+  id: string;
+  label: string;
+  server: SwiggyServer | "combined";
+  status: SwiggyVisualDishCaptureStatus;
+  swiggyTools: string[];
+  userConfirmation: string;
+  output: string;
+  fallback: string;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyVisualDishGuardrail {
+  id: string;
+  label: string;
+  status: SwiggyVisualDishCaptureStatus;
+  policy: string;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyVisualDishSampleCapture {
+  id: string;
+  intent: SwiggyVisualDishCaptureIntent;
+  inputHint: string;
+  detectedLabel: string;
+  confidence: number;
+  selectedRoute: string;
+  status: SwiggyVisualDishCaptureStatus;
+}
+
+export interface SwiggyVisualDishCaptureAnalysis {
+  generatedAt: string;
+  requestId: string;
+  mode: "mock" | "staging" | "production";
+  input: {
+    intent: SwiggyVisualDishCaptureIntent;
+    imageName?: string;
+    caption: string;
+    city: string;
+    rawImageRetained: false;
+  };
+  detected: {
+    label: string;
+    cuisine: string;
+    confidence: number;
+    alternatives: string[];
+    requiresUserConfirmation: boolean;
+  };
+  swiggyRoutes: SwiggyVisualDishRoute[];
+  selectedRouteId: string;
+  nextActions: string[];
+  telemetry: Array<{ field: string; value: string; redaction: string }>;
+  assertions: string[];
+}
+
+export interface SwiggyVisualDishCaptureCenter {
+  generatedAt: string;
+  score: number;
+  mode: "mock" | "staging" | "production";
+  officialSources: string[];
+  totals: {
+    routes: number;
+    readyRoutes: number;
+    guardrails: number;
+    readyGuardrails: number;
+    sampleCaptures: number;
+    externalGates: number;
+  };
+  routes: SwiggyVisualDishRoute[];
+  guardrails: SwiggyVisualDishGuardrail[];
+  sampleCaptures: SwiggyVisualDishSampleCapture[];
+  operatorRunbook: Array<{ sequence: number; label: string; command: string; proves: string }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type NutritionBudgetStatus = "ready" | "needs_live_data" | "external_gate";
 
 export interface NutritionBudgetTarget {

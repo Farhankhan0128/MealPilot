@@ -133,6 +133,7 @@ import {
   fetchSwiggyLocationTrust,
   fetchSwiggyOfferIntelligence,
   fetchSwiggyOrderLifecycle,
+  fetchSwiggyVisualDishCapture,
   fetchSwiggyRouteOptimizer,
   fetchTrafficReadinessPlan,
   fetchTracking,
@@ -249,6 +250,7 @@ import type {
   SwiggyWebsiteAtlas,
   SwiggyUpstreamWatchReport,
   SwiggyWidgetRuntimeReport,
+  SwiggyVisualDishCaptureCenter,
   SwiggyRouteOptimizationReport,
   SwiggyServer,
   TrafficReadinessPlan,
@@ -408,6 +410,7 @@ function App() {
   const [swiggyGrowthPartnership, setSwiggyGrowthPartnership] = useState<SwiggyGrowthPartnershipCenter | null>(null);
   const [channelMultimodalStudio, setChannelMultimodalStudio] =
     useState<SwiggyChannelMultimodalStudio | null>(null);
+  const [visualDishCapture, setVisualDishCapture] = useState<SwiggyVisualDishCaptureCenter | null>(null);
   const [nutritionBudget, setNutritionBudget] = useState<NutritionBudgetIntelligence | null>(null);
   const [householdPreference, setHouseholdPreference] = useState<HouseholdPreferenceGraph | null>(null);
   const [guestCollaboration, setGuestCollaboration] = useState<GuestCollaborationCenter | null>(null);
@@ -591,6 +594,7 @@ function App() {
       faqPolicyResponse,
       growthPartnershipResponse,
       channelMultimodalResponse,
+      visualDishCaptureResponse,
       nutritionBudgetResponse,
       householdPreferenceResponse,
       guestCollaborationResponse,
@@ -676,6 +680,7 @@ function App() {
       fetchSwiggyFaqPolicyCenter(),
       fetchSwiggyGrowthPartnershipCenter(),
       fetchChannelMultimodalStudio(),
+      fetchSwiggyVisualDishCapture(),
       fetchNutritionBudgetIntelligence(),
       fetchHouseholdPreferenceGraph(),
       fetchGuestCollaborationCenter(),
@@ -762,6 +767,7 @@ function App() {
     setSwiggyFaqPolicy(faqPolicyResponse.faqPolicy);
     setSwiggyGrowthPartnership(growthPartnershipResponse.growthPartnership);
     setChannelMultimodalStudio(channelMultimodalResponse.channelMultimodalStudio);
+    setVisualDishCapture(visualDishCaptureResponse.visualDishCapture);
     setNutritionBudget(nutritionBudgetResponse.nutritionBudget);
     setHouseholdPreference(householdPreferenceResponse.householdPreference);
     setGuestCollaboration(guestCollaborationResponse.guestCollaboration);
@@ -851,6 +857,7 @@ function App() {
       faqPolicyResponse,
       growthPartnershipResponse,
       channelMultimodalResponse,
+      visualDishCaptureResponse,
       nutritionBudgetResponse,
       householdPreferenceResponse,
       guestCollaborationResponse,
@@ -933,6 +940,7 @@ function App() {
       fetchSwiggyFaqPolicyCenter(),
       fetchSwiggyGrowthPartnershipCenter(),
       fetchChannelMultimodalStudio(),
+      fetchSwiggyVisualDishCapture(),
       fetchNutritionBudgetIntelligence(),
       fetchHouseholdPreferenceGraph(),
       fetchGuestCollaborationCenter(),
@@ -1015,6 +1023,7 @@ function App() {
     setSwiggyFaqPolicy(faqPolicyResponse.faqPolicy);
     setSwiggyGrowthPartnership(growthPartnershipResponse.growthPartnership);
     setChannelMultimodalStudio(channelMultimodalResponse.channelMultimodalStudio);
+    setVisualDishCapture(visualDishCaptureResponse.visualDishCapture);
     setNutritionBudget(nutritionBudgetResponse.nutritionBudget);
     setHouseholdPreference(householdPreferenceResponse.householdPreference);
     setGuestCollaboration(guestCollaborationResponse.guestCollaboration);
@@ -1671,6 +1680,7 @@ function App() {
                 faqPolicy={swiggyFaqPolicy}
                 growthPartnership={swiggyGrowthPartnership}
                 channelMultimodalStudio={channelMultimodalStudio}
+                visualDishCapture={visualDishCapture}
                 nutritionBudget={nutritionBudget}
                 householdPreference={householdPreference}
                 guestCollaboration={guestCollaboration}
@@ -2243,6 +2253,7 @@ function LaunchCenterPanel({
   faqPolicy,
   growthPartnership,
   channelMultimodalStudio,
+  visualDishCapture,
   nutritionBudget,
   householdPreference,
   guestCollaboration,
@@ -2299,6 +2310,7 @@ function LaunchCenterPanel({
   faqPolicy: SwiggyFaqPolicyCenter | null;
   growthPartnership: SwiggyGrowthPartnershipCenter | null;
   channelMultimodalStudio: SwiggyChannelMultimodalStudio | null;
+  visualDishCapture: SwiggyVisualDishCaptureCenter | null;
   nutritionBudget: NutritionBudgetIntelligence | null;
   householdPreference: HouseholdPreferenceGraph | null;
   guestCollaboration: GuestCollaborationCenter | null;
@@ -3341,6 +3353,50 @@ function LaunchCenterPanel({
               </li>
             ))}
           </ul>
+        </article>
+
+        <article className="visual-dish-capture-card">
+          <div className="mini-heading">
+            <Camera aria-hidden="true" />
+            <strong>Visual Dish Capture</strong>
+          </div>
+          <span>
+            {visualDishCapture
+              ? `${visualDishCapture.score}/100, ${visualDishCapture.totals.readyRoutes}/${visualDishCapture.totals.routes} routes safe`
+              : "Turning dish photos into safe Swiggy route plans"}
+          </span>
+          <div className="visual-dish-capture-grid">
+            <div>
+              <strong>{visualDishCapture?.totals.sampleCaptures ?? 0}</strong>
+              <span>Samples</span>
+            </div>
+            <div>
+              <strong>
+                {visualDishCapture?.totals.readyGuardrails ?? 0}/{visualDishCapture?.totals.guardrails ?? 0}
+              </strong>
+              <span>Guards</span>
+            </div>
+            <div>
+              <strong>{visualDishCapture?.totals.externalGates ?? 0}</strong>
+              <span>Gates</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(visualDishCapture?.routes ?? []).slice(0, 4).map((routeItem) => (
+              <li key={routeItem.id} data-status={routeItem.status === "ready" ? "healthy" : "watch"}>
+                <span>{routeItem.label}</span>
+                <strong>{routeItem.server === "combined" ? "Combined" : serverLabel(routeItem.server)}</strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-links">
+            <a href="/api/swiggy-visual-dish-capture" target="_blank" rel="noreferrer">
+              Capture API
+            </a>
+            <a href="https://mcp.swiggy.com/builders/developers/" target="_blank" rel="noreferrer">
+              Developer lanes
+            </a>
+          </div>
         </article>
 
         <article className="nutrition-budget-card">

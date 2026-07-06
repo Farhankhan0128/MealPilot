@@ -119,6 +119,7 @@ import { buildSloIncidentCommandCenter } from "./services/sloIncidentCommand.js"
 import { buildSwiggySourceIntelligence } from "./services/sourceIntelligence.js";
 import { buildSwiggyUpstreamWatch } from "./services/upstreamWatch.js";
 import { buildVisualQaCenter } from "./services/visualQaCenter.js";
+import { analyzeSwiggyVisualDishCapture, buildSwiggyVisualDishCaptureCenter } from "./services/visualDishCapture.js";
 import { buildSwiggyWebsiteAtlas } from "./services/websiteAtlas.js";
 import { createRuntimeTelemetry, type RuntimeTelemetryRecorder } from "./services/runtimeTelemetry.js";
 import { createMemorySessionStore, type SessionStore } from "./store/sessionStore.js";
@@ -194,6 +195,13 @@ const accessSubmissionStateSchema = z.object({
   formSubmittedAt: z.string().trim().optional(),
   handoffEmailSentAt: z.string().trim().optional(),
   notes: z.string().trim().optional(),
+});
+
+const visualDishAnalyzeSchema = z.object({
+  intent: z.enum(["dish_photo", "menu_screenshot", "pantry_photo", "chat_image"]),
+  caption: z.string().trim().min(3).max(240),
+  city: z.enum(["Bengaluru", "Delhi NCR", "Mumbai"]),
+  imageName: z.string().trim().max(120).optional(),
 });
 
 const mcpServerSchema = z.enum(["food", "instamart", "dineout"]);
@@ -689,6 +697,20 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/channel-multimodal-studio", (_req, res) => {
     res.json({ channelMultimodalStudio: buildSwiggyChannelMultimodalStudio() });
+  });
+
+  app.get("/api/swiggy-visual-dish-capture", (_req, res) => {
+    res.json({ visualDishCapture: buildSwiggyVisualDishCaptureCenter(config) });
+  });
+
+  app.post("/api/swiggy-visual-dish-capture/analyze", (req, res) => {
+    const body = visualDishAnalyzeSchema.parse(req.body);
+    res.json({
+      analysis: analyzeSwiggyVisualDishCapture({
+        config,
+        ...body,
+      }),
+    });
   });
 
   app.get("/api/nutrition-budget-intelligence", (_req, res) => {

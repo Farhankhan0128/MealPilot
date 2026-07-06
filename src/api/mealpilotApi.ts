@@ -97,6 +97,9 @@ import type {
   SwiggyUpstreamWatchReport,
   SwiggyWebsiteAtlas,
   SwiggyWidgetRuntimeReport,
+  SwiggyVisualDishCaptureAnalysis,
+  SwiggyVisualDishCaptureCenter,
+  SwiggyVisualDishCaptureIntent,
   TrackingEvent,
   UserPlanningRequest,
   UserProfile,
@@ -318,6 +321,22 @@ export function fetchSwiggyGrowthPartnershipCenter() {
 
 export function fetchChannelMultimodalStudio() {
   return requestJson<{ channelMultimodalStudio: SwiggyChannelMultimodalStudio }>("/api/channel-multimodal-studio");
+}
+
+export function fetchSwiggyVisualDishCapture() {
+  return requestJson<{ visualDishCapture: SwiggyVisualDishCaptureCenter }>("/api/swiggy-visual-dish-capture");
+}
+
+export function analyzeSwiggyVisualDishCapture(input: {
+  intent: SwiggyVisualDishCaptureIntent;
+  caption: string;
+  city: "Bengaluru" | "Delhi NCR" | "Mumbai";
+  imageName?: string;
+}) {
+  return requestJson<{ analysis: SwiggyVisualDishCaptureAnalysis }>("/api/swiggy-visual-dish-capture/analyze", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
 }
 
 export function fetchNutritionBudgetIntelligence() {

@@ -115,6 +115,11 @@ assert(
   "OpenAPI channel and multimodal studio contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-visual-dish-capture"].get.summary.includes("Visual Dish Capture") &&
+    openApi.paths["/api/swiggy-visual-dish-capture/analyze"].post.summary.includes("visual dish"),
+  "OpenAPI visual dish capture contract is missing",
+);
+assert(
   openApi.paths["/api/nutrition-budget-intelligence"].get.summary.includes("Nutrition and Budget"),
   "OpenAPI nutrition and budget intelligence contract is missing",
 );
@@ -669,6 +674,50 @@ assert(
   "channel and multimodal vision gate is missing",
 );
 
+const visualDishCapture = await request("/api/swiggy-visual-dish-capture");
+assert(visualDishCapture.visualDishCapture.score >= 78, "visual dish capture score is below target");
+assert(
+  visualDishCapture.visualDishCapture.totals.routes === 4 &&
+    visualDishCapture.visualDishCapture.totals.readyRoutes === 4 &&
+    visualDishCapture.visualDishCapture.totals.guardrails === 5 &&
+    visualDishCapture.visualDishCapture.totals.readyGuardrails === 3 &&
+    visualDishCapture.visualDishCapture.totals.sampleCaptures === 3,
+  "visual dish capture totals are incomplete",
+);
+assert(
+  ["food_menu_match", "instamart_ingredient_rescue", "dineout_place_discovery", "combined_craving_to_evening"].every((id) =>
+    visualDishCapture.visualDishCapture.routes.some((route) => route.id === id),
+  ),
+  "visual dish capture routes are incomplete",
+);
+assert(
+  visualDishCapture.visualDishCapture.guardrails.some(
+    (guard) => guard.id === "no_raw_image_retention" && guard.policy.includes("raw image bytes"),
+  ),
+  "visual dish capture raw-image guardrail is missing",
+);
+const visualDishAnalysis = await request("/api/swiggy-visual-dish-capture/analyze", {
+  method: "POST",
+  body: JSON.stringify({
+    intent: "dish_photo",
+    caption: "smoky paneer tikka with chutney",
+    city: "Bengaluru",
+    imageName: "paneer-tikka.jpg",
+  }),
+});
+assert(visualDishAnalysis.analysis.input.rawImageRetained === false, "visual dish analysis retained raw image");
+assert(
+  visualDishAnalysis.analysis.detected.label === "paneer tikka" &&
+    visualDishAnalysis.analysis.detected.requiresUserConfirmation &&
+    visualDishAnalysis.analysis.selectedRouteId === "food_menu_match",
+  "visual dish analysis label or route is wrong",
+);
+assert(
+  visualDishAnalysis.analysis.swiggyRoutes.some((route) => route.swiggyTools.includes("search_menu")) &&
+    visualDishAnalysis.analysis.telemetry.some((item) => item.field === "raw_image_retained" && item.value === "false"),
+  "visual dish analysis route or telemetry is incomplete",
+);
+
 const nutritionBudget = await request("/api/nutrition-budget-intelligence");
 assert(nutritionBudget.nutritionBudget.score >= 91, "nutrition and budget intelligence score is below target");
 assert(nutritionBudget.nutritionBudget.totalTargets === 4, "nutrition and budget targets are incomplete");
@@ -1098,8 +1147,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 28, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 28, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 29, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 29, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -1177,6 +1226,12 @@ assert(
     ),
   ),
   "visual QA live signal calibration target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some((target) => target.id === "visual_dish_capture_card" && target.selector === ".visual-dish-capture-card"),
+  ),
+  "visual QA visual dish capture target is missing",
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
@@ -1270,7 +1325,7 @@ assert(
     (command) =>
       command.id === "visual_capture_harness" &&
       command.command === "npm run verify:visual" &&
-      command.expectedSignal.includes("targetCount >= 28"),
+      command.expectedSignal.includes("targetCount >= 29"),
   ),
   "visual QA Playwright command is missing",
 );
@@ -2742,6 +2797,10 @@ assert(
   "reviewer proof channel and multimodal artifact is missing",
 );
 assert(
+  proof.proof.artifacts.some((artifact) => artifact.label === "Swiggy Visual Dish Capture Center"),
+  "reviewer proof visual dish capture artifact is missing",
+);
+assert(
   proof.proof.artifacts.some((artifact) => artifact.label === "Nutrition & Budget Intelligence"),
   "reviewer proof nutrition and budget artifact is missing",
 );
@@ -3746,7 +3805,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 28, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 29, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -3760,7 +3819,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("27")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("29")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -3797,6 +3856,7 @@ assert(
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "FAQ & Policy Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Growth Partnership Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Channel & Multimodal Studio") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Visual Dish Capture Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Nutrition & Budget Intelligence") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Household Preference Graph") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Guest Collaboration & Calendar Center") &&
@@ -3914,6 +3974,10 @@ assert(
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/channel-multimodal-studio"),
   "launch bundle channel and multimodal handoff link is missing",
+);
+assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-visual-dish-capture"),
+  "launch bundle visual dish capture handoff link is missing",
 );
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/nutrition-budget-intelligence"),
@@ -4235,6 +4299,9 @@ console.log(
       channelMultimodalScore: channelMultimodal.channelMultimodalStudio.score,
       channelMultimodalLanes: channelMultimodal.channelMultimodalStudio.totalLanes,
       channelExecutionPackets: channelMultimodal.channelMultimodalStudio.totalExecutionPackets,
+      visualDishCaptureScore: visualDishCapture.visualDishCapture.score,
+      visualDishCaptureRoutes: visualDishCapture.visualDishCapture.totals.routes,
+      visualDishAnalysisRoute: visualDishAnalysis.analysis.selectedRouteId,
       nutritionBudgetScore: nutritionBudget.nutritionBudget.score,
       nutritionBudgetRoutes: nutritionBudget.nutritionBudget.totalRoutes,
       householdPreferenceScore: householdPreference.householdPreference.score,

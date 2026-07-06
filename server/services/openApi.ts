@@ -341,6 +341,30 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-visual-dish-capture": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Visual Dish Capture Center for camera-to-commerce route planning",
+          responses: {
+            "200": {
+              description:
+                "Visual dish capture routes, Food/Instamart/Dineout toolchains, sample captures, privacy guardrails, confirmation gates, and external vision/staging approvals",
+            },
+          },
+        },
+      },
+      "/api/swiggy-visual-dish-capture/analyze": {
+        post: {
+          tags: ["Commerce"],
+          summary: "Analyze a visual dish caption into safe Swiggy route plans",
+          responses: {
+            "200": {
+              description:
+                "Detected dish label, confidence, alternatives, selected Food/Instamart/Dineout route, no-raw-image-retention telemetry, and confirmation-first next actions",
+            },
+          },
+        },
+      },
       "/api/nutrition-budget-intelligence": {
         get: {
           tags: ["Builder Access"],

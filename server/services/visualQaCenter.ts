@@ -222,6 +222,17 @@ const targetGroups = [
         "artifacts/visual-qa/live-signal-calibration-card.png",
       ),
       target(
+        "visual_dish_capture_card",
+        "Visual Dish Capture card",
+        "/",
+        ".visual-dish-capture-card",
+        "desktop",
+        1280,
+        900,
+        "Visual Dish Capture shows image-to-Swiggy route plans, sample captures, guardrails, and external vision/staging gates.",
+        "artifacts/visual-qa/visual-dish-capture-card.png",
+      ),
+      target(
         "developer_quickstart_card",
         "Developer Quickstart card",
         "/",
@@ -460,7 +471,7 @@ const commands = [
     "visual_capture_harness",
     "npm run verify:visual",
     "Playwright captures every Visual QA target at desktop, tablet, and mobile sizes and writes report.json.",
-    "ok true with targetCount >= 28 and PNG files under artifacts/visual-qa.",
+    "ok true with targetCount >= 29 and PNG files under artifacts/visual-qa.",
   ),
   command(
     "desktop_capture",
