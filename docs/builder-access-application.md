@@ -113,6 +113,7 @@ Scale-up after staging:
 - Audit Ledger Center for redacted Swiggy session/tool events, support correlation, retention posture, DSR routing, and packet fields.
 - Swiggy Route Optimizer for official-source-grounded profiles, parallel read batches, cache policies, call savings, retry classes, cross-server handoffs, confirmation gates, and staging assertions.
 - Swiggy Confirmation Command Center at `/api/swiggy-confirmation-command-center` for final-commerce confirmation proof across Food `place_food_order`, Instamart `checkout`, and Dineout `book_table`, including fresh cart or slot reads, explicit user confirmation, separate approvals for combined plans, post-action status probes before retry, Swiggy-response payment/free-booking truth, and external live credential gates.
+- Swiggy Cancellation & Care Center at `/api/swiggy-cancellation-care-center` for Food and Instamart no-tool cancellation handling, official customer-care copy, Dineout booking-status recovery, `report_error` support payloads, incident email routing, and live support gates.
 - Support Bridge for official `report_error` calls across Food, Instamart, and Dineout, including toolContext identifiers, SLA routing, redaction rules, and escalation checklist.
 - SLO Incident Command Center for 99.9% uptime targets, read/write/commercial latency bands, status-page fallback, S0-S3 incident comms, 72-hour maintenance notice, and remediation evidence.
 - Error Intelligence catalogue for the current Swiggy failure envelope, message/HTTP buckets, planned symbolic codes, domain failures, retry limits, observability hooks, and user-safe recovery copy.
@@ -239,6 +240,7 @@ Email: add primary engineering email before submission.
 - Swiggy Cart Mutation Workbench: `/api/swiggy-cart-mutation-workbench`
 - Swiggy Discovery Freshness: `/api/swiggy-discovery-freshness`
 - Swiggy Confirmation Command Center: `/api/swiggy-confirmation-command-center`
+- Swiggy Cancellation & Care Center: `/api/swiggy-cancellation-care-center`
 - SLO Incident Command Center: `/api/slo-incident-command`
 - Support Bridge: `/api/support/bridge`
 - Error Intelligence: `/api/error-intelligence`

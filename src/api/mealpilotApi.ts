@@ -62,6 +62,7 @@ import type {
   SwiggyAccessDossier,
   SwiggyAccessEvidenceMatrix,
   SwiggyBuilderIntakeCommandCenter,
+  SwiggyCancellationCareCenterReport,
   SwiggyCartMutationReport,
   SwiggyChannelMultimodalStudio,
   SwiggyConfirmationCommandCenterReport,
@@ -551,6 +552,12 @@ export function fetchSwiggyDiscoveryFreshness() {
 export function fetchSwiggyConfirmationCommandCenter() {
   return requestJson<{ confirmationCommandCenter: SwiggyConfirmationCommandCenterReport }>(
     "/api/swiggy-confirmation-command-center",
+  );
+}
+
+export function fetchSwiggyCancellationCareCenter() {
+  return requestJson<{ cancellationCareCenter: SwiggyCancellationCareCenterReport }>(
+    "/api/swiggy-cancellation-care-center",
   );
 }
 

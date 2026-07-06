@@ -109,6 +109,7 @@ import {
   fetchSwiggyDocsCoverage,
   fetchSwiggyDocsTwinExplorer,
   fetchSwiggyDeepSiteMap,
+  fetchSwiggyCancellationCareCenter,
   fetchSwiggyConfirmationCommandCenter,
   fetchSwiggyDiscoveryFreshness,
   fetchSwiggyCtaExecutionCenter,
@@ -207,6 +208,7 @@ import type {
   SwiggyAccessDossier,
   SwiggyAccessEvidenceMatrix,
   SwiggyBuilderIntakeCommandCenter,
+  SwiggyCancellationCareCenterReport,
   SwiggyCartMutationReport,
   SwiggyChannelMultimodalStudio,
   SwiggyConfirmationCommandCenterReport,
@@ -459,6 +461,8 @@ function App() {
   const [discoveryFreshness, setDiscoveryFreshness] = useState<SwiggyDiscoveryFreshnessReport | null>(null);
   const [confirmationCommandCenter, setConfirmationCommandCenter] =
     useState<SwiggyConfirmationCommandCenterReport | null>(null);
+  const [cancellationCareCenter, setCancellationCareCenter] =
+    useState<SwiggyCancellationCareCenterReport | null>(null);
   const [routeOptimizer, setRouteOptimizer] = useState<SwiggyRouteOptimizationReport | null>(null);
   const [exportText, setExportText] = useState<string | null>(null);
   const [authUrl, setAuthUrl] = useState<string | null>(null);
@@ -613,6 +617,7 @@ function App() {
       cartMutationResponse,
       discoveryFreshnessResponse,
       confirmationCommandResponse,
+      cancellationCareResponse,
       routeOptimizerResponse,
     ] = await Promise.all([
       fetchPantry(),
@@ -690,6 +695,7 @@ function App() {
       fetchSwiggyCartMutationWorkbench(),
       fetchSwiggyDiscoveryFreshness(),
       fetchSwiggyConfirmationCommandCenter(),
+      fetchSwiggyCancellationCareCenter(),
       fetchSwiggyRouteOptimizer(),
     ]);
     setPantry(pantryResponse.pantry);
@@ -772,6 +778,7 @@ function App() {
     setCartMutation(cartMutationResponse.cartMutation);
     setDiscoveryFreshness(discoveryFreshnessResponse.discoveryFreshness);
     setConfirmationCommandCenter(confirmationCommandResponse.confirmationCommandCenter);
+    setCancellationCareCenter(cancellationCareResponse.cancellationCareCenter);
     setRouteOptimizer(routeOptimizerResponse.routeOptimizer);
   }
 
@@ -849,6 +856,7 @@ function App() {
       cartMutationResponse,
       discoveryFreshnessResponse,
       confirmationCommandResponse,
+      cancellationCareResponse,
       routeOptimizerResponse,
     ] = await Promise.all([
       fetchMcpCatalog(),
@@ -923,6 +931,7 @@ function App() {
       fetchSwiggyCartMutationWorkbench(),
       fetchSwiggyDiscoveryFreshness(),
       fetchSwiggyConfirmationCommandCenter(),
+      fetchSwiggyCancellationCareCenter(),
       fetchSwiggyRouteOptimizer(),
     ]);
     setMcpCatalog(catalogResponse);
@@ -1001,6 +1010,7 @@ function App() {
     setCartMutation(cartMutationResponse.cartMutation);
     setDiscoveryFreshness(discoveryFreshnessResponse.discoveryFreshness);
     setConfirmationCommandCenter(confirmationCommandResponse.confirmationCommandCenter);
+    setCancellationCareCenter(cancellationCareResponse.cancellationCareCenter);
     setRouteOptimizer(routeOptimizerResponse.routeOptimizer);
   }
 
@@ -1663,6 +1673,7 @@ function App() {
                 cartMutation={cartMutation}
                 discoveryFreshness={discoveryFreshness}
                 confirmationCommandCenter={confirmationCommandCenter}
+                cancellationCareCenter={cancellationCareCenter}
                 routeOptimizer={routeOptimizer}
                 evaluationLab={evaluationLab}
               />
@@ -4381,6 +4392,7 @@ function ProductionEvidencePanel({
   cartMutation,
   discoveryFreshness,
   confirmationCommandCenter,
+  cancellationCareCenter,
   routeOptimizer,
   evaluationLab,
 }: {
@@ -4408,6 +4420,7 @@ function ProductionEvidencePanel({
   cartMutation: SwiggyCartMutationReport | null;
   discoveryFreshness: SwiggyDiscoveryFreshnessReport | null;
   confirmationCommandCenter: SwiggyConfirmationCommandCenterReport | null;
+  cancellationCareCenter: SwiggyCancellationCareCenterReport | null;
   routeOptimizer: SwiggyRouteOptimizationReport | null;
   evaluationLab: EvaluationLab | null;
 }) {
@@ -4823,6 +4836,47 @@ function ProductionEvidencePanel({
               >
                 <span>{lane.label}</span>
                 <strong>{lane.protectedAction.replaceAll("_", " ")}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="cancellation-care-card">
+          <div className="mini-heading">
+            <LifeBuoy aria-hidden="true" />
+            <strong>Cancellation & Care</strong>
+          </div>
+          <span>
+            {cancellationCareCenter
+              ? `${cancellationCareCenter.score}/100, ${cancellationCareCenter.totals.noToolCancellationGuards} no-tool guards, ${cancellationCareCenter.customerCarePhone}`
+              : "Loading cancellation and support policy"}
+          </span>
+          <div className="cancellation-care-grid">
+            <div>
+              <strong>{cancellationCareCenter?.totals.lanes ?? 0}</strong>
+              <span>Lanes</span>
+            </div>
+            <div>
+              <strong>{cancellationCareCenter?.totals.reportErrorTools ?? 0}</strong>
+              <span>Report tools</span>
+            </div>
+            <div>
+              <strong>{cancellationCareCenter?.totals.readyControls ?? 0}</strong>
+              <span>Controls</span>
+            </div>
+            <div>
+              <strong>{cancellationCareCenter?.totals.externalGates ?? 0}</strong>
+              <span>Live gates</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(cancellationCareCenter?.lanes ?? []).slice(0, 4).map((lane) => (
+              <li
+                key={lane.id}
+                data-status={lane.status === "ready" ? "healthy" : lane.status === "external_gate" ? "blocked" : "watch"}
+              >
+                <span>{lane.label}</span>
+                <strong>{lane.server === "combined" ? "all" : serverLabel(lane.server)}</strong>
               </li>
             ))}
           </ul>

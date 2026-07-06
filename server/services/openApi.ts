@@ -219,6 +219,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-cancellation-care-center": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Cancellation and Care Center for no-tool cancellations and report_error support",
+          responses: {
+            "200": {
+              description:
+                "Cancellation and support guardrails for Food and Instamart customer-care copy, Dineout booking status, report_error toolContext, incident email routing, planned error-code gates, and live support calibration",
+            },
+          },
+        },
+      },
       "/api/mcp/backpressure-governor": {
         get: {
           tags: ["Builder Access"],

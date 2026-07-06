@@ -330,6 +330,7 @@ export function buildReviewerProof(options: {
       { label: "Swiggy Cart Mutation Workbench", path: "/api/swiggy-cart-mutation-workbench" },
       { label: "Swiggy Discovery Freshness", path: "/api/swiggy-discovery-freshness" },
       { label: "Swiggy Confirmation Command Center", path: "/api/swiggy-confirmation-command-center" },
+      { label: "Swiggy Cancellation & Care Center", path: "/api/swiggy-cancellation-care-center" },
       { label: "SLO Incident Command Center", path: "/api/slo-incident-command" },
       { label: "Data Governance Center", path: "/api/data-governance-center" },
       { label: "Enterprise Delegated Auth Center", path: "/api/enterprise-delegated-auth" },

@@ -3606,6 +3606,73 @@ export interface SwiggyConfirmationCommandCenterReport {
   externalGates: string[];
 }
 
+export type SwiggyCancellationCareStatus = "ready" | "watch" | "external_gate";
+
+export interface SwiggyCancellationCareLane {
+  id: string;
+  server: SwiggyServer | "combined";
+  label: string;
+  officialTools: string[];
+  userIntent: string;
+  allowedAction: string;
+  blockedAction: string;
+  supportCopy: string;
+  status: SwiggyCancellationCareStatus;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyCancellationCareControl {
+  id: string;
+  label: string;
+  policy: string;
+  status: SwiggyCancellationCareStatus;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyCancellationCareScenario {
+  id: string;
+  label: string;
+  trigger: string;
+  expectedDecision: string;
+  status: SwiggyCancellationCareStatus;
+}
+
+export interface SwiggyCancellationCareTelemetry {
+  field: string;
+  source: string;
+  redaction: string;
+  status: SwiggyCancellationCareStatus;
+}
+
+export interface SwiggyCancellationCareCenterReport {
+  generatedAt: string;
+  score: number;
+  mode: "mock" | "staging" | "production";
+  officialSources: string[];
+  customerCarePhone: string;
+  totals: {
+    lanes: number;
+    reportErrorTools: number;
+    readyControls: number;
+    scenarios: number;
+    noToolCancellationGuards: number;
+    externalGates: number;
+  };
+  lanes: SwiggyCancellationCareLane[];
+  controls: SwiggyCancellationCareControl[];
+  scenarios: SwiggyCancellationCareScenario[];
+  telemetry: SwiggyCancellationCareTelemetry[];
+  operatorActions: Array<{
+    id: string;
+    label: string;
+    owner: "MealPilot" | "Operator" | "Swiggy";
+    status: SwiggyCancellationCareStatus;
+    evidence: string;
+  }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export interface VersionAlert {
   id: string;
   label: string;

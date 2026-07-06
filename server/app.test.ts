@@ -111,6 +111,8 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/swiggy-discovery-freshness"].get.responses["200"].description).toContain("variant");
     expect(openApi.body.paths["/api/swiggy-confirmation-command-center"].get.summary).toContain("Confirmation Command");
     expect(openApi.body.paths["/api/swiggy-confirmation-command-center"].get.responses["200"].description).toContain("separate confirmations");
+    expect(openApi.body.paths["/api/swiggy-cancellation-care-center"].get.summary).toContain("Cancellation");
+    expect(openApi.body.paths["/api/swiggy-cancellation-care-center"].get.responses["200"].description).toContain("report_error");
     expect(openApi.body.paths["/api/slo-incident-command"].get.summary).toContain("SLO Incident");
     expect(openApi.body.paths["/api/data-governance-center"].get.summary).toContain("Data Governance");
     expect(openApi.body.paths["/api/production-launch-bundle"].get.summary).toContain("Production Launch Bundle");
@@ -899,7 +901,7 @@ describe("MealPilot API", () => {
     expect(packet.totals.formFields).toBeGreaterThanOrEqual(10);
     expect(packet.totals.requiredAttachments).toBeGreaterThanOrEqual(10);
     expect(packet.totals.launchArtifacts).toBeGreaterThanOrEqual(50);
-    expect(packet.totals.visualTargets).toBe(20);
+    expect(packet.totals.visualTargets).toBe(21);
     expect(packet.files.map((file: { id: string }) => file.id)).toEqual(
       expect.arrayContaining(["packet_json", "packet_markdown", "visual_report", "production_summary"]),
     );
@@ -911,7 +913,7 @@ describe("MealPilot API", () => {
     ).toBe(true);
     expect(
       packet.commands.some(
-        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("20"),
+        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("21"),
       ),
     ).toBe(true);
     expect(packet.copyBlocks.formFields).toContain("Redirect URI(s)");
@@ -1487,8 +1489,8 @@ describe("MealPilot API", () => {
     const visualQa = response.body.visualQa;
 
     expect(visualQa.score).toBe(100);
-    expect(visualQa.totalTargets).toBe(20);
-    expect(visualQa.readyTargets).toBe(20);
+    expect(visualQa.totalTargets).toBe(21);
+    expect(visualQa.readyTargets).toBe(21);
     expect(visualQa.totalRules).toBe(7);
     expect(visualQa.readyRules).toBe(7);
     expect(visualQa.totalCommands).toBe(5);
@@ -1564,6 +1566,11 @@ describe("MealPilot API", () => {
       ),
     ).toBe(true);
     expect(
+      visualQa.targetGroups.some((group: { targets: Array<{ id: string; selector: string }> }) =>
+        group.targets.some((target) => target.id === "cancellation_care_card" && target.selector === ".cancellation-care-card"),
+      ),
+    ).toBe(true);
+    expect(
       visualQa.rules.some(
         (rule: { id: string; check: string }) =>
           rule.id === "no_overlap" &&
@@ -1592,7 +1599,7 @@ describe("MealPilot API", () => {
         (command: { id: string; command: string; expectedSignal: string }) =>
           command.id === "visual_capture_harness" &&
           command.command === "npm run verify:visual" &&
-          command.expectedSignal.includes("targetCount >= 20"),
+          command.expectedSignal.includes("targetCount >= 21"),
       ),
     ).toBe(true);
     expect(visualQa.externalGates.some((gate: string) => gate.includes("Selected PNG screenshots"))).toBe(true);
@@ -2845,6 +2852,13 @@ describe("MealPilot API", () => {
           artifact.path === "/api/swiggy-confirmation-command-center",
       ),
     ).toBe(true);
+    expect(
+      proof.body.proof.artifacts.some(
+        (artifact: { label: string; path: string }) =>
+          artifact.label === "Swiggy Cancellation & Care Center" &&
+          artifact.path === "/api/swiggy-cancellation-care-center",
+      ),
+    ).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "SLO Incident Command Center")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Data Governance Center")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Swiggy Upstream Watch")).toBe(true);
@@ -3197,6 +3211,26 @@ describe("MealPilot API", () => {
     expect(report.assertions.some((assertion: string) => assertion.includes("separate confirmations"))).toBe(true);
   });
 
+  it("returns Swiggy Cancellation and Care Center for no-tool cancellation and report_error routing", async () => {
+    const { app } = createMealPilotServer();
+
+    const response = await request(app).get("/api/swiggy-cancellation-care-center").expect(200);
+    const report = response.body.cancellationCareCenter;
+
+    expect(response.body).toEqual({ cancellationCareCenter: report });
+    expect(report.score).toBeGreaterThanOrEqual(90);
+    expect(report.customerCarePhone).toBe("080-67466729");
+    expect(report.totals.reportErrorTools).toBe(3);
+    expect(report.totals.noToolCancellationGuards).toBeGreaterThanOrEqual(2);
+    expect(report.lanes.map((lane: { id: string }) => lane.id)).toEqual(
+      expect.arrayContaining(["food_cancel_request", "instamart_cancel_request", "dineout_booking_management"]),
+    );
+    expect(JSON.stringify(report.controls).toLowerCase()).toContain("no-tool cancellation");
+    expect(JSON.stringify(report.lanes)).toContain("report_error");
+    expect(report.assertions.some((assertion: string) => assertion.includes("never call an MCP cancellation tool"))).toBe(true);
+    expect(report.externalGates.some((gate: string) => gate.includes("staging credentials"))).toBe(true);
+  });
+
   it("returns SLO and incident command evidence for Swiggy operations", async () => {
     const { app } = createMealPilotServer();
     const created = await request(app).post("/api/plan").send(planningRequest).expect(201);
@@ -3271,6 +3305,7 @@ describe("MealPilot API", () => {
         "Swiggy Cart Mutation Workbench",
         "Swiggy Discovery Freshness",
         "Swiggy Confirmation Command Center",
+        "Swiggy Cancellation & Care Center",
         "SLO Incident Command Center",
         "Swiggy Journey Compiler",
         "Swiggy Access Dossier",
@@ -3326,6 +3361,7 @@ describe("MealPilot API", () => {
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-cart-mutation-workbench");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-discovery-freshness");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-confirmation-command-center");
+    expect(bundle.handoffEmail.body).toContain("/api/swiggy-cancellation-care-center");
     expect(bundle.handoffEmail.body).toContain("/api/mcp/staging-cutover");
     expect(bundle.handoffEmail.body).toContain("/api/audit-ledger");
     expect(bundle.commands.some((command: { command: string }) => command.command.includes("npm run verify:production"))).toBe(

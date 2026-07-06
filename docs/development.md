@@ -118,6 +118,8 @@ The verifier also validates `/api/swiggy-discovery-freshness` for Food restauran
 
 The verifier also validates `/api/swiggy-confirmation-command-center` for final Food `place_food_order`, Instamart `checkout`, and Dineout `book_table` proof: fresh cart or slot reads, explicit per-action approvals, separate combined-plan confirmations, post-action status probes before retry, Swiggy-response payment and free-booking truth, and live credential gates.
 
+The verifier also validates `/api/swiggy-cancellation-care-center` for Food and Instamart no-tool cancellation handling, official customer-care copy, Dineout booking-status recovery, `report_error` payload context, incident email routing, planned error-code gates, and live support calibration gates.
+
 The verifier also validates `/api/swiggy-source-intelligence` for Builders website inventory, CTA coverage, `llms` and markdown documentation counts, 35-tool reference alignment, drift signals, external gates, and build-queue readiness.
 
 The verifier also validates `/api/coding-agent-governance` for the root `AGENTS.md` file, official Swiggy coding-agent docs, `llms.txt`, `llms-full.txt`, markdown-twin retrieval, reference paths, Food 14 / Instamart 13 / Dineout 8 smoke evidence, commercial confirmation rules, and no-token/no-PII logging guardrails.
@@ -232,6 +234,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/swiggy-cart-mutation-workbench`
 - `GET /api/swiggy-discovery-freshness`
 - `GET /api/swiggy-confirmation-command-center`
+- `GET /api/swiggy-cancellation-care-center`
 - `GET /api/version-monitor`
 - `GET /api/compliance-evidence`
 - `GET /api/reviewer-proof`
@@ -336,6 +339,8 @@ Production should use an HTTPS redirect URI with exact-match allowlisting.
 
 `/api/swiggy-confirmation-command-center` is the final-commerce proof surface for Swiggy Food `place_food_order`, Instamart `checkout`, and Dineout `book_table`. It shows the last fresh cart or slot read, the explicit user approval, separate approval rows for combined plans, post-action status probes before retry, payment/free-booking values as reported by Swiggy, and external gates for live credentials.
 
+`/api/swiggy-cancellation-care-center` is the cancellation and care proof surface. It blocks fake Food and Instamart cancellation calls, shows the official Swiggy customer-care phone copy, routes Dineout booking issues through `get_booking_status`, prepares `report_error` payloads with redacted toolContext, and keeps incident email evidence ready for `builders@swiggy.in`.
+
 ## Safety Tests
 
 The test suite checks that:
@@ -395,6 +400,7 @@ The test suite checks that:
 - SLO Incident Command maps 99.9% uptime targets, latency classes, status-page fallback, S0-S3 runbooks, 72-hour maintenance notice, measurement exclusions, and remediation evidence.
 - Error Intelligence maps Swiggy's current `success:false` failure envelope, message/HTTP buckets, planned symbolic codes, domain failures, retry policy, observability hooks, and support actions.
 - Swiggy Confirmation Command Center verifies final Food order, Instamart checkout, and Dineout booking proof with fresh cart or slot reads, explicit separate approvals, non-blind retry probes, Swiggy-response payment/free-booking truth, and live credential gates.
+- Swiggy Cancellation & Care Center verifies no-tool cancellation handling, official customer-care copy, Dineout booking recovery, `report_error` support context, incident email routing, and planned error-code gates.
 - Profile, substitution, confirm-all, tracking, and Builder Access package routes work end to end.
 - Pantry, group planning, scheduling, ops, privacy, markdown export, and OAuth callback routes work end to end.
 - Readiness, OpenAPI, preflight, replay, widgets, Widget Runtime, Staging Cutover, submission, Submission Console, Access Evidence Matrix, Production Launch Bundle, rate-limit, version, compliance, data governance, audit ledger, and reviewer proof routes work end to end.

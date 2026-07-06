@@ -352,6 +352,15 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
         "Makes final Food place_food_order, Instamart checkout, Dineout book_table, separate combined approvals, post-action status probes, payment truth, and live credential gates reviewer-visible.",
     },
     {
+      id: "cancellation_care_center",
+      label: "Swiggy Cancellation & Care Center",
+      path: "/api/swiggy-cancellation-care-center",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Separates Food and Instamart no-tool cancellation requests, official customer-care copy, Dineout booking status, report_error toolContext, and incident email routing.",
+    },
+    {
       id: "slo_incident_command",
       label: "SLO Incident Command Center",
       path: "/api/slo-incident-command",
@@ -850,6 +859,7 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- Swiggy Cart Mutation Workbench: /api/swiggy-cart-mutation-workbench",
     "- Swiggy Discovery Freshness: /api/swiggy-discovery-freshness",
     "- Swiggy Confirmation Command Center: /api/swiggy-confirmation-command-center",
+    "- Swiggy Cancellation & Care Center: /api/swiggy-cancellation-care-center",
     "- SLO Incident Command Center: /api/slo-incident-command",
     "- MCP Tool Lab: /api/mcp/tool-lab",
     "- MCP Capability Registry: /api/mcp/capability-registry",

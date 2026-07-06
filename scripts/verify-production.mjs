@@ -181,6 +181,13 @@ assert(
   "OpenAPI Swiggy Confirmation Command Center is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-cancellation-care-center"]?.get?.summary?.includes("Cancellation") &&
+    openApi.paths["/api/swiggy-cancellation-care-center"]?.get?.responses?.["200"]?.description?.includes(
+      "report_error",
+    ),
+  "OpenAPI Swiggy Cancellation and Care Center is missing",
+);
+assert(
   openApi.paths["/api/mcp/resource-prompt-studio"].get.summary.includes("Resource and Prompt Studio"),
   "OpenAPI resource and prompt studio is missing",
 );
@@ -971,8 +978,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 20, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 20, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 21, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 21, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -1054,6 +1061,18 @@ assert(
   "visual QA coding agent governance target is missing",
 );
 assert(
+  visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some((target) => target.id === "confirmation_command_card" && target.selector === ".confirmation-command-card"),
+  ),
+  "visual QA confirmation command target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some((target) => target.id === "cancellation_care_card" && target.selector === ".cancellation-care-card"),
+  ),
+  "visual QA cancellation care target is missing",
+);
+assert(
   visualQa.visualQa.rules.some(
     (rule) =>
       rule.id === "no_overlap" &&
@@ -1085,7 +1104,7 @@ assert(
     (command) =>
       command.id === "visual_capture_harness" &&
       command.command === "npm run verify:visual" &&
-      command.expectedSignal.includes("targetCount >= 20"),
+      command.expectedSignal.includes("targetCount >= 21"),
   ),
   "visual QA Playwright command is missing",
 );
@@ -2942,6 +2961,36 @@ assert(
   "Confirmation Command Center assertions are incomplete",
 );
 
+const cancellationCare = await request("/api/swiggy-cancellation-care-center");
+assert(
+  Object.keys(cancellationCare).join(",") === "cancellationCareCenter",
+  "Cancellation and Care Center response shape is incorrect",
+);
+assert(cancellationCare.cancellationCareCenter.score >= 90, "Cancellation and Care Center score is below target");
+assert(cancellationCare.cancellationCareCenter.customerCarePhone === "080-67466729", "customer care phone is missing");
+assert(cancellationCare.cancellationCareCenter.totals.reportErrorTools === 3, "report_error tool coverage is incomplete");
+assert(
+  cancellationCare.cancellationCareCenter.totals.noToolCancellationGuards >= 2,
+  "no-tool cancellation guards are incomplete",
+);
+assert(
+  ["food_cancel_request", "instamart_cancel_request", "dineout_booking_management"].every((id) =>
+    cancellationCare.cancellationCareCenter.lanes.some((lane) => lane.id === id),
+  ),
+  "Cancellation and Care lanes are incomplete",
+);
+assert(
+  JSON.stringify(cancellationCare.cancellationCareCenter.controls).toLowerCase().includes("no-tool cancellation") &&
+    JSON.stringify(cancellationCare.cancellationCareCenter.lanes).includes("report_error"),
+  "Cancellation and Care controls are incomplete",
+);
+assert(
+  cancellationCare.cancellationCareCenter.assertions.some((assertion) =>
+    assertion.includes("never call an MCP cancellation tool"),
+  ),
+  "Cancellation and Care cancellation assertion is missing",
+);
+
 const sloIncident = await request("/api/slo-incident-command");
 assert(sloIncident.sloIncident.score >= 90, "SLO incident command score is below target");
 assert(
@@ -3321,7 +3370,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 20, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 21, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -3335,7 +3384,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("20")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("21")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -3396,6 +3445,7 @@ assert(
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Offer Intelligence") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Order Lifecycle") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Confirmation Command Center") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Cancellation & Care Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "SLO Incident Command Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Journey Compiler") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Access Dossier") &&
@@ -3579,6 +3629,10 @@ assert(
   "launch bundle Confirmation Command Center handoff link is missing",
 );
 assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-cancellation-care-center"),
+  "launch bundle Cancellation and Care handoff link is missing",
+);
+assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/mcp/staging-cutover"),
   "launch bundle staging cutover handoff link is missing",
 );
@@ -3708,6 +3762,10 @@ console.log(
       confirmationCommandTools: confirmationCommand.confirmationCommandCenter.totals.toolsCovered,
       confirmationCommandProtectedActions: confirmationCommand.confirmationCommandCenter.totals.protectedActions,
       confirmationCommandExternalGates: confirmationCommand.confirmationCommandCenter.totals.externalGates,
+      cancellationCareScore: cancellationCare.cancellationCareCenter.score,
+      cancellationCareReportErrorTools: cancellationCare.cancellationCareCenter.totals.reportErrorTools,
+      cancellationCareNoToolGuards: cancellationCare.cancellationCareCenter.totals.noToolCancellationGuards,
+      cancellationCareExternalGates: cancellationCare.cancellationCareCenter.totals.externalGates,
       sloIncidentScore: sloIncident.sloIncident.score,
       sloUptimeTargets: sloIncident.sloIncident.uptimeTargets.length,
       resilienceScore: resilience.runbook.score,

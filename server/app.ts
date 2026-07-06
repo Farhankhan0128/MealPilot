@@ -33,6 +33,7 @@ import { buildSwiggyCartMutationWorkbench } from "./services/cartMutationWorkben
 import { buildSwiggyChannelMultimodalStudio } from "./services/channelMultimodalStudio.js";
 import { buildCodingAgentGovernance } from "./services/codingAgentGovernance.js";
 import { buildCommercialActionGuard } from "./services/commercialActionGuard.js";
+import { buildSwiggyCancellationCareCenter } from "./services/cancellationCareCenter.js";
 import { buildSwiggyConfirmationCommandCenter } from "./services/confirmationCommandCenter.js";
 import { buildSwiggyCtaExecutionCenter } from "./services/ctaExecutionCenter.js";
 import { buildSwiggyAccessEvidenceMatrix } from "./services/accessEvidenceMatrix.js";
@@ -1027,6 +1028,15 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
   app.get("/api/swiggy-confirmation-command-center", (_req, res) => {
     res.json({
       confirmationCommandCenter: buildSwiggyConfirmationCommandCenter({
+        plans: store.getAllPlans(),
+        config,
+      }),
+    });
+  });
+
+  app.get("/api/swiggy-cancellation-care-center", (_req, res) => {
+    res.json({
+      cancellationCareCenter: buildSwiggyCancellationCareCenter({
         plans: store.getAllPlans(),
         config,
       }),
