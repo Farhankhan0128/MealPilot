@@ -64,6 +64,7 @@ import {
   fetchDemoStudio,
   fetchErrorIntelligence,
   fetchEnterpriseDelegatedAuthCenter,
+  fetchEnterprisePlatformCenter,
   fetchEvaluationLab,
   fetchGoLive,
   fetchGroupPlan,
@@ -167,6 +168,7 @@ import type {
   DemoStudioStep,
   DeveloperQuickstartWorkbench,
   EnterpriseDelegatedAuthCenter,
+  EnterprisePlatformCenterReport,
   ErrorIntelligenceReport,
   EvaluationLab,
   GoLiveCheck,
@@ -420,6 +422,7 @@ function App() {
   const [sandboxCredentialWorkbench, setSandboxCredentialWorkbench] =
     useState<SandboxCredentialWorkbench | null>(null);
   const [enterpriseDelegatedAuth, setEnterpriseDelegatedAuth] = useState<EnterpriseDelegatedAuthCenter | null>(null);
+  const [enterprisePlatformCenter, setEnterprisePlatformCenter] = useState<EnterprisePlatformCenterReport | null>(null);
   const [surfaceMode, setSurfaceMode] = useState<AgentSurface>("chat");
   const [agentSurface, setAgentSurface] = useState<AgentSurfaceResponse | null>(null);
   const [goLiveChecks, setGoLiveChecks] = useState<GoLiveCheck[]>([]);
@@ -596,6 +599,7 @@ function App() {
       sandboxCredentialResponse,
       authLifecycleResponse,
       enterpriseDelegatedAuthResponse,
+      enterprisePlatformResponse,
       supportBridgeResponse,
       goLiveResponse,
       demoStudioResponse,
@@ -676,6 +680,7 @@ function App() {
       fetchSandboxCredentialWorkbench(),
       fetchSwiggyAuthLifecycleCenter(),
       fetchEnterpriseDelegatedAuthCenter(),
+      fetchEnterprisePlatformCenter(),
       fetchSupportBridge(),
       fetchGoLive(),
       fetchDemoStudio(),
@@ -757,6 +762,7 @@ function App() {
     setSandboxCredentialWorkbench(sandboxCredentialResponse.sandboxWorkbench);
     setAuthLifecycleCenter(authLifecycleResponse.authLifecycleCenter);
     setEnterpriseDelegatedAuth(enterpriseDelegatedAuthResponse.enterpriseAuth);
+    setEnterprisePlatformCenter(enterprisePlatformResponse.enterprisePlatform);
     setSupportBridge(supportBridgeResponse.supportBridge);
     setGoLiveChecks(goLiveResponse.checks);
     setObservabilityMetrics(goLiveResponse.metrics);
@@ -841,6 +847,7 @@ function App() {
       sandboxCredentialResponse,
       authLifecycleResponse,
       enterpriseDelegatedAuthResponse,
+      enterprisePlatformResponse,
       supportBridgeResponse,
       goLiveResponse,
       demoStudioResponse,
@@ -918,6 +925,7 @@ function App() {
       fetchSandboxCredentialWorkbench(),
       fetchSwiggyAuthLifecycleCenter(),
       fetchEnterpriseDelegatedAuthCenter(),
+      fetchEnterprisePlatformCenter(),
       fetchSupportBridge(),
       fetchGoLive(),
       fetchDemoStudio(),
@@ -995,6 +1003,7 @@ function App() {
     setSandboxCredentialWorkbench(sandboxCredentialResponse.sandboxWorkbench);
     setAuthLifecycleCenter(authLifecycleResponse.authLifecycleCenter);
     setEnterpriseDelegatedAuth(enterpriseDelegatedAuthResponse.enterpriseAuth);
+    setEnterprisePlatformCenter(enterprisePlatformResponse.enterprisePlatform);
     setSupportBridge(supportBridgeResponse.supportBridge);
     setGoLiveChecks(goLiveResponse.checks);
     setObservabilityMetrics(goLiveResponse.metrics);
@@ -1695,6 +1704,7 @@ function App() {
                 cancellationCareCenter={cancellationCareCenter}
                 dineoutPrecisionCenter={dineoutPrecisionCenter}
                 authLifecycleCenter={authLifecycleCenter}
+                enterprisePlatformCenter={enterprisePlatformCenter}
                 routeOptimizer={routeOptimizer}
                 evaluationLab={evaluationLab}
               />
@@ -4416,6 +4426,7 @@ function ProductionEvidencePanel({
   cancellationCareCenter,
   dineoutPrecisionCenter,
   authLifecycleCenter,
+  enterprisePlatformCenter,
   routeOptimizer,
   evaluationLab,
 }: {
@@ -4446,6 +4457,7 @@ function ProductionEvidencePanel({
   cancellationCareCenter: SwiggyCancellationCareCenterReport | null;
   dineoutPrecisionCenter: SwiggyDineoutPrecisionCenterReport | null;
   authLifecycleCenter: SwiggyAuthLifecycleCenterReport | null;
+  enterprisePlatformCenter: EnterprisePlatformCenterReport | null;
   routeOptimizer: SwiggyRouteOptimizationReport | null;
   evaluationLab: EvaluationLab | null;
 }) {
@@ -4984,6 +4996,47 @@ function ProductionEvidencePanel({
               >
                 <span>{lane.label}</span>
                 <strong>{lane.status.replace("_", " ")}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="enterprise-platform-card">
+          <div className="mini-heading">
+            <Users aria-hidden="true" />
+            <strong>Enterprise Platform</strong>
+          </div>
+          <span>
+            {enterprisePlatformCenter
+              ? `${enterprisePlatformCenter.score}/100, ${enterprisePlatformCenter.totals.readyTenantControls} tenant controls`
+              : "Loading platform operator controls"}
+          </span>
+          <div className="enterprise-platform-grid">
+            <div>
+              <strong>{enterprisePlatformCenter?.totals.readinessLanes ?? 0}</strong>
+              <span>Lanes</span>
+            </div>
+            <div>
+              <strong>{enterprisePlatformCenter?.totals.supportLanes ?? 0}</strong>
+              <span>Support</span>
+            </div>
+            <div>
+              <strong>{enterprisePlatformCenter?.totals.auditExports ?? 0}</strong>
+              <span>Audits</span>
+            </div>
+            <div>
+              <strong>{enterprisePlatformCenter?.totals.contractGates ?? 0}</strong>
+              <span>Contracts</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(enterprisePlatformCenter?.readinessLanes ?? []).slice(0, 4).map((lane) => (
+              <li
+                key={lane.id}
+                data-status={lane.status === "ready" ? "healthy" : lane.status === "external_gate" ? "blocked" : "watch"}
+              >
+                <span>{lane.label}</span>
+                <strong>{lane.owner}</strong>
               </li>
             ))}
           </ul>

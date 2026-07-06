@@ -78,6 +78,7 @@ import { buildSwiggyDineoutPrecisionCenter } from "./services/dineoutPrecisionCe
 import { buildSwiggyDocsCoverage } from "./services/docsCoverage.js";
 import { buildSwiggyDocsTwinExplorer } from "./services/docsTwinExplorer.js";
 import { buildEnterpriseDelegatedAuthCenter } from "./services/enterpriseDelegatedAuth.js";
+import { buildEnterprisePlatformCenter } from "./services/enterprisePlatformCenter.js";
 import {
   buildComplianceEvidence,
   buildRateLimitPlan,
@@ -394,6 +395,10 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/enterprise-delegated-auth", (_req, res) => {
     res.json({ enterpriseAuth: buildEnterpriseDelegatedAuthCenter(config) });
+  });
+
+  app.get("/api/enterprise-platform-center", (_req, res) => {
+    res.json({ enterprisePlatform: buildEnterprisePlatformCenter(config) });
   });
 
   app.get("/api/profile", (_req, res) => {

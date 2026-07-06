@@ -321,6 +321,7 @@ export function buildReviewerProof(options: {
       { label: "MCP Gateway", path: "/api/mcp-gateway" },
       { label: "Swiggy OAuth Status", path: "/api/auth/swiggy/status" },
       { label: "Swiggy Auth Lifecycle Center", path: "/api/swiggy-auth-lifecycle-center" },
+      { label: "Swiggy Enterprise Platform Center", path: "/api/enterprise-platform-center" },
       { label: "Rate-limit plan", path: "/api/rate-limit-plan" },
       { label: "Traffic Readiness Plan", path: "/api/traffic-readiness-plan" },
       { label: "MCP Backpressure Governor", path: "/api/mcp/backpressure-governor" },

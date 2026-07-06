@@ -264,11 +264,11 @@ function buildQueue(): SwiggySourceBuildQueueItem[] {
     {
       id: "enterprise_scale_lane",
       label: "Turn enterprise docs into a tenant-ready platform lane",
-      owner: "Swiggy",
-      status: "external_gate",
+      owner: "Joint",
+      status: "watch",
       trigger: "Enterprise access, delegated auth, custom quotas, and commercial terms are approved",
-      nextBuild: "Enable tenant-specific OAuth brokering, per-user token lifecycle, support SLAs, and enterprise audit exports.",
-      evidenceLinks: ["/api/enterprise-delegated-auth", "/api/data-governance-center", "/api/slo-incident-command"],
+      nextBuild: "Use Enterprise Platform Center to run tenant-specific OAuth brokering, quota review, support SLAs, contract gates, and enterprise audit exports.",
+      evidenceLinks: ["/api/enterprise-platform-center", "/api/enterprise-delegated-auth", "/api/data-governance-center"],
     },
   ];
 }

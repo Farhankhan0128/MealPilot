@@ -387,9 +387,9 @@ const staticDocs: StaticDoc[] = [
     markdownPath: "docs/start/enterprise/index.md",
     officialSummary: "White-glove onboarding for platforms operating Swiggy on behalf of many users.",
     mealPilotSurface:
-      "Launch Bundle and Enterprise Delegated Auth Center preserve platform-operator application, architecture review, capacity, contract, staging, and production cutover as external gates.",
-    evidenceLinks: ["/api/enterprise-delegated-auth", "/api/swiggy-builders-map", "/api/production-launch-bundle"],
-    status: "documented",
+      "Enterprise Platform Center turns platform-operator application, tenant boundaries, delegated auth, quota profiles, contract support, audit exports, staging soak, and co-branding gates into a first-class artifact.",
+    evidenceLinks: ["/api/enterprise-platform-center", "/api/enterprise-delegated-auth", "/api/production-launch-bundle"],
+    status: "implemented",
   },
   {
     id: "start",

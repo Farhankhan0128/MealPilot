@@ -156,7 +156,7 @@ The application will include a 2-3 minute Loom or unlisted YouTube demo showing:
 6. Launch Center shows 35-tool coverage, Journey Compiler, Access Dossier, Access Evidence Matrix, Builder Intake, FAQ & Policy Center, Growth Partnership Center, Channel & Multimodal Studio, Nutrition & Budget Intelligence, Household Preference Graph, Guest Collaboration & Calendar Center, Luxury Experience Workspace, Reviewer Artifact Vault, Visual QA Center, Premium Use Case Studio, Premium Concierge Itinerary, Staging Cutover Rehearsal, Staging Certification Matrix, Brand Compliance Kit, Capability Registry, Resource & Prompt Studio, Tool Contract Matrix, Scenario Runner, State Orchestrator, Widget Runtime Center, Commercial Action Guard, Website Atlas, Docs Coverage, Docs Twin Explorer, Upstream Watch, Source Intelligence, Deep Site Map, Developer Quickstart, CTA Execution, Innovation Radar, AI Client Connect Kit, Tool Lab, MCP Gateway cutover, OAuth Status, Credential Cockpit, Sandbox Credential Workbench, Delegated Auth Center, chat/voice behavior, go-live gates, and observability metrics.
 7. Demo Studio shows cart preflight, MCP replay, Staging Transcript Export, Submission Console, Access Submission Studio, and submission readiness.
 8. Production Evidence shows widgets, rate limits, Traffic Readiness, Swiggy Load Lab, Offer Intelligence, Order Lifecycle, MCP Backpressure Governor, SLO Command, Data Governance, versioning, compliance, Production Launch Bundle, trace monitor, runtime telemetry, audit ledger, route optimizer, resilience drills, Evaluation Lab, Source Intelligence artifact, Deep Site Map artifact, Developer Quickstart artifact, CTA Execution artifact, Innovation Radar artifact, and reviewer proof score.
-9. Show `/api/ready`, `/api/openapi.json`, `/api/swiggy-website-atlas`, `/api/swiggy-builder-intake`, `/api/swiggy-faq-policy`, `/api/swiggy-growth-partnership`, `/api/channel-multimodal-studio`, `/api/nutrition-budget-intelligence`, `/api/household-preference-graph`, `/api/guest-collaboration-calendar`, `/api/luxury-experience-workspace`, `/api/reviewer-artifact-vault`, `/api/visual-qa-center`, `/api/submission-console`, `/api/access-submission-studio`, `/api/swiggy-docs-twin-explorer`, `/api/swiggy-upstream-watch`, `/api/swiggy-source-intelligence`, `/api/swiggy-deep-site-map`, `/api/swiggy-developer-quickstart`, `/api/swiggy-cta-execution-center`, `/api/swiggy-innovation-radar`, `/api/mcp/tool-lab`, `/api/mcp/tool-contract-matrix`, `/api/mcp/scenario-runner`, `/api/mcp/state-orchestrator`, `/api/mcp/commercial-action-guard`, `/api/mcp/backpressure-governor`, `/api/mcp/resource-prompt-studio`, `/api/mcp/widget-runtime`, `/api/mcp/staging-cutover`, `/api/swiggy-journey-compiler`, `/api/swiggy-access-dossier`, `/api/swiggy-access-evidence-matrix`, `/api/premium-use-case-studio`, `/api/premium-concierge-itinerary`, `/api/staging-certification-matrix`, `/api/auth/swiggy/status`, `/api/credential-onboarding`, `/api/sandbox-credential-workbench`, `/api/enterprise-delegated-auth`, `/api/audit-ledger`, and `npm run verify:production`.
+9. Show `/api/ready`, `/api/openapi.json`, `/api/swiggy-website-atlas`, `/api/swiggy-builder-intake`, `/api/swiggy-faq-policy`, `/api/swiggy-growth-partnership`, `/api/channel-multimodal-studio`, `/api/nutrition-budget-intelligence`, `/api/household-preference-graph`, `/api/guest-collaboration-calendar`, `/api/luxury-experience-workspace`, `/api/reviewer-artifact-vault`, `/api/visual-qa-center`, `/api/submission-console`, `/api/access-submission-studio`, `/api/swiggy-docs-twin-explorer`, `/api/swiggy-upstream-watch`, `/api/swiggy-source-intelligence`, `/api/swiggy-deep-site-map`, `/api/swiggy-developer-quickstart`, `/api/swiggy-cta-execution-center`, `/api/swiggy-innovation-radar`, `/api/mcp/tool-lab`, `/api/mcp/tool-contract-matrix`, `/api/mcp/scenario-runner`, `/api/mcp/state-orchestrator`, `/api/mcp/commercial-action-guard`, `/api/mcp/backpressure-governor`, `/api/mcp/resource-prompt-studio`, `/api/mcp/widget-runtime`, `/api/mcp/staging-cutover`, `/api/swiggy-journey-compiler`, `/api/swiggy-access-dossier`, `/api/swiggy-access-evidence-matrix`, `/api/premium-use-case-studio`, `/api/premium-concierge-itinerary`, `/api/staging-certification-matrix`, `/api/auth/swiggy/status`, `/api/credential-onboarding`, `/api/sandbox-credential-workbench`, `/api/enterprise-delegated-auth`, `/api/enterprise-platform-center`, `/api/audit-ledger`, and `npm run verify:production`.
 10. Show storage diagnostics and snapshot export in `/api/storage/status` and `/api/storage/export`.
 11. Show `/api/observability/traces` with trace IDs, no raw PII, and safe log fields.
 12. Show `/api/telemetry/runtime` with live request IDs, session IDs, redaction fields, and MCP event coverage.
@@ -171,17 +171,18 @@ The application will include a 2-3 minute Loom or unlisted YouTube demo showing:
 21. Show `/api/slo-incident-command` with uptime targets, latency classes, status fallback, maintenance windows, and S0-S3 comms.
 22. Show `/api/data-governance-center` with DPDP roles, data flows, DSR routing, retention, security contacts, and signed-manifest watch.
 23. Show `/api/enterprise-delegated-auth` with per-user PKCE, token lifecycle, logout, redirect schemes, troubleshooting, architecture review, and platform-operator gates.
-24. Show `/api/error-intelligence` with Swiggy error buckets, planned codes, and domain failures.
-25. Show `/api/resilience` with the order-placement recovery runbook.
-26. Show `/api/evaluation-lab` with persona QA across chat and voice surfaces.
-27. Show `/api/traffic-readiness-plan` with expected volume, lane budgets, Retry-After handling, seven-day notice, capacity email, and staged rollout.
-28. Show `/api/swiggy-load-lab` with synthetic pilot/campaign load scenarios, cohort ramps, Retry-After drills, commercial single-flight proof, and external capacity gates.
-29. Show `/api/swiggy-offer-intelligence` with Food coupon sequencing, Dineout deal validation, Instamart value substitutions, savings disclaimers, and no-blind-discount drills.
-30. Show `/api/swiggy-order-lifecycle` with Food/Instamart/Dineout status tools, tracking cadence, non-blind retry probes, and support-safe lifecycle telemetry.
-31. Show `/api/swiggy-location-trust` with Food/Instamart saved-address tools, Dineout saved locations, address-choice pauses, address switch refresh, and raw-address redaction.
-32. Show `/api/swiggy-cart-mutation-workbench` with Food cart readback, Instamart full-cart replacement, Dineout create_cart gates, payment-method truth, and checkout-safe mutation rules.
-33. Show `/api/swiggy-discovery-freshness` with Food search/menu truth, Instamart product variants, Dineout details/slots, pagination, coordinate consistency, and stale-result invalidation.
-34. Show `/api/production-launch-bundle` with proof artifacts, verification commands, external Swiggy gates, and the review email draft.
+24. Show `/api/enterprise-platform-center` with tenant boundaries, quota review, support SLAs, contract gates, co-branding approval, and enterprise audit exports.
+25. Show `/api/error-intelligence` with Swiggy error buckets, planned codes, and domain failures.
+26. Show `/api/resilience` with the order-placement recovery runbook.
+27. Show `/api/evaluation-lab` with persona QA across chat and voice surfaces.
+28. Show `/api/traffic-readiness-plan` with expected volume, lane budgets, Retry-After handling, seven-day notice, capacity email, and staged rollout.
+29. Show `/api/swiggy-load-lab` with synthetic pilot/campaign load scenarios, cohort ramps, Retry-After drills, commercial single-flight proof, and external capacity gates.
+30. Show `/api/swiggy-offer-intelligence` with Food coupon sequencing, Dineout deal validation, Instamart value substitutions, savings disclaimers, and no-blind-discount drills.
+31. Show `/api/swiggy-order-lifecycle` with Food/Instamart/Dineout status tools, tracking cadence, non-blind retry probes, and support-safe lifecycle telemetry.
+32. Show `/api/swiggy-location-trust` with Food/Instamart saved-address tools, Dineout saved locations, address-choice pauses, address switch refresh, and raw-address redaction.
+33. Show `/api/swiggy-cart-mutation-workbench` with Food cart readback, Instamart full-cart replacement, Dineout create_cart gates, payment-method truth, and checkout-safe mutation rules.
+34. Show `/api/swiggy-discovery-freshness` with Food search/menu truth, Instamart product variants, Dineout details/slots, pagination, coordinate consistency, and stale-result invalidation.
+35. Show `/api/production-launch-bundle` with proof artifacts, verification commands, external Swiggy gates, and the review email draft.
 
 ## Primary Technical Contact
 
@@ -225,6 +226,7 @@ Email: add primary engineering email before submission.
 - Brand Compliance Kit: `/api/brand-compliance-kit`
 - Data Governance Center: `/api/data-governance-center`
 - Enterprise Delegated Auth Center: `/api/enterprise-delegated-auth`
+- Swiggy Enterprise Platform Center: `/api/enterprise-platform-center`
 - Swiggy OAuth Status: `/api/auth/swiggy/status`
 - Swiggy Auth Lifecycle Center: `/api/swiggy-auth-lifecycle-center`
 - Swiggy Journey Compiler: `/api/swiggy-journey-compiler`

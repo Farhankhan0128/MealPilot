@@ -60,6 +60,7 @@ import type {
   SupportBridgeReport,
   SwiggyAuthStatusReport,
   SwiggyAuthLifecycleCenterReport,
+  EnterprisePlatformCenterReport,
   SwiggyAccessDossier,
   SwiggyAccessEvidenceMatrix,
   SwiggyBuilderIntakeCommandCenter,
@@ -403,6 +404,10 @@ export function fetchSwiggyAuthLifecycleCenter() {
 
 export function fetchEnterpriseDelegatedAuthCenter() {
   return requestJson<{ enterpriseAuth: EnterpriseDelegatedAuthCenter }>("/api/enterprise-delegated-auth");
+}
+
+export function fetchEnterprisePlatformCenter() {
+  return requestJson<{ enterprisePlatform: EnterprisePlatformCenterReport }>("/api/enterprise-platform-center");
 }
 
 export function fetchAgentSurface(sessionId: string, surface: AgentSurface) {

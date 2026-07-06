@@ -265,6 +265,17 @@ const targetGroups = [
         "Auth Lifecycle shows PKCE, token lifetime, re-auth recovery, storage rules, and live credential gates.",
         "artifacts/visual-qa/auth-lifecycle-card.png",
       ),
+      target(
+        "enterprise_platform_card",
+        "Enterprise Platform card",
+        "/",
+        ".enterprise-platform-card",
+        "desktop",
+        1280,
+        900,
+        "Enterprise Platform shows tenant controls, quota readiness, support lanes, contract gates, and audit exports.",
+        "artifacts/visual-qa/enterprise-platform-card.png",
+      ),
     ],
   },
   {
@@ -405,7 +416,7 @@ const commands = [
     "visual_capture_harness",
     "npm run verify:visual",
     "Playwright captures every Visual QA target at desktop, tablet, and mobile sizes and writes report.json.",
-        "ok true with targetCount >= 23 and PNG files under artifacts/visual-qa.",
+        "ok true with targetCount >= 24 and PNG files under artifacts/visual-qa.",
   ),
   command(
     "desktop_capture",

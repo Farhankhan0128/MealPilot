@@ -215,6 +215,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/credential-onboarding`
 - `GET /api/sandbox-credential-workbench`
 - `GET /api/enterprise-delegated-auth`
+- `GET /api/enterprise-platform-center`
 - `GET /api/observability/traces`
 - `GET /api/telemetry/runtime`
 - `GET /api/audit-ledger`
@@ -319,6 +320,8 @@ Production should use an HTTPS redirect URI with exact-match allowlisting.
 
 `/api/enterprise-delegated-auth` shows the enterprise platform-operator flow: per-user PKCE, authorization-code exchange, per-user bearer token handling, 5-day token lifetime, 30-day Swiggy user session, redirect scheme strategy, logout, 401/419/403 recovery, capacity backoff, and the contract/staging/production gates Swiggy must approve.
 
+`/api/enterprise-platform-center` is the broader platform-operator proof surface. It maps tenant registry boundaries, per-user delegated tokens, tenant-scoped quota profiles, support routing, audit exports, peak-QPS review, contract gates, co-branding approval, staging soak, and enterprise Slack/dashboard gates without pretending those external Swiggy approvals are already granted.
+
 `/api/mcp/resource-prompt-studio` shows the concrete MCP resources and prompts surfaced by the local mock: two resource URIs and two prompts for each Swiggy server, sample `resources/read` and `prompts/get` payloads, JSON-RPC smoke requests, and live staging gates for Swiggy-issued credentials.
 
 `/api/channel-multimodal-studio` shows the developer-page build lanes as concrete channel contracts: voice ordering, auto-restock, group ordering, dietary planning, reservation planning, and screenshot-to-order, with Swiggy toolchains, local execution packets, response rules, confirmation gates, telemetry contracts, and Slack/Teams, mobile camera, vision/OCR, and enterprise gates.
@@ -387,6 +390,7 @@ The test suite checks that:
 - Brand Compliance Kit maps Powered by Swiggy attribution, co-branding rules, asset gates, palette usage, no-endorsement copy, and final screenshot review.
 - Data Governance Center maps Swiggy Data Fiduciary and MealPilot Data Processor roles, India/Singapore residency, tool-call PII flows, local DSR endpoints, Swiggy-originated DSR routing, 90-day audit retention, token redaction, security contacts, and signed-manifest watch items.
 - Enterprise Delegated Auth Center maps Swiggy's multi-tenant on-behalf-of OAuth 2.1 flow, per-user token storage, platform redirect schemes, troubleshooting, architecture review, and external partner gates.
+- Swiggy Enterprise Platform Center maps the official platform-operator lane into tenant boundaries, delegated-auth controls, quota and peak-QPS review, support SLAs, contract gates, co-branding approvals, and enterprise audit exports.
 - Swiggy Journey Compiler maps all 35 tools into official Food, Instamart, Dineout, combined, and premium MealPilot journeys with confirmation and recovery gates.
 - Swiggy Access Dossier maps access-form fields, Swiggy review checks, allowed/restricted/prohibited conduct, legal readiness, developer/enterprise tracks, proof links, and external/manual gates.
 - Swiggy Access Evidence Matrix reconciles every official access field, required attachment, runbook step, proof command, owner, operator input, and Swiggy gate into one reviewer-ready ledger.

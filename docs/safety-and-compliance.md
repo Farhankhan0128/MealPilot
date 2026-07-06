@@ -146,6 +146,8 @@ The `/api/premium-concierge-itinerary` endpoint turns Swiggy's official Food, In
 
 The `/api/enterprise-delegated-auth` endpoint keeps the enterprise on-behalf-of boundary explicit. Swiggy remains the Data Fiduciary; MealPilot/platform storage is limited to scoped per-user session state. Each end user gets a fresh PKCE verifier/challenge, one Swiggy authorization code exchange, one per-user bearer token, and a logout/delete path. Tokens are never shared across users, passwords/OTPs/payment credentials never pass through MealPilot, 401/419/403 failures trigger re-auth or entitlement review, and platform-operator approval, capacity ceilings, final redirect allowlists, partner contracts, staging credentials, and production cutover remain external gates.
 
+The `/api/enterprise-platform-center` endpoint keeps platform-scale operation honest. Tenant ids, workspace ids, Swiggy session ids, and end-user OAuth grants stay separated; support packets stay redacted; quota profiles are tenant-scoped; audit exports expose request ids and support correlation rather than raw payloads; and enterprise-only Slack, dashboards, co-branding assets, designated contacts, bespoke remedies, and commercial terms remain external gates until Swiggy approves them.
+
 The `/api/evaluation-lab` endpoint regression-tests the product against multiple user scenarios before review:
 
 - Chat and voice response shaping.

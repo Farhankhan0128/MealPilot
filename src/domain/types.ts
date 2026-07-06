@@ -4466,6 +4466,73 @@ export interface EnterpriseDelegatedAuthCenter {
   assertions: string[];
 }
 
+export type EnterprisePlatformStatus = "ready" | "watch" | "external_gate";
+
+export interface EnterprisePlatformReadinessLane {
+  id: string;
+  label: string;
+  owner: "MealPilot" | "Swiggy" | "Operator" | "Joint";
+  status: EnterprisePlatformStatus;
+  officialRequirement: string;
+  mealPilotControl: string;
+  evidenceLinks: string[];
+}
+
+export interface EnterpriseTenantControl {
+  id: string;
+  label: string;
+  status: EnterprisePlatformStatus;
+  tenantBoundary: string;
+  control: string;
+  evidenceLinks: string[];
+}
+
+export interface EnterpriseSupportLane {
+  id: string;
+  channel: string;
+  useCase: string;
+  sla: string;
+  status: EnterprisePlatformStatus;
+  evidenceLinks: string[];
+}
+
+export interface EnterprisePlatformCenterReport {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  currentTrack: "developer_ready_enterprise_planned";
+  platformProfile: {
+    mode: "mock" | "staging" | "production";
+    tenantModel: string;
+    expectedPeakQps: string;
+    surfaces: string[];
+    userGeography: string;
+    productionGate: string;
+  };
+  totals: {
+    readinessLanes: number;
+    readyTenantControls: number;
+    supportLanes: number;
+    contractGates: number;
+    auditExports: number;
+    externalGates: number;
+  };
+  readinessLanes: EnterprisePlatformReadinessLane[];
+  tenantControls: EnterpriseTenantControl[];
+  supportLanes: EnterpriseSupportLane[];
+  contractGates: Array<{
+    id: string;
+    label: string;
+    requirement: string;
+    mealPilotEvidence: string;
+    status: EnterprisePlatformStatus;
+  }>;
+  auditExports: Array<{ id: string; label: string; contents: string[]; status: EnterprisePlatformStatus; evidenceLinks: string[] }>;
+  operatorActions: Array<{ id: string; label: string; owner: "MealPilot" | "Swiggy" | "Operator" | "Joint"; status: EnterprisePlatformStatus; evidence: string }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type EvaluationStatus = "pass" | "watch" | "blocked";
 
 export interface EvaluationCheck {

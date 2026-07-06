@@ -667,6 +667,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/enterprise-platform-center": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Enterprise Platform Center for tenant, quota, support, and contract readiness",
+          responses: {
+            "200": {
+              description:
+                "Enterprise platform readiness report for platform-operator onboarding, per-user delegated OAuth, tenant boundaries, peak QPS and quota review, 48-hour staging soak, contract SLAs, support channels, audit exports, co-branding gates, and enterprise external approvals",
+            },
+          },
+        },
+      },
       "/api/go-live": {
         get: {
           tags: ["Builder Access"],

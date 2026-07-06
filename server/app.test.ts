@@ -92,6 +92,8 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/swiggy-auth-lifecycle-center"].get.summary).toContain("Auth Lifecycle");
     expect(openApi.body.paths["/api/swiggy-auth-lifecycle-center"].get.responses["200"].description).toContain("401/419");
     expect(openApi.body.paths["/api/enterprise-delegated-auth"].get.summary).toContain("Enterprise Delegated Auth");
+    expect(openApi.body.paths["/api/enterprise-platform-center"].get.summary).toContain("Enterprise Platform");
+    expect(openApi.body.paths["/api/enterprise-platform-center"].get.responses["200"].description).toContain("tenant boundaries");
     expect(openApi.body.paths["/api/observability/traces"].get.summary).toContain("Trace spans");
     expect(openApi.body.paths["/api/telemetry/runtime"].get.summary).toContain("Runtime request telemetry");
     expect(openApi.body.paths["/api/audit-ledger"].get.summary).toContain("audit ledger");
@@ -440,6 +442,38 @@ describe("MealPilot API", () => {
       expect.arrayContaining(["Delegated OAuth", "Rate limits and capacity", "Observability handoff", "Data handling"]),
     );
     expect(center.externalGates.some((gate: string) => gate.includes("platform-operator"))).toBe(true);
+  });
+
+  it("models Swiggy enterprise platform readiness for tenant, quota, support, and contract gates", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/enterprise-platform-center").expect(200);
+    const center = response.body.enterprisePlatform;
+
+    expect(center.score).toBeGreaterThanOrEqual(88);
+    expect(center.currentTrack).toBe("developer_ready_enterprise_planned");
+    expect(center.platformProfile.surfaces).toEqual(expect.arrayContaining(["voice", "chat", "enterprise SaaS"]));
+    expect(center.readinessLanes.map((lane: { id: string }) => lane.id)).toEqual(
+      expect.arrayContaining([
+        "platform_operator_path",
+        "tenant_delegated_auth",
+        "quota_and_peak_qps",
+        "staging_soak",
+        "contract_sla_support",
+      ]),
+    );
+    expect(center.tenantControls.map((control: { id: string }) => control.id)).toEqual(
+      expect.arrayContaining(["tenant_registry", "per_user_tokens", "tenant_quota_profile", "tenant_support_routing", "tenant_audit_export"]),
+    );
+    expect(center.supportLanes.map((lane: { id: string }) => lane.id)).toEqual(
+      expect.arrayContaining(["builders_email", "security_email", "designated_contact", "runtime_report_error", "enterprise_slack"]),
+    );
+    expect(center.contractGates.map((gate: { id: string }) => gate.id)).toEqual(
+      expect.arrayContaining(["commercial_terms", "security_attestations", "peak_qps_review", "co_branding_approval"]),
+    );
+    expect(center.auditExports).toHaveLength(3);
+    expect(center.totals.readyTenantControls).toBe(5);
+    expect(center.externalGates.some((gate: string) => gate.includes("Enterprise access"))).toBe(true);
+    expect(center.assertions.some((assertion: string) => assertion.includes("separate access track"))).toBe(true);
   });
 
   it("updates profile, substitutes items, confirms all, and returns tracking", async () => {
@@ -921,7 +955,7 @@ describe("MealPilot API", () => {
     expect(packet.totals.formFields).toBeGreaterThanOrEqual(10);
     expect(packet.totals.requiredAttachments).toBeGreaterThanOrEqual(10);
     expect(packet.totals.launchArtifacts).toBeGreaterThanOrEqual(50);
-    expect(packet.totals.visualTargets).toBe(23);
+    expect(packet.totals.visualTargets).toBe(24);
     expect(packet.files.map((file: { id: string }) => file.id)).toEqual(
       expect.arrayContaining(["packet_json", "packet_markdown", "visual_report", "production_summary"]),
     );
@@ -933,7 +967,7 @@ describe("MealPilot API", () => {
     ).toBe(true);
     expect(
       packet.commands.some(
-        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("23"),
+        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("24"),
       ),
     ).toBe(true);
     expect(packet.copyBlocks.formFields).toContain("Redirect URI(s)");
@@ -1509,8 +1543,8 @@ describe("MealPilot API", () => {
     const visualQa = response.body.visualQa;
 
     expect(visualQa.score).toBe(100);
-    expect(visualQa.totalTargets).toBe(23);
-    expect(visualQa.readyTargets).toBe(23);
+    expect(visualQa.totalTargets).toBe(24);
+    expect(visualQa.readyTargets).toBe(24);
     expect(visualQa.totalRules).toBe(7);
     expect(visualQa.readyRules).toBe(7);
     expect(visualQa.totalCommands).toBe(5);
@@ -1601,6 +1635,11 @@ describe("MealPilot API", () => {
       ),
     ).toBe(true);
     expect(
+      visualQa.targetGroups.some((group: { targets: Array<{ id: string; selector: string }> }) =>
+        group.targets.some((target) => target.id === "enterprise_platform_card" && target.selector === ".enterprise-platform-card"),
+      ),
+    ).toBe(true);
+    expect(
       visualQa.rules.some(
         (rule: { id: string; check: string }) =>
           rule.id === "no_overlap" &&
@@ -1629,7 +1668,7 @@ describe("MealPilot API", () => {
         (command: { id: string; command: string; expectedSignal: string }) =>
           command.id === "visual_capture_harness" &&
           command.command === "npm run verify:visual" &&
-          command.expectedSignal.includes("targetCount >= 23"),
+          command.expectedSignal.includes("targetCount >= 24"),
       ),
     ).toBe(true);
     expect(visualQa.externalGates.some((gate: string) => gate.includes("Selected PNG screenshots"))).toBe(true);
@@ -1660,6 +1699,14 @@ describe("MealPilot API", () => {
           page.id === "delegated_auth" &&
           page.status === "implemented" &&
           page.evidenceLinks.includes("/api/enterprise-delegated-auth"),
+      ),
+    ).toBe(true);
+    expect(
+      report.pages.some(
+        (page: { id: string; status: string; evidenceLinks: string[] }) =>
+          page.id === "enterprise_index" &&
+          page.status === "implemented" &&
+          page.evidenceLinks.includes("/api/enterprise-platform-center"),
       ),
     ).toBe(true);
     expect(report.pages.some((page: { id: string }) => page.id === "reference_food_place_food_order")).toBe(true);
@@ -2933,6 +2980,7 @@ describe("MealPilot API", () => {
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Swiggy Auth Lifecycle Center")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Resource & Prompt Studio")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Enterprise Delegated Auth Center")).toBe(true);
+    expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Swiggy Enterprise Platform Center")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Audit Ledger Center")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Submission Console")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "FAQ & Policy Center")).toBe(true);
@@ -3368,6 +3416,7 @@ describe("MealPilot API", () => {
         "Swiggy Auth Lifecycle Center",
         "Sandbox Credential Workbench",
         "Enterprise Delegated Auth Center",
+        "Swiggy Enterprise Platform Center",
         "Traffic Readiness Plan",
         "MCP Backpressure Governor",
         "Swiggy Load Lab",
@@ -3403,6 +3452,7 @@ describe("MealPilot API", () => {
     expect(bundle.goLiveGates.some((gate: { label: string }) => gate.label.includes("Data governance"))).toBe(true);
     expect(bundle.goLiveGates.some((gate: { label: string; status: string }) => gate.label.includes("delegated-auth") && gate.status === "external_gate")).toBe(true);
     expect(bundle.handoffEmail.body).toContain("/api/enterprise-delegated-auth");
+    expect(bundle.handoffEmail.body).toContain("/api/enterprise-platform-center");
     expect(bundle.handoffEmail.body).toContain("/api/auth/swiggy/status");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-auth-lifecycle-center");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-builder-intake");

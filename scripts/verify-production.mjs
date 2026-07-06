@@ -51,6 +51,11 @@ assert(
   "OpenAPI enterprise delegated-auth contract is missing",
 );
 assert(
+  openApi.paths["/api/enterprise-platform-center"]?.get?.summary?.includes("Enterprise Platform") &&
+    openApi.paths["/api/enterprise-platform-center"]?.get?.responses?.["200"]?.description?.includes("tenant boundaries"),
+  "OpenAPI enterprise platform contract is missing",
+);
+assert(
   openApi.paths["/api/auth/swiggy/status"].get.summary.includes("OAuth callback"),
   "OpenAPI OAuth status contract is missing",
 );
@@ -990,8 +995,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 23, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 23, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 24, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 24, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -1097,6 +1102,12 @@ assert(
   "visual QA Auth Lifecycle target is missing",
 );
 assert(
+  visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some((target) => target.id === "enterprise_platform_card" && target.selector === ".enterprise-platform-card"),
+  ),
+  "visual QA enterprise platform target is missing",
+);
+assert(
   visualQa.visualQa.rules.some(
     (rule) =>
       rule.id === "no_overlap" &&
@@ -1128,7 +1139,7 @@ assert(
     (command) =>
       command.id === "visual_capture_harness" &&
       command.command === "npm run verify:visual" &&
-      command.expectedSignal.includes("targetCount >= 23"),
+      command.expectedSignal.includes("targetCount >= 24"),
   ),
   "visual QA Playwright command is missing",
 );
@@ -1157,6 +1168,15 @@ assert(
       page.evidenceLinks.includes("/api/enterprise-delegated-auth"),
   ),
   "Swiggy enterprise delegated-auth docs coverage is missing",
+);
+assert(
+  docsCoverage.docsCoverage.pages.some(
+    (page) =>
+      page.id === "enterprise_index" &&
+      page.status === "implemented" &&
+      page.evidenceLinks.includes("/api/enterprise-platform-center"),
+  ),
+  "Swiggy enterprise platform docs coverage is missing",
 );
 
 const docsTwinExplorer = await request("/api/swiggy-docs-twin-explorer");
@@ -2271,6 +2291,51 @@ assert(
   "enterprise delegated auth must preserve platform-operator gate",
 );
 
+const enterprisePlatform = await request("/api/enterprise-platform-center");
+assert(
+  Object.keys(enterprisePlatform).join(",") === "enterprisePlatform",
+  "enterprise platform response shape is incorrect",
+);
+assert(enterprisePlatform.enterprisePlatform.score >= 88, "enterprise platform score is below target");
+assert(
+  enterprisePlatform.enterprisePlatform.currentTrack === "developer_ready_enterprise_planned" &&
+    enterprisePlatform.enterprisePlatform.platformProfile.surfaces.includes("enterprise SaaS"),
+  "enterprise platform profile is incomplete",
+);
+assert(
+  ["platform_operator_path", "tenant_delegated_auth", "quota_and_peak_qps", "staging_soak", "contract_sla_support"].every((id) =>
+    enterprisePlatform.enterprisePlatform.readinessLanes.some((lane) => lane.id === id),
+  ),
+  "enterprise platform readiness lanes are incomplete",
+);
+assert(
+  ["tenant_registry", "per_user_tokens", "tenant_quota_profile", "tenant_support_routing", "tenant_audit_export"].every((id) =>
+    enterprisePlatform.enterprisePlatform.tenantControls.some((control) => control.id === id),
+  ),
+  "enterprise platform tenant controls are incomplete",
+);
+assert(
+  ["builders_email", "security_email", "designated_contact", "runtime_report_error", "enterprise_slack"].every((id) =>
+    enterprisePlatform.enterprisePlatform.supportLanes.some((lane) => lane.id === id),
+  ),
+  "enterprise platform support lanes are incomplete",
+);
+assert(
+  ["commercial_terms", "security_attestations", "peak_qps_review", "co_branding_approval"].every((id) =>
+    enterprisePlatform.enterprisePlatform.contractGates.some((gate) => gate.id === id),
+  ),
+  "enterprise platform contract gates are incomplete",
+);
+assert(
+  enterprisePlatform.enterprisePlatform.auditExports.length === 3 &&
+    enterprisePlatform.enterprisePlatform.externalGates.some((gate) => gate.includes("Enterprise access")),
+  "enterprise platform audit exports or gates are incomplete",
+);
+assert(
+  enterprisePlatform.enterprisePlatform.assertions.some((assertion) => assertion.includes("separate access track")),
+  "enterprise platform assertions are incomplete",
+);
+
 const preflight = await request(`/api/sessions/${sessionId}/preflight`);
 assert(preflight.preflight.checks.length >= 15, "preflight checks are incomplete");
 
@@ -2587,6 +2652,10 @@ assert(
 assert(
   proof.proof.artifacts.some((artifact) => artifact.label === "Enterprise Delegated Auth Center"),
   "reviewer proof enterprise delegated-auth artifact is missing",
+);
+assert(
+  proof.proof.artifacts.some((artifact) => artifact.label === "Swiggy Enterprise Platform Center"),
+  "reviewer proof enterprise platform artifact is missing",
 );
 assert(
   proof.proof.artifacts.some((artifact) => artifact.label === "Audit Ledger Center"),
@@ -3455,7 +3524,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 23, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 24, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -3469,7 +3538,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("23")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("24")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -3525,6 +3594,7 @@ assert(
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Auth Lifecycle Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Sandbox Credential Workbench") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Enterprise Delegated Auth Center") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Enterprise Platform Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Traffic Readiness Plan") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "MCP Backpressure Governor") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Load Lab") &&
@@ -3578,6 +3648,10 @@ assert(
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-auth-lifecycle-center"),
   "launch bundle Auth Lifecycle handoff link is missing",
+);
+assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/enterprise-platform-center"),
+  "launch bundle enterprise platform handoff link is missing",
 );
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/sandbox-credential-workbench"),
@@ -3778,6 +3852,9 @@ console.log(
       innovationRadarScore: innovationRadar.innovationRadar.score,
       innovationRadarLanes: innovationRadar.innovationRadar.opportunityCount,
       enterpriseDelegatedAuthScore: enterpriseAuth.enterpriseAuth.score,
+      enterprisePlatformScore: enterprisePlatform.enterprisePlatform.score,
+      enterprisePlatformTenantControls: enterprisePlatform.enterprisePlatform.totals.readyTenantControls,
+      enterprisePlatformSupportLanes: enterprisePlatform.enterprisePlatform.totals.supportLanes,
       authLifecycleScore: authLifecycle.authLifecycleCenter.score,
       authLifecycleRecoveries: authLifecycle.authLifecycleCenter.totals.recoveryScenarios,
       authLifecycleRefreshTokenV1: authLifecycle.authLifecycleCenter.tokenLifetimes.refreshTokenAvailableInV1,

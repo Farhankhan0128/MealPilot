@@ -184,6 +184,7 @@ Open Production Evidence and show:
 - Data Governance Center with DPDP roles, India/Singapore residency, data-flow inventory, DSR routing, 90-day Swiggy audit retention, token redaction, and signed-manifest watch.
 - Audit Ledger Center with redacted session/tool events, support correlation keys, DSR routing, and Swiggy support packet fields.
 - Enterprise Delegated Auth Center artifact for platform DCR preregistration, per-user OAuth, MCP on-behalf-of calls, 401/419/403 recovery, and architecture-review evidence.
+- Swiggy Enterprise Platform Center artifact for tenant boundaries, quota review, support SLAs, contract gates, co-branding approval, and enterprise audit exports.
 - Version monitor with v1 route pinning and deprecation alert readiness.
 - Compliance controls for consent, PII minimization, deletion, audit logging, and training-data exclusion.
 - Support Bridge redaction rules, SLA matrix, and escalation checklist.
@@ -259,6 +260,7 @@ Briefly show production readiness:
 - `/api/mcp-gateway`
 - `/api/auth/swiggy/status`
 - `/api/enterprise-delegated-auth`
+- `/api/enterprise-platform-center`
 - `/api/traffic-readiness-plan`
 - `/api/swiggy-load-lab`
 - `/api/swiggy-offer-intelligence`

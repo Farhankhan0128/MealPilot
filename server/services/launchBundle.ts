@@ -493,6 +493,15 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
         "Turns PKCE, 120-second codes, 5-day tokens, no refresh-token assumption, 401/419 re-auth, exact redirects, per-user tokens, and no-token logging into reviewer evidence.",
     },
     {
+      id: "enterprise_platform_center",
+      label: "Swiggy Enterprise Platform Center",
+      path: "/api/enterprise-platform-center",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Turns platform-operator onboarding, tenant boundaries, delegated auth, quota review, contract support, audit exports, staging soak, and co-branding gates into reviewer evidence.",
+    },
+    {
       id: "runtime_telemetry",
       label: "Runtime Telemetry",
       path: "/api/telemetry/runtime",
@@ -887,6 +896,7 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- Sandbox Credential Workbench: /api/sandbox-credential-workbench",
     "- Swiggy OAuth Status: /api/auth/swiggy/status",
     "- Swiggy Auth Lifecycle Center: /api/swiggy-auth-lifecycle-center",
+    "- Swiggy Enterprise Platform Center: /api/enterprise-platform-center",
     "- Error Intelligence: /api/error-intelligence",
     "- Support Bridge: /api/support/bridge",
     "- Runtime Telemetry: /api/telemetry/runtime",
