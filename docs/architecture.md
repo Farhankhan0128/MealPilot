@@ -109,6 +109,7 @@ Implementation:
 - Exposes `/api/guest-collaboration-calendar` as the group planning layer for guest votes, occasion templates, Dineout-first date nights, Food reminders, Instamart prep, calendar/share handoffs, and Slack/Teams gates.
 - Exposes `/api/luxury-experience-workspace` as the polished reservation, Food cart, Instamart basket, combined evening, and recovery review layer with concierge modes, all-tool coverage, widget fallbacks, voice contracts, telemetry, and confirmation gates.
 - Exposes `/api/reviewer-artifact-vault` as the access-submission manifest for proof links, OpenAPI, smoke commands, screenshot targets, demo-video checklist, logs, traces, redaction rules, support context, and Swiggy handoff copy.
+- Exposes `/api/swiggy-demo-evidence-director` as the 2-3 minute demo recording control plane for timed scenes, proof assets, visual QA requirements, redaction gates, runbook commands, and Swiggy handoff copy.
 - Exposes `/api/visual-qa-center` as the reviewer screenshot and layout evidence center for viewport targets, selector manifests, artifact paths, no-overlap rules, text-fit rules, widget fallbacks, mobile layout checks, redaction visibility, and automation/manual gates.
 - Exposes `/api/swiggy-docs-coverage` as the 69-page `llms.txt` documentation coverage audit across Start, Build, Operate, Reference, and Blog.
 - Exposes `/api/swiggy-docs-twin-explorer` as the paired markdown/rendered-page explorer for every official `llms.txt` page, including retrieval lanes, proof links, assertions, and drift gates.

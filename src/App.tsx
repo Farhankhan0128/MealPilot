@@ -117,6 +117,7 @@ import {
   fetchSwiggyFaqPolicyCenter,
   fetchSwiggyGrowthPartnershipCenter,
   fetchSwiggyShowcaseSubmissionCenter,
+  fetchSwiggyDemoEvidenceDirector,
   fetchSwiggySubmissionTimelineCenter,
   fetchSwiggyInteractionQaCenter,
   fetchSwiggyAccessDossier,
@@ -259,6 +260,7 @@ import type {
   SwiggyFaqPolicyCenter,
   SwiggyGrowthPartnershipCenter,
   SwiggyShowcaseSubmissionCenter,
+  SwiggyDemoEvidenceDirector,
   SwiggySubmissionTimelineCenter,
   SwiggyInteractionQaCenter,
   SwiggyPartnerSuccessDesk,
@@ -452,6 +454,7 @@ function App() {
   const [swiggyFaqPolicy, setSwiggyFaqPolicy] = useState<SwiggyFaqPolicyCenter | null>(null);
   const [swiggyGrowthPartnership, setSwiggyGrowthPartnership] = useState<SwiggyGrowthPartnershipCenter | null>(null);
   const [showcaseSubmission, setShowcaseSubmission] = useState<SwiggyShowcaseSubmissionCenter | null>(null);
+  const [demoEvidence, setDemoEvidence] = useState<SwiggyDemoEvidenceDirector | null>(null);
   const [submissionTimeline, setSubmissionTimeline] = useState<SwiggySubmissionTimelineCenter | null>(null);
   const [partnerSuccess, setPartnerSuccess] = useState<SwiggyPartnerSuccessDesk | null>(null);
   const [interactionQa, setInteractionQa] = useState<SwiggyInteractionQaCenter | null>(null);
@@ -656,6 +659,7 @@ function App() {
       faqPolicyResponse,
       growthPartnershipResponse,
       showcaseSubmissionResponse,
+      demoEvidenceResponse,
       submissionTimelineResponse,
       partnerSuccessResponse,
       interactionQaResponse,
@@ -761,6 +765,7 @@ function App() {
       fetchSwiggyFaqPolicyCenter(),
       fetchSwiggyGrowthPartnershipCenter(),
       fetchSwiggyShowcaseSubmissionCenter(),
+      fetchSwiggyDemoEvidenceDirector(),
       fetchSwiggySubmissionTimelineCenter(),
       fetchSwiggyPartnerSuccessDesk(),
       fetchSwiggyInteractionQaCenter(),
@@ -867,6 +872,7 @@ function App() {
     setSwiggyFaqPolicy(faqPolicyResponse.faqPolicy);
     setSwiggyGrowthPartnership(growthPartnershipResponse.growthPartnership);
     setShowcaseSubmission(showcaseSubmissionResponse.showcaseSubmission);
+    setDemoEvidence(demoEvidenceResponse.demoEvidence);
     setSubmissionTimeline(submissionTimelineResponse.submissionTimeline);
     setPartnerSuccess(partnerSuccessResponse.partnerSuccess);
     setInteractionQa(interactionQaResponse.interactionQa);
@@ -976,6 +982,7 @@ function App() {
       faqPolicyResponse,
       growthPartnershipResponse,
       showcaseSubmissionResponse,
+      demoEvidenceResponse,
       submissionTimelineResponse,
       partnerSuccessResponse,
       interactionQaResponse,
@@ -1078,6 +1085,7 @@ function App() {
       fetchSwiggyFaqPolicyCenter(),
       fetchSwiggyGrowthPartnershipCenter(),
       fetchSwiggyShowcaseSubmissionCenter(),
+      fetchSwiggyDemoEvidenceDirector(),
       fetchSwiggySubmissionTimelineCenter(),
       fetchSwiggyPartnerSuccessDesk(),
       fetchSwiggyInteractionQaCenter(),
@@ -1180,6 +1188,7 @@ function App() {
     setSwiggyFaqPolicy(faqPolicyResponse.faqPolicy);
     setSwiggyGrowthPartnership(growthPartnershipResponse.growthPartnership);
     setShowcaseSubmission(showcaseSubmissionResponse.showcaseSubmission);
+    setDemoEvidence(demoEvidenceResponse.demoEvidence);
     setSubmissionTimeline(submissionTimelineResponse.submissionTimeline);
     setPartnerSuccess(partnerSuccessResponse.partnerSuccess);
     setInteractionQa(interactionQaResponse.interactionQa);
@@ -1857,6 +1866,7 @@ function App() {
                 faqPolicy={swiggyFaqPolicy}
                 growthPartnership={swiggyGrowthPartnership}
                 showcaseSubmission={showcaseSubmission}
+                demoEvidence={demoEvidence}
                 submissionTimeline={submissionTimeline}
                 partnerSuccess={partnerSuccess}
                 interactionQa={interactionQa}
@@ -2449,6 +2459,7 @@ function LaunchCenterPanel({
   faqPolicy,
   growthPartnership,
   showcaseSubmission,
+  demoEvidence,
   submissionTimeline,
   partnerSuccess,
   interactionQa,
@@ -2524,6 +2535,7 @@ function LaunchCenterPanel({
   faqPolicy: SwiggyFaqPolicyCenter | null;
   growthPartnership: SwiggyGrowthPartnershipCenter | null;
   showcaseSubmission: SwiggyShowcaseSubmissionCenter | null;
+  demoEvidence: SwiggyDemoEvidenceDirector | null;
   submissionTimeline: SwiggySubmissionTimelineCenter | null;
   partnerSuccess: SwiggyPartnerSuccessDesk | null;
   interactionQa: SwiggyInteractionQaCenter | null;
@@ -3806,6 +3818,54 @@ function LaunchCenterPanel({
             </a>
             <a href="/api/swiggy-builders-launch-story" target="_blank" rel="noreferrer">
               Story
+            </a>
+          </div>
+        </article>
+
+        <article className="demo-evidence-card">
+          <div className="mini-heading">
+            <Camera aria-hidden="true" />
+            <strong>Demo Evidence Director</strong>
+          </div>
+          <span>
+            {demoEvidence
+              ? `${demoEvidence.score}/100, ${demoEvidence.totals.readyScenes}/${demoEvidence.totals.scenes} scenes ready`
+              : "Preparing 2-3 minute recording gates and proof assets"}
+          </span>
+          <div className="demo-evidence-grid">
+            <div>
+              <strong>{demoEvidence?.totals.proofAssets ?? 0}</strong>
+              <span>Proof assets</span>
+            </div>
+            <div>
+              <strong>{demoEvidence?.totals.recordingGates ?? 0}</strong>
+              <span>Recording gates</span>
+            </div>
+            <div>
+              <strong>{demoEvidence?.totals.operatorInputs ?? 0}</strong>
+              <span>Inputs</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(demoEvidence?.scenes ?? []).slice(0, 5).map((item) => (
+              <li
+                key={item.id}
+                data-status={item.status === "ready" ? "healthy" : item.status === "swiggy_gate" ? "blocked" : "watch"}
+              >
+                <span>{item.label}</span>
+                <strong>{item.duration}</strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-intelligence-actions" aria-label="Demo evidence links">
+            <a href="/api/swiggy-demo-evidence-director" target="_blank" rel="noreferrer">
+              Director API
+            </a>
+            <a href="/api/visual-qa-center" target="_blank" rel="noreferrer">
+              Visual QA
+            </a>
+            <a href="/api/builder-packet-export" target="_blank" rel="noreferrer">
+              Packet
             </a>
           </div>
         </article>

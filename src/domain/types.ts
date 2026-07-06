@@ -1428,6 +1428,64 @@ export interface SwiggyShowcaseSubmissionCenter {
   externalGates: string[];
 }
 
+export type SwiggyDemoEvidenceStatus = "ready" | "operator_input" | "swiggy_gate";
+export type SwiggyDemoEvidenceOwner = "MealPilot" | "Operator" | "Swiggy" | "Joint";
+
+export interface SwiggyDemoEvidenceScene {
+  sequence: number;
+  id: string;
+  label: string;
+  duration: string;
+  status: SwiggyDemoEvidenceStatus;
+  cameraCue: string;
+  narration: string;
+  proofLinks: string[];
+  recordingGate: string;
+}
+
+export interface SwiggyDemoProofAsset {
+  id: string;
+  label: string;
+  source: string;
+  owner: SwiggyDemoEvidenceOwner;
+  status: SwiggyDemoEvidenceStatus;
+  purpose: string;
+  redaction: string;
+}
+
+export interface SwiggyDemoRecordingGate {
+  id: string;
+  label: string;
+  owner: SwiggyDemoEvidenceOwner;
+  status: SwiggyDemoEvidenceStatus;
+  check: string;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyDemoEvidenceDirector {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  recommendedRuntime: string;
+  totals: {
+    scenes: number;
+    readyScenes: number;
+    proofAssets: number;
+    readyProofAssets: number;
+    recordingGates: number;
+    operatorInputs: number;
+    swiggyGates: number;
+    proofLinks: number;
+  };
+  scenes: SwiggyDemoEvidenceScene[];
+  proofAssets: SwiggyDemoProofAsset[];
+  recordingGates: SwiggyDemoRecordingGate[];
+  runbook: Array<{ sequence: number; label: string; command: string; proves: string }>;
+  handoffEmail: { to: string; subject: string; bodyPreview: string; evidenceLinks: string[] };
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type SwiggySubmissionTimelineStatus = "ready" | "operator_input" | "swiggy_gate";
 export type SwiggySubmissionTimelineOwner = "MealPilot" | "Operator" | "Swiggy" | "Joint";
 

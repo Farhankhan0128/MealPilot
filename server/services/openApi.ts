@@ -401,6 +401,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-demo-evidence-director": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Demo Evidence Director for 2-3 minute recording and showcase handoff proof",
+          responses: {
+            "200": {
+              description:
+                "Time-coded demo scenes, proof assets, recording gates, visual QA evidence, redaction checks, runbook commands, handoff email copy, and Swiggy-owned approval gates",
+            },
+          },
+        },
+      },
       "/api/swiggy-submission-timeline-center": {
         get: {
           tags: ["Builder Access"],

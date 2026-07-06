@@ -188,6 +188,7 @@ MealPilot should become a luxury-grade food and meal intelligence product with t
 | FAQ & Policy Center | `server/services/faqPolicyCenter.ts` |
 | Growth Partnership Center | `server/services/growthPartnership.ts` |
 | Showcase Submission Center | `server/services/showcaseSubmissionCenter.ts` |
+| Demo Evidence Director | `server/services/demoEvidenceDirector.ts` |
 | Submission Timeline Center | `server/services/submissionTimelineCenter.ts` |
 | Partner Success Desk | `server/services/partnerSuccessDesk.ts` |
 | Interaction QA Center | `server/services/interactionQaCenter.ts` |

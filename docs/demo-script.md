@@ -266,6 +266,7 @@ Briefly show production readiness:
 - `/api/guest-collaboration-calendar`
 - `/api/luxury-experience-workspace`
 - `/api/reviewer-artifact-vault`
+- `/api/swiggy-demo-evidence-director`
 - `/api/visual-qa-center`
 - `/api/premium-concierge-itinerary`
 - `/api/mcp/tool-contract-matrix`

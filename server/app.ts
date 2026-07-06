@@ -62,6 +62,7 @@ import { buildErrorIntelligenceReport, classifyMcpError } from "./services/error
 import { buildSwiggyFaqPolicyCenter } from "./services/faqPolicyCenter.js";
 import { buildGuestCollaborationCenter } from "./services/guestCollaborationCenter.js";
 import { buildSwiggyGrowthPartnershipCenter } from "./services/growthPartnership.js";
+import { buildSwiggyDemoEvidenceDirector } from "./services/demoEvidenceDirector.js";
 import { buildHouseholdPreferenceGraph } from "./services/householdPreferenceGraph.js";
 import { buildSwiggyInteractionQaCenter } from "./services/interactionQaCenter.js";
 import { buildSwiggyInnovationRadar } from "./services/innovationRadar.js";
@@ -1011,6 +1012,10 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/swiggy-showcase-submission-center", (_req, res) => {
     res.json({ showcaseSubmission: buildSwiggyShowcaseSubmissionCenter() });
+  });
+
+  app.get("/api/swiggy-demo-evidence-director", (_req, res) => {
+    res.json({ demoEvidence: buildSwiggyDemoEvidenceDirector() });
   });
 
   app.get("/api/swiggy-submission-timeline-center", (_req, res) => {

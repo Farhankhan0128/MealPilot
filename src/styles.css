@@ -1134,6 +1134,10 @@ select:focus {
   grid-column: span 2;
 }
 
+.demo-evidence-card {
+  grid-column: span 2;
+}
+
 .channel-multimodal-card {
   grid-column: span 2;
 }
@@ -1419,6 +1423,7 @@ select:focus {
 .faq-policy-grid,
 .growth-partnership-grid,
 .showcase-submission-grid,
+.demo-evidence-grid,
 .submission-timeline-grid,
 .partner-success-grid,
 .interaction-qa-grid,
@@ -1472,6 +1477,7 @@ select:focus {
 .faq-policy-grid div,
 .growth-partnership-grid div,
 .showcase-submission-grid div,
+.demo-evidence-grid div,
 .submission-timeline-grid div,
 .partner-success-grid div,
 .interaction-qa-grid div,
@@ -1526,6 +1532,7 @@ select:focus {
 .faq-policy-grid strong,
 .growth-partnership-grid strong,
 .showcase-submission-grid strong,
+.demo-evidence-grid strong,
 .submission-timeline-grid strong,
 .partner-success-grid strong,
 .interaction-qa-grid strong,
@@ -1579,6 +1586,7 @@ select:focus {
 .faq-policy-grid span,
 .growth-partnership-grid span,
 .showcase-submission-grid span,
+.demo-evidence-grid span,
 .submission-timeline-grid span,
 .partner-success-grid span,
 .interaction-qa-grid span,
@@ -2276,6 +2284,7 @@ select:focus {
   .builder-intake-card,
   .faq-policy-card,
   .growth-partnership-card,
+  .demo-evidence-card,
   .channel-multimodal-card,
   .nutrition-budget-card,
   .preference-graph-card,
@@ -2389,6 +2398,7 @@ select:focus {
   .faq-policy-grid,
   .growth-partnership-grid,
   .showcase-submission-grid,
+  .demo-evidence-grid,
   .submission-timeline-grid,
   .partner-success-grid,
   .interaction-qa-grid,
@@ -3006,6 +3016,7 @@ select:focus {
 .builder-intake-card,
 .faq-policy-card,
 .growth-partnership-card,
+.demo-evidence-card,
 .channel-multimodal-card,
 .nutrition-budget-card,
 .preference-graph-card,
@@ -3105,6 +3116,7 @@ select:focus {
 .faq-policy-grid div,
 .growth-partnership-grid div,
 .showcase-submission-grid div,
+.demo-evidence-grid div,
 .submission-timeline-grid div,
 .partner-success-grid div,
 .interaction-qa-grid div,
@@ -3308,6 +3320,7 @@ select:focus {
   .builder-intake-card,
   .faq-policy-card,
   .growth-partnership-card,
+  .demo-evidence-card,
   .channel-multimodal-card,
   .voice-commerce-card,
   .quality-loop-card,
@@ -3501,6 +3514,7 @@ select:focus {
   .faq-policy-grid,
   .growth-partnership-grid,
   .showcase-submission-grid,
+  .demo-evidence-grid,
   .submission-timeline-grid,
   .partner-success-grid,
   .interaction-qa-grid,
@@ -3537,6 +3551,7 @@ select:focus {
   .builder-intake-card,
   .faq-policy-card,
   .growth-partnership-card,
+  .demo-evidence-card,
   .channel-multimodal-card,
   .voice-commerce-card,
   .quality-loop-card,

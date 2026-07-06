@@ -102,6 +102,14 @@ const artifactSections = [
         "Script avoids live order placement unless Swiggy staging credentials explicitly allow it.",
       ),
       artifact(
+        "demo_evidence_director",
+        "Demo Evidence Director",
+        "api",
+        "/api/swiggy-demo-evidence-director",
+        "Time-coded scenes, proof assets, recording gates, runbook commands, visual QA links, and Swiggy handoff copy for the 2-3 minute demo.",
+        "Keeps demo recording, final email send, and Swiggy approvals as explicit operator or external gates.",
+      ),
+      artifact(
         "demo_video_link",
         "Demo video link",
         "video",
@@ -267,6 +275,7 @@ export function buildReviewerArtifactVault(): ReviewerArtifactVault {
     "- Builder packet: /api/builder-package.md",
     "- OpenAPI: /api/openapi.json",
     "- Demo script: docs/demo-script.md",
+    "- Demo Evidence Director: /api/swiggy-demo-evidence-director",
     "- Verification: npm run verify:production",
     "",
     "Manual attachments still needed: short demo video URL, final production HTTPS redirect URI, final static IP/egress details, and selected screenshots.",

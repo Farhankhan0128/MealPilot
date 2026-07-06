@@ -96,6 +96,7 @@ import type {
   SwiggyDocsTwinExplorer,
   SwiggyFaqPolicyCenter,
   SwiggyGrowthPartnershipCenter,
+  SwiggyDemoEvidenceDirector,
   SwiggyInteractionQaCenter,
   SwiggyShowcaseSubmissionCenter,
   SwiggySubmissionTimelineCenter,
@@ -410,6 +411,10 @@ export function fetchSwiggyShowcaseSubmissionCenter() {
   return requestJson<{ showcaseSubmission: SwiggyShowcaseSubmissionCenter }>(
     "/api/swiggy-showcase-submission-center",
   );
+}
+
+export function fetchSwiggyDemoEvidenceDirector() {
+  return requestJson<{ demoEvidence: SwiggyDemoEvidenceDirector }>("/api/swiggy-demo-evidence-director");
 }
 
 export function fetchSwiggySubmissionTimelineCenter() {

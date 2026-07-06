@@ -108,6 +108,8 @@ The verifier also validates `/api/swiggy-cta-live-audit` for safe live Builders/
 
 The verifier also validates `/api/swiggy-showcase-submission-center` for feature-ready pitch blocks, demo storyboard steps, metric packs, visual proof, draft outreach email, operator-owned demo inputs, and Swiggy co-branding/feature approval gates.
 
+The verifier also validates `/api/swiggy-demo-evidence-director` for the 2-3 minute recording storyboard, proof assets, recording gates, redaction checks, visual QA links, runbook commands, builders@swiggy.in handoff copy, and explicit operator/Swiggy gates.
+
 The verifier also validates `/api/swiggy-submission-timeline-center` for the eight-phase Start Building, proof-freeze, demo, access-form, handoff-email, DCR, staging, soak, and production-promotion timeline with proof links and explicit operator/Swiggy gates.
 
 The verifier also validates `/api/swiggy-partner-success-desk` for access handoff, developer support, SLO incidents, capacity review, backpressure controls, growth showcase asks, escalation emails, and enterprise Slack/partner-manager gates.
@@ -228,6 +230,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/reviewer-artifact-vault`
 - `GET /api/visual-qa-center`
 - `GET /api/swiggy-showcase-submission-center`
+- `GET /api/swiggy-demo-evidence-director`
 - `GET /api/swiggy-submission-timeline-center`
 - `GET /api/builder-packet-export`
 - `GET /api/builder-packet-export.md`
@@ -439,6 +442,8 @@ Production should use an HTTPS redirect URI with exact-match allowlisting.
 
 `/api/swiggy-showcase-submission-center` prepares the public Swiggy showcase packet: pitch copy, demo flow, metric proof, visual-gallery links, and a builders@swiggy.in email draft are generated from local evidence while video recording, final email submission, co-branding, and feature placement remain explicit operator or Swiggy gates.
 
+`/api/swiggy-demo-evidence-director` prepares the final demo recording packet: six timed scenes, proof assets, visual QA expectations, redaction review gates, runbook commands, and handoff email copy are generated locally while recording, URL hosting, final send, access approval, credentials, and co-branding stay operator or Swiggy owned.
+
 `/api/swiggy-submission-timeline-center` prepares the operator launch timeline: eight phases cover Start Building review, packet freeze, demo capture, Request Access form submission, Send Demo handoff, DCR, staging credentials/seed, and production promotion, each with owner, status, entrypoint, checklist, proof links, and no-automatic-external-submission safety.
 
 `/api/swiggy-partner-success-desk` composes the post-access operator room: access handoff, support bridge, SLO incidents, capacity review, backpressure, growth showcase asks, and enterprise Slack/partner-manager gates are pulled into one reviewer surface with proof links and escalation email drafts.
@@ -451,7 +456,7 @@ Production should use an HTTPS redirect URI with exact-match allowlisting.
 
 `/api/swiggy-access-evidence-matrix` is the access-review evidence ledger. It reconciles Access Dossier, Submission Console, Access Submission Studio, and Reviewer Artifact Vault rows into one owner-tagged matrix for official fields, proof attachments, runbook steps, commands, manual operator inputs, and Swiggy approval gates.
 
-`/api/builder-packet-export` and `/api/builder-packet-export.md` turn the Submission Console, Access Submission Studio, Access Evidence Matrix, Production Launch Bundle, Reviewer Artifact Vault, Deep Site Map, and Visual QA Center into a reproducible Swiggy access packet. Run `npm run export:builder-packet` against the production server to write `artifacts/builder-packet/mealpilot-swiggy-access-packet.json`, `mealpilot-swiggy-access-packet.md`, and `verification-summary.json`.
+`/api/builder-packet-export` and `/api/builder-packet-export.md` turn the Submission Console, Access Submission Studio, Access Evidence Matrix, Production Launch Bundle, Reviewer Artifact Vault, Demo Evidence Director, Deep Site Map, and Visual QA Center into a reproducible Swiggy access packet. Run `npm run export:builder-packet` against the production server to write `artifacts/builder-packet/mealpilot-swiggy-access-packet.json`, `mealpilot-swiggy-access-packet.md`, and `verification-summary.json`.
 
 `/api/swiggy-confirmation-command-center` is the final-commerce proof surface for Swiggy Food `place_food_order`, Instamart `checkout`, and Dineout `book_table`. `/api/swiggy-confirmation-command-center/execute` makes that proof executable in mock and credentialed modes: it requires fresh context, separate confirmation, Swiggy payment/free-booking truth, blocks paid Dineout free-booking misuse, runs preflight -> action -> status probe, records no-blind-retry telemetry, and keeps live credentials as an external gate.
 

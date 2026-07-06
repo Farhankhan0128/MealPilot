@@ -213,6 +213,15 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
         "Packages proof links, OpenAPI, smoke commands, screenshot targets, demo-video checklist, logs, traces, redaction rules, support context, and Swiggy handoff copy into one reviewer manifest.",
     },
     {
+      id: "demo_evidence_director",
+      label: "Swiggy Demo Evidence Director",
+      path: "/api/swiggy-demo-evidence-director",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Coordinates the 2-3 minute demo storyboard, proof assets, recording gates, redaction checks, runbook commands, and builders@swiggy.in handoff copy.",
+    },
+    {
       id: "access_evidence_matrix",
       label: "Swiggy Access Evidence Matrix",
       path: "/api/swiggy-access-evidence-matrix",
@@ -978,6 +987,7 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- Guest Collaboration & Calendar Center: /api/guest-collaboration-calendar",
     "- Luxury Experience Workspace: /api/luxury-experience-workspace",
     "- Reviewer Artifact Vault: /api/reviewer-artifact-vault",
+    "- Swiggy Demo Evidence Director: /api/swiggy-demo-evidence-director",
     "- Swiggy Access Evidence Matrix: /api/swiggy-access-evidence-matrix",
     "- Visual QA Center: /api/visual-qa-center",
     "- Submission Console: /api/submission-console",

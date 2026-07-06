@@ -144,6 +144,10 @@ assert(
   "OpenAPI showcase submission center contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-demo-evidence-director"].get.summary.includes("Demo Evidence Director"),
+  "OpenAPI demo evidence director contract is missing",
+);
+assert(
   openApi.paths["/api/swiggy-submission-timeline-center"].get.summary.includes("Submission Timeline"),
   "OpenAPI submission timeline center contract is missing",
 );
@@ -824,6 +828,48 @@ assert(
     showcaseSubmission.showcaseSubmission.assertions.some((assertion) => assertion.includes("no email")) &&
     showcaseSubmission.showcaseSubmission.externalGates.some((gate) => gate.includes("co-branding")),
   "showcase submission outreach, assertions, or gates are missing",
+);
+
+const demoEvidence = await request("/api/swiggy-demo-evidence-director");
+assert(demoEvidence.demoEvidence.score >= 85, "demo evidence director score is below target");
+assert(
+  demoEvidence.demoEvidence.totals.scenes === 6 &&
+    demoEvidence.demoEvidence.totals.readyScenes === 5 &&
+    demoEvidence.demoEvidence.totals.proofAssets === 8 &&
+    demoEvidence.demoEvidence.totals.readyProofAssets === 6 &&
+    demoEvidence.demoEvidence.totals.recordingGates === 6 &&
+    demoEvidence.demoEvidence.totals.operatorInputs === 5 &&
+    demoEvidence.demoEvidence.totals.swiggyGates === 2,
+  "demo evidence director totals are incomplete",
+);
+assert(
+  ["opening_context", "mcp_coverage", "commercial_guard", "reviewer_evidence", "handoff_close"].every((id) =>
+    demoEvidence.demoEvidence.scenes.some((scene) => scene.id === id),
+  ),
+  "demo evidence director scenes are incomplete",
+);
+assert(
+  ["demo_video_url:operator_input", "swiggy_approval:swiggy_gate", "visual_report:ready"].every((entry) =>
+    demoEvidence.demoEvidence.proofAssets.some((asset) => `${asset.id}:${asset.status}` === entry),
+  ),
+  "demo evidence director proof assets are incomplete",
+);
+assert(
+  ["redaction_review:operator_input", "swiggy_access_review:swiggy_gate"].every((entry) =>
+    demoEvidence.demoEvidence.recordingGates.some((gate) => `${gate.id}:${gate.status}` === entry),
+  ),
+  "demo evidence director recording gates are incomplete",
+);
+assert(
+  demoEvidence.demoEvidence.runbook.map((step) => step.sequence).join(",") === "1,2,3,4,5" &&
+    demoEvidence.demoEvidence.handoffEmail.to === "builders@swiggy.in" &&
+    demoEvidence.demoEvidence.handoffEmail.evidenceLinks.includes("/api/swiggy-demo-evidence-director"),
+  "demo evidence director runbook or handoff email is incomplete",
+);
+assert(
+  demoEvidence.demoEvidence.assertions.some((assertion) => assertion.includes("does not record video")) &&
+    demoEvidence.demoEvidence.externalGates.some((gate) => gate.includes("co-branding")),
+  "demo evidence director assertions or external gates are missing",
 );
 
 const submissionTimeline = await request("/api/swiggy-submission-timeline-center");
@@ -1697,6 +1743,17 @@ assert(
   "reviewer artifact vault access evidence matrix artifact is missing",
 );
 assert(
+  reviewerArtifactVault.reviewerArtifactVault.artifactSections.some((section) =>
+    section.artifacts.some(
+      (artifact) =>
+        artifact.id === "demo_evidence_director" &&
+        artifact.label === "Demo Evidence Director" &&
+        artifact.path === "/api/swiggy-demo-evidence-director",
+    ),
+  ),
+  "reviewer artifact vault demo evidence director artifact is missing",
+);
+assert(
   reviewerArtifactVault.reviewerArtifactVault.screenshotTargets.some(
     (target) =>
       target.id === "luxury_workspace_card" &&
@@ -1757,7 +1814,8 @@ assert(
 );
 assert(
   reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.to === "builders@swiggy.in" &&
-    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/reviewer-artifact-vault"),
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/reviewer-artifact-vault") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-demo-evidence-director"),
   "reviewer artifact vault email draft is incomplete",
 );
 assert(
@@ -1767,8 +1825,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 46, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 46, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 47, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 47, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -1789,6 +1847,17 @@ assert(
     ),
   ),
   "visual QA card screenshot target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some(
+      (target) =>
+        target.id === "demo_evidence_card" &&
+        target.selector === ".demo-evidence-card" &&
+        target.viewport === "desktop",
+    ),
+  ),
+  "visual QA demo evidence target is missing",
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
@@ -5212,7 +5281,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 46, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 47, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -5226,7 +5295,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("46")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("47")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -5275,6 +5344,7 @@ assert(
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Guest Collaboration & Calendar Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Luxury Experience Workspace") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Reviewer Artifact Vault") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Demo Evidence Director") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Access Evidence Matrix") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Visual QA Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Builders Launch Story Center") &&
@@ -5436,6 +5506,10 @@ assert(
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/reviewer-artifact-vault"),
   "launch bundle reviewer artifact vault handoff link is missing",
+);
+assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-demo-evidence-director"),
+  "launch bundle demo evidence director handoff link is missing",
 );
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-access-evidence-matrix"),
@@ -5783,6 +5857,9 @@ console.log(
       showcaseSubmissionScore: showcaseSubmission.showcaseSubmission.score,
       showcaseSubmissionAssets: showcaseSubmission.showcaseSubmission.totals.assets,
       showcaseSubmissionGates: showcaseSubmission.showcaseSubmission.totals.swiggyGates,
+      demoEvidenceScore: demoEvidence.demoEvidence.score,
+      demoEvidenceScenes: demoEvidence.demoEvidence.totals.scenes,
+      demoEvidenceProofAssets: demoEvidence.demoEvidence.totals.proofAssets,
       submissionTimelineScore: submissionTimeline.submissionTimeline.score,
       submissionTimelinePhases: submissionTimeline.submissionTimeline.totals.phases,
       submissionTimelineSwiggyGates: submissionTimeline.submissionTimeline.totals.swiggyGates,

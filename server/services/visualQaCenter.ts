@@ -420,6 +420,17 @@ const targetGroups = [
         "artifacts/visual-qa/showcase-submission-card.png",
       ),
       target(
+        "demo_evidence_card",
+        "Demo Evidence Director card",
+        "/",
+        ".demo-evidence-card",
+        "desktop",
+        1280,
+        900,
+        "Demo Evidence Director shows timed scenes, proof assets, recording gates, operator inputs, and packet links.",
+        "artifacts/visual-qa/demo-evidence-card.png",
+      ),
+      target(
         "submission_timeline_card",
         "Submission Timeline card",
         "/",
