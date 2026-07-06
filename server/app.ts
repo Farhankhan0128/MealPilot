@@ -63,6 +63,7 @@ import {
 } from "./services/mcpGateway.js";
 import { buildCredentialOnboardingReport } from "./services/credentialOnboarding.js";
 import { buildDataGovernanceCenter } from "./services/dataGovernance.js";
+import { buildSwiggyDeepSiteMap } from "./services/deepSiteMap.js";
 import { buildSwiggyDocsCoverage } from "./services/docsCoverage.js";
 import { buildEnterpriseDelegatedAuthCenter } from "./services/enterpriseDelegatedAuth.js";
 import {
@@ -637,6 +638,15 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/swiggy-source-intelligence", (_req, res) => {
     res.json({ sourceIntelligence: buildSwiggySourceIntelligence() });
+  });
+
+  app.get("/api/swiggy-deep-site-map", (_req, res) => {
+    res.json({
+      deepSiteMap: buildSwiggyDeepSiteMap({
+        config,
+        latestPlan: store.getAllPlans().at(-1),
+      }),
+    });
   });
 
   app.get("/api/swiggy-innovation-radar", (_req, res) => {

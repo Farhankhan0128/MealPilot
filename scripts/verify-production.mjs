@@ -1037,6 +1037,57 @@ assert(
   "source intelligence staging replay queue is missing",
 );
 
+const deepSiteMap = await request("/api/swiggy-deep-site-map");
+assert(deepSiteMap.deepSiteMap.score >= 90, "Swiggy deep site map score is below target");
+assert(deepSiteMap.deepSiteMap.totals.pages >= 8, "deep site map page coverage is incomplete");
+assert(deepSiteMap.deepSiteMap.totals.modules >= 38, "deep site map module coverage is incomplete");
+assert(deepSiteMap.deepSiteMap.totals.ctas >= 11, "deep site map CTA coverage is incomplete");
+assert(deepSiteMap.deepSiteMap.totals.headerLinks >= 12, "deep site map header coverage is incomplete");
+assert(deepSiteMap.deepSiteMap.totals.footerLinks >= 6, "deep site map footer coverage is incomplete");
+assert(deepSiteMap.deepSiteMap.totals.proofLinks >= 20, "deep site map proof-link coverage is incomplete");
+assert(
+  ["home", "developers", "enterprises", "access", "docs_home", "blog_launch"].every((id) =>
+    deepSiteMap.deepSiteMap.pages.some((page) => page.id === id),
+  ),
+  "deep site map critical pages are incomplete",
+);
+assert(
+  deepSiteMap.deepSiteMap.pages.some(
+    (page) =>
+      page.id === "access" &&
+      page.ctaSignals.includes("Apply as Developer") &&
+      page.moduleSignals.includes("The Ground Rules") &&
+      page.proofLinks.includes("/api/submission-console"),
+  ),
+  "deep site map access-page proof row is incomplete",
+);
+assert(
+  deepSiteMap.deepSiteMap.ctas.some(
+    (cta) =>
+      cta.id === "apply_developer" &&
+      cta.completionGate === "operator_submit" &&
+      cta.status === "documented" &&
+      cta.evidenceLinks.includes("/api/swiggy-access-dossier"),
+  ),
+  "deep site map developer-apply CTA gate is incomplete",
+);
+assert(
+  deepSiteMap.deepSiteMap.headerFooterMatrix.some((item) => item.label === "Start Building") &&
+    deepSiteMap.deepSiteMap.headerFooterMatrix.some((item) => item.label === "Privacy Policy"),
+  "deep site map header/footer matrix is incomplete",
+);
+assert(
+  ["site_pages", "header_footer", "cta_paths", "source_reconciliation"].every((id) =>
+    deepSiteMap.deepSiteMap.sections.some((section) => section.id === id),
+  ),
+  "deep site map sections are incomplete",
+);
+assert(
+  deepSiteMap.deepSiteMap.assertions.some((assertion) => assertion.includes("Every public Builders page")) &&
+    deepSiteMap.deepSiteMap.externalGates.some((gate) => gate.includes("Google Forms")),
+  "deep site map assertions or external gates are incomplete",
+);
+
 const innovationRadar = await request("/api/swiggy-innovation-radar");
 assert(innovationRadar.innovationRadar.score >= 70, "innovation radar score is below target");
 assert(innovationRadar.innovationRadar.opportunityCount === 8, "innovation radar opportunity count is incomplete");
@@ -2760,6 +2811,9 @@ console.log(
       upstreamRoadmapItems: upstreamWatch.upstreamWatch.roadmapItems.length,
       sourceIntelligenceScore: sourceIntelligence.sourceIntelligence.score,
       sourceDriftSignals: sourceIntelligence.sourceIntelligence.driftSignals.length,
+      deepSiteMapScore: deepSiteMap.deepSiteMap.score,
+      deepSiteMapPages: deepSiteMap.deepSiteMap.totals.pages,
+      deepSiteMapCtas: deepSiteMap.deepSiteMap.totals.ctas,
       innovationRadarScore: innovationRadar.innovationRadar.score,
       innovationRadarLanes: innovationRadar.innovationRadar.opportunityCount,
       enterpriseDelegatedAuthScore: enterpriseAuth.enterpriseAuth.score,

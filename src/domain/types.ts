@@ -644,6 +644,79 @@ export interface SwiggyWebsiteAtlas {
   remainingExternalGates: string[];
 }
 
+export type SwiggyDeepSiteMapStatus = "implemented" | "documented" | "watch" | "external_gate";
+
+export interface SwiggyDeepSitePage {
+  id: string;
+  title: string;
+  url: string;
+  pageType: SwiggyWebsitePageAtlas["pageType"];
+  primaryAudience: SwiggyWebsitePageAtlas["primaryAudience"];
+  moduleCount: number;
+  ctaCount: number;
+  headerSignals: string[];
+  footerSignals: string[];
+  ctaSignals: string[];
+  moduleSignals: string[];
+  proofLinks: string[];
+  coverageStatus: SwiggyDeepSiteMapStatus;
+  nextReviewAction: string;
+}
+
+export interface SwiggyDeepSiteCta {
+  id: string;
+  label: string;
+  url: string;
+  appearsOn: string[];
+  intent: string;
+  actionType: "navigate" | "form" | "email" | "docs" | "demo";
+  completionGate: SwiggyBuilderCtaCompletionGate;
+  mealPilotResponse: string;
+  evidenceLinks: string[];
+  status: SwiggyDeepSiteMapStatus;
+}
+
+export interface SwiggyDeepSiteSection {
+  id: string;
+  label: string;
+  officialSignal: string;
+  sourceUrls: string[];
+  evidenceLinks: string[];
+  total: number;
+  ready: number;
+  status: SwiggyDeepSiteMapStatus;
+  nextAction: string;
+}
+
+export interface SwiggyDeepSiteMap {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  totals: {
+    pages: number;
+    modules: number;
+    ctas: number;
+    headerLinks: number;
+    footerLinks: number;
+    crawlSignals: number;
+    proofLinks: number;
+    sections: number;
+  };
+  pages: SwiggyDeepSitePage[];
+  ctas: SwiggyDeepSiteCta[];
+  sections: SwiggyDeepSiteSection[];
+  headerFooterMatrix: Array<{
+    id: string;
+    label: string;
+    location: SwiggyWebsiteNavLink["location"];
+    url: string;
+    mealPilotCoverage: string;
+    status: SwiggyDeepSiteMapStatus;
+  }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type SwiggyBuilderIntakeStatus = "ready" | "operator_input" | "external_gate";
 export type SwiggyBuilderCtaTrack = "product" | "developer" | "enterprise" | "docs" | "support" | "demo";
 export type SwiggyBuilderCtaCompletionGate = "none" | "operator_submit" | "swiggy_approval" | "external_site";

@@ -1154,7 +1154,8 @@ select:focus {
   grid-column: span 2;
 }
 
-.website-atlas-card {
+.website-atlas-card,
+.deep-site-map-card {
   grid-column: span 2;
 }
 
@@ -1421,13 +1422,15 @@ select:focus {
   font-weight: 900;
 }
 
-.website-atlas-grid {
+.website-atlas-grid,
+.deep-site-map-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
 }
 
-.website-atlas-grid div {
+.website-atlas-grid div,
+.deep-site-map-grid div {
   display: grid;
   gap: 3px;
   min-height: 64px;
@@ -1436,12 +1439,14 @@ select:focus {
   background: #fff;
 }
 
-.website-atlas-grid strong {
+.website-atlas-grid strong,
+.deep-site-map-grid strong {
   color: var(--green-dark);
   font-size: 1.18rem;
 }
 
-.website-atlas-grid span {
+.website-atlas-grid span,
+.deep-site-map-grid span {
   font-size: 0.75rem;
   font-weight: 900;
 }
@@ -1893,6 +1898,7 @@ select:focus {
   .capability-registry-card,
   .resource-prompt-card,
   .website-atlas-card,
+  .deep-site-map-card,
   .upstream-watch-card,
   .source-intelligence-card,
   .innovation-radar-card,
@@ -2584,6 +2590,7 @@ select:focus {
 .capability-registry-card,
 .resource-prompt-card,
 .website-atlas-card,
+.deep-site-map-card,
 .upstream-watch-card,
 .source-intelligence-card,
 .innovation-radar-card,
@@ -2847,6 +2854,7 @@ select:focus {
   .capability-registry-card,
   .resource-prompt-card,
   .website-atlas-card,
+  .deep-site-map-card,
   .upstream-watch-card,
   .support-bridge-card,
   .submission-card,

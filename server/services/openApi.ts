@@ -401,6 +401,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-deep-site-map": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy deep site map for every Builders page, module, CTA, header, and footer proof path",
+          responses: {
+            "200": {
+              description:
+                "Page-by-page Builders website audit with module signals, CTA ownership, header/footer matrix, source reconciliation sections, MealPilot proof links, assertions, and external gates",
+            },
+          },
+        },
+      },
       "/api/swiggy-innovation-radar": {
         get: {
           tags: ["Builder Access"],

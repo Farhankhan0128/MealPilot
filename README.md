@@ -58,6 +58,7 @@ Planned MCP servers:
 - MCP Capability Registry that maps and locally exercises `mcp:tools`, `mcp:resources`, `mcp:prompts`, OAuth metadata, widgets, prompt contracts, and external Swiggy gates.
 - Resource & Prompt Studio that exercises `resources/list`, `resources/read`, `prompts/list`, and `prompts/get` across Food, Instamart, and Dineout with samples, smoke calls, and live Swiggy gates.
 - Swiggy Website Atlas that maps the Builders header, docs subnav, footer groups, production access page, launch blog, rendered-page crawl evidence, page modules, CTAs, and legal/resource links to MealPilot evidence.
+- Swiggy Deep Site Map that consolidates every Builders page, module, CTA, header link, docs subnav item, footer resource, source-refresh section, and MealPilot proof path into one reviewer audit.
 - Builder Intake Command Center that converts every signup, apply, demo, contact, docs, and footer CTA into owner-assigned next actions, access-form fields, a demo storyboard, and copy-ready handoff drafts.
 - FAQ & Policy Center that maps homepage, developer, enterprise, access-guideline, footer-resource, allowed/restricted/prohibited, operating-principle, and legal policy signals to MealPilot evidence.
 - Growth Partnership Center that turns Swiggy's get-noticed, co-branding, direct-support, hiring, co-marketing, analytics, and strategic-growth signals into launch experiments, proof assets, metrics, and partner asks.
@@ -231,6 +232,7 @@ GET  /api/visual-qa-center
 GET  /api/swiggy-docs-coverage
 GET  /api/swiggy-upstream-watch
 GET  /api/swiggy-source-intelligence
+GET  /api/swiggy-deep-site-map
 GET  /api/swiggy-innovation-radar
 GET  /api/ai-client-connect-kit
 GET  /api/brand-compliance-kit
@@ -355,6 +357,8 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 `GET /api/swiggy-upstream-watch` is the upstream-change control center: Swiggy `llms.txt`, `llms-full.txt`, Markdown page contract, v1.0 shipped capability/limitation inventory, v1.1/v1.2/v2 roadmap watch, signed-manifest external gate, and action queue for new tool pages, rate-limit headers, hosted widgets, and manifest signing.
 
 `GET /api/swiggy-source-intelligence` is the source reconciliation center: Builders website pages, homepage/developer/enterprise/docs CTAs, `llms.txt`, `llms-full.txt`, markdown twins, 35-tool reference counts, drift signals, and the build queue are compared against MealPilot evidence so reviewers can see what is implemented, what is watched, and what is gated by Swiggy credentials.
+
+`GET /api/swiggy-deep-site-map` is the page-by-page Builders website audit: homepage, developers, enterprises, access, docs, reference, blog, footer, every CTA, header, docs subnav, footer resource, module signal, proof link, source-reconciliation section, assertion, and external gate in one reviewer surface.
 
 `GET /api/swiggy-innovation-radar` is the product strategy engine: Swiggy developer ideas, enterprise signals, access ground rules, support model, and all-server MCP references become premium opportunity lanes, route optimizations, build phases, differentiators, next builds, and explicit staging or partner gates.
 

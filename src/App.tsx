@@ -100,6 +100,7 @@ import {
   fetchSwiggyGrowthPartnershipCenter,
   fetchSwiggyAccessDossier,
   fetchSwiggyDocsCoverage,
+  fetchSwiggyDeepSiteMap,
   fetchSwiggyInnovationRadar,
   fetchSwiggyJourneyCompiler,
   fetchSwiggyScenarioRunner,
@@ -190,6 +191,7 @@ import type {
   SwiggyAccessDossier,
   SwiggyBuilderIntakeCommandCenter,
   SwiggyChannelMultimodalStudio,
+  SwiggyDeepSiteMap,
   SwiggyWidget,
   SwiggyBuildersMap,
   SwiggyDocsCoverageReport,
@@ -352,6 +354,7 @@ function App() {
   const [mcpToolLab, setMcpToolLab] = useState<McpToolLabReport | null>(null);
   const [swiggyBuildersMap, setSwiggyBuildersMap] = useState<SwiggyBuildersMap | null>(null);
   const [swiggyWebsiteAtlas, setSwiggyWebsiteAtlas] = useState<SwiggyWebsiteAtlas | null>(null);
+  const [swiggyDeepSiteMap, setSwiggyDeepSiteMap] = useState<SwiggyDeepSiteMap | null>(null);
   const [swiggyBuilderIntake, setSwiggyBuilderIntake] = useState<SwiggyBuilderIntakeCommandCenter | null>(null);
   const [swiggyFaqPolicy, setSwiggyFaqPolicy] = useState<SwiggyFaqPolicyCenter | null>(null);
   const [swiggyGrowthPartnership, setSwiggyGrowthPartnership] = useState<SwiggyGrowthPartnershipCenter | null>(null);
@@ -511,6 +514,7 @@ function App() {
       toolLabResponse,
       buildersMapResponse,
       websiteAtlasResponse,
+      deepSiteMapResponse,
       builderIntakeResponse,
       faqPolicyResponse,
       growthPartnershipResponse,
@@ -576,6 +580,7 @@ function App() {
       fetchMcpToolLab(),
       fetchSwiggyBuildersMap(),
       fetchSwiggyWebsiteAtlas(),
+      fetchSwiggyDeepSiteMap(),
       fetchSwiggyBuilderIntake(),
       fetchSwiggyFaqPolicyCenter(),
       fetchSwiggyGrowthPartnershipCenter(),
@@ -642,6 +647,7 @@ function App() {
     setMcpToolLab(toolLabResponse.toolLab);
     setSwiggyBuildersMap(buildersMapResponse.map);
     setSwiggyWebsiteAtlas(websiteAtlasResponse.atlas);
+    setSwiggyDeepSiteMap(deepSiteMapResponse.deepSiteMap);
     setSwiggyBuilderIntake(builderIntakeResponse.intake);
     setSwiggyFaqPolicy(faqPolicyResponse.faqPolicy);
     setSwiggyGrowthPartnership(growthPartnershipResponse.growthPartnership);
@@ -711,6 +717,7 @@ function App() {
       toolLabResponse,
       buildersMapResponse,
       websiteAtlasResponse,
+      deepSiteMapResponse,
       builderIntakeResponse,
       faqPolicyResponse,
       growthPartnershipResponse,
@@ -773,6 +780,7 @@ function App() {
       fetchMcpToolLab(),
       fetchSwiggyBuildersMap(),
       fetchSwiggyWebsiteAtlas(),
+      fetchSwiggyDeepSiteMap(),
       fetchSwiggyBuilderIntake(),
       fetchSwiggyFaqPolicyCenter(),
       fetchSwiggyGrowthPartnershipCenter(),
@@ -835,6 +843,7 @@ function App() {
     setMcpToolLab(toolLabResponse.toolLab);
     setSwiggyBuildersMap(buildersMapResponse.map);
     setSwiggyWebsiteAtlas(websiteAtlasResponse.atlas);
+    setSwiggyDeepSiteMap(deepSiteMapResponse.deepSiteMap);
     setSwiggyBuilderIntake(builderIntakeResponse.intake);
     setSwiggyFaqPolicy(faqPolicyResponse.faqPolicy);
     setSwiggyGrowthPartnership(growthPartnershipResponse.growthPartnership);
@@ -1471,6 +1480,7 @@ function App() {
                 toolLab={mcpToolLab}
                 buildersMap={swiggyBuildersMap}
                 websiteAtlas={swiggyWebsiteAtlas}
+                deepSiteMap={swiggyDeepSiteMap}
                 builderIntake={swiggyBuilderIntake}
                 faqPolicy={swiggyFaqPolicy}
                 growthPartnership={swiggyGrowthPartnership}
@@ -2023,6 +2033,7 @@ function LaunchCenterPanel({
   toolLab,
   buildersMap,
   websiteAtlas,
+  deepSiteMap,
   builderIntake,
   faqPolicy,
   growthPartnership,
@@ -2070,6 +2081,7 @@ function LaunchCenterPanel({
   toolLab: McpToolLabReport | null;
   buildersMap: SwiggyBuildersMap | null;
   websiteAtlas: SwiggyWebsiteAtlas | null;
+  deepSiteMap: SwiggyDeepSiteMap | null;
   builderIntake: SwiggyBuilderIntakeCommandCenter | null;
   faqPolicy: SwiggyFaqPolicyCenter | null;
   growthPartnership: SwiggyGrowthPartnershipCenter | null;
@@ -2695,6 +2707,55 @@ function LaunchCenterPanel({
               <li key={page.id} data-status={page.status === "covered" ? "healthy" : "watch"}>
                 <span>{page.pageId.replaceAll("_", " ")}</span>
                 <strong>{page.moduleSignals.length} modules</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="deep-site-map-card">
+          <div className="mini-heading">
+            <BookOpen aria-hidden="true" />
+            <strong>Deep Site Map</strong>
+          </div>
+          <span>
+            {deepSiteMap
+              ? `${deepSiteMap.score}/100, ${deepSiteMap.totals.pages} pages, ${deepSiteMap.totals.proofLinks} proofs`
+              : "Auditing every Builders page, module, CTA, header, and footer"}
+          </span>
+          <div className="deep-site-map-grid">
+            <div>
+              <strong>{deepSiteMap?.totals.modules ?? 0}</strong>
+              <span>Modules</span>
+            </div>
+            <div>
+              <strong>{deepSiteMap?.totals.ctas ?? 0}</strong>
+              <span>CTAs</span>
+            </div>
+            <div>
+              <strong>{deepSiteMap?.totals.headerLinks ?? 0}</strong>
+              <span>Header</span>
+            </div>
+            <div>
+              <strong>{deepSiteMap?.totals.footerLinks ?? 0}</strong>
+              <span>Footer</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(deepSiteMap?.pages ?? []).slice(0, 6).map((page) => (
+              <li
+                key={page.id}
+                data-status={
+                  page.coverageStatus === "implemented"
+                    ? "healthy"
+                    : page.coverageStatus === "documented"
+                      ? "healthy"
+                    : page.coverageStatus === "external_gate"
+                      ? "watch"
+                      : page.coverageStatus
+                }
+              >
+                <span>{page.title}</span>
+                <strong>{page.moduleCount} modules</strong>
               </li>
             ))}
           </ul>

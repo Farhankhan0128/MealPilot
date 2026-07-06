@@ -62,6 +62,7 @@ import type {
   SwiggyAccessDossier,
   SwiggyBuilderIntakeCommandCenter,
   SwiggyChannelMultimodalStudio,
+  SwiggyDeepSiteMap,
   SwiggyWidget,
   SwiggyBuildersMap,
   SwiggyDocsCoverageReport,
@@ -312,6 +313,10 @@ export function fetchSwiggyUpstreamWatch() {
 
 export function fetchSwiggySourceIntelligence() {
   return requestJson<{ sourceIntelligence: SwiggySourceIntelligenceReport }>("/api/swiggy-source-intelligence");
+}
+
+export function fetchSwiggyDeepSiteMap() {
+  return requestJson<{ deepSiteMap: SwiggyDeepSiteMap }>("/api/swiggy-deep-site-map");
 }
 
 export function fetchSwiggyInnovationRadar() {

@@ -91,6 +91,7 @@ Implementation:
 - Exposes `/api/swiggy-docs-coverage` as the 69-page `llms.txt` documentation coverage audit across Start, Build, Operate, Reference, and Blog.
 - Exposes `/api/swiggy-upstream-watch` as the Swiggy docs/changelog watch center for `llms.txt`, `llms-full.txt`, v1.0 shipped/limited capabilities, v1.1/v1.2/v2 roadmap items, signed manifests, and required MealPilot follow-up actions.
 - Exposes `/api/swiggy-source-intelligence` as the source reconciliation center for Builders website pages, CTAs, `llms` docs, markdown twins, 35-tool reference counts, drift signals, and build-queue actions.
+- Exposes `/api/swiggy-deep-site-map` as the consolidated Builders website audit for every page, module signal, CTA, header/docs/footer link, proof path, source-reconciliation section, assertion, and external gate.
 - Exposes `/api/swiggy-innovation-radar` as the premium product strategy layer for Swiggy developer ideas, enterprise signals, access ground rules, support model, all-server MCP references, opportunity lanes, route optimizations, build phases, and partner gates.
 - Exposes `/api/ai-client-connect-kit` as the AI-client and coding-agent connection kit for Claude Desktop, ChatGPT, Cursor, VS Code, Windsurf, MCP clients, SDK auth modes, and delegated-auth gates.
 - Exposes `/api/brand-compliance-kit` as the Swiggy attribution and co-branding readiness artifact for Powered by Swiggy copy, asset gates, palette audit, surface placement, and screenshot review.

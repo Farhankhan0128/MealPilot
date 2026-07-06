@@ -59,6 +59,7 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/swiggy-docs-coverage"].get.summary).toContain("llms.txt");
     expect(openApi.body.paths["/api/swiggy-upstream-watch"].get.summary).toContain("upstream docs");
     expect(openApi.body.paths["/api/swiggy-source-intelligence"].get.summary).toContain("source intelligence");
+    expect(openApi.body.paths["/api/swiggy-deep-site-map"].get.summary).toContain("deep site map");
     expect(openApi.body.paths["/api/swiggy-innovation-radar"].get.summary).toContain("innovation radar");
     expect(openApi.body.paths["/api/ai-client-connect-kit"].get.summary).toContain("AI client");
     expect(openApi.body.paths["/api/coding-agent-governance"].get.summary).toContain("coding-agent governance");
@@ -1572,6 +1573,49 @@ describe("MealPilot API", () => {
       ),
     ).toBe(true);
     expect(report.assertions.some((assertion: string) => assertion.includes("source-intelligence"))).toBe(true);
+  });
+
+  it("returns a deep Swiggy site map with page, CTA, header, footer, and proof coverage", async () => {
+    const { app } = createMealPilotServer();
+    await request(app).post("/api/plan").send(planningRequest).expect(201);
+    const response = await request(app).get("/api/swiggy-deep-site-map").expect(200);
+    const map = response.body.deepSiteMap;
+
+    expect(map.score).toBeGreaterThanOrEqual(90);
+    expect(map.totals.pages).toBeGreaterThanOrEqual(8);
+    expect(map.totals.modules).toBeGreaterThanOrEqual(38);
+    expect(map.totals.ctas).toBeGreaterThanOrEqual(11);
+    expect(map.totals.headerLinks).toBeGreaterThanOrEqual(12);
+    expect(map.totals.footerLinks).toBeGreaterThanOrEqual(6);
+    expect(map.totals.proofLinks).toBeGreaterThanOrEqual(20);
+    expect(map.pages.map((page: { id: string }) => page.id)).toEqual(
+      expect.arrayContaining(["home", "developers", "enterprises", "access", "docs_home", "blog_launch"]),
+    );
+    expect(
+      map.pages.some(
+        (page: { id: string; ctaSignals: string[]; moduleSignals: string[]; proofLinks: string[] }) =>
+          page.id === "access" &&
+          page.ctaSignals.includes("Apply as Developer") &&
+          page.moduleSignals.includes("The Ground Rules") &&
+          page.proofLinks.includes("/api/submission-console"),
+      ),
+    ).toBe(true);
+    expect(
+      map.ctas.some(
+        (cta: { id: string; completionGate: string; status: string; evidenceLinks: string[] }) =>
+          cta.id === "apply_developer" &&
+          cta.completionGate === "operator_submit" &&
+          cta.status === "documented" &&
+          cta.evidenceLinks.includes("/api/swiggy-access-dossier"),
+      ),
+    ).toBe(true);
+    expect(map.headerFooterMatrix.some((item: { label: string }) => item.label === "Start Building")).toBe(true);
+    expect(map.headerFooterMatrix.some((item: { label: string }) => item.label === "Privacy Policy")).toBe(true);
+    expect(map.sections.map((section: { id: string }) => section.id)).toEqual(
+      expect.arrayContaining(["site_pages", "header_footer", "cta_paths", "source_reconciliation"]),
+    );
+    expect(map.assertions.some((assertion: string) => assertion.includes("Every public Builders page"))).toBe(true);
+    expect(map.externalGates.some((gate: string) => gate.includes("Google Forms"))).toBe(true);
   });
 
   it("returns innovation radar that turns Swiggy signals into premium product lanes", async () => {

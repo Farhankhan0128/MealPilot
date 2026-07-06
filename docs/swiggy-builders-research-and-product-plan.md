@@ -278,6 +278,7 @@ Coverage targets:
 - Luxury Experience Workspace for all 35 Swiggy tools across premium reservation, Food cart, Instamart basket, combined evening, and recovery workspaces with widget fallbacks, voice contracts, telemetry, and confirmation gates
 - Reviewer Artifact Vault for access-submission proof links, OpenAPI, smoke commands, screenshot targets, demo-video checklist, logs, traces, redaction rules, support context, and reviewer handoff copy
 - Visual QA Center for screenshot targets, selectors, viewport dimensions, artifact paths, no-overlap/text-fit rules, widget fallback checks, mobile layout checks, redaction visibility, and screenshot automation gates
+- Swiggy Deep Site Map for a single reviewer audit of every Builders page, module signal, CTA, header/docs/footer link, source-reconciliation section, MealPilot proof path, assertion, and external gate
 - Swiggy OAuth Status coverage for authorize/token/logout endpoints, callback lifecycle, pending PKCE verifier count, token source, expiry, storage policy, and no-token-logging checklist
 - Local MCP JSON-RPC shape
 - OAuth callback and fail-closed staging behavior
@@ -338,6 +339,7 @@ MealPilot must keep mock evidence clearly labeled as simulated until these gates
 - Keep `/api/mcp/widget-runtime` as source-of-truth evidence for Swiggy iframe sandboxing, origin-verified postMessage handlers, semantic fallbacks, voice exclusions, and hosted-widget gates.
 - Keep `/api/mcp/staging-cutover` as source-of-truth evidence for real MCP first-call probes, OAuth gates, fail-closed routing, retry branches, support packet fields, and production promotion gates.
 - Keep `/api/swiggy-builder-intake` as source-of-truth evidence for converting all 11 website CTA paths and access requirements into locally prepared owner-assigned submission actions, demo steps, drafts, and explicit operator/Swiggy gates.
+- Keep `/api/swiggy-deep-site-map` as source-of-truth evidence for the complete Builders website audit: page rows, module signals, CTA gates, header/footer matrix, source sections, proof links, assertions, and external gates.
 - Keep `/api/mcp/capability-registry` as the source-of-truth map for `mcp:tools`, `mcp:resources`, `mcp:prompts`, metadata, widgets, and prompt contracts.
 - Keep `/api/mcp/resource-prompt-studio` as source-of-truth evidence for local MCP resource and prompt inventory, samples, smoke requests, and live staging gates.
 - Keep `/api/channel-multimodal-studio` as source-of-truth evidence for channel contracts, local execution packets, multimodal pipelines, Swiggy toolchains, privacy boundaries, telemetry contracts, and external platform gates.
