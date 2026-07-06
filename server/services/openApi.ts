@@ -437,6 +437,30 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-payment-truth-center": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Payment Truth Center for cart, coupon, COD, checkout, and booking settlement proof",
+          responses: {
+            "200": {
+              description:
+                "Food cart payment truth, Instamart checkout bill truth, Dineout free-booking truth, paid-cart gates, combined settlement readbacks, payment guardrails, and no payment-instrument retention evidence",
+            },
+          },
+        },
+      },
+      "/api/swiggy-payment-truth-center/reconcile": {
+        post: {
+          tags: ["Commerce"],
+          summary: "Reconcile a Swiggy cart or booking payment claim before confirmation",
+          responses: {
+            "200": {
+              description:
+                "Selected payment truth lane, settlement status, risk flags, user-facing copy, redacted telemetry, and confirmation-lock assertions",
+            },
+          },
+        },
+      },
       "/api/nutrition-budget-intelligence": {
         get: {
           tags: ["Builder Access"],

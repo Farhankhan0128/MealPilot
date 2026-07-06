@@ -87,6 +87,8 @@ import type {
   SwiggyOfferIntelligenceReport,
   SwiggyOperatingContractCenterReport,
   SwiggyOrderLifecycleReport,
+  SwiggyPaymentTruthCenter,
+  SwiggyPaymentTruthReconciliation,
   SwiggyScenarioRunnerReport,
   SwiggySourceIntelligenceReport,
   SwiggyQualityFeedbackAnalysis,
@@ -392,6 +394,26 @@ export function planSwiggyRitualAutopilot(input: {
     method: "POST",
     body: JSON.stringify(input),
   });
+}
+
+export function fetchSwiggyPaymentTruthCenter() {
+  return requestJson<{ paymentTruth: SwiggyPaymentTruthCenter }>("/api/swiggy-payment-truth-center");
+}
+
+export function reconcileSwiggyPaymentTruth(input: {
+  server: "food" | "instamart" | "dineout" | "combined";
+  cartTotal: number;
+  expectedDiscount: number;
+  paymentPreference: "cod" | "online" | "free_booking" | "unknown";
+  city: "Bengaluru" | "Delhi NCR" | "Mumbai";
+}) {
+  return requestJson<{ reconciliation: SwiggyPaymentTruthReconciliation }>(
+    "/api/swiggy-payment-truth-center/reconcile",
+    {
+      method: "POST",
+      body: JSON.stringify(input),
+    },
+  );
 }
 
 export function fetchNutritionBudgetIntelligence() {

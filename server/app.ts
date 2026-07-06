@@ -96,6 +96,7 @@ import { buildObservabilityTraceReport, buildSwiggyRouteOptimizationReport } fro
 import { buildSwiggyOfferIntelligence } from "./services/offerIntelligence.js";
 import { buildSwiggyOperatingContractCenter } from "./services/operatingContractCenter.js";
 import { buildSwiggyOrderLifecycle } from "./services/orderLifecycle.js";
+import { buildSwiggyPaymentTruthCenter, reconcileSwiggyPaymentTruth } from "./services/paymentTruthCenter.js";
 import { buildPremiumConciergeItinerary } from "./services/premiumConciergeItinerary.js";
 import { buildPremiumUseCaseStudio } from "./services/premiumUseCaseStudio.js";
 import { analyzeSwiggyQualityFeedback, buildSwiggyQualityLoopCenter } from "./services/qualityLoopCenter.js";
@@ -226,6 +227,14 @@ const ritualAutopilotPlanSchema = z.object({
   city: z.enum(["Bengaluru", "Delhi NCR", "Mumbai"]),
   budget: z.number().int().min(300).max(20000),
   consentToUseHistory: z.boolean(),
+});
+
+const paymentTruthReconcileSchema = z.object({
+  server: z.enum(["food", "instamart", "dineout", "combined"]),
+  cartTotal: z.number().min(0).max(100000),
+  expectedDiscount: z.number().min(0).max(50000),
+  paymentPreference: z.enum(["cod", "online", "free_booking", "unknown"]),
+  city: z.enum(["Bengaluru", "Delhi NCR", "Mumbai"]),
 });
 
 const mcpServerSchema = z.enum(["food", "instamart", "dineout"]);
@@ -773,6 +782,20 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
     const body = ritualAutopilotPlanSchema.parse(req.body);
     res.json({
       ritualPlan: planSwiggyRitualAutopilot({
+        config,
+        ...body,
+      }),
+    });
+  });
+
+  app.get("/api/swiggy-payment-truth-center", (_req, res) => {
+    res.json({ paymentTruth: buildSwiggyPaymentTruthCenter(config) });
+  });
+
+  app.post("/api/swiggy-payment-truth-center/reconcile", (req, res) => {
+    const body = paymentTruthReconcileSchema.parse(req.body);
+    res.json({
+      reconciliation: reconcileSwiggyPaymentTruth({
         config,
         ...body,
       }),

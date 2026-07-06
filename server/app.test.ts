@@ -62,6 +62,8 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/swiggy-quality-loop-center/feedback"].post.summary).toContain("feedback");
     expect(openApi.body.paths["/api/swiggy-ritual-autopilot-center"].get.summary).toContain("Ritual Autopilot");
     expect(openApi.body.paths["/api/swiggy-ritual-autopilot-center/plan"].post.summary).toContain("ritual");
+    expect(openApi.body.paths["/api/swiggy-payment-truth-center"].get.summary).toContain("Payment Truth");
+    expect(openApi.body.paths["/api/swiggy-payment-truth-center/reconcile"].post.summary).toContain("payment");
     expect(openApi.body.paths["/api/nutrition-budget-intelligence"].get.summary).toContain("Nutrition and Budget");
     expect(openApi.body.paths["/api/household-preference-graph"].get.summary).toContain("Household Preference Graph");
     expect(openApi.body.paths["/api/guest-collaboration-calendar"].get.summary).toContain("Guest Collaboration");
@@ -1126,7 +1128,7 @@ describe("MealPilot API", () => {
     expect(packet.totals.formFields).toBeGreaterThanOrEqual(10);
     expect(packet.totals.requiredAttachments).toBeGreaterThanOrEqual(10);
     expect(packet.totals.launchArtifacts).toBeGreaterThanOrEqual(50);
-    expect(packet.totals.visualTargets).toBe(32);
+    expect(packet.totals.visualTargets).toBe(33);
     expect(packet.files.map((file: { id: string }) => file.id)).toEqual(
       expect.arrayContaining(["packet_json", "packet_markdown", "visual_report", "production_summary"]),
     );
@@ -1138,7 +1140,7 @@ describe("MealPilot API", () => {
     ).toBe(true);
     expect(
       packet.commands.some(
-        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("32"),
+        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("33"),
       ),
     ).toBe(true);
     expect(packet.copyBlocks.formFields).toContain("Redirect URI(s)");
@@ -1516,6 +1518,59 @@ describe("MealPilot API", () => {
       ),
     ).toBe(true);
     expect(ritualPlan.assertions.some((assertion: string) => assertion.includes("not a subscription"))).toBe(true);
+  });
+
+  it("returns a payment truth center and reconciles settlement claims safely", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/swiggy-payment-truth-center").expect(200);
+    const center = response.body.paymentTruth;
+
+    expect(center.score).toBeGreaterThanOrEqual(86);
+    expect(center.totals.lanes).toBe(5);
+    expect(center.totals.readyLanes).toBe(4);
+    expect(center.totals.guardrails).toBe(6);
+    expect(center.totals.readyGuardrails).toBe(4);
+    expect(center.totals.samples).toBe(4);
+    expect(center.lanes.map((lane: { id: string }) => lane.id)).toEqual(
+      expect.arrayContaining([
+        "food_cart_payment_truth",
+        "instamart_bill_checkout_truth",
+        "dineout_free_booking_truth",
+        "dineout_bill_payment_cart_truth",
+        "combined_settlement_readback",
+      ]),
+    );
+    expect(
+      center.guardrails.some(
+        (guard: { id: string; policy: string }) =>
+          guard.id === "cart_response_is_truth" && guard.policy.includes("Swiggy cart or status responses"),
+      ),
+    ).toBe(true);
+
+    const reconcileResponse = await request(app)
+      .post("/api/swiggy-payment-truth-center/reconcile")
+      .send({
+        server: "food",
+        cartTotal: 720,
+        expectedDiscount: 120,
+        paymentPreference: "cod",
+        city: "Bengaluru",
+      })
+      .expect(200);
+    const reconciliation = reconcileResponse.body.reconciliation;
+
+    expect(reconciliation.selectedLaneId).toBe("food_cart_payment_truth");
+    expect(reconciliation.settlementStatus).toBe("needs_cart_readback");
+    expect(reconciliation.riskFlags).toEqual(
+      expect.arrayContaining(["coupon_requires_fresh_cart_readback", "cod_must_come_from_cart_payment_methods"]),
+    );
+    expect(
+      reconciliation.telemetry.some(
+        (item: { field: string; value: string }) =>
+          item.field === "raw_payment_instrument_retained" && item.value === "false",
+      ),
+    ).toBe(true);
+    expect(reconciliation.assertions.some((assertion: string) => assertion.includes("never stores raw payment"))).toBe(true);
   });
 
   it("returns nutrition and budget intelligence for protein, pantry, coupon, and Dineout routes", async () => {
@@ -1922,8 +1977,8 @@ describe("MealPilot API", () => {
     const visualQa = response.body.visualQa;
 
     expect(visualQa.score).toBe(100);
-    expect(visualQa.totalTargets).toBe(32);
-    expect(visualQa.readyTargets).toBe(32);
+    expect(visualQa.totalTargets).toBe(33);
+    expect(visualQa.readyTargets).toBe(33);
     expect(visualQa.totalRules).toBe(7);
     expect(visualQa.readyRules).toBe(7);
     expect(visualQa.totalCommands).toBe(5);
@@ -2012,6 +2067,11 @@ describe("MealPilot API", () => {
     ).toBe(true);
     expect(
       visualQa.targetGroups.some((group: { targets: Array<{ id: string; selector: string }> }) =>
+        group.targets.some((target) => target.id === "payment_truth_card" && target.selector === ".payment-truth-card"),
+      ),
+    ).toBe(true);
+    expect(
+      visualQa.targetGroups.some((group: { targets: Array<{ id: string; selector: string }> }) =>
         group.targets.some((target) => target.id === "developer_quickstart_card" && target.selector === ".developer-quickstart-card"),
       ),
     ).toBe(true);
@@ -2091,7 +2151,7 @@ describe("MealPilot API", () => {
         (command: { id: string; command: string; expectedSignal: string }) =>
           command.id === "visual_capture_harness" &&
           command.command === "npm run verify:visual" &&
-          command.expectedSignal.includes("targetCount >= 32"),
+          command.expectedSignal.includes("targetCount >= 33"),
       ),
     ).toBe(true);
     expect(visualQa.externalGates.some((gate: string) => gate.includes("Selected PNG screenshots"))).toBe(true);
@@ -3424,6 +3484,7 @@ describe("MealPilot API", () => {
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Swiggy Voice Commerce Rehearsal Center")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Swiggy Quality Loop Center")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Swiggy Ritual Autopilot Center")).toBe(true);
+    expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Swiggy Payment Truth Center")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Nutrition & Budget Intelligence")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Household Preference Graph")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Luxury Experience Workspace")).toBe(true);
@@ -3835,6 +3896,7 @@ describe("MealPilot API", () => {
         "Swiggy Voice Commerce Rehearsal Center",
         "Swiggy Quality Loop Center",
         "Swiggy Ritual Autopilot Center",
+        "Swiggy Payment Truth Center",
         "Nutrition & Budget Intelligence",
         "Household Preference Graph",
         "Luxury Experience Workspace",
@@ -3911,6 +3973,7 @@ describe("MealPilot API", () => {
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-voice-commerce-center");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-quality-loop-center");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-ritual-autopilot-center");
+    expect(bundle.handoffEmail.body).toContain("/api/swiggy-payment-truth-center");
     expect(bundle.handoffEmail.body).toContain("/api/nutrition-budget-intelligence");
     expect(bundle.handoffEmail.body).toContain("/api/household-preference-graph");
     expect(bundle.handoffEmail.body).toContain("/api/luxury-experience-workspace");

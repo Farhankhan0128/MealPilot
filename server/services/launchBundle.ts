@@ -141,6 +141,15 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
         "Turns recurring household routines into consented Food, Instamart, Dineout, and combined plans with reminder-only cadence, fresh reads, and no automatic commercial actions.",
     },
     {
+      id: "payment_truth_center",
+      label: "Swiggy Payment Truth Center",
+      path: "/api/swiggy-payment-truth-center",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Reconciles Food cart totals, coupons, COD, Instamart checkout bills, Dineout free bookings, and paid-cart gates from Swiggy source-of-truth readbacks without storing payment instruments.",
+    },
+    {
       id: "nutrition_budget_intelligence",
       label: "Nutrition & Budget Intelligence",
       path: "/api/nutrition-budget-intelligence",
@@ -934,6 +943,7 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- Swiggy Voice Commerce Rehearsal Center: /api/swiggy-voice-commerce-center",
     "- Swiggy Quality Loop Center: /api/swiggy-quality-loop-center",
     "- Swiggy Ritual Autopilot Center: /api/swiggy-ritual-autopilot-center",
+    "- Swiggy Payment Truth Center: /api/swiggy-payment-truth-center",
     "- Nutrition & Budget Intelligence: /api/nutrition-budget-intelligence",
     "- Household Preference Graph: /api/household-preference-graph",
     "- Guest Collaboration & Calendar Center: /api/guest-collaboration-calendar",

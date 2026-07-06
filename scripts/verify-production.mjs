@@ -135,6 +135,11 @@ assert(
   "OpenAPI ritual autopilot contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-payment-truth-center"].get.summary.includes("Payment Truth") &&
+    openApi.paths["/api/swiggy-payment-truth-center/reconcile"].post.summary.includes("payment"),
+  "OpenAPI payment truth contract is missing",
+);
+assert(
   openApi.paths["/api/nutrition-budget-intelligence"].get.summary.includes("Nutrition and Budget"),
   "OpenAPI nutrition and budget intelligence contract is missing",
 );
@@ -880,6 +885,56 @@ assert(
   "ritual autopilot safety telemetry is incomplete",
 );
 
+const paymentTruth = await request("/api/swiggy-payment-truth-center");
+assert(paymentTruth.paymentTruth.score >= 86, "payment truth score is below target");
+assert(
+  paymentTruth.paymentTruth.totals.lanes === 5 &&
+    paymentTruth.paymentTruth.totals.readyLanes === 4 &&
+    paymentTruth.paymentTruth.totals.guardrails === 6 &&
+    paymentTruth.paymentTruth.totals.readyGuardrails === 4 &&
+    paymentTruth.paymentTruth.totals.samples === 4,
+  "payment truth totals are incomplete",
+);
+assert(
+  [
+    "food_cart_payment_truth",
+    "instamart_bill_checkout_truth",
+    "dineout_free_booking_truth",
+    "dineout_bill_payment_cart_truth",
+    "combined_settlement_readback",
+  ].every((id) => paymentTruth.paymentTruth.lanes.some((lane) => lane.id === id)),
+  "payment truth lanes are incomplete",
+);
+assert(
+  paymentTruth.paymentTruth.guardrails.some(
+    (guard) => guard.id === "cart_response_is_truth" && guard.policy.includes("Swiggy cart or status responses"),
+  ),
+  "payment truth cart-response guardrail is missing",
+);
+const paymentReconciliation = await request("/api/swiggy-payment-truth-center/reconcile", {
+  method: "POST",
+  body: JSON.stringify({
+    server: "food",
+    cartTotal: 720,
+    expectedDiscount: 120,
+    paymentPreference: "cod",
+    city: "Bengaluru",
+  }),
+});
+assert(
+  paymentReconciliation.reconciliation.selectedLaneId === "food_cart_payment_truth" &&
+    paymentReconciliation.reconciliation.settlementStatus === "needs_cart_readback" &&
+    paymentReconciliation.reconciliation.riskFlags.includes("coupon_requires_fresh_cart_readback") &&
+    paymentReconciliation.reconciliation.riskFlags.includes("cod_must_come_from_cart_payment_methods"),
+  "payment truth reconciliation route is wrong",
+);
+assert(
+  paymentReconciliation.reconciliation.telemetry.some(
+    (item) => item.field === "raw_payment_instrument_retained" && item.value === "false",
+  ) && paymentReconciliation.reconciliation.assertions.some((assertion) => assertion.includes("never stores raw payment")),
+  "payment truth telemetry is incomplete",
+);
+
 const nutritionBudget = await request("/api/nutrition-budget-intelligence");
 assert(nutritionBudget.nutritionBudget.score >= 91, "nutrition and budget intelligence score is below target");
 assert(nutritionBudget.nutritionBudget.totalTargets === 4, "nutrition and budget targets are incomplete");
@@ -1309,8 +1364,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 32, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 32, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 33, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 33, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -1415,6 +1470,12 @@ assert(
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some((target) => target.id === "payment_truth_card" && target.selector === ".payment-truth-card"),
+  ),
+  "visual QA payment truth target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
     group.targets.some((target) => target.id === "developer_quickstart_card" && target.selector === ".developer-quickstart-card"),
   ),
   "visual QA developer quickstart target is missing",
@@ -1505,7 +1566,7 @@ assert(
     (command) =>
       command.id === "visual_capture_harness" &&
       command.command === "npm run verify:visual" &&
-      command.expectedSignal.includes("targetCount >= 32"),
+      command.expectedSignal.includes("targetCount >= 33"),
   ),
   "visual QA Playwright command is missing",
 );
@@ -2993,6 +3054,10 @@ assert(
   "reviewer proof ritual autopilot artifact is missing",
 );
 assert(
+  proof.proof.artifacts.some((artifact) => artifact.label === "Swiggy Payment Truth Center"),
+  "reviewer proof payment truth artifact is missing",
+);
+assert(
   proof.proof.artifacts.some((artifact) => artifact.label === "Nutrition & Budget Intelligence"),
   "reviewer proof nutrition and budget artifact is missing",
 );
@@ -3997,7 +4062,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 32, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 33, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -4011,7 +4076,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("32")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("33")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -4052,6 +4117,7 @@ assert(
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Voice Commerce Rehearsal Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Quality Loop Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Ritual Autopilot Center") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Payment Truth Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Nutrition & Budget Intelligence") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Household Preference Graph") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Guest Collaboration & Calendar Center") &&
@@ -4185,6 +4251,10 @@ assert(
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-ritual-autopilot-center"),
   "launch bundle ritual autopilot handoff link is missing",
+);
+assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-payment-truth-center"),
+  "launch bundle payment truth handoff link is missing",
 );
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/nutrition-budget-intelligence"),
@@ -4515,6 +4585,12 @@ console.log(
       qualityLoopScore: qualityLoop.qualityLoop.score,
       qualityLoopLanes: qualityLoop.qualityLoop.totals.lanes,
       qualityFeedbackLane: qualityFeedback.analysis.selectedLaneId,
+      ritualAutopilotScore: ritualAutopilot.ritualAutopilot.score,
+      ritualAutopilotLanes: ritualAutopilot.ritualAutopilot.totals.lanes,
+      ritualPlanLane: ritualPlan.ritualPlan.selectedLaneId,
+      paymentTruthScore: paymentTruth.paymentTruth.score,
+      paymentTruthLanes: paymentTruth.paymentTruth.totals.lanes,
+      paymentTruthStatus: paymentReconciliation.reconciliation.settlementStatus,
       nutritionBudgetScore: nutritionBudget.nutritionBudget.score,
       nutritionBudgetRoutes: nutritionBudget.nutritionBudget.totalRoutes,
       householdPreferenceScore: householdPreference.householdPreference.score,

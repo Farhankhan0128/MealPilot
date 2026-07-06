@@ -266,6 +266,17 @@ const targetGroups = [
         "artifacts/visual-qa/ritual-autopilot-card.png",
       ),
       target(
+        "payment_truth_card",
+        "Payment Truth Center card",
+        "/",
+        ".payment-truth-card",
+        "desktop",
+        1280,
+        900,
+        "Payment Truth shows cart totals, coupons, COD, checkout, booking, and Dineout paid-cart gates from Swiggy source-of-truth responses.",
+        "artifacts/visual-qa/payment-truth-card.png",
+      ),
+      target(
         "developer_quickstart_card",
         "Developer Quickstart card",
         "/",
@@ -504,7 +515,7 @@ const commands = [
     "visual_capture_harness",
     "npm run verify:visual",
     "Playwright captures every Visual QA target at desktop, tablet, and mobile sizes and writes report.json.",
-    "ok true with targetCount >= 32 and PNG files under artifacts/visual-qa.",
+    "ok true with targetCount >= 33 and PNG files under artifacts/visual-qa.",
   ),
   command(
     "desktop_capture",

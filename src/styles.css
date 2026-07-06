@@ -1102,6 +1102,10 @@ select:focus {
   grid-column: span 2;
 }
 
+.payment-truth-card {
+  grid-column: span 2;
+}
+
 .tool-lab-card {
   grid-column: span 2;
 }
@@ -1394,6 +1398,7 @@ select:focus {
   .voice-commerce-grid,
   .quality-loop-grid,
   .ritual-autopilot-grid,
+  .payment-truth-grid,
   .builder-intake-grid,
 .faq-policy-grid,
 .growth-partnership-grid,
@@ -1435,6 +1440,7 @@ select:focus {
   .voice-commerce-grid div,
   .quality-loop-grid div,
   .ritual-autopilot-grid div,
+  .payment-truth-grid div,
   .builder-intake-grid div,
 .faq-policy-grid div,
 .growth-partnership-grid div,
@@ -1479,6 +1485,7 @@ select:focus {
   .voice-commerce-grid strong,
   .quality-loop-grid strong,
   .ritual-autopilot-grid strong,
+  .payment-truth-grid strong,
   .builder-intake-grid strong,
 .faq-policy-grid strong,
 .growth-partnership-grid strong,
@@ -1520,6 +1527,7 @@ select:focus {
   .voice-commerce-grid span,
   .quality-loop-grid span,
   .ritual-autopilot-grid span,
+  .payment-truth-grid span,
   .builder-intake-grid span,
 .faq-policy-grid span,
 .growth-partnership-grid span,
@@ -2173,6 +2181,7 @@ select:focus {
   .voice-commerce-card,
   .quality-loop-card,
   .ritual-autopilot-card,
+  .payment-truth-card,
   .tool-lab-card,
   .contract-matrix-card,
   .builder-intake-card,
@@ -2280,6 +2289,7 @@ select:focus {
   .voice-commerce-grid,
   .quality-loop-grid,
   .ritual-autopilot-grid,
+  .payment-truth-grid,
   .faq-policy-grid,
   .growth-partnership-grid,
   .channel-multimodal-grid,
@@ -2888,6 +2898,7 @@ select:focus {
 .voice-commerce-card,
 .quality-loop-card,
 .ritual-autopilot-card,
+.payment-truth-card,
 .tool-lab-card,
 .contract-matrix-card,
 .builder-intake-card,
@@ -2980,6 +2991,7 @@ select:focus {
 .voice-commerce-grid div,
 .quality-loop-grid div,
 .ritual-autopilot-grid div,
+.payment-truth-grid div,
 .visual-dish-capture-grid div,
 .builder-intake-grid div,
 .faq-policy-grid div,
@@ -3183,6 +3195,7 @@ select:focus {
   .voice-commerce-card,
   .quality-loop-card,
   .ritual-autopilot-card,
+  .payment-truth-card,
   .nutrition-budget-card,
   .preference-graph-card,
   .guest-collaboration-card,
@@ -3357,6 +3370,7 @@ select:focus {
   .voice-commerce-grid,
   .quality-loop-grid,
   .ritual-autopilot-grid,
+  .payment-truth-grid,
   .staging-cutover-grid,
   .live-signal-calibration-grid,
   .visual-dish-capture-grid,
@@ -3399,6 +3413,7 @@ select:focus {
   .voice-commerce-card,
   .quality-loop-card,
   .ritual-autopilot-card,
+  .payment-truth-card,
   .nutrition-budget-card,
   .preference-graph-card,
   .guest-collaboration-card,

@@ -134,6 +134,7 @@ import {
   fetchSwiggyLocationTrust,
   fetchSwiggyOfferIntelligence,
   fetchSwiggyOrderLifecycle,
+  fetchSwiggyPaymentTruthCenter,
   fetchSwiggyQualityLoopCenter,
   fetchSwiggyRitualAutopilotCenter,
   fetchSwiggyVisualDishCapture,
@@ -244,6 +245,7 @@ import type {
   SwiggyOfferIntelligenceReport,
   SwiggyOperatingContractCenterReport,
   SwiggyOrderLifecycleReport,
+  SwiggyPaymentTruthCenter,
   SwiggyQualityLoopCenter,
   SwiggyRitualAutopilotCenter,
   SwiggyScenarioRunnerReport,
@@ -421,6 +423,7 @@ function App() {
   const [voiceCommerce, setVoiceCommerce] = useState<SwiggyVoiceCommerceCenter | null>(null);
   const [qualityLoop, setQualityLoop] = useState<SwiggyQualityLoopCenter | null>(null);
   const [ritualAutopilot, setRitualAutopilot] = useState<SwiggyRitualAutopilotCenter | null>(null);
+  const [paymentTruth, setPaymentTruth] = useState<SwiggyPaymentTruthCenter | null>(null);
   const [nutritionBudget, setNutritionBudget] = useState<NutritionBudgetIntelligence | null>(null);
   const [householdPreference, setHouseholdPreference] = useState<HouseholdPreferenceGraph | null>(null);
   const [guestCollaboration, setGuestCollaboration] = useState<GuestCollaborationCenter | null>(null);
@@ -608,6 +611,7 @@ function App() {
       voiceCommerceResponse,
       qualityLoopResponse,
       ritualAutopilotResponse,
+      paymentTruthResponse,
       nutritionBudgetResponse,
       householdPreferenceResponse,
       guestCollaborationResponse,
@@ -697,6 +701,7 @@ function App() {
       fetchSwiggyVoiceCommerceCenter(),
       fetchSwiggyQualityLoopCenter(),
       fetchSwiggyRitualAutopilotCenter(),
+      fetchSwiggyPaymentTruthCenter(),
       fetchNutritionBudgetIntelligence(),
       fetchHouseholdPreferenceGraph(),
       fetchGuestCollaborationCenter(),
@@ -787,6 +792,7 @@ function App() {
     setVoiceCommerce(voiceCommerceResponse.voiceCommerce);
     setQualityLoop(qualityLoopResponse.qualityLoop);
     setRitualAutopilot(ritualAutopilotResponse.ritualAutopilot);
+    setPaymentTruth(paymentTruthResponse.paymentTruth);
     setNutritionBudget(nutritionBudgetResponse.nutritionBudget);
     setHouseholdPreference(householdPreferenceResponse.householdPreference);
     setGuestCollaboration(guestCollaborationResponse.guestCollaboration);
@@ -880,6 +886,7 @@ function App() {
       voiceCommerceResponse,
       qualityLoopResponse,
       ritualAutopilotResponse,
+      paymentTruthResponse,
       nutritionBudgetResponse,
       householdPreferenceResponse,
       guestCollaborationResponse,
@@ -966,6 +973,7 @@ function App() {
       fetchSwiggyVoiceCommerceCenter(),
       fetchSwiggyQualityLoopCenter(),
       fetchSwiggyRitualAutopilotCenter(),
+      fetchSwiggyPaymentTruthCenter(),
       fetchNutritionBudgetIntelligence(),
       fetchHouseholdPreferenceGraph(),
       fetchGuestCollaborationCenter(),
@@ -1052,6 +1060,7 @@ function App() {
     setVoiceCommerce(voiceCommerceResponse.voiceCommerce);
     setQualityLoop(qualityLoopResponse.qualityLoop);
     setRitualAutopilot(ritualAutopilotResponse.ritualAutopilot);
+    setPaymentTruth(paymentTruthResponse.paymentTruth);
     setNutritionBudget(nutritionBudgetResponse.nutritionBudget);
     setHouseholdPreference(householdPreferenceResponse.householdPreference);
     setGuestCollaboration(guestCollaborationResponse.guestCollaboration);
@@ -1712,6 +1721,7 @@ function App() {
                 voiceCommerce={voiceCommerce}
                 qualityLoop={qualityLoop}
                 ritualAutopilot={ritualAutopilot}
+                paymentTruth={paymentTruth}
                 nutritionBudget={nutritionBudget}
                 householdPreference={householdPreference}
                 guestCollaboration={guestCollaboration}
@@ -2288,6 +2298,7 @@ function LaunchCenterPanel({
   voiceCommerce,
   qualityLoop,
   ritualAutopilot,
+  paymentTruth,
   nutritionBudget,
   householdPreference,
   guestCollaboration,
@@ -2348,6 +2359,7 @@ function LaunchCenterPanel({
   voiceCommerce: SwiggyVoiceCommerceCenter | null;
   qualityLoop: SwiggyQualityLoopCenter | null;
   ritualAutopilot: SwiggyRitualAutopilotCenter | null;
+  paymentTruth: SwiggyPaymentTruthCenter | null;
   nutritionBudget: NutritionBudgetIntelligence | null;
   householdPreference: HouseholdPreferenceGraph | null;
   guestCollaboration: GuestCollaborationCenter | null;
@@ -3564,6 +3576,50 @@ function LaunchCenterPanel({
             </a>
             <a href="https://mcp.swiggy.com/builders/docs/build/recipes/combined/" target="_blank" rel="noreferrer">
               Combined recipe
+            </a>
+          </div>
+        </article>
+
+        <article className="payment-truth-card">
+          <div className="mini-heading">
+            <ShieldCheck aria-hidden="true" />
+            <strong>Payment Truth Center</strong>
+          </div>
+          <span>
+            {paymentTruth
+              ? `${paymentTruth.score}/100, ${paymentTruth.totals.readyLanes}/${paymentTruth.totals.lanes} settlement lanes safe`
+              : "Reconciling cart totals, coupons, COD, checkout, and booking payment truth"}
+          </span>
+          <div className="payment-truth-grid">
+            <div>
+              <strong>{paymentTruth?.totals.samples ?? 0}</strong>
+              <span>Samples</span>
+            </div>
+            <div>
+              <strong>
+                {paymentTruth?.totals.readyGuardrails ?? 0}/{paymentTruth?.totals.guardrails ?? 0}
+              </strong>
+              <span>Guards</span>
+            </div>
+            <div>
+              <strong>{paymentTruth?.totals.externalGates ?? 0}</strong>
+              <span>Gates</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(paymentTruth?.lanes ?? []).slice(0, 5).map((laneItem) => (
+              <li key={laneItem.id} data-status={laneItem.status === "staging_gate" ? "watch" : "healthy"}>
+                <span>{laneItem.label}</span>
+                <strong>{laneItem.server === "combined" ? "Combined" : serverLabel(laneItem.server)}</strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-links">
+            <a href="/api/swiggy-payment-truth-center" target="_blank" rel="noreferrer">
+              Payment API
+            </a>
+            <a href="https://mcp.swiggy.com/builders/docs/reference/food/get_food_cart/" target="_blank" rel="noreferrer">
+              Cart truth
             </a>
           </div>
         </article>

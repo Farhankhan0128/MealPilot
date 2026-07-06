@@ -1455,6 +1455,85 @@ export interface SwiggyRitualAutopilotCenter {
   externalGates: string[];
 }
 
+export type SwiggyPaymentTruthStatus = "ready" | "confirmation_gate" | "support_gate" | "staging_gate";
+export type SwiggyPaymentTruthSignal =
+  | "cart_total"
+  | "coupon_discount"
+  | "payment_methods"
+  | "cod_eligibility"
+  | "free_booking"
+  | "bill_payment";
+
+export interface SwiggyPaymentTruthLane {
+  id: string;
+  label: string;
+  server: SwiggyServer | "combined";
+  status: SwiggyPaymentTruthStatus;
+  swiggyTools: string[];
+  trustedSignals: SwiggyPaymentTruthSignal[];
+  truthSource: string;
+  userPromise: string;
+  paymentBoundary: string;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyPaymentTruthGuardrail {
+  id: string;
+  label: string;
+  status: SwiggyPaymentTruthStatus;
+  policy: string;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyPaymentTruthSample {
+  id: string;
+  server: SwiggyServer | "combined";
+  prompt: string;
+  selectedLane: string;
+  status: SwiggyPaymentTruthStatus;
+}
+
+export interface SwiggyPaymentTruthReconciliation {
+  generatedAt: string;
+  requestId: string;
+  mode: "mock" | "staging" | "production";
+  input: {
+    server: SwiggyServer | "combined";
+    cartTotal: number;
+    expectedDiscount: number;
+    paymentPreference: "cod" | "online" | "free_booking" | "unknown";
+    city: string;
+  };
+  selectedLaneId: string;
+  settlementStatus: "ready_for_confirmation" | "needs_cart_readback" | "support_review";
+  userFacingCopy: string;
+  riskFlags: string[];
+  swiggyRoute: SwiggyPaymentTruthLane;
+  telemetry: Array<{ field: string; value: string; redaction: string }>;
+  assertions: string[];
+}
+
+export interface SwiggyPaymentTruthCenter {
+  generatedAt: string;
+  score: number;
+  mode: "mock" | "staging" | "production";
+  officialSources: string[];
+  totals: {
+    lanes: number;
+    readyLanes: number;
+    guardrails: number;
+    readyGuardrails: number;
+    samples: number;
+    externalGates: number;
+  };
+  lanes: SwiggyPaymentTruthLane[];
+  guardrails: SwiggyPaymentTruthGuardrail[];
+  samples: SwiggyPaymentTruthSample[];
+  operatorRunbook: Array<{ sequence: number; label: string; command: string; proves: string }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type NutritionBudgetStatus = "ready" | "needs_live_data" | "external_gate";
 
 export interface NutritionBudgetTarget {

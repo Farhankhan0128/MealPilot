@@ -295,6 +295,7 @@ export function buildReviewerProof(options: {
       { label: "Swiggy Voice Commerce Rehearsal Center", path: "/api/swiggy-voice-commerce-center" },
       { label: "Swiggy Quality Loop Center", path: "/api/swiggy-quality-loop-center" },
       { label: "Swiggy Ritual Autopilot Center", path: "/api/swiggy-ritual-autopilot-center" },
+      { label: "Swiggy Payment Truth Center", path: "/api/swiggy-payment-truth-center" },
       { label: "Nutrition & Budget Intelligence", path: "/api/nutrition-budget-intelligence" },
       { label: "Household Preference Graph", path: "/api/household-preference-graph" },
       { label: "Guest Collaboration & Calendar Center", path: "/api/guest-collaboration-calendar" },
