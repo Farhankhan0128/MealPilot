@@ -80,6 +80,8 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/swiggy-source-intelligence"].get.summary).toContain("source intelligence");
     expect(openApi.body.paths["/api/swiggy-deep-site-map"].get.summary).toContain("deep site map");
     expect(openApi.body.paths["/api/swiggy-developer-quickstart"].get.summary).toContain("developer quickstart");
+    expect(openApi.body.paths["/api/swiggy-developer-quickstart/run-first-call"].post.summary).toContain("first-call");
+    expect(openApi.body.paths["/api/swiggy-developer-quickstart/run-first-call"].post.responses["200"].description).toContain("raw address");
     expect(openApi.body.paths["/api/swiggy-cta-execution-center"].get.summary).toContain("CTA execution");
     expect(openApi.body.paths["/api/swiggy-innovation-radar"].get.summary).toContain("innovation radar");
     expect(openApi.body.paths["/api/ai-client-connect-kit"].get.summary).toContain("AI client");
@@ -310,6 +312,15 @@ describe("MealPilot API", () => {
       .expect(401);
 
     expect(blocked.body.error.message).toContain("OAuth token");
+
+    const firstCallBlocked = await request(app)
+      .post("/api/swiggy-developer-quickstart/run-first-call")
+      .send({ drillId: "food_get_addresses" })
+      .expect(200);
+
+    expect(firstCallBlocked.body.firstCallExecution.decision).toBe("external_gate");
+    expect(firstCallBlocked.body.firstCallExecution.executedTools).toEqual([]);
+    expect(firstCallBlocked.body.firstCallExecution.riskFlags).toContain("live_swiggy_token_required_for_first_call");
   });
 
   it("forwards live MCP resources and prompts without rewriting JSON-RPC methods", async () => {
@@ -369,6 +380,61 @@ describe("MealPilot API", () => {
       expect(fetchMock.mock.calls[0][0]).toBe("https://mcp-staging.swiggy.com/food");
       expect(fetchMock.mock.calls[1][0]).toBe("https://mcp-staging.swiggy.com/dineout");
       expect(new Headers(fetchMock.mock.calls[0][1]?.headers).get("Authorization")).toBe("Bearer staging_token");
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
+  });
+
+  it("fails closed for live developer first-call errors and placeholder drills", async () => {
+    const originalFetch = globalThis.fetch;
+    const fetchMock = vi.fn(async (_url: string | URL | Request, init?: RequestInit) => {
+      const body = JSON.parse(String(init?.body ?? "{}")) as Record<string, unknown>;
+      return new Response(
+        JSON.stringify({
+          jsonrpc: "2.0",
+          id: body.id,
+          error: { code: -32000, message: "Swiggy tool unavailable" },
+        }),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    });
+    globalThis.fetch = fetchMock as typeof fetch;
+
+    try {
+      const { app } = createMealPilotServer({
+        config: {
+          appName: "MealPilot India",
+          port: 8787,
+          swiggyMode: "staging",
+          swiggyClientId: "client_staging",
+          swiggyRedirectUri: "https://mealpilot.app/auth/swiggy/callback",
+          swiggyScope: "mcp:tools mcp:resources mcp:prompts",
+          swiggyBaseUrl: "https://mcp-staging.swiggy.com",
+          swiggyAccessToken: "staging_token",
+          planRetentionDays: 14,
+        },
+      });
+
+      const errored = await request(app)
+        .post("/api/swiggy-developer-quickstart/run-first-call")
+        .send({ drillId: "food_get_addresses" })
+        .expect(200);
+
+      expect(errored.body.firstCallExecution.decision).toBe("tool_error");
+      expect(errored.body.firstCallExecution.responseSummary.available).toBe(false);
+      expect(errored.body.firstCallExecution.responseSummary.primaryLabel).toBe("tool_error");
+      expect(errored.body.firstCallExecution.riskFlags).toContain("swiggy_first_call_tool_error");
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+
+      const gated = await request(app)
+        .post("/api/swiggy-developer-quickstart/run-first-call")
+        .send({ drillId: "food_search_restaurants" })
+        .expect(200);
+
+      expect(gated.body.firstCallExecution.decision).toBe("external_gate");
+      expect(gated.body.firstCallExecution.executedTools).toEqual([]);
+      expect(gated.body.firstCallExecution.riskFlags).toContain("concrete_runtime_location_required_for_first_call");
+      expect(fetchMock).toHaveBeenCalledTimes(1);
     } finally {
       globalThis.fetch = originalFetch;
     }
@@ -2692,6 +2758,31 @@ describe("MealPilot API", () => {
     expect(workbench.authGates.some((gate: { id: string; status: string }) => gate.id === "staging" && gate.status === "external_gate")).toBe(true);
     expect(workbench.commands.some((command: { id: string; expectedSignal: string }) => command.id === "production_verifier" && command.expectedSignal.includes("developerQuickstartScore"))).toBe(true);
     expect(workbench.assertions.some((assertion: string) => assertion.includes("get_addresses"))).toBe(true);
+
+    const addressExecution = await request(app)
+      .post("/api/swiggy-developer-quickstart/run-first-call")
+      .send({ drillId: "food_get_addresses" })
+      .expect(200);
+    expect(addressExecution.body.firstCallExecution.decision).toBe("executed");
+    expect(addressExecution.body.firstCallExecution.executedTools).toEqual(["get_addresses"]);
+    expect(addressExecution.body.firstCallExecution.responseSummary.resultKind).toBe("address_list");
+    expect(addressExecution.body.firstCallExecution.responseSummary.available).toBe(true);
+    expect(addressExecution.body.firstCallExecution.responseSummary.primaryLabel).toMatch(/^redacted_address_/);
+    expect(addressExecution.body.firstCallExecution.responseSummary.primaryLabel).not.toContain("Home");
+    expect(
+      addressExecution.body.firstCallExecution.telemetry.some(
+        (field: { field: string; value: string }) => field.field === "raw_address_payload_retained" && field.value === "false",
+      ),
+    ).toBe(true);
+
+    const dineoutExecution = await request(app)
+      .post("/api/swiggy-developer-quickstart/run-first-call")
+      .send({ drillId: "dineout_search_restaurants" })
+      .expect(200);
+    expect(dineoutExecution.body.firstCallExecution.decision).toBe("executed");
+    expect(dineoutExecution.body.firstCallExecution.executedTools).toEqual(["search_restaurants_dineout"]);
+    expect(dineoutExecution.body.firstCallExecution.responseSummary.resultKind).toBe("dineout_list");
+    expect(dineoutExecution.body.firstCallExecution.nextRecommendedStep).toContain("get_available_slots");
   });
 
   it("returns a Swiggy CTA execution center for every click path and manual gate", async () => {

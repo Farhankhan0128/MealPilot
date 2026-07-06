@@ -2456,6 +2456,36 @@ export interface DeveloperQuickstartWorkbench {
   externalGates: string[];
 }
 
+export type DeveloperFirstCallExecutionDecision = "executed" | "external_gate" | "tool_error" | "unsupported_drill";
+
+export interface DeveloperFirstCallExecution {
+  generatedAt: string;
+  requestId: string;
+  mode: "mock" | "staging" | "production";
+  input: {
+    drillId: string;
+    server: SwiggyServer;
+    tool: string;
+  };
+  decision: DeveloperFirstCallExecutionDecision;
+  executedTools: string[];
+  responseSummary: {
+    available: boolean;
+    resultKind: "address_list" | "restaurant_list" | "product_list" | "dineout_list" | "unknown";
+    itemCount: number;
+    primaryLabel: string;
+    responseHash: string;
+  };
+  nextRecommendedStep: string;
+  riskFlags: string[];
+  telemetry: Array<{
+    field: string;
+    value: string;
+    redaction: string;
+  }>;
+  assertions: string[];
+}
+
 export type CodingAgentGovernanceStatus = "ready" | "needs_update" | "missing";
 
 export interface CodingAgentGovernanceSource {

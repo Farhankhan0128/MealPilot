@@ -119,7 +119,7 @@ Open the Launch Center and show:
 - Upstream Watch showing `llms.txt`, `llms-full.txt`, v1.0 limitations, v1.1/v1.2/v2 roadmap items, signed-manifest watch, and new-tool action queues.
 - Source Intelligence showing official website pages, CTA inventory, `llms` docs, markdown twins, 35-tool reference counts, drift signals, and build-queue actions.
 - Deep Site Map showing every Builders page, rendered module signal, CTA, header/docs/footer link, proof path, source-reconciliation section, assertion, and external gate in one reviewer audit.
-- Developer Quickstart Workbench showing official first-call steps, SDK/framework adapters, `get_addresses` JSON-RPC drills, OAuth gates, and recipe handoffs.
+- Developer Quickstart Workbench showing official first-call steps, SDK/framework adapters, executable `get_addresses` JSON-RPC drills, OAuth gates, and recipe handoffs.
 - CTA Execution Center showing official CTA/header/footer/docs click targets, keyboard paths, proof links, operator gates, and non-auto-submission rules.
 - Innovation Radar showing premium opportunity lanes, route optimizations, build phases, differentiators, and staging or partner gates derived from Swiggy source signals.
 - AI Client Connect Kit showing Claude Desktop, ChatGPT, Cursor, VS Code, Windsurf, generic MCP config, coding-agent rules, and SDK auth modes.
@@ -252,6 +252,7 @@ Briefly show production readiness:
 - `/api/swiggy-source-intelligence`
 - `/api/swiggy-deep-site-map`
 - `/api/swiggy-developer-quickstart`
+- `/api/swiggy-developer-quickstart/run-first-call`
 - `/api/swiggy-cta-execution-center`
 - `/api/swiggy-innovation-radar`
 - `/api/swiggy-builder-intake`

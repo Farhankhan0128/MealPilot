@@ -4130,6 +4130,10 @@ function LaunchCenterPanel({
               <strong>{developerQuickstart?.totals.authGates ?? 0}</strong>
               <span>Auth gates</span>
             </div>
+            <div>
+              <strong>{developerQuickstart ? "POST" : "-"}</strong>
+              <span>Run drill</span>
+            </div>
           </div>
           <ul className="compact-status-list">
             {(developerQuickstart?.firstCallDrills ?? []).slice(0, 4).map((drill) => (
@@ -4145,6 +4149,9 @@ function LaunchCenterPanel({
           <div className="source-intelligence-actions" aria-label="Developer quickstart links">
             <a href="/api/swiggy-developer-quickstart" target="_blank" rel="noreferrer">
               Open workbench
+            </a>
+            <a href="/api/openapi.json" target="_blank" rel="noreferrer">
+              Run schema
             </a>
             <a href="https://mcp.swiggy.com/builders/docs/start/developer/" target="_blank" rel="noreferrer">
               Quickstart

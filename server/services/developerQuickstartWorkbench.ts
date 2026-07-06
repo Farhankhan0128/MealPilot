@@ -1,4 +1,7 @@
+import crypto from "node:crypto";
+import type { ServerConfig } from "../config.js";
 import type {
+  DeveloperFirstCallExecution,
   DeveloperFirstCallDrill,
   DeveloperFrameworkAdapter,
   DeveloperQuickstartAuthGate,
@@ -51,6 +54,96 @@ function serverUrl(server: SwiggyServer) {
 
 function endpointPath(server: SwiggyServer) {
   return server === "instamart" ? "/im" : `/${server}`;
+}
+
+function hashValue(value: unknown) {
+  return crypto.createHash("sha256").update(JSON.stringify(value ?? {})).digest("hex").slice(0, 16);
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+}
+
+function responseData(response: unknown): unknown {
+  if (isRecord(response) && "result" in response) {
+    const result = response.result;
+    if (isRecord(result) && "data" in result) return result.data;
+  }
+  return response;
+}
+
+function extractCollection(data: unknown): unknown[] {
+  if (Array.isArray(data)) return data;
+  if (!isRecord(data)) return [];
+  for (const key of ["addresses", "restaurants", "items", "products", "locations", "data"]) {
+    const value = data[key];
+    if (Array.isArray(value)) return value;
+  }
+  return [data];
+}
+
+function hasFailedResponse(response: unknown) {
+  if (!response) return false;
+  if (isRecord(response) && "error" in response) return true;
+  if (isRecord(response) && isRecord(response.result) && response.result.success === false) return true;
+  const data = responseData(response);
+  return isRecord(data) && data.success === false;
+}
+
+function hasPlaceholderArgument(value: unknown): boolean {
+  if (typeof value === "string") return value.startsWith("from_");
+  if (Array.isArray(value)) return value.some(hasPlaceholderArgument);
+  if (isRecord(value)) return Object.values(value).some(hasPlaceholderArgument);
+  return false;
+}
+
+function resultKind(tool: string): DeveloperFirstCallExecution["responseSummary"]["resultKind"] {
+  if (tool === "get_addresses") return "address_list";
+  if (tool === "search_restaurants") return "restaurant_list";
+  if (tool === "search_products") return "product_list";
+  if (tool === "search_restaurants_dineout") return "dineout_list";
+  return "unknown";
+}
+
+function firstLabel(tool: string, item: unknown) {
+  if (!item || typeof item !== "object") return "available";
+  if (tool === "get_addresses") return `redacted_address_${hashValue(item)}`;
+  const record = item as Record<string, unknown>;
+  for (const key of ["label", "name", "title", "id", "addressId", "spinId"]) {
+    const value = record[key];
+    if (typeof value === "string" || typeof value === "number") return String(value).slice(0, 80);
+  }
+  return "available";
+}
+
+function summarizeFirstCall(tool: string, response: unknown): DeveloperFirstCallExecution["responseSummary"] {
+  if (hasFailedResponse(response)) {
+    return {
+      available: false,
+      resultKind: resultKind(tool),
+      itemCount: 0,
+      primaryLabel: "tool_error",
+      responseHash: hashValue(response),
+    };
+  }
+
+  const data = responseData(response);
+  const collection = extractCollection(data);
+  return {
+    available: Boolean(data),
+    resultKind: resultKind(tool),
+    itemCount: collection.length,
+    primaryLabel: firstLabel(tool, collection[0]),
+    responseHash: data ? hashValue(data) : "not_executed",
+  };
+}
+
+function nextStepForDrill(drill: DeveloperFirstCallDrill) {
+  if (drill.tool === "get_addresses") return "Use the selected addressId for search_restaurants or search_products.";
+  if (drill.tool === "search_restaurants") return "Run search_menu or get_restaurant_menu before staging a Food cart.";
+  if (drill.tool === "search_products") return "Select product variants or spinIds before update_cart.";
+  if (drill.tool === "search_restaurants_dineout") return "Run get_restaurant_details and get_available_slots before any booking confirmation.";
+  return "Continue with the next read-only Swiggy drill.";
 }
 
 const readinessSteps: DeveloperQuickstartStep[] = [
@@ -391,6 +484,69 @@ export function buildDeveloperQuickstartWorkbench(): DeveloperQuickstartWorkbenc
       "Live phone + OTP consent, staging credentials, and production approval remain Swiggy-controlled.",
       "Final production redirect URI, demo video, static egress details, and engineering contact must be filled by the operator.",
       "Bearer-token SDK examples require secure runtime token storage before staging or production calls.",
+    ],
+  };
+}
+
+export async function executeDeveloperFirstCall(input: {
+  config: ServerConfig;
+  drillId: string;
+  liveCredentialReady: boolean;
+  executeTool: (server: SwiggyServer, tool: string, args: Record<string, unknown>) => Promise<unknown>;
+}): Promise<DeveloperFirstCallExecution> {
+  const drill = firstCallDrills.find((item) => item.id === input.drillId);
+  const riskFlags: string[] = [];
+
+  if (!drill) riskFlags.push("unsupported_quickstart_drill");
+  if (input.config.swiggyMode !== "mock" && !input.liveCredentialReady) riskFlags.push("live_swiggy_token_required_for_first_call");
+  if (drill && input.config.swiggyMode !== "mock" && hasPlaceholderArgument(drill.jsonRpc.params.arguments)) {
+    riskFlags.push("concrete_runtime_location_required_for_first_call");
+  }
+
+  let decision: DeveloperFirstCallExecution["decision"] = "executed";
+  if (!drill) decision = "unsupported_drill";
+  else if (input.config.swiggyMode !== "mock" && !input.liveCredentialReady) decision = "external_gate";
+  else if (input.config.swiggyMode !== "mock" && hasPlaceholderArgument(drill.jsonRpc.params.arguments)) decision = "external_gate";
+
+  let response: unknown;
+  const executedTools: string[] = [];
+  if (drill && decision === "executed") {
+    response = await input.executeTool(drill.server, drill.tool, drill.jsonRpc.params.arguments ?? {});
+    executedTools.push(drill.tool);
+    if (hasFailedResponse(response)) {
+      decision = "tool_error";
+      riskFlags.push("swiggy_first_call_tool_error");
+    }
+  }
+  const responseSummary = summarizeFirstCall(drill?.tool ?? "unknown", response);
+
+  return {
+    generatedAt: new Date().toISOString(),
+    requestId: `quickstart_${Date.now().toString(36)}`,
+    mode: input.config.swiggyMode,
+    input: {
+      drillId: input.drillId,
+      server: drill?.server ?? "food",
+      tool: drill?.tool ?? "unknown",
+    },
+    decision,
+    executedTools,
+    responseSummary,
+    nextRecommendedStep: drill ? nextStepForDrill(drill) : "Choose one of the declared Developer Quickstart first-call drills.",
+    riskFlags,
+    telemetry: [
+      { field: "drill_id", value: input.drillId, redaction: "safe identifier" },
+      { field: "server", value: drill?.server ?? "unknown", redaction: "safe enum" },
+      { field: "tool", value: drill?.tool ?? "unknown", redaction: "tool name only" },
+      { field: "response_hash", value: responseSummary.responseHash, redaction: "sha256 prefix only" },
+      { field: "raw_address_payload_retained", value: "false", redaction: "hard-coded privacy invariant" },
+      { field: "commercial_action_executed", value: "false", redaction: "hard-coded safety invariant" },
+    ],
+    assertions: [
+      "Developer first-call execution is limited to declared read-only quickstart drills.",
+      "get_addresses and saved-location results are summarized without retaining raw address text or coordinates.",
+      "No cart, checkout, order, booking, or support mutation is executed by the quickstart drill.",
+      "Live Swiggy first calls remain credential-gated outside mock mode.",
     ],
   };
 }

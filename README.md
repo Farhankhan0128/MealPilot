@@ -266,6 +266,7 @@ GET  /api/swiggy-upstream-watch
 GET  /api/swiggy-source-intelligence
 GET  /api/swiggy-deep-site-map
 GET  /api/swiggy-developer-quickstart
+POST /api/swiggy-developer-quickstart/run-first-call
 GET  /api/swiggy-cta-execution-center
 GET  /api/swiggy-innovation-radar
 GET  /api/ai-client-connect-kit
@@ -422,7 +423,7 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 
 `GET /api/swiggy-deep-site-map` is the page-by-page Builders website audit: homepage, developers, enterprises, access, docs, reference, blog, footer, every CTA, header, docs subnav, footer resource, module signal, proof link, source-reconciliation section, assertion, and external gate in one reviewer surface.
 
-`GET /api/swiggy-developer-quickstart` is the self-serve developer onboarding workbench: official quickstart, build-agent, authenticate, and `llms.txt` sources become readiness steps, SDK/framework adapters, first-call `get_addresses` and discovery drills, auth gates, recipe handoffs, commands, assertions, and external Swiggy credential gates.
+`GET /api/swiggy-developer-quickstart` plus `POST /api/swiggy-developer-quickstart/run-first-call` is the self-serve developer onboarding workbench: official quickstart, build-agent, authenticate, and `llms.txt` sources become readiness steps, SDK/framework adapters, executable read-only first-call `get_addresses` and discovery drills, raw-address redaction telemetry, auth gates, recipe handoffs, commands, assertions, and external Swiggy credential gates.
 
 `GET /api/swiggy-cta-execution-center` is the click-readiness workbench: every official Builders CTA, global header link, docs subnav item, footer resource, mailto, Google Form, and legal link becomes a browser action, keyboard path, proof-link bundle, completion gate, assertion, and operator handoff rule.
 

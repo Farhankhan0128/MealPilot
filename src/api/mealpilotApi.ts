@@ -15,6 +15,7 @@ import type {
   CredentialOnboardingReport,
   DataGovernanceCenter,
   DemoStudioStep,
+  DeveloperFirstCallExecution,
   EnterpriseDelegatedAuthCenter,
   ErrorIntelligenceReport,
   EvaluationLab,
@@ -524,6 +525,18 @@ export function fetchSwiggyDeepSiteMap() {
 
 export function fetchDeveloperQuickstartWorkbench() {
   return requestJson<{ quickstartWorkbench: DeveloperQuickstartWorkbench }>("/api/swiggy-developer-quickstart");
+}
+
+export function runDeveloperQuickstartFirstCall(input: {
+  drillId: "food_get_addresses" | "food_search_restaurants" | "instamart_search_products" | "dineout_search_restaurants";
+}) {
+  return requestJson<{ firstCallExecution: DeveloperFirstCallExecution }>(
+    "/api/swiggy-developer-quickstart/run-first-call",
+    {
+      method: "POST",
+      body: JSON.stringify(input),
+    },
+  );
 }
 
 export function fetchSwiggyCtaExecutionCenter() {

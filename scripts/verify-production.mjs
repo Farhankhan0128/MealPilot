@@ -87,7 +87,11 @@ assert(
   "OpenAPI source intelligence contract is missing",
 );
 assert(
-  openApi.paths["/api/swiggy-developer-quickstart"]?.get?.summary?.includes("developer quickstart"),
+  openApi.paths["/api/swiggy-developer-quickstart"]?.get?.summary?.includes("developer quickstart") &&
+    openApi.paths["/api/swiggy-developer-quickstart/run-first-call"]?.post?.summary?.includes("first-call") &&
+    openApi.paths["/api/swiggy-developer-quickstart/run-first-call"]?.post?.responses?.["200"]?.description?.includes(
+      "raw address",
+    ),
   "OpenAPI developer quickstart contract is missing",
 );
 assert(
@@ -2012,6 +2016,26 @@ assert(
 assert(
   developerQuickstart.quickstartWorkbench.authGates.some((gate) => gate.id === "staging" && gate.status === "external_gate"),
   "developer quickstart staging auth gate is missing",
+);
+const firstCallExecution = await request("/api/swiggy-developer-quickstart/run-first-call", {
+  method: "POST",
+  body: JSON.stringify({ drillId: "food_get_addresses" }),
+});
+assert(firstCallExecution.firstCallExecution.decision === "executed", "developer quickstart first-call decision is wrong");
+assert(
+  firstCallExecution.firstCallExecution.executedTools.join(",") === "get_addresses",
+  "developer quickstart first-call tool execution is wrong",
+);
+assert(
+  firstCallExecution.firstCallExecution.responseSummary.resultKind === "address_list" &&
+    firstCallExecution.firstCallExecution.responseSummary.available === true,
+  "developer quickstart first-call summary is incomplete",
+);
+assert(
+  firstCallExecution.firstCallExecution.telemetry.some(
+    (field) => field.field === "raw_address_payload_retained" && field.value === "false",
+  ),
+  "developer quickstart first-call redaction telemetry is missing",
 );
 
 const ctaExecution = await request("/api/swiggy-cta-execution-center");
@@ -4865,6 +4889,8 @@ console.log(
       developerQuickstartScore: developerQuickstart.quickstartWorkbench.score,
       developerQuickstartFirstCalls: developerQuickstart.quickstartWorkbench.totals.firstCallDrills,
       developerQuickstartFrameworks: developerQuickstart.quickstartWorkbench.totals.frameworks,
+      developerFirstCallDecision: firstCallExecution.firstCallExecution.decision,
+      developerFirstCallTool: firstCallExecution.firstCallExecution.executedTools[0],
       ctaExecutionScore: ctaExecution.ctaExecution.score,
       ctaExecutionTargets: ctaExecution.ctaExecution.totals.targets,
       ctaExecutionOperatorActions: ctaExecution.ctaExecution.totals.operatorActions,

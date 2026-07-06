@@ -677,6 +677,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-developer-quickstart/run-first-call": {
+        post: {
+          tags: ["Builder Access"],
+          summary: "Run a read-only Swiggy developer quickstart first-call drill",
+          responses: {
+            "200": {
+              description:
+                "Executable get_addresses, search_restaurants, search_products, or Dineout search first-call drill with response hashing, raw address redaction, no commercial action execution, and live credential gates",
+            },
+          },
+        },
+      },
       "/api/swiggy-cta-execution-center": {
         get: {
           tags: ["Builder Access"],

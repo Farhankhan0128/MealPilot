@@ -75,7 +75,7 @@ import {
 import { buildCredentialOnboardingReport } from "./services/credentialOnboarding.js";
 import { buildDataGovernanceCenter } from "./services/dataGovernance.js";
 import { buildSwiggyDeepSiteMap } from "./services/deepSiteMap.js";
-import { buildDeveloperQuickstartWorkbench } from "./services/developerQuickstartWorkbench.js";
+import { buildDeveloperQuickstartWorkbench, executeDeveloperFirstCall } from "./services/developerQuickstartWorkbench.js";
 import { buildSwiggyDiscoveryFreshness, resolveSwiggyDiscoveryFreshness } from "./services/discoveryFreshness.js";
 import { buildSwiggyDineoutPrecisionCenter } from "./services/dineoutPrecisionCenter.js";
 import { buildSwiggyDocsCoverage } from "./services/docsCoverage.js";
@@ -359,6 +359,10 @@ const resourcePromptExecutionSchema = z
       ctx.addIssue({ code: z.ZodIssueCode.custom, message: "prompts/get requires params.name" });
     }
   });
+
+const developerFirstCallSchema = z.object({
+  drillId: z.enum(["food_get_addresses", "food_search_restaurants", "instamart_search_products", "dineout_search_restaurants"]),
+});
 
 const mcpServerSchema = z.enum(["food", "instamart", "dineout"]);
 const agentSurfaceSchema = z.enum(["chat", "voice"]);
@@ -1044,6 +1048,44 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
   app.get("/api/swiggy-developer-quickstart", (_req, res) => {
     res.json({ quickstartWorkbench: buildDeveloperQuickstartWorkbench() });
   });
+
+  app.post(
+    "/api/swiggy-developer-quickstart/run-first-call",
+    asyncRoute(async (req, res) => {
+      const body = developerFirstCallSchema.parse(req.body);
+      const executeTool = async (server: SwiggyServer, tool: string, toolArguments: Record<string, unknown>) => {
+        const request: JsonRpcRequest = {
+          jsonrpc: "2.0",
+          id: `quickstart-${Date.now().toString(36)}`,
+          method: "tools/call",
+          params: {
+            name: tool,
+            arguments: toolArguments,
+          },
+        };
+
+        if (config.swiggyMode === "mock") {
+          return handleMockJsonRpc(server, request);
+        }
+
+        return callConfiguredSwiggyTool({
+          config,
+          server,
+          request,
+          accessToken: runtimeAccessToken,
+        });
+      };
+
+      res.json({
+        firstCallExecution: await executeDeveloperFirstCall({
+          config,
+          ...body,
+          liveCredentialReady: Boolean(runtimeAccessToken),
+          executeTool,
+        }),
+      });
+    }),
+  );
 
   app.get("/api/swiggy-cta-execution-center", (_req, res) => {
     res.json({

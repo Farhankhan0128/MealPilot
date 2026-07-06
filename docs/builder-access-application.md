@@ -231,7 +231,7 @@ Email: add primary engineering email before submission.
 - Swiggy Upstream Watch: `/api/swiggy-upstream-watch`
 - Swiggy Source Intelligence: `/api/swiggy-source-intelligence`
 - Swiggy Deep Site Map: `/api/swiggy-deep-site-map`
-- Developer Quickstart Workbench: `/api/swiggy-developer-quickstart`
+- Developer Quickstart Workbench: `/api/swiggy-developer-quickstart`, `/api/swiggy-developer-quickstart/run-first-call`
 - CTA Execution Center: `/api/swiggy-cta-execution-center`
 - Swiggy Innovation Radar: `/api/swiggy-innovation-radar`
 - AI Client Connect Kit: `/api/ai-client-connect-kit`

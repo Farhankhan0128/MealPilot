@@ -218,6 +218,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/swiggy-source-intelligence`
 - `GET /api/swiggy-deep-site-map`
 - `GET /api/swiggy-developer-quickstart`
+- `POST /api/swiggy-developer-quickstart/run-first-call`
 - `GET /api/swiggy-cta-execution-center`
 - `GET /api/swiggy-innovation-radar`
 - `GET /api/ai-client-connect-kit`
@@ -443,7 +444,7 @@ The test suite checks that:
 - Swiggy Upstream Watch maps Swiggy's changelog, `llms.txt`, `llms-full.txt`, v1.0 limitations, v1.1/v1.2/v2 roadmap, signed manifests, and action queues to MealPilot proof surfaces.
 - Swiggy Source Intelligence reconciles Builders website pages, CTAs, `llms` docs, markdown twins, reference tool counts, drift signals, and build-queue items into one Launch Center surface.
 - Swiggy Deep Site Map consolidates every Builders page, rendered module signal, CTA, header link, docs subnav item, footer resource, proof link, source-reconciliation section, assertion, and external gate into one Launch Center audit surface.
-- Developer Quickstart Workbench maps Swiggy's official quickstart, build-agent, OAuth, and `llms.txt` sources to readiness steps, SDK adapters, first-call JSON-RPC drills, recipe handoffs, auth gates, and verifier commands.
+- Developer Quickstart Workbench maps Swiggy's official quickstart, build-agent, OAuth, and `llms.txt` sources to readiness steps, SDK adapters, first-call JSON-RPC drills, recipe handoffs, auth gates, and verifier commands; `/api/swiggy-developer-quickstart/run-first-call` executes read-only drills with redacted response summaries and live credential gates.
 - CTA Execution Center converts official Builders CTAs, header links, docs nav links, footer resources, mailto links, Google Forms, and legal links into click-ready browser actions, keyboard paths, proof bundles, and manual completion gates.
 - Swiggy Innovation Radar maps Swiggy developer ideas, enterprise signals, access ground rules, support model, and MCP references into premium product lanes, route optimizations, build phases, differentiators, and partner gates.
 - Traffic Readiness maps expected sessions, daily tool calls, peak QPS, Retry-After behavior, seven-day major-event notice, capacity upgrade email, and the 1% -> 10% -> 50% -> 100% rollout.
