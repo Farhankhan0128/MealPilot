@@ -91,6 +91,7 @@ Planned MCP servers:
 - Builder Intake Command Center that converts every signup, apply, demo, contact, docs, and footer CTA into owner-assigned next actions, access-form fields, a demo storyboard, and copy-ready handoff drafts.
 - FAQ & Policy Center that maps homepage, developer, enterprise, access-guideline, footer-resource, allowed/restricted/prohibited, operating-principle, and legal policy signals to MealPilot evidence.
 - Growth Partnership Center that turns Swiggy's get-noticed, co-branding, direct-support, hiring, co-marketing, analytics, and strategic-growth signals into launch experiments, proof assets, metrics, and partner asks.
+- Swiggy Builder Talent Signal Center at `/api/swiggy-talent-signal-center` that turns standout-project, demo, GitHub, and hiring-visibility signals into portfolio assets, talent paths, outreach copy, proof routes, and Swiggy-owned recruiting gates.
 - Swiggy Showcase Submission Center at `/api/swiggy-showcase-submission-center` that packages pitch blocks, a 2-minute demo storyboard, proof metrics, visual-gallery links, outreach copy, operator-owned inputs, and Swiggy co-branding/feature gates for a feature-ready review packet.
 - Swiggy Demo Evidence Director at `/api/swiggy-demo-evidence-director` that converts the 2-3 minute recording into timed scenes, proof assets, redaction checks, visual QA links, runbook commands, and builders@swiggy.in handoff copy without recording video or sending email locally.
 - Swiggy Submission Timeline Center at `/api/swiggy-submission-timeline-center` that sequences Start Building, proof freeze, demo recording, Request Access, Send Demo, Dynamic Client Registration, staging seed, 48-hour soak, and production promotion with explicit MealPilot, operator, and Swiggy ownership.
@@ -267,6 +268,7 @@ GET  /api/swiggy-builder-intake
 GET  /api/swiggy-faq-policy
 GET  /api/swiggy-faq-resolution-center
 GET  /api/swiggy-growth-partnership
+GET  /api/swiggy-talent-signal-center
 GET  /api/swiggy-showcase-submission-center
 GET  /api/swiggy-demo-evidence-director
 GET  /api/swiggy-submission-timeline-center
@@ -515,6 +517,8 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 `GET /api/swiggy-faq-resolution-center` turns public Builders FAQ questions and policy rules into reviewer-ready answers with owners, proof links, activation CTAs, a five-step reviewer script, support contact, and explicit operator or Swiggy gates.
 
 `GET /api/swiggy-growth-partnership` is the growth partnership center: official get-noticed, hiring, co-branding, direct-support, enterprise analytics, and joint go-to-market signals become MealPilot launch experiments, proof assets, metric targets, and explicit partner asks while Swiggy feature placement, co-marketing approval, Slack, partner manager, dashboard access, and higher limits remain external gates.
+
+`GET /api/swiggy-talent-signal-center` is the builder talent and portfolio center: standout-project, demo, GitHub, architecture, metrics, visual proof, and outreach signals become portfolio assets and talent paths while Swiggy recruiting, feature placement, endorsement, partner channels, and enterprise support remain explicit external gates.
 
 `GET /api/swiggy-showcase-submission-center` is the feature-ready Swiggy showcase packet: pitch blocks, demo storyboard, metric pack, visual proof links, and a draft builders@swiggy.in outreach email are prepared locally while the demo video URL remains operator-owned and any Powered by Swiggy or feature-placement claims stay behind Swiggy approval gates.
 

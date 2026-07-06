@@ -147,6 +147,11 @@ assert(
   "OpenAPI growth partnership contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-talent-signal-center"].get.summary.includes("Talent Signal") &&
+    openApi.paths["/api/swiggy-talent-signal-center"].get.responses["200"].description.includes("developer hiring signal"),
+  "OpenAPI talent signal center contract is missing",
+);
+assert(
   openApi.paths["/api/swiggy-benefits-activation-center"].get.summary.includes("Benefits Activation") &&
     openApi.paths["/api/swiggy-benefits-activation-center"].get.responses["200"].description.includes("live API access"),
   "OpenAPI benefits activation center contract is missing",
@@ -846,6 +851,43 @@ assert(
 assert(
   growthPartnership.growthPartnership.externalGates.some((gate) => gate.includes("co-marketing")),
   "growth partnership co-marketing gate is missing",
+);
+
+const talentSignal = await request("/api/swiggy-talent-signal-center");
+assert(talentSignal.talentSignal.score >= 85, "talent signal score is below target");
+assert(talentSignal.talentSignal.totals.signals >= 6, "talent signal coverage is incomplete");
+assert(talentSignal.talentSignal.totals.readySignals >= 4, "talent signal ready coverage is incomplete");
+assert(talentSignal.talentSignal.totals.portfolioAssets === 6, "talent signal portfolio assets are incomplete");
+assert(talentSignal.talentSignal.totals.readyAssets >= 3, "talent signal ready assets are incomplete");
+assert(talentSignal.talentSignal.totals.talentPaths === 4, "talent signal paths are incomplete");
+assert(talentSignal.talentSignal.totals.swiggyGates >= 2, "talent signal Swiggy gates are incomplete");
+assert(
+  ["standout_project", "hiring_visibility", "swiggy_recruiting_gate", "technical_depth"].every((id) =>
+    talentSignal.talentSignal.signals.some((signal) => signal.id === id),
+  ),
+  "talent signal critical signals are missing",
+);
+assert(
+  ["demo_video", "github_repo", "architecture_packet", "metrics_packet", "talent_outreach"].every((id) =>
+    talentSignal.talentSignal.portfolioAssets.some((asset) => asset.id === id),
+  ),
+  "talent signal portfolio assets are missing",
+);
+assert(
+  ["builder_visibility", "engineering_depth", "operator_maturity", "enterprise_readiness"].every((id) =>
+    talentSignal.talentSignal.talentPaths.some((path) => path.id === id),
+  ),
+  "talent signal paths are missing",
+);
+assert(
+  talentSignal.talentSignal.reviewerNarrative.map((step) => step.sequence).join(",") === "1,2,3,4",
+  "talent signal reviewer narrative is incomplete",
+);
+assert(talentSignal.talentSignal.outreachDraft.to === "builders@swiggy.in", "talent signal outreach draft is missing");
+assert(
+  talentSignal.talentSignal.assertions.some((assertion) => assertion.includes("not a promise")) &&
+    talentSignal.talentSignal.externalGates.some((gate) => gate.includes("hiring conversation")),
+  "talent signal boundary assertions are missing",
 );
 
 const benefitsActivation = await request("/api/swiggy-benefits-activation-center");
@@ -1997,8 +2039,12 @@ assert(
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-partner-support-room") &&
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-benefits-activation-center") &&
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-faq-resolution-center") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-talent-signal-center") &&
     reviewerArtifactVault.reviewerArtifactVault.artifactSections.some((section) =>
       section.artifacts.some((artifact) => artifact.id === "faq_resolution" && artifact.path === "/api/swiggy-faq-resolution-center"),
+    ) &&
+    reviewerArtifactVault.reviewerArtifactVault.artifactSections.some((section) =>
+      section.artifacts.some((artifact) => artifact.id === "talent_signal" && artifact.path === "/api/swiggy-talent-signal-center"),
     ),
   "reviewer artifact vault email draft is incomplete",
 );
@@ -2009,8 +2055,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 51, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 51, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 52, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 52, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -2042,6 +2088,17 @@ assert(
     ),
   ),
   "visual QA FAQ resolution target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some(
+      (target) =>
+        target.id === "talent_signal_card" &&
+        target.selector === ".talent-signal-card" &&
+        target.viewport === "desktop",
+    ),
+  ),
+  "visual QA talent signal target is missing",
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
@@ -4156,6 +4213,10 @@ assert(
   "reviewer proof growth partnership artifact is missing",
 );
 assert(
+  proof.proof.artifacts.some((artifact) => artifact.label === "Swiggy Builder Talent Signal Center"),
+  "reviewer proof talent signal artifact is missing",
+);
+assert(
   proof.proof.artifacts.some((artifact) => artifact.label === "Channel & Multimodal Studio"),
   "reviewer proof channel and multimodal artifact is missing",
 );
@@ -5549,7 +5610,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 51, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 52, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -5563,7 +5624,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("51")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("52")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -5600,6 +5661,7 @@ assert(
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "FAQ & Policy Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy FAQ Resolution Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Growth Partnership Center") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Builder Talent Signal Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Channel & Multimodal Studio") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Visual Dish Capture Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Voice Commerce Rehearsal Center") &&
@@ -5732,6 +5794,10 @@ assert(
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-growth-partnership"),
   "launch bundle growth partnership handoff link is missing",
+);
+assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-talent-signal-center"),
+  "launch bundle talent signal handoff link is missing",
 );
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-benefits-activation-center"),
@@ -6146,6 +6212,9 @@ console.log(
       faqResolutionCtas: faqResolution.faqResolution.totals.activationCtas,
       growthPartnershipScore: growthPartnership.growthPartnership.score,
       growthExperiments: growthPartnership.growthPartnership.totalExperiments,
+      talentSignalScore: talentSignal.talentSignal.score,
+      talentSignalPaths: talentSignal.talentSignal.totals.talentPaths,
+      talentSignalAssets: talentSignal.talentSignal.totals.portfolioAssets,
       benefitsActivationScore: benefitsActivation.benefitsActivation.score,
       benefitsActivationLanes: benefitsActivation.benefitsActivation.totals.benefits,
       benefitsActivationCtas: benefitsActivation.benefitsActivation.totals.activationCtas,

@@ -119,6 +119,7 @@ import {
   fetchSwiggyFaqPolicyCenter,
   fetchSwiggyFaqResolutionCenter,
   fetchSwiggyGrowthPartnershipCenter,
+  fetchSwiggyTalentSignalCenter,
   fetchSwiggyShowcaseSubmissionCenter,
   fetchSwiggyDemoEvidenceDirector,
   fetchSwiggySubmissionTimelineCenter,
@@ -266,6 +267,7 @@ import type {
   SwiggyFaqPolicyCenter,
   SwiggyFaqResolutionCenter,
   SwiggyGrowthPartnershipCenter,
+  SwiggyTalentSignalCenter,
   SwiggyShowcaseSubmissionCenter,
   SwiggyDemoEvidenceDirector,
   SwiggySubmissionTimelineCenter,
@@ -462,6 +464,7 @@ function App() {
   const [swiggyFaqPolicy, setSwiggyFaqPolicy] = useState<SwiggyFaqPolicyCenter | null>(null);
   const [faqResolution, setFaqResolution] = useState<SwiggyFaqResolutionCenter | null>(null);
   const [swiggyGrowthPartnership, setSwiggyGrowthPartnership] = useState<SwiggyGrowthPartnershipCenter | null>(null);
+  const [talentSignal, setTalentSignal] = useState<SwiggyTalentSignalCenter | null>(null);
   const [benefitsActivation, setBenefitsActivation] = useState<SwiggyBenefitsActivationCenter | null>(null);
   const [showcaseSubmission, setShowcaseSubmission] = useState<SwiggyShowcaseSubmissionCenter | null>(null);
   const [demoEvidence, setDemoEvidence] = useState<SwiggyDemoEvidenceDirector | null>(null);
@@ -671,6 +674,7 @@ function App() {
       faqPolicyResponse,
       faqResolutionResponse,
       growthPartnershipResponse,
+      talentSignalResponse,
       benefitsActivationResponse,
       showcaseSubmissionResponse,
       demoEvidenceResponse,
@@ -781,6 +785,7 @@ function App() {
       fetchSwiggyFaqPolicyCenter(),
       fetchSwiggyFaqResolutionCenter(),
       fetchSwiggyGrowthPartnershipCenter(),
+      fetchSwiggyTalentSignalCenter(),
       fetchSwiggyBenefitsActivationCenter(),
       fetchSwiggyShowcaseSubmissionCenter(),
       fetchSwiggyDemoEvidenceDirector(),
@@ -892,6 +897,7 @@ function App() {
     setSwiggyFaqPolicy(faqPolicyResponse.faqPolicy);
     setFaqResolution(faqResolutionResponse.faqResolution);
     setSwiggyGrowthPartnership(growthPartnershipResponse.growthPartnership);
+    setTalentSignal(talentSignalResponse.talentSignal);
     setBenefitsActivation(benefitsActivationResponse.benefitsActivation);
     setShowcaseSubmission(showcaseSubmissionResponse.showcaseSubmission);
     setDemoEvidence(demoEvidenceResponse.demoEvidence);
@@ -1006,6 +1012,7 @@ function App() {
       faqPolicyResponse,
       faqResolutionResponse,
       growthPartnershipResponse,
+      talentSignalResponse,
       benefitsActivationResponse,
       showcaseSubmissionResponse,
       demoEvidenceResponse,
@@ -1113,6 +1120,7 @@ function App() {
       fetchSwiggyFaqPolicyCenter(),
       fetchSwiggyFaqResolutionCenter(),
       fetchSwiggyGrowthPartnershipCenter(),
+      fetchSwiggyTalentSignalCenter(),
       fetchSwiggyBenefitsActivationCenter(),
       fetchSwiggyShowcaseSubmissionCenter(),
       fetchSwiggyDemoEvidenceDirector(),
@@ -1220,6 +1228,7 @@ function App() {
     setSwiggyFaqPolicy(faqPolicyResponse.faqPolicy);
     setFaqResolution(faqResolutionResponse.faqResolution);
     setSwiggyGrowthPartnership(growthPartnershipResponse.growthPartnership);
+    setTalentSignal(talentSignalResponse.talentSignal);
     setBenefitsActivation(benefitsActivationResponse.benefitsActivation);
     setShowcaseSubmission(showcaseSubmissionResponse.showcaseSubmission);
     setDemoEvidence(demoEvidenceResponse.demoEvidence);
@@ -1902,6 +1911,7 @@ function App() {
                 faqPolicy={swiggyFaqPolicy}
                 faqResolution={faqResolution}
                 growthPartnership={swiggyGrowthPartnership}
+                talentSignal={talentSignal}
                 benefitsActivation={benefitsActivation}
                 showcaseSubmission={showcaseSubmission}
                 demoEvidence={demoEvidence}
@@ -2499,6 +2509,7 @@ function LaunchCenterPanel({
   faqPolicy,
   faqResolution,
   growthPartnership,
+  talentSignal,
   benefitsActivation,
   showcaseSubmission,
   demoEvidence,
@@ -2579,6 +2590,7 @@ function LaunchCenterPanel({
   faqPolicy: SwiggyFaqPolicyCenter | null;
   faqResolution: SwiggyFaqResolutionCenter | null;
   growthPartnership: SwiggyGrowthPartnershipCenter | null;
+  talentSignal: SwiggyTalentSignalCenter | null;
   benefitsActivation: SwiggyBenefitsActivationCenter | null;
   showcaseSubmission: SwiggyShowcaseSubmissionCenter | null;
   demoEvidence: SwiggyDemoEvidenceDirector | null;
@@ -3870,6 +3882,54 @@ function LaunchCenterPanel({
               </li>
             ))}
           </ul>
+        </article>
+
+        <article className="talent-signal-card">
+          <div className="mini-heading">
+            <Users aria-hidden="true" />
+            <strong>Talent Signal</strong>
+          </div>
+          <span>
+            {talentSignal
+              ? `${talentSignal.score}/100, ${talentSignal.totals.readySignals}/${talentSignal.totals.signals} signals ready`
+              : "Preparing portfolio, GitHub, demo, and hiring-readiness proof"}
+          </span>
+          <div className="talent-signal-grid">
+            <div>
+              <strong>{talentSignal?.totals.readyAssets ?? 0}/{talentSignal?.totals.portfolioAssets ?? 0}</strong>
+              <span>Assets</span>
+            </div>
+            <div>
+              <strong>{talentSignal?.totals.talentPaths ?? 0}</strong>
+              <span>Paths</span>
+            </div>
+            <div>
+              <strong>{talentSignal?.totals.swiggyGates ?? 0}</strong>
+              <span>Gates</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(talentSignal?.talentPaths ?? []).slice(0, 4).map((talentPath) => (
+              <li
+                key={talentPath.id}
+                data-status={talentPath.status === "ready" ? "healthy" : talentPath.status === "swiggy_gate" ? "blocked" : "watch"}
+              >
+                <span>{talentPath.label}</span>
+                <strong>{talentPath.roleSignal}</strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-intelligence-actions" aria-label="Talent signal links">
+            <a href="/api/swiggy-talent-signal-center" target="_blank" rel="noreferrer">
+              Talent API
+            </a>
+            <a href="/api/swiggy-showcase-submission-center" target="_blank" rel="noreferrer">
+              Showcase
+            </a>
+            <a href="https://github.com/Farhankhan0128/MealPilot" target="_blank" rel="noreferrer">
+              GitHub
+            </a>
+          </div>
         </article>
 
         <article className="benefits-activation-card">

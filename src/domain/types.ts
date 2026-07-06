@@ -1502,6 +1502,67 @@ export interface SwiggyBenefitsActivationCenter {
   externalGates: string[];
 }
 
+export type SwiggyTalentSignalStatus = "ready" | "operator_input" | "swiggy_gate";
+export type SwiggyTalentSignalOwner = "MealPilot" | "Operator" | "Swiggy" | "Joint";
+
+export interface SwiggyTalentSignal {
+  id: string;
+  source: "builders_home" | "developers" | "access" | "showcase";
+  officialSignal: string;
+  mealPilotSignal: string;
+  owner: SwiggyTalentSignalOwner;
+  status: SwiggyTalentSignalStatus;
+  proofLinks: string[];
+  nextAction: string;
+}
+
+export interface SwiggyTalentPortfolioAsset {
+  id: string;
+  label: string;
+  format: "demo" | "github" | "architecture" | "metric_pack" | "visual" | "outreach";
+  owner: SwiggyTalentSignalOwner;
+  status: SwiggyTalentSignalStatus;
+  purpose: string;
+  proofLinks: string[];
+}
+
+export interface SwiggyTalentPath {
+  id: string;
+  label: string;
+  roleSignal: "builder" | "engineer" | "partner" | "enterprise";
+  pitch: string;
+  evidenceLinks: string[];
+  status: SwiggyTalentSignalStatus;
+  gate: string;
+}
+
+export interface SwiggyTalentSignalCenter {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  totals: {
+    signals: number;
+    readySignals: number;
+    portfolioAssets: number;
+    readyAssets: number;
+    talentPaths: number;
+    swiggyGates: number;
+    proofLinks: number;
+  };
+  signals: SwiggyTalentSignal[];
+  portfolioAssets: SwiggyTalentPortfolioAsset[];
+  talentPaths: SwiggyTalentPath[];
+  reviewerNarrative: Array<{ sequence: number; label: string; say: string; proofLinks: string[] }>;
+  outreachDraft: {
+    to: string;
+    subject: string;
+    bodyPreview: string;
+    proofLinks: string[];
+  };
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type SwiggyShowcaseSubmissionStatus = "ready" | "operator_input" | "swiggy_gate";
 
 export interface SwiggyShowcaseSubmissionAsset {

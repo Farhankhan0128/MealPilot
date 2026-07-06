@@ -263,6 +263,7 @@ Briefly show production readiness:
 - `/api/swiggy-faq-policy`
 - `/api/swiggy-faq-resolution-center`
 - `/api/swiggy-growth-partnership`
+- `/api/swiggy-talent-signal-center`
 - `/api/channel-multimodal-studio`
 - `/api/nutrition-budget-intelligence`
 - `/api/household-preference-graph`

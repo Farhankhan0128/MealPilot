@@ -218,6 +218,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/swiggy-faq-policy`
 - `GET /api/swiggy-faq-resolution-center`
 - `GET /api/swiggy-growth-partnership`
+- `GET /api/swiggy-talent-signal-center`
 - `GET /api/swiggy-partner-success-desk`
 - `GET /api/swiggy-interaction-qa-center`
 - `GET /api/channel-multimodal-studio`
@@ -526,6 +527,7 @@ The test suite checks that:
 - CTA Execution Center converts official Builders CTAs, header links, docs nav links, footer resources, mailto links, Google Forms, and legal links into click-ready browser actions, keyboard paths, proof bundles, and manual completion gates.
 - Swiggy FAQ Resolution Center converts Builders FAQ and policy coverage into reviewer-ready answers, owners, proof links, activation CTAs, a support contact, and explicit operator or Swiggy gates.
 - Swiggy Innovation Radar maps Swiggy developer ideas, enterprise signals, access ground rules, support model, and MCP references into premium product lanes, route optimizations, build phases, differentiators, and partner gates.
+- Swiggy Builder Talent Signal Center converts standout-project, demo, GitHub, hiring-visibility, and portfolio signals into proof assets, talent paths, outreach copy, reviewer narrative, and Swiggy-owned recruiting or feature-placement gates.
 - Traffic Readiness maps expected sessions, daily tool calls, peak QPS, Retry-After behavior, seven-day major-event notice, capacity upgrade email, and the 1% -> 10% -> 50% -> 100% rollout.
 - Swiggy Quota Negotiation Center composes Rate Limit Plan, Traffic Readiness, Backpressure Governor, Load Lab, and Route Optimizer into five capacity asks, four launch scenarios, four runbook steps, Retry-After header readiness, and a `builders@swiggy.in` capacity packet.
 - AI Client Connect Kit generates and validates client configs, coding-agent rule files, SDK auth-mode guidance, endpoint correctness, secret redaction, troubleshooting, privacy notes, and delegated-auth gates.

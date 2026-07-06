@@ -420,6 +420,17 @@ const targetGroups = [
         "artifacts/visual-qa/faq-resolution-card.png",
       ),
       target(
+        "talent_signal_card",
+        "Talent Signal card",
+        "/",
+        ".talent-signal-card",
+        "desktop",
+        1280,
+        900,
+        "Talent Signal shows portfolio assets, GitHub/demo proof, hiring-readiness paths, and Swiggy-owned recruiting gates.",
+        "artifacts/visual-qa/talent-signal-card.png",
+      ),
+      target(
         "partner_success_card",
         "Partner Success Desk card",
         "/",

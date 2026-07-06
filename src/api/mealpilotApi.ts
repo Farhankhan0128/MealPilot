@@ -99,6 +99,7 @@ import type {
   SwiggyFaqPolicyCenter,
   SwiggyFaqResolutionCenter,
   SwiggyGrowthPartnershipCenter,
+  SwiggyTalentSignalCenter,
   SwiggyDemoEvidenceDirector,
   SwiggyInteractionQaCenter,
   SwiggyPartnerSupportRoom,
@@ -413,6 +414,10 @@ export function fetchSwiggyFaqResolutionCenter() {
 
 export function fetchSwiggyGrowthPartnershipCenter() {
   return requestJson<{ growthPartnership: SwiggyGrowthPartnershipCenter }>("/api/swiggy-growth-partnership");
+}
+
+export function fetchSwiggyTalentSignalCenter() {
+  return requestJson<{ talentSignal: SwiggyTalentSignalCenter }>("/api/swiggy-talent-signal-center");
 }
 
 export function fetchSwiggyBenefitsActivationCenter() {

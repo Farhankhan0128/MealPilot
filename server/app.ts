@@ -104,6 +104,7 @@ import { buildOpenApiDocument } from "./services/openApi.js";
 import { buildSandboxCredentialWorkbench } from "./services/sandboxCredentialWorkbench.js";
 import { buildSwiggyShowcaseSubmissionCenter } from "./services/showcaseSubmissionCenter.js";
 import { buildSwiggySubmissionTimelineCenter } from "./services/submissionTimelineCenter.js";
+import { buildSwiggyTalentSignalCenter } from "./services/talentSignalCenter.js";
 import { buildNutritionBudgetIntelligence } from "./services/nutritionBudgetIntelligence.js";
 import { buildObservabilityTraceReport, buildSwiggyRouteOptimizationReport } from "./services/observability.js";
 import { buildSwiggyOfferIntelligence, decideSwiggyOffer } from "./services/offerIntelligence.js";
@@ -1034,6 +1035,10 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/swiggy-growth-partnership", (_req, res) => {
     res.json({ growthPartnership: buildSwiggyGrowthPartnershipCenter() });
+  });
+
+  app.get("/api/swiggy-talent-signal-center", (_req, res) => {
+    res.json({ talentSignal: buildSwiggyTalentSignalCenter() });
   });
 
   app.get("/api/swiggy-benefits-activation-center", (_req, res) => {

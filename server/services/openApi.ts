@@ -401,6 +401,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-talent-signal-center": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Builder Talent Signal Center for portfolio, demo, GitHub, and hiring-readiness proof",
+          responses: {
+            "200": {
+              description:
+                "Builder visibility, developer hiring signal, portfolio assets, talent paths, outreach draft, proof routes, and Swiggy-owned recruiting or feature-placement gates mapped to MealPilot evidence",
+            },
+          },
+        },
+      },
       "/api/swiggy-benefits-activation-center": {
         get: {
           tags: ["Builder Access"],
