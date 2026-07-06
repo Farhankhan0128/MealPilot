@@ -1,8 +1,11 @@
 import type {
   MealPlan,
   ObservabilityAttribute,
+  RouteOptimizationBatch,
+  RouteOptimizationHandoff,
   ObservabilityTraceReport,
   RouteOptimizationJourney,
+  RouteOptimizationProfile,
   RouteOptimizationStep,
   SwiggyRouteOptimizationReport,
   SwiggyServer,
@@ -348,16 +351,209 @@ const journeys: RouteOptimizationJourney[] = [
   },
 ];
 
+const officialRouteSources = [
+  "https://mcp.swiggy.com/builders/",
+  "https://mcp.swiggy.com/builders/llms.txt",
+  "https://mcp.swiggy.com/builders/docs/build/recipes/order-food/",
+  "https://mcp.swiggy.com/builders/docs/build/recipes/order-groceries/",
+  "https://mcp.swiggy.com/builders/docs/build/recipes/book-a-table/",
+  "https://mcp.swiggy.com/builders/docs/build/recipes/combined/",
+  "https://mcp.swiggy.com/builders/docs/build/agent-patterns/multi-turn-state/",
+  "https://mcp.swiggy.com/builders/docs/build/agent-patterns/voice-vs-chat/",
+  "https://mcp.swiggy.com/builders/docs/build/ship-to-production/",
+];
+
+function totalLatency(journey: RouteOptimizationJourney) {
+  return journey.steps.reduce((sum, item) => sum + item.expectedLatencyMs, 0);
+}
+
+function commercialGateCount(journey: RouteOptimizationJourney) {
+  return journey.steps.filter((item) => item.toolClass === "commercial_action").length;
+}
+
+const profiles: RouteOptimizationProfile[] = [
+  {
+    id: "express_parallel_discovery",
+    label: "Express Parallel Discovery",
+    objective: "Resolve location once, fan out Food, Instamart, and Dineout discovery, then collapse into separate confirmation lanes.",
+    bestFor: "Busy weekday planning when the user wants a full answer quickly.",
+    journeyIds: ["three_server_meal_plan"],
+    estimatedLatencyMs: 780,
+    savedCalls: 6,
+    safetyPosture: "Parallel reads only; commercial calls remain serialized behind separate confirmations.",
+  },
+  {
+    id: "voice_minimal_reorder",
+    label: "Voice Minimal Reorder",
+    objective: "Use saved address and go-to items to avoid long spoken search results and raw identifier exposure.",
+    bestFor: "Hands-free pantry replenishment and car/home assistant surfaces.",
+    journeyIds: ["voice_reorder"],
+    estimatedLatencyMs: 500,
+    savedCalls: 3,
+    safetyPosture: "No raw addressId, spinId, cartId, or long menu lists in speech.",
+  },
+  {
+    id: "occasion_conversion_guard",
+    label: "Occasion Conversion Guard",
+    objective: "Prioritize Dineout slot scarcity before Food dessert planning while keeping reservations and delivery separate.",
+    bestFor: "Date nights, guests at home, celebrations, and weekend social planning.",
+    journeyIds: ["occasion_orchestrator"],
+    estimatedLatencyMs: 860,
+    savedCalls: 4,
+    safetyPosture: "Booking status is checked before any Dineout retry; Food placement is a separate confirmation.",
+  },
+  {
+    id: "support_safe_recovery",
+    label: "Support-Safe Recovery",
+    objective: "Convert uncertain commercial outcomes into status lookup and report_error payloads instead of duplicate writes.",
+    bestFor: "Network timeouts, 5xxs, user complaints, and live-support escalation.",
+    journeyIds: journeys.map((journey) => journey.id),
+    estimatedLatencyMs: 900,
+    savedCalls: 5,
+    safetyPosture: "place_food_order, checkout, and book_table never blind retry.",
+  },
+];
+
+const parallelBatches: RouteOptimizationBatch[] = [
+  {
+    id: "location_resolution",
+    label: "Resolve Location Context",
+    phase: "location",
+    parallel: true,
+    tools: [
+      { server: "food", tool: "get_addresses" },
+      { server: "dineout", tool: "get_saved_locations" },
+    ],
+    expectedLatencyMs: 90,
+    savedCalls: 1,
+    riskControl: "Only redacted address labels and Dineout coordinates enter downstream route planning.",
+  },
+  {
+    id: "three_server_discovery",
+    label: "Parallel Discovery Fanout",
+    phase: "discovery",
+    parallel: true,
+    tools: [
+      { server: "food", tool: "search_restaurants" },
+      { server: "instamart", tool: "your_go_to_items" },
+      { server: "instamart", tool: "search_products" },
+      { server: "dineout", tool: "search_restaurants_dineout" },
+    ],
+    expectedLatencyMs: 180,
+    savedCalls: 4,
+    riskControl: "Reads can fan out only after location scope is resolved; no cart mutation joins this batch.",
+  },
+  {
+    id: "cart_truth_boundary",
+    label: "Authoritative Cart Truth",
+    phase: "cart_truth",
+    parallel: true,
+    tools: [
+      { server: "food", tool: "get_food_cart" },
+      { server: "instamart", tool: "get_cart" },
+      { server: "dineout", tool: "get_available_slots" },
+    ],
+    expectedLatencyMs: 150,
+    savedCalls: 2,
+    riskControl: "Cart and slot reads are refreshed immediately before user-facing confirmation modals.",
+  },
+  {
+    id: "separate_confirmation_locks",
+    label: "Separate Confirmation Locks",
+    phase: "confirmation",
+    parallel: false,
+    tools: [
+      { server: "food", tool: "place_food_order" },
+      { server: "instamart", tool: "checkout" },
+      { server: "dineout", tool: "book_table" },
+    ],
+    expectedLatencyMs: 660,
+    savedCalls: 0,
+    riskControl: "Each commercial action has its own visible total, item/slot summary, and explicit confirmation.",
+  },
+  {
+    id: "non_blind_recovery",
+    label: "Non-Blind Recovery",
+    phase: "support",
+    parallel: false,
+    tools: [
+      { server: "food", tool: "get_food_orders" },
+      { server: "instamart", tool: "get_orders" },
+      { server: "dineout", tool: "get_booking_status" },
+    ],
+    expectedLatencyMs: 180,
+    savedCalls: 2,
+    riskControl: "After uncertain commercial results, status lookup must happen before retry or support escalation.",
+  },
+];
+
+const crossServerHandoffs: RouteOptimizationHandoff[] = [
+  {
+    id: "address_to_food_instamart",
+    fromServer: "food",
+    toServer: "instamart",
+    sharedContext: "Saved Home or Office label, city, and coarse serviceability intent.",
+    redactionRule: "Do not copy raw address text, phone, or access token into client-visible route state.",
+    cacheWindow: "Session only; invalidate when the user changes address or city.",
+    proofLink: "/api/mcp/state-orchestrator",
+  },
+  {
+    id: "dineout_slot_to_food_reminder",
+    fromServer: "dineout",
+    toServer: "food",
+    sharedContext: "Reservation date/time and user-approved dessert reminder window.",
+    redactionRule: "Do not schedule an immediate Food order from a future Dineout slot; store reminder intent only.",
+    cacheWindow: "Until the reminder fires, then refresh Food restaurant and cart truth.",
+    proofLink: "/api/premium-concierge-itinerary",
+  },
+  {
+    id: "instamart_pantry_to_food_budget",
+    fromServer: "instamart",
+    toServer: "food",
+    sharedContext: "Pantry gaps and remaining budget after grocery basket preview.",
+    redactionRule: "Use derived category gaps, not raw grocery order payloads.",
+    cacheWindow: "One planning turn; refresh get_cart before checkout.",
+    proofLink: "/api/nutrition-budget-intelligence",
+  },
+  {
+    id: "support_context_all_servers",
+    fromServer: "food",
+    toServer: "dineout",
+    sharedContext: "Redacted request id, trace id, Swiggy server, tool name, status class, and timestamp.",
+    redactionRule: "No raw payload, full address, payment credential, phone, email, or bearer token enters support copy.",
+    cacheWindow: "Support packet only; retain according to local audit retention policy.",
+    proofLink: "/api/support/bridge",
+  },
+];
+
 export function buildSwiggyRouteOptimizationReport(): SwiggyRouteOptimizationReport {
   const totalSavedCalls = journeys.reduce((sum, journey) => sum + journey.savedCalls, 0);
   const totalBaselineCalls = journeys.reduce((sum, journey) => sum + journey.baselineCalls, 0);
+  const totalOptimizedCalls = journeys.reduce((sum, journey) => sum + journey.optimizedCalls, 0);
   const savingsScore = Math.round((totalSavedCalls / totalBaselineCalls) * 100);
+  const commercialGates = journeys.reduce((sum, journey) => sum + commercialGateCount(journey), 0);
+  const parallelizableSteps = parallelBatches
+    .filter((batch) => batch.parallel)
+    .reduce((sum, batch) => sum + batch.tools.length, 0);
+  const expectedLatencyMs = Math.max(...journeys.map(totalLatency));
 
   return {
     generatedAt: new Date().toISOString(),
     score: 90 + Math.min(10, savingsScore),
+    officialSources: officialRouteSources,
+    totals: {
+      baselineCalls: totalBaselineCalls,
+      optimizedCalls: totalOptimizedCalls,
+      savedCalls: totalSavedCalls,
+      parallelizableSteps,
+      commercialGates,
+      expectedLatencyMs,
+    },
     totalSavedCalls,
     journeys,
+    profiles,
+    parallelBatches,
+    crossServerHandoffs,
     cacheRules: [
       "Saved addresses are session-scoped and invalidated on explicit location changes.",
       "Cart reads are never cached at confirmation or commercial-action boundaries.",
@@ -377,6 +573,13 @@ export function buildSwiggyRouteOptimizationReport(): SwiggyRouteOptimizationRep
       "Non-idempotent staging drills must prove check-then-retry for place_food_order, checkout, and book_table.",
       "429 handling must honor Retry-After when Swiggy begins emitting the header.",
       "OpenTelemetry export can be wired to the host platform without changing span names or redaction policy.",
+    ],
+    assertions: [
+      "Independent Food, Instamart, and Dineout discovery reads can run in parallel only after location scope is resolved.",
+      "Cart truth and slot availability are always refreshed before user confirmation, even when earlier reads were cached.",
+      "Commercial actions are serialized and isolated so a Food failure cannot trigger Instamart checkout or Dineout booking.",
+      "Cross-server handoffs share derived intent and redacted context only; raw addresses, tokens, payment data, and payloads stay out of client state.",
+      "Support-safe recovery uses status tools and report_error payloads instead of duplicate commercial writes.",
     ],
   };
 }

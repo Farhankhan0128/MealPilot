@@ -4739,11 +4739,41 @@ function ProductionEvidencePanel({
               ? `${routeOptimizer.score}/100 route score, ${routeOptimizer.totalSavedCalls} calls saved`
               : "Loading route optimizer"}
           </span>
+          <div className="route-optimizer-grid">
+            <div>
+              <strong>{routeOptimizer?.totals.optimizedCalls ?? 0}/{routeOptimizer?.totals.baselineCalls ?? 0}</strong>
+              <span>Calls</span>
+            </div>
+            <div>
+              <strong>{routeOptimizer?.parallelBatches.filter((batch) => batch.parallel).length ?? 0}</strong>
+              <span>Parallel lanes</span>
+            </div>
+            <div>
+              <strong>{routeOptimizer?.totals.commercialGates ?? 0}</strong>
+              <span>Gates</span>
+            </div>
+          </div>
           <ul className="compact-status-list">
-            {(routeOptimizer?.journeys ?? []).slice(0, 3).map((journey) => (
-              <li key={journey.id} data-status="healthy">
-                <span>{journey.title}</span>
-                <strong>{journey.optimizedCalls}/{journey.baselineCalls}</strong>
+            {(routeOptimizer?.profiles ?? []).slice(0, 4).map((profile) => (
+              <li key={profile.id} data-status="healthy">
+                <span>{profile.label}</span>
+                <strong>{profile.savedCalls} saved</strong>
+              </li>
+            ))}
+          </ul>
+          <ul className="compact-status-list">
+            {(routeOptimizer?.parallelBatches ?? []).slice(0, 3).map((batch) => (
+              <li key={batch.id} data-status={batch.parallel ? "healthy" : "watch"}>
+                <span>{batch.label}</span>
+                <strong>{batch.phase.replaceAll("_", " ")}</strong>
+              </li>
+            ))}
+          </ul>
+          <ul className="compact-status-list">
+            {(routeOptimizer?.crossServerHandoffs ?? []).slice(0, 3).map((handoff) => (
+              <li key={handoff.id} data-status="healthy">
+                <span>{serverLabel(handoff.fromServer)} to {serverLabel(handoff.toServer)}</span>
+                <strong>{handoff.cacheWindow.split(";")[0]}</strong>
               </li>
             ))}
           </ul>

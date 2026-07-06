@@ -185,6 +185,7 @@ Open Production Evidence and show:
 - Developer Quickstart Workbench artifact for self-serve first-call readiness, SDK adapters, auth gates, and route handoffs.
 - CTA Execution Center artifact for click-readiness, keyboard navigation, manual form/email gates, and footer/legal proof.
 - Swiggy Innovation Radar artifact for premium product strategy, opportunity lanes, route optimization, build phases, and partner gates.
+- Route Optimizer artifact for profile comparison, parallel read batches, cross-server handoffs, call savings, cache/retry policy, and commercial confirmation gates.
 - Tool Contract Matrix artifact for all-tool schema, response envelope, retry, confirmation, and error-bucket evidence.
 - State Orchestrator artifact for official multi-turn cart state, switch guards, stale-cart recovery, and voice/chat response contracts.
 - Commercial Action Guard artifact for non-idempotent Food, Instamart, Dineout, and combined commercial-action safety.

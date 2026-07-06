@@ -16,6 +16,12 @@ Official sources:
 - Start docs: https://mcp.swiggy.com/builders/docs/start/
 - Coding agents: https://mcp.swiggy.com/builders/docs/start/coding-agents/
 - Authentication: https://mcp.swiggy.com/builders/docs/start/authenticate/
+- Food order recipe: https://mcp.swiggy.com/builders/docs/build/recipes/order-food/
+- Grocery order recipe: https://mcp.swiggy.com/builders/docs/build/recipes/order-groceries/
+- Table booking recipe: https://mcp.swiggy.com/builders/docs/build/recipes/book-a-table/
+- Combined route recipe: https://mcp.swiggy.com/builders/docs/build/recipes/combined/
+- Multi-turn state pattern: https://mcp.swiggy.com/builders/docs/build/agent-patterns/multi-turn-state/
+- Voice vs chat pattern: https://mcp.swiggy.com/builders/docs/build/agent-patterns/voice-vs-chat/
 - Developer quickstart: https://mcp.swiggy.com/builders/docs/start/developer/
 - Build recipes: https://mcp.swiggy.com/builders/docs/build/
 - Reference: https://mcp.swiggy.com/builders/docs/reference/
@@ -149,6 +155,16 @@ MealPilot should become a luxury-grade food and meal intelligence product with t
 | Observability | Log request ID, trace ID, session ID, tool, duration, status, and hashed user context only |
 | Audit ledger | Keep support-safe session/tool metadata, retention posture, DSR routing, and no raw Swiggy payloads |
 
+`/api/swiggy-route-optimizer` now makes this plan executable as reviewer evidence. It exposes four optimizer profiles: Express Parallel Discovery for three-server planning, Voice Minimal Reorder for low-spoken-output grocery replenishment, Occasion Conversion Guard for Dineout-first evenings, and Support-Safe Recovery for uncertain commercial outcomes.
+
+| Optimizer artifact | What it proves | Official grounding |
+| --- | --- | --- |
+| Call-saving totals | Baseline calls, optimized calls, saved calls, commercial gates, parallel tools, and expected latency are derived from the Food, Instamart, Dineout, and combined journey rows. | `llms.txt`, order-food, order-groceries, book-a-table, combined |
+| Parallel batches | Only location resolution, discovery fanout, and cart/slot truth reads are marked parallel; commercial actions are serialized. | Multi-turn state, ship-to-production, route recipes |
+| Cache/retry matrix | Addresses are session cached, carts are never cached at action boundaries, tracking is throttled, and non-idempotent writes use status lookup before retry. | Multi-turn state, rate limits, error guidance |
+| Cross-server handoffs | Food/Instamart address context, Dineout-to-Food reminders, Instamart pantry-to-Food budget, and support packets share derived/redacted context only. | Data and compliance, support, combined recipe |
+| Confirmation boundaries | `place_food_order`, `checkout`, and `book_table` stay behind separate visible confirmations and never appear in parallel batches. | Order-food, order-groceries, book-a-table |
+
 ## Backend Implementation Status
 
 | Capability | Artifact |
@@ -234,7 +250,7 @@ MealPilot should become a luxury-grade food and meal intelligence product with t
 | Trace Monitor | Span-level MCP traces, log contract, and redaction evidence |
 | Runtime Telemetry | Live API/MCP request events, status classes, request IDs, session correlation, and redaction contract |
 | Audit Ledger | Redacted session/tool events, support correlation, retention posture, DSR routing, and support packet fields |
-| Route Optimizer | Call-saving journeys, cache rules, retry classes, and staging assertions |
+| Route Optimizer | Call-saving journeys, optimizer profiles, parallel batches, cache/retry rules, cross-server handoffs, confirmation boundaries, and staging assertions |
 | Safety UX | Confirmation modal per commercial action |
 | Styling | `src/styles.css` |
 
@@ -393,7 +409,7 @@ MealPilot must keep mock evidence clearly labeled as simulated until these gates
 
 - Add OpenTelemetry spans if the deploy platform supports it.
 - Keep `/api/observability/traces` as the stable span/log contract until OpenTelemetry export is enabled.
-- Keep `/api/swiggy-route-optimizer` as the route-safety and call-saving contract for Swiggy review.
+- Keep `/api/swiggy-route-optimizer` as the route-safety and call-saving contract for Swiggy review, including optimizer profiles, explicit parallel batches, cache/retry policy, cross-server handoffs, commercial confirmation boundaries, and source-linked assertions.
 - Add durable encrypted store or managed database.
 - Add structured logs with sampling and PII redaction.
 - Add CI smoke test that runs against staging credentials from secrets.
@@ -416,6 +432,6 @@ The full objective is complete only when:
 - No commercial action can happen without visible confirmation.
 - Non-idempotent retry behavior is verified against real Swiggy status/order lookup tools.
 - Logging, tracing, OpenAPI, docs, tests, and production smoke checks pass.
-- Route optimizer evidence proves cache, retry, confirmation, and call-saving behavior for representative Food, Instamart, and Dineout journeys.
+- Route optimizer evidence proves cache, retry, parallel batch, cross-server handoff, confirmation, and call-saving behavior for representative Food, Instamart, Dineout, and combined journeys.
 - The app is recorded and packaged for Swiggy Builder Access review.
 - Remaining external gates are either completed or clearly marked as waiting on Swiggy approval.

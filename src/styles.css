@@ -1591,6 +1591,7 @@ select:focus {
 .access-submission-grid div,
 .access-evidence-grid div,
 .submission-console-grid div,
+.route-optimizer-grid div,
 .proof-grid div {
   border-radius: 8px;
   padding: 10px;
@@ -1616,6 +1617,7 @@ select:focus {
 .data-governance-grid strong,
 .audit-ledger-grid strong,
 .slo-grid strong,
+.route-optimizer-grid strong,
 .proof-grid strong {
   display: block;
   color: var(--ink);
@@ -1723,6 +1725,7 @@ select:focus {
 .data-governance-grid,
 .audit-ledger-grid,
 .slo-grid,
+.route-optimizer-grid,
 .docs-coverage-grid,
 .docs-twin-grid,
 .source-intelligence-grid,
@@ -1771,6 +1774,7 @@ select:focus {
 .data-governance-grid div,
 .audit-ledger-grid div,
 .submission-console-grid div,
+.route-optimizer-grid div,
 .slo-grid div {
   border-radius: 8px;
   padding: 10px;
@@ -1784,6 +1788,7 @@ select:focus {
 .access-submission-grid,
 .access-evidence-grid,
 .submission-console-grid,
+.route-optimizer-grid,
 .slo-grid {
   margin: 10px 0;
   min-width: 0;
@@ -1797,6 +1802,7 @@ select:focus {
 .backpressure-grid div,
 .data-governance-grid div,
 .audit-ledger-grid div,
+.route-optimizer-grid div,
 .slo-grid div {
   min-width: 0;
   overflow-wrap: anywhere;
@@ -2015,6 +2021,7 @@ select:focus {
   .backpressure-grid,
   .data-governance-grid,
   .audit-ledger-grid,
+  .route-optimizer-grid,
   .enterprise-auth-grid,
   .resource-prompt-grid,
   .widget-runtime-grid,
@@ -3057,6 +3064,7 @@ select:focus {
   .backpressure-grid,
   .data-governance-grid,
   .audit-ledger-grid,
+  .route-optimizer-grid,
   .enterprise-auth-grid,
   .resource-prompt-grid,
   .widget-runtime-grid,

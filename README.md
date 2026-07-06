@@ -95,7 +95,7 @@ Planned MCP servers:
 - Trace Monitor with span-level MCP tool evidence, redaction contracts, request IDs, and support-ready log fields.
 - Runtime Telemetry ledger with live API/MCP request events, hashed user context, session correlation, redaction contract, status classes, and support-ready request IDs.
 - Audit Ledger Center with redacted tool-call audit events, support correlation keys, retention posture, DSR routing, and Swiggy support packet fields.
-- Swiggy Route Optimizer with call-saving journeys, cache rules, retry classes, confirmation gates, and staging assertions.
+- Swiggy Route Optimizer with call-saving journeys, optimization profiles, parallel read batches, cross-server handoffs, cache/retry rules, confirmation gates, and staging assertions.
 - Support Bridge with official `report_error` JSON-RPC payloads for Food, Instamart, and Dineout, SLA routing, redaction rules, and escalation checklist.
 - SLO Incident Command Center with Swiggy uptime targets, latency classes, status-page fallback, S0/S1 comms, maintenance windows, measurement exclusions, and remediation evidence.
 - Error Intelligence catalogue for Swiggy `success:false` envelopes, message/HTTP classification, planned symbolic codes, domain failures, retry budgets, and support actions.
@@ -433,6 +433,8 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 `GET /api/mcp/scenario-runner` executes the official Food, Instamart, Dineout, and combined recipes as local JSON-RPC `tools/call` traces, including guard/recovery probes, support paths, confirmation-gated commerce steps, and full 35-tool coverage.
 
 `GET /api/mcp/state-orchestrator` turns Swiggy's multi-turn cart state and voice/chat pattern docs into executable MealPilot rules: authoritative cart refreshes, Food restaurant-switch warnings, Instamart address-switch clears, Dineout slot refreshes, stale-cart recovery, and surface-specific response contracts.
+
+`GET /api/swiggy-route-optimizer` is the official-recipe optimization ledger: it compares baseline and optimized Food, Instamart, Dineout, and combined routes, exposes optimizer profiles, explicit parallel read batches, cross-server handoffs, cache windows, retry ownership, redaction rules, call savings, and commercial confirmation boundaries.
 
 `GET /api/staging-certification-matrix` is the credentialed launch map: all 35 Swiggy tools assigned to staging smoke waves, OAuth/DCR prerequisites, 48-hour soak requirements, telemetry/redaction expectations, rollback policy, and production-promotion gates.
 

@@ -2720,6 +2720,57 @@ const routeOptimizer = await request("/api/swiggy-route-optimizer");
 assert(routeOptimizer.routeOptimizer.score >= 90, "route optimizer score is below target");
 assert(routeOptimizer.routeOptimizer.totalSavedCalls > 0, "route optimizer call savings are missing");
 assert(routeOptimizer.routeOptimizer.journeys.length >= 3, "route optimizer journeys are incomplete");
+assert(
+  routeOptimizer.routeOptimizer.officialSources.includes("https://mcp.swiggy.com/builders/llms.txt") &&
+    routeOptimizer.routeOptimizer.officialSources.some((source) => source.includes("/docs/build/recipes/order-food/")),
+  "route optimizer official sources are incomplete",
+);
+const routeTotals = routeOptimizer.routeOptimizer.journeys.reduce(
+  (totals, journey) => ({
+    baselineCalls: totals.baselineCalls + journey.baselineCalls,
+    optimizedCalls: totals.optimizedCalls + journey.optimizedCalls,
+    savedCalls: totals.savedCalls + journey.savedCalls,
+    commercialGates:
+      totals.commercialGates + journey.steps.filter((step) => step.toolClass === "commercial_action").length,
+  }),
+  { baselineCalls: 0, optimizedCalls: 0, savedCalls: 0, commercialGates: 0 },
+);
+assert(routeOptimizer.routeOptimizer.totals.baselineCalls === routeTotals.baselineCalls, "route optimizer baseline rollup is inconsistent");
+assert(routeOptimizer.routeOptimizer.totals.optimizedCalls === routeTotals.optimizedCalls, "route optimizer optimized rollup is inconsistent");
+assert(routeOptimizer.routeOptimizer.totals.savedCalls === routeOptimizer.routeOptimizer.totalSavedCalls, "route optimizer saved-call total is inconsistent");
+assert(routeOptimizer.routeOptimizer.totals.savedCalls === routeTotals.savedCalls, "route optimizer journey savings rollup is inconsistent");
+assert(routeOptimizer.routeOptimizer.totals.commercialGates === routeTotals.commercialGates, "route optimizer commercial gate rollup is inconsistent");
+assert(routeOptimizer.routeOptimizer.profiles.length >= 4, "route optimizer profiles are incomplete");
+assert(
+  routeOptimizer.routeOptimizer.profiles.some((profile) => profile.id === "express_parallel_discovery" && profile.savedCalls >= 6),
+  "route optimizer express parallel profile is missing",
+);
+assert(routeOptimizer.routeOptimizer.parallelBatches.length >= 5, "route optimizer parallel batches are incomplete");
+const parallelToolCount = routeOptimizer.routeOptimizer.parallelBatches
+  .filter((batch) => batch.parallel)
+  .reduce((sum, batch) => sum + batch.tools.length, 0);
+assert(
+  routeOptimizer.routeOptimizer.totals.parallelizableSteps === parallelToolCount,
+  "route optimizer parallelizable count must come from explicit parallel batches",
+);
+assert(
+  !routeOptimizer.routeOptimizer.parallelBatches
+    .filter((batch) => batch.parallel)
+    .flatMap((batch) => batch.tools)
+    .some((tool) => ["place_food_order", "checkout", "book_table"].includes(tool.tool)),
+  "route optimizer must not put commercial actions in parallel batches",
+);
+assert(routeOptimizer.routeOptimizer.crossServerHandoffs.length >= 4, "route optimizer cross-server handoffs are incomplete");
+assert(
+  routeOptimizer.routeOptimizer.crossServerHandoffs.some(
+    (handoff) => handoff.id === "support_context_all_servers" && handoff.redactionRule.includes("bearer token"),
+  ),
+  "route optimizer support redaction handoff is missing",
+);
+assert(
+  routeOptimizer.routeOptimizer.assertions.some((assertion) => assertion.includes("Independent Food")),
+  "route optimizer assertions are incomplete",
+);
 
 const supportBridge = await request(`/api/support/bridge?${new URLSearchParams({ sessionId }).toString()}`);
 assert(supportBridge.supportBridge.score >= 95, "support bridge score is below target");
@@ -3288,6 +3339,10 @@ console.log(
       auditLedgerScore: auditLedger.auditLedger.score,
       auditLedgerEvents: auditLedger.auditLedger.totalEvents,
       routeOptimizerScore: routeOptimizer.routeOptimizer.score,
+      routeOptimizerProfiles: routeOptimizer.routeOptimizer.profiles.length,
+      routeOptimizerParallelBatches: routeOptimizer.routeOptimizer.parallelBatches.length,
+      routeOptimizerHandoffs: routeOptimizer.routeOptimizer.crossServerHandoffs.length,
+      routeOptimizerParallelTools: routeOptimizer.routeOptimizer.totals.parallelizableSteps,
       supportBridgeScore: supportBridge.supportBridge.score,
       supportBridgeReports: supportBridge.supportBridge.reportErrorTools.length,
       errorIntelligenceScore: errorIntelligence.errorIntelligence.score,

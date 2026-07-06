@@ -823,7 +823,12 @@ export function buildOpenApiDocument(config: ServerConfig) {
         get: {
           tags: ["Builder Access"],
           summary: "Swiggy MCP route optimization and call-saving plan",
-          responses: { "200": { description: "Optimized journeys, cache rules, retry policies, and staging assertions" } },
+          responses: {
+            "200": {
+              description:
+                "Official source links, call-saving totals, optimizer profiles, parallel batches, cross-server handoffs, cache rules, retry policies, guardrails, assertions, and staging assertions",
+            },
+          },
         },
       },
       "/api/privacy/export": {

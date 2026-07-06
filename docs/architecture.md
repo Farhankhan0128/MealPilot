@@ -137,7 +137,7 @@ Implementation:
 - Generates trace spans, support-ready log contracts, and redaction evidence through `/api/observability/traces`.
 - Records live runtime API/MCP request telemetry through `/api/telemetry/runtime`, including request IDs, hashed user context, optional session IDs, status classes, latency, redaction evidence, and support-ready correlation identifiers.
 - Generates `/api/audit-ledger` with redacted plan audit events, Swiggy support correlations, retention posture, DSR routing, and builders@swiggy.in packet fields.
-- Generates Swiggy MCP route optimization evidence through `/api/swiggy-route-optimizer`, including cache policies, retry classes, confirmation gates, and staging assertions.
+- Generates Swiggy MCP route optimization evidence through `/api/swiggy-route-optimizer`, including official source links, call-saving totals, optimizer profiles, batch-planned parallel reads, cache key policy, retry class ownership, cross-server handoffs, redaction rules, confirmation-boundary handoff to Commercial Action Guard, and staging assertions.
 - Generates resilience drills for safe 5xx retries, 429 Retry-After handling, 401 reauth, non-idempotent check-then-retry, and deprecation alerts.
 - Serves OpenAPI 3.1 at `/api/openapi.json`, readiness checks at `/api/ready`, and request IDs on every API response.
 - Ships with Docker, Render blueprint, GitHub Actions CI, and an automated production smoke verifier.

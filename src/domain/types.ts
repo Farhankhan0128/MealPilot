@@ -3603,14 +3603,61 @@ export interface RouteOptimizationJourney {
   controls: string[];
 }
 
+export interface RouteOptimizationTotals {
+  baselineCalls: number;
+  optimizedCalls: number;
+  savedCalls: number;
+  parallelizableSteps: number;
+  commercialGates: number;
+  expectedLatencyMs: number;
+}
+
+export interface RouteOptimizationProfile {
+  id: string;
+  label: string;
+  objective: string;
+  bestFor: string;
+  journeyIds: string[];
+  estimatedLatencyMs: number;
+  savedCalls: number;
+  safetyPosture: string;
+}
+
+export interface RouteOptimizationBatch {
+  id: string;
+  label: string;
+  phase: "location" | "discovery" | "cart_truth" | "confirmation" | "commercial" | "support";
+  parallel: boolean;
+  tools: Array<{ server: SwiggyServer; tool: string }>;
+  expectedLatencyMs: number;
+  savedCalls: number;
+  riskControl: string;
+}
+
+export interface RouteOptimizationHandoff {
+  id: string;
+  fromServer: SwiggyServer;
+  toServer: SwiggyServer;
+  sharedContext: string;
+  redactionRule: string;
+  cacheWindow: string;
+  proofLink: string;
+}
+
 export interface SwiggyRouteOptimizationReport {
   generatedAt: string;
   score: number;
+  officialSources: string[];
+  totals: RouteOptimizationTotals;
   totalSavedCalls: number;
   journeys: RouteOptimizationJourney[];
+  profiles: RouteOptimizationProfile[];
+  parallelBatches: RouteOptimizationBatch[];
+  crossServerHandoffs: RouteOptimizationHandoff[];
   cacheRules: string[];
   guardrails: string[];
   stagingAssertions: string[];
+  assertions: string[];
 }
 
 export type CredentialReadinessStatus = "ready" | "watch" | "blocked";

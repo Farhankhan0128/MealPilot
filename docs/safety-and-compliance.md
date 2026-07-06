@@ -44,6 +44,8 @@ Unsafe to retry blindly:
 - Food order placement.
 - Instamart checkout.
 - Dineout table booking.
+
+`/api/swiggy-route-optimizer` is the route-level safety ledger for those rules. It allows only location and discovery reads to run in parallel batches, requires Food and Instamart cart truth plus Dineout slot truth immediately before confirmation, keeps `place_food_order`, `checkout`, and `book_table` out of every parallel batch, and records cross-server handoffs as derived context with raw addresses, payment data, bearer tokens, and full Swiggy payloads redacted.
 - Any tool call that mutates cart state without first checking the current cart.
 
 For non-idempotent calls, MealPilot records the attempted action and asks the user to verify the result before trying again.

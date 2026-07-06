@@ -111,7 +111,7 @@ Scale-up after staging:
 - Trace Monitor for MCP spans, request IDs, support log fields, and redaction evidence.
 - Runtime Telemetry ledger for live API/MCP request logs, status classes, hashed user context, session IDs, request IDs, and redaction checks.
 - Audit Ledger Center for redacted Swiggy session/tool events, support correlation, retention posture, DSR routing, and packet fields.
-- Swiggy Route Optimizer for cache policies, call savings, retry classes, confirmation gates, and staging assertions.
+- Swiggy Route Optimizer for official-source-grounded profiles, parallel read batches, cache policies, call savings, retry classes, cross-server handoffs, confirmation gates, and staging assertions.
 - Support Bridge for official `report_error` calls across Food, Instamart, and Dineout, including toolContext identifiers, SLA routing, redaction rules, and escalation checklist.
 - SLO Incident Command Center for 99.9% uptime targets, read/write/commercial latency bands, status-page fallback, S0-S3 incident comms, 72-hour maintenance notice, and remediation evidence.
 - Error Intelligence catalogue for the current Swiggy failure envelope, message/HTTP buckets, planned symbolic codes, domain failures, retry limits, observability hooks, and user-safe recovery copy.
@@ -158,7 +158,7 @@ The application will include a 2-3 minute Loom or unlisted YouTube demo showing:
 12. Show `/api/telemetry/runtime` with live request IDs, session IDs, redaction fields, and MCP event coverage.
 13. Show `/api/audit-ledger` with redacted audit events, support correlation, retention, DSR routing, and Swiggy support packet fields.
 14. Show `/api/submission-console`, `/api/access-submission-studio`, and `/api/swiggy-access-evidence-matrix` with developer/enterprise targets, official CTAs, copy blocks, attachments, browser runbook steps, blockers, owners, proof commands, and drafts. Save demo URL, primary contact, production redirect URI, static egress/IP, environment summary, terms acknowledgement, submitted-form timestamp, and sent-email timestamp through `PATCH /api/access-submission-studio/state` before recording the final reviewer packet.
-15. Show `/api/swiggy-route-optimizer` with call-saving routes and confirmation gates.
+15. Show `/api/swiggy-route-optimizer` with call-saving routes, optimizer profiles, parallel read batches, cache/retry policies, cross-server handoffs, redaction rules, confirmation gates, and staging assertions.
 16. Show `/api/mcp/capability-registry` with tools, resources, prompts, metadata, widgets, and external gates.
 17. Show `/api/mcp/resource-prompt-studio` with all six resource reads, all six prompt samples, and twelve JSON-RPC smoke requests.
 18. Show `/api/support/bridge` with Food, Instamart, and Dineout `report_error` payloads.

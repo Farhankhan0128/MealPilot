@@ -94,6 +94,8 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/telemetry/runtime"].get.summary).toContain("Runtime request telemetry");
     expect(openApi.body.paths["/api/audit-ledger"].get.summary).toContain("audit ledger");
     expect(openApi.body.paths["/api/swiggy-route-optimizer"].get.summary).toContain("route optimization");
+    expect(openApi.body.paths["/api/swiggy-route-optimizer"].get.responses["200"].description).toContain("optimizer profiles");
+    expect(openApi.body.paths["/api/swiggy-route-optimizer"].get.responses["200"].description).toContain("cross-server handoffs");
     expect(openApi.body.paths["/api/traffic-readiness-plan"].get.summary).toContain("Traffic readiness");
     expect(openApi.body.paths["/api/slo-incident-command"].get.summary).toContain("SLO Incident");
     expect(openApi.body.paths["/api/data-governance-center"].get.summary).toContain("Data Governance");
@@ -3050,10 +3052,55 @@ describe("MealPilot API", () => {
     const optimizer = await request(app).get("/api/swiggy-route-optimizer").expect(200);
     expect(optimizer.body.routeOptimizer.score).toBeGreaterThanOrEqual(90);
     expect(optimizer.body.routeOptimizer.totalSavedCalls).toBeGreaterThan(0);
+    expect(optimizer.body.routeOptimizer.officialSources).toEqual(
+      expect.arrayContaining([
+        "https://mcp.swiggy.com/builders/",
+        "https://mcp.swiggy.com/builders/llms.txt",
+        "https://mcp.swiggy.com/builders/docs/build/recipes/order-food/",
+      ]),
+    );
+    expect(optimizer.body.routeOptimizer.totals.baselineCalls).toBeGreaterThan(
+      optimizer.body.routeOptimizer.totals.optimizedCalls,
+    );
+    expect(optimizer.body.routeOptimizer.totals.savedCalls).toBe(optimizer.body.routeOptimizer.totalSavedCalls);
+    const parallelToolCount = optimizer.body.routeOptimizer.parallelBatches
+      .filter((batch: { parallel: boolean }) => batch.parallel)
+      .reduce((sum: number, batch: { tools: Array<{ tool: string }> }) => sum + batch.tools.length, 0);
+    expect(optimizer.body.routeOptimizer.totals.parallelizableSteps).toBe(parallelToolCount);
+    expect(optimizer.body.routeOptimizer.totals.commercialGates).toBeGreaterThanOrEqual(3);
+    expect(optimizer.body.routeOptimizer.profiles.length).toBeGreaterThanOrEqual(4);
+    expect(
+      optimizer.body.routeOptimizer.profiles.some((profile: { id: string }) => profile.id === "express_parallel_discovery"),
+    ).toBe(true);
+    expect(optimizer.body.routeOptimizer.parallelBatches.length).toBeGreaterThanOrEqual(5);
+    expect(
+      optimizer.body.routeOptimizer.parallelBatches
+        .filter((batch: { parallel: boolean }) => batch.parallel)
+        .flatMap((batch: { tools: Array<{ tool: string }> }) => batch.tools)
+        .some((tool: { tool: string }) => ["place_food_order", "checkout", "book_table"].includes(tool.tool)),
+    ).toBe(false);
+    expect(
+      optimizer.body.routeOptimizer.parallelBatches.some(
+        (batch: { id: string; parallel: boolean; tools: Array<{ tool: string }> }) =>
+          batch.id === "three_server_discovery" &&
+          batch.parallel &&
+          batch.tools.some((tool) => tool.tool === "search_restaurants_dineout"),
+      ),
+    ).toBe(true);
+    expect(optimizer.body.routeOptimizer.crossServerHandoffs.length).toBeGreaterThanOrEqual(4);
+    expect(
+      optimizer.body.routeOptimizer.crossServerHandoffs.some(
+        (handoff: { id: string; redactionRule: string }) =>
+          handoff.id === "support_context_all_servers" && handoff.redactionRule.includes("bearer token"),
+      ),
+    ).toBe(true);
     expect(
       optimizer.body.routeOptimizer.journeys.some((journey: { id: string }) => journey.id === "three_server_meal_plan"),
     ).toBe(true);
     expect(optimizer.body.routeOptimizer.guardrails.some((guardrail: string) => guardrail.includes("commercial tools"))).toBe(true);
+    expect(
+      optimizer.body.routeOptimizer.assertions.some((assertion: string) => assertion.includes("Independent Food")),
+    ).toBe(true);
   });
 
   it("records runtime telemetry with redacted API and MCP request evidence", async () => {
