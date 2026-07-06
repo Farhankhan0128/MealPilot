@@ -23,6 +23,7 @@ import {
   buildRestockSuggestions,
 } from "./services/advancedWorkflows.js";
 import { buildAiClientConnectKit } from "./services/aiClientConnect.js";
+import { buildAccessSubmissionStudio } from "./services/accessSubmissionStudio.js";
 import { buildAuditLedgerCenter } from "./services/auditLedger.js";
 import { buildBrandComplianceKit } from "./services/brandCompliance.js";
 import { buildBuilderPacketExport, buildBuilderPacketMarkdown } from "./services/builderPacketExport.js";
@@ -868,6 +869,17 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
   app.get("/api/submission-console", (_req, res) => {
     res.json({
       submissionConsole: buildSubmissionConsole({
+        config,
+        profile: store.getProfile(),
+        coverage: buildMcpCoverage(),
+        latestPlan: store.getAllPlans().at(-1),
+      }),
+    });
+  });
+
+  app.get("/api/access-submission-studio", (_req, res) => {
+    res.json({
+      accessSubmissionStudio: buildAccessSubmissionStudio({
         config,
         profile: store.getProfile(),
         coverage: buildMcpCoverage(),

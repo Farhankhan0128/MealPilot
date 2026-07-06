@@ -2360,6 +2360,71 @@ export interface BuilderPacketExport {
   externalGates: string[];
 }
 
+export interface AccessSubmissionStudioTarget {
+  id: string;
+  label: string;
+  url: string;
+  cta: string;
+  status: SubmissionConsoleStatus;
+  purpose: string;
+  nextAction: string;
+}
+
+export interface AccessSubmissionStudioCopyBlock {
+  id: string;
+  label: string;
+  status: SubmissionConsoleStatus;
+  value: string;
+  copyAction: string;
+}
+
+export interface AccessSubmissionStudioAttachment {
+  id: string;
+  label: string;
+  status: SubmissionConsoleStatus;
+  path: string;
+  required: boolean;
+}
+
+export interface AccessSubmissionStudioStep {
+  id: string;
+  sequence: number;
+  label: string;
+  owner: "MealPilot" | "Operator" | "Swiggy";
+  status: SubmissionConsoleStatus;
+  action: string;
+}
+
+export interface AccessSubmissionStudio {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  recommendedTrack: "developer" | "enterprise";
+  canSubmitNow: boolean;
+  submitReadinessLabel: string;
+  officialTargets: AccessSubmissionStudioTarget[];
+  copyBlocks: AccessSubmissionStudioCopyBlock[];
+  attachmentChecklist: AccessSubmissionStudioAttachment[];
+  browserRunbook: AccessSubmissionStudioStep[];
+  mailto: {
+    to: string;
+    subject: string;
+    body: string;
+    href: string;
+  };
+  totals: {
+    readyCopyBlocks: number;
+    totalCopyBlocks: number;
+    readyRequiredAttachments: number;
+    totalRequiredAttachments: number;
+    operatorBlocks: number;
+    externalGates: number;
+  };
+  blockers: string[];
+  assertions: string[];
+  externalGates: string[];
+}
+
 export interface SwiggyWidget {
   id: string;
   type: "restaurant-card" | "menu-item" | "cart-widget" | "product-card" | "slot-picker";

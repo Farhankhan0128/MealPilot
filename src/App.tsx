@@ -41,6 +41,7 @@ import {
   createSupportReport,
   deletePrivacyData,
   exportPrivacyData,
+  fetchAccessSubmissionStudio,
   fetchAgentSurface,
   fetchAuditLedger,
   fetchBuilderPackage,
@@ -131,6 +132,7 @@ import { buildConfirmationMessage } from "./domain/safety";
 import type {
   AgentSurface,
   AgentSurfaceResponse,
+  AccessSubmissionStudio,
   AuditLedgerCenter,
   AiClientConnectKit,
   BuilderPacketExport,
@@ -381,6 +383,7 @@ function App() {
   const [submissionPackage, setSubmissionPackage] = useState<SubmissionPackage | null>(null);
   const [submissionConsole, setSubmissionConsole] = useState<SubmissionConsole | null>(null);
   const [builderPacketExport, setBuilderPacketExport] = useState<BuilderPacketExport | null>(null);
+  const [accessSubmissionStudio, setAccessSubmissionStudio] = useState<AccessSubmissionStudio | null>(null);
   const [widgets, setWidgets] = useState<SwiggyWidget[]>([]);
   const [widgetBridge, setWidgetBridge] = useState<{ origin: string; sandbox: string; verifyOrigin: boolean } | null>(
     null,
@@ -511,6 +514,7 @@ function App() {
       evaluationResponse,
       submissionResponse,
       submissionConsoleResponse,
+      accessSubmissionStudioResponse,
       packetExportResponse,
       rateLimitResponse,
       trafficReadinessResponse,
@@ -575,6 +579,7 @@ function App() {
       fetchEvaluationLab(),
       fetchSubmissionPackage(),
       fetchSubmissionConsole(),
+      fetchAccessSubmissionStudio(),
       fetchBuilderPacketExport(),
       fetchRateLimitPlan(),
       fetchTrafficReadinessPlan(),
@@ -642,6 +647,7 @@ function App() {
     setEvaluationLab(evaluationResponse.evaluation);
     setSubmissionPackage(submissionResponse.package);
     setSubmissionConsole(submissionConsoleResponse.submissionConsole);
+    setAccessSubmissionStudio(accessSubmissionStudioResponse.accessSubmissionStudio);
     setBuilderPacketExport(packetExportResponse.packet);
     setRateLimit(rateLimitResponse.rateLimit);
     setTrafficReadiness(trafficReadinessResponse.trafficReadiness);
@@ -707,6 +713,7 @@ function App() {
       evaluationResponse,
       submissionResponse,
       submissionConsoleResponse,
+      accessSubmissionStudioResponse,
       packetExportResponse,
       rateLimitResponse,
       trafficReadinessResponse,
@@ -768,6 +775,7 @@ function App() {
       fetchEvaluationLab(),
       fetchSubmissionPackage(),
       fetchSubmissionConsole(),
+      fetchAccessSubmissionStudio(),
       fetchBuilderPacketExport(),
       fetchRateLimitPlan(),
       fetchTrafficReadinessPlan(),
@@ -831,6 +839,7 @@ function App() {
     setEvaluationLab(evaluationResponse.evaluation);
     setSubmissionPackage(submissionResponse.package);
     setSubmissionConsole(submissionConsoleResponse.submissionConsole);
+    setAccessSubmissionStudio(accessSubmissionStudioResponse.accessSubmissionStudio);
     setBuilderPacketExport(packetExportResponse.packet);
     setRateLimit(rateLimitResponse.rateLimit);
     setTrafficReadiness(trafficReadinessResponse.trafficReadiness);
@@ -1473,6 +1482,7 @@ function App() {
                 steps={demoSteps}
                 submissionPackage={submissionPackage}
                 submissionConsole={submissionConsole}
+                accessSubmissionStudio={accessSubmissionStudio}
                 builderPacketExport={builderPacketExport}
               />
               <ProductionEvidencePanel
@@ -3574,6 +3584,7 @@ function DemoStudioPanel({
   steps,
   submissionPackage,
   submissionConsole,
+  accessSubmissionStudio,
   builderPacketExport,
 }: {
   preflight: CartPreflightReport | null;
@@ -3582,6 +3593,7 @@ function DemoStudioPanel({
   steps: DemoStudioStep[];
   submissionPackage: SubmissionPackage | null;
   submissionConsole: SubmissionConsole | null;
+  accessSubmissionStudio: AccessSubmissionStudio | null;
   builderPacketExport: BuilderPacketExport | null;
 }) {
   const readyFields = submissionPackage?.fields.filter((field) => field.status === "ready").length ?? 0;
@@ -3756,6 +3768,59 @@ function DemoStudioPanel({
               </li>
             ))}
           </ul>
+        </article>
+
+        <article className="access-submission-card">
+          <div className="mini-heading">
+            <Rocket aria-hidden="true" />
+            <strong>Access Submission Studio</strong>
+          </div>
+          <span>
+            {accessSubmissionStudio
+              ? `${accessSubmissionStudio.score}/100, ${accessSubmissionStudio.submitReadinessLabel}`
+              : "Preparing final Swiggy access submission room"}
+          </span>
+          <div className="access-submission-grid">
+            <div>
+              <strong>
+                {accessSubmissionStudio
+                  ? `${accessSubmissionStudio.totals.readyCopyBlocks}/${accessSubmissionStudio.totals.totalCopyBlocks}`
+                  : "Loading"}
+              </strong>
+              <span>Copy blocks</span>
+            </div>
+            <div>
+              <strong>
+                {accessSubmissionStudio
+                  ? `${accessSubmissionStudio.totals.readyRequiredAttachments}/${accessSubmissionStudio.totals.totalRequiredAttachments}`
+                  : "Loading"}
+              </strong>
+              <span>Attachments</span>
+            </div>
+            <div>
+              <strong>{accessSubmissionStudio ? accessSubmissionStudio.totals.externalGates : "Loading"}</strong>
+              <span>External gates</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(accessSubmissionStudio?.browserRunbook ?? []).slice(0, 6).map((step) => (
+              <li
+                key={step.id}
+                data-status={step.status === "ready" ? "healthy" : step.status === "blocked" ? "blocked" : "watch"}
+              >
+                <span>{step.label}</span>
+                <strong>{step.owner}</strong>
+              </li>
+            ))}
+          </ul>
+          <div className="access-submission-actions">
+            {(accessSubmissionStudio?.officialTargets ?? []).map((target) => (
+              <a key={target.id} href={target.url} target={target.url.startsWith("http") ? "_blank" : undefined} rel="noreferrer">
+                {target.cta}
+              </a>
+            ))}
+            {accessSubmissionStudio ? <a href={accessSubmissionStudio.mailto.href}>Email builders@swiggy.in</a> : null}
+          </div>
         </article>
 
         <article className="builder-packet-card">

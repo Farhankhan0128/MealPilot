@@ -202,6 +202,14 @@ function buildAttachments(latestPlan: MealPlan | undefined): SubmissionConsoleAt
       mustAttach: true,
     },
     {
+      id: "sandbox_credential_workbench",
+      label: "Sandbox Credential Workbench",
+      status: "ready",
+      path: "/api/sandbox-credential-workbench",
+      purpose: "Localhost demo, DCR, PKCE, staging credentials, seeded data, 48-hour soak, and production-promotion proof.",
+      mustAttach: true,
+    },
+    {
       id: "data_governance",
       label: "Data Governance Center",
       status: "ready",

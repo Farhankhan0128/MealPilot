@@ -2387,7 +2387,7 @@ assert(
   "submission console official fields are incomplete",
 );
 assert(
-  ["builder_packet", "launch_bundle", "access_dossier", "demo_video", "audit_ledger"].every((id) =>
+  ["builder_packet", "launch_bundle", "access_dossier", "demo_video", "sandbox_credential_workbench", "audit_ledger"].every((id) =>
     submissionConsole.submissionConsole.attachments.some((attachment) => attachment.id === id),
   ),
   "submission console attachment pack is incomplete",
@@ -2421,6 +2421,65 @@ assert(
 assert(
   submissionConsole.submissionConsole.externalGates.some((gate) => gate.includes("Google Form")),
   "submission console official form gate is missing",
+);
+
+const accessSubmissionStudio = await request("/api/access-submission-studio");
+assert(accessSubmissionStudio.accessSubmissionStudio.score >= 75, "access submission studio score is below target");
+assert(accessSubmissionStudio.accessSubmissionStudio.recommendedTrack === "developer", "access submission studio developer track is missing");
+assert(accessSubmissionStudio.accessSubmissionStudio.canSubmitNow === false, "access submission studio must not claim local auto-submit readiness");
+assert(
+  accessSubmissionStudio.accessSubmissionStudio.officialSources.includes("https://mcp.swiggy.com/builders/") &&
+    accessSubmissionStudio.accessSubmissionStudio.officialSources.includes("https://mcp.swiggy.com/builders/access/"),
+  "access submission studio official sources are incomplete",
+);
+assert(
+  ["start_building", "request_access", "send_demo"].every((id) =>
+    accessSubmissionStudio.accessSubmissionStudio.officialTargets.some((target) => target.id === id),
+  ),
+  "access submission studio official CTA targets are incomplete",
+);
+assert(
+  accessSubmissionStudio.accessSubmissionStudio.officialTargets.some(
+    (target) =>
+      target.id === "request_access" &&
+      target.cta === "Request access" &&
+      target.url === "https://mcp.swiggy.com/builders/access/" &&
+      target.status === "operator_input",
+  ),
+  "access submission studio request-access target is incomplete",
+);
+assert(
+  ["track", "redirect_uris", "security_contact", "handoff_email_subject"].every((id) =>
+    accessSubmissionStudio.accessSubmissionStudio.copyBlocks.some((block) => block.id === id),
+  ),
+  "access submission studio copy blocks are incomplete",
+);
+assert(
+  ["builder_packet", "sandbox_credential_workbench", "staging_transcript", "demo_video"].every((id) =>
+    accessSubmissionStudio.accessSubmissionStudio.attachmentChecklist.some((attachment) => attachment.id === id),
+  ),
+  "access submission studio attachment checklist is incomplete",
+);
+assert(
+  ["run_verifiers", "record_demo", "submit_access_form", "send_handoff", "await_credentials"].every((id) =>
+    accessSubmissionStudio.accessSubmissionStudio.browserRunbook.some((step) => step.id === id),
+  ),
+  "access submission studio browser runbook is incomplete",
+);
+assert(
+  accessSubmissionStudio.accessSubmissionStudio.mailto.to === "builders@swiggy.in" &&
+    accessSubmissionStudio.accessSubmissionStudio.mailto.href.startsWith("mailto:"),
+  "access submission studio builders mailto is incomplete",
+);
+assert(
+  accessSubmissionStudio.accessSubmissionStudio.totals.readyRequiredAttachments >= 8 &&
+    accessSubmissionStudio.accessSubmissionStudio.totals.operatorBlocks >= 1,
+  "access submission studio readiness totals are incomplete",
+);
+assert(
+  accessSubmissionStudio.accessSubmissionStudio.externalGates.some((gate) => gate.includes("official Swiggy access form")) &&
+    accessSubmissionStudio.accessSubmissionStudio.assertions.some((assertion) => assertion.includes("never auto-submits")),
+  "access submission studio external-gate assertions are incomplete",
 );
 
 const builderPacket = await request("/api/builder-packet-export");
@@ -2488,6 +2547,7 @@ assert(
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Brand Compliance Kit") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Data Governance Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy OAuth Status") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Sandbox Credential Workbench") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Enterprise Delegated Auth Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Traffic Readiness Plan") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "MCP Backpressure Governor") &&
@@ -2532,6 +2592,10 @@ assert(
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/auth/swiggy/status"),
   "launch bundle OAuth status handoff link is missing",
+);
+assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/sandbox-credential-workbench"),
+  "launch bundle sandbox credential handoff link is missing",
 );
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-builder-intake"),
@@ -2733,6 +2797,9 @@ console.log(
       submissionConsoleAttachments: submissionConsole.submissionConsole.totalAttachments,
       submissionRequirements: submissionConsole.submissionConsole.totalRequirements,
       submissionPacketItems: submissionConsole.submissionConsole.packetOrder.length,
+      accessSubmissionStudioScore: accessSubmissionStudio.accessSubmissionStudio.score,
+      accessSubmissionTargets: accessSubmissionStudio.accessSubmissionStudio.officialTargets.length,
+      accessSubmissionCopyBlocks: accessSubmissionStudio.accessSubmissionStudio.totals.totalCopyBlocks,
       builderPacketScore: builderPacket.packet.score,
       builderPacketFiles: builderPacket.packet.totals.packetFiles,
       builderPacketVisualTargets: builderPacket.packet.totals.visualTargets,

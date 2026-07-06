@@ -111,6 +111,7 @@ Implementation:
 - Generates chat-safe and voice-safe response payloads from the same plan session.
 - Generates Swiggy-ready support reports with session IDs for escalation.
 - Generates `/api/support/bridge` with official `report_error` JSON-RPC payloads for Food, Instamart, and Dineout, plus SLA routing, redaction rules, and escalation checklist.
+- Generates `/api/access-submission-studio` as the final operator-facing Swiggy access room for CTA targets, copy blocks, required attachments, browser runbook, mailto handoff, blockers, and external gates.
 - Generates `/api/slo-incident-command` with Swiggy SLO targets, severity runbooks, status-page gates, 72-hour maintenance notice, and live readiness checks.
 - Generates `/api/error-intelligence` with Swiggy's current `success:false` envelope, message/HTTP buckets, planned symbolic codes, domain failures, retry budgets, and support actions.
 - Generates preflight reports before commercial actions, including budget, address, payment scope, item, confirmation, and substitution checks.

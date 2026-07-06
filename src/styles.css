@@ -1551,6 +1551,7 @@ select:focus {
 .replay-list li,
 .widget-list li,
 .submission-grid div,
+.access-submission-grid div,
 .submission-console-grid div,
 .proof-grid div {
   border-radius: 8px;
@@ -1562,6 +1563,7 @@ select:focus {
 .replay-list strong,
 .widget-list strong,
 .submission-grid strong,
+.access-submission-grid strong,
 .submission-console-grid strong,
 .docs-coverage-grid strong,
 .source-intelligence-grid strong,
@@ -1582,6 +1584,7 @@ select:focus {
 
 .submission-card,
 .submission-console-card,
+.access-submission-card,
 .builder-packet-card,
 .staging-transcript-card,
 .widget-card,
@@ -1602,7 +1605,25 @@ select:focus {
   grid-column: span 2;
 }
 
+.access-submission-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.access-submission-actions a {
+  border: 1px solid var(--mp-border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  background: var(--mp-layer);
+  color: var(--mp-blue-dark);
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-decoration: none;
+}
+
 .submission-grid,
+.access-submission-grid,
 .submission-console-grid,
 .staging-transcript-grid,
 .traffic-readiness-grid,
@@ -1628,6 +1649,7 @@ select:focus {
 .coding-agent-grid,
 .client-connect-grid,
 .journey-compiler-grid,
+.access-submission-grid,
 .staging-transcript-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   margin-top: 10px;
@@ -1639,6 +1661,7 @@ select:focus {
 .coding-agent-grid div,
 .client-connect-grid div,
 .journey-compiler-grid div,
+.access-submission-grid div,
 .staging-transcript-grid div,
 .traffic-readiness-grid div,
 .backpressure-grid div,
@@ -1655,6 +1678,7 @@ select:focus {
 .backpressure-grid,
 .data-governance-grid,
 .audit-ledger-grid,
+.access-submission-grid,
 .submission-console-grid,
 .slo-grid {
   margin: 10px 0;
@@ -1662,6 +1686,7 @@ select:focus {
 }
 
 .submission-grid div,
+.access-submission-grid div,
 .submission-console-grid div,
 .staging-transcript-grid div,
 .traffic-readiness-grid div,
@@ -2517,6 +2542,7 @@ select:focus {
 .support-bridge-card,
 .submission-card,
 .submission-console-card,
+.access-submission-card,
 .builder-packet-card,
 .staging-transcript-card,
 .widget-card,
@@ -2777,6 +2803,7 @@ select:focus {
   .support-bridge-card,
   .submission-card,
   .submission-console-card,
+  .access-submission-card,
   .builder-packet-card,
   .staging-transcript-card,
   .widget-card,
@@ -2902,6 +2929,7 @@ select:focus {
   .concierge-slot-list,
   .concierge-stat-grid,
   .submission-grid,
+  .access-submission-grid,
   .submission-console-grid,
   .traffic-readiness-grid,
   .backpressure-grid,
@@ -2965,6 +2993,7 @@ select:focus {
   .support-bridge-card,
   .submission-card,
   .submission-console-card,
+  .access-submission-card,
   .builder-packet-card,
   .staging-transcript-card,
   .widget-card,

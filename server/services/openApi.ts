@@ -599,6 +599,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/access-submission-studio": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy access submission studio",
+          responses: {
+            "200": {
+              description:
+                "Final operator-facing Swiggy access room with official CTA targets, copy blocks, attachments, browser runbook, generated mailto draft, blockers, and external gates",
+            },
+          },
+        },
+      },
       "/api/builder-packet-export": {
         get: {
           tags: ["Builder Access"],

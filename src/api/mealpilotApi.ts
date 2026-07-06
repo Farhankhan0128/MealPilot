@@ -1,6 +1,7 @@
 import type {
   AgentSurface,
   AgentSurfaceResponse,
+  AccessSubmissionStudio,
   AuditLedgerCenter,
   AiClientConnectKit,
   BrandComplianceKit,
@@ -459,6 +460,10 @@ export function fetchSubmissionPackage() {
 
 export function fetchSubmissionConsole() {
   return requestJson<{ submissionConsole: SubmissionConsole }>("/api/submission-console");
+}
+
+export function fetchAccessSubmissionStudio() {
+  return requestJson<{ accessSubmissionStudio: AccessSubmissionStudio }>("/api/access-submission-studio");
 }
 
 export function fetchBuilderPacketExport() {

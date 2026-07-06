@@ -340,6 +340,15 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
       evidence: "Shows OAuth metadata, Dynamic Client Registration preview, redirect audit, scopes, and external gates.",
     },
     {
+      id: "sandbox_credential_workbench",
+      label: "Sandbox Credential Workbench",
+      path: "/api/sandbox-credential-workbench",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Joins localhost demo proof, DCR, PKCE, redirect allowlisting, staging credentials, seeded data, 48-hour soak, and production-promotion gates.",
+    },
+    {
       id: "oauth_status",
       label: "Swiggy OAuth Status",
       path: "/api/auth/swiggy/status",
@@ -712,6 +721,7 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- MCP Capability Registry: /api/mcp/capability-registry",
     "- Resource & Prompt Studio: /api/mcp/resource-prompt-studio",
     "- Credential Cockpit: /api/credential-onboarding",
+    "- Sandbox Credential Workbench: /api/sandbox-credential-workbench",
     "- Swiggy OAuth Status: /api/auth/swiggy/status",
     "- Error Intelligence: /api/error-intelligence",
     "- Support Bridge: /api/support/bridge",

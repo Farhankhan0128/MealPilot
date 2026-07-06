@@ -81,6 +81,7 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/mcp/resource-prompt-studio"].get.summary).toContain("Resource and Prompt Studio");
     expect(openApi.body.paths["/api/credential-onboarding"].get.summary).toContain("Dynamic Client Registration");
     expect(openApi.body.paths["/api/sandbox-credential-workbench"].get.summary).toContain("sandbox");
+    expect(openApi.body.paths["/api/access-submission-studio"].get.summary).toContain("submission studio");
     expect(openApi.body.paths["/api/auth/swiggy/status"].get.summary).toContain("OAuth callback");
     expect(openApi.body.paths["/api/enterprise-delegated-auth"].get.summary).toContain("Enterprise Delegated Auth");
     expect(openApi.body.paths["/api/observability/traces"].get.summary).toContain("Trace spans");
@@ -708,7 +709,14 @@ describe("MealPilot API", () => {
     );
     expect(submissionConsole.totalAttachments).toBeGreaterThanOrEqual(10);
     expect(submissionConsole.attachments.map((attachment: { id: string }) => attachment.id)).toEqual(
-      expect.arrayContaining(["builder_packet", "launch_bundle", "access_dossier", "demo_video", "audit_ledger"]),
+      expect.arrayContaining([
+        "builder_packet",
+        "launch_bundle",
+        "access_dossier",
+        "demo_video",
+        "sandbox_credential_workbench",
+        "audit_ledger",
+      ]),
     );
     expect(
       submissionConsole.attachments.some(
@@ -737,6 +745,50 @@ describe("MealPilot API", () => {
     expect(submissionConsole.outboundDrafts.some((draft: { to: string }) => draft.to === "builders@swiggy.in")).toBe(true);
     expect(submissionConsole.externalGates.some((gate: string) => gate.includes("Google Form"))).toBe(true);
     expect(submissionConsole.assertions.some((assertion: string) => assertion.includes("pre-submit dossier"))).toBe(true);
+  });
+
+  it("returns a final Swiggy access submission studio with official CTA handoff actions", async () => {
+    const { app } = createMealPilotServer();
+    await request(app).post("/api/plan").send(planningRequest).expect(201);
+    const response = await request(app).get("/api/access-submission-studio").expect(200);
+    const studio = response.body.accessSubmissionStudio;
+
+    expect(studio.score).toBeGreaterThanOrEqual(75);
+    expect(studio.recommendedTrack).toBe("developer");
+    expect(studio.canSubmitNow).toBe(false);
+    expect(studio.officialSources).toEqual(
+      expect.arrayContaining([
+        "https://mcp.swiggy.com/builders/",
+        "https://mcp.swiggy.com/builders/access/",
+      ]),
+    );
+    expect(studio.officialTargets.map((target: { id: string }) => target.id)).toEqual(
+      expect.arrayContaining(["start_building", "request_access", "send_demo"]),
+    );
+    expect(
+      studio.officialTargets.some(
+        (target: { id: string; cta: string; url: string; status: string }) =>
+          target.id === "request_access" &&
+          target.cta === "Request access" &&
+          target.url === "https://mcp.swiggy.com/builders/access/" &&
+          target.status === "operator_input",
+      ),
+    ).toBe(true);
+    expect(studio.copyBlocks.map((block: { id: string }) => block.id)).toEqual(
+      expect.arrayContaining(["track", "redirect_uris", "security_contact", "handoff_email_subject"]),
+    );
+    expect(studio.attachmentChecklist.map((attachment: { id: string }) => attachment.id)).toEqual(
+      expect.arrayContaining(["builder_packet", "sandbox_credential_workbench", "staging_transcript", "demo_video"]),
+    );
+    expect(studio.browserRunbook.map((step: { id: string }) => step.id)).toEqual(
+      expect.arrayContaining(["run_verifiers", "record_demo", "submit_access_form", "send_handoff", "await_credentials"]),
+    );
+    expect(studio.mailto.to).toBe("builders@swiggy.in");
+    expect(studio.mailto.href).toContain("mailto:");
+    expect(studio.totals.readyRequiredAttachments).toBeGreaterThanOrEqual(8);
+    expect(studio.totals.operatorBlocks).toBeGreaterThanOrEqual(1);
+    expect(studio.externalGates.some((gate: string) => gate.includes("official Swiggy access form"))).toBe(true);
+    expect(studio.assertions.some((assertion: string) => assertion.includes("never auto-submits"))).toBe(true);
   });
 
   it("returns an executable Swiggy builder packet export with Markdown output", async () => {
@@ -2402,6 +2454,7 @@ describe("MealPilot API", () => {
         "Brand Compliance Kit",
         "Data Governance Center",
         "Swiggy OAuth Status",
+        "Sandbox Credential Workbench",
         "Enterprise Delegated Auth Center",
         "Traffic Readiness Plan",
         "MCP Backpressure Governor",
