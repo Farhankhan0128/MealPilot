@@ -113,6 +113,8 @@ import type {
   SwiggyStagingCredentialDrillReport,
   SwiggyStagingCutoverRehearsal,
   SwiggyLiveSignalCalibrationReport,
+  SwiggySurfaceContractRehearsal,
+  SwiggySurfaceRehearsalTarget,
   SwiggyStateOrchestratorReport,
   SwiggyToolContractMatrix,
   SwiggyUpstreamWatchReport,
@@ -300,6 +302,20 @@ export function fetchSwiggyScenarioRunner() {
 
 export function fetchSwiggyStateOrchestrator() {
   return requestJson<{ stateOrchestrator: SwiggyStateOrchestratorReport }>("/api/mcp/state-orchestrator");
+}
+
+export function rehearseSwiggySurfaceContract(input: {
+  sessionId: string;
+  scenarioId?: string;
+  preferredSurface?: SwiggySurfaceRehearsalTarget;
+}) {
+  return requestJson<{ surfaceRehearsal: SwiggySurfaceContractRehearsal }>(
+    "/api/mcp/state-orchestrator/rehearse-surface",
+    {
+      method: "POST",
+      body: JSON.stringify(input),
+    },
+  );
 }
 
 export function fetchSwiggyWidgetRuntime() {

@@ -284,6 +284,7 @@ GET  /api/mcp/tool-lab
 GET  /api/mcp/tool-contract-matrix
 GET  /api/mcp/scenario-runner
 GET  /api/mcp/state-orchestrator
+POST /api/mcp/state-orchestrator/rehearse-surface
 GET  /api/mcp/widget-runtime
 GET  /api/mcp/backpressure-governor
 GET  /api/mcp/staging-cutover
@@ -503,7 +504,7 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 
 `GET /api/mcp/scenario-runner` executes the official Food, Instamart, Dineout, and combined recipes as local JSON-RPC `tools/call` traces, including guard/recovery probes, support paths, confirmation-gated commerce steps, and full 35-tool coverage.
 
-`GET /api/mcp/state-orchestrator` turns Swiggy's multi-turn cart state and voice/chat pattern docs into executable MealPilot rules: authoritative cart refreshes, Food restaurant-switch warnings, Instamart address-switch clears, Dineout slot refreshes, stale-cart recovery, and surface-specific response contracts.
+`GET /api/mcp/state-orchestrator` plus `POST /api/mcp/state-orchestrator/rehearse-surface` turns Swiggy's multi-turn cart state and voice/chat pattern docs into executable MealPilot rules: authoritative cart refreshes, Food restaurant-switch warnings, Instamart address-switch clears, Dineout slot refreshes, stale-cart recovery, and same-route chat, voice, and widget surface rehearsals with raw-ID suppression and commercial-action locks.
 
 `GET /api/swiggy-route-optimizer` is the official-recipe optimization ledger: it compares baseline and optimized Food, Instamart, Dineout, and combined routes, exposes optimizer profiles, explicit parallel read batches, cross-server handoffs, cache windows, retry ownership, redaction rules, call savings, and commercial confirmation boundaries.
 

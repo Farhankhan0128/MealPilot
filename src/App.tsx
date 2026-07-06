@@ -2665,6 +2665,10 @@ function LaunchCenterPanel({
               <strong>{stateOrchestrator?.surfaceContracts.length ?? 0}</strong>
               <span>Surfaces</span>
             </div>
+            <div>
+              <strong>{stateOrchestrator ? "POST" : "-"}</strong>
+              <span>Rehearse</span>
+            </div>
           </div>
           <ul className="compact-status-list">
             {(stateOrchestrator?.serverModels ?? []).map((model) => (

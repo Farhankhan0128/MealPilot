@@ -195,6 +195,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/mcp/state-orchestrator/rehearse-surface": {
+        post: {
+          tags: ["Builder Access"],
+          summary: "Rehearse Swiggy chat, voice, and widget surface contracts for a MealPilot session",
+          responses: {
+            "200": {
+              description:
+                "Executable surface-contract rehearsal with chat rich cards, voice three-item caps, widget semantic fallbacks, raw-ID suppression, confirmation locks, and no commercial action execution",
+            },
+          },
+        },
+      },
       "/api/mcp/widget-runtime": {
         get: {
           tags: ["Builder Access"],

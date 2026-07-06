@@ -235,6 +235,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/mcp/tool-contract-matrix`
 - `GET /api/mcp/scenario-runner`
 - `GET /api/mcp/state-orchestrator`
+- `POST /api/mcp/state-orchestrator/rehearse-surface`
 - `GET /api/mcp/capability-registry`
 - `GET /api/mcp/resource-prompt-studio`
 - `POST /api/mcp/resource-prompt-studio/execute`
@@ -408,6 +409,8 @@ Production should use an HTTPS redirect URI with exact-match allowlisting.
 
 `/api/swiggy-dineout-precision-center` is the Dineout precision proof surface. It separates free table bookings from bill-payment carts, validates `isFree=true` and `bookingPrice=0` before `book_table`, uses `cartType: "DINEOUT"` for bill-payment `create_cart`, blocks paid deals from the free booking path, and keeps live payment validation behind Swiggy credentials.
 
+`/api/mcp/state-orchestrator/rehearse-surface` proves the same MealPilot session can render Swiggy output safely across chat, voice, and widget surfaces: chat gets richer cards, voice is capped to three spoken options, widget output stays semantic fallback, raw recommendation IDs stay hashed, and commercial actions remain locked.
+
 ## Safety Tests
 
 The test suite checks that:
@@ -438,7 +441,7 @@ The test suite checks that:
 - Swiggy Staging Credential Drill Center composes credential onboarding, sandbox workbench, staging cutover, staging certification, seeded-data needs, first-call JSON-RPC drills, operator commands, and builders@swiggy.in handoff copy into one first-live-credential runbook.
 - Tool Lab probes all 35 official tools, preserves JSON-RPC `tools/call` shape, and classifies commercial actions behind confirmation gates.
 - Tool Contract Matrix maps all 35 tool parameters, source/privacy labels, response envelopes, current and planned error buckets, retry posture, fixture previews, and official references.
-- State Orchestrator maps multi-turn cart truth, Food restaurant switches, Instamart address switches, Dineout slot refreshes, stale-cart recovery, and voice/chat response differences to explicit guards.
+- State Orchestrator maps multi-turn cart truth, Food restaurant switches, Instamart address switches, Dineout slot refreshes, stale-cart recovery, and voice/chat/widget response differences to explicit executable guards.
 - Swiggy Docs Coverage maps all 69 `llms.txt` pages across Start, Build, Operate, Reference, and Blog to app evidence and external gates.
 - Swiggy Docs Twin Explorer pairs all 69 official markdown twins with rendered URLs, retrieval lanes, proof links, section groups, and drift gates.
 - Swiggy Upstream Watch maps Swiggy's changelog, `llms.txt`, `llms-full.txt`, v1.0 limitations, v1.1/v1.2/v2 roadmap, signed manifests, and action queues to MealPilot proof surfaces.

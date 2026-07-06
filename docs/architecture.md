@@ -86,7 +86,7 @@ Implementation:
 - Exposes `/api/mcp/tool-lab` to probe every official Swiggy MCP tool with JSON-RPC request samples, response previews, route classes, safety gates, retry policies, and innovation use cases.
 - Exposes `/api/mcp/tool-contract-matrix` as the all-tool contract layer for parameters, source/privacy labels, response envelopes, confirmation gates, retry policies, error buckets, and local fixtures.
 - Exposes `/api/mcp/scenario-runner` as the executable official recipe layer for Food, Instamart, Dineout, and combined flows, with guard/recovery branches and all 35 tools covered.
-- Exposes `/api/mcp/state-orchestrator` for Swiggy's multi-turn cart state, server-boundary, stale-cart recovery, and voice/chat surface rules.
+- Exposes `/api/mcp/state-orchestrator` and `/api/mcp/state-orchestrator/rehearse-surface` for Swiggy's multi-turn cart state, server-boundary, stale-cart recovery, and executable chat/voice/widget surface rules.
 - Exposes `/api/mcp/capability-registry` for tools, resources, prompts, OAuth metadata, widget registry, static metadata, and external gates.
 - Exposes `/api/mcp/resource-prompt-studio` for concrete `resources/list`, `resources/read`, `prompts/list`, and `prompts/get` coverage across Food, Instamart, and Dineout.
 - Exposes `/api/swiggy-builders-map` as the current Swiggy Builders website, CTA, capability, product-opportunity, and credential-gate source of truth.

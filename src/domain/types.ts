@@ -398,6 +398,48 @@ export interface SwiggySurfaceContract {
   widgetPolicy: string;
 }
 
+export type SwiggySurfaceRehearsalTarget = "chat" | "voice" | "widget";
+
+export interface SwiggySurfaceRehearsalVariant {
+  surface: SwiggySurfaceRehearsalTarget;
+  maxPresentedItems: number;
+  presentedItems: Array<{
+    safeHandle: string;
+    title: string;
+    provider: string;
+    total: number;
+    eta: string;
+    server: SwiggyServer;
+  }>;
+  responseText: string;
+  confirmationPrompt: string;
+  widgetContract: string;
+  commercialActionLocked: boolean;
+  internalIdsExposed: boolean;
+  violations: string[];
+}
+
+export interface SwiggySurfaceContractRehearsal {
+  generatedAt: string;
+  requestId: string;
+  input: {
+    sessionId: string;
+    scenarioId: string;
+    preferredSurface: SwiggySurfaceRehearsalTarget;
+  };
+  selectedScenarioId: string;
+  planSummary: string;
+  officialSources: string[];
+  variants: SwiggySurfaceRehearsalVariant[];
+  riskFlags: string[];
+  telemetry: Array<{
+    field: string;
+    value: string;
+    redaction: string;
+  }>;
+  assertions: string[];
+}
+
 export interface SwiggyStateOrchestratorReport {
   generatedAt: string;
   score: number;

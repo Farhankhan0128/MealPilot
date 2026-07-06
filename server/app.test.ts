@@ -98,6 +98,8 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/mcp/tool-contract-matrix"].get.summary).toContain("tool contract matrix");
     expect(openApi.body.paths["/api/mcp/scenario-runner"].get.summary).toContain("scenario runner");
     expect(openApi.body.paths["/api/mcp/state-orchestrator"].get.summary).toContain("multi-turn cart state");
+    expect(openApi.body.paths["/api/mcp/state-orchestrator/rehearse-surface"].post.summary).toContain("surface contracts");
+    expect(openApi.body.paths["/api/mcp/state-orchestrator/rehearse-surface"].post.responses["200"].description).toContain("raw-ID");
     expect(openApi.body.paths["/api/mcp/widget-runtime"].get.summary).toContain("widget iframe");
     expect(openApi.body.paths["/api/mcp/commercial-action-guard"].get.summary).toContain("commercial action");
     expect(openApi.body.paths["/api/mcp/backpressure-governor"].get.summary).toContain("backpressure");
@@ -3362,7 +3364,7 @@ describe("MealPilot API", () => {
 
   it("orchestrates Swiggy multi-turn cart state and voice/chat contracts", async () => {
     const { app } = createMealPilotServer();
-    await request(app).post("/api/plan").send(planningRequest).expect(201);
+    const planResponse = await request(app).post("/api/plan").send(planningRequest).expect(201);
     const response = await request(app).get("/api/mcp/state-orchestrator").expect(200);
     const report = response.body.stateOrchestrator;
 
@@ -3397,6 +3399,33 @@ describe("MealPilot API", () => {
     expect(chat.maxPresentedItems).toBe(8);
     expect(chat.widgetPolicy).toContain("semantic widget contracts");
     expect(report.assertions.some((assertion: string) => assertion.includes("authoritative Swiggy read"))).toBe(true);
+
+    const rehearsalResponse = await request(app)
+      .post("/api/mcp/state-orchestrator/rehearse-surface")
+      .send({
+        sessionId: planResponse.body.plan.id,
+        scenarioId: "combined_server_boundaries",
+        preferredSurface: "voice",
+      })
+      .expect(200);
+    const rehearsal = rehearsalResponse.body.surfaceRehearsal;
+    const voiceVariant = rehearsal.variants.find((variant: { surface: string }) => variant.surface === "voice");
+    const chatVariant = rehearsal.variants.find((variant: { surface: string }) => variant.surface === "chat");
+    const widgetVariant = rehearsal.variants.find((variant: { surface: string }) => variant.surface === "widget");
+
+    expect(rehearsal.selectedScenarioId).toBe("combined_server_boundaries");
+    expect(rehearsal.variants.map((variant: { surface: string }) => variant.surface)).toEqual(["chat", "voice", "widget"]);
+    expect(voiceVariant.maxPresentedItems).toBe(3);
+    expect(voiceVariant.presentedItems.length).toBeLessThanOrEqual(3);
+    expect(chatVariant.presentedItems.length).toBeGreaterThanOrEqual(voiceVariant.presentedItems.length);
+    expect(widgetVariant.widgetContract).toContain("fallback");
+    expect(rehearsal.variants.every((variant: { commercialActionLocked: boolean }) => variant.commercialActionLocked)).toBe(true);
+    expect(rehearsal.variants.every((variant: { internalIdsExposed: boolean }) => !variant.internalIdsExposed)).toBe(true);
+    expect(
+      rehearsal.telemetry.some(
+        (field: { field: string; value: string }) => field.field === "commercial_action_executed" && field.value === "false",
+      ),
+    ).toBe(true);
   });
 
   it("returns Swiggy widget runtime contracts with secure fallbacks", async () => {

@@ -194,6 +194,13 @@ assert(
   "OpenAPI state orchestrator is missing",
 );
 assert(
+  openApi.paths["/api/mcp/state-orchestrator/rehearse-surface"]?.post?.summary?.includes("surface contracts") &&
+    openApi.paths["/api/mcp/state-orchestrator/rehearse-surface"]?.post?.responses?.["200"]?.description?.includes(
+      "raw-ID",
+    ),
+  "OpenAPI state orchestrator surface rehearsal is missing",
+);
+assert(
   openApi.paths["/api/mcp/widget-runtime"].get.summary.includes("widget iframe"),
   "OpenAPI widget runtime is missing",
 );
@@ -2564,6 +2571,35 @@ assert(
   chatContract.maxPresentedItems === 8 && chatContract.widgetPolicy.includes("semantic widget contracts"),
   "state orchestrator chat contract is incomplete",
 );
+const surfaceRehearsal = await request("/api/mcp/state-orchestrator/rehearse-surface", {
+  method: "POST",
+  body: JSON.stringify({
+    sessionId,
+    scenarioId: "combined_server_boundaries",
+    preferredSurface: "voice",
+  }),
+});
+const voiceSurface = surfaceRehearsal.surfaceRehearsal.variants.find((variant) => variant.surface === "voice");
+const chatSurface = surfaceRehearsal.surfaceRehearsal.variants.find((variant) => variant.surface === "chat");
+const widgetSurface = surfaceRehearsal.surfaceRehearsal.variants.find((variant) => variant.surface === "widget");
+assert(surfaceRehearsal.surfaceRehearsal.selectedScenarioId === "combined_server_boundaries", "surface rehearsal selected the wrong scenario");
+assert(
+  voiceSurface.maxPresentedItems === 3 &&
+    voiceSurface.presentedItems.length <= 3 &&
+    chatSurface.presentedItems.length >= voiceSurface.presentedItems.length,
+  "surface rehearsal voice/chat item limits are wrong",
+);
+assert(
+  widgetSurface.widgetContract.includes("fallback") &&
+    surfaceRehearsal.surfaceRehearsal.variants.every((variant) => variant.commercialActionLocked && !variant.internalIdsExposed),
+  "surface rehearsal widget fallback or ID lock is incomplete",
+);
+assert(
+  surfaceRehearsal.surfaceRehearsal.telemetry.some(
+    (field) => field.field === "commercial_action_executed" && field.value === "false",
+  ),
+  "surface rehearsal commercial-action telemetry is missing",
+);
 
 const capabilityRegistry = await request("/api/mcp/capability-registry");
 assert(capabilityRegistry.registry.score >= 90, "capability registry score is below target");
@@ -4933,6 +4969,8 @@ console.log(
       scenarioRunnerSteps: scenarioRunner.scenarioRunner.totalSteps,
       stateOrchestratorScore: stateOrchestrator.stateOrchestrator.score,
       stateTurnBoundaries: stateOrchestrator.stateOrchestrator.totalTurnBoundaries,
+      surfaceRehearsalScenario: surfaceRehearsal.surfaceRehearsal.selectedScenarioId,
+      surfaceRehearsalVariants: surfaceRehearsal.surfaceRehearsal.variants.length,
       widgetRuntimeScore: widgetRuntime.widgetRuntime.score,
       widgetRuntimeSurfaces: widgetRuntime.widgetRuntime.totalSurfaces,
       commercialActionGuardScore: commercialActionGuard.commercialActionGuard.score,

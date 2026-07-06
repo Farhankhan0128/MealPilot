@@ -271,6 +271,7 @@ Briefly show production readiness:
 - `/api/mcp/tool-contract-matrix`
 - `/api/mcp/scenario-runner`
 - `/api/mcp/state-orchestrator`
+- `/api/mcp/state-orchestrator/rehearse-surface`
 - `/api/mcp/resource-prompt-studio`
 - `/api/mcp/resource-prompt-studio/execute`
 - `/api/mcp/staging-cutover`

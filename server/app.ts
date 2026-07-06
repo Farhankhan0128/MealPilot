@@ -111,7 +111,7 @@ import { buildSwiggyStagingCutoverRehearsal } from "./services/stagingCutover.js
 import { buildStagingCertificationMatrix } from "./services/stagingCertification.js";
 import { buildStagingTranscriptExport } from "./services/stagingTranscript.js";
 import { buildSubmissionConsole } from "./services/submissionConsole.js";
-import { buildSwiggyStateOrchestrator } from "./services/stateOrchestrator.js";
+import { buildSwiggyStateOrchestrator, rehearseSwiggySurfaceContract } from "./services/stateOrchestrator.js";
 import { buildSwiggyWidgetRuntime } from "./services/widgetRuntime.js";
 import { buildSwiggyBuildersMap } from "./services/swiggyBuildersMap.js";
 import { buildSwiggyAuthStatusReport, type AuthLifecycleEvent } from "./services/swiggyAuthStatus.js";
@@ -366,6 +366,11 @@ const developerFirstCallSchema = z.object({
 
 const mcpServerSchema = z.enum(["food", "instamart", "dineout"]);
 const agentSurfaceSchema = z.enum(["chat", "voice"]);
+const surfaceContractRehearsalSchema = z.object({
+  sessionId: z.string().min(4),
+  scenarioId: z.string().trim().optional(),
+  preferredSurface: z.enum(["chat", "voice", "widget"]).optional(),
+});
 
 export interface MealPilotServerOptions {
   config?: ServerConfig;
@@ -851,6 +856,23 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/mcp/state-orchestrator", (_req, res) => {
     res.json({ stateOrchestrator: buildSwiggyStateOrchestrator(store.getAllPlans().at(-1)) });
+  });
+
+  app.post("/api/mcp/state-orchestrator/rehearse-surface", (req, res) => {
+    const body = surfaceContractRehearsalSchema.parse(req.body);
+    const plan = store.getPlan(body.sessionId);
+    if (!plan) {
+      res.status(404).json({ error: { message: "Session not found." } });
+      return;
+    }
+
+    res.json({
+      surfaceRehearsal: rehearseSwiggySurfaceContract({
+        plan,
+        scenarioId: body.scenarioId,
+        preferredSurface: body.preferredSurface,
+      }),
+    });
   });
 
   app.get("/api/mcp/widget-runtime", (_req, res) => {

@@ -1,7 +1,12 @@
+import crypto from "node:crypto";
 import type {
   MealPlan,
+  Recommendation,
   SwiggyServer,
   SwiggyServerStateModel,
+  SwiggySurfaceContractRehearsal,
+  SwiggySurfaceRehearsalTarget,
+  SwiggySurfaceRehearsalVariant,
   SwiggyStateOrchestratorReport,
   SwiggyStateScenario,
   SwiggySurfaceContract,
@@ -17,6 +22,86 @@ const officialSources = [
   "https://mcp.swiggy.com/builders/docs/build/recipes/book-a-table/",
   "https://mcp.swiggy.com/builders/docs/build/recipes/combined/",
 ];
+
+function hashHandle(value: string) {
+  return crypto.createHash("sha256").update(value).digest("hex").slice(0, 12);
+}
+
+function surfaceLimit(surface: SwiggySurfaceRehearsalTarget) {
+  if (surface === "voice") return 3;
+  if (surface === "chat") return 8;
+  return 5;
+}
+
+function widgetType(server: SwiggyServer) {
+  if (server === "food") return "restaurant-card + cart-widget fallback";
+  if (server === "instamart") return "product-card + cart-widget fallback";
+  return "restaurant-card + slot-picker fallback";
+}
+
+function responseForSurface(surface: SwiggySurfaceRehearsalTarget, items: Recommendation[], total: number) {
+  const providerList = items.map((item) => item.provider).join(", ");
+  if (surface === "voice") {
+    return `I found ${items.length} Swiggy options: ${providerList}. Estimated total is Rs ${total.toLocaleString("en-IN")}.`;
+  }
+  if (surface === "widget") {
+    return `Render ${items.length} semantic Swiggy fallback cards with provider, ETA, total, and confirmation state.`;
+  }
+  return `Show ${items.length} Swiggy recommendation cards from ${providerList}; estimated total Rs ${total.toLocaleString("en-IN")}.`;
+}
+
+function confirmationForSurface(surface: SwiggySurfaceRehearsalTarget, scenario?: SwiggyStateScenario) {
+  if (surface === "voice") {
+    return scenario?.confirmationCopy.voice ?? "Say confirm only after I read total, timing, and booking or delivery context.";
+  }
+  if (surface === "widget") {
+    return "Keep widget actions disabled until the parent app receives an explicit confirmation event.";
+  }
+  return scenario?.confirmationCopy.chat ?? "Review the refreshed Swiggy details and confirm the exact action you want.";
+}
+
+function buildVariant(
+  surface: SwiggySurfaceRehearsalTarget,
+  recommendations: Recommendation[],
+  scenario?: SwiggyStateScenario,
+): SwiggySurfaceRehearsalVariant {
+  const maxPresentedItems = surfaceLimit(surface);
+  const visible = recommendations.slice(0, maxPresentedItems);
+  const total = visible.reduce((sum, item) => sum + item.total, 0);
+  const presentedItems = visible.map((item) => ({
+    safeHandle: `${item.server}_${hashHandle(item.id)}`,
+    title: item.title,
+    provider: item.provider,
+    total: item.total,
+    eta: item.eta,
+    server: item.server,
+  }));
+  const responseText = responseForSurface(surface, visible, total);
+  const serialized = JSON.stringify({ responseText, presentedItems, confirmation: confirmationForSurface(surface, scenario) });
+  const rawIds = recommendations.map((item) => item.id).filter((id) => serialized.includes(id));
+  const violations = [
+    visible.length > maxPresentedItems ? "too_many_presented_items" : "",
+    rawIds.length ? "raw_recommendation_id_exposed" : "",
+    surface === "voice" && /addressId|restaurantId|spinId|OAuth/i.test(serialized) ? "forbidden_voice_identifier" : "",
+  ].filter(Boolean);
+
+  return {
+    surface,
+    maxPresentedItems,
+    presentedItems,
+    responseText,
+    confirmationPrompt: confirmationForSurface(surface, scenario),
+    widgetContract:
+      surface === "widget"
+        ? Array.from(new Set(visible.map((item) => widgetType(item.server)))).join("; ")
+        : surface === "chat"
+          ? "Rich cards may use semantic widget fallbacks when hosted widgets are unavailable."
+          : "No iframe or visual widget rendering on TTS-only voice surfaces.",
+    commercialActionLocked: true,
+    internalIdsExposed: rawIds.length > 0,
+    violations,
+  };
+}
 
 function guard(
   sequence: number,
@@ -245,6 +330,51 @@ export function buildSwiggyStateOrchestrator(latestPlan?: MealPlan): SwiggyState
       "Live CART_EXPIRED, stock drift, price drift, and slot race conditions require Swiggy staging seeded data to validate against real responses.",
       "Hosted Swiggy widget iframe URLs and X-Swiggy-Widgets opt-in remain planned by Swiggy; MealPilot uses semantic fallbacks until then.",
       "Future Food scheduling is still reminder-time confirmation because v1 Food placement is immediate.",
+    ],
+  };
+}
+
+export function rehearseSwiggySurfaceContract(input: {
+  plan: MealPlan;
+  scenarioId?: string;
+  preferredSurface?: SwiggySurfaceRehearsalTarget;
+}): SwiggySurfaceContractRehearsal {
+  const scenarios = buildScenarios(input.plan);
+  const scenario = scenarios.find((item) => item.id === input.scenarioId) ?? scenarios[0];
+  const preferredSurface = input.preferredSurface ?? "voice";
+  const variants = (["chat", "voice", "widget"] as const).map((surface) =>
+    buildVariant(surface, input.plan.recommendations, scenario),
+  );
+  const riskFlags = [
+    scenario ? "" : "scenario_not_found_defaulted",
+    ...variants.flatMap((variant) => variant.violations),
+  ].filter(Boolean);
+
+  return {
+    generatedAt: new Date().toISOString(),
+    requestId: `surface_${Date.now().toString(36)}`,
+    input: {
+      sessionId: input.plan.id,
+      scenarioId: input.scenarioId ?? scenario.id,
+      preferredSurface,
+    },
+    selectedScenarioId: scenario.id,
+    planSummary: input.plan.summary,
+    officialSources,
+    variants,
+    riskFlags,
+    telemetry: [
+      { field: "session_id_hash", value: hashHandle(input.plan.id), redaction: "sha256 prefix only" },
+      { field: "preferred_surface", value: preferredSurface, redaction: "safe enum" },
+      { field: "raw_recommendation_ids_exposed", value: String(variants.some((variant) => variant.internalIdsExposed)), redaction: "boolean only" },
+      { field: "commercial_action_executed", value: "false", redaction: "hard-coded safety invariant" },
+      { field: "raw_audio_retained", value: "false", redaction: "hard-coded voice invariant" },
+    ],
+    assertions: [
+      "The same Swiggy route can produce chat, voice, and widget-safe outputs without exposing raw IDs.",
+      "Voice output is capped at three spoken options and avoids tables, widgets, addressId, restaurantId, spinId, and tokens.",
+      "Widget output uses semantic fallback contracts until hosted Swiggy widgets are enabled.",
+      "No place_food_order, checkout, book_table, or cart mutation runs during surface rehearsal.",
     ],
   };
 }
