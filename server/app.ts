@@ -98,6 +98,7 @@ import { buildSwiggyOperatingContractCenter } from "./services/operatingContract
 import { buildSwiggyOrderLifecycle } from "./services/orderLifecycle.js";
 import { buildPremiumConciergeItinerary } from "./services/premiumConciergeItinerary.js";
 import { buildPremiumUseCaseStudio } from "./services/premiumUseCaseStudio.js";
+import { analyzeSwiggyQualityFeedback, buildSwiggyQualityLoopCenter } from "./services/qualityLoopCenter.js";
 import { buildReviewerArtifactVault } from "./services/reviewerArtifactVault.js";
 import { createPkcePair, createState } from "./services/pkce.js";
 import { buildMcpResourcePromptStudio } from "./services/resourcePromptStudio.js";
@@ -208,6 +209,14 @@ const visualDishAnalyzeSchema = z.object({
 const voiceCommerceRehearsalSchema = z.object({
   utterance: z.string().trim().min(4).max(240),
   city: z.enum(["Bengaluru", "Delhi NCR", "Mumbai"]),
+});
+
+const qualityFeedbackSchema = z.object({
+  server: z.enum(["food", "instamart", "dineout", "combined"]),
+  rating: z.number().int().min(1).max(5),
+  comment: z.string().trim().min(3).max(280),
+  city: z.enum(["Bengaluru", "Delhi NCR", "Mumbai"]),
+  consentToLearn: z.boolean(),
 });
 
 const mcpServerSchema = z.enum(["food", "instamart", "dineout"]);
@@ -727,6 +736,20 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
     const body = voiceCommerceRehearsalSchema.parse(req.body);
     res.json({
       rehearsal: rehearseSwiggyVoiceCommerce({
+        config,
+        ...body,
+      }),
+    });
+  });
+
+  app.get("/api/swiggy-quality-loop-center", (_req, res) => {
+    res.json({ qualityLoop: buildSwiggyQualityLoopCenter(config) });
+  });
+
+  app.post("/api/swiggy-quality-loop-center/feedback", (req, res) => {
+    const body = qualityFeedbackSchema.parse(req.body);
+    res.json({
+      analysis: analyzeSwiggyQualityFeedback({
         config,
         ...body,
       }),

@@ -89,6 +89,8 @@ import type {
   SwiggyOrderLifecycleReport,
   SwiggyScenarioRunnerReport,
   SwiggySourceIntelligenceReport,
+  SwiggyQualityFeedbackAnalysis,
+  SwiggyQualityLoopCenter,
   SwiggyStagingCredentialDrillReport,
   SwiggyStagingCutoverRehearsal,
   SwiggyLiveSignalCalibrationReport,
@@ -350,6 +352,23 @@ export function rehearseSwiggyVoiceCommerce(input: {
   city: "Bengaluru" | "Delhi NCR" | "Mumbai";
 }) {
   return requestJson<{ rehearsal: SwiggyVoiceCommerceRehearsal }>("/api/swiggy-voice-commerce-center/rehearse", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
+}
+
+export function fetchSwiggyQualityLoopCenter() {
+  return requestJson<{ qualityLoop: SwiggyQualityLoopCenter }>("/api/swiggy-quality-loop-center");
+}
+
+export function analyzeSwiggyQualityFeedback(input: {
+  server: "food" | "instamart" | "dineout" | "combined";
+  rating: number;
+  comment: string;
+  city: "Bengaluru" | "Delhi NCR" | "Mumbai";
+  consentToLearn: boolean;
+}) {
+  return requestJson<{ analysis: SwiggyQualityFeedbackAnalysis }>("/api/swiggy-quality-loop-center/feedback", {
     method: "POST",
     body: JSON.stringify(input),
   });

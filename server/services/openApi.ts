@@ -389,6 +389,30 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-quality-loop-center": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Quality Loop Center for post-experience learning and support signals",
+          responses: {
+            "200": {
+              description:
+                "Food, Instamart, Dineout, and combined feedback loops with consented learning, support redaction, repeat optimization, and external history gates",
+            },
+          },
+        },
+      },
+      "/api/swiggy-quality-loop-center/feedback": {
+        post: {
+          tags: ["Commerce"],
+          summary: "Analyze post-order or post-booking feedback into safe Swiggy learning routes",
+          responses: {
+            "200": {
+              description:
+                "Feedback sentiment, selected quality loop, consented learning tags, support packet decision, redacted telemetry, and next MealPilot optimization action",
+            },
+          },
+        },
+      },
       "/api/nutrition-budget-intelligence": {
         get: {
           tags: ["Builder Access"],

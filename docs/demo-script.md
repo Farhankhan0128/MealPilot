@@ -208,6 +208,7 @@ Open Production Evidence and show:
 - Staging Cutover Rehearsal artifact for real MCP transport readiness, OAuth gates, first-call probes, support packet fields, and production promotion checks.
 - Visual Dish Capture artifact at `/api/swiggy-visual-dish-capture` plus `/api/swiggy-visual-dish-capture/analyze` for screenshot-to-order smoke proof.
 - Voice Commerce artifact at `/api/swiggy-voice-commerce-center` plus `/api/swiggy-voice-commerce-center/rehearse` for spoken Swiggy route rehearsal.
+- Quality Loop artifact at `/api/swiggy-quality-loop-center` plus `/api/swiggy-quality-loop-center/feedback` for post-experience learning and support-safe feedback proof.
 - Website Atlas coverage for the production access page, launch blog, apply CTAs, header, footer, and docs subnav.
 - Builders Launch Story Center artifact for launch-blog story beats, 18+ to 35-tool reconciliation, demo journey, showcase packet, CTA paths, and external co-marketing gates.
 - Deep Site Map coverage for every Builders page row, module signal, CTA gate, source section, proof link, assertion, and external gate.
@@ -215,6 +216,7 @@ Open Production Evidence and show:
 - Channel & Multimodal Studio for voice, auto-restock, group ordering, dietary planner, reservation, and screenshot-to-order channel contracts plus local execution packets for route plans, response rules, confirmation gates, and telemetry.
 - Visual Dish Capture Center for dish photo, menu screenshot, pantry photo, and chat-image captions routed into Food, Instamart, Dineout, or combined plans with no raw-image retention and confirmation-first labels.
 - Voice Commerce Rehearsal Center for quick Food orders, Instamart restock, Dineout bookings, and combined spoken intents with short TTS, card fallbacks, no raw-audio retention, and confirmation prompts.
+- Quality Loop Center for consented repeat learning, feedback triage, support-safe issue routing, and no raw Swiggy payload retention across Food, Instamart, Dineout, and combined journeys.
 - Nutrition & Budget Intelligence for protein-per-rupee, coupon-safe cart review, Instamart pantry gaps, group budgets, Dineout balance, and nutrition safety controls.
 - Household Preference Graph for consented order/go-to/saved-location signals, household weights, pantry forecasts, retention rules, and cancellation-safe active-order memory.
 - Guest Collaboration & Calendar Center for guest votes, date-night and guests-at-home templates, Dineout slot checks, Food reminder handoffs, Instamart prep, ICS artifacts, Slack/Teams gates, and voice-safe briefs.

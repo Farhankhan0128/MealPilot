@@ -55,6 +55,7 @@ Status: in progress.
 - Add Channel & Multimodal Studio for voice, auto-restock, group bot, dietary planner, reservation, screenshot-to-order developer lanes, and local execution packets. Complete.
 - Add Swiggy Visual Dish Capture Center for no-retention dish photo, menu screenshot, pantry photo, and chat-image route analysis with confirmation-first labels. Complete.
 - Add Swiggy Voice Commerce Rehearsal Center for no-retention spoken Food, Instamart, Dineout, and combined route rehearsal with short TTS and confirmation prompts. Complete.
+- Add Swiggy Quality Loop Center for consented post-experience learning, support-safe feedback analysis, repeat optimization, and no raw Swiggy payload retention. Complete.
 - Add Nutrition & Budget Intelligence for protein-per-rupee planning, coupon-safe cart review, Instamart pantry gaps, group budgets, Dineout balance, and nutrition-estimate gates. Complete.
 - Add Household Preference Graph for consented active-order, go-to item, order-history, Dineout location, household weighting, forecast, and retention evidence. Complete.
 - Add Guest Collaboration & Calendar Center for guest votes, occasion templates, Dineout-first planning, Food reminder handoffs, Instamart prep, calendar artifacts, Slack/Teams gates, and voice-safe briefs. Complete.

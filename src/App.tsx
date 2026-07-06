@@ -134,6 +134,7 @@ import {
   fetchSwiggyLocationTrust,
   fetchSwiggyOfferIntelligence,
   fetchSwiggyOrderLifecycle,
+  fetchSwiggyQualityLoopCenter,
   fetchSwiggyVisualDishCapture,
   fetchSwiggyVoiceCommerceCenter,
   fetchSwiggyRouteOptimizer,
@@ -242,6 +243,7 @@ import type {
   SwiggyOfferIntelligenceReport,
   SwiggyOperatingContractCenterReport,
   SwiggyOrderLifecycleReport,
+  SwiggyQualityLoopCenter,
   SwiggyScenarioRunnerReport,
   SwiggySourceIntelligenceReport,
   SwiggyStagingCredentialDrillReport,
@@ -415,6 +417,7 @@ function App() {
     useState<SwiggyChannelMultimodalStudio | null>(null);
   const [visualDishCapture, setVisualDishCapture] = useState<SwiggyVisualDishCaptureCenter | null>(null);
   const [voiceCommerce, setVoiceCommerce] = useState<SwiggyVoiceCommerceCenter | null>(null);
+  const [qualityLoop, setQualityLoop] = useState<SwiggyQualityLoopCenter | null>(null);
   const [nutritionBudget, setNutritionBudget] = useState<NutritionBudgetIntelligence | null>(null);
   const [householdPreference, setHouseholdPreference] = useState<HouseholdPreferenceGraph | null>(null);
   const [guestCollaboration, setGuestCollaboration] = useState<GuestCollaborationCenter | null>(null);
@@ -600,6 +603,7 @@ function App() {
       channelMultimodalResponse,
       visualDishCaptureResponse,
       voiceCommerceResponse,
+      qualityLoopResponse,
       nutritionBudgetResponse,
       householdPreferenceResponse,
       guestCollaborationResponse,
@@ -687,6 +691,7 @@ function App() {
       fetchChannelMultimodalStudio(),
       fetchSwiggyVisualDishCapture(),
       fetchSwiggyVoiceCommerceCenter(),
+      fetchSwiggyQualityLoopCenter(),
       fetchNutritionBudgetIntelligence(),
       fetchHouseholdPreferenceGraph(),
       fetchGuestCollaborationCenter(),
@@ -775,6 +780,7 @@ function App() {
     setChannelMultimodalStudio(channelMultimodalResponse.channelMultimodalStudio);
     setVisualDishCapture(visualDishCaptureResponse.visualDishCapture);
     setVoiceCommerce(voiceCommerceResponse.voiceCommerce);
+    setQualityLoop(qualityLoopResponse.qualityLoop);
     setNutritionBudget(nutritionBudgetResponse.nutritionBudget);
     setHouseholdPreference(householdPreferenceResponse.householdPreference);
     setGuestCollaboration(guestCollaborationResponse.guestCollaboration);
@@ -866,6 +872,7 @@ function App() {
       channelMultimodalResponse,
       visualDishCaptureResponse,
       voiceCommerceResponse,
+      qualityLoopResponse,
       nutritionBudgetResponse,
       householdPreferenceResponse,
       guestCollaborationResponse,
@@ -950,6 +957,7 @@ function App() {
       fetchChannelMultimodalStudio(),
       fetchSwiggyVisualDishCapture(),
       fetchSwiggyVoiceCommerceCenter(),
+      fetchSwiggyQualityLoopCenter(),
       fetchNutritionBudgetIntelligence(),
       fetchHouseholdPreferenceGraph(),
       fetchGuestCollaborationCenter(),
@@ -1034,6 +1042,7 @@ function App() {
     setChannelMultimodalStudio(channelMultimodalResponse.channelMultimodalStudio);
     setVisualDishCapture(visualDishCaptureResponse.visualDishCapture);
     setVoiceCommerce(voiceCommerceResponse.voiceCommerce);
+    setQualityLoop(qualityLoopResponse.qualityLoop);
     setNutritionBudget(nutritionBudgetResponse.nutritionBudget);
     setHouseholdPreference(householdPreferenceResponse.householdPreference);
     setGuestCollaboration(guestCollaborationResponse.guestCollaboration);
@@ -1692,6 +1701,7 @@ function App() {
                 channelMultimodalStudio={channelMultimodalStudio}
                 visualDishCapture={visualDishCapture}
                 voiceCommerce={voiceCommerce}
+                qualityLoop={qualityLoop}
                 nutritionBudget={nutritionBudget}
                 householdPreference={householdPreference}
                 guestCollaboration={guestCollaboration}
@@ -2266,6 +2276,7 @@ function LaunchCenterPanel({
   channelMultimodalStudio,
   visualDishCapture,
   voiceCommerce,
+  qualityLoop,
   nutritionBudget,
   householdPreference,
   guestCollaboration,
@@ -2324,6 +2335,7 @@ function LaunchCenterPanel({
   channelMultimodalStudio: SwiggyChannelMultimodalStudio | null;
   visualDishCapture: SwiggyVisualDishCaptureCenter | null;
   voiceCommerce: SwiggyVoiceCommerceCenter | null;
+  qualityLoop: SwiggyQualityLoopCenter | null;
   nutritionBudget: NutritionBudgetIntelligence | null;
   householdPreference: HouseholdPreferenceGraph | null;
   guestCollaboration: GuestCollaborationCenter | null;
@@ -3452,6 +3464,50 @@ function LaunchCenterPanel({
             </a>
             <a href="https://mcp.swiggy.com/builders/docs/build/agent-patterns/voice-vs-chat/" target="_blank" rel="noreferrer">
               Voice pattern
+            </a>
+          </div>
+        </article>
+
+        <article className="quality-loop-card">
+          <div className="mini-heading">
+            <RefreshCw aria-hidden="true" />
+            <strong>Quality Loop Center</strong>
+          </div>
+          <span>
+            {qualityLoop
+              ? `${qualityLoop.score}/100, ${qualityLoop.totals.readyLanes}/${qualityLoop.totals.lanes} loops safe`
+              : "Learning from Food, Instamart, and Dineout outcomes"}
+          </span>
+          <div className="quality-loop-grid">
+            <div>
+              <strong>{qualityLoop?.totals.samples ?? 0}</strong>
+              <span>Samples</span>
+            </div>
+            <div>
+              <strong>
+                {qualityLoop?.totals.readyGuardrails ?? 0}/{qualityLoop?.totals.guardrails ?? 0}
+              </strong>
+              <span>Guards</span>
+            </div>
+            <div>
+              <strong>{qualityLoop?.totals.externalGates ?? 0}</strong>
+              <span>Gates</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(qualityLoop?.lanes ?? []).slice(0, 4).map((laneItem) => (
+              <li key={laneItem.id} data-status={laneItem.status === "ready" ? "healthy" : "watch"}>
+                <span>{laneItem.label}</span>
+                <strong>{laneItem.server === "combined" ? "Combined" : serverLabel(laneItem.server)}</strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-links">
+            <a href="/api/swiggy-quality-loop-center" target="_blank" rel="noreferrer">
+              Quality API
+            </a>
+            <a href="https://mcp.swiggy.com/builders/docs/operate/support/" target="_blank" rel="noreferrer">
+              Support docs
             </a>
           </div>
         </article>

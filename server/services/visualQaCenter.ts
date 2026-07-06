@@ -244,6 +244,17 @@ const targetGroups = [
         "artifacts/visual-qa/voice-commerce-card.png",
       ),
       target(
+        "quality_loop_card",
+        "Quality Loop Center card",
+        "/",
+        ".quality-loop-card",
+        "desktop",
+        1280,
+        900,
+        "Quality Loop shows post-experience learning, samples, guardrails, support redaction, and external history gates.",
+        "artifacts/visual-qa/quality-loop-card.png",
+      ),
+      target(
         "developer_quickstart_card",
         "Developer Quickstart card",
         "/",
@@ -482,7 +493,7 @@ const commands = [
     "visual_capture_harness",
     "npm run verify:visual",
     "Playwright captures every Visual QA target at desktop, tablet, and mobile sizes and writes report.json.",
-    "ok true with targetCount >= 30 and PNG files under artifacts/visual-qa.",
+    "ok true with targetCount >= 31 and PNG files under artifacts/visual-qa.",
   ),
   command(
     "desktop_capture",

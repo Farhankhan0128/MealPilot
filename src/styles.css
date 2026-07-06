@@ -1094,6 +1094,10 @@ select:focus {
   grid-column: span 2;
 }
 
+.quality-loop-card {
+  grid-column: span 2;
+}
+
 .tool-lab-card {
   grid-column: span 2;
 }
@@ -1384,6 +1388,7 @@ select:focus {
   .live-signal-calibration-grid,
   .visual-dish-capture-grid,
   .voice-commerce-grid,
+  .quality-loop-grid,
   .builder-intake-grid,
 .faq-policy-grid,
 .growth-partnership-grid,
@@ -1423,6 +1428,7 @@ select:focus {
   .live-signal-calibration-grid div,
   .visual-dish-capture-grid div,
   .voice-commerce-grid div,
+  .quality-loop-grid div,
   .builder-intake-grid div,
 .faq-policy-grid div,
 .growth-partnership-grid div,
@@ -1465,6 +1471,7 @@ select:focus {
   .live-signal-calibration-grid strong,
   .visual-dish-capture-grid strong,
   .voice-commerce-grid strong,
+  .quality-loop-grid strong,
   .builder-intake-grid strong,
 .faq-policy-grid strong,
 .growth-partnership-grid strong,
@@ -1504,6 +1511,7 @@ select:focus {
   .live-signal-calibration-grid span,
   .visual-dish-capture-grid span,
   .voice-commerce-grid span,
+  .quality-loop-grid span,
   .builder-intake-grid span,
 .faq-policy-grid span,
 .growth-partnership-grid span,
@@ -2155,6 +2163,7 @@ select:focus {
   .live-signal-calibration-card,
   .visual-dish-capture-card,
   .voice-commerce-card,
+  .quality-loop-card,
   .tool-lab-card,
   .contract-matrix-card,
   .builder-intake-card,
@@ -2260,6 +2269,7 @@ select:focus {
   .live-signal-calibration-grid,
   .visual-dish-capture-grid,
   .voice-commerce-grid,
+  .quality-loop-grid,
   .faq-policy-grid,
   .growth-partnership-grid,
   .channel-multimodal-grid,
@@ -2866,6 +2876,7 @@ select:focus {
 .live-signal-calibration-card,
 .visual-dish-capture-card,
 .voice-commerce-card,
+.quality-loop-card,
 .tool-lab-card,
 .contract-matrix-card,
 .builder-intake-card,
@@ -2956,6 +2967,7 @@ select:focus {
 .staging-credential-drill-grid div,
 .live-signal-calibration-grid div,
 .voice-commerce-grid div,
+.quality-loop-grid div,
 .visual-dish-capture-grid div,
 .builder-intake-grid div,
 .faq-policy-grid div,
@@ -3157,6 +3169,7 @@ select:focus {
   .growth-partnership-card,
   .channel-multimodal-card,
   .voice-commerce-card,
+  .quality-loop-card,
   .nutrition-budget-card,
   .preference-graph-card,
   .guest-collaboration-card,
@@ -3329,6 +3342,7 @@ select:focus {
   .widget-runtime-grid,
   .commercial-guard-grid,
   .voice-commerce-grid,
+  .quality-loop-grid,
   .staging-cutover-grid,
   .live-signal-calibration-grid,
   .visual-dish-capture-grid,
@@ -3369,6 +3383,7 @@ select:focus {
   .growth-partnership-card,
   .channel-multimodal-card,
   .voice-commerce-card,
+  .quality-loop-card,
   .nutrition-budget-card,
   .preference-graph-card,
   .guest-collaboration-card,

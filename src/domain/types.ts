@@ -1298,6 +1298,82 @@ export interface SwiggyVoiceCommerceCenter {
   externalGates: string[];
 }
 
+export type SwiggyQualityLoopStatus = "ready" | "needs_consent" | "support_gate" | "staging_gate";
+export type SwiggyQualityLoopSignal = "taste" | "delivery" | "freshness" | "booking" | "value" | "support";
+
+export interface SwiggyQualityLoopLane {
+  id: string;
+  label: string;
+  server: SwiggyServer | "combined";
+  status: SwiggyQualityLoopStatus;
+  swiggyTools: string[];
+  capturedSignals: SwiggyQualityLoopSignal[];
+  userQuestion: string;
+  learningAction: string;
+  supportAction: string;
+  nextOptimization: string;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyQualityLoopGuardrail {
+  id: string;
+  label: string;
+  status: SwiggyQualityLoopStatus;
+  policy: string;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyQualityLoopSample {
+  id: string;
+  server: SwiggyServer | "combined";
+  rating: number;
+  comment: string;
+  selectedLane: string;
+  status: SwiggyQualityLoopStatus;
+}
+
+export interface SwiggyQualityFeedbackAnalysis {
+  generatedAt: string;
+  requestId: string;
+  mode: "mock" | "staging" | "production";
+  input: {
+    server: SwiggyServer | "combined";
+    rating: number;
+    comment: string;
+    city: string;
+    consentToLearn: boolean;
+  };
+  sentiment: "delighted" | "mixed" | "issue";
+  selectedLaneId: string;
+  learningTags: string[];
+  nextMealPilotAction: string;
+  supportPacketNeeded: boolean;
+  swiggyRoute: SwiggyQualityLoopLane;
+  telemetry: Array<{ field: string; value: string; redaction: string }>;
+  assertions: string[];
+}
+
+export interface SwiggyQualityLoopCenter {
+  generatedAt: string;
+  score: number;
+  mode: "mock" | "staging" | "production";
+  officialSources: string[];
+  totals: {
+    lanes: number;
+    readyLanes: number;
+    guardrails: number;
+    readyGuardrails: number;
+    samples: number;
+    externalGates: number;
+  };
+  lanes: SwiggyQualityLoopLane[];
+  guardrails: SwiggyQualityLoopGuardrail[];
+  samples: SwiggyQualityLoopSample[];
+  operatorRunbook: Array<{ sequence: number; label: string; command: string; proves: string }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type NutritionBudgetStatus = "ready" | "needs_live_data" | "external_gate";
 
 export interface NutritionBudgetTarget {

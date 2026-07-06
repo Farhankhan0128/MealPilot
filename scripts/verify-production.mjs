@@ -125,6 +125,11 @@ assert(
   "OpenAPI voice commerce contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-quality-loop-center"].get.summary.includes("Quality Loop") &&
+    openApi.paths["/api/swiggy-quality-loop-center/feedback"].post.summary.includes("feedback"),
+  "OpenAPI quality loop contract is missing",
+);
+assert(
   openApi.paths["/api/nutrition-budget-intelligence"].get.summary.includes("Nutrition and Budget"),
   "OpenAPI nutrition and budget intelligence contract is missing",
 );
@@ -766,6 +771,66 @@ assert(
   "voice rehearsal script, route, or telemetry is incomplete",
 );
 
+const qualityLoop = await request("/api/swiggy-quality-loop-center");
+assert(qualityLoop.qualityLoop.score >= 84, "quality loop score is below target");
+assert(
+  qualityLoop.qualityLoop.totals.lanes === 4 &&
+    qualityLoop.qualityLoop.totals.readyLanes === 4 &&
+    qualityLoop.qualityLoop.totals.guardrails === 6 &&
+    qualityLoop.qualityLoop.totals.readyGuardrails === 4 &&
+    qualityLoop.qualityLoop.totals.samples === 4,
+  "quality loop totals are incomplete",
+);
+assert(
+  ["food_taste_repeat_loop", "instamart_freshness_loop", "dineout_experience_loop", "combined_household_learning_loop"].every((id) =>
+    qualityLoop.qualityLoop.lanes.some((lane) => lane.id === id),
+  ),
+  "quality loop lanes are incomplete",
+);
+assert(
+  qualityLoop.qualityLoop.guardrails.some(
+    (guard) => guard.id === "consent_before_learning" && guard.policy.includes("requires user consent"),
+  ),
+  "quality loop consent guardrail is missing",
+);
+const qualityFeedback = await request("/api/swiggy-quality-loop-center/feedback", {
+  method: "POST",
+  body: JSON.stringify({
+    server: "food",
+    rating: 5,
+    comment: "Loved the paneer tikka, repeat this restaurant",
+    city: "Bengaluru",
+    consentToLearn: true,
+  }),
+});
+assert(
+  qualityFeedback.analysis.sentiment === "delighted" &&
+    qualityFeedback.analysis.selectedLaneId === "food_taste_repeat_loop" &&
+    qualityFeedback.analysis.learningTags.includes("repeat_candidate"),
+  "quality feedback learning route is wrong",
+);
+assert(
+  qualityFeedback.analysis.supportPacketNeeded === false &&
+    qualityFeedback.analysis.telemetry.some((item) => item.field === "raw_payload_retained" && item.value === "false"),
+  "quality feedback telemetry is incomplete",
+);
+const qualityIssue = await request("/api/swiggy-quality-loop-center/feedback", {
+  method: "POST",
+  body: JSON.stringify({
+    server: "instamart",
+    rating: 2,
+    comment: "Curd was stale and close to expiry",
+    city: "Bengaluru",
+    consentToLearn: false,
+  }),
+});
+assert(
+  qualityIssue.analysis.supportPacketNeeded &&
+    qualityIssue.analysis.learningTags.length === 0 &&
+    qualityIssue.analysis.selectedLaneId === "instamart_freshness_loop",
+  "quality issue feedback did not preserve support/consent boundaries",
+);
+
 const nutritionBudget = await request("/api/nutrition-budget-intelligence");
 assert(nutritionBudget.nutritionBudget.score >= 91, "nutrition and budget intelligence score is below target");
 assert(nutritionBudget.nutritionBudget.totalTargets === 4, "nutrition and budget targets are incomplete");
@@ -1195,8 +1260,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 30, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 30, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 31, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 31, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -1286,6 +1351,12 @@ assert(
     group.targets.some((target) => target.id === "voice_commerce_card" && target.selector === ".voice-commerce-card"),
   ),
   "visual QA voice commerce target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some((target) => target.id === "quality_loop_card" && target.selector === ".quality-loop-card"),
+  ),
+  "visual QA quality loop target is missing",
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
@@ -1379,7 +1450,7 @@ assert(
     (command) =>
       command.id === "visual_capture_harness" &&
       command.command === "npm run verify:visual" &&
-      command.expectedSignal.includes("targetCount >= 30"),
+      command.expectedSignal.includes("targetCount >= 31"),
   ),
   "visual QA Playwright command is missing",
 );
@@ -2859,6 +2930,10 @@ assert(
   "reviewer proof voice commerce artifact is missing",
 );
 assert(
+  proof.proof.artifacts.some((artifact) => artifact.label === "Swiggy Quality Loop Center"),
+  "reviewer proof quality loop artifact is missing",
+);
+assert(
   proof.proof.artifacts.some((artifact) => artifact.label === "Nutrition & Budget Intelligence"),
   "reviewer proof nutrition and budget artifact is missing",
 );
@@ -3863,7 +3938,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 30, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 31, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -3877,7 +3952,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("30")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("31")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -3916,6 +3991,7 @@ assert(
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Channel & Multimodal Studio") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Visual Dish Capture Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Voice Commerce Rehearsal Center") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Quality Loop Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Nutrition & Budget Intelligence") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Household Preference Graph") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Guest Collaboration & Calendar Center") &&
@@ -4041,6 +4117,10 @@ assert(
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-voice-commerce-center"),
   "launch bundle voice commerce handoff link is missing",
+);
+assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-quality-loop-center"),
+  "launch bundle quality loop handoff link is missing",
 );
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/nutrition-budget-intelligence"),
@@ -4368,6 +4448,9 @@ console.log(
       voiceCommerceScore: voiceCommerce.voiceCommerce.score,
       voiceCommerceScenarios: voiceCommerce.voiceCommerce.totals.scenarios,
       voiceRehearsalRoute: voiceRehearsal.rehearsal.selectedScenarioId,
+      qualityLoopScore: qualityLoop.qualityLoop.score,
+      qualityLoopLanes: qualityLoop.qualityLoop.totals.lanes,
+      qualityFeedbackLane: qualityFeedback.analysis.selectedLaneId,
       nutritionBudgetScore: nutritionBudget.nutritionBudget.score,
       nutritionBudgetRoutes: nutritionBudget.nutritionBudget.totalRoutes,
       householdPreferenceScore: householdPreference.householdPreference.score,

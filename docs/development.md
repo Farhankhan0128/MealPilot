@@ -128,6 +128,8 @@ The verifier also validates `/api/swiggy-visual-dish-capture` and `/api/swiggy-v
 
 The verifier also validates `/api/swiggy-voice-commerce-center` and `/api/swiggy-voice-commerce-center/rehearse` for spoken-commerce routing: Food quick orders, Instamart restock, Dineout bookings, and combined evening plans become short TTS scripts, visual card fallbacks, confirmation prompts, no-raw-id readbacks, and no-raw-audio telemetry.
 
+The verifier also validates `/api/swiggy-quality-loop-center` and `/api/swiggy-quality-loop-center/feedback` for post-experience learning: Food, Instamart, Dineout, and combined feedback resolve to consented tags, support packet decisions, no-raw-payload telemetry, and next-route optimization.
+
 The verifier also validates `/api/swiggy-auth-lifecycle-center` for Swiggy OAuth token lifecycle: PKCE S256, 120-second single-use codes, 5-day access tokens, no refresh-token assumption in v1.0, 401/419/403 recovery, exact redirect allowlisting, delegated per-user token boundaries, logout handling, secure storage, and no-token logging.
 
 The verifier also validates `/api/swiggy-source-intelligence` for Builders website inventory, CTA coverage, `llms` and markdown documentation counts, 35-tool reference alignment, drift signals, external gates, and build-queue readiness.
@@ -187,6 +189,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/channel-multimodal-studio`
 - `GET /api/swiggy-visual-dish-capture`
 - `GET /api/swiggy-voice-commerce-center`
+- `GET /api/swiggy-quality-loop-center`
 - `GET /api/nutrition-budget-intelligence`
 - `GET /api/household-preference-graph`
 - `GET /api/guest-collaboration-calendar`
@@ -341,6 +344,8 @@ Production should use an HTTPS redirect URI with exact-match allowlisting.
 
 `/api/swiggy-voice-commerce-center` is the productized voice-commerce proof surface. It maps spoken quick orders, pantry restock, table booking, and combined evening intents into short TTS scripts, visual fallbacks, Swiggy toolchains, confirmation prompts, no-raw-id policies, and no-raw-audio telemetry; `/api/swiggy-voice-commerce-center/rehearse` provides deterministic local smoke proof.
 
+`/api/swiggy-quality-loop-center` is the productized post-experience learning proof surface. It maps Food, Instamart, Dineout, and combined feedback into consented derived tags, support-safe redaction, repeat optimization, external history gates, and `/api/swiggy-quality-loop-center/feedback` smoke analysis.
+
 `/api/nutrition-budget-intelligence` shows premium nutrition and budget planning routes: protein-per-rupee Food search, COD-safe coupons, Instamart go-to and product search, group-budget allocation, Dineout evening balance, and camera-label macro planning with no medical claims.
 
 `/api/household-preference-graph` shows consent-aware personalization routes: Food active-order taste signals, Instamart go-to items and order history, Dineout saved-location memory, household member weights, pantry forecasts, failure memory, retention rules, and DPDP controls.
@@ -389,6 +394,7 @@ The test suite checks that:
 - Growth Partnership Center maps get-noticed, hiring, co-branding, direct support, co-marketing, analytics, strategic guidance, launch experiments, metrics, proof assets, and external partner asks.
 - Channel & Multimodal Studio maps voice, web chat, Slack/Teams, mobile camera, enterprise, and screenshot-to-order channels to Swiggy MCP toolchains, local execution packets, response contracts, telemetry, and external platform gates.
 - Swiggy Voice Commerce Rehearsal Center validates spoken Swiggy route planning with no raw-audio retention, no raw ids in TTS, short scripts, visual fallbacks, and confirmation readbacks before live execution.
+- Swiggy Quality Loop Center validates consented post-experience learning, support-safe feedback analysis, repeat optimization, and no raw Swiggy payload storage.
 - Nutrition & Budget Intelligence maps Food, Instamart, Dineout, coupon, cart, group, and camera-label routes to protein-per-rupee estimates, budget controls, safety notes, and external data gates.
 - Household Preference Graph maps active orders, go-to items, order history, saved-location signals, household weights, forecasts, cancellation rules, and retention boundaries to consented personalization evidence.
 - Guest Collaboration & Calendar Center maps group votes, occasion templates, Dineout slot checks, Food reminder handoffs, Instamart prep, calendar artifacts, and Slack/Teams gates to separate Swiggy confirmation controls.

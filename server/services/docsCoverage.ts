@@ -21,11 +21,12 @@ const staticDocs: StaticDoc[] = [
     markdownPath: "docs/index.md",
     officialSummary: "Build commerce into your AI agent with Food, Instamart, Dineout, and 35 MCP tools.",
     mealPilotSurface:
-      "README, Launch Center, Premium Use Case Studio, Visual Dish Capture, Voice Commerce, Website Atlas, and reviewer proof package the complete product story.",
+      "README, Launch Center, Premium Use Case Studio, Visual Dish Capture, Voice Commerce, Quality Loop, Website Atlas, and reviewer proof package the complete product story.",
     evidenceLinks: [
       "/api/premium-use-case-studio",
       "/api/swiggy-visual-dish-capture",
       "/api/swiggy-voice-commerce-center",
+      "/api/swiggy-quality-loop-center",
       "/api/swiggy-website-atlas",
       "/api/reviewer-proof",
     ],
@@ -58,12 +59,13 @@ const staticDocs: StaticDoc[] = [
     markdownPath: "docs/build/index.md",
     officialSummary: "Recipes and patterns for shipping Swiggy MCP agents.",
     mealPilotSurface:
-      "Premium Use Case Studio, Journey Compiler, Visual Dish Capture, Voice Commerce, Planner, Demo Studio, widgets, preflight, and replay implement the recipe backbone.",
+      "Premium Use Case Studio, Journey Compiler, Visual Dish Capture, Voice Commerce, Quality Loop, Planner, Demo Studio, widgets, preflight, and replay implement the recipe backbone.",
     evidenceLinks: [
       "/api/premium-use-case-studio",
       "/api/swiggy-journey-compiler",
       "/api/swiggy-visual-dish-capture",
       "/api/swiggy-voice-commerce-center",
+      "/api/swiggy-quality-loop-center",
       "/api/demo-studio",
       "/api/sessions/:sessionId/replay",
     ],
