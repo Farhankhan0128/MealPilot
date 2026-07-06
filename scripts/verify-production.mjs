@@ -760,6 +760,36 @@ assert(
   "growth partnership co-marketing gate is missing",
 );
 
+const partnerSuccess = await request("/api/swiggy-partner-success-desk");
+assert(partnerSuccess.partnerSuccess.score >= 85, "Partner Success Desk score is below target");
+assert(partnerSuccess.partnerSuccess.totals.lanes >= 7, "Partner Success Desk lane coverage is incomplete");
+assert(partnerSuccess.partnerSuccess.totals.ready >= 4, "Partner Success Desk ready lane coverage is incomplete");
+assert(partnerSuccess.partnerSuccess.totals.manualInputs >= 1, "Partner Success Desk manual gates are missing");
+assert(partnerSuccess.partnerSuccess.totals.externalGates >= 1, "Partner Success Desk external gates are missing");
+assert(
+  ["demo_handoff", "developer_support", "slo_incident", "traffic_capacity", "growth_showcase", "enterprise_slack_partner"].every((id) =>
+    partnerSuccess.partnerSuccess.lanes.some((lane) => lane.id === id),
+  ),
+  "Partner Success Desk lanes are incomplete",
+);
+assert(
+  partnerSuccess.partnerSuccess.lanes.some(
+    (lane) => lane.id === "traffic_capacity" && lane.evidenceLinks.includes("/api/traffic-readiness-plan") && lane.status === "ready",
+  ),
+  "Partner Success Desk traffic capacity lane is missing",
+);
+assert(
+  ["support", "capacity", "access"].every((id) =>
+    partnerSuccess.partnerSuccess.escalationEmails.some((email) => email.id === id && email.to === "builders@swiggy.in"),
+  ),
+  "Partner Success Desk escalation emails are incomplete",
+);
+assert(
+  partnerSuccess.partnerSuccess.assertions.some((assertion) => assertion.includes("existing verified support")) &&
+    partnerSuccess.partnerSuccess.externalGates.some((gate) => gate.includes("Slack")),
+  "Partner Success Desk assertions or external gates are missing",
+);
+
 const channelMultimodal = await request("/api/channel-multimodal-studio");
 assert(channelMultimodal.channelMultimodalStudio.score >= 89, "channel and multimodal studio score is below target");
 assert(channelMultimodal.channelMultimodalStudio.totalLanes === 6, "channel and multimodal lane coverage is incomplete");
@@ -1605,8 +1635,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 39, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 39, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 40, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 40, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -1746,6 +1776,12 @@ assert(
     group.targets.some((target) => target.id === "cta_live_audit_card" && target.selector === ".cta-live-audit-card"),
   ),
   "visual QA CTA live audit target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some((target) => target.id === "partner_success_card" && target.selector === ".partner-success-card"),
+  ),
+  "visual QA Partner Success target is missing",
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
@@ -4870,7 +4906,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 39, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 40, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -4884,7 +4920,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("39")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("40")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -5424,6 +5460,9 @@ console.log(
       faqPolicyQuestions: faqPolicy.faqPolicy.totalQuestions,
       growthPartnershipScore: growthPartnership.growthPartnership.score,
       growthExperiments: growthPartnership.growthPartnership.totalExperiments,
+      partnerSuccessScore: partnerSuccess.partnerSuccess.score,
+      partnerSuccessLanes: partnerSuccess.partnerSuccess.totals.lanes,
+      partnerSuccessExternalGates: partnerSuccess.partnerSuccess.totals.externalGates,
       channelMultimodalScore: channelMultimodal.channelMultimodalStudio.score,
       channelMultimodalLanes: channelMultimodal.channelMultimodalStudio.totalLanes,
       channelExecutionPackets: channelMultimodal.channelMultimodalStudio.totalExecutionPackets,

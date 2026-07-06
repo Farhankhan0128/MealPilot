@@ -365,6 +365,17 @@ const targetGroups = [
         "artifacts/visual-qa/cta-live-audit-card.png",
       ),
       target(
+        "partner_success_card",
+        "Partner Success Desk card",
+        "/",
+        ".partner-success-card",
+        "desktop",
+        1280,
+        900,
+        "Partner Success Desk shows support, capacity, incident, growth, and enterprise external gates in one reviewer surface.",
+        "artifacts/visual-qa/partner-success-card.png",
+      ),
+      target(
         "innovation_radar_card",
         "Innovation Radar card",
         "/",

@@ -130,6 +130,7 @@ import {
   fetchSwiggyCtaLiveAudit,
   fetchSwiggyInnovationRadar,
   fetchSwiggyJourneyCompiler,
+  fetchSwiggyPartnerSuccessDesk,
   fetchSwiggyScenarioRunner,
   fetchSwiggySourceIntelligence,
   fetchSwiggyStagingCutover,
@@ -250,6 +251,7 @@ import type {
   SwiggyDocsTwinExplorer,
   SwiggyFaqPolicyCenter,
   SwiggyGrowthPartnershipCenter,
+  SwiggyPartnerSuccessDesk,
   SwiggyHandshakeDoctor,
   SwiggyLlmsManifestVerifier,
   SwiggyInnovationRadarReport,
@@ -436,6 +438,7 @@ function App() {
   const [swiggyBuilderIntake, setSwiggyBuilderIntake] = useState<SwiggyBuilderIntakeCommandCenter | null>(null);
   const [swiggyFaqPolicy, setSwiggyFaqPolicy] = useState<SwiggyFaqPolicyCenter | null>(null);
   const [swiggyGrowthPartnership, setSwiggyGrowthPartnership] = useState<SwiggyGrowthPartnershipCenter | null>(null);
+  const [partnerSuccess, setPartnerSuccess] = useState<SwiggyPartnerSuccessDesk | null>(null);
   const [channelMultimodalStudio, setChannelMultimodalStudio] =
     useState<SwiggyChannelMultimodalStudio | null>(null);
   const [visualDishCapture, setVisualDishCapture] = useState<SwiggyVisualDishCaptureCenter | null>(null);
@@ -633,6 +636,7 @@ function App() {
       builderIntakeResponse,
       faqPolicyResponse,
       growthPartnershipResponse,
+      partnerSuccessResponse,
       channelMultimodalResponse,
       visualDishCaptureResponse,
       voiceCommerceResponse,
@@ -731,6 +735,7 @@ function App() {
       fetchSwiggyBuilderIntake(),
       fetchSwiggyFaqPolicyCenter(),
       fetchSwiggyGrowthPartnershipCenter(),
+      fetchSwiggyPartnerSuccessDesk(),
       fetchChannelMultimodalStudio(),
       fetchSwiggyVisualDishCapture(),
       fetchSwiggyVoiceCommerceCenter(),
@@ -830,6 +835,7 @@ function App() {
     setSwiggyBuilderIntake(builderIntakeResponse.intake);
     setSwiggyFaqPolicy(faqPolicyResponse.faqPolicy);
     setSwiggyGrowthPartnership(growthPartnershipResponse.growthPartnership);
+    setPartnerSuccess(partnerSuccessResponse.partnerSuccess);
     setChannelMultimodalStudio(channelMultimodalResponse.channelMultimodalStudio);
     setVisualDishCapture(visualDishCaptureResponse.visualDishCapture);
     setVoiceCommerce(voiceCommerceResponse.voiceCommerce);
@@ -932,6 +938,7 @@ function App() {
       builderIntakeResponse,
       faqPolicyResponse,
       growthPartnershipResponse,
+      partnerSuccessResponse,
       channelMultimodalResponse,
       visualDishCaptureResponse,
       voiceCommerceResponse,
@@ -1027,6 +1034,7 @@ function App() {
       fetchSwiggyBuilderIntake(),
       fetchSwiggyFaqPolicyCenter(),
       fetchSwiggyGrowthPartnershipCenter(),
+      fetchSwiggyPartnerSuccessDesk(),
       fetchChannelMultimodalStudio(),
       fetchSwiggyVisualDishCapture(),
       fetchSwiggyVoiceCommerceCenter(),
@@ -1122,6 +1130,7 @@ function App() {
     setSwiggyBuilderIntake(builderIntakeResponse.intake);
     setSwiggyFaqPolicy(faqPolicyResponse.faqPolicy);
     setSwiggyGrowthPartnership(growthPartnershipResponse.growthPartnership);
+    setPartnerSuccess(partnerSuccessResponse.partnerSuccess);
     setChannelMultimodalStudio(channelMultimodalResponse.channelMultimodalStudio);
     setVisualDishCapture(visualDishCaptureResponse.visualDishCapture);
     setVoiceCommerce(voiceCommerceResponse.voiceCommerce);
@@ -1792,6 +1801,7 @@ function App() {
                 builderIntake={swiggyBuilderIntake}
                 faqPolicy={swiggyFaqPolicy}
                 growthPartnership={swiggyGrowthPartnership}
+                partnerSuccess={partnerSuccess}
                 channelMultimodalStudio={channelMultimodalStudio}
                 visualDishCapture={visualDishCapture}
                 voiceCommerce={voiceCommerce}
@@ -2377,6 +2387,7 @@ function LaunchCenterPanel({
   builderIntake,
   faqPolicy,
   growthPartnership,
+  partnerSuccess,
   channelMultimodalStudio,
   visualDishCapture,
   voiceCommerce,
@@ -2446,6 +2457,7 @@ function LaunchCenterPanel({
   builderIntake: SwiggyBuilderIntakeCommandCenter | null;
   faqPolicy: SwiggyFaqPolicyCenter | null;
   growthPartnership: SwiggyGrowthPartnershipCenter | null;
+  partnerSuccess: SwiggyPartnerSuccessDesk | null;
   channelMultimodalStudio: SwiggyChannelMultimodalStudio | null;
   visualDishCapture: SwiggyVisualDishCaptureCenter | null;
   voiceCommerce: SwiggyVoiceCommerceCenter | null;
@@ -3633,6 +3645,54 @@ function LaunchCenterPanel({
               </li>
             ))}
           </ul>
+        </article>
+
+        <article className="partner-success-card">
+          <div className="mini-heading">
+            <LifeBuoy aria-hidden="true" />
+            <strong>Partner Success Desk</strong>
+          </div>
+          <span>
+            {partnerSuccess
+              ? `${partnerSuccess.score}/100, ${partnerSuccess.totals.ready}/${partnerSuccess.totals.lanes} lanes ready`
+              : "Combining support, capacity, incidents, and growth handoffs"}
+          </span>
+          <div className="partner-success-grid">
+            <div>
+              <strong>{partnerSuccess?.totals.proofLinks ?? 0}</strong>
+              <span>Proof links</span>
+            </div>
+            <div>
+              <strong>{partnerSuccess?.totals.manualInputs ?? 0}</strong>
+              <span>Manual</span>
+            </div>
+            <div>
+              <strong>{partnerSuccess?.totals.externalGates ?? 0}</strong>
+              <span>Gates</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(partnerSuccess?.lanes ?? []).slice(0, 5).map((lane) => (
+              <li
+                key={lane.id}
+                data-status={lane.status === "ready" ? "healthy" : lane.status === "external_gate" ? "blocked" : "watch"}
+              >
+                <span>{lane.label}</span>
+                <strong>{lane.owner}</strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-intelligence-actions" aria-label="Partner success links">
+            <a href="/api/swiggy-partner-success-desk" target="_blank" rel="noreferrer">
+              Success desk
+            </a>
+            <a href="/api/support/bridge" target="_blank" rel="noreferrer">
+              Support
+            </a>
+            <a href="/api/traffic-readiness-plan" target="_blank" rel="noreferrer">
+              Capacity
+            </a>
+          </div>
         </article>
 
         <article className="channel-multimodal-card">

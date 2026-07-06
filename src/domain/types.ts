@@ -1395,6 +1395,37 @@ export interface SwiggyGrowthPartnershipCenter {
   externalGates: string[];
 }
 
+export type SwiggyPartnerSuccessStatus = "ready" | "manual_input" | "external_gate";
+
+export interface SwiggyPartnerSuccessLane {
+  id: string;
+  label: string;
+  officialSignal: string;
+  mealPilotControl: string;
+  owner: "MealPilot" | "Operator" | "Swiggy" | "Joint";
+  status: SwiggyPartnerSuccessStatus;
+  evidenceLinks: string[];
+  nextAction: string;
+}
+
+export interface SwiggyPartnerSuccessDesk {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  totals: {
+    lanes: number;
+    ready: number;
+    manualInputs: number;
+    externalGates: number;
+    proofLinks: number;
+  };
+  lanes: SwiggyPartnerSuccessLane[];
+  escalationEmails: Array<{ id: string; label: string; to: string; subject: string; source: string }>;
+  reviewerRunbook: Array<{ sequence: number; label: string; evidenceLinks: string[]; status: SwiggyPartnerSuccessStatus }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type SwiggyChannelMultimodalStatus = "ready" | "manual_input" | "external_gate";
 export type SwiggyChannelTarget =
   | "web_chat"

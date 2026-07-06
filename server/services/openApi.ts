@@ -389,6 +389,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-partner-success-desk": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Partner Success Desk for support, growth, capacity, and incident operations",
+          responses: {
+            "200": {
+              description:
+                "Composed partner-success desk covering access handoff, developer support, SLO incident readiness, capacity review, backpressure, growth showcase asks, enterprise Slack gates, proof links, and escalation emails",
+            },
+          },
+        },
+      },
       "/api/channel-multimodal-studio": {
         get: {
           tags: ["Builder Access"],

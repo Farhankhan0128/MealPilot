@@ -186,6 +186,7 @@ MealPilot should become a luxury-grade food and meal intelligence product with t
 | Builder Intake Command Center | `server/services/builderIntake.ts` |
 | FAQ & Policy Center | `server/services/faqPolicyCenter.ts` |
 | Growth Partnership Center | `server/services/growthPartnership.ts` |
+| Partner Success Desk | `server/services/partnerSuccessDesk.ts` |
 | Swiggy Builders map | `server/services/swiggyBuildersMap.ts` |
 | Swiggy Docs Coverage | `server/services/docsCoverage.ts` |
 | Swiggy Docs Twin Explorer | `server/services/docsTwinExplorer.ts` |
@@ -279,6 +280,7 @@ Coverage targets:
 - Swiggy Builders Page Mesh Auditor for live public page reachability, title/anchor extraction, module signal parity, CTA matching, and safe-origin drift checks across every non-external Website Atlas page
 - FAQ & Policy Center for homepage/developer/enterprise FAQ themes, access ground rules, footer resources, allowed/restricted/prohibited policy categories, legal signals, and support contact
 - Growth Partnership Center for get-noticed, hiring, co-branding, direct support, co-marketing, analytics dashboards, strategic guidance, launch experiments, metrics, assets, and partner asks
+- Partner Success Desk for access handoff, support, SLO incidents, capacity review, backpressure, growth showcase, escalation emails, and enterprise Slack/partner-manager external gates
 - Swiggy Upstream Watch for `llms.txt`, `llms-full.txt`, changelog limitations, v1.1/v1.2/v2 roadmap items, signed manifests, and new-tool action queues
 - Swiggy Source Intelligence for website, CTA, `llms`, markdown twin, reference count, drift signal, external gate, and build-queue reconciliation
 - Swiggy Docs Twin Explorer for all 69 official markdown/rendered page pairs, retrieval lanes, proof routes, assertions, and drift gates

@@ -63,6 +63,7 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/swiggy-builder-intake"].get.summary).toContain("Builder Intake");
     expect(openApi.body.paths["/api/swiggy-faq-policy"].get.summary).toContain("FAQ");
     expect(openApi.body.paths["/api/swiggy-growth-partnership"].get.summary).toContain("Growth Partnership");
+    expect(openApi.body.paths["/api/swiggy-partner-success-desk"].get.summary).toContain("Partner Success");
     expect(openApi.body.paths["/api/channel-multimodal-studio"].get.summary).toContain("Channel and Multimodal");
     expect(openApi.body.paths["/api/swiggy-visual-dish-capture"].get.summary).toContain("Visual Dish Capture");
     expect(openApi.body.paths["/api/swiggy-visual-dish-capture/analyze"].post.summary).toContain("visual dish");
@@ -1433,7 +1434,7 @@ describe("MealPilot API", () => {
     expect(packet.totals.formFields).toBeGreaterThanOrEqual(10);
     expect(packet.totals.requiredAttachments).toBeGreaterThanOrEqual(10);
     expect(packet.totals.launchArtifacts).toBeGreaterThanOrEqual(50);
-    expect(packet.totals.visualTargets).toBe(39);
+    expect(packet.totals.visualTargets).toBe(40);
     expect(packet.files.map((file: { id: string }) => file.id)).toEqual(
       expect.arrayContaining(["packet_json", "packet_markdown", "visual_report", "production_summary"]),
     );
@@ -1445,7 +1446,7 @@ describe("MealPilot API", () => {
     ).toBe(true);
     expect(
       packet.commands.some(
-        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("39"),
+        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("40"),
       ),
     ).toBe(true);
     expect(packet.copyBlocks.formFields).toContain("Redirect URI(s)");
@@ -1542,6 +1543,42 @@ describe("MealPilot API", () => {
       expect.arrayContaining(["activation", "cross_server", "conversion_safety", "support"]),
     );
     expect(center.externalGates.some((gate: string) => gate.includes("co-marketing"))).toBe(true);
+  });
+
+  it("returns a Swiggy Partner Success Desk for post-access support and growth operations", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/swiggy-partner-success-desk").expect(200);
+    const desk = response.body.partnerSuccess;
+
+    expect(desk.score).toBeGreaterThanOrEqual(85);
+    expect(desk.totals.lanes).toBeGreaterThanOrEqual(7);
+    expect(desk.totals.ready).toBeGreaterThanOrEqual(4);
+    expect(desk.totals.manualInputs).toBeGreaterThanOrEqual(1);
+    expect(desk.totals.externalGates).toBeGreaterThanOrEqual(1);
+    expect(desk.lanes.map((lane: { id: string }) => lane.id)).toEqual(
+      expect.arrayContaining([
+        "demo_handoff",
+        "developer_support",
+        "slo_incident",
+        "traffic_capacity",
+        "growth_showcase",
+        "enterprise_slack_partner",
+      ]),
+    );
+    expect(
+      desk.lanes.some(
+        (lane: { id: string; evidenceLinks: string[]; status: string }) =>
+          lane.id === "traffic_capacity" &&
+          lane.evidenceLinks.includes("/api/traffic-readiness-plan") &&
+          lane.status === "ready",
+      ),
+    ).toBe(true);
+    expect(desk.escalationEmails.map((email: { id: string; to: string }) => `${email.id}:${email.to}`)).toEqual(
+      expect.arrayContaining(["support:builders@swiggy.in", "capacity:builders@swiggy.in", "access:builders@swiggy.in"]),
+    );
+    expect(desk.reviewerRunbook.map((step: { sequence: number }) => step.sequence)).toEqual([1, 2, 3, 4]);
+    expect(desk.assertions.some((assertion: string) => assertion.includes("existing verified support"))).toBe(true);
+    expect(desk.externalGates.some((gate: string) => gate.includes("Slack"))).toBe(true);
   });
 
   it("returns channel and multimodal studio coverage for developer build lanes", async () => {
@@ -2388,8 +2425,8 @@ describe("MealPilot API", () => {
     const visualQa = response.body.visualQa;
 
     expect(visualQa.score).toBe(100);
-    expect(visualQa.totalTargets).toBe(39);
-    expect(visualQa.readyTargets).toBe(39);
+    expect(visualQa.totalTargets).toBe(40);
+    expect(visualQa.readyTargets).toBe(40);
     expect(visualQa.totalRules).toBe(7);
     expect(visualQa.readyRules).toBe(7);
     expect(visualQa.totalCommands).toBe(5);
@@ -2506,6 +2543,11 @@ describe("MealPilot API", () => {
     expect(
       visualQa.targetGroups.some((group: { targets: Array<{ id: string; selector: string }> }) =>
         group.targets.some((target) => target.id === "cta_live_audit_card" && target.selector === ".cta-live-audit-card"),
+      ),
+    ).toBe(true);
+    expect(
+      visualQa.targetGroups.some((group: { targets: Array<{ id: string; selector: string }> }) =>
+        group.targets.some((target) => target.id === "partner_success_card" && target.selector === ".partner-success-card"),
       ),
     ).toBe(true);
     expect(
