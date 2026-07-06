@@ -27,6 +27,7 @@ flowchart LR
   API --> DataGov["Data Governance Center"]
   API --> Support["Support Bridge"]
   API --> Errors["Error Intelligence"]
+  API --> ConfirmCmd["Confirmation Command Center"]
   Mock --> Food["Swiggy MCP shape: food"]
   Mock --> IM["Swiggy MCP shape: im"]
   Mock --> Dineout["Swiggy MCP shape: dineout"]
@@ -117,6 +118,7 @@ Implementation:
 - Exposes `/api/swiggy-location-trust` as the saved-address and location trust center for Food/Instamart `get_addresses`, Instamart address create/delete, Dineout saved locations, user-choice pauses, address switch refresh, and raw-address redaction.
 - Exposes `/api/swiggy-cart-mutation-workbench` as the cart control room for Food cart readbacks, Instamart full-cart replacement, Dineout create_cart gates, payment-method truth, add-on confirmation, and checkout-safe mutations.
 - Exposes `/api/swiggy-discovery-freshness` as the discovery control room for Food search/menu truth, Instamart product and go-to item variants, Dineout search/details/slots, pagination, coordinate consistency, and stale-result invalidation.
+- Exposes `/api/swiggy-confirmation-command-center` as the final-commerce confirmation proof for Swiggy Food `place_food_order`, Instamart `checkout`, and Dineout `book_table`. It keeps official-source guardrails visible by requiring a fresh Food or Instamart cart read or Dineout slot read before approval, recording explicit user confirmation per action, splitting combined plans into separate approvals, probing order or booking status before any retry, deriving payment and free-booking truth only from Swiggy responses, and keeping live staging or production credentials as external gates.
 - Exposes `/api/slo-incident-command` as the SLA and incident artifact for 99.9% uptime targets, latency bands, status-page fallback, incident comms, maintenance windows, measurement exclusions, and remediation evidence.
 - Exposes `/api/mcp-gateway` for mock, staging, and production routing status, token posture, cutover steps, fallback behavior, and canary rollout.
 - Exposes `/api/auth/swiggy/status` for Swiggy OAuth lifecycle status, authorize/token/logout endpoints, pending PKCE verifier count, callback outcome, token source, expiry, and storage policy without exposing bearer values.

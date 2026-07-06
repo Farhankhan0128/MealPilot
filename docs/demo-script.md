@@ -175,6 +175,7 @@ Open Production Evidence and show:
 - Swiggy Location Trust at `/api/swiggy-location-trust` with Food/Instamart saved-address reads, Instamart create/delete address intent, Dineout saved locations, address-choice pauses, switch refresh guards, and raw-address redaction.
 - Swiggy Cart Mutation Workbench at `/api/swiggy-cart-mutation-workbench` with Food cart readback, Instamart full-cart replacement, Dineout create_cart gates, payment-method truth, add-on confirmation, and staging cart-write gates.
 - Swiggy Discovery Freshness at `/api/swiggy-discovery-freshness` with Food search/menu pagination, Instamart variants and go-to items, Dineout restaurant details and slots, coordinate consistency, and stale-result invalidation.
+- Swiggy Confirmation Command Center at `/api/swiggy-confirmation-command-center` with final-commerce proof for Food `place_food_order`, Instamart `checkout`, and Dineout `book_table`: fresh cart or slot reads, explicit separate approvals, status probes before retry, Swiggy-response payment/free-booking truth, and live credential gates.
 - MCP Backpressure Governor artifact at `/api/mcp/backpressure-governor` with current upstream-shedder handling, future 429/header readiness, token buckets, tracking floor, voice burst shaping, and background-job gates.
 - SLO Command score, uptime targets, commercial p95 latency, maintenance windows, and status-page external gate.
 - Data Governance Center with DPDP roles, India/Singapore residency, data-flow inventory, DSR routing, 90-day Swiggy audit retention, token redaction, and signed-manifest watch.
@@ -262,6 +263,7 @@ Briefly show production readiness:
 - `/api/swiggy-location-trust`
 - `/api/swiggy-cart-mutation-workbench`
 - `/api/swiggy-discovery-freshness`
+- `/api/swiggy-confirmation-command-center`
 - `/api/slo-incident-command`
 - `/api/audit-ledger`
 - `/api/submission-console`

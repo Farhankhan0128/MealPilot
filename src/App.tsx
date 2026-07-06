@@ -109,6 +109,7 @@ import {
   fetchSwiggyDocsCoverage,
   fetchSwiggyDocsTwinExplorer,
   fetchSwiggyDeepSiteMap,
+  fetchSwiggyConfirmationCommandCenter,
   fetchSwiggyDiscoveryFreshness,
   fetchSwiggyCtaExecutionCenter,
   fetchSwiggyInnovationRadar,
@@ -208,6 +209,7 @@ import type {
   SwiggyBuilderIntakeCommandCenter,
   SwiggyCartMutationReport,
   SwiggyChannelMultimodalStudio,
+  SwiggyConfirmationCommandCenterReport,
   SwiggyCtaExecutionCenter,
   SwiggyDeepSiteMap,
   SwiggyDiscoveryFreshnessReport,
@@ -455,6 +457,8 @@ function App() {
   const [locationTrust, setLocationTrust] = useState<SwiggyLocationTrustReport | null>(null);
   const [cartMutation, setCartMutation] = useState<SwiggyCartMutationReport | null>(null);
   const [discoveryFreshness, setDiscoveryFreshness] = useState<SwiggyDiscoveryFreshnessReport | null>(null);
+  const [confirmationCommandCenter, setConfirmationCommandCenter] =
+    useState<SwiggyConfirmationCommandCenterReport | null>(null);
   const [routeOptimizer, setRouteOptimizer] = useState<SwiggyRouteOptimizationReport | null>(null);
   const [exportText, setExportText] = useState<string | null>(null);
   const [authUrl, setAuthUrl] = useState<string | null>(null);
@@ -608,6 +612,7 @@ function App() {
       locationTrustResponse,
       cartMutationResponse,
       discoveryFreshnessResponse,
+      confirmationCommandResponse,
       routeOptimizerResponse,
     ] = await Promise.all([
       fetchPantry(),
@@ -684,6 +689,7 @@ function App() {
       fetchSwiggyLocationTrust(),
       fetchSwiggyCartMutationWorkbench(),
       fetchSwiggyDiscoveryFreshness(),
+      fetchSwiggyConfirmationCommandCenter(),
       fetchSwiggyRouteOptimizer(),
     ]);
     setPantry(pantryResponse.pantry);
@@ -765,6 +771,7 @@ function App() {
     setLocationTrust(locationTrustResponse.locationTrust);
     setCartMutation(cartMutationResponse.cartMutation);
     setDiscoveryFreshness(discoveryFreshnessResponse.discoveryFreshness);
+    setConfirmationCommandCenter(confirmationCommandResponse.confirmationCommandCenter);
     setRouteOptimizer(routeOptimizerResponse.routeOptimizer);
   }
 
@@ -841,6 +848,7 @@ function App() {
       locationTrustResponse,
       cartMutationResponse,
       discoveryFreshnessResponse,
+      confirmationCommandResponse,
       routeOptimizerResponse,
     ] = await Promise.all([
       fetchMcpCatalog(),
@@ -914,6 +922,7 @@ function App() {
       fetchSwiggyLocationTrust(),
       fetchSwiggyCartMutationWorkbench(),
       fetchSwiggyDiscoveryFreshness(),
+      fetchSwiggyConfirmationCommandCenter(),
       fetchSwiggyRouteOptimizer(),
     ]);
     setMcpCatalog(catalogResponse);
@@ -991,6 +1000,7 @@ function App() {
     setLocationTrust(locationTrustResponse.locationTrust);
     setCartMutation(cartMutationResponse.cartMutation);
     setDiscoveryFreshness(discoveryFreshnessResponse.discoveryFreshness);
+    setConfirmationCommandCenter(confirmationCommandResponse.confirmationCommandCenter);
     setRouteOptimizer(routeOptimizerResponse.routeOptimizer);
   }
 
@@ -1652,6 +1662,7 @@ function App() {
                 locationTrust={locationTrust}
                 cartMutation={cartMutation}
                 discoveryFreshness={discoveryFreshness}
+                confirmationCommandCenter={confirmationCommandCenter}
                 routeOptimizer={routeOptimizer}
                 evaluationLab={evaluationLab}
               />
@@ -4369,6 +4380,7 @@ function ProductionEvidencePanel({
   locationTrust,
   cartMutation,
   discoveryFreshness,
+  confirmationCommandCenter,
   routeOptimizer,
   evaluationLab,
 }: {
@@ -4395,6 +4407,7 @@ function ProductionEvidencePanel({
   locationTrust: SwiggyLocationTrustReport | null;
   cartMutation: SwiggyCartMutationReport | null;
   discoveryFreshness: SwiggyDiscoveryFreshnessReport | null;
+  confirmationCommandCenter: SwiggyConfirmationCommandCenterReport | null;
   routeOptimizer: SwiggyRouteOptimizationReport | null;
   evaluationLab: EvaluationLab | null;
 }) {
@@ -4769,6 +4782,47 @@ function ProductionEvidencePanel({
               >
                 <span>{lane.label}</span>
                 <strong>{lane.officialTools.length} tools</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="confirmation-command-card">
+          <div className="mini-heading">
+            <ClipboardCheck aria-hidden="true" />
+            <strong>Confirmation Command</strong>
+          </div>
+          <span>
+            {confirmationCommandCenter
+              ? `${confirmationCommandCenter.score}/100, ${confirmationCommandCenter.totals.protectedActions} protected actions, ${confirmationCommandCenter.totals.postActionProbes} probes`
+              : "Loading final commerce confirmations"}
+          </span>
+          <div className="confirmation-command-grid">
+            <div>
+              <strong>{confirmationCommandCenter?.totals.lanes ?? 0}</strong>
+              <span>Lanes</span>
+            </div>
+            <div>
+              <strong>{confirmationCommandCenter?.totals.readyChecklistItems ?? 0}</strong>
+              <span>Checks</span>
+            </div>
+            <div>
+              <strong>{confirmationCommandCenter?.totals.scenarios ?? 0}</strong>
+              <span>Drills</span>
+            </div>
+            <div>
+              <strong>{confirmationCommandCenter?.totals.externalGates ?? 0}</strong>
+              <span>Live gates</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(confirmationCommandCenter?.lanes ?? []).slice(0, 4).map((lane) => (
+              <li
+                key={lane.id}
+                data-status={lane.status === "ready" ? "healthy" : lane.status === "external_gate" ? "blocked" : "watch"}
+              >
+                <span>{lane.label}</span>
+                <strong>{lane.protectedAction.replaceAll("_", " ")}</strong>
               </li>
             ))}
           </ul>

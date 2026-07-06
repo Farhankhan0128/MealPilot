@@ -64,6 +64,7 @@ import type {
   SwiggyBuilderIntakeCommandCenter,
   SwiggyCartMutationReport,
   SwiggyChannelMultimodalStudio,
+  SwiggyConfirmationCommandCenterReport,
   SwiggyDeepSiteMap,
   SwiggyDiscoveryFreshnessReport,
   DeveloperQuickstartWorkbench,
@@ -545,6 +546,12 @@ export function fetchSwiggyCartMutationWorkbench() {
 
 export function fetchSwiggyDiscoveryFreshness() {
   return requestJson<{ discoveryFreshness: SwiggyDiscoveryFreshnessReport }>("/api/swiggy-discovery-freshness");
+}
+
+export function fetchSwiggyConfirmationCommandCenter() {
+  return requestJson<{ confirmationCommandCenter: SwiggyConfirmationCommandCenterReport }>(
+    "/api/swiggy-confirmation-command-center",
+  );
 }
 
 export function fetchVersionMonitor() {

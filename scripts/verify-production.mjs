@@ -174,6 +174,13 @@ assert(
   "OpenAPI Swiggy Discovery Freshness is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-confirmation-command-center"]?.get?.summary?.includes("Confirmation Command") &&
+    openApi.paths["/api/swiggy-confirmation-command-center"]?.get?.responses?.["200"]?.description?.includes(
+      "separate confirmations",
+    ),
+  "OpenAPI Swiggy Confirmation Command Center is missing",
+);
+assert(
   openApi.paths["/api/mcp/resource-prompt-studio"].get.summary.includes("Resource and Prompt Studio"),
   "OpenAPI resource and prompt studio is missing",
 );
@@ -964,8 +971,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 19, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 19, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 20, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 20, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -1078,7 +1085,7 @@ assert(
     (command) =>
       command.id === "visual_capture_harness" &&
       command.command === "npm run verify:visual" &&
-      command.expectedSignal.includes("targetCount >= 19"),
+      command.expectedSignal.includes("targetCount >= 20"),
   ),
   "visual QA Playwright command is missing",
 );
@@ -2900,6 +2907,41 @@ assert(
   "Discovery Freshness menu-to-cart assertion is missing",
 );
 
+const confirmationCommand = await request("/api/swiggy-confirmation-command-center");
+assert(
+  Object.keys(confirmationCommand).join(",") === "confirmationCommandCenter",
+  "Confirmation Command Center response shape is incorrect",
+);
+assert(confirmationCommand.confirmationCommandCenter.score >= 90, "Confirmation Command Center score is below target");
+assert(
+  confirmationCommand.confirmationCommandCenter.totals.protectedActions >= 3,
+  "Confirmation Command Center protected actions are incomplete",
+);
+assert(
+  confirmationCommand.confirmationCommandCenter.totals.toolsCovered >= 10,
+  "Confirmation Command Center tool coverage is incomplete",
+);
+assert(
+  confirmationCommand.confirmationCommandCenter.totals.externalGates >= 1,
+  "Confirmation Command Center external gates are missing",
+);
+assert(
+  ["place_food_order", "checkout", "book_table"].every((tool) =>
+    JSON.stringify(confirmationCommand.confirmationCommandCenter.lanes).includes(tool),
+  ),
+  "Confirmation Command Center protected lanes are incomplete",
+);
+assert(
+  JSON.stringify(confirmationCommand.confirmationCommandCenter.checklist).toLowerCase().includes("separate confirmations") &&
+    JSON.stringify(confirmationCommand.confirmationCommandCenter.checklist).toLowerCase().includes("post-action status probe"),
+  "Confirmation Command Center checklist is incomplete",
+);
+assert(
+  confirmationCommand.confirmationCommandCenter.assertions.some((assertion) => assertion.includes("fresh read")) &&
+    confirmationCommand.confirmationCommandCenter.assertions.some((assertion) => assertion.includes("separate confirmations")),
+  "Confirmation Command Center assertions are incomplete",
+);
+
 const sloIncident = await request("/api/slo-incident-command");
 assert(sloIncident.sloIncident.score >= 90, "SLO incident command score is below target");
 assert(
@@ -3279,7 +3321,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 19, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 20, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -3293,7 +3335,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("19")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("20")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -3353,6 +3395,7 @@ assert(
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Load Lab") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Offer Intelligence") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Order Lifecycle") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Confirmation Command Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "SLO Incident Command Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Journey Compiler") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Access Dossier") &&
@@ -3532,6 +3575,10 @@ assert(
   "launch bundle Discovery Freshness handoff link is missing",
 );
 assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-confirmation-command-center"),
+  "launch bundle Confirmation Command Center handoff link is missing",
+);
+assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/mcp/staging-cutover"),
   "launch bundle staging cutover handoff link is missing",
 );
@@ -3657,6 +3704,10 @@ console.log(
       discoveryFreshnessScore: discoveryFreshness.discoveryFreshness.score,
       discoveryFreshnessTools: discoveryFreshness.discoveryFreshness.totals.toolsCovered,
       discoveryFreshnessChecks: discoveryFreshness.discoveryFreshness.totals.freshnessChecks,
+      confirmationCommandScore: confirmationCommand.confirmationCommandCenter.score,
+      confirmationCommandTools: confirmationCommand.confirmationCommandCenter.totals.toolsCovered,
+      confirmationCommandProtectedActions: confirmationCommand.confirmationCommandCenter.totals.protectedActions,
+      confirmationCommandExternalGates: confirmationCommand.confirmationCommandCenter.totals.externalGates,
       sloIncidentScore: sloIncident.sloIncident.score,
       sloUptimeTargets: sloIncident.sloIncident.uptimeTargets.length,
       resilienceScore: resilience.runbook.score,

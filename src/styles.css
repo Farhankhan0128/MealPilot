@@ -1734,6 +1734,7 @@ select:focus {
 .load-lab-grid,
 .offer-intelligence-grid,
 .order-lifecycle-grid,
+.confirmation-command-grid,
 .data-governance-grid,
 .audit-ledger-grid,
 .slo-grid,
@@ -1765,6 +1766,10 @@ select:focus {
   grid-column: span 6;
 }
 
+.confirmation-command-card {
+  grid-column: span 6;
+}
+
 .location-trust-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1786,9 +1791,17 @@ select:focus {
   margin-top: 10px;
 }
 
+.confirmation-command-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+
 .location-trust-grid div,
 .cart-mutation-grid div,
-.discovery-freshness-grid div {
+.discovery-freshness-grid div,
+.confirmation-command-grid div {
   border-radius: 8px;
   padding: 10px;
   background: #fff;
@@ -1796,7 +1809,8 @@ select:focus {
 
 .location-trust-grid strong,
 .cart-mutation-grid strong,
-.discovery-freshness-grid strong {
+.discovery-freshness-grid strong,
+.confirmation-command-grid strong {
   display: block;
   color: var(--ink);
 }
@@ -2097,6 +2111,7 @@ select:focus {
   .location-trust-grid,
   .cart-mutation-grid,
   .discovery-freshness-grid,
+  .confirmation-command-grid,
   .data-governance-grid,
   .audit-ledger-grid,
   .route-optimizer-grid,
@@ -3021,6 +3036,7 @@ select:focus {
   .load-lab-card,
   .offer-intelligence-card,
   .order-lifecycle-card,
+  .confirmation-command-card,
   .data-governance-card,
   .audit-ledger-card,
   .slo-incident-card,

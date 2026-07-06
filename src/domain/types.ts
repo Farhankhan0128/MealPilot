@@ -3537,6 +3537,75 @@ export interface SwiggyDiscoveryFreshnessReport {
   externalGates: string[];
 }
 
+export type SwiggyConfirmationCommandStatus = "ready" | "watch" | "external_gate";
+
+export interface SwiggyConfirmationLane {
+  id: string;
+  server: SwiggyServer | "combined";
+  label: string;
+  officialTools: string[];
+  protectedAction: string;
+  confirmationCopy: string;
+  preflightReads: string[];
+  postActionProbe: string;
+  retryPolicy: string;
+  status: SwiggyConfirmationCommandStatus;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyConfirmationChecklistItem {
+  id: string;
+  label: string;
+  policy: string;
+  status: SwiggyConfirmationCommandStatus;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyConfirmationScenario {
+  id: string;
+  label: string;
+  trigger: string;
+  expectedDecision: string;
+  protectedAction: string;
+  status: SwiggyConfirmationCommandStatus;
+}
+
+export interface SwiggyConfirmationTelemetry {
+  field: string;
+  source: string;
+  redaction: string;
+  status: SwiggyConfirmationCommandStatus;
+}
+
+export interface SwiggyConfirmationCommandCenterReport {
+  generatedAt: string;
+  score: number;
+  mode: "mock" | "staging" | "production";
+  officialSources: string[];
+  totals: {
+    lanes: number;
+    toolsCovered: number;
+    readyChecklistItems: number;
+    scenarios: number;
+    protectedActions: number;
+    postActionProbes: number;
+    externalGates: number;
+  };
+  lanes: SwiggyConfirmationLane[];
+  checklist: SwiggyConfirmationChecklistItem[];
+  scenarios: SwiggyConfirmationScenario[];
+  telemetry: SwiggyConfirmationTelemetry[];
+  operatorActions: Array<{
+    id: string;
+    label: string;
+    owner: "MealPilot" | "Operator" | "Swiggy";
+    status: SwiggyConfirmationCommandStatus;
+    evidence: string;
+  }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export interface VersionAlert {
   id: string;
   label: string;

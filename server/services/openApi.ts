@@ -207,6 +207,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-confirmation-command-center": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Confirmation Command Center for final Food, Instamart, and Dineout actions",
+          responses: {
+            "200": {
+              description:
+                "Reviewer-visible final commerce confirmation center with fresh cart and slot reads, separate confirmations for place_food_order, checkout, and book_table, post-action status probes, redacted telemetry, support packets, and external credential gates",
+            },
+          },
+        },
+      },
       "/api/mcp/backpressure-governor": {
         get: {
           tags: ["Builder Access"],
