@@ -169,6 +169,11 @@ assert(
   "OpenAPI Swiggy Cart Mutation Workbench is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-discovery-freshness"].get.summary.includes("Discovery Freshness") &&
+    openApi.paths["/api/swiggy-discovery-freshness"].get.responses["200"].description.includes("variant"),
+  "OpenAPI Swiggy Discovery Freshness is missing",
+);
+assert(
   openApi.paths["/api/mcp/resource-prompt-studio"].get.summary.includes("Resource and Prompt Studio"),
   "OpenAPI resource and prompt studio is missing",
 );
@@ -2856,6 +2861,45 @@ assert(
   "Cart Mutation Workbench readback assertion is missing",
 );
 
+const discoveryFreshness = await request("/api/swiggy-discovery-freshness");
+assert(discoveryFreshness.discoveryFreshness.score >= 85, "Discovery Freshness score is below target");
+assert(discoveryFreshness.discoveryFreshness.totals.toolsCovered >= 8, "Discovery Freshness tools are incomplete");
+assert(discoveryFreshness.discoveryFreshness.totals.readyControls === 5, "Discovery Freshness controls are incomplete");
+assert(
+  discoveryFreshness.discoveryFreshness.officialSources.includes("https://mcp.swiggy.com/builders/llms.txt") &&
+    discoveryFreshness.discoveryFreshness.officialSources.some((source) => source.includes("/reference/food/search_restaurants/")) &&
+    discoveryFreshness.discoveryFreshness.officialSources.some((source) => source.includes("/reference/food/search_menu/")) &&
+    discoveryFreshness.discoveryFreshness.officialSources.some((source) => source.includes("/reference/instamart/search_products/")) &&
+    discoveryFreshness.discoveryFreshness.officialSources.some((source) => source.includes("/reference/instamart/your_go_to_items/")) &&
+    discoveryFreshness.discoveryFreshness.officialSources.some((source) => source.includes("/reference/dineout/get_available_slots/")),
+  "Discovery Freshness official sources are incomplete",
+);
+assert(
+  ["food_menu_detail", "instamart_product_search", "dineout_search_and_details", "dineout_slot_freshness"].every((id) =>
+    discoveryFreshness.discoveryFreshness.lanes.some((lane) => lane.id === id),
+  ),
+  "Discovery Freshness lanes are incomplete",
+);
+assert(
+  discoveryFreshness.discoveryFreshness.controls.some((control) => control.id === "variant_truth" && control.status === "ready") &&
+    discoveryFreshness.discoveryFreshness.controls.some((control) => control.id === "coordinate_consistency" && control.status === "ready"),
+  "Discovery Freshness controls are missing",
+);
+assert(
+  ["food_more_menu_options", "instamart_variant_choice", "dineout_slot_selection"].every((id) =>
+    discoveryFreshness.discoveryFreshness.scenarios.some((scenario) => scenario.id === id),
+  ),
+  "Discovery Freshness scenarios are incomplete",
+);
+assert(
+  discoveryFreshness.discoveryFreshness.telemetry.some((field) => field.field === "result_id_hash" && field.status === "ready"),
+  "Discovery Freshness telemetry redaction is missing",
+);
+assert(
+  discoveryFreshness.discoveryFreshness.assertions.some((assertion) => assertion.includes("search_menu before update_food_cart")),
+  "Discovery Freshness menu-to-cart assertion is missing",
+);
+
 const sloIncident = await request("/api/slo-incident-command");
 assert(sloIncident.sloIncident.score >= 90, "SLO incident command score is below target");
 assert(
@@ -3484,6 +3528,10 @@ assert(
   "launch bundle Cart Mutation Workbench handoff link is missing",
 );
 assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-discovery-freshness"),
+  "launch bundle Discovery Freshness handoff link is missing",
+);
+assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/mcp/staging-cutover"),
   "launch bundle staging cutover handoff link is missing",
 );
@@ -3606,6 +3654,9 @@ console.log(
       cartMutationScore: cartMutation.cartMutation.score,
       cartMutationTools: cartMutation.cartMutation.totals.toolsCovered,
       cartMutationReadbacks: cartMutation.cartMutation.totals.readbackLanes,
+      discoveryFreshnessScore: discoveryFreshness.discoveryFreshness.score,
+      discoveryFreshnessTools: discoveryFreshness.discoveryFreshness.totals.toolsCovered,
+      discoveryFreshnessChecks: discoveryFreshness.discoveryFreshness.totals.freshnessChecks,
       sloIncidentScore: sloIncident.sloIncident.score,
       sloUptimeTargets: sloIncident.sloIncident.uptimeTargets.length,
       resilienceScore: resilience.runbook.score,

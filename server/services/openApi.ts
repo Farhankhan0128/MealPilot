@@ -798,6 +798,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-discovery-freshness": {
+        get: {
+          tags: ["Commerce"],
+          summary: "Swiggy Discovery Freshness Workbench for search, menu, product, and slot truth",
+          responses: {
+            "200": {
+              description:
+                "Food restaurant and menu search, Instamart product and go-to item discovery, Dineout restaurant details and slots, pagination truth, variant selection, coordinate consistency, and freshness invalidation",
+            },
+          },
+        },
+      },
       "/api/support/bridge": {
         get: {
           tags: ["Operations"],

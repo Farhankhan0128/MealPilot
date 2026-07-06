@@ -176,7 +176,8 @@ The application will include a 2-3 minute Loom or unlisted YouTube demo showing:
 30. Show `/api/swiggy-order-lifecycle` with Food/Instamart/Dineout status tools, tracking cadence, non-blind retry probes, and support-safe lifecycle telemetry.
 31. Show `/api/swiggy-location-trust` with Food/Instamart saved-address tools, Dineout saved locations, address-choice pauses, address switch refresh, and raw-address redaction.
 32. Show `/api/swiggy-cart-mutation-workbench` with Food cart readback, Instamart full-cart replacement, Dineout create_cart gates, payment-method truth, and checkout-safe mutation rules.
-33. Show `/api/production-launch-bundle` with proof artifacts, verification commands, external Swiggy gates, and the review email draft.
+33. Show `/api/swiggy-discovery-freshness` with Food search/menu truth, Instamart product variants, Dineout details/slots, pagination, coordinate consistency, and stale-result invalidation.
+34. Show `/api/production-launch-bundle` with proof artifacts, verification commands, external Swiggy gates, and the review email draft.
 
 ## Primary Technical Contact
 
@@ -235,6 +236,7 @@ Email: add primary engineering email before submission.
 - Swiggy Order Lifecycle: `/api/swiggy-order-lifecycle`
 - Swiggy Location Trust: `/api/swiggy-location-trust`
 - Swiggy Cart Mutation Workbench: `/api/swiggy-cart-mutation-workbench`
+- Swiggy Discovery Freshness: `/api/swiggy-discovery-freshness`
 - SLO Incident Command Center: `/api/slo-incident-command`
 - Support Bridge: `/api/support/bridge`
 - Error Intelligence: `/api/error-intelligence`

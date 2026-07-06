@@ -107,6 +107,8 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/swiggy-location-trust"].get.responses["200"].description).toContain("address");
     expect(openApi.body.paths["/api/swiggy-cart-mutation-workbench"].get.summary).toContain("Cart Mutation");
     expect(openApi.body.paths["/api/swiggy-cart-mutation-workbench"].get.responses["200"].description).toContain("readback");
+    expect(openApi.body.paths["/api/swiggy-discovery-freshness"].get.summary).toContain("Discovery Freshness");
+    expect(openApi.body.paths["/api/swiggy-discovery-freshness"].get.responses["200"].description).toContain("variant");
     expect(openApi.body.paths["/api/slo-incident-command"].get.summary).toContain("SLO Incident");
     expect(openApi.body.paths["/api/data-governance-center"].get.summary).toContain("Data Governance");
     expect(openApi.body.paths["/api/production-launch-bundle"].get.summary).toContain("Production Launch Bundle");
@@ -2826,6 +2828,7 @@ describe("MealPilot API", () => {
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Swiggy Order Lifecycle")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Swiggy Location Trust")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Swiggy Cart Mutation Workbench")).toBe(true);
+    expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Swiggy Discovery Freshness")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "SLO Incident Command Center")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Data Governance Center")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Swiggy Upstream Watch")).toBe(true);
@@ -3114,6 +3117,51 @@ describe("MealPilot API", () => {
     expect(cart.externalGates.some((gate: string) => gate.includes("Staging credentials"))).toBe(true);
   });
 
+  it("returns Swiggy Discovery Freshness for search, menu, product, and slot truth", async () => {
+    const { app } = createMealPilotServer();
+    await request(app).post("/api/plan").send(planningRequest).expect(201);
+
+    const response = await request(app).get("/api/swiggy-discovery-freshness").expect(200);
+    const freshness = response.body.discoveryFreshness;
+
+    expect(freshness.score).toBeGreaterThanOrEqual(85);
+    expect(freshness.mode).toBe("mock");
+    expect(freshness.officialSources).toEqual(
+      expect.arrayContaining([
+        "https://mcp.swiggy.com/builders/",
+        "https://mcp.swiggy.com/builders/llms.txt",
+        "https://mcp.swiggy.com/builders/docs/reference/food/search_restaurants/",
+        "https://mcp.swiggy.com/builders/docs/reference/food/search_menu/",
+        "https://mcp.swiggy.com/builders/docs/reference/food/get_restaurant_menu/",
+        "https://mcp.swiggy.com/builders/docs/reference/instamart/search_products/",
+        "https://mcp.swiggy.com/builders/docs/reference/instamart/your_go_to_items/",
+        "https://mcp.swiggy.com/builders/docs/reference/dineout/search_restaurants_dineout/",
+        "https://mcp.swiggy.com/builders/docs/reference/dineout/get_available_slots/",
+      ]),
+    );
+    expect(freshness.totals.toolsCovered).toBeGreaterThanOrEqual(8);
+    expect(freshness.totals.readyControls).toBe(5);
+    expect(freshness.lanes.map((lane: { id: string }) => lane.id)).toEqual(
+      expect.arrayContaining(["food_menu_detail", "instamart_product_search", "dineout_search_and_details", "dineout_slot_freshness"]),
+    );
+    expect(
+      freshness.controls.some(
+        (control: { id: string; status: string }) => control.id === "variant_truth" && control.status === "ready",
+      ),
+    ).toBe(true);
+    expect(
+      freshness.controls.some(
+        (control: { id: string; status: string }) => control.id === "coordinate_consistency" && control.status === "ready",
+      ),
+    ).toBe(true);
+    expect(freshness.scenarios.map((scenario: { id: string }) => scenario.id)).toEqual(
+      expect.arrayContaining(["food_more_menu_options", "instamart_variant_choice", "dineout_slot_selection"]),
+    );
+    expect(freshness.telemetry.some((field: { field: string }) => field.field === "result_id_hash")).toBe(true);
+    expect(freshness.assertions.some((assertion: string) => assertion.includes("search_menu before update_food_cart"))).toBe(true);
+    expect(freshness.externalGates.some((gate: string) => gate.includes("Staging credentials"))).toBe(true);
+  });
+
   it("returns SLO and incident command evidence for Swiggy operations", async () => {
     const { app } = createMealPilotServer();
     const created = await request(app).post("/api/plan").send(planningRequest).expect(201);
@@ -3186,6 +3234,7 @@ describe("MealPilot API", () => {
         "Swiggy Order Lifecycle",
         "Swiggy Location Trust",
         "Swiggy Cart Mutation Workbench",
+        "Swiggy Discovery Freshness",
         "SLO Incident Command Center",
         "Swiggy Journey Compiler",
         "Swiggy Access Dossier",
@@ -3239,6 +3288,7 @@ describe("MealPilot API", () => {
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-order-lifecycle");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-location-trust");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-cart-mutation-workbench");
+    expect(bundle.handoffEmail.body).toContain("/api/swiggy-discovery-freshness");
     expect(bundle.handoffEmail.body).toContain("/api/mcp/staging-cutover");
     expect(bundle.handoffEmail.body).toContain("/api/audit-ledger");
     expect(bundle.commands.some((command: { command: string }) => command.command.includes("npm run verify:production"))).toBe(

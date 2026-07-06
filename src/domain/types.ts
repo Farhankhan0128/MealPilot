@@ -3471,6 +3471,72 @@ export interface SwiggyCartMutationReport {
   externalGates: string[];
 }
 
+export type SwiggyDiscoveryFreshnessStatus = "ready" | "watch" | "external_gate";
+
+export interface SwiggyDiscoveryFreshnessLane {
+  id: string;
+  server: SwiggyServer | "combined";
+  label: string;
+  officialTools: string[];
+  freshnessRule: string;
+  selectionRule: string;
+  mutationBoundary: string;
+  status: SwiggyDiscoveryFreshnessStatus;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyDiscoveryFreshnessControl {
+  id: string;
+  label: string;
+  policy: string;
+  status: SwiggyDiscoveryFreshnessStatus;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyDiscoveryFreshnessScenario {
+  id: string;
+  label: string;
+  trigger: string;
+  expectedDecision: string;
+  tools: string[];
+  status: SwiggyDiscoveryFreshnessStatus;
+}
+
+export interface SwiggyDiscoveryFreshnessTelemetry {
+  field: string;
+  source: string;
+  redaction: string;
+  status: SwiggyDiscoveryFreshnessStatus;
+}
+
+export interface SwiggyDiscoveryFreshnessReport {
+  generatedAt: string;
+  score: number;
+  mode: "mock" | "staging" | "production";
+  officialSources: string[];
+  totals: {
+    lanes: number;
+    toolsCovered: number;
+    readyControls: number;
+    scenarios: number;
+    freshnessChecks: number;
+    externalGates: number;
+  };
+  lanes: SwiggyDiscoveryFreshnessLane[];
+  controls: SwiggyDiscoveryFreshnessControl[];
+  scenarios: SwiggyDiscoveryFreshnessScenario[];
+  telemetry: SwiggyDiscoveryFreshnessTelemetry[];
+  operatorActions: Array<{
+    id: string;
+    label: string;
+    owner: "MealPilot" | "Operator" | "Swiggy";
+    status: SwiggyDiscoveryFreshnessStatus;
+    evidence: string;
+  }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export interface VersionAlert {
   id: string;
   label: string;

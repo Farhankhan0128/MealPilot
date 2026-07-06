@@ -70,6 +70,7 @@ import { buildCredentialOnboardingReport } from "./services/credentialOnboarding
 import { buildDataGovernanceCenter } from "./services/dataGovernance.js";
 import { buildSwiggyDeepSiteMap } from "./services/deepSiteMap.js";
 import { buildDeveloperQuickstartWorkbench } from "./services/developerQuickstartWorkbench.js";
+import { buildSwiggyDiscoveryFreshness } from "./services/discoveryFreshness.js";
 import { buildSwiggyDocsCoverage } from "./services/docsCoverage.js";
 import { buildSwiggyDocsTwinExplorer } from "./services/docsTwinExplorer.js";
 import { buildEnterpriseDelegatedAuthCenter } from "./services/enterpriseDelegatedAuth.js";
@@ -1016,6 +1017,10 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/swiggy-cart-mutation-workbench", (_req, res) => {
     res.json({ cartMutation: buildSwiggyCartMutationWorkbench({ plans: store.getAllPlans(), config }) });
+  });
+
+  app.get("/api/swiggy-discovery-freshness", (_req, res) => {
+    res.json({ discoveryFreshness: buildSwiggyDiscoveryFreshness({ plans: store.getAllPlans(), config }) });
   });
 
   app.get("/api/version-monitor", (_req, res) => {

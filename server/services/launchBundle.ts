@@ -334,6 +334,15 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
         "Makes Food cart readbacks, Instamart full-cart replacement, Dineout create_cart gates, payment-method truth, add-on confirmation, and staging cart-write gates reviewer-visible.",
     },
     {
+      id: "discovery_freshness",
+      label: "Swiggy Discovery Freshness",
+      path: "/api/swiggy-discovery-freshness",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Turns Food restaurant/menu search, Instamart product/go-to discovery, Dineout search/details/slots, pagination, variant truth, coordinate consistency, and freshness invalidation into reviewer evidence.",
+    },
+    {
       id: "slo_incident_command",
       label: "SLO Incident Command Center",
       path: "/api/slo-incident-command",
@@ -830,6 +839,7 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- Swiggy Order Lifecycle: /api/swiggy-order-lifecycle",
     "- Swiggy Location Trust: /api/swiggy-location-trust",
     "- Swiggy Cart Mutation Workbench: /api/swiggy-cart-mutation-workbench",
+    "- Swiggy Discovery Freshness: /api/swiggy-discovery-freshness",
     "- SLO Incident Command Center: /api/slo-incident-command",
     "- MCP Tool Lab: /api/mcp/tool-lab",
     "- MCP Capability Registry: /api/mcp/capability-registry",

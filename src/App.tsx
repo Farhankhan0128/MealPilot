@@ -25,6 +25,7 @@ import {
   RefreshCw,
   Rocket,
   ScrollText,
+  Search,
   ShieldCheck,
   ShoppingBasket,
   Sparkles,
@@ -108,6 +109,7 @@ import {
   fetchSwiggyDocsCoverage,
   fetchSwiggyDocsTwinExplorer,
   fetchSwiggyDeepSiteMap,
+  fetchSwiggyDiscoveryFreshness,
   fetchSwiggyCtaExecutionCenter,
   fetchSwiggyInnovationRadar,
   fetchSwiggyJourneyCompiler,
@@ -208,6 +210,7 @@ import type {
   SwiggyChannelMultimodalStudio,
   SwiggyCtaExecutionCenter,
   SwiggyDeepSiteMap,
+  SwiggyDiscoveryFreshnessReport,
   SwiggyWidget,
   SwiggyBuildersMap,
   SwiggyDocsCoverageReport,
@@ -451,6 +454,7 @@ function App() {
   const [orderLifecycle, setOrderLifecycle] = useState<SwiggyOrderLifecycleReport | null>(null);
   const [locationTrust, setLocationTrust] = useState<SwiggyLocationTrustReport | null>(null);
   const [cartMutation, setCartMutation] = useState<SwiggyCartMutationReport | null>(null);
+  const [discoveryFreshness, setDiscoveryFreshness] = useState<SwiggyDiscoveryFreshnessReport | null>(null);
   const [routeOptimizer, setRouteOptimizer] = useState<SwiggyRouteOptimizationReport | null>(null);
   const [exportText, setExportText] = useState<string | null>(null);
   const [authUrl, setAuthUrl] = useState<string | null>(null);
@@ -603,6 +607,7 @@ function App() {
       orderLifecycleResponse,
       locationTrustResponse,
       cartMutationResponse,
+      discoveryFreshnessResponse,
       routeOptimizerResponse,
     ] = await Promise.all([
       fetchPantry(),
@@ -678,6 +683,7 @@ function App() {
       fetchSwiggyOrderLifecycle(),
       fetchSwiggyLocationTrust(),
       fetchSwiggyCartMutationWorkbench(),
+      fetchSwiggyDiscoveryFreshness(),
       fetchSwiggyRouteOptimizer(),
     ]);
     setPantry(pantryResponse.pantry);
@@ -758,6 +764,7 @@ function App() {
     setOrderLifecycle(orderLifecycleResponse.orderLifecycle);
     setLocationTrust(locationTrustResponse.locationTrust);
     setCartMutation(cartMutationResponse.cartMutation);
+    setDiscoveryFreshness(discoveryFreshnessResponse.discoveryFreshness);
     setRouteOptimizer(routeOptimizerResponse.routeOptimizer);
   }
 
@@ -833,6 +840,7 @@ function App() {
       orderLifecycleResponse,
       locationTrustResponse,
       cartMutationResponse,
+      discoveryFreshnessResponse,
       routeOptimizerResponse,
     ] = await Promise.all([
       fetchMcpCatalog(),
@@ -905,6 +913,7 @@ function App() {
       fetchSwiggyOrderLifecycle(),
       fetchSwiggyLocationTrust(),
       fetchSwiggyCartMutationWorkbench(),
+      fetchSwiggyDiscoveryFreshness(),
       fetchSwiggyRouteOptimizer(),
     ]);
     setMcpCatalog(catalogResponse);
@@ -981,6 +990,7 @@ function App() {
     setOrderLifecycle(orderLifecycleResponse.orderLifecycle);
     setLocationTrust(locationTrustResponse.locationTrust);
     setCartMutation(cartMutationResponse.cartMutation);
+    setDiscoveryFreshness(discoveryFreshnessResponse.discoveryFreshness);
     setRouteOptimizer(routeOptimizerResponse.routeOptimizer);
   }
 
@@ -1641,6 +1651,7 @@ function App() {
                 orderLifecycle={orderLifecycle}
                 locationTrust={locationTrust}
                 cartMutation={cartMutation}
+                discoveryFreshness={discoveryFreshness}
                 routeOptimizer={routeOptimizer}
                 evaluationLab={evaluationLab}
               />
@@ -4357,6 +4368,7 @@ function ProductionEvidencePanel({
   orderLifecycle,
   locationTrust,
   cartMutation,
+  discoveryFreshness,
   routeOptimizer,
   evaluationLab,
 }: {
@@ -4382,6 +4394,7 @@ function ProductionEvidencePanel({
   orderLifecycle: SwiggyOrderLifecycleReport | null;
   locationTrust: SwiggyLocationTrustReport | null;
   cartMutation: SwiggyCartMutationReport | null;
+  discoveryFreshness: SwiggyDiscoveryFreshnessReport | null;
   routeOptimizer: SwiggyRouteOptimizationReport | null;
   evaluationLab: EvaluationLab | null;
 }) {
@@ -4709,6 +4722,47 @@ function ProductionEvidencePanel({
           </div>
           <ul className="compact-status-list">
             {(cartMutation?.lanes ?? []).slice(0, 4).map((lane) => (
+              <li
+                key={lane.id}
+                data-status={lane.status === "ready" ? "healthy" : lane.status === "external_gate" ? "blocked" : "watch"}
+              >
+                <span>{lane.label}</span>
+                <strong>{lane.officialTools.length} tools</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="discovery-freshness-card">
+          <div className="mini-heading">
+            <Search aria-hidden="true" />
+            <strong>Discovery Freshness</strong>
+          </div>
+          <span>
+            {discoveryFreshness
+              ? `${discoveryFreshness.score}/100, ${discoveryFreshness.totals.toolsCovered} discovery tools, ${discoveryFreshness.totals.freshnessChecks} checks`
+              : "Loading discovery freshness"}
+          </span>
+          <div className="discovery-freshness-grid">
+            <div>
+              <strong>{discoveryFreshness?.totals.lanes ?? 0}</strong>
+              <span>Lanes</span>
+            </div>
+            <div>
+              <strong>{discoveryFreshness?.totals.readyControls ?? 0}</strong>
+              <span>Controls</span>
+            </div>
+            <div>
+              <strong>{discoveryFreshness?.totals.scenarios ?? 0}</strong>
+              <span>Scenarios</span>
+            </div>
+            <div>
+              <strong>{discoveryFreshness?.totals.externalGates ?? 0}</strong>
+              <span>Live gates</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(discoveryFreshness?.lanes ?? []).slice(0, 4).map((lane) => (
               <li
                 key={lane.id}
                 data-status={lane.status === "ready" ? "healthy" : lane.status === "external_gate" ? "blocked" : "watch"}
