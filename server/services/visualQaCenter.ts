@@ -398,6 +398,17 @@ const targetGroups = [
         "artifacts/visual-qa/showcase-submission-card.png",
       ),
       target(
+        "submission_timeline_card",
+        "Submission Timeline card",
+        "/",
+        ".submission-timeline-card",
+        "desktop",
+        1280,
+        900,
+        "Submission Timeline Center shows access form, demo handoff, credential, staging, and production promotion gates.",
+        "artifacts/visual-qa/submission-timeline-card.png",
+      ),
+      target(
         "interaction_qa_card",
         "Interaction QA card",
         "/",

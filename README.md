@@ -88,6 +88,7 @@ Planned MCP servers:
 - FAQ & Policy Center that maps homepage, developer, enterprise, access-guideline, footer-resource, allowed/restricted/prohibited, operating-principle, and legal policy signals to MealPilot evidence.
 - Growth Partnership Center that turns Swiggy's get-noticed, co-branding, direct-support, hiring, co-marketing, analytics, and strategic-growth signals into launch experiments, proof assets, metrics, and partner asks.
 - Swiggy Showcase Submission Center at `/api/swiggy-showcase-submission-center` that packages pitch blocks, a 2-minute demo storyboard, proof metrics, visual-gallery links, outreach copy, operator-owned inputs, and Swiggy co-branding/feature gates for a feature-ready review packet.
+- Swiggy Submission Timeline Center at `/api/swiggy-submission-timeline-center` that sequences Start Building, proof freeze, demo recording, Request Access, Send Demo, Dynamic Client Registration, staging seed, 48-hour soak, and production promotion with explicit MealPilot, operator, and Swiggy ownership.
 - Partner Success Desk at `/api/swiggy-partner-success-desk` that composes access handoff, developer support, SLO incidents, capacity review, backpressure, growth showcase asks, and enterprise Slack/partner-manager gates into one reviewer surface.
 - Swiggy Interaction QA Center at `/api/swiggy-interaction-qa-center` that proves portal CTAs map to executable routes, visible feedback, automated tests, and explicit Swiggy/operator gates.
 - Channel & Multimodal Studio that turns Swiggy's developer-page ideas into voice, web chat, Slack/Teams, mobile camera, enterprise, and screenshot-to-order contracts with local execution packets for route plans, response rules, confirmation gates, and telemetry.
@@ -260,6 +261,7 @@ GET  /api/swiggy-builder-intake
 GET  /api/swiggy-faq-policy
 GET  /api/swiggy-growth-partnership
 GET  /api/swiggy-showcase-submission-center
+GET  /api/swiggy-submission-timeline-center
 GET  /api/swiggy-partner-success-desk
 GET  /api/swiggy-interaction-qa-center
 GET  /api/channel-multimodal-studio
@@ -496,6 +498,8 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 `GET /api/swiggy-growth-partnership` is the growth partnership center: official get-noticed, hiring, co-branding, direct-support, enterprise analytics, and joint go-to-market signals become MealPilot launch experiments, proof assets, metric targets, and explicit partner asks while Swiggy feature placement, co-marketing approval, Slack, partner manager, dashboard access, and higher limits remain external gates.
 
 `GET /api/swiggy-showcase-submission-center` is the feature-ready Swiggy showcase packet: pitch blocks, demo storyboard, metric pack, visual proof links, and a draft builders@swiggy.in outreach email are prepared locally while the demo video URL remains operator-owned and any Powered by Swiggy or feature-placement claims stay behind Swiggy approval gates.
+
+`GET /api/swiggy-submission-timeline-center` is the end-to-end signup timeline: it turns Swiggy's Start Building, Request Access, Send Demo, DCR, staging, soak, and production-promotion path into eight owner-tagged phases, daily runbook actions, proof links, and external gates while preventing local automation from submitting forms, sending email, or claiming approval.
 
 `GET /api/swiggy-partner-success-desk` is the post-access operator room: access handoff, developer support, SLO incident readiness, capacity review, backpressure controls, growth showcase asks, and enterprise Slack/partner-manager gates are composed from existing verified proof routes with escalation email drafts.
 

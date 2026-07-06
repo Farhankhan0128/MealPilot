@@ -108,6 +108,8 @@ The verifier also validates `/api/swiggy-cta-live-audit` for safe live Builders/
 
 The verifier also validates `/api/swiggy-showcase-submission-center` for feature-ready pitch blocks, demo storyboard steps, metric packs, visual proof, draft outreach email, operator-owned demo inputs, and Swiggy co-branding/feature approval gates.
 
+The verifier also validates `/api/swiggy-submission-timeline-center` for the eight-phase Start Building, proof-freeze, demo, access-form, handoff-email, DCR, staging, soak, and production-promotion timeline with proof links and explicit operator/Swiggy gates.
+
 The verifier also validates `/api/swiggy-partner-success-desk` for access handoff, developer support, SLO incidents, capacity review, backpressure controls, growth showcase asks, escalation emails, and enterprise Slack/partner-manager gates.
 
 The verifier also validates `/api/swiggy-interaction-qa-center` for planner, confirmation, support-report, privacy, packet-export, first-call, access-submission, and partner-support CTA contracts with automated proof and explicit Swiggy/operator gates.
@@ -226,6 +228,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/reviewer-artifact-vault`
 - `GET /api/visual-qa-center`
 - `GET /api/swiggy-showcase-submission-center`
+- `GET /api/swiggy-submission-timeline-center`
 - `GET /api/builder-packet-export`
 - `GET /api/builder-packet-export.md`
 - `GET /api/swiggy-docs-coverage`
@@ -432,6 +435,8 @@ Production should use an HTTPS redirect URI with exact-match allowlisting.
 
 `/api/swiggy-showcase-submission-center` prepares the public Swiggy showcase packet: pitch copy, demo flow, metric proof, visual-gallery links, and a builders@swiggy.in email draft are generated from local evidence while video recording, final email submission, co-branding, and feature placement remain explicit operator or Swiggy gates.
 
+`/api/swiggy-submission-timeline-center` prepares the operator launch timeline: eight phases cover Start Building review, packet freeze, demo capture, Request Access form submission, Send Demo handoff, DCR, staging credentials/seed, and production promotion, each with owner, status, entrypoint, checklist, proof links, and no-automatic-external-submission safety.
+
 `/api/swiggy-partner-success-desk` composes the post-access operator room: access handoff, support bridge, SLO incidents, capacity review, backpressure, growth showcase asks, and enterprise Slack/partner-manager gates are pulled into one reviewer surface with proof links and escalation email drafts.
 
 `/api/swiggy-interaction-qa-center` composes the clickable portal contract: every locally executable CTA maps to a route, feedback expectation, automated proof, and Swiggy relevance, while access form submission, Slack, partner manager, production credentials, and co-marketing remain manual or external gates.
@@ -469,6 +474,7 @@ The test suite checks that:
 - FAQ & Policy Center maps homepage, developer, enterprise, access-guideline, footer-resource, allowed/restricted/prohibited, operating-principle, and legal signals to MealPilot evidence links.
 - Growth Partnership Center maps get-noticed, hiring, co-branding, direct support, co-marketing, analytics, strategic guidance, launch experiments, metrics, proof assets, and external partner asks.
 - Swiggy Showcase Submission Center packages pitch blocks, demo storyboard, metric pack, visual-gallery links, outreach copy, operator inputs, and Swiggy approval gates for a feature-ready review packet.
+- Swiggy Submission Timeline Center sequences access form submission, demo handoff, DCR, staging seed, 48-hour soak, and production promotion with explicit MealPilot, operator, and Swiggy ownership.
 - Partner Success Desk composes access handoff, developer support, SLO incident readiness, traffic capacity, backpressure controls, growth showcase asks, escalation emails, and Swiggy-owned Slack/partner-manager gates.
 - Interaction QA Center maps portal CTAs to executable MealPilot routes, visible feedback, regression commands, automation coverage, and explicit Swiggy/operator gates.
 - Channel & Multimodal Studio maps voice, web chat, Slack/Teams, mobile camera, enterprise, and screenshot-to-order channels to Swiggy MCP toolchains, local execution packets, response contracts, telemetry, and external platform gates.

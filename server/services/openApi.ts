@@ -401,6 +401,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-submission-timeline-center": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Submission Timeline Center for access, demo, credential, and launch handoff",
+          responses: {
+            "200": {
+              description:
+                "End-to-end operator and Swiggy-owned timeline for Start Building, Request Access, Send Demo, Dynamic Client Registration, staging seed, 48-hour soak, production promotion, proof links, and external gates",
+            },
+          },
+        },
+      },
       "/api/swiggy-partner-success-desk": {
         get: {
           tags: ["Builder Access"],

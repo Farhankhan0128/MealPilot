@@ -1428,6 +1428,50 @@ export interface SwiggyShowcaseSubmissionCenter {
   externalGates: string[];
 }
 
+export type SwiggySubmissionTimelineStatus = "ready" | "operator_input" | "swiggy_gate";
+export type SwiggySubmissionTimelineOwner = "MealPilot" | "Operator" | "Swiggy" | "Joint";
+
+export interface SwiggySubmissionTimelinePhase {
+  sequence: number;
+  id: string;
+  label: string;
+  officialAction: string;
+  owner: SwiggySubmissionTimelineOwner;
+  status: SwiggySubmissionTimelineStatus;
+  plannedWindow: string;
+  entrypoint: string;
+  checklist: string[];
+  evidenceLinks: string[];
+  nextAction: string;
+}
+
+export interface SwiggySubmissionTimelineCenter {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  currentStage: string;
+  nextOperatorAction: string;
+  totals: {
+    phases: number;
+    ready: number;
+    operatorInputs: number;
+    swiggyGates: number;
+    officialActions: number;
+    proofLinks: number;
+  };
+  phases: SwiggySubmissionTimelinePhase[];
+  dailyRunbook: Array<{ day: string; focus: string; actions: string[]; proofLinks: string[] }>;
+  handoffPacket: {
+    formTarget: string;
+    demoTarget: string;
+    supportEmail: string;
+    packetLinks: string[];
+    safetyNote: string;
+  };
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type SwiggyPartnerSuccessStatus = "ready" | "manual_input" | "external_gate";
 
 export interface SwiggyPartnerSuccessLane {

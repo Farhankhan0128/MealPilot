@@ -64,6 +64,7 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/swiggy-faq-policy"].get.summary).toContain("FAQ");
     expect(openApi.body.paths["/api/swiggy-growth-partnership"].get.summary).toContain("Growth Partnership");
     expect(openApi.body.paths["/api/swiggy-showcase-submission-center"].get.summary).toContain("Showcase Submission");
+    expect(openApi.body.paths["/api/swiggy-submission-timeline-center"].get.summary).toContain("Submission Timeline");
     expect(openApi.body.paths["/api/swiggy-partner-success-desk"].get.summary).toContain("Partner Success");
     expect(openApi.body.paths["/api/swiggy-interaction-qa-center"].get.summary).toContain("Interaction QA");
     expect(openApi.body.paths["/api/swiggy-staging-seed-smoke-center"].get.summary).toContain("Seed and Smoke");
@@ -1474,7 +1475,7 @@ describe("MealPilot API", () => {
     expect(packet.totals.formFields).toBeGreaterThanOrEqual(10);
     expect(packet.totals.requiredAttachments).toBeGreaterThanOrEqual(10);
     expect(packet.totals.launchArtifacts).toBeGreaterThanOrEqual(50);
-    expect(packet.totals.visualTargets).toBe(43);
+    expect(packet.totals.visualTargets).toBe(44);
     expect(packet.files.map((file: { id: string }) => file.id)).toEqual(
       expect.arrayContaining(["packet_json", "packet_markdown", "visual_report", "production_summary"]),
     );
@@ -1486,7 +1487,7 @@ describe("MealPilot API", () => {
     ).toBe(true);
     expect(
       packet.commands.some(
-        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("43"),
+        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("44"),
       ),
     ).toBe(true);
     expect(packet.copyBlocks.formFields).toContain("Redirect URI(s)");
@@ -1645,6 +1646,38 @@ describe("MealPilot API", () => {
     expect(center.outreachEmail.to).toBe("builders@swiggy.in");
     expect(center.assertions.some((assertion: string) => assertion.includes("no email"))).toBe(true);
     expect(center.externalGates.some((gate: string) => gate.includes("co-branding"))).toBe(true);
+  });
+
+  it("returns a Swiggy Submission Timeline Center for end-to-end access handoff", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/swiggy-submission-timeline-center").expect(200);
+    const center = response.body.submissionTimeline;
+
+    expect(center.score).toBeGreaterThanOrEqual(60);
+    expect(center.totals.phases).toBe(8);
+    expect(center.totals.ready).toBeGreaterThanOrEqual(2);
+    expect(center.totals.operatorInputs).toBeGreaterThanOrEqual(2);
+    expect(center.totals.swiggyGates).toBeGreaterThanOrEqual(3);
+    expect(center.totals.officialActions).toBe(8);
+    expect(center.totals.proofLinks).toBeGreaterThanOrEqual(20);
+    expect(center.phases.map((phase: { id: string }) => phase.id)).toEqual(
+      expect.arrayContaining([
+        "start_building_review",
+        "local_packet_freeze",
+        "demo_video_capture",
+        "request_access_form",
+        "send_demo_handoff",
+        "dynamic_client_registration",
+        "staging_credentials_and_seed",
+        "production_promotion",
+      ]),
+    );
+    expect(center.dailyRunbook.map((day: { day: string }) => day.day)).toEqual(["Day 0", "Day 1", "Day 2"]);
+    expect(center.handoffPacket.formTarget).toBe("https://mcp.swiggy.com/builders/access/");
+    expect(center.handoffPacket.demoTarget).toBe("mailto:builders@swiggy.in");
+    expect(center.handoffPacket.safetyNote).toContain("no automatic external submission");
+    expect(center.assertions.some((assertion: string) => assertion.includes("Every phase"))).toBe(true);
+    expect(center.externalGates.some((gate: string) => gate.includes("Dynamic Client Registration"))).toBe(true);
   });
 
   it("returns Swiggy Interaction QA Center coverage for clickable portal CTAs", async () => {
@@ -2529,8 +2562,8 @@ describe("MealPilot API", () => {
     const visualQa = response.body.visualQa;
 
     expect(visualQa.score).toBe(100);
-    expect(visualQa.totalTargets).toBe(43);
-    expect(visualQa.readyTargets).toBe(43);
+    expect(visualQa.totalTargets).toBe(44);
+    expect(visualQa.readyTargets).toBe(44);
     expect(visualQa.totalRules).toBe(7);
     expect(visualQa.readyRules).toBe(7);
     expect(visualQa.totalCommands).toBe(5);
@@ -2662,6 +2695,11 @@ describe("MealPilot API", () => {
     expect(
       visualQa.targetGroups.some((group: { targets: Array<{ id: string; selector: string }> }) =>
         group.targets.some((target) => target.id === "showcase_submission_card" && target.selector === ".showcase-submission-card"),
+      ),
+    ).toBe(true);
+    expect(
+      visualQa.targetGroups.some((group: { targets: Array<{ id: string; selector: string }> }) =>
+        group.targets.some((target) => target.id === "submission_timeline_card" && target.selector === ".submission-timeline-card"),
       ),
     ).toBe(true);
     expect(

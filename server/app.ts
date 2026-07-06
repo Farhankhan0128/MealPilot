@@ -98,6 +98,7 @@ import { buildResilienceDrills, buildResilienceRunbook } from "./services/resili
 import { buildOpenApiDocument } from "./services/openApi.js";
 import { buildSandboxCredentialWorkbench } from "./services/sandboxCredentialWorkbench.js";
 import { buildSwiggyShowcaseSubmissionCenter } from "./services/showcaseSubmissionCenter.js";
+import { buildSwiggySubmissionTimelineCenter } from "./services/submissionTimelineCenter.js";
 import { buildNutritionBudgetIntelligence } from "./services/nutritionBudgetIntelligence.js";
 import { buildObservabilityTraceReport, buildSwiggyRouteOptimizationReport } from "./services/observability.js";
 import { buildSwiggyOfferIntelligence, decideSwiggyOffer } from "./services/offerIntelligence.js";
@@ -998,6 +999,18 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/swiggy-showcase-submission-center", (_req, res) => {
     res.json({ showcaseSubmission: buildSwiggyShowcaseSubmissionCenter() });
+  });
+
+  app.get("/api/swiggy-submission-timeline-center", (_req, res) => {
+    res.json({
+      submissionTimeline: buildSwiggySubmissionTimelineCenter({
+        config,
+        profile: store.getProfile(),
+        coverage: buildMcpCoverage(),
+        latestPlan: store.getAllPlans().at(-1),
+        handoffState: store.getAccessSubmissionState(),
+      }),
+    });
   });
 
   app.get("/api/swiggy-partner-success-desk", (_req, res) => {

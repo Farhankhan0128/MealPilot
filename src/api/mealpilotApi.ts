@@ -97,6 +97,7 @@ import type {
   SwiggyGrowthPartnershipCenter,
   SwiggyInteractionQaCenter,
   SwiggyShowcaseSubmissionCenter,
+  SwiggySubmissionTimelineCenter,
   SwiggyPartnerSuccessDesk,
   SwiggyLlmsManifestVerifier,
   SwiggyInnovationRadarReport,
@@ -406,6 +407,12 @@ export function fetchSwiggyGrowthPartnershipCenter() {
 export function fetchSwiggyShowcaseSubmissionCenter() {
   return requestJson<{ showcaseSubmission: SwiggyShowcaseSubmissionCenter }>(
     "/api/swiggy-showcase-submission-center",
+  );
+}
+
+export function fetchSwiggySubmissionTimelineCenter() {
+  return requestJson<{ submissionTimeline: SwiggySubmissionTimelineCenter }>(
+    "/api/swiggy-submission-timeline-center",
   );
 }
 

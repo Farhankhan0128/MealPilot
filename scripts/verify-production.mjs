@@ -144,6 +144,10 @@ assert(
   "OpenAPI showcase submission center contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-submission-timeline-center"].get.summary.includes("Submission Timeline"),
+  "OpenAPI submission timeline center contract is missing",
+);
+assert(
   openApi.paths["/api/swiggy-partner-success-desk"].get.summary.includes("Partner Success"),
   "OpenAPI partner success desk contract is missing",
 );
@@ -810,6 +814,43 @@ assert(
     showcaseSubmission.showcaseSubmission.assertions.some((assertion) => assertion.includes("no email")) &&
     showcaseSubmission.showcaseSubmission.externalGates.some((gate) => gate.includes("co-branding")),
   "showcase submission outreach, assertions, or gates are missing",
+);
+
+const submissionTimeline = await request("/api/swiggy-submission-timeline-center");
+assert(submissionTimeline.submissionTimeline.score >= 60, "submission timeline score is below target");
+assert(
+  submissionTimeline.submissionTimeline.totals.phases === 8 &&
+    submissionTimeline.submissionTimeline.totals.ready >= 2 &&
+    submissionTimeline.submissionTimeline.totals.operatorInputs >= 2 &&
+    submissionTimeline.submissionTimeline.totals.swiggyGates >= 3 &&
+    submissionTimeline.submissionTimeline.totals.officialActions === 8 &&
+    submissionTimeline.submissionTimeline.totals.proofLinks >= 20,
+  "submission timeline totals are incomplete",
+);
+assert(
+  [
+    "start_building_review",
+    "local_packet_freeze",
+    "demo_video_capture",
+    "request_access_form",
+    "send_demo_handoff",
+    "dynamic_client_registration",
+    "staging_credentials_and_seed",
+    "production_promotion",
+  ].every((id) => submissionTimeline.submissionTimeline.phases.some((phase) => phase.id === id)),
+  "submission timeline phases are incomplete",
+);
+assert(
+  submissionTimeline.submissionTimeline.dailyRunbook.map((day) => day.day).join(",") === "Day 0,Day 1,Day 2" &&
+    submissionTimeline.submissionTimeline.handoffPacket.formTarget === "https://mcp.swiggy.com/builders/access/" &&
+    submissionTimeline.submissionTimeline.handoffPacket.demoTarget === "mailto:builders@swiggy.in",
+  "submission timeline runbook or handoff targets are incomplete",
+);
+assert(
+  submissionTimeline.submissionTimeline.handoffPacket.safetyNote.includes("no automatic external submission") &&
+    submissionTimeline.submissionTimeline.assertions.some((assertion) => assertion.includes("Every phase")) &&
+    submissionTimeline.submissionTimeline.externalGates.some((gate) => gate.includes("Dynamic Client Registration")),
+  "submission timeline safety assertions or gates are missing",
 );
 
 const partnerSuccess = await request("/api/swiggy-partner-success-desk");
@@ -1716,8 +1757,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 43, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 43, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 44, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 44, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -1875,6 +1916,12 @@ assert(
     group.targets.some((target) => target.id === "showcase_submission_card" && target.selector === ".showcase-submission-card"),
   ),
   "visual QA Showcase Submission target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some((target) => target.id === "submission_timeline_card" && target.selector === ".submission-timeline-card"),
+  ),
+  "visual QA Submission Timeline target is missing",
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
@@ -5042,7 +5089,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 43, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 44, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -5056,7 +5103,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("43")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("44")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -5602,6 +5649,9 @@ console.log(
       showcaseSubmissionScore: showcaseSubmission.showcaseSubmission.score,
       showcaseSubmissionAssets: showcaseSubmission.showcaseSubmission.totals.assets,
       showcaseSubmissionGates: showcaseSubmission.showcaseSubmission.totals.swiggyGates,
+      submissionTimelineScore: submissionTimeline.submissionTimeline.score,
+      submissionTimelinePhases: submissionTimeline.submissionTimeline.totals.phases,
+      submissionTimelineSwiggyGates: submissionTimeline.submissionTimeline.totals.swiggyGates,
       partnerSuccessScore: partnerSuccess.partnerSuccess.score,
       partnerSuccessLanes: partnerSuccess.partnerSuccess.totals.lanes,
       partnerSuccessExternalGates: partnerSuccess.partnerSuccess.totals.externalGates,

@@ -116,6 +116,7 @@ import {
   fetchSwiggyFaqPolicyCenter,
   fetchSwiggyGrowthPartnershipCenter,
   fetchSwiggyShowcaseSubmissionCenter,
+  fetchSwiggySubmissionTimelineCenter,
   fetchSwiggyInteractionQaCenter,
   fetchSwiggyAccessDossier,
   fetchSwiggyAccessEvidenceMatrix,
@@ -255,6 +256,7 @@ import type {
   SwiggyFaqPolicyCenter,
   SwiggyGrowthPartnershipCenter,
   SwiggyShowcaseSubmissionCenter,
+  SwiggySubmissionTimelineCenter,
   SwiggyInteractionQaCenter,
   SwiggyPartnerSuccessDesk,
   SwiggyHandshakeDoctor,
@@ -446,6 +448,7 @@ function App() {
   const [swiggyFaqPolicy, setSwiggyFaqPolicy] = useState<SwiggyFaqPolicyCenter | null>(null);
   const [swiggyGrowthPartnership, setSwiggyGrowthPartnership] = useState<SwiggyGrowthPartnershipCenter | null>(null);
   const [showcaseSubmission, setShowcaseSubmission] = useState<SwiggyShowcaseSubmissionCenter | null>(null);
+  const [submissionTimeline, setSubmissionTimeline] = useState<SwiggySubmissionTimelineCenter | null>(null);
   const [partnerSuccess, setPartnerSuccess] = useState<SwiggyPartnerSuccessDesk | null>(null);
   const [interactionQa, setInteractionQa] = useState<SwiggyInteractionQaCenter | null>(null);
   const [channelMultimodalStudio, setChannelMultimodalStudio] =
@@ -647,6 +650,7 @@ function App() {
       faqPolicyResponse,
       growthPartnershipResponse,
       showcaseSubmissionResponse,
+      submissionTimelineResponse,
       partnerSuccessResponse,
       interactionQaResponse,
       channelMultimodalResponse,
@@ -749,6 +753,7 @@ function App() {
       fetchSwiggyFaqPolicyCenter(),
       fetchSwiggyGrowthPartnershipCenter(),
       fetchSwiggyShowcaseSubmissionCenter(),
+      fetchSwiggySubmissionTimelineCenter(),
       fetchSwiggyPartnerSuccessDesk(),
       fetchSwiggyInteractionQaCenter(),
       fetchChannelMultimodalStudio(),
@@ -852,6 +857,7 @@ function App() {
     setSwiggyFaqPolicy(faqPolicyResponse.faqPolicy);
     setSwiggyGrowthPartnership(growthPartnershipResponse.growthPartnership);
     setShowcaseSubmission(showcaseSubmissionResponse.showcaseSubmission);
+    setSubmissionTimeline(submissionTimelineResponse.submissionTimeline);
     setPartnerSuccess(partnerSuccessResponse.partnerSuccess);
     setInteractionQa(interactionQaResponse.interactionQa);
     setChannelMultimodalStudio(channelMultimodalResponse.channelMultimodalStudio);
@@ -958,6 +964,7 @@ function App() {
       faqPolicyResponse,
       growthPartnershipResponse,
       showcaseSubmissionResponse,
+      submissionTimelineResponse,
       partnerSuccessResponse,
       interactionQaResponse,
       channelMultimodalResponse,
@@ -1057,6 +1064,7 @@ function App() {
       fetchSwiggyFaqPolicyCenter(),
       fetchSwiggyGrowthPartnershipCenter(),
       fetchSwiggyShowcaseSubmissionCenter(),
+      fetchSwiggySubmissionTimelineCenter(),
       fetchSwiggyPartnerSuccessDesk(),
       fetchSwiggyInteractionQaCenter(),
       fetchChannelMultimodalStudio(),
@@ -1156,6 +1164,7 @@ function App() {
     setSwiggyFaqPolicy(faqPolicyResponse.faqPolicy);
     setSwiggyGrowthPartnership(growthPartnershipResponse.growthPartnership);
     setShowcaseSubmission(showcaseSubmissionResponse.showcaseSubmission);
+    setSubmissionTimeline(submissionTimelineResponse.submissionTimeline);
     setPartnerSuccess(partnerSuccessResponse.partnerSuccess);
     setInteractionQa(interactionQaResponse.interactionQa);
     setChannelMultimodalStudio(channelMultimodalResponse.channelMultimodalStudio);
@@ -1830,6 +1839,7 @@ function App() {
                 faqPolicy={swiggyFaqPolicy}
                 growthPartnership={swiggyGrowthPartnership}
                 showcaseSubmission={showcaseSubmission}
+                submissionTimeline={submissionTimeline}
                 partnerSuccess={partnerSuccess}
                 interactionQa={interactionQa}
                 channelMultimodalStudio={channelMultimodalStudio}
@@ -2419,6 +2429,7 @@ function LaunchCenterPanel({
   faqPolicy,
   growthPartnership,
   showcaseSubmission,
+  submissionTimeline,
   partnerSuccess,
   interactionQa,
   channelMultimodalStudio,
@@ -2492,6 +2503,7 @@ function LaunchCenterPanel({
   faqPolicy: SwiggyFaqPolicyCenter | null;
   growthPartnership: SwiggyGrowthPartnershipCenter | null;
   showcaseSubmission: SwiggyShowcaseSubmissionCenter | null;
+  submissionTimeline: SwiggySubmissionTimelineCenter | null;
   partnerSuccess: SwiggyPartnerSuccessDesk | null;
   interactionQa: SwiggyInteractionQaCenter | null;
   channelMultimodalStudio: SwiggyChannelMultimodalStudio | null;
@@ -3772,6 +3784,54 @@ function LaunchCenterPanel({
             </a>
             <a href="/api/swiggy-builders-launch-story" target="_blank" rel="noreferrer">
               Story
+            </a>
+          </div>
+        </article>
+
+        <article className="submission-timeline-card">
+          <div className="mini-heading">
+            <CalendarCheck aria-hidden="true" />
+            <strong>Submission Timeline</strong>
+          </div>
+          <span>
+            {submissionTimeline
+              ? `${submissionTimeline.score}/100, ${submissionTimeline.currentStage}`
+              : "Sequencing form, demo, credentials, staging, and production handoff"}
+          </span>
+          <div className="submission-timeline-grid">
+            <div>
+              <strong>{submissionTimeline?.totals.ready ?? 0}/{submissionTimeline?.totals.phases ?? 0}</strong>
+              <span>Phases</span>
+            </div>
+            <div>
+              <strong>{submissionTimeline?.totals.operatorInputs ?? 0}</strong>
+              <span>Inputs</span>
+            </div>
+            <div>
+              <strong>{submissionTimeline?.totals.swiggyGates ?? 0}</strong>
+              <span>Swiggy gates</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(submissionTimeline?.phases ?? []).slice(0, 5).map((item) => (
+              <li
+                key={item.id}
+                data-status={item.status === "ready" ? "healthy" : item.status === "swiggy_gate" ? "blocked" : "watch"}
+              >
+                <span>{item.label}</span>
+                <strong>{item.owner}</strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-intelligence-actions" aria-label="Submission timeline links">
+            <a href="/api/swiggy-submission-timeline-center" target="_blank" rel="noreferrer">
+              Timeline API
+            </a>
+            <a href="/api/access-submission-studio" target="_blank" rel="noreferrer">
+              Access studio
+            </a>
+            <a href="/api/builder-packet-export" target="_blank" rel="noreferrer">
+              Packet
             </a>
           </div>
         </article>
