@@ -114,6 +114,7 @@ Open the Launch Center and show:
 - Upstream Watch showing `llms.txt`, `llms-full.txt`, v1.0 limitations, v1.1/v1.2/v2 roadmap items, signed-manifest watch, and new-tool action queues.
 - Source Intelligence showing official website pages, CTA inventory, `llms` docs, markdown twins, 35-tool reference counts, drift signals, and build-queue actions.
 - Deep Site Map showing every Builders page, rendered module signal, CTA, header/docs/footer link, proof path, source-reconciliation section, assertion, and external gate in one reviewer audit.
+- Developer Quickstart Workbench showing official first-call steps, SDK/framework adapters, `get_addresses` JSON-RPC drills, OAuth gates, and recipe handoffs.
 - Innovation Radar showing premium opportunity lanes, route optimizations, build phases, differentiators, and staging or partner gates derived from Swiggy source signals.
 - AI Client Connect Kit showing Claude Desktop, ChatGPT, Cursor, VS Code, Windsurf, generic MCP config, coding-agent rules, and SDK auth modes.
 - Brand Compliance Kit showing Powered by Swiggy attribution, co-branding asset gates, palette audit, and no-endorsement copy.
@@ -176,6 +177,7 @@ Open Production Evidence and show:
 - Swiggy Upstream Watch artifact for changelog, coding-agent docs, roadmap, signed-manifest, and release-drift control.
 - Swiggy Source Intelligence artifact for website/docs/API drift reconciliation, 35-tool count alignment, and external gate tracking.
 - Swiggy Deep Site Map artifact for page/module/CTA/header/footer proof coverage and reviewer readback.
+- Developer Quickstart Workbench artifact for self-serve first-call readiness, SDK adapters, auth gates, and route handoffs.
 - Swiggy Innovation Radar artifact for premium product strategy, opportunity lanes, route optimization, build phases, and partner gates.
 - Tool Contract Matrix artifact for all-tool schema, response envelope, retry, confirmation, and error-bucket evidence.
 - State Orchestrator artifact for official multi-turn cart state, switch guards, stale-cart recovery, and voice/chat response contracts.
@@ -214,6 +216,7 @@ Briefly show production readiness:
 - `/api/swiggy-upstream-watch`
 - `/api/swiggy-source-intelligence`
 - `/api/swiggy-deep-site-map`
+- `/api/swiggy-developer-quickstart`
 - `/api/swiggy-innovation-radar`
 - `/api/swiggy-builder-intake`
 - `/api/swiggy-faq-policy`

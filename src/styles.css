@@ -1130,6 +1130,10 @@ select:focus {
   grid-column: span 2;
 }
 
+.developer-quickstart-card {
+  grid-column: span 2;
+}
+
 .access-dossier-card {
   grid-column: span 2;
 }
@@ -1319,6 +1323,7 @@ select:focus {
 .staging-certification-grid,
 .upstream-watch-grid,
 .source-intelligence-grid,
+.developer-quickstart-grid,
 .innovation-radar-grid,
 .coding-agent-grid,
 .brand-compliance-grid {
@@ -1350,6 +1355,7 @@ select:focus {
 .staging-certification-grid div,
 .upstream-watch-grid div,
 .source-intelligence-grid div,
+.developer-quickstart-grid div,
 .innovation-radar-grid div,
 .coding-agent-grid div,
 .brand-compliance-grid div {
@@ -1384,6 +1390,7 @@ select:focus {
 .staging-certification-grid strong,
 .upstream-watch-grid strong,
 .source-intelligence-grid strong,
+.developer-quickstart-grid strong,
 .innovation-radar-grid strong,
 .coding-agent-grid strong,
 .brand-compliance-grid strong {
@@ -1415,6 +1422,7 @@ select:focus {
 .staging-certification-grid span,
 .upstream-watch-grid span,
 .source-intelligence-grid span,
+.developer-quickstart-grid span,
 .innovation-radar-grid span,
 .coding-agent-grid span,
 .brand-compliance-grid span {
@@ -1602,6 +1610,7 @@ select:focus {
 .launch-bundle-card,
 .docs-coverage-card,
 .source-intelligence-card,
+.developer-quickstart-card,
 .innovation-radar-card,
 .coding-agent-card,
 .client-connect-card,
@@ -1686,6 +1695,7 @@ select:focus {
 .slo-grid,
 .docs-coverage-grid,
 .source-intelligence-grid,
+.developer-quickstart-grid,
 .innovation-radar-grid,
 .coding-agent-grid,
 .client-connect-grid,
@@ -1698,6 +1708,7 @@ select:focus {
 
 .docs-coverage-grid,
 .source-intelligence-grid,
+.developer-quickstart-grid,
 .innovation-radar-grid,
 .coding-agent-grid,
 .client-connect-grid,
@@ -1710,6 +1721,7 @@ select:focus {
 
 .docs-coverage-grid div,
 .source-intelligence-grid div,
+.developer-quickstart-grid div,
 .innovation-radar-grid div,
 .coding-agent-grid div,
 .client-connect-grid div,
@@ -2610,6 +2622,7 @@ select:focus {
 .launch-bundle-card,
 .docs-coverage-card,
 .source-intelligence-card,
+.developer-quickstart-card,
 .innovation-radar-card,
 .coding-agent-card,
 .client-connect-card,
@@ -2666,12 +2679,14 @@ select:focus {
 .staging-certification-grid div,
 .upstream-watch-grid div,
 .source-intelligence-grid div,
+.developer-quickstart-grid div,
 .innovation-radar-grid div,
 .coding-agent-grid div,
 .brand-compliance-grid div,
 .website-atlas-grid div,
 .docs-coverage-grid div,
 .source-intelligence-grid div,
+.developer-quickstart-grid div,
 .innovation-radar-grid div,
 .coding-agent-grid div,
 .client-connect-grid div,
@@ -2872,6 +2887,7 @@ select:focus {
   .launch-bundle-card,
   .docs-coverage-card,
   .source-intelligence-card,
+  .developer-quickstart-card,
   .innovation-radar-card,
   .client-connect-card,
   .journey-compiler-card,

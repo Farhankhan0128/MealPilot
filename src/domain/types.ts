@@ -1655,6 +1655,102 @@ export interface AiClientConnectKit {
   externalGates: string[];
 }
 
+export type DeveloperQuickstartStatus = "ready" | "operator_input" | "external_gate" | "watch";
+
+export interface DeveloperQuickstartSource {
+  id: string;
+  label: string;
+  url: string;
+  signal: string;
+}
+
+export interface DeveloperQuickstartStep {
+  id: string;
+  sequence: number;
+  label: string;
+  officialSignal: string;
+  mealPilotEvidence: string;
+  endpoint: string;
+  status: DeveloperQuickstartStatus;
+}
+
+export interface DeveloperFrameworkAdapter {
+  id: string;
+  label: string;
+  language: "typescript" | "python" | "multi";
+  authMode: AgentSdkAuthMode;
+  mcpClient: string;
+  serverUrls: string[];
+  setupSteps: string[];
+  firstCallPrompt: string;
+  reconnectPolicy: string;
+  status: DeveloperQuickstartStatus;
+}
+
+export interface DeveloperFirstCallDrill {
+  id: string;
+  server: SwiggyServer;
+  endpoint: string;
+  tool: string;
+  jsonRpc: {
+    jsonrpc: "2.0";
+    id: string;
+    method: "tools/call" | "tools/list";
+    params: {
+      name?: string;
+      arguments?: Record<string, unknown>;
+    };
+  };
+  expectedSignal: string;
+  prerequisites: string[];
+  retryPolicy: string;
+  safetyGate: string;
+  status: DeveloperQuickstartStatus;
+}
+
+export interface DeveloperRecipeHandoff {
+  id: string;
+  label: string;
+  officialDoc: string;
+  servers: SwiggyServer[];
+  tools: string[];
+  routeOptimization: string;
+  confirmationGates: string[];
+  evidenceLinks: string[];
+  status: DeveloperQuickstartStatus;
+}
+
+export interface DeveloperQuickstartAuthGate {
+  id: string;
+  label: string;
+  officialRequirement: string;
+  mealPilotControl: string;
+  evidenceLinks: string[];
+  status: DeveloperQuickstartStatus;
+}
+
+export interface DeveloperQuickstartWorkbench {
+  generatedAt: string;
+  score: number;
+  officialSources: DeveloperQuickstartSource[];
+  totals: {
+    steps: number;
+    frameworks: number;
+    firstCallDrills: number;
+    recipeHandoffs: number;
+    authGates: number;
+    readyItems: number;
+  };
+  readinessSteps: DeveloperQuickstartStep[];
+  frameworkAdapters: DeveloperFrameworkAdapter[];
+  firstCallDrills: DeveloperFirstCallDrill[];
+  recipeHandoffs: DeveloperRecipeHandoff[];
+  authGates: DeveloperQuickstartAuthGate[];
+  commands: Array<{ id: string; command: string; proves: string; expectedSignal: string }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type CodingAgentGovernanceStatus = "ready" | "needs_update" | "missing";
 
 export interface CodingAgentGovernanceSource {

@@ -353,8 +353,9 @@ const staticDocs: StaticDoc[] = [
     title: "Build an agent",
     markdownPath: "docs/start/developer/build-an-agent.md",
     officialSummary: "Working code to wire Swiggy MCP into an agent framework.",
-    mealPilotSurface: "Express MCP gateway, JSON-RPC mock, typed client fetchers, and Tool Lab provide the app-level implementation.",
-    evidenceLinks: ["/api/mcp-gateway", "/api/mcp/tool-lab", "/api/openapi.json"],
+    mealPilotSurface:
+      "Developer Quickstart Workbench, Express MCP gateway, JSON-RPC mock, typed client fetchers, and Tool Lab provide the app-level implementation.",
+    evidenceLinks: ["/api/swiggy-developer-quickstart", "/api/mcp-gateway", "/api/mcp/tool-lab", "/api/openapi.json"],
     status: "implemented",
   },
   {
@@ -363,8 +364,9 @@ const staticDocs: StaticDoc[] = [
     title: "Developer quickstart",
     markdownPath: "docs/start/developer/index.md",
     officialSummary: "Zero to first successful Swiggy tool call.",
-    mealPilotSurface: "Local mock mode, npm scripts, Docker/Render assets, and production smoke create the reviewer quickstart.",
-    evidenceLinks: ["/api/health", "/api/mcp/food", "/api/mcp/tool-lab"],
+    mealPilotSurface:
+      "Developer Quickstart Workbench, local mock mode, npm scripts, Docker/Render assets, and production smoke create the reviewer quickstart.",
+    evidenceLinks: ["/api/swiggy-developer-quickstart", "/api/health", "/api/mcp/food", "/api/mcp/tool-lab"],
     status: "implemented",
   },
   {

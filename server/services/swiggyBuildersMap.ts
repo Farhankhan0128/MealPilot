@@ -46,7 +46,7 @@ const pages: SwiggyBuilderPageCoverage[] = [
     url: "https://mcp.swiggy.com/builders/docs/start/developer/",
     purpose: "First MCP tool call and path from localhost to staging to production.",
     mealPilotCoverage:
-      "Local JSON-RPC mock mirrors tools/call, /api/mcp/:server routes can switch to staging/production once a bearer token exists, and /api/mcp-gateway shows cutover posture.",
+      "Developer Quickstart Workbench maps official steps, framework adapters, first-call drills, and auth gates; local JSON-RPC mock mirrors tools/call, /api/mcp/:server routes can switch to staging/production once a bearer token exists, and /api/mcp-gateway shows cutover posture.",
     implementationStatus: "implemented",
   },
   {

@@ -413,6 +413,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-developer-quickstart": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy developer quickstart workbench for first tool call readiness",
+          responses: {
+            "200": {
+              description:
+                "Self-serve developer workbench mapping official quickstart, build-agent, and OAuth docs into readiness steps, framework adapters, first-call JSON-RPC drills, recipe handoffs, auth gates, assertions, and verification commands",
+            },
+          },
+        },
+      },
       "/api/swiggy-innovation-radar": {
         get: {
           tags: ["Builder Access"],

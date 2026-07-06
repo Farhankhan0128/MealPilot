@@ -26,6 +26,7 @@ import {
   ShieldCheck,
   ShoppingBasket,
   Sparkles,
+  Terminal,
   Utensils,
   Users,
   X,
@@ -55,6 +56,7 @@ import {
   fetchComplianceEvidence,
   fetchDataGovernanceCenter,
   fetchCredentialOnboarding,
+  fetchDeveloperQuickstartWorkbench,
   fetchDemoStudio,
   fetchErrorIntelligence,
   fetchEnterpriseDelegatedAuthCenter,
@@ -147,6 +149,7 @@ import type {
   CredentialOnboardingReport,
   DataGovernanceCenter,
   DemoStudioStep,
+  DeveloperQuickstartWorkbench,
   EnterpriseDelegatedAuthCenter,
   ErrorIntelligenceReport,
   EvaluationLab,
@@ -370,6 +373,7 @@ function App() {
   const [swiggyUpstreamWatch, setSwiggyUpstreamWatch] = useState<SwiggyUpstreamWatchReport | null>(null);
   const [swiggySourceIntelligence, setSwiggySourceIntelligence] =
     useState<SwiggySourceIntelligenceReport | null>(null);
+  const [developerQuickstart, setDeveloperQuickstart] = useState<DeveloperQuickstartWorkbench | null>(null);
   const [swiggyInnovationRadar, setSwiggyInnovationRadar] = useState<SwiggyInnovationRadarReport | null>(null);
   const [aiClientConnectKit, setAiClientConnectKit] = useState<AiClientConnectKit | null>(null);
   const [codingAgentGovernance, setCodingAgentGovernance] = useState<CodingAgentGovernance | null>(null);
@@ -528,6 +532,7 @@ function App() {
       docsCoverageResponse,
       upstreamWatchResponse,
       sourceIntelligenceResponse,
+      developerQuickstartResponse,
       innovationRadarResponse,
       aiClientConnectResponse,
       codingAgentGovernanceResponse,
@@ -594,6 +599,7 @@ function App() {
       fetchSwiggyDocsCoverage(),
       fetchSwiggyUpstreamWatch(),
       fetchSourceIntelligenceOptional(),
+      fetchDeveloperQuickstartWorkbench(),
       fetchInnovationRadarOptional(),
       fetchAiClientConnectKit(),
       fetchCodingAgentGovernance(),
@@ -661,6 +667,7 @@ function App() {
     setSwiggyDocsCoverage(docsCoverageResponse.docsCoverage);
     setSwiggyUpstreamWatch(upstreamWatchResponse.upstreamWatch);
     setSwiggySourceIntelligence(sourceIntelligenceResponse.sourceIntelligence);
+    setDeveloperQuickstart(developerQuickstartResponse.quickstartWorkbench);
     setSwiggyInnovationRadar(innovationRadarResponse.innovationRadar);
     setAiClientConnectKit(aiClientConnectResponse.connectKit);
     setCodingAgentGovernance(codingAgentGovernanceResponse.codingAgentGovernance);
@@ -731,6 +738,7 @@ function App() {
       docsCoverageResponse,
       upstreamWatchResponse,
       sourceIntelligenceResponse,
+      developerQuickstartResponse,
       innovationRadarResponse,
       aiClientConnectResponse,
       codingAgentGovernanceResponse,
@@ -794,6 +802,7 @@ function App() {
       fetchSwiggyDocsCoverage(),
       fetchSwiggyUpstreamWatch(),
       fetchSourceIntelligenceOptional(),
+      fetchDeveloperQuickstartWorkbench(),
       fetchInnovationRadarOptional(),
       fetchAiClientConnectKit(),
       fetchCodingAgentGovernance(),
@@ -857,6 +866,7 @@ function App() {
     setSwiggyDocsCoverage(docsCoverageResponse.docsCoverage);
     setSwiggyUpstreamWatch(upstreamWatchResponse.upstreamWatch);
     setSwiggySourceIntelligence(sourceIntelligenceResponse.sourceIntelligence);
+    setDeveloperQuickstart(developerQuickstartResponse.quickstartWorkbench);
     setSwiggyInnovationRadar(innovationRadarResponse.innovationRadar);
     setAiClientConnectKit(aiClientConnectResponse.connectKit);
     setCodingAgentGovernance(codingAgentGovernanceResponse.codingAgentGovernance);
@@ -1494,6 +1504,7 @@ function App() {
                 docsCoverage={swiggyDocsCoverage}
                 upstreamWatch={swiggyUpstreamWatch}
                 sourceIntelligence={swiggySourceIntelligence}
+                developerQuickstart={developerQuickstart}
                 innovationRadar={swiggyInnovationRadar}
                 aiClientConnectKit={aiClientConnectKit}
                 codingAgentGovernance={codingAgentGovernance}
@@ -2047,6 +2058,7 @@ function LaunchCenterPanel({
   docsCoverage,
   upstreamWatch,
   sourceIntelligence,
+  developerQuickstart,
   innovationRadar,
   aiClientConnectKit,
   codingAgentGovernance,
@@ -2095,6 +2107,7 @@ function LaunchCenterPanel({
   docsCoverage: SwiggyDocsCoverageReport | null;
   upstreamWatch: SwiggyUpstreamWatchReport | null;
   sourceIntelligence: SwiggySourceIntelligenceReport | null;
+  developerQuickstart: DeveloperQuickstartWorkbench | null;
   innovationRadar: SwiggyInnovationRadarReport | null;
   aiClientConnectKit: AiClientConnectKit | null;
   codingAgentGovernance: CodingAgentGovernance | null;
@@ -3210,6 +3223,54 @@ function LaunchCenterPanel({
                 Official source
               </a>
             ))}
+          </div>
+        </article>
+
+        <article className="developer-quickstart-card">
+          <div className="mini-heading">
+            <Terminal aria-hidden="true" />
+            <strong>Developer Quickstart</strong>
+          </div>
+          <span>
+            {developerQuickstart
+              ? `${developerQuickstart.score}/100, ${developerQuickstart.totals.firstCallDrills} first-call drills`
+              : "Mapping Swiggy quickstart into first-call readiness"}
+          </span>
+          <div className="developer-quickstart-grid">
+            <div>
+              <strong>{developerQuickstart?.totals.steps ?? 0}</strong>
+              <span>Steps</span>
+            </div>
+            <div>
+              <strong>{developerQuickstart?.totals.frameworks ?? 0}</strong>
+              <span>Frameworks</span>
+            </div>
+            <div>
+              <strong>{developerQuickstart?.totals.authGates ?? 0}</strong>
+              <span>Auth gates</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(developerQuickstart?.firstCallDrills ?? []).slice(0, 4).map((drill) => (
+              <li
+                key={drill.id}
+                data-status={drill.status === "ready" ? "healthy" : drill.status === "external_gate" ? "blocked" : "watch"}
+              >
+                <span>{drill.tool}</span>
+                <strong>{drill.server}</strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-intelligence-actions" aria-label="Developer quickstart links">
+            <a href="/api/swiggy-developer-quickstart" target="_blank" rel="noreferrer">
+              Open workbench
+            </a>
+            <a href="https://mcp.swiggy.com/builders/docs/start/developer/" target="_blank" rel="noreferrer">
+              Quickstart
+            </a>
+            <a href="https://mcp.swiggy.com/builders/docs/start/authenticate/" target="_blank" rel="noreferrer">
+              OAuth docs
+            </a>
           </div>
         </article>
 

@@ -63,6 +63,10 @@ assert(
   "OpenAPI source intelligence contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-developer-quickstart"]?.get?.summary?.includes("developer quickstart"),
+  "OpenAPI developer quickstart contract is missing",
+);
+assert(
   openApi.paths["/api/swiggy-innovation-radar"]?.get?.summary?.includes("innovation radar"),
   "OpenAPI innovation radar contract is missing",
 );
@@ -772,7 +776,7 @@ const reviewerArtifactVault = await request("/api/reviewer-artifact-vault");
 assert(reviewerArtifactVault.reviewerArtifactVault.score >= 90, "reviewer artifact vault score is below target");
 assert(reviewerArtifactVault.reviewerArtifactVault.totalArtifacts >= 30, "reviewer artifact vault artifacts are incomplete");
 assert(reviewerArtifactVault.reviewerArtifactVault.readyArtifacts >= 30, "reviewer artifact vault ready artifacts are incomplete");
-assert(reviewerArtifactVault.reviewerArtifactVault.totalScreenshotTargets === 8, "reviewer artifact vault screenshot targets are incomplete");
+assert(reviewerArtifactVault.reviewerArtifactVault.totalScreenshotTargets === 9, "reviewer artifact vault screenshot targets are incomplete");
 assert(reviewerArtifactVault.reviewerArtifactVault.readyScreenshotTargets >= 5, "reviewer artifact vault ready screenshots are incomplete");
 assert(reviewerArtifactVault.reviewerArtifactVault.totalCommands === 7, "reviewer artifact vault commands are incomplete");
 assert(reviewerArtifactVault.reviewerArtifactVault.readyCommands >= 6, "reviewer artifact vault ready commands are incomplete");
@@ -807,6 +811,17 @@ assert(
   "reviewer artifact vault deep site map artifact is missing",
 );
 assert(
+  reviewerArtifactVault.reviewerArtifactVault.artifactSections.some((section) =>
+    section.artifacts.some(
+      (artifact) =>
+        artifact.id === "developer_quickstart" &&
+        artifact.label === "Developer Quickstart Workbench" &&
+        artifact.path === "/api/swiggy-developer-quickstart",
+    ),
+  ),
+  "reviewer artifact vault developer quickstart artifact is missing",
+);
+assert(
   reviewerArtifactVault.reviewerArtifactVault.screenshotTargets.some(
     (target) =>
       target.id === "luxury_workspace_card" &&
@@ -814,6 +829,15 @@ assert(
       target.status === "ready",
   ),
   "reviewer artifact vault luxury screenshot target is missing",
+);
+assert(
+  reviewerArtifactVault.reviewerArtifactVault.screenshotTargets.some(
+    (target) =>
+      target.id === "developer_quickstart_card" &&
+      target.selector === ".developer-quickstart-card" &&
+      target.status === "ready",
+  ),
+  "reviewer artifact vault developer quickstart screenshot target is missing",
 );
 assert(
   reviewerArtifactVault.reviewerArtifactVault.commands.some(
@@ -841,8 +865,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 15, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 15, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 16, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 16, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -895,6 +919,12 @@ assert(
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some((target) => target.id === "developer_quickstart_card" && target.selector === ".developer-quickstart-card"),
+  ),
+  "visual QA developer quickstart target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
     group.targets.some((target) => target.id === "coding_agent_card" && target.selector === ".coding-agent-card"),
   ),
   "visual QA coding agent governance target is missing",
@@ -931,7 +961,7 @@ assert(
     (command) =>
       command.id === "visual_capture_harness" &&
       command.command === "npm run verify:visual" &&
-      command.expectedSignal.includes("targetCount >= 15"),
+      command.expectedSignal.includes("targetCount >= 16"),
   ),
   "visual QA Playwright command is missing",
 );
@@ -1103,6 +1133,53 @@ assert(
   deepSiteMap.deepSiteMap.assertions.some((assertion) => assertion.includes("Every public Builders page")) &&
     deepSiteMap.deepSiteMap.externalGates.some((gate) => gate.includes("Google Forms")),
   "deep site map assertions or external gates are incomplete",
+);
+
+const developerQuickstart = await request("/api/swiggy-developer-quickstart");
+assert(developerQuickstart.quickstartWorkbench.score >= 85, "developer quickstart score is below target");
+assert(developerQuickstart.quickstartWorkbench.totals.steps === 6, "developer quickstart step coverage is incomplete");
+assert(developerQuickstart.quickstartWorkbench.totals.frameworks >= 5, "developer quickstart framework coverage is incomplete");
+assert(developerQuickstart.quickstartWorkbench.totals.firstCallDrills === 4, "developer quickstart first-call drills are incomplete");
+assert(developerQuickstart.quickstartWorkbench.totals.recipeHandoffs === 4, "developer quickstart recipe handoffs are incomplete");
+assert(developerQuickstart.quickstartWorkbench.totals.authGates === 5, "developer quickstart auth gates are incomplete");
+assert(
+  ["developer_quickstart", "build_an_agent", "authenticate", "llms_index"].every((id) =>
+    developerQuickstart.quickstartWorkbench.officialSources.some((source) => source.id === id),
+  ),
+  "developer quickstart official sources are incomplete",
+);
+assert(
+  developerQuickstart.quickstartWorkbench.firstCallDrills.some(
+    (drill) =>
+      drill.id === "food_get_addresses" &&
+      drill.server === "food" &&
+      drill.tool === "get_addresses" &&
+      drill.jsonRpc.method === "tools/call" &&
+      drill.jsonRpc.params.name === "get_addresses",
+  ),
+  "developer quickstart get_addresses first-call drill is missing",
+);
+assert(
+  developerQuickstart.quickstartWorkbench.frameworkAdapters.some(
+    (adapter) =>
+      adapter.id === "openai_agents_js" &&
+      adapter.authMode === "native_auth_provider" &&
+      adapter.serverUrls.includes("https://mcp.swiggy.com/im"),
+  ),
+  "developer quickstart OpenAI Agents JS adapter is missing",
+);
+assert(
+  developerQuickstart.quickstartWorkbench.recipeHandoffs.some(
+    (handoff) =>
+      handoff.id === "combined_evening" &&
+      handoff.confirmationGates.includes("book_table") &&
+      handoff.evidenceLinks.includes("/api/swiggy-route-optimizer"),
+  ),
+  "developer quickstart combined route handoff is missing",
+);
+assert(
+  developerQuickstart.quickstartWorkbench.authGates.some((gate) => gate.id === "staging" && gate.status === "external_gate"),
+  "developer quickstart staging auth gate is missing",
 );
 
 const innovationRadar = await request("/api/swiggy-innovation-radar");
@@ -2087,6 +2164,12 @@ assert(
   "reviewer proof deep site map artifact is missing",
 );
 assert(
+  proof.proof.artifacts.some(
+    (artifact) => artifact.label === "Developer Quickstart Workbench" && artifact.path === "/api/swiggy-developer-quickstart",
+  ),
+  "reviewer proof developer quickstart artifact is missing",
+);
+assert(
   proof.proof.artifacts.some((artifact) => artifact.label === "Swiggy Innovation Radar"),
   "reviewer proof innovation radar artifact is missing",
 );
@@ -2602,7 +2685,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 15, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 16, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -2616,7 +2699,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("15")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("16")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -2647,6 +2730,7 @@ assert(
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Submission Console") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Website Atlas") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Deep Site Map") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Developer Quickstart Workbench") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Builder Intake Command Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "FAQ & Policy Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Growth Partnership Center") &&
@@ -2772,6 +2856,10 @@ assert(
   "launch bundle deep site map handoff link is missing",
 );
 assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-developer-quickstart"),
+  "launch bundle developer quickstart handoff link is missing",
+);
+assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-innovation-radar"),
   "launch bundle innovation radar handoff link is missing",
 );
@@ -2846,6 +2934,9 @@ console.log(
       deepSiteMapScore: deepSiteMap.deepSiteMap.score,
       deepSiteMapPages: deepSiteMap.deepSiteMap.totals.pages,
       deepSiteMapCtas: deepSiteMap.deepSiteMap.totals.ctas,
+      developerQuickstartScore: developerQuickstart.quickstartWorkbench.score,
+      developerQuickstartFirstCalls: developerQuickstart.quickstartWorkbench.totals.firstCallDrills,
+      developerQuickstartFrameworks: developerQuickstart.quickstartWorkbench.totals.frameworks,
       innovationRadarScore: innovationRadar.innovationRadar.score,
       innovationRadarLanes: innovationRadar.innovationRadar.opportunityCount,
       enterpriseDelegatedAuthScore: enterpriseAuth.enterpriseAuth.score,

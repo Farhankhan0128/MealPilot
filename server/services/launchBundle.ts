@@ -33,6 +33,15 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
         "Consolidates every Builders page, module signal, CTA, header/docs/footer link, proof path, source section, assertion, and external gate into one reviewer audit.",
     },
     {
+      id: "developer_quickstart",
+      label: "Developer Quickstart Workbench",
+      path: "/api/swiggy-developer-quickstart",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Turns Swiggy's self-serve developer quickstart into readiness steps, framework adapters, first-call JSON-RPC drills, auth gates, and recipe handoffs.",
+    },
+    {
       id: "builder_intake",
       label: "Builder Intake Command Center",
       path: "/api/swiggy-builder-intake",
@@ -512,6 +521,7 @@ function buildPhases(config: ServerConfig, latestPlan: MealPlan | undefined, art
         artifact("staging_transcript"),
         artifact("website_atlas"),
         artifact("deep_site_map"),
+        artifact("developer_quickstart"),
         artifact("builder_intake"),
         artifact("faq_policy"),
         artifact("growth_partnership"),
@@ -695,6 +705,7 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- Packet Markdown export: /api/builder-packet-export.md",
     "- Website Atlas: /api/swiggy-website-atlas",
     "- Deep Site Map: /api/swiggy-deep-site-map",
+    "- Developer Quickstart Workbench: /api/swiggy-developer-quickstart",
     "- Builder Intake Command Center: /api/swiggy-builder-intake",
     "- FAQ & Policy Center: /api/swiggy-faq-policy",
     "- Growth Partnership Center: /api/swiggy-growth-partnership",

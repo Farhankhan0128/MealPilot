@@ -97,7 +97,7 @@ function coverageClusters(): SwiggySourceCoverageCluster[] {
         `${officialSource}docs/start/consumer/`,
         `${officialSource}docs/start/authenticate/`,
       ],
-      ["/api/ai-client-connect-kit", "/api/enterprise-delegated-auth", "/api/credential-onboarding"],
+      ["/api/swiggy-developer-quickstart", "/api/ai-client-connect-kit", "/api/enterprise-delegated-auth", "/api/credential-onboarding"],
       "covered",
       "Keep the developer path runnable locally while enterprise and consumer paths remain documented with explicit gates.",
     ),

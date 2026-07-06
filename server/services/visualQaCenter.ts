@@ -156,6 +156,17 @@ const targetGroups = [
         "artifacts/visual-qa/deep-site-map-card.png",
       ),
       target(
+        "developer_quickstart_card",
+        "Developer Quickstart card",
+        "/",
+        ".developer-quickstart-card",
+        "desktop",
+        1280,
+        900,
+        "Developer Quickstart shows first-call drills, SDK adapters, OAuth gates, and official quickstart proof.",
+        "artifacts/visual-qa/developer-quickstart-card.png",
+      ),
+      target(
         "innovation_radar_card",
         "Innovation Radar card",
         "/",
@@ -317,7 +328,7 @@ const commands = [
     "visual_capture_harness",
     "npm run verify:visual",
     "Playwright captures every Visual QA target at desktop, tablet, and mobile sizes and writes report.json.",
-    "ok true with targetCount >= 15 and PNG files under artifacts/visual-qa.",
+    "ok true with targetCount >= 16 and PNG files under artifacts/visual-qa.",
   ),
   command(
     "desktop_capture",
@@ -381,7 +392,7 @@ export function buildVisualQaCenter(): VisualQaCenter {
       },
     ],
     assertions: [
-      "Visual QA targets cover planner, Launch Center, Deep Site Map, Coding Agent Governance, Luxury Experience Workspace, Reviewer Artifact Vault, Production Evidence, Demo Studio, and widget fallbacks.",
+      "Visual QA targets cover planner, Launch Center, Deep Site Map, Developer Quickstart, Coding Agent Governance, Luxury Experience Workspace, Reviewer Artifact Vault, Production Evidence, Demo Studio, and widget fallbacks.",
       "Desktop, tablet, and mobile viewports are represented with explicit selectors and artifact paths.",
       "UI rules encode no-overlap, text-fit, widget-security, redaction, confirmation-visibility, and mobile single-column checks.",
       "Playwright screenshot automation captures every manifest target and writes local PNG evidence plus report.json.",
