@@ -304,6 +304,7 @@ POST /api/swiggy-location-trust/select
 GET  /api/swiggy-cart-mutation-workbench
 POST /api/swiggy-cart-mutation-workbench/mutate
 GET  /api/swiggy-discovery-freshness
+POST /api/swiggy-discovery-freshness/resolve
 GET  /api/swiggy-confirmation-command-center
 GET  /api/swiggy-cancellation-care-center
 GET  /api/swiggy-dineout-precision-center
@@ -518,7 +519,7 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 
 `GET /api/swiggy-cart-mutation-workbench` plus `POST /api/swiggy-cart-mutation-workbench/mutate` is the cart mutation control room: it covers Food `get_food_cart`, `update_food_cart`, and `flush_food_cart`, Instamart `get_cart`, `update_cart`, and `clear_cart`, Dineout `create_cart`, executable readback-after-write decisions, payment-method truth, add-on confirmation, no-commercial-action guarantees, and live cart-write gates.
 
-`GET /api/swiggy-discovery-freshness` is the search and availability workbench: it covers Food `search_restaurants`, `get_restaurant_menu`, and `search_menu`, Instamart `search_products` and `your_go_to_items`, Dineout `search_restaurants_dineout`, `get_restaurant_details`, and `get_available_slots`, with pagination truth, variant selection, coordinate consistency, and stale-result invalidation.
+`GET /api/swiggy-discovery-freshness` plus `POST /api/swiggy-discovery-freshness/resolve` is the search and availability workbench: it covers Food `search_restaurants`, `get_restaurant_menu`, and `search_menu`, Instamart `search_products` and `your_go_to_items`, Dineout `search_restaurants_dineout`, `get_restaurant_details`, and `get_available_slots`, with executable read-only discovery, pagination truth, variant selection, coordinate consistency, no-cart-mutation telemetry, and stale-result invalidation.
 
 `GET /api/swiggy-confirmation-command-center` is the visible final-commerce confirmation proof for Food `place_food_order`, Instamart `checkout`, and Dineout `book_table`: it shows fresh cart or slot reads, explicit user approval, separate approvals for combined plans, post-action status probes before retry, Swiggy-response payment and free-booking truth, and external gates for live credentials.
 

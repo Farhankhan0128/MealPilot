@@ -1,12 +1,15 @@
+import crypto from "node:crypto";
 import type { ServerConfig } from "../config.js";
 import type {
   MealPlan,
+  SwiggyDiscoveryResolution,
   SwiggyDiscoveryFreshnessControl,
   SwiggyDiscoveryFreshnessLane,
   SwiggyDiscoveryFreshnessReport,
   SwiggyDiscoveryFreshnessScenario,
   SwiggyDiscoveryFreshnessStatus,
   SwiggyDiscoveryFreshnessTelemetry,
+  SwiggyServer,
 } from "../../src/domain/types.js";
 
 const officialSources = [
@@ -26,6 +29,89 @@ function statusWeight(status: SwiggyDiscoveryFreshnessStatus) {
   if (status === "ready") return 1;
   if (status === "watch") return 0.78;
   return 0.48;
+}
+
+function laneForTool(tool: SwiggyDiscoveryResolution["input"]["discoveryTool"]) {
+  if (tool === "search_restaurants") return "food_restaurant_search";
+  if (tool === "get_restaurant_menu" || tool === "search_menu") return "food_menu_detail";
+  if (tool === "search_products" || tool === "your_go_to_items") return "instamart_product_search";
+  if (tool === "search_restaurants_dineout" || tool === "get_restaurant_details") return "dineout_search_and_details";
+  return "dineout_slot_freshness";
+}
+
+function nextToolFor(input: {
+  server: SwiggyServer;
+  tool: SwiggyDiscoveryResolution["input"]["discoveryTool"];
+  downstreamIntent: SwiggyDiscoveryResolution["input"]["downstreamIntent"];
+}) {
+  if (input.downstreamIntent === "cart_mutation") {
+    if (input.server === "food") return "search_menu then /api/swiggy-cart-mutation-workbench/mutate";
+    if (input.server === "instamart") return "select variant spinId then /api/swiggy-cart-mutation-workbench/mutate";
+    return "get_available_slots before Dineout create_cart gate";
+  }
+  if (input.downstreamIntent === "booking") return "get_available_slots then confirmation command center";
+  if (input.downstreamIntent === "combined_plan") return "refresh affected server discovery lanes";
+  if (input.tool === "search_restaurants") return "get_restaurant_menu or search_menu";
+  if (input.tool === "search_restaurants_dineout") return "get_restaurant_details";
+  if (input.tool === "get_restaurant_details") return "get_available_slots";
+  return "ask user to choose a result";
+}
+
+function responseData(response: unknown): unknown {
+  if (!response || typeof response !== "object") return undefined;
+  const result = (response as { result?: unknown }).result;
+  if (result && typeof result === "object" && "data" in result) return (result as { data?: unknown }).data;
+  return undefined;
+}
+
+function firstLabel(item: unknown): string {
+  if (!item || typeof item !== "object") return "available_result";
+  const row = item as Record<string, unknown>;
+  for (const key of ["name", "title", "time", "id", "spinId"]) {
+    if (typeof row[key] === "string") return row[key] as string;
+  }
+  return "available_result";
+}
+
+function summarizeDiscoveryResponse(response: unknown): SwiggyDiscoveryResolution["resultSummary"] {
+  const data = responseData(response);
+  if (Array.isArray(data)) {
+    return {
+      available: data.length > 0,
+      resultCount: data.length,
+      primaryLabel: data.length ? firstLabel(data[0]) : "none",
+      freshnessTag: "live_readback",
+    };
+  }
+  if (data && typeof data === "object") {
+    const record = data as Record<string, unknown>;
+    const nested = Array.isArray(record.restaurants) ? record.restaurants : Array.isArray(record.items) ? record.items : undefined;
+    if (nested) {
+      return {
+        available: nested.length > 0,
+        resultCount: nested.length,
+        primaryLabel: nested.length ? firstLabel(nested[0]) : "none",
+        freshnessTag: "live_readback",
+      };
+    }
+    return {
+      available: true,
+      resultCount: 1,
+      primaryLabel: firstLabel(record),
+      freshnessTag: "live_readback",
+    };
+  }
+  return { available: false, resultCount: 0, primaryLabel: "none", freshnessTag: "empty_readback" };
+}
+
+function hashArguments(args: Record<string, unknown>) {
+  return crypto.createHash("sha256").update(JSON.stringify(args)).digest("hex").slice(0, 16);
+}
+
+function isToolServerMatch(server: SwiggyServer, tool: SwiggyDiscoveryResolution["input"]["discoveryTool"]) {
+  if (server === "food") return ["search_restaurants", "get_restaurant_menu", "search_menu"].includes(tool);
+  if (server === "instamart") return ["search_products", "your_go_to_items"].includes(tool);
+  return ["search_restaurants_dineout", "get_restaurant_details", "get_available_slots"].includes(tool);
 }
 
 export function buildSwiggyDiscoveryFreshness(options: {
@@ -262,5 +348,89 @@ export function buildSwiggyDiscoveryFreshness(options: {
       "Discovery changes invalidate cart, coupon, slot, and confirmation state before any commercial action.",
     ],
     externalGates,
+  };
+}
+
+export async function resolveSwiggyDiscoveryFreshness(input: {
+  config: ServerConfig;
+  server: SwiggyServer;
+  discoveryTool: SwiggyDiscoveryResolution["input"]["discoveryTool"];
+  toolArguments: Record<string, unknown>;
+  contextFresh: boolean;
+  userSelectedResult: boolean;
+  downstreamIntent: SwiggyDiscoveryResolution["input"]["downstreamIntent"];
+  liveCredentialReady: boolean;
+  executeTool: (server: SwiggyServer, tool: string, args: Record<string, unknown>) => Promise<unknown>;
+}): Promise<SwiggyDiscoveryResolution> {
+  const riskFlags: string[] = [];
+  const invalidatedSurfaces = new Set<string>();
+  const selectedLaneId = laneForTool(input.discoveryTool);
+  const toolServerMatch = isToolServerMatch(input.server, input.discoveryTool);
+
+  if (!toolServerMatch) riskFlags.push("discovery_tool_server_mismatch");
+  if (!input.contextFresh) {
+    riskFlags.push("fresh_location_or_selection_context_required");
+    ["cart", "coupon", "slot", "confirmation"].forEach((surface) => invalidatedSurfaces.add(surface));
+  }
+  if (!input.userSelectedResult) riskFlags.push("user_selection_required_before_downstream_action");
+  if (input.config.swiggyMode !== "mock" && !input.liveCredentialReady) riskFlags.push("live_swiggy_token_required_for_discovery");
+
+  let response: unknown;
+  let decision: SwiggyDiscoveryResolution["decision"];
+  if (!toolServerMatch || !input.contextFresh) {
+    decision = "blocked_until_refresh";
+  } else if (input.config.swiggyMode !== "mock" && !input.liveCredentialReady) {
+    decision = "external_gate";
+  } else {
+    response = await input.executeTool(input.server, input.discoveryTool, input.toolArguments);
+    decision = input.userSelectedResult ? "resolved_for_selection" : "pause_for_selection";
+  }
+
+  const resultSummary = summarizeDiscoveryResponse(response);
+  const nextRequiredTool = nextToolFor({
+    server: input.server,
+    tool: input.discoveryTool,
+    downstreamIntent: input.downstreamIntent,
+  });
+
+  return {
+    generatedAt: new Date().toISOString(),
+    requestId: `discovery_${Date.now().toString(36)}`,
+    mode: input.config.swiggyMode,
+    input: {
+      server: input.server,
+      discoveryTool: input.discoveryTool,
+      contextFresh: input.contextFresh,
+      userSelectedResult: input.userSelectedResult,
+      downstreamIntent: input.downstreamIntent,
+    },
+    decision,
+    selectedLaneId,
+    resultSummary,
+    invalidatedSurfaces: Array.from(invalidatedSurfaces),
+    nextRequiredTool,
+    userFacingCopy:
+      decision === "resolved_for_selection"
+        ? `I refreshed ${input.discoveryTool} and can continue with ${nextRequiredTool}.`
+        : decision === "pause_for_selection"
+          ? "I found fresh Swiggy results. Please choose one before I touch cart, slot, or confirmation state."
+          : decision === "external_gate"
+            ? "Live discovery is gated until Swiggy credentials are available for this environment."
+            : "I need fresh address, query, restaurant, date, or guest-count context before this discovery step.",
+    riskFlags,
+    telemetry: [
+      { field: "server", value: input.server, redaction: "safe enum" },
+      { field: "discovery_tool", value: input.discoveryTool, redaction: "tool name only" },
+      { field: "tool_argument_hash", value: hashArguments(input.toolArguments), redaction: "sha256 prefix only" },
+      { field: "result_count_bucket", value: resultSummary.resultCount > 0 ? "non_empty" : "empty", redaction: "bucket only" },
+      { field: "raw_discovery_payload_retained", value: "false", redaction: "hard-coded privacy invariant" },
+      { field: "cart_mutation_executed", value: "false", redaction: "hard-coded safety invariant" },
+    ],
+    assertions: [
+      "Discovery resolution executes only read-only search, menu, product, detail, or slot tools.",
+      "Cart mutation and commercial actions remain outside the Discovery Freshness route.",
+      "Raw discovery payloads, queries, coordinates, restaurant ids, item ids, spin ids, and slot ids are not retained.",
+      "Fresh discovery changes invalidate downstream cart, coupon, slot, and confirmation state before commercial action.",
+    ],
   };
 }

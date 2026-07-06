@@ -189,7 +189,7 @@ The application will include a 2-3 minute Loom or unlisted YouTube demo showing:
 31. Show `/api/swiggy-order-lifecycle` and `/api/swiggy-order-lifecycle/probe` with Food/Instamart/Dineout status tools, tracking cadence, executable non-blind retry decisions, and support-safe lifecycle telemetry.
 32. Show `/api/swiggy-location-trust` and `/api/swiggy-location-trust/select` with Food/Instamart saved-address tools, Dineout saved locations, executable address-choice decisions, address switch refresh, and raw-address redaction.
 33. Show `/api/swiggy-cart-mutation-workbench` and `/api/swiggy-cart-mutation-workbench/mutate` with Food cart readback, Instamart full-cart replacement, Dineout create_cart gates, executable readback-after-write decisions, payment-method truth, and checkout-safe mutation rules.
-34. Show `/api/swiggy-discovery-freshness` with Food search/menu truth, Instamart product variants, Dineout details/slots, pagination, coordinate consistency, and stale-result invalidation.
+34. Show `/api/swiggy-discovery-freshness` and `/api/swiggy-discovery-freshness/resolve` with Food search/menu truth, Instamart product variants, Dineout details/slots, executable read-only discovery, pagination, coordinate consistency, and stale-result invalidation.
 35. Show `/api/production-launch-bundle` with proof artifacts, verification commands, external Swiggy gates, and the review email draft.
 
 ## Primary Technical Contact
@@ -259,7 +259,7 @@ Email: add primary engineering email before submission.
 - Swiggy Order Lifecycle: `/api/swiggy-order-lifecycle`, `/api/swiggy-order-lifecycle/probe`
 - Swiggy Location Trust: `/api/swiggy-location-trust`, `/api/swiggy-location-trust/select`
 - Swiggy Cart Mutation Workbench: `/api/swiggy-cart-mutation-workbench`, `/api/swiggy-cart-mutation-workbench/mutate`
-- Swiggy Discovery Freshness: `/api/swiggy-discovery-freshness`
+- Swiggy Discovery Freshness: `/api/swiggy-discovery-freshness`, `/api/swiggy-discovery-freshness/resolve`
 - Swiggy Confirmation Command Center: `/api/swiggy-confirmation-command-center`
 - Swiggy Cancellation & Care Center: `/api/swiggy-cancellation-care-center`
 - Swiggy Dineout Precision Center: `/api/swiggy-dineout-precision-center`

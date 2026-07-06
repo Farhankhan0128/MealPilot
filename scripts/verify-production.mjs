@@ -245,6 +245,10 @@ assert(
   "OpenAPI Swiggy Discovery Freshness is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-discovery-freshness/resolve"].post.summary.includes("Resolve"),
+  "OpenAPI Swiggy Discovery Freshness resolve route is missing",
+);
+assert(
   openApi.paths["/api/swiggy-confirmation-command-center"]?.get?.summary?.includes("Confirmation Command") &&
     openApi.paths["/api/swiggy-confirmation-command-center"]?.get?.responses?.["200"]?.description?.includes(
       "separate confirmations",
@@ -3835,6 +3839,28 @@ assert(
   discoveryFreshness.discoveryFreshness.assertions.some((assertion) => assertion.includes("search_menu before update_food_cart")),
   "Discovery Freshness menu-to-cart assertion is missing",
 );
+const discoveryResolution = await request("/api/swiggy-discovery-freshness/resolve", {
+  method: "POST",
+  body: JSON.stringify({
+    server: "instamart",
+    discoveryTool: "search_products",
+    toolArguments: { query: "tofu", addressId: "addr_home_001" },
+    contextFresh: true,
+    userSelectedResult: false,
+    downstreamIntent: "cart_mutation",
+  }),
+});
+assert(discoveryResolution.discoveryResolution.decision === "pause_for_selection", "Discovery resolution decision is wrong");
+assert(discoveryResolution.discoveryResolution.selectedLaneId === "instamart_product_search", "Discovery resolution lane is wrong");
+assert(discoveryResolution.discoveryResolution.resultSummary.available === true, "Discovery resolution summary is unavailable");
+assert(
+  discoveryResolution.discoveryResolution.telemetry.some((field) => field.field === "cart_mutation_executed" && field.value === "false"),
+  "Discovery resolution no-cart-mutation telemetry invariant is missing",
+);
+assert(
+  discoveryResolution.discoveryResolution.assertions.some((assertion) => assertion.includes("read-only")),
+  "Discovery resolution read-only assertion is missing",
+);
 
 const confirmationCommand = await request("/api/swiggy-confirmation-command-center");
 assert(
@@ -4784,6 +4810,7 @@ console.log(
       discoveryFreshnessScore: discoveryFreshness.discoveryFreshness.score,
       discoveryFreshnessTools: discoveryFreshness.discoveryFreshness.totals.toolsCovered,
       discoveryFreshnessChecks: discoveryFreshness.discoveryFreshness.totals.freshnessChecks,
+      discoveryResolutionDecision: discoveryResolution.discoveryResolution.decision,
       confirmationCommandScore: confirmationCommand.confirmationCommandCenter.score,
       confirmationCommandTools: confirmationCommand.confirmationCommandCenter.totals.toolsCovered,
       confirmationCommandProtectedActions: confirmationCommand.confirmationCommandCenter.totals.protectedActions,

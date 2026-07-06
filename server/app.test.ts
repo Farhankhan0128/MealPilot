@@ -139,6 +139,7 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/swiggy-cart-mutation-workbench/mutate"].post.summary).toContain("cart mutation");
     expect(openApi.body.paths["/api/swiggy-discovery-freshness"].get.summary).toContain("Discovery Freshness");
     expect(openApi.body.paths["/api/swiggy-discovery-freshness"].get.responses["200"].description).toContain("variant");
+    expect(openApi.body.paths["/api/swiggy-discovery-freshness/resolve"].post.summary).toContain("Resolve");
     expect(openApi.body.paths["/api/swiggy-confirmation-command-center"].get.summary).toContain("Confirmation Command");
     expect(openApi.body.paths["/api/swiggy-confirmation-command-center"].get.responses["200"].description).toContain("separate confirmations");
     expect(openApi.body.paths["/api/swiggy-cancellation-care-center"].get.summary).toContain("Cancellation");
@@ -4095,6 +4096,41 @@ describe("MealPilot API", () => {
     expect(freshness.telemetry.some((field: { field: string }) => field.field === "result_id_hash")).toBe(true);
     expect(freshness.assertions.some((assertion: string) => assertion.includes("search_menu before update_food_cart"))).toBe(true);
     expect(freshness.externalGates.some((gate: string) => gate.includes("Staging credentials"))).toBe(true);
+
+    const resolutionResponse = await request(app)
+      .post("/api/swiggy-discovery-freshness/resolve")
+      .send({
+        server: "instamart",
+        discoveryTool: "search_products",
+        toolArguments: { query: "tofu", addressId: "addr_home_001" },
+        contextFresh: true,
+        userSelectedResult: false,
+        downstreamIntent: "cart_mutation",
+      })
+      .expect(200);
+    const resolution = resolutionResponse.body.discoveryResolution;
+    expect(resolution.decision).toBe("pause_for_selection");
+    expect(resolution.selectedLaneId).toBe("instamart_product_search");
+    expect(resolution.resultSummary.available).toBe(true);
+    expect(resolution.nextRequiredTool).toContain("select variant");
+    expect(
+      resolution.telemetry.some((field: { field: string; value: string }) => field.field === "cart_mutation_executed" && field.value === "false"),
+    ).toBe(true);
+    expect(resolution.assertions.some((assertion: string) => assertion.includes("read-only"))).toBe(true);
+
+    const staleResolution = await request(app)
+      .post("/api/swiggy-discovery-freshness/resolve")
+      .send({
+        server: "food",
+        discoveryTool: "search_menu",
+        toolArguments: { query: "paneer" },
+        contextFresh: false,
+        userSelectedResult: true,
+        downstreamIntent: "cart_mutation",
+      })
+      .expect(200);
+    expect(staleResolution.body.discoveryResolution.decision).toBe("blocked_until_refresh");
+    expect(staleResolution.body.discoveryResolution.invalidatedSurfaces).toEqual(expect.arrayContaining(["cart", "coupon", "confirmation"]));
   });
 
   it("returns Swiggy Confirmation Command Center for separate protected action confirmations", async () => {

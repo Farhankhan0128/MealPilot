@@ -5492,6 +5492,10 @@ function ProductionEvidencePanel({
               <strong>{discoveryFreshness?.totals.externalGates ?? 0}</strong>
               <span>Live gates</span>
             </div>
+            <div>
+              <strong>{discoveryFreshness ? "POST" : "-"}</strong>
+              <span>Resolve gate</span>
+            </div>
           </div>
           <ul className="compact-status-list">
             {(discoveryFreshness?.lanes ?? []).slice(0, 4).map((lane) => (
@@ -5504,6 +5508,14 @@ function ProductionEvidencePanel({
               </li>
             ))}
           </ul>
+          <div className="source-links">
+            <a href="/api/swiggy-discovery-freshness" target="_blank" rel="noreferrer">
+              Discovery API
+            </a>
+            <a href="/api/openapi.json" target="_blank" rel="noreferrer">
+              Resolve schema
+            </a>
+          </div>
         </article>
 
         <article className="confirmation-command-card">

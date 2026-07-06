@@ -4213,6 +4213,45 @@ export interface SwiggyDiscoveryFreshnessReport {
   externalGates: string[];
 }
 
+export interface SwiggyDiscoveryResolution {
+  generatedAt: string;
+  requestId: string;
+  mode: "mock" | "staging" | "production";
+  input: {
+    server: SwiggyServer;
+    discoveryTool:
+      | "search_restaurants"
+      | "get_restaurant_menu"
+      | "search_menu"
+      | "search_products"
+      | "your_go_to_items"
+      | "search_restaurants_dineout"
+      | "get_restaurant_details"
+      | "get_available_slots";
+    contextFresh: boolean;
+    userSelectedResult: boolean;
+    downstreamIntent: "browse" | "cart_mutation" | "booking" | "combined_plan";
+  };
+  decision: "resolved_for_selection" | "pause_for_selection" | "blocked_until_refresh" | "external_gate";
+  selectedLaneId: string;
+  resultSummary: {
+    available: boolean;
+    resultCount: number;
+    primaryLabel: string;
+    freshnessTag: string;
+  };
+  invalidatedSurfaces: string[];
+  nextRequiredTool: string;
+  userFacingCopy: string;
+  riskFlags: string[];
+  telemetry: Array<{
+    field: string;
+    value: string;
+    redaction: string;
+  }>;
+  assertions: string[];
+}
+
 export type SwiggyConfirmationCommandStatus = "ready" | "watch" | "external_gate";
 
 export interface SwiggyConfirmationLane {

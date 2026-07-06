@@ -178,7 +178,7 @@ Open Production Evidence and show:
 - Swiggy Order Lifecycle at `/api/swiggy-order-lifecycle` plus `/api/swiggy-order-lifecycle/probe` with order-history/status tools, 10-second tracking cadence, executable non-blind retry decisions, and support-safe timeline telemetry.
 - Swiggy Location Trust at `/api/swiggy-location-trust` plus `/api/swiggy-location-trust/select` with Food/Instamart saved-address reads, Instamart create/delete address intent, Dineout saved locations, executable address-choice decisions, switch refresh guards, and raw-address redaction.
 - Swiggy Cart Mutation Workbench at `/api/swiggy-cart-mutation-workbench` plus `/api/swiggy-cart-mutation-workbench/mutate` with Food cart readback, Instamart full-cart replacement, Dineout create_cart gates, executable readback-after-write decisions, payment-method truth, add-on confirmation, and staging cart-write gates.
-- Swiggy Discovery Freshness at `/api/swiggy-discovery-freshness` with Food search/menu pagination, Instamart variants and go-to items, Dineout restaurant details and slots, coordinate consistency, and stale-result invalidation.
+- Swiggy Discovery Freshness at `/api/swiggy-discovery-freshness` plus `/api/swiggy-discovery-freshness/resolve` with Food search/menu pagination, Instamart variants and go-to items, Dineout restaurant details and slots, executable read-only discovery, coordinate consistency, and stale-result invalidation.
 - Swiggy Confirmation Command Center at `/api/swiggy-confirmation-command-center` with final-commerce proof for Food `place_food_order`, Instamart `checkout`, and Dineout `book_table`: fresh cart or slot reads, explicit separate approvals, status probes before retry, Swiggy-response payment/free-booking truth, and live credential gates.
 - Swiggy Cancellation & Care Center at `/api/swiggy-cancellation-care-center` with Food and Instamart no-tool cancellation handling, official customer-care copy, Dineout booking-status recovery, `report_error` support context, and incident email routing.
 - Swiggy Dineout Precision Center at `/api/swiggy-dineout-precision-center` with free-booking validation, bill-payment `create_cart` modeling, paid-deal blocking, booking-status retry probes, and live payment gates.
@@ -286,6 +286,7 @@ Briefly show production readiness:
 - `/api/swiggy-cart-mutation-workbench`
 - `/api/swiggy-cart-mutation-workbench/mutate`
 - `/api/swiggy-discovery-freshness`
+- `/api/swiggy-discovery-freshness/resolve`
 - `/api/swiggy-confirmation-command-center`
 - `/api/swiggy-cancellation-care-center`
 - `/api/swiggy-dineout-precision-center`

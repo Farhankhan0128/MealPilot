@@ -72,6 +72,7 @@ import type {
   SwiggyConfirmationCommandCenterReport,
   SwiggyDeepSiteMap,
   SwiggyDineoutPrecisionCenterReport,
+  SwiggyDiscoveryResolution,
   SwiggyDiscoveryFreshnessReport,
   DeveloperQuickstartWorkbench,
   SwiggyCtaExecutionCenter,
@@ -787,6 +788,28 @@ export function mutateSwiggyCart(input: {
 
 export function fetchSwiggyDiscoveryFreshness() {
   return requestJson<{ discoveryFreshness: SwiggyDiscoveryFreshnessReport }>("/api/swiggy-discovery-freshness");
+}
+
+export function resolveSwiggyDiscoveryFreshness(input: {
+  server: "food" | "instamart" | "dineout";
+  discoveryTool:
+    | "search_restaurants"
+    | "get_restaurant_menu"
+    | "search_menu"
+    | "search_products"
+    | "your_go_to_items"
+    | "search_restaurants_dineout"
+    | "get_restaurant_details"
+    | "get_available_slots";
+  toolArguments?: Record<string, unknown>;
+  contextFresh: boolean;
+  userSelectedResult: boolean;
+  downstreamIntent: "browse" | "cart_mutation" | "booking" | "combined_plan";
+}) {
+  return requestJson<{ discoveryResolution: SwiggyDiscoveryResolution }>("/api/swiggy-discovery-freshness/resolve", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
 }
 
 export function fetchSwiggyConfirmationCommandCenter() {

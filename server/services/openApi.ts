@@ -1128,6 +1128,20 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-discovery-freshness/resolve": {
+        post: {
+          tags: ["Commerce"],
+          summary: "Resolve fresh Swiggy discovery results before cart, slot, or confirmation state",
+          description:
+            "Read-only discovery execution, result summary, selected lane, required next tool, invalidated downstream surfaces, redacted telemetry, and no-cart-mutation assertions",
+          responses: {
+            "200": {
+              description:
+                "Food, Instamart, or Dineout discovery resolution using safe read tools such as search_menu, search_products, get_restaurant_details, or get_available_slots",
+            },
+          },
+        },
+      },
       "/api/support/bridge": {
         get: {
           tags: ["Operations"],

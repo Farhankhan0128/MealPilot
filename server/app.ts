@@ -76,7 +76,7 @@ import { buildCredentialOnboardingReport } from "./services/credentialOnboarding
 import { buildDataGovernanceCenter } from "./services/dataGovernance.js";
 import { buildSwiggyDeepSiteMap } from "./services/deepSiteMap.js";
 import { buildDeveloperQuickstartWorkbench } from "./services/developerQuickstartWorkbench.js";
-import { buildSwiggyDiscoveryFreshness } from "./services/discoveryFreshness.js";
+import { buildSwiggyDiscoveryFreshness, resolveSwiggyDiscoveryFreshness } from "./services/discoveryFreshness.js";
 import { buildSwiggyDineoutPrecisionCenter } from "./services/dineoutPrecisionCenter.js";
 import { buildSwiggyDocsCoverage } from "./services/docsCoverage.js";
 import { buildSwiggyDocsTwinExplorer } from "./services/docsTwinExplorer.js";
@@ -298,6 +298,24 @@ const cartMutationExecutionSchema = z.object({
   contextFresh: z.boolean(),
   userConfirmed: z.boolean(),
   commercialActionRequested: z.boolean(),
+});
+
+const discoveryResolutionSchema = z.object({
+  server: z.enum(["food", "instamart", "dineout"]),
+  discoveryTool: z.enum([
+    "search_restaurants",
+    "get_restaurant_menu",
+    "search_menu",
+    "search_products",
+    "your_go_to_items",
+    "search_restaurants_dineout",
+    "get_restaurant_details",
+    "get_available_slots",
+  ]),
+  toolArguments: z.record(z.string(), z.unknown()).default({}),
+  contextFresh: z.boolean(),
+  userSelectedResult: z.boolean(),
+  downstreamIntent: z.enum(["browse", "cart_mutation", "booking", "combined_plan"]),
 });
 
 const mcpServerSchema = z.enum(["food", "instamart", "dineout"]);
@@ -1369,6 +1387,44 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
   app.get("/api/swiggy-discovery-freshness", (_req, res) => {
     res.json({ discoveryFreshness: buildSwiggyDiscoveryFreshness({ plans: store.getAllPlans(), config }) });
   });
+
+  app.post(
+    "/api/swiggy-discovery-freshness/resolve",
+    asyncRoute(async (req, res) => {
+      const body = discoveryResolutionSchema.parse(req.body);
+      const executeTool = async (server: SwiggyServer, tool: string, toolArguments: Record<string, unknown>) => {
+        const request: JsonRpcRequest = {
+          jsonrpc: "2.0",
+          id: `discovery-${Date.now().toString(36)}`,
+          method: "tools/call",
+          params: {
+            name: tool,
+            arguments: toolArguments,
+          },
+        };
+
+        if (config.swiggyMode === "mock") {
+          return handleMockJsonRpc(server, request);
+        }
+
+        return callConfiguredSwiggyTool({
+          config,
+          server,
+          request,
+          accessToken: runtimeAccessToken,
+        });
+      };
+
+      res.json({
+        discoveryResolution: await resolveSwiggyDiscoveryFreshness({
+          config,
+          ...body,
+          liveCredentialReady: Boolean(runtimeAccessToken),
+          executeTool,
+        }),
+      });
+    }),
+  );
 
   app.get("/api/swiggy-confirmation-command-center", (_req, res) => {
     res.json({
