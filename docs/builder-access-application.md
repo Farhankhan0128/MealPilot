@@ -121,7 +121,7 @@ Scale-up after staging:
 - Runtime Telemetry ledger for live API/MCP request logs, status classes, hashed user context, session IDs, request IDs, and redaction checks.
 - Audit Ledger Center for redacted Swiggy session/tool events, support correlation, retention posture, DSR routing, and packet fields.
 - Swiggy Route Optimizer for official-source-grounded profiles, parallel read batches, cache policies, call savings, retry classes, cross-server handoffs, confirmation gates, and staging assertions.
-- Swiggy Confirmation Command Center at `/api/swiggy-confirmation-command-center` for final-commerce confirmation proof across Food `place_food_order`, Instamart `checkout`, and Dineout `book_table`, including fresh cart or slot reads, explicit user confirmation, separate approvals for combined plans, post-action status probes before retry, Swiggy-response payment/free-booking truth, and external live credential gates.
+- Swiggy Confirmation Command Center at `/api/swiggy-confirmation-command-center` plus `/api/swiggy-confirmation-command-center/execute` for final-commerce confirmation proof across Food `place_food_order`, Instamart `checkout`, and Dineout `book_table`, including fresh cart or slot reads, explicit user confirmation, separate approvals for combined plans, guarded preflight/action/status-probe execution, no-blind-retry telemetry, Swiggy-response payment/free-booking truth, paid-Dineout blocking, and external live credential gates.
 - Swiggy Cancellation & Care Center at `/api/swiggy-cancellation-care-center` for Food and Instamart no-tool cancellation handling, official customer-care copy, Dineout booking-status recovery, `report_error` support payloads, incident email routing, and live support gates.
 - Swiggy Dineout Precision Center at `/api/swiggy-dineout-precision-center` for Dineout free reservation proof, `create_cart` bill-payment cart modeling, paid-deal blocking, `get_booking_status` retry protection, and live payment credential gates.
 - Support Bridge for official `report_error` calls across Food, Instamart, and Dineout, including toolContext identifiers, SLA routing, redaction rules, and escalation checklist.
@@ -260,7 +260,7 @@ Email: add primary engineering email before submission.
 - Swiggy Location Trust: `/api/swiggy-location-trust`, `/api/swiggy-location-trust/select`
 - Swiggy Cart Mutation Workbench: `/api/swiggy-cart-mutation-workbench`, `/api/swiggy-cart-mutation-workbench/mutate`
 - Swiggy Discovery Freshness: `/api/swiggy-discovery-freshness`, `/api/swiggy-discovery-freshness/resolve`
-- Swiggy Confirmation Command Center: `/api/swiggy-confirmation-command-center`
+- Swiggy Confirmation Command Center: `/api/swiggy-confirmation-command-center`, `/api/swiggy-confirmation-command-center/execute`
 - Swiggy Cancellation & Care Center: `/api/swiggy-cancellation-care-center`
 - Swiggy Dineout Precision Center: `/api/swiggy-dineout-precision-center`
 - SLO Incident Command Center: `/api/slo-incident-command`

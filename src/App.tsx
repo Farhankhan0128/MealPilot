@@ -5545,6 +5545,10 @@ function ProductionEvidencePanel({
               <strong>{confirmationCommandCenter?.totals.externalGates ?? 0}</strong>
               <span>Live gates</span>
             </div>
+            <div>
+              <strong>{confirmationCommandCenter ? "POST" : "-"}</strong>
+              <span>Execute gate</span>
+            </div>
           </div>
           <ul className="compact-status-list">
             {(confirmationCommandCenter?.lanes ?? []).slice(0, 4).map((lane) => (
@@ -5557,6 +5561,14 @@ function ProductionEvidencePanel({
               </li>
             ))}
           </ul>
+          <div className="source-links">
+            <a href="/api/swiggy-confirmation-command-center" target="_blank" rel="noreferrer">
+              Command API
+            </a>
+            <a href="/api/openapi.json" target="_blank" rel="noreferrer">
+              Execute schema
+            </a>
+          </div>
         </article>
 
         <article className="cancellation-care-card">

@@ -219,6 +219,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-confirmation-command-center/execute": {
+        post: {
+          tags: ["Builder Access"],
+          summary: "Execute a guarded Swiggy final-commerce confirmation with status probe",
+          responses: {
+            "200": {
+              description:
+                "Executable protected-action gate for Food place_food_order, Instamart checkout, or Dineout book_table with fresh preflight read, separate explicit confirmation, Swiggy payment or free-booking truth, post-action status probe, no-blind-retry telemetry, and live credential gates",
+            },
+          },
+        },
+      },
       "/api/swiggy-cancellation-care-center": {
         get: {
           tags: ["Builder Access"],

@@ -120,7 +120,7 @@ The verifier also validates `/api/swiggy-discovery-freshness` and `/api/swiggy-d
 
 The verifier also validates `/api/swiggy-live-signal-calibration` for Food active-order memory, Instamart go-to and order-history cadence, Dineout saved-location and booking truth, discovery relevance drift, offer/cart truth, support failure memory, privacy controls, and staging credential gates.
 
-The verifier also validates `/api/swiggy-confirmation-command-center` for final Food `place_food_order`, Instamart `checkout`, and Dineout `book_table` proof: fresh cart or slot reads, explicit per-action approvals, separate combined-plan confirmations, post-action status probes before retry, Swiggy-response payment and free-booking truth, and live credential gates.
+The verifier also validates `/api/swiggy-confirmation-command-center` and `/api/swiggy-confirmation-command-center/execute` for final Food `place_food_order`, Instamart `checkout`, and Dineout `book_table` proof: fresh cart or slot reads, explicit per-action approvals, separate combined-plan confirmations, guarded preflight -> protected action -> status-probe execution, Swiggy-response payment and free-booking truth, no-blind-retry telemetry, paid-Dineout blocking, and live credential gates.
 
 The verifier also validates `/api/swiggy-cancellation-care-center` for Food and Instamart no-tool cancellation handling, official customer-care copy, Dineout booking-status recovery, `report_error` payload context, incident email routing, planned error-code gates, and live support calibration gates.
 
@@ -272,6 +272,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/swiggy-discovery-freshness`
 - `POST /api/swiggy-discovery-freshness/resolve`
 - `GET /api/swiggy-confirmation-command-center`
+- `POST /api/swiggy-confirmation-command-center/execute`
 - `GET /api/swiggy-cancellation-care-center`
 - `GET /api/swiggy-dineout-precision-center`
 - `GET /api/version-monitor`
@@ -398,7 +399,7 @@ Production should use an HTTPS redirect URI with exact-match allowlisting.
 
 `/api/builder-packet-export` and `/api/builder-packet-export.md` turn the Submission Console, Access Submission Studio, Access Evidence Matrix, Production Launch Bundle, Reviewer Artifact Vault, Deep Site Map, and Visual QA Center into a reproducible Swiggy access packet. Run `npm run export:builder-packet` against the production server to write `artifacts/builder-packet/mealpilot-swiggy-access-packet.json`, `mealpilot-swiggy-access-packet.md`, and `verification-summary.json`.
 
-`/api/swiggy-confirmation-command-center` is the final-commerce proof surface for Swiggy Food `place_food_order`, Instamart `checkout`, and Dineout `book_table`. It shows the last fresh cart or slot read, the explicit user approval, separate approval rows for combined plans, post-action status probes before retry, payment/free-booking values as reported by Swiggy, and external gates for live credentials.
+`/api/swiggy-confirmation-command-center` is the final-commerce proof surface for Swiggy Food `place_food_order`, Instamart `checkout`, and Dineout `book_table`. `/api/swiggy-confirmation-command-center/execute` makes that proof executable in mock and credentialed modes: it requires fresh context, separate confirmation, Swiggy payment/free-booking truth, blocks paid Dineout free-booking misuse, runs preflight -> action -> status probe, records no-blind-retry telemetry, and keeps live credentials as an external gate.
 
 `/api/swiggy-cancellation-care-center` is the cancellation and care proof surface. It blocks fake Food and Instamart cancellation calls, shows the official Swiggy customer-care phone copy, routes Dineout booking issues through `get_booking_status`, prepares `report_error` payloads with redacted toolContext, and keeps incident email evidence ready for `builders@swiggy.in`.
 

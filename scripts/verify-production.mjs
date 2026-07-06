@@ -256,6 +256,13 @@ assert(
   "OpenAPI Swiggy Confirmation Command Center is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-confirmation-command-center/execute"]?.post?.summary?.includes("guarded") &&
+    openApi.paths["/api/swiggy-confirmation-command-center/execute"]?.post?.responses?.["200"]?.description?.includes(
+      "no-blind-retry",
+    ),
+  "OpenAPI Swiggy Confirmation execution route is missing",
+);
+assert(
   openApi.paths["/api/swiggy-cancellation-care-center"]?.get?.summary?.includes("Cancellation") &&
     openApi.paths["/api/swiggy-cancellation-care-center"]?.get?.responses?.["200"]?.description?.includes(
       "report_error",
@@ -3896,6 +3903,56 @@ assert(
     confirmationCommand.confirmationCommandCenter.assertions.some((assertion) => assertion.includes("separate confirmations")),
   "Confirmation Command Center assertions are incomplete",
 );
+const confirmationExecution = await request("/api/swiggy-confirmation-command-center/execute", {
+  method: "POST",
+  body: JSON.stringify({
+    server: "food",
+    actionTool: "place_food_order",
+    preflightArguments: { restaurantId: "rest_green_bowl" },
+    actionArguments: { addressId: "addr_home_001", paymentMethod: "COD" },
+    statusProbeArguments: { limit: 5 },
+    contextFresh: true,
+    userConfirmed: true,
+    separateConfirmation: true,
+    paymentOrFreeTruthAcknowledged: true,
+    simulateAmbiguousResult: true,
+  }),
+});
+assert(
+  confirmationExecution.confirmationExecution.decision === "resolved_after_status_probe",
+  "Confirmation execution decision is wrong",
+);
+assert(
+  confirmationExecution.confirmationExecution.executedTools.join(",") === "get_food_cart,place_food_order,get_food_orders",
+  "Confirmation execution tool sequence is wrong",
+);
+assert(
+  confirmationExecution.confirmationExecution.telemetry.some(
+    (field) => field.field === "blind_retry_executed" && field.value === "false",
+  ),
+  "Confirmation execution no-blind-retry telemetry is missing",
+);
+assert(
+  confirmationExecution.confirmationExecution.statusProbeSummary.attempted === true,
+  "Confirmation execution status probe is missing",
+);
+const blockedPaidDineout = await request("/api/swiggy-confirmation-command-center/execute", {
+  method: "POST",
+  body: JSON.stringify({
+    server: "dineout",
+    actionTool: "book_table",
+    contextFresh: true,
+    userConfirmed: true,
+    separateConfirmation: true,
+    paymentOrFreeTruthAcknowledged: true,
+    dineoutFreeBooking: false,
+  }),
+});
+assert(
+  blockedPaidDineout.confirmationExecution.decision === "blocked_paid_dineout" &&
+    blockedPaidDineout.confirmationExecution.executedTools.length === 0,
+  "Confirmation execution paid Dineout block is missing",
+);
 
 const cancellationCare = await request("/api/swiggy-cancellation-care-center");
 assert(
@@ -4815,6 +4872,8 @@ console.log(
       confirmationCommandTools: confirmationCommand.confirmationCommandCenter.totals.toolsCovered,
       confirmationCommandProtectedActions: confirmationCommand.confirmationCommandCenter.totals.protectedActions,
       confirmationCommandExternalGates: confirmationCommand.confirmationCommandCenter.totals.externalGates,
+      confirmationExecutionDecision: confirmationExecution.confirmationExecution.decision,
+      confirmationExecutionTools: confirmationExecution.confirmationExecution.executedTools.length,
       cancellationCareScore: cancellationCare.cancellationCareCenter.score,
       cancellationCareReportErrorTools: cancellationCare.cancellationCareCenter.totals.reportErrorTools,
       cancellationCareNoToolGuards: cancellationCare.cancellationCareCenter.totals.noToolCancellationGuards,

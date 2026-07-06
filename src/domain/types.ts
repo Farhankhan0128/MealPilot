@@ -4321,6 +4321,68 @@ export interface SwiggyConfirmationCommandCenterReport {
   externalGates: string[];
 }
 
+export type SwiggyConfirmationExecutionDecision =
+  | "executed_with_status_probe"
+  | "resolved_after_status_probe"
+  | "awaiting_confirmation"
+  | "blocked_until_refresh"
+  | "blocked_payment_truth"
+  | "blocked_server_mismatch"
+  | "blocked_paid_dineout"
+  | "external_gate";
+
+export interface SwiggyConfirmationExecution {
+  generatedAt: string;
+  requestId: string;
+  mode: "mock" | "staging" | "production";
+  input: {
+    server: SwiggyServer;
+    actionTool: "place_food_order" | "checkout" | "book_table";
+    contextFresh: boolean;
+    userConfirmed: boolean;
+    separateConfirmation: boolean;
+    paymentOrFreeTruthAcknowledged: boolean;
+    simulateAmbiguousResult: boolean;
+  };
+  decision: SwiggyConfirmationExecutionDecision;
+  selectedLaneId: "food_order_confirmation" | "instamart_checkout_confirmation" | "dineout_booking_confirmation";
+  preflightTool: "get_food_cart" | "get_cart" | "get_available_slots";
+  protectedActionTool: "place_food_order" | "checkout" | "book_table";
+  statusProbeTool: "get_food_orders" | "get_orders" | "get_booking_status";
+  executedTools: string[];
+  preflightSummary: {
+    available: boolean;
+    totalLabel: string;
+    paymentOrFreeLabel: string;
+    statusLabel: string;
+  };
+  actionSummary: {
+    attempted: boolean;
+    statusLabel: string;
+    referenceHash: string;
+  };
+  statusProbeSummary: {
+    attempted: boolean;
+    statusLabel: string;
+    referenceHash: string;
+  };
+  riskFlags: string[];
+  userFacingCopy: string;
+  supportPacket: {
+    confirmationIdHash: string;
+    preflightSnapshotHash: string;
+    protectedAction: string;
+    statusProbe: string;
+    retryPolicy: string;
+  };
+  telemetry: Array<{
+    field: string;
+    value: string;
+    redaction: string;
+  }>;
+  assertions: string[];
+}
+
 export type SwiggyCancellationCareStatus = "ready" | "watch" | "external_gate";
 
 export interface SwiggyCancellationCareLane {

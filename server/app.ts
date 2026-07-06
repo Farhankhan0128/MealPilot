@@ -36,7 +36,7 @@ import { buildSwiggyChannelMultimodalStudio } from "./services/channelMultimodal
 import { buildCodingAgentGovernance } from "./services/codingAgentGovernance.js";
 import { buildCommercialActionGuard } from "./services/commercialActionGuard.js";
 import { buildSwiggyCancellationCareCenter } from "./services/cancellationCareCenter.js";
-import { buildSwiggyConfirmationCommandCenter } from "./services/confirmationCommandCenter.js";
+import { buildSwiggyConfirmationCommandCenter, executeSwiggyConfirmationCommand } from "./services/confirmationCommandCenter.js";
 import { buildSwiggyCtaExecutionCenter } from "./services/ctaExecutionCenter.js";
 import { buildSwiggyCustomizationStudio, validateSwiggyCustomization } from "./services/customizationStudio.js";
 import { buildSwiggyAccessEvidenceMatrix } from "./services/accessEvidenceMatrix.js";
@@ -316,6 +316,20 @@ const discoveryResolutionSchema = z.object({
   contextFresh: z.boolean(),
   userSelectedResult: z.boolean(),
   downstreamIntent: z.enum(["browse", "cart_mutation", "booking", "combined_plan"]),
+});
+
+const confirmationExecutionSchema = z.object({
+  server: z.enum(["food", "instamart", "dineout"]),
+  actionTool: z.enum(["place_food_order", "checkout", "book_table"]),
+  preflightArguments: z.record(z.string(), z.unknown()).default({}),
+  actionArguments: z.record(z.string(), z.unknown()).default({}),
+  statusProbeArguments: z.record(z.string(), z.unknown()).default({}),
+  contextFresh: z.boolean(),
+  userConfirmed: z.boolean(),
+  separateConfirmation: z.boolean(),
+  paymentOrFreeTruthAcknowledged: z.boolean(),
+  dineoutFreeBooking: z.boolean().default(false),
+  simulateAmbiguousResult: z.boolean().default(false),
 });
 
 const mcpServerSchema = z.enum(["food", "instamart", "dineout"]);
@@ -1434,6 +1448,44 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
       }),
     });
   });
+
+  app.post(
+    "/api/swiggy-confirmation-command-center/execute",
+    asyncRoute(async (req, res) => {
+      const body = confirmationExecutionSchema.parse(req.body);
+      const executeTool = async (server: SwiggyServer, tool: string, toolArguments: Record<string, unknown>) => {
+        const request: JsonRpcRequest = {
+          jsonrpc: "2.0",
+          id: `confirmation-${Date.now().toString(36)}`,
+          method: "tools/call",
+          params: {
+            name: tool,
+            arguments: toolArguments,
+          },
+        };
+
+        if (config.swiggyMode === "mock") {
+          return handleMockJsonRpc(server, request);
+        }
+
+        return callConfiguredSwiggyTool({
+          config,
+          server,
+          request,
+          accessToken: runtimeAccessToken,
+        });
+      };
+
+      res.json({
+        confirmationExecution: await executeSwiggyConfirmationCommand({
+          config,
+          ...body,
+          liveCredentialReady: Boolean(runtimeAccessToken),
+          executeTool,
+        }),
+      });
+    }),
+  );
 
   app.get("/api/swiggy-cancellation-care-center", (_req, res) => {
     res.json({

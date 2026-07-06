@@ -142,6 +142,8 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/swiggy-discovery-freshness/resolve"].post.summary).toContain("Resolve");
     expect(openApi.body.paths["/api/swiggy-confirmation-command-center"].get.summary).toContain("Confirmation Command");
     expect(openApi.body.paths["/api/swiggy-confirmation-command-center"].get.responses["200"].description).toContain("separate confirmations");
+    expect(openApi.body.paths["/api/swiggy-confirmation-command-center/execute"].post.summary).toContain("guarded");
+    expect(openApi.body.paths["/api/swiggy-confirmation-command-center/execute"].post.responses["200"].description).toContain("no-blind-retry");
     expect(openApi.body.paths["/api/swiggy-cancellation-care-center"].get.summary).toContain("Cancellation");
     expect(openApi.body.paths["/api/swiggy-cancellation-care-center"].get.responses["200"].description).toContain("report_error");
     expect(openApi.body.paths["/api/swiggy-dineout-precision-center"].get.summary).toContain("Dineout Precision");
@@ -4150,6 +4152,61 @@ describe("MealPilot API", () => {
     expect(checklistText).toContain("post-action status probe");
     expect(report.assertions.some((assertion: string) => assertion.includes("fresh read"))).toBe(true);
     expect(report.assertions.some((assertion: string) => assertion.includes("separate confirmations"))).toBe(true);
+
+    const executionResponse = await request(app)
+      .post("/api/swiggy-confirmation-command-center/execute")
+      .send({
+        server: "food",
+        actionTool: "place_food_order",
+        preflightArguments: { restaurantId: "rest_green_bowl" },
+        actionArguments: { addressId: "addr_home_001", paymentMethod: "COD" },
+        statusProbeArguments: { limit: 5 },
+        contextFresh: true,
+        userConfirmed: true,
+        separateConfirmation: true,
+        paymentOrFreeTruthAcknowledged: true,
+        simulateAmbiguousResult: true,
+      })
+      .expect(200);
+    const execution = executionResponse.body.confirmationExecution;
+    expect(execution.decision).toBe("resolved_after_status_probe");
+    expect(execution.selectedLaneId).toBe("food_order_confirmation");
+    expect(execution.executedTools).toEqual(["get_food_cart", "place_food_order", "get_food_orders"]);
+    expect(execution.preflightSummary.available).toBe(true);
+    expect(execution.statusProbeSummary.attempted).toBe(true);
+    expect(
+      execution.telemetry.some((field: { field: string; value: string }) => field.field === "blind_retry_executed" && field.value === "false"),
+    ).toBe(true);
+    expect(execution.assertions.some((assertion: string) => assertion.includes("separate explicit user confirmation"))).toBe(true);
+
+    const unconfirmedResponse = await request(app)
+      .post("/api/swiggy-confirmation-command-center/execute")
+      .send({
+        server: "instamart",
+        actionTool: "checkout",
+        contextFresh: true,
+        userConfirmed: false,
+        separateConfirmation: false,
+        paymentOrFreeTruthAcknowledged: true,
+      })
+      .expect(200);
+    expect(unconfirmedResponse.body.confirmationExecution.decision).toBe("awaiting_confirmation");
+    expect(unconfirmedResponse.body.confirmationExecution.executedTools).toEqual([]);
+
+    const paidDineoutResponse = await request(app)
+      .post("/api/swiggy-confirmation-command-center/execute")
+      .send({
+        server: "dineout",
+        actionTool: "book_table",
+        contextFresh: true,
+        userConfirmed: true,
+        separateConfirmation: true,
+        paymentOrFreeTruthAcknowledged: true,
+        dineoutFreeBooking: false,
+      })
+      .expect(200);
+    expect(paidDineoutResponse.body.confirmationExecution.decision).toBe("blocked_paid_dineout");
+    expect(paidDineoutResponse.body.confirmationExecution.executedTools).toEqual([]);
   });
 
   it("returns Swiggy Cancellation and Care Center for no-tool cancellation and report_error routing", async () => {

@@ -1,12 +1,15 @@
+import crypto from "node:crypto";
 import type { ServerConfig } from "../config.js";
 import type {
   MealPlan,
   SwiggyConfirmationChecklistItem,
   SwiggyConfirmationCommandCenterReport,
+  SwiggyConfirmationExecution,
   SwiggyConfirmationCommandStatus,
   SwiggyConfirmationLane,
   SwiggyConfirmationScenario,
   SwiggyConfirmationTelemetry,
+  SwiggyServer,
 } from "../../src/domain/types.js";
 
 const officialSources = [
@@ -29,6 +32,82 @@ function statusWeight(status: SwiggyConfirmationCommandStatus) {
   if (status === "ready") return 1;
   if (status === "watch") return 0.78;
   return 0.48;
+}
+
+function hashValue(value: unknown) {
+  return crypto.createHash("sha256").update(JSON.stringify(value ?? {})).digest("hex").slice(0, 16);
+}
+
+function commercialLaneFor(input: { server: SwiggyServer; actionTool: SwiggyConfirmationExecution["protectedActionTool"] }) {
+  if (input.server === "food" && input.actionTool === "place_food_order") {
+    return {
+      laneId: "food_order_confirmation" as const,
+      preflightTool: "get_food_cart" as const,
+      statusProbeTool: "get_food_orders" as const,
+    };
+  }
+  if (input.server === "instamart" && input.actionTool === "checkout") {
+    return {
+      laneId: "instamart_checkout_confirmation" as const,
+      preflightTool: "get_cart" as const,
+      statusProbeTool: "get_orders" as const,
+    };
+  }
+  if (input.server === "dineout" && input.actionTool === "book_table") {
+    return {
+      laneId: "dineout_booking_confirmation" as const,
+      preflightTool: "get_available_slots" as const,
+      statusProbeTool: "get_booking_status" as const,
+    };
+  }
+  return undefined;
+}
+
+function responseData(response: unknown): unknown {
+  if (response && typeof response === "object" && "result" in response) {
+    const result = (response as { result?: unknown }).result;
+    if (result && typeof result === "object" && "data" in result) return (result as { data?: unknown }).data;
+  }
+  return response;
+}
+
+function labelFromData(data: unknown, keys: string[], fallback: string) {
+  if (Array.isArray(data)) return data.length > 0 ? `${data.length} result${data.length === 1 ? "" : "s"}` : "empty";
+  if (!data || typeof data !== "object") return fallback;
+  const record = data as Record<string, unknown>;
+  for (const key of keys) {
+    const value = record[key];
+    if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") return String(value);
+  }
+  return fallback;
+}
+
+function summarizePreflight(response: unknown): SwiggyConfirmationExecution["preflightSummary"] {
+  const data = responseData(response);
+  return {
+    available: Boolean(data),
+    totalLabel: labelFromData(data, ["total", "billToPay", "bookingPrice"], "source-of-truth pending"),
+    paymentOrFreeLabel: labelFromData(data, ["paymentMethod", "skipPayment", "isFree"], "payment/free truth pending"),
+    statusLabel: labelFromData(data, ["status", "availability"], Array.isArray(data) && data.length > 0 ? "available" : "unknown"),
+  };
+}
+
+function summarizeAction(response: unknown, attempted: boolean): SwiggyConfirmationExecution["actionSummary"] {
+  const data = responseData(response);
+  return {
+    attempted,
+    statusLabel: attempted ? labelFromData(data, ["status", "paymentMethod"], "attempted") : "not_attempted",
+    referenceHash: attempted ? hashValue(data) : "not_attempted",
+  };
+}
+
+function summarizeProbe(response: unknown, attempted: boolean): SwiggyConfirmationExecution["statusProbeSummary"] {
+  const data = responseData(response);
+  return {
+    attempted,
+    statusLabel: attempted ? labelFromData(data, ["status", "eta"], "probe_completed") : "not_attempted",
+    referenceHash: attempted ? hashValue(data) : "not_attempted",
+  };
 }
 
 export function buildSwiggyConfirmationCommandCenter(options: {
@@ -260,5 +339,133 @@ export function buildSwiggyConfirmationCommandCenter(options: {
       "Combined plans require separate confirmations for Food, Instamart, and Dineout.",
     ],
     externalGates,
+  };
+}
+
+export async function executeSwiggyConfirmationCommand(input: {
+  config: ServerConfig;
+  server: SwiggyServer;
+  actionTool: SwiggyConfirmationExecution["protectedActionTool"];
+  preflightArguments: Record<string, unknown>;
+  actionArguments: Record<string, unknown>;
+  statusProbeArguments: Record<string, unknown>;
+  contextFresh: boolean;
+  userConfirmed: boolean;
+  separateConfirmation: boolean;
+  paymentOrFreeTruthAcknowledged: boolean;
+  dineoutFreeBooking: boolean;
+  simulateAmbiguousResult: boolean;
+  liveCredentialReady: boolean;
+  executeTool: (server: SwiggyServer, tool: string, args: Record<string, unknown>) => Promise<unknown>;
+}): Promise<SwiggyConfirmationExecution> {
+  const lane = commercialLaneFor({ server: input.server, actionTool: input.actionTool });
+  const riskFlags: string[] = [];
+
+  if (!lane) riskFlags.push("protected_action_server_mismatch");
+  if (!input.contextFresh) riskFlags.push("fresh_cart_or_slot_read_required");
+  if (!input.userConfirmed) riskFlags.push("explicit_user_confirmation_required");
+  if (!input.separateConfirmation) riskFlags.push("separate_confirmation_required_for_protected_action");
+  if (!input.paymentOrFreeTruthAcknowledged) riskFlags.push("swiggy_payment_or_free_booking_truth_required");
+  if (input.server === "dineout" && !input.dineoutFreeBooking) riskFlags.push("paid_dineout_deal_not_book_table_path");
+  if (input.config.swiggyMode !== "mock" && !input.liveCredentialReady) riskFlags.push("live_swiggy_token_required_for_commercial_action");
+
+  let decision: SwiggyConfirmationExecution["decision"] = "executed_with_status_probe";
+  if (!lane) decision = "blocked_server_mismatch";
+  else if (!input.contextFresh) decision = "blocked_until_refresh";
+  else if (!input.userConfirmed || !input.separateConfirmation) decision = "awaiting_confirmation";
+  else if (!input.paymentOrFreeTruthAcknowledged) decision = "blocked_payment_truth";
+  else if (input.server === "dineout" && !input.dineoutFreeBooking) decision = "blocked_paid_dineout";
+  else if (input.config.swiggyMode !== "mock" && !input.liveCredentialReady) decision = "external_gate";
+  else if (input.simulateAmbiguousResult) {
+    riskFlags.push("ambiguous_commercial_result_recovered_with_status_probe");
+    decision = "resolved_after_status_probe";
+  }
+
+  const executedTools: string[] = [];
+  let preflightResponse: unknown;
+  let actionResponse: unknown;
+  let probeResponse: unknown;
+
+  if (lane && (decision === "executed_with_status_probe" || decision === "resolved_after_status_probe")) {
+    preflightResponse = await input.executeTool(input.server, lane.preflightTool, input.preflightArguments);
+    executedTools.push(lane.preflightTool);
+    actionResponse = await input.executeTool(input.server, input.actionTool, input.actionArguments);
+    executedTools.push(input.actionTool);
+    probeResponse = await input.executeTool(input.server, lane.statusProbeTool, input.statusProbeArguments);
+    executedTools.push(lane.statusProbeTool);
+  }
+
+  const selectedLaneId = lane?.laneId ?? "food_order_confirmation";
+  const preflightTool = lane?.preflightTool ?? "get_food_cart";
+  const statusProbeTool = lane?.statusProbeTool ?? "get_food_orders";
+  const confirmationIdHash = hashValue({
+    server: input.server,
+    actionTool: input.actionTool,
+    actionArguments: input.actionArguments,
+    timeBucket: Math.floor(Date.now() / 60_000),
+  });
+  const preflightSummary = summarizePreflight(preflightResponse);
+  const actionSummary = summarizeAction(actionResponse, executedTools.includes(input.actionTool));
+  const statusProbeSummary = summarizeProbe(probeResponse, executedTools.includes(statusProbeTool));
+
+  return {
+    generatedAt: new Date().toISOString(),
+    requestId: `confirm_${Date.now().toString(36)}`,
+    mode: input.config.swiggyMode,
+    input: {
+      server: input.server,
+      actionTool: input.actionTool,
+      contextFresh: input.contextFresh,
+      userConfirmed: input.userConfirmed,
+      separateConfirmation: input.separateConfirmation,
+      paymentOrFreeTruthAcknowledged: input.paymentOrFreeTruthAcknowledged,
+      simulateAmbiguousResult: input.simulateAmbiguousResult,
+    },
+    decision,
+    selectedLaneId,
+    preflightTool,
+    protectedActionTool: input.actionTool,
+    statusProbeTool,
+    executedTools,
+    preflightSummary,
+    actionSummary,
+    statusProbeSummary,
+    riskFlags,
+    userFacingCopy:
+      decision === "executed_with_status_probe"
+        ? `Confirmed ${input.actionTool} after ${preflightTool}; ${statusProbeTool} completed before any retry path.`
+        : decision === "resolved_after_status_probe"
+          ? `The ${input.actionTool} result was treated as ambiguous, so I used ${statusProbeTool} instead of retrying blindly.`
+          : decision === "awaiting_confirmation"
+            ? `I need a separate explicit confirmation before ${input.actionTool}.`
+            : decision === "external_gate"
+              ? "Live commercial action execution is gated until Swiggy credentials are available for this environment."
+              : decision === "blocked_paid_dineout"
+                ? "Paid Dineout deals cannot use the free book_table path; use the Dineout cart/payment flow instead."
+                : "I need fresh Swiggy cart, slot, payment, or free-booking truth before this final action.",
+    supportPacket: {
+      confirmationIdHash,
+      preflightSnapshotHash: hashValue(preflightResponse),
+      protectedAction: input.actionTool,
+      statusProbe: statusProbeTool,
+      retryPolicy: "No blind retry: use the status probe result before any second commercial action attempt.",
+    },
+    telemetry: [
+      { field: "server", value: input.server, redaction: "safe enum" },
+      { field: "protected_action", value: input.actionTool, redaction: "tool name only" },
+      { field: "preflight_tool", value: preflightTool, redaction: "tool name only" },
+      { field: "status_probe_tool", value: statusProbeTool, redaction: "tool name only" },
+      { field: "confirmation_id_hash", value: confirmationIdHash, redaction: "sha256 prefix only" },
+      { field: "commercial_action_executed", value: String(executedTools.includes(input.actionTool)), redaction: "boolean invariant" },
+      { field: "blind_retry_executed", value: "false", redaction: "hard-coded safety invariant" },
+      { field: "raw_commercial_payload_retained", value: "false", redaction: "hard-coded privacy invariant" },
+    ],
+    assertions: [
+      "Commercial execution starts with the official fresh cart or slot read for the selected Swiggy server.",
+      "place_food_order, checkout, and book_table require a separate explicit user confirmation.",
+      "Payment method, bill total, and free-booking truth must be acknowledged from Swiggy preflight data.",
+      "No blind retry is executed; ambiguous outcomes use order or booking status probes first.",
+      "Raw order IDs, booking IDs, cart IDs, address IDs, payment details, and coordinates are not retained.",
+    ],
   };
 }

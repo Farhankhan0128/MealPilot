@@ -70,6 +70,7 @@ import type {
   SwiggyCartMutationReport,
   SwiggyChannelMultimodalStudio,
   SwiggyConfirmationCommandCenterReport,
+  SwiggyConfirmationExecution,
   SwiggyDeepSiteMap,
   SwiggyDineoutPrecisionCenterReport,
   SwiggyDiscoveryResolution,
@@ -815,6 +816,28 @@ export function resolveSwiggyDiscoveryFreshness(input: {
 export function fetchSwiggyConfirmationCommandCenter() {
   return requestJson<{ confirmationCommandCenter: SwiggyConfirmationCommandCenterReport }>(
     "/api/swiggy-confirmation-command-center",
+  );
+}
+
+export function executeSwiggyConfirmationCommand(input: {
+  server: "food" | "instamart" | "dineout";
+  actionTool: "place_food_order" | "checkout" | "book_table";
+  preflightArguments?: Record<string, unknown>;
+  actionArguments?: Record<string, unknown>;
+  statusProbeArguments?: Record<string, unknown>;
+  contextFresh: boolean;
+  userConfirmed: boolean;
+  separateConfirmation: boolean;
+  paymentOrFreeTruthAcknowledged: boolean;
+  dineoutFreeBooking?: boolean;
+  simulateAmbiguousResult?: boolean;
+}) {
+  return requestJson<{ confirmationExecution: SwiggyConfirmationExecution }>(
+    "/api/swiggy-confirmation-command-center/execute",
+    {
+      method: "POST",
+      body: JSON.stringify(input),
+    },
   );
 }
 

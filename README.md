@@ -306,6 +306,7 @@ POST /api/swiggy-cart-mutation-workbench/mutate
 GET  /api/swiggy-discovery-freshness
 POST /api/swiggy-discovery-freshness/resolve
 GET  /api/swiggy-confirmation-command-center
+POST /api/swiggy-confirmation-command-center/execute
 GET  /api/swiggy-cancellation-care-center
 GET  /api/swiggy-dineout-precision-center
 GET  /api/observability/traces
@@ -521,7 +522,7 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 
 `GET /api/swiggy-discovery-freshness` plus `POST /api/swiggy-discovery-freshness/resolve` is the search and availability workbench: it covers Food `search_restaurants`, `get_restaurant_menu`, and `search_menu`, Instamart `search_products` and `your_go_to_items`, Dineout `search_restaurants_dineout`, `get_restaurant_details`, and `get_available_slots`, with executable read-only discovery, pagination truth, variant selection, coordinate consistency, no-cart-mutation telemetry, and stale-result invalidation.
 
-`GET /api/swiggy-confirmation-command-center` is the visible final-commerce confirmation proof for Food `place_food_order`, Instamart `checkout`, and Dineout `book_table`: it shows fresh cart or slot reads, explicit user approval, separate approvals for combined plans, post-action status probes before retry, Swiggy-response payment and free-booking truth, and external gates for live credentials.
+`GET /api/swiggy-confirmation-command-center` plus `POST /api/swiggy-confirmation-command-center/execute` is the visible and executable final-commerce confirmation proof for Food `place_food_order`, Instamart `checkout`, and Dineout `book_table`: it shows fresh cart or slot reads, explicit user approval, separate approvals for combined plans, guarded preflight -> protected action -> status-probe execution, Swiggy-response payment and free-booking truth, no-blind-retry telemetry, paid-Dineout blocking, and external gates for live credentials.
 
 `GET /api/swiggy-cancellation-care-center` is the no-tool cancellation and support workbench: it shows official customer-care copy for Food and Instamart cancellation requests, Dineout booking-status recovery, `report_error` payload context across all three servers, incident email boundaries, planned error-code gates, and live support calibration gates.
 
