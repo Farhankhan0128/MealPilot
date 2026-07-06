@@ -16,6 +16,7 @@ flowchart LR
   API --> Registry["MCP Capability Registry"]
   API --> ToolLab["MCP Tool Lab"]
   API --> Atlas["Website Atlas"]
+  API --> DocsTwin["Docs Twin Explorer"]
   API --> SourceIntel["Source Intelligence"]
   API --> DeepMap["Deep Site Map"]
   API --> DevQuick["Developer Quickstart"]
@@ -45,7 +46,7 @@ flowchart LR
 - Separate confirmation panels for Food, Instamart, and Dineout.
 - Simulated tracking after confirmation.
 - Pantry, group planning, reminders, privacy export/delete, and ops status panels.
-- Launch Center with MCP coverage, Journey Compiler, Access Dossier, Growth Partnership Center, Channel & Multimodal Studio, Nutrition & Budget Intelligence, Household Preference Graph, Guest Collaboration & Calendar Center, Luxury Experience Workspace, Reviewer Artifact Vault, Visual QA Center, Premium Use Case Studio, Staging Cutover Rehearsal, Staging Certification Matrix, Brand Compliance Kit, Capability Registry, Resource & Prompt Studio, Tool Contract Matrix, Widget Runtime Center, Commercial Action Guard, Website Atlas with access-page and launch-blog coverage, Docs Coverage, Upstream Watch, Source Intelligence, Deep Site Map, Developer Quickstart, CTA Execution, Innovation Radar, Tool Lab, Credential Cockpit, Support Bridge, chat/voice response contracts, go-live checks, observability metrics, rollout plan, and support report generation.
+- Launch Center with MCP coverage, Journey Compiler, Access Dossier, Growth Partnership Center, Channel & Multimodal Studio, Nutrition & Budget Intelligence, Household Preference Graph, Guest Collaboration & Calendar Center, Luxury Experience Workspace, Reviewer Artifact Vault, Visual QA Center, Premium Use Case Studio, Staging Cutover Rehearsal, Staging Certification Matrix, Brand Compliance Kit, Capability Registry, Resource & Prompt Studio, Tool Contract Matrix, Widget Runtime Center, Commercial Action Guard, Website Atlas with access-page and launch-blog coverage, Docs Coverage, Docs Twin Explorer, Upstream Watch, Source Intelligence, Deep Site Map, Developer Quickstart, CTA Execution, Innovation Radar, Tool Lab, Credential Cockpit, Support Bridge, chat/voice response contracts, go-live checks, observability metrics, rollout plan, and support report generation.
 - Demo Studio with cart preflight checks, offer opportunities, MCP replay transcripts, staging transcript export, demo progress, and submission readiness.
 - Production Evidence panel with Swiggy widget contracts, rate-limit budgets, version/deprecation monitoring, compliance controls, Source Intelligence, Deep Site Map, Developer Quickstart, CTA Execution, and Innovation Radar artifact links, Data Governance Center, Production Launch Bundle, Error Intelligence, Resilience Lab drills, Evaluation Lab persona QA, and reviewer proof score.
 - No checkout, order, or booking call is hidden inside a generic "continue" button.
@@ -92,6 +93,7 @@ Implementation:
 - Exposes `/api/reviewer-artifact-vault` as the access-submission manifest for proof links, OpenAPI, smoke commands, screenshot targets, demo-video checklist, logs, traces, redaction rules, support context, and Swiggy handoff copy.
 - Exposes `/api/visual-qa-center` as the reviewer screenshot and layout evidence center for viewport targets, selector manifests, artifact paths, no-overlap rules, text-fit rules, widget fallbacks, mobile layout checks, redaction visibility, and automation/manual gates.
 - Exposes `/api/swiggy-docs-coverage` as the 69-page `llms.txt` documentation coverage audit across Start, Build, Operate, Reference, and Blog.
+- Exposes `/api/swiggy-docs-twin-explorer` as the paired markdown/rendered-page explorer for every official `llms.txt` page, including retrieval lanes, proof links, assertions, and drift gates.
 - Exposes `/api/swiggy-upstream-watch` as the Swiggy docs/changelog watch center for `llms.txt`, `llms-full.txt`, v1.0 shipped/limited capabilities, v1.1/v1.2/v2 roadmap items, signed manifests, and required MealPilot follow-up actions.
 - Exposes `/api/swiggy-source-intelligence` as the source reconciliation center for Builders website pages, CTAs, `llms` docs, markdown twins, 35-tool reference counts, drift signals, and build-queue actions.
 - Exposes `/api/swiggy-deep-site-map` as the consolidated Builders website audit for every page, module signal, CTA, header/docs/footer link, proof path, source-reconciliation section, assertion, and external gate.
@@ -159,6 +161,7 @@ Implementation:
 - `server/services/reviewerArtifactVault.ts`
 - `server/services/visualQaCenter.ts`
 - `server/services/docsCoverage.ts`
+- `server/services/docsTwinExplorer.ts`
 - `server/services/sourceIntelligence.ts`
 - `server/services/deepSiteMap.ts`
 - `server/services/developerQuickstartWorkbench.ts`

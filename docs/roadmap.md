@@ -30,6 +30,7 @@ Status: in progress.
 - Add OAuth Status panel, callback URL cleanup, redacted token posture, and token exchange path. Complete.
 - Add Swiggy Upstream Watch for `llms.txt`, `llms-full.txt`, changelog limitations, roadmap items, signed manifests, and release-drift action queues. Complete.
 - Add Swiggy Source Intelligence for Builders website, CTA, `llms`, markdown twin, reference count, drift signal, and build-queue reconciliation. Complete.
+- Add Swiggy Docs Twin Explorer for all 69 official markdown/rendered page pairs, retrieval lanes, proof routes, assertions, and drift gates. Complete.
 - Add Swiggy Deep Site Map for every Builders page, module signal, CTA, header/docs/footer link, source section, proof path, assertion, and external gate. Complete.
 - Add Developer Quickstart Workbench for official first-call readiness, framework adapters, OAuth gates, JSON-RPC drills, and recipe handoffs. Complete.
 - Add CTA Execution Center for official Builders CTAs, header/docs/footer links, browser actions, keyboard paths, proof links, and manual gates. Complete.

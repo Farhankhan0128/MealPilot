@@ -67,6 +67,7 @@ import { buildDataGovernanceCenter } from "./services/dataGovernance.js";
 import { buildSwiggyDeepSiteMap } from "./services/deepSiteMap.js";
 import { buildDeveloperQuickstartWorkbench } from "./services/developerQuickstartWorkbench.js";
 import { buildSwiggyDocsCoverage } from "./services/docsCoverage.js";
+import { buildSwiggyDocsTwinExplorer } from "./services/docsTwinExplorer.js";
 import { buildEnterpriseDelegatedAuthCenter } from "./services/enterpriseDelegatedAuth.js";
 import {
   buildComplianceEvidence,
@@ -632,6 +633,10 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/swiggy-docs-coverage", (_req, res) => {
     res.json({ docsCoverage: buildSwiggyDocsCoverage() });
+  });
+
+  app.get("/api/swiggy-docs-twin-explorer", (_req, res) => {
+    res.json({ docsTwinExplorer: buildSwiggyDocsTwinExplorer() });
   });
 
   app.get("/api/swiggy-upstream-watch", (_req, res) => {

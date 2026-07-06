@@ -24,6 +24,7 @@ import {
   Radio,
   RefreshCw,
   Rocket,
+  ScrollText,
   ShieldCheck,
   ShoppingBasket,
   Sparkles,
@@ -103,6 +104,7 @@ import {
   fetchSwiggyGrowthPartnershipCenter,
   fetchSwiggyAccessDossier,
   fetchSwiggyDocsCoverage,
+  fetchSwiggyDocsTwinExplorer,
   fetchSwiggyDeepSiteMap,
   fetchSwiggyCtaExecutionCenter,
   fetchSwiggyInnovationRadar,
@@ -201,6 +203,7 @@ import type {
   SwiggyWidget,
   SwiggyBuildersMap,
   SwiggyDocsCoverageReport,
+  SwiggyDocsTwinExplorer,
   SwiggyFaqPolicyCenter,
   SwiggyGrowthPartnershipCenter,
   SwiggyInnovationRadarReport,
@@ -373,6 +376,7 @@ function App() {
   const [reviewerArtifactVault, setReviewerArtifactVault] = useState<ReviewerArtifactVault | null>(null);
   const [visualQa, setVisualQa] = useState<VisualQaCenter | null>(null);
   const [swiggyDocsCoverage, setSwiggyDocsCoverage] = useState<SwiggyDocsCoverageReport | null>(null);
+  const [docsTwinExplorer, setDocsTwinExplorer] = useState<SwiggyDocsTwinExplorer | null>(null);
   const [swiggyUpstreamWatch, setSwiggyUpstreamWatch] = useState<SwiggyUpstreamWatchReport | null>(null);
   const [swiggySourceIntelligence, setSwiggySourceIntelligence] =
     useState<SwiggySourceIntelligenceReport | null>(null);
@@ -534,6 +538,7 @@ function App() {
       reviewerArtifactVaultResponse,
       visualQaResponse,
       docsCoverageResponse,
+      docsTwinExplorerResponse,
       upstreamWatchResponse,
       sourceIntelligenceResponse,
       developerQuickstartResponse,
@@ -602,6 +607,7 @@ function App() {
       fetchReviewerArtifactVault(),
       fetchVisualQaCenter(),
       fetchSwiggyDocsCoverage(),
+      fetchSwiggyDocsTwinExplorer(),
       fetchSwiggyUpstreamWatch(),
       fetchSourceIntelligenceOptional(),
       fetchDeveloperQuickstartWorkbench(),
@@ -671,6 +677,7 @@ function App() {
     setReviewerArtifactVault(reviewerArtifactVaultResponse.reviewerArtifactVault);
     setVisualQa(visualQaResponse.visualQa);
     setSwiggyDocsCoverage(docsCoverageResponse.docsCoverage);
+    setDocsTwinExplorer(docsTwinExplorerResponse.docsTwinExplorer);
     setSwiggyUpstreamWatch(upstreamWatchResponse.upstreamWatch);
     setSwiggySourceIntelligence(sourceIntelligenceResponse.sourceIntelligence);
     setDeveloperQuickstart(developerQuickstartResponse.quickstartWorkbench);
@@ -743,6 +750,7 @@ function App() {
       reviewerArtifactVaultResponse,
       visualQaResponse,
       docsCoverageResponse,
+      docsTwinExplorerResponse,
       upstreamWatchResponse,
       sourceIntelligenceResponse,
       developerQuickstartResponse,
@@ -808,6 +816,7 @@ function App() {
       fetchReviewerArtifactVault(),
       fetchVisualQaCenter(),
       fetchSwiggyDocsCoverage(),
+      fetchSwiggyDocsTwinExplorer(),
       fetchSwiggyUpstreamWatch(),
       fetchSourceIntelligenceOptional(),
       fetchDeveloperQuickstartWorkbench(),
@@ -873,6 +882,7 @@ function App() {
     setReviewerArtifactVault(reviewerArtifactVaultResponse.reviewerArtifactVault);
     setVisualQa(visualQaResponse.visualQa);
     setSwiggyDocsCoverage(docsCoverageResponse.docsCoverage);
+    setDocsTwinExplorer(docsTwinExplorerResponse.docsTwinExplorer);
     setSwiggyUpstreamWatch(upstreamWatchResponse.upstreamWatch);
     setSwiggySourceIntelligence(sourceIntelligenceResponse.sourceIntelligence);
     setDeveloperQuickstart(developerQuickstartResponse.quickstartWorkbench);
@@ -1512,6 +1522,7 @@ function App() {
                 reviewerArtifactVault={reviewerArtifactVault}
                 visualQa={visualQa}
                 docsCoverage={swiggyDocsCoverage}
+                docsTwinExplorer={docsTwinExplorer}
                 upstreamWatch={swiggyUpstreamWatch}
                 sourceIntelligence={swiggySourceIntelligence}
                 developerQuickstart={developerQuickstart}
@@ -2067,6 +2078,7 @@ function LaunchCenterPanel({
   reviewerArtifactVault,
   visualQa,
   docsCoverage,
+  docsTwinExplorer,
   upstreamWatch,
   sourceIntelligence,
   developerQuickstart,
@@ -2117,6 +2129,7 @@ function LaunchCenterPanel({
   reviewerArtifactVault: ReviewerArtifactVault | null;
   visualQa: VisualQaCenter | null;
   docsCoverage: SwiggyDocsCoverageReport | null;
+  docsTwinExplorer: SwiggyDocsTwinExplorer | null;
   upstreamWatch: SwiggyUpstreamWatchReport | null;
   sourceIntelligence: SwiggySourceIntelligenceReport | null;
   developerQuickstart: DeveloperQuickstartWorkbench | null;
@@ -3185,6 +3198,51 @@ function LaunchCenterPanel({
               </li>
             ))}
           </ul>
+        </article>
+
+        <article className="docs-twin-card">
+          <div className="mini-heading">
+            <ScrollText aria-hidden="true" />
+            <strong>Docs Twin Explorer</strong>
+          </div>
+          <span>
+            {docsTwinExplorer
+              ? `${docsTwinExplorer.score}/100, ${docsTwinExplorer.totals.markdownTwins} markdown twins`
+              : "Pairing Swiggy markdown twins with rendered pages and proof routes"}
+          </span>
+          <div className="docs-twin-grid">
+            <div>
+              <strong>{docsTwinExplorer?.totals.pages ?? 0}</strong>
+              <span>Pages</span>
+            </div>
+            <div>
+              <strong>{docsTwinExplorer?.totals.referenceTools ?? 0}</strong>
+              <span>Tools</span>
+            </div>
+            <div>
+              <strong>{docsTwinExplorer?.retrievalLanes.length ?? 0}</strong>
+              <span>Lanes</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(docsTwinExplorer?.groups ?? []).map((group) => (
+              <li key={group.id} data-status={group.externalGates > 0 ? "blocked" : group.documented > 0 ? "watch" : "healthy"}>
+                <span>{group.label}</span>
+                <strong>{group.ready}/{group.total}</strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-intelligence-actions" aria-label="Docs twin links">
+            <a href="/api/swiggy-docs-twin-explorer" target="_blank" rel="noreferrer">
+              Open explorer
+            </a>
+            <a href="https://mcp.swiggy.com/builders/llms.txt" target="_blank" rel="noreferrer">
+              llms.txt
+            </a>
+            <a href="https://mcp.swiggy.com/builders/llms-full.txt" target="_blank" rel="noreferrer">
+              llms-full
+            </a>
+          </div>
         </article>
 
         <article className="source-intelligence-card">

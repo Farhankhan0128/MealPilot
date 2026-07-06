@@ -59,6 +59,10 @@ assert(
   "OpenAPI upstream watch contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-docs-twin-explorer"]?.get?.summary?.includes("docs twin"),
+  "OpenAPI docs twin explorer contract is missing",
+);
+assert(
   openApi.paths["/api/swiggy-source-intelligence"]?.get?.summary?.includes("source intelligence"),
   "OpenAPI source intelligence contract is missing",
 );
@@ -780,7 +784,7 @@ const reviewerArtifactVault = await request("/api/reviewer-artifact-vault");
 assert(reviewerArtifactVault.reviewerArtifactVault.score >= 90, "reviewer artifact vault score is below target");
 assert(reviewerArtifactVault.reviewerArtifactVault.totalArtifacts >= 30, "reviewer artifact vault artifacts are incomplete");
 assert(reviewerArtifactVault.reviewerArtifactVault.readyArtifacts >= 30, "reviewer artifact vault ready artifacts are incomplete");
-assert(reviewerArtifactVault.reviewerArtifactVault.totalScreenshotTargets === 10, "reviewer artifact vault screenshot targets are incomplete");
+assert(reviewerArtifactVault.reviewerArtifactVault.totalScreenshotTargets === 11, "reviewer artifact vault screenshot targets are incomplete");
 assert(reviewerArtifactVault.reviewerArtifactVault.readyScreenshotTargets >= 5, "reviewer artifact vault ready screenshots are incomplete");
 assert(reviewerArtifactVault.reviewerArtifactVault.totalCommands === 7, "reviewer artifact vault commands are incomplete");
 assert(reviewerArtifactVault.reviewerArtifactVault.readyCommands >= 6, "reviewer artifact vault ready commands are incomplete");
@@ -837,6 +841,17 @@ assert(
   "reviewer artifact vault CTA execution artifact is missing",
 );
 assert(
+  reviewerArtifactVault.reviewerArtifactVault.artifactSections.some((section) =>
+    section.artifacts.some(
+      (artifact) =>
+        artifact.id === "docs_twin_explorer" &&
+        artifact.label === "Swiggy Docs Twin Explorer" &&
+        artifact.path === "/api/swiggy-docs-twin-explorer",
+    ),
+  ),
+  "reviewer artifact vault docs twin explorer artifact is missing",
+);
+assert(
   reviewerArtifactVault.reviewerArtifactVault.screenshotTargets.some(
     (target) =>
       target.id === "luxury_workspace_card" &&
@@ -864,6 +879,15 @@ assert(
   "reviewer artifact vault CTA execution screenshot target is missing",
 );
 assert(
+  reviewerArtifactVault.reviewerArtifactVault.screenshotTargets.some(
+    (target) =>
+      target.id === "docs_twin_card" &&
+      target.selector === ".docs-twin-card" &&
+      target.status === "ready",
+  ),
+  "reviewer artifact vault docs twin screenshot target is missing",
+);
+assert(
   reviewerArtifactVault.reviewerArtifactVault.commands.some(
     (command) =>
       command.id === "verify_production" &&
@@ -889,8 +913,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 17, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 17, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 18, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 18, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -955,6 +979,12 @@ assert(
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some((target) => target.id === "docs_twin_card" && target.selector === ".docs-twin-card"),
+  ),
+  "visual QA docs twin target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
     group.targets.some((target) => target.id === "coding_agent_card" && target.selector === ".coding-agent-card"),
   ),
   "visual QA coding agent governance target is missing",
@@ -991,7 +1021,7 @@ assert(
     (command) =>
       command.id === "visual_capture_harness" &&
       command.command === "npm run verify:visual" &&
-      command.expectedSignal.includes("targetCount >= 17"),
+      command.expectedSignal.includes("targetCount >= 18"),
   ),
   "visual QA Playwright command is missing",
 );
@@ -1020,6 +1050,54 @@ assert(
       page.evidenceLinks.includes("/api/enterprise-delegated-auth"),
   ),
   "Swiggy enterprise delegated-auth docs coverage is missing",
+);
+
+const docsTwinExplorer = await request("/api/swiggy-docs-twin-explorer");
+assert(docsTwinExplorer.docsTwinExplorer.score >= 95, "Swiggy docs twin explorer score is below target");
+assert(docsTwinExplorer.docsTwinExplorer.totals.pages === 69, "Swiggy docs twin explorer page coverage is incomplete");
+assert(docsTwinExplorer.docsTwinExplorer.totals.markdownTwins === 69, "Swiggy docs twin markdown coverage is incomplete");
+assert(docsTwinExplorer.docsTwinExplorer.totals.renderedPages === 69, "Swiggy docs twin rendered page coverage is incomplete");
+assert(docsTwinExplorer.docsTwinExplorer.totals.referenceTools === 35, "Swiggy docs twin reference tool coverage is incomplete");
+assert(docsTwinExplorer.docsTwinExplorer.totals.sections === 5, "Swiggy docs twin section coverage is incomplete");
+assert(
+  ["start", "build", "operate", "reference", "blog"].every((id) =>
+    docsTwinExplorer.docsTwinExplorer.groups.some((group) => group.id === id),
+  ),
+  "Swiggy docs twin groups are incomplete",
+);
+assert(
+  docsTwinExplorer.docsTwinExplorer.rows.some(
+    (row) =>
+      row.id === "developer_quickstart" &&
+      row.markdownUrl.endsWith("/docs/start/developer/index.md") &&
+      row.renderedUrl.endsWith("/docs/start/developer/") &&
+      row.retrievalMode === "markdown_twin" &&
+      row.evidenceLinks.includes("/api/swiggy-developer-quickstart"),
+  ),
+  "Swiggy docs twin developer quickstart row is missing",
+);
+assert(
+  docsTwinExplorer.docsTwinExplorer.rows.some(
+    (row) =>
+      row.id === "reference_food_place_food_order" &&
+      row.section === "reference" &&
+      row.markdownUrl.endsWith("/docs/reference/food/place_food_order.md"),
+  ),
+  "Swiggy docs twin place_food_order reference row is missing",
+);
+assert(
+  docsTwinExplorer.docsTwinExplorer.retrievalLanes.some(
+    (lane) =>
+      lane.id === "proof_readback" &&
+      lane.command.includes("/api/swiggy-docs-twin-explorer") &&
+      lane.expectedSignal.includes("totals.pages === 69"),
+  ),
+  "Swiggy docs twin proof readback lane is missing",
+);
+assert(
+  docsTwinExplorer.docsTwinExplorer.assertions.some((assertion) => assertion.includes("markdown twin URL")) &&
+    docsTwinExplorer.docsTwinExplorer.externalGates.some((gate) => gate.includes("re-browse llms.txt")),
+  "Swiggy docs twin assertions or external gates are missing",
 );
 
 const upstreamWatch = await request("/api/swiggy-upstream-watch");
@@ -2290,6 +2368,12 @@ assert(
   "reviewer proof upstream watch artifact is missing",
 );
 assert(
+  proof.proof.artifacts.some(
+    (artifact) => artifact.label === "Swiggy Docs Twin Explorer" && artifact.path === "/api/swiggy-docs-twin-explorer",
+  ),
+  "reviewer proof docs twin explorer artifact is missing",
+);
+assert(
   proof.proof.artifacts.some((artifact) => artifact.label === "Premium Concierge Itinerary"),
   "reviewer proof premium concierge artifact is missing",
 );
@@ -2785,7 +2869,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 17, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 18, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -2799,7 +2883,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("17")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("18")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -2843,6 +2927,7 @@ assert(
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Reviewer Artifact Vault") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Visual QA Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Docs Coverage") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Docs Twin Explorer") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Upstream Watch") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Source Intelligence") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Innovation Radar") &&
@@ -2945,6 +3030,10 @@ assert(
   "launch bundle submission console handoff link is missing",
 );
 assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-docs-twin-explorer"),
+  "launch bundle docs twin handoff link is missing",
+);
+assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-upstream-watch"),
   "launch bundle upstream watch handoff link is missing",
 );
@@ -3032,6 +3121,9 @@ console.log(
       builderIntakeCtas: `${builderIntake.intake.readyCtas}/${builderIntake.intake.totalCtas}`,
       docsCoverageScore: docsCoverage.docsCoverage.score,
       docsCoveragePages: docsCoverage.docsCoverage.totalPages,
+      docsTwinScore: docsTwinExplorer.docsTwinExplorer.score,
+      docsTwinPages: docsTwinExplorer.docsTwinExplorer.totals.pages,
+      docsTwinMarkdownTwins: docsTwinExplorer.docsTwinExplorer.totals.markdownTwins,
       upstreamWatchScore: upstreamWatch.upstreamWatch.score,
       upstreamRoadmapItems: upstreamWatch.upstreamWatch.roadmapItems.length,
       sourceIntelligenceScore: sourceIntelligence.sourceIntelligence.score,

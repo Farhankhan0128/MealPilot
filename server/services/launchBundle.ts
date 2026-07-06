@@ -149,6 +149,15 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
       evidence: "Maps all llms.txt-linked docs pages to MealPilot evidence, expansion lanes, and external gates.",
     },
     {
+      id: "docs_twin_explorer",
+      label: "Swiggy Docs Twin Explorer",
+      path: "/api/swiggy-docs-twin-explorer",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Pairs every official llms.txt markdown twin with its rendered page, section group, retrieval lane, MealPilot proof route, and drift gate.",
+    },
+    {
       id: "upstream_watch",
       label: "Swiggy Upstream Watch",
       path: "/api/swiggy-upstream-watch",
@@ -543,6 +552,7 @@ function buildPhases(config: ServerConfig, latestPlan: MealPlan | undefined, art
         artifact("reviewer_artifact_vault"),
         artifact("visual_qa_center"),
         artifact("submission_console"),
+        artifact("docs_twin_explorer"),
         artifact("upstream_watch"),
         artifact("source_intelligence"),
         artifact("innovation_radar"),
@@ -729,6 +739,7 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- Visual QA Center: /api/visual-qa-center",
     "- Submission Console: /api/submission-console",
     "- Swiggy Docs Coverage: /api/swiggy-docs-coverage",
+    "- Swiggy Docs Twin Explorer: /api/swiggy-docs-twin-explorer",
     "- Swiggy Upstream Watch: /api/swiggy-upstream-watch",
     "- Swiggy Source Intelligence: /api/swiggy-source-intelligence",
     "- Swiggy Innovation Radar: /api/swiggy-innovation-radar",

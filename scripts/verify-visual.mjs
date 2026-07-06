@@ -75,7 +75,10 @@ async function verifyTarget(page, target) {
     );
   }
 
-  const screenshotPath = path.join(outputDir, `${safeFilename(target.id)}.png`);
+  const screenshotPath = target.artifactPath
+    ? path.resolve(target.artifactPath)
+    : path.join(outputDir, `${safeFilename(target.id)}.png`);
+  await fs.mkdir(path.dirname(screenshotPath), { recursive: true });
   await page.screenshot({ fullPage: true, path: screenshotPath });
 
   return {
@@ -99,8 +102,8 @@ async function main() {
   const manifest = await fetchJson(manifestUrl);
   const targets = manifest.visualQa.targetGroups.flatMap((group) => group.targets);
 
-  if (targets.length < 17) {
-    throw new Error(`Expected at least 17 visual targets, found ${targets.length}`);
+  if (targets.length < 18) {
+    throw new Error(`Expected at least 18 visual targets, found ${targets.length}`);
   }
 
   const browser = await chromium.launch({ headless: true });

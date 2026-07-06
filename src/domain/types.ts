@@ -898,6 +898,64 @@ export interface SwiggyDocsCoverageReport {
   remainingExternalGates: string[];
 }
 
+export type SwiggyDocsTwinStatus = "ready" | "documented" | "watch" | "external_gate";
+
+export interface SwiggyDocsTwinRow {
+  id: string;
+  section: SwiggyDocsSection;
+  title: string;
+  markdownUrl: string;
+  renderedUrl: string;
+  retrievalMode: "markdown_twin" | "rendered_page";
+  mealPilotProof: string;
+  evidenceLinks: string[];
+  status: SwiggyDocsTwinStatus;
+  nextAction: string;
+}
+
+export interface SwiggyDocsTwinGroup {
+  id: SwiggyDocsSection;
+  label: string;
+  total: number;
+  ready: number;
+  documented: number;
+  externalGates: number;
+  sampleMarkdownUrls: string[];
+  evidenceLinks: string[];
+}
+
+export interface SwiggyDocsTwinRetrievalLane {
+  id: string;
+  label: string;
+  sourceUrl: string;
+  command: string;
+  expectedSignal: string;
+  status: SwiggyDocsTwinStatus;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyDocsTwinExplorer {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  totals: {
+    pages: number;
+    markdownTwins: number;
+    renderedPages: number;
+    referenceTools: number;
+    sections: number;
+    readyRows: number;
+    documentedRows: number;
+    externalGates: number;
+    proofLinks: number;
+  };
+  groups: SwiggyDocsTwinGroup[];
+  rows: SwiggyDocsTwinRow[];
+  retrievalLanes: SwiggyDocsTwinRetrievalLane[];
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type SwiggyFaqPolicyStatus = "ready" | "documented" | "external_gate";
 
 export interface SwiggyFaqPolicyItem {

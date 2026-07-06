@@ -68,6 +68,7 @@ import type {
   SwiggyWidget,
   SwiggyBuildersMap,
   SwiggyDocsCoverageReport,
+  SwiggyDocsTwinExplorer,
   SwiggyFaqPolicyCenter,
   SwiggyGrowthPartnershipCenter,
   SwiggyInnovationRadarReport,
@@ -307,6 +308,10 @@ export function fetchVisualQaCenter() {
 
 export function fetchSwiggyDocsCoverage() {
   return requestJson<{ docsCoverage: SwiggyDocsCoverageReport }>("/api/swiggy-docs-coverage");
+}
+
+export function fetchSwiggyDocsTwinExplorer() {
+  return requestJson<{ docsTwinExplorer: SwiggyDocsTwinExplorer }>("/api/swiggy-docs-twin-explorer");
 }
 
 export function fetchSwiggyUpstreamWatch() {

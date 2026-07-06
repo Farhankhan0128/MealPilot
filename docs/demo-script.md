@@ -111,6 +111,7 @@ Open the Launch Center and show:
 - FAQ & Policy Center showing homepage/developer/enterprise FAQ coverage, footer resources, access ground rules, legal signals, and external gates.
 - Growth Partnership Center showing launch experiments, co-marketing assets, metric targets, partner asks, and external Swiggy approvals.
 - Docs Coverage showing all 69 Swiggy `llms.txt` pages mapped to MealPilot evidence and external gates.
+- Docs Twin Explorer showing markdown twins, rendered URLs, retrieval lanes, section groups, proof links, and drift gates.
 - Upstream Watch showing `llms.txt`, `llms-full.txt`, v1.0 limitations, v1.1/v1.2/v2 roadmap items, signed-manifest watch, and new-tool action queues.
 - Source Intelligence showing official website pages, CTA inventory, `llms` docs, markdown twins, 35-tool reference counts, drift signals, and build-queue actions.
 - Deep Site Map showing every Builders page, rendered module signal, CTA, header/docs/footer link, proof path, source-reconciliation section, assertion, and external gate in one reviewer audit.
@@ -175,6 +176,7 @@ Open Production Evidence and show:
 - Compliance controls for consent, PII minimization, deletion, audit logging, and training-data exclusion.
 - Support Bridge redaction rules, SLA matrix, and escalation checklist.
 - Swiggy Docs Coverage artifact in reviewer proof and launch handoff.
+- Swiggy Docs Twin Explorer artifact for markdown twin retrieval, rendered-page pairing, and proof readback.
 - Swiggy Upstream Watch artifact for changelog, coding-agent docs, roadmap, signed-manifest, and release-drift control.
 - Swiggy Source Intelligence artifact for website/docs/API drift reconciliation, 35-tool count alignment, and external gate tracking.
 - Swiggy Deep Site Map artifact for page/module/CTA/header/footer proof coverage and reviewer readback.
@@ -215,6 +217,7 @@ Briefly show production readiness:
 
 - `/api/ready`
 - `/api/openapi.json`
+- `/api/swiggy-docs-twin-explorer`
 - `/api/swiggy-upstream-watch`
 - `/api/swiggy-source-intelligence`
 - `/api/swiggy-deep-site-map`

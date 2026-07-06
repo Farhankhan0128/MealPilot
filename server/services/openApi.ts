@@ -377,6 +377,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-docs-twin-explorer": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy docs twin explorer for every llms.txt markdown and rendered page pair",
+          responses: {
+            "200": {
+              description:
+                "Official llms.txt documentation explorer with markdown twin URLs, rendered page URLs, section groups, retrieval lanes, proof links, assertions, and drift gates for all Swiggy Builders docs pages",
+            },
+          },
+        },
+      },
       "/api/swiggy-upstream-watch": {
         get: {
           tags: ["Builder Access"],

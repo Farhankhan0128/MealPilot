@@ -57,6 +57,7 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/reviewer-artifact-vault"].get.summary).toContain("Reviewer Artifact Vault");
     expect(openApi.body.paths["/api/visual-qa-center"].get.summary).toContain("Visual QA Center");
     expect(openApi.body.paths["/api/swiggy-docs-coverage"].get.summary).toContain("llms.txt");
+    expect(openApi.body.paths["/api/swiggy-docs-twin-explorer"].get.summary).toContain("docs twin");
     expect(openApi.body.paths["/api/swiggy-upstream-watch"].get.summary).toContain("upstream docs");
     expect(openApi.body.paths["/api/swiggy-source-intelligence"].get.summary).toContain("source intelligence");
     expect(openApi.body.paths["/api/swiggy-deep-site-map"].get.summary).toContain("deep site map");
@@ -881,7 +882,7 @@ describe("MealPilot API", () => {
     expect(packet.totals.formFields).toBeGreaterThanOrEqual(10);
     expect(packet.totals.requiredAttachments).toBeGreaterThanOrEqual(10);
     expect(packet.totals.launchArtifacts).toBeGreaterThanOrEqual(50);
-    expect(packet.totals.visualTargets).toBe(17);
+    expect(packet.totals.visualTargets).toBe(18);
     expect(packet.files.map((file: { id: string }) => file.id)).toEqual(
       expect.arrayContaining(["packet_json", "packet_markdown", "visual_report", "production_summary"]),
     );
@@ -893,7 +894,7 @@ describe("MealPilot API", () => {
     ).toBe(true);
     expect(
       packet.commands.some(
-        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("17"),
+        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("18"),
       ),
     ).toBe(true);
     expect(packet.copyBlocks.formFields).toContain("Redirect URI(s)");
@@ -1320,7 +1321,7 @@ describe("MealPilot API", () => {
     expect(vault.score).toBeGreaterThanOrEqual(90);
     expect(vault.totalArtifacts).toBeGreaterThanOrEqual(30);
     expect(vault.readyArtifacts).toBeGreaterThanOrEqual(30);
-    expect(vault.totalScreenshotTargets).toBe(10);
+    expect(vault.totalScreenshotTargets).toBe(11);
     expect(vault.readyScreenshotTargets).toBeGreaterThanOrEqual(5);
     expect(vault.totalCommands).toBe(7);
     expect(vault.readyCommands).toBeGreaterThanOrEqual(6);
@@ -1382,6 +1383,16 @@ describe("MealPilot API", () => {
       vault.artifactSections.some((section: { artifacts: Array<{ id: string; label: string; path: string }> }) =>
         section.artifacts.some(
           (artifact) =>
+            artifact.id === "docs_twin_explorer" &&
+            artifact.label === "Swiggy Docs Twin Explorer" &&
+            artifact.path === "/api/swiggy-docs-twin-explorer",
+        ),
+      ),
+    ).toBe(true);
+    expect(
+      vault.artifactSections.some((section: { artifacts: Array<{ id: string; label: string; path: string }> }) =>
+        section.artifacts.some(
+          (artifact) =>
             artifact.id === "innovation_radar" &&
             artifact.label === "Swiggy Innovation Radar" &&
             artifact.path === "/api/swiggy-innovation-radar",
@@ -1413,6 +1424,14 @@ describe("MealPilot API", () => {
       ),
     ).toBe(true);
     expect(
+      vault.screenshotTargets.some(
+        (target: { id: string; selector: string; status: string }) =>
+          target.id === "docs_twin_card" &&
+          target.selector === ".docs-twin-card" &&
+          target.status === "ready",
+      ),
+    ).toBe(true);
+    expect(
       vault.commands.some(
         (command: { id: string; command: string; expectedSignal: string }) =>
           command.id === "verify_production" &&
@@ -1433,8 +1452,8 @@ describe("MealPilot API", () => {
     const visualQa = response.body.visualQa;
 
     expect(visualQa.score).toBe(100);
-    expect(visualQa.totalTargets).toBe(17);
-    expect(visualQa.readyTargets).toBe(17);
+    expect(visualQa.totalTargets).toBe(18);
+    expect(visualQa.readyTargets).toBe(18);
     expect(visualQa.totalRules).toBe(7);
     expect(visualQa.readyRules).toBe(7);
     expect(visualQa.totalCommands).toBe(5);
@@ -1489,6 +1508,11 @@ describe("MealPilot API", () => {
     ).toBe(true);
     expect(
       visualQa.targetGroups.some((group: { targets: Array<{ id: string; selector: string }> }) =>
+        group.targets.some((target) => target.id === "docs_twin_card" && target.selector === ".docs-twin-card"),
+      ),
+    ).toBe(true);
+    expect(
+      visualQa.targetGroups.some((group: { targets: Array<{ id: string; selector: string }> }) =>
         group.targets.some((target) => target.id === "coding_agent_card" && target.selector === ".coding-agent-card"),
       ),
     ).toBe(true);
@@ -1521,7 +1545,7 @@ describe("MealPilot API", () => {
         (command: { id: string; command: string; expectedSignal: string }) =>
           command.id === "visual_capture_harness" &&
           command.command === "npm run verify:visual" &&
-          command.expectedSignal.includes("targetCount >= 17"),
+          command.expectedSignal.includes("targetCount >= 18"),
       ),
     ).toBe(true);
     expect(visualQa.externalGates.some((gate: string) => gate.includes("Selected PNG screenshots"))).toBe(true);
@@ -1556,6 +1580,63 @@ describe("MealPilot API", () => {
     ).toBe(true);
     expect(report.pages.some((page: { id: string }) => page.id === "reference_food_place_food_order")).toBe(true);
     expect(report.assertions.some((assertion: string) => assertion.includes("llms.txt-linked"))).toBe(true);
+  });
+
+  it("returns a Swiggy docs twin explorer for markdown and rendered page retrieval", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/swiggy-docs-twin-explorer").expect(200);
+    const explorer = response.body.docsTwinExplorer;
+
+    expect(explorer.score).toBeGreaterThanOrEqual(95);
+    expect(explorer.officialSources).toEqual(
+      expect.arrayContaining([
+        "https://mcp.swiggy.com/builders/",
+        "https://mcp.swiggy.com/builders/llms.txt",
+        "https://mcp.swiggy.com/builders/llms-full.txt",
+      ]),
+    );
+    expect(explorer.totals.pages).toBe(69);
+    expect(explorer.totals.markdownTwins).toBe(69);
+    expect(explorer.totals.renderedPages).toBe(69);
+    expect(explorer.totals.referenceTools).toBe(35);
+    expect(explorer.totals.sections).toBe(5);
+    expect(explorer.groups.map((group: { id: string; total: number }) => [group.id, group.total])).toEqual(
+      expect.arrayContaining([
+        ["start", 10],
+        ["build", 10],
+        ["operate", 8],
+        ["reference", 40],
+        ["blog", 1],
+      ]),
+    );
+    expect(
+      explorer.rows.some(
+        (row: { id: string; markdownUrl: string; renderedUrl: string; evidenceLinks: string[]; retrievalMode: string }) =>
+          row.id === "developer_quickstart" &&
+          row.markdownUrl.endsWith("/docs/start/developer/index.md") &&
+          row.renderedUrl.endsWith("/docs/start/developer/") &&
+          row.retrievalMode === "markdown_twin" &&
+          row.evidenceLinks.includes("/api/swiggy-developer-quickstart"),
+      ),
+    ).toBe(true);
+    expect(
+      explorer.rows.some(
+        (row: { id: string; section: string; markdownUrl: string }) =>
+          row.id === "reference_food_place_food_order" &&
+          row.section === "reference" &&
+          row.markdownUrl.endsWith("/docs/reference/food/place_food_order.md"),
+      ),
+    ).toBe(true);
+    expect(
+      explorer.retrievalLanes.some(
+        (lane: { id: string; command: string; expectedSignal: string }) =>
+          lane.id === "proof_readback" &&
+          lane.command.includes("/api/swiggy-docs-twin-explorer") &&
+          lane.expectedSignal.includes("totals.pages === 69"),
+      ),
+    ).toBe(true);
+    expect(explorer.assertions.some((assertion: string) => assertion.includes("markdown twin URL"))).toBe(true);
+    expect(explorer.externalGates.some((gate: string) => gate.includes("re-browse llms.txt"))).toBe(true);
   });
 
   it("returns Swiggy upstream docs, changelog, and roadmap watch evidence", async () => {
@@ -2631,6 +2712,12 @@ describe("MealPilot API", () => {
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "SLO Incident Command Center")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Data Governance Center")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Swiggy Upstream Watch")).toBe(true);
+    expect(
+      proof.body.proof.artifacts.some(
+        (artifact: { label: string; path: string }) =>
+          artifact.label === "Swiggy Docs Twin Explorer" && artifact.path === "/api/swiggy-docs-twin-explorer",
+      ),
+    ).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Swiggy Source Intelligence")).toBe(true);
     expect(
       proof.body.proof.artifacts.some(
@@ -2745,6 +2832,7 @@ describe("MealPilot API", () => {
         "CTA Execution Center",
         "Builder Intake Command Center",
         "Swiggy Docs Coverage",
+        "Swiggy Docs Twin Explorer",
         "Swiggy Upstream Watch",
         "Swiggy Source Intelligence",
         "Swiggy Innovation Radar",
@@ -2791,6 +2879,7 @@ describe("MealPilot API", () => {
     expect(bundle.handoffEmail.body).toContain("/api/reviewer-artifact-vault");
     expect(bundle.handoffEmail.body).toContain("/api/visual-qa-center");
     expect(bundle.handoffEmail.body).toContain("/api/submission-console");
+    expect(bundle.handoffEmail.body).toContain("/api/swiggy-docs-twin-explorer");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-upstream-watch");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-source-intelligence");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-innovation-radar");

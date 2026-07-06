@@ -1134,6 +1134,10 @@ select:focus {
   grid-column: span 2;
 }
 
+.docs-twin-card {
+  grid-column: span 2;
+}
+
 .cta-execution-card {
   grid-column: span 2;
 }
@@ -1326,6 +1330,7 @@ select:focus {
 .use-case-studio-grid,
 .staging-certification-grid,
 .upstream-watch-grid,
+.docs-twin-grid,
 .source-intelligence-grid,
 .developer-quickstart-grid,
 .cta-execution-grid,
@@ -1359,6 +1364,7 @@ select:focus {
 .use-case-studio-grid div,
 .staging-certification-grid div,
 .upstream-watch-grid div,
+.docs-twin-grid div,
 .source-intelligence-grid div,
 .developer-quickstart-grid div,
 .cta-execution-grid div,
@@ -1395,6 +1401,7 @@ select:focus {
 .use-case-studio-grid strong,
 .staging-certification-grid strong,
 .upstream-watch-grid strong,
+.docs-twin-grid strong,
 .source-intelligence-grid strong,
 .developer-quickstart-grid strong,
 .cta-execution-grid strong,
@@ -1428,6 +1435,7 @@ select:focus {
 .use-case-studio-grid span,
 .staging-certification-grid span,
 .upstream-watch-grid span,
+.docs-twin-grid span,
 .source-intelligence-grid span,
 .developer-quickstart-grid span,
 .cta-execution-grid span,
@@ -1617,6 +1625,7 @@ select:focus {
 .proof-card,
 .launch-bundle-card,
 .docs-coverage-card,
+.docs-twin-card,
 .source-intelligence-card,
 .developer-quickstart-card,
 .cta-execution-card,
@@ -1703,6 +1712,7 @@ select:focus {
 .audit-ledger-grid,
 .slo-grid,
 .docs-coverage-grid,
+.docs-twin-grid,
 .source-intelligence-grid,
 .developer-quickstart-grid,
 .cta-execution-grid,
@@ -1717,6 +1727,7 @@ select:focus {
 }
 
 .docs-coverage-grid,
+.docs-twin-grid,
 .source-intelligence-grid,
 .developer-quickstart-grid,
 .cta-execution-grid,
@@ -1731,6 +1742,7 @@ select:focus {
 }
 
 .docs-coverage-grid div,
+.docs-twin-grid div,
 .source-intelligence-grid div,
 .developer-quickstart-grid div,
 .cta-execution-grid div,
@@ -2633,6 +2645,7 @@ select:focus {
 .proof-card,
 .launch-bundle-card,
 .docs-coverage-card,
+.docs-twin-card,
 .source-intelligence-card,
 .developer-quickstart-card,
 .cta-execution-card,
@@ -2699,6 +2712,7 @@ select:focus {
 .brand-compliance-grid div,
 .website-atlas-grid div,
 .docs-coverage-grid div,
+.docs-twin-grid div,
 .source-intelligence-grid div,
 .developer-quickstart-grid div,
 .cta-execution-grid div,
@@ -2900,7 +2914,8 @@ select:focus {
   .slo-incident-card,
   .proof-card,
   .launch-bundle-card,
-  .docs-coverage-card,
+.docs-coverage-card,
+.docs-twin-card,
 .source-intelligence-card,
 .developer-quickstart-card,
 .cta-execution-card,
@@ -3038,6 +3053,7 @@ select:focus {
   .luxury-experience-grid,
   .reviewer-artifact-grid,
   .visual-qa-grid,
+  .docs-twin-grid,
   .coding-agent-grid,
   .slo-grid,
   .proof-grid {
