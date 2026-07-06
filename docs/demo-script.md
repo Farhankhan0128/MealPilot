@@ -110,6 +110,7 @@ Open the Launch Center and show:
 - Capability Registry and Resource & Prompt Studio showing `mcp:tools`, `mcp:resources`, `mcp:prompts`, metadata, widgets, prompt contracts, sample reads, and prompt messages.
 - FAQ & Policy Center showing homepage/developer/enterprise FAQ coverage, footer resources, access ground rules, legal signals, and external gates.
 - Growth Partnership Center showing launch experiments, co-marketing assets, metric targets, partner asks, and external Swiggy approvals.
+- Builders Launch Story Center showing the April 2026 launch narrative, current 35-tool docs reconciliation, reviewer demo journey, showcase assets, CTA paths, and co-marketing gates.
 - Docs Coverage showing all 69 Swiggy `llms.txt` pages mapped to MealPilot evidence and external gates.
 - Docs Twin Explorer showing markdown twins, rendered URLs, retrieval lanes, section groups, proof links, and drift gates.
 - Upstream Watch showing `llms.txt`, `llms-full.txt`, v1.0 limitations, v1.1/v1.2/v2 roadmap items, signed-manifest watch, and new-tool action queues.
@@ -203,6 +204,7 @@ Open Production Evidence and show:
 - Resource & Prompt Studio artifact for MCP resource and prompt reads across all three Swiggy servers.
 - Staging Cutover Rehearsal artifact for real MCP transport readiness, OAuth gates, first-call probes, support packet fields, and production promotion checks.
 - Website Atlas coverage for the production access page, launch blog, apply CTAs, header, footer, and docs subnav.
+- Builders Launch Story Center artifact for launch-blog story beats, 18+ to 35-tool reconciliation, demo journey, showcase packet, CTA paths, and external co-marketing gates.
 - Deep Site Map coverage for every Builders page row, module signal, CTA gate, source section, proof link, assertion, and external gate.
 - Builder Intake Command Center for CTA ownership, access-form values, demo storyboard, outbound drafts, and live credential gates.
 - Channel & Multimodal Studio for voice, auto-restock, group ordering, dietary planner, reservation, and screenshot-to-order channel contracts plus local execution packets for route plans, response rules, confirmation gates, and telemetry.

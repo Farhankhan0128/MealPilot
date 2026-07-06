@@ -178,6 +178,17 @@ const targetGroups = [
         "artifacts/visual-qa/deep-site-map-card.png",
       ),
       target(
+        "builders_launch_story_card",
+        "Builders Launch Story card",
+        "/",
+        ".builders-launch-story-card",
+        "desktop",
+        1280,
+        900,
+        "Launch Story shows launch-blog reconciliation, showcase assets, journey steps, and CTA paths.",
+        "artifacts/visual-qa/builders-launch-story-card.png",
+      ),
+      target(
         "developer_quickstart_card",
         "Developer Quickstart card",
         "/",
@@ -416,7 +427,7 @@ const commands = [
     "visual_capture_harness",
     "npm run verify:visual",
     "Playwright captures every Visual QA target at desktop, tablet, and mobile sizes and writes report.json.",
-        "ok true with targetCount >= 24 and PNG files under artifacts/visual-qa.",
+        "ok true with targetCount >= 25 and PNG files under artifacts/visual-qa.",
   ),
   command(
     "desktop_capture",

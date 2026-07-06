@@ -26,6 +26,7 @@ Status: in progress.
 - Add SLO Incident Command Center for uptime, latency, status-page fallback, maintenance windows, and incident comms. Complete.
 - Add Data Governance Center for DPDP roles, residency, PII flows, DSR routing, retention, token redaction, and signed-manifest watch. Complete.
 - Deepen Website Atlas with production access page, launch blog, developer/enterprise apply CTAs, and public conversion paths. Complete.
+- Add Swiggy Builders Launch Story Center for launch-blog narrative, current 35-tool reconciliation, reviewer demo journey, showcase assets, and co-marketing gates. Complete.
 - Add Enterprise Delegated Auth Center for on-behalf-of PKCE, per-user token storage, platform redirect schemes, troubleshooting, architecture review, and partner gates. Complete.
 - Add Swiggy Enterprise Platform Center for tenant boundaries, delegated-auth controls, quota review, support SLAs, contract gates, co-branding approval, and enterprise audit exports. Complete.
 - Add OAuth Status panel, callback URL cleanup, redacted token posture, and token exchange path. Complete.

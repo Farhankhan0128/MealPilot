@@ -417,9 +417,10 @@ const staticDocs: StaticDoc[] = [
     title: "Swiggy Announces Builders Club",
     markdownPath: "blog/2026-04-17-builders-club-launch.md",
     officialSummary: "Ecosystem narrative for Swiggy MCP builders.",
-    mealPilotSurface: "Research plan aligns MealPilot to India-first agent commerce and Builder Access review positioning.",
-    evidenceLinks: ["/api/swiggy-builders-map", "/api/production-launch-bundle"],
-    status: "documented",
+    mealPilotSurface:
+      "Swiggy Builders Launch Story Center reconciles the launch-blog ecosystem narrative with the current 35-tool docs snapshot, reviewer demo journey, showcase assets, CTAs, and co-marketing gates.",
+    evidenceLinks: ["/api/swiggy-builders-launch-story", "/api/swiggy-builders-map", "/api/production-launch-bundle"],
+    status: "implemented",
   },
 ];
 

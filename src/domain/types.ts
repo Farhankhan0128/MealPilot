@@ -4533,6 +4533,45 @@ export interface EnterprisePlatformCenterReport {
   externalGates: string[];
 }
 
+export type SwiggyLaunchStoryStatus = "ready" | "watch" | "external_gate";
+
+export interface SwiggyLaunchStoryBeat {
+  id: string;
+  label: string;
+  officialSignal: string;
+  mealPilotProof: string;
+  status: SwiggyLaunchStoryStatus;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyBuildersLaunchStoryCenterReport {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  launchSignal: {
+    blogToolSignal: string;
+    currentDocsToolSnapshot: string;
+    reconciliation: string;
+    status: SwiggyLaunchStoryStatus;
+  };
+  totals: {
+    storyBeats: number;
+    journeySteps: number;
+    showcaseAssets: number;
+    ecosystemLanes: number;
+    ctaPaths: number;
+    externalGates: number;
+  };
+  storyBeats: SwiggyLaunchStoryBeat[];
+  builderJourney: Array<{ id: string; sequence: number; label: string; proof: string; status: SwiggyLaunchStoryStatus; evidenceLinks: string[] }>;
+  showcaseAssets: Array<{ id: string; label: string; format: "demo" | "proof" | "packet" | "story"; status: SwiggyLaunchStoryStatus; evidenceLinks: string[] }>;
+  ecosystemLanes: Array<{ id: string; label: string; audience: "developers" | "startups" | "enterprise" | "skill_authors"; mealPilotPosition: string; status: SwiggyLaunchStoryStatus }>;
+  ctaPaths: Array<{ id: string; label: string; officialCta: string; mealPilotAction: string; status: SwiggyLaunchStoryStatus; evidenceLinks: string[] }>;
+  launchGuardrails: Array<{ id: string; rule: string; evidence: string; status: SwiggyLaunchStoryStatus }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type EvaluationStatus = "pass" | "watch" | "blocked";
 
 export interface EvaluationCheck {

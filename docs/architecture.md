@@ -16,6 +16,7 @@ flowchart LR
   API --> Registry["MCP Capability Registry"]
   API --> ToolLab["MCP Tool Lab"]
   API --> Atlas["Website Atlas"]
+  API --> Story["Builders Launch Story"]
   API --> DocsTwin["Docs Twin Explorer"]
   API --> SourceIntel["Source Intelligence"]
   API --> DeepMap["Deep Site Map"]
@@ -47,7 +48,7 @@ flowchart LR
 - Separate confirmation panels for Food, Instamart, and Dineout.
 - Simulated tracking after confirmation.
 - Pantry, group planning, reminders, privacy export/delete, and ops status panels.
-- Launch Center with MCP coverage, Journey Compiler, Access Dossier, Access Evidence Matrix, Growth Partnership Center, Channel & Multimodal Studio, Nutrition & Budget Intelligence, Household Preference Graph, Guest Collaboration & Calendar Center, Luxury Experience Workspace, Reviewer Artifact Vault, Visual QA Center, Premium Use Case Studio, Staging Cutover Rehearsal, Staging Certification Matrix, Brand Compliance Kit, Capability Registry, Resource & Prompt Studio, Tool Contract Matrix, Widget Runtime Center, Commercial Action Guard, Website Atlas with access-page and launch-blog coverage, Docs Coverage, Docs Twin Explorer, Upstream Watch, Source Intelligence, Deep Site Map, Developer Quickstart, CTA Execution, Innovation Radar, Tool Lab, Credential Cockpit, Support Bridge, chat/voice response contracts, go-live checks, observability metrics, rollout plan, and support report generation.
+- Launch Center with MCP coverage, Journey Compiler, Access Dossier, Access Evidence Matrix, Growth Partnership Center, Channel & Multimodal Studio, Nutrition & Budget Intelligence, Household Preference Graph, Guest Collaboration & Calendar Center, Luxury Experience Workspace, Reviewer Artifact Vault, Visual QA Center, Premium Use Case Studio, Staging Cutover Rehearsal, Staging Certification Matrix, Brand Compliance Kit, Capability Registry, Resource & Prompt Studio, Tool Contract Matrix, Widget Runtime Center, Commercial Action Guard, Website Atlas with access-page and launch-blog coverage, Builders Launch Story Center, Docs Coverage, Docs Twin Explorer, Upstream Watch, Source Intelligence, Deep Site Map, Developer Quickstart, CTA Execution, Innovation Radar, Tool Lab, Credential Cockpit, Support Bridge, chat/voice response contracts, go-live checks, observability metrics, rollout plan, and support report generation.
 - Demo Studio with cart preflight checks, offer opportunities, MCP replay transcripts, staging transcript export, demo progress, and submission readiness.
 - Production Evidence panel with Swiggy widget contracts, rate-limit budgets, version/deprecation monitoring, compliance controls, Source Intelligence, Deep Site Map, Developer Quickstart, CTA Execution, and Innovation Radar artifact links, Data Governance Center, Production Launch Bundle, Error Intelligence, Resilience Lab drills, Evaluation Lab persona QA, and reviewer proof score.
 - No checkout, order, or booking call is hidden inside a generic "continue" button.
@@ -83,6 +84,7 @@ Implementation:
 - Exposes `/api/mcp/resource-prompt-studio` for concrete `resources/list`, `resources/read`, `prompts/list`, and `prompts/get` coverage across Food, Instamart, and Dineout.
 - Exposes `/api/swiggy-builders-map` as the current Swiggy Builders website, CTA, capability, product-opportunity, and credential-gate source of truth.
 - Exposes `/api/swiggy-website-atlas` as the header, docs subnav, footer, production-access page, launch blog, page-module, CTA, resource, and legal-link coverage artifact.
+- Exposes `/api/swiggy-builders-launch-story` as the launch-blog story center that reconciles the April 2026 18+ tool narrative with the current 35-tool docs snapshot, reviewer demo journey, showcase assets, ecosystem lanes, CTA paths, and co-marketing gates.
 - Exposes `/api/swiggy-builder-intake` as the action layer for every signup, apply, demo, contact, docs, and footer CTA, with submission fields, storyboard, drafts, owners, and gates.
 - Exposes `/api/swiggy-faq-policy` as the FAQ and policy coverage center for homepage, developer, enterprise, access-guideline, footer-resource, allowed/restricted/prohibited, operating-principle, legal, and support-contact signals.
 - Exposes `/api/swiggy-growth-partnership` as the launch-growth layer for get-noticed, hiring, co-branding, direct support, co-marketing, analytics, strategic guidance, experiments, metrics, proof assets, and partner asks.

@@ -104,6 +104,7 @@ import {
   fetchSwiggyAuthStatus,
   fetchSwiggyBuildersMap,
   fetchSwiggyBuilderIntake,
+  fetchSwiggyBuildersLaunchStory,
   fetchSwiggyFaqPolicyCenter,
   fetchSwiggyGrowthPartnershipCenter,
   fetchSwiggyAccessDossier,
@@ -212,6 +213,7 @@ import type {
   SwiggyAuthStatusReport,
   SwiggyAccessDossier,
   SwiggyAccessEvidenceMatrix,
+  SwiggyBuildersLaunchStoryCenterReport,
   SwiggyBuilderIntakeCommandCenter,
   SwiggyCancellationCareCenterReport,
   SwiggyCartMutationReport,
@@ -388,6 +390,7 @@ function App() {
   const [mcpToolLab, setMcpToolLab] = useState<McpToolLabReport | null>(null);
   const [swiggyBuildersMap, setSwiggyBuildersMap] = useState<SwiggyBuildersMap | null>(null);
   const [swiggyWebsiteAtlas, setSwiggyWebsiteAtlas] = useState<SwiggyWebsiteAtlas | null>(null);
+  const [buildersLaunchStory, setBuildersLaunchStory] = useState<SwiggyBuildersLaunchStoryCenterReport | null>(null);
   const [swiggyDeepSiteMap, setSwiggyDeepSiteMap] = useState<SwiggyDeepSiteMap | null>(null);
   const [swiggyBuilderIntake, setSwiggyBuilderIntake] = useState<SwiggyBuilderIntakeCommandCenter | null>(null);
   const [swiggyFaqPolicy, setSwiggyFaqPolicy] = useState<SwiggyFaqPolicyCenter | null>(null);
@@ -568,6 +571,7 @@ function App() {
       toolLabResponse,
       buildersMapResponse,
       websiteAtlasResponse,
+      buildersLaunchStoryResponse,
       deepSiteMapResponse,
       builderIntakeResponse,
       faqPolicyResponse,
@@ -649,6 +653,7 @@ function App() {
       fetchMcpToolLab(),
       fetchSwiggyBuildersMap(),
       fetchSwiggyWebsiteAtlas(),
+      fetchSwiggyBuildersLaunchStory(),
       fetchSwiggyDeepSiteMap(),
       fetchSwiggyBuilderIntake(),
       fetchSwiggyFaqPolicyCenter(),
@@ -731,6 +736,7 @@ function App() {
     setMcpToolLab(toolLabResponse.toolLab);
     setSwiggyBuildersMap(buildersMapResponse.map);
     setSwiggyWebsiteAtlas(websiteAtlasResponse.atlas);
+    setBuildersLaunchStory(buildersLaunchStoryResponse.launchStory);
     setSwiggyDeepSiteMap(deepSiteMapResponse.deepSiteMap);
     setSwiggyBuilderIntake(builderIntakeResponse.intake);
     setSwiggyFaqPolicy(faqPolicyResponse.faqPolicy);
@@ -816,6 +822,7 @@ function App() {
       toolLabResponse,
       buildersMapResponse,
       websiteAtlasResponse,
+      buildersLaunchStoryResponse,
       deepSiteMapResponse,
       builderIntakeResponse,
       faqPolicyResponse,
@@ -894,6 +901,7 @@ function App() {
       fetchMcpToolLab(),
       fetchSwiggyBuildersMap(),
       fetchSwiggyWebsiteAtlas(),
+      fetchSwiggyBuildersLaunchStory(),
       fetchSwiggyDeepSiteMap(),
       fetchSwiggyBuilderIntake(),
       fetchSwiggyFaqPolicyCenter(),
@@ -972,6 +980,7 @@ function App() {
     setMcpToolLab(toolLabResponse.toolLab);
     setSwiggyBuildersMap(buildersMapResponse.map);
     setSwiggyWebsiteAtlas(websiteAtlasResponse.atlas);
+    setBuildersLaunchStory(buildersLaunchStoryResponse.launchStory);
     setSwiggyDeepSiteMap(deepSiteMapResponse.deepSiteMap);
     setSwiggyBuilderIntake(builderIntakeResponse.intake);
     setSwiggyFaqPolicy(faqPolicyResponse.faqPolicy);
@@ -1624,6 +1633,7 @@ function App() {
                 toolLab={mcpToolLab}
                 buildersMap={swiggyBuildersMap}
                 websiteAtlas={swiggyWebsiteAtlas}
+                buildersLaunchStory={buildersLaunchStory}
                 deepSiteMap={swiggyDeepSiteMap}
                 builderIntake={swiggyBuilderIntake}
                 faqPolicy={swiggyFaqPolicy}
@@ -2192,6 +2202,7 @@ function LaunchCenterPanel({
   toolLab,
   buildersMap,
   websiteAtlas,
+  buildersLaunchStory,
   deepSiteMap,
   builderIntake,
   faqPolicy,
@@ -2244,6 +2255,7 @@ function LaunchCenterPanel({
   toolLab: McpToolLabReport | null;
   buildersMap: SwiggyBuildersMap | null;
   websiteAtlas: SwiggyWebsiteAtlas | null;
+  buildersLaunchStory: SwiggyBuildersLaunchStoryCenterReport | null;
   deepSiteMap: SwiggyDeepSiteMap | null;
   builderIntake: SwiggyBuilderIntakeCommandCenter | null;
   faqPolicy: SwiggyFaqPolicyCenter | null;
@@ -2923,6 +2935,44 @@ function LaunchCenterPanel({
               <li key={page.id} data-status={page.status === "covered" ? "healthy" : "watch"}>
                 <span>{page.pageId.replaceAll("_", " ")}</span>
                 <strong>{page.moduleSignals.length} modules</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="builders-launch-story-card">
+          <div className="mini-heading">
+            <Rocket aria-hidden="true" />
+            <strong>Launch Story</strong>
+          </div>
+          <span>
+            {buildersLaunchStory
+              ? `${buildersLaunchStory.score}/100, ${buildersLaunchStory.launchSignal.currentDocsToolSnapshot}`
+              : "Loading Builders Club launch story"}
+          </span>
+          <div className="builders-launch-story-grid">
+            <div>
+              <strong>{buildersLaunchStory?.totals.storyBeats ?? 0}</strong>
+              <span>Beats</span>
+            </div>
+            <div>
+              <strong>{buildersLaunchStory?.totals.showcaseAssets ?? 0}</strong>
+              <span>Assets</span>
+            </div>
+            <div>
+              <strong>{buildersLaunchStory?.totals.ctaPaths ?? 0}</strong>
+              <span>CTAs</span>
+            </div>
+            <div>
+              <strong>{buildersLaunchStory?.totals.ecosystemLanes ?? 0}</strong>
+              <span>Lanes</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(buildersLaunchStory?.storyBeats ?? []).slice(0, 4).map((beat) => (
+              <li key={beat.id} data-status={beat.status === "ready" ? "healthy" : "watch"}>
+                <span>{beat.label}</span>
+                <strong>{beat.evidenceLinks.length} proofs</strong>
               </li>
             ))}
           </ul>

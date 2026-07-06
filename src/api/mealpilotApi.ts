@@ -61,6 +61,7 @@ import type {
   SwiggyAuthStatusReport,
   SwiggyAuthLifecycleCenterReport,
   EnterprisePlatformCenterReport,
+  SwiggyBuildersLaunchStoryCenterReport,
   SwiggyAccessDossier,
   SwiggyAccessEvidenceMatrix,
   SwiggyBuilderIntakeCommandCenter,
@@ -276,6 +277,10 @@ export function fetchSwiggyBuildersMap() {
 
 export function fetchSwiggyWebsiteAtlas() {
   return requestJson<{ atlas: SwiggyWebsiteAtlas }>("/api/swiggy-website-atlas");
+}
+
+export function fetchSwiggyBuildersLaunchStory() {
+  return requestJson<{ launchStory: SwiggyBuildersLaunchStoryCenterReport }>("/api/swiggy-builders-launch-story");
 }
 
 export function fetchSwiggyBuilderIntake() {

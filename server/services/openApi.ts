@@ -281,6 +281,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           responses: { "200": { description: "Global navigation, docs navigation, footer groups, page modules, CTAs, and coverage assertions" } },
         },
       },
+      "/api/swiggy-builders-launch-story": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Builders Launch Story Center for the launch blog, demo story, and showcase path",
+          responses: {
+            "200": {
+              description:
+                "Launch-blog narrative, current 35-tool docs reconciliation, builder journey, reviewer demo assets, ecosystem lanes, CTA paths, co-marketing guardrails, and Swiggy external gates",
+            },
+          },
+        },
+      },
       "/api/swiggy-builder-intake": {
         get: {
           tags: ["Builder Access"],

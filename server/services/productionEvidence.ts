@@ -300,6 +300,7 @@ export function buildReviewerProof(options: {
       { label: "Swiggy Docs Twin Explorer", path: "/api/swiggy-docs-twin-explorer" },
       { label: "Swiggy Upstream Watch", path: "/api/swiggy-upstream-watch" },
       { label: "Swiggy Source Intelligence", path: "/api/swiggy-source-intelligence" },
+      { label: "Swiggy Builders Launch Story Center", path: "/api/swiggy-builders-launch-story" },
       { label: "Swiggy Deep Site Map", path: "/api/swiggy-deep-site-map" },
       { label: "Developer Quickstart Workbench", path: "/api/swiggy-developer-quickstart" },
       { label: "CTA Execution Center", path: "/api/swiggy-cta-execution-center" },

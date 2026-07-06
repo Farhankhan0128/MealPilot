@@ -24,6 +24,15 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
       evidence: "Maps Builders header, docs subnav, footer, page modules, CTAs, and legal/resource links.",
     },
     {
+      id: "builders_launch_story",
+      label: "Swiggy Builders Launch Story Center",
+      path: "/api/swiggy-builders-launch-story",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Curates the Builders Club launch-blog narrative into a reviewer demo story, current 35-tool reconciliation, showcase assets, CTA paths, and co-marketing gates.",
+    },
+    {
       id: "deep_site_map",
       label: "Swiggy Deep Site Map",
       path: "/api/swiggy-deep-site-map",
@@ -842,6 +851,7 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- Executable packet export: /api/builder-packet-export",
     "- Packet Markdown export: /api/builder-packet-export.md",
     "- Website Atlas: /api/swiggy-website-atlas",
+    "- Swiggy Builders Launch Story Center: /api/swiggy-builders-launch-story",
     "- Deep Site Map: /api/swiggy-deep-site-map",
     "- Developer Quickstart Workbench: /api/swiggy-developer-quickstart",
     "- CTA Execution Center: /api/swiggy-cta-execution-center",

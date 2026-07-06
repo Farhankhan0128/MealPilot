@@ -341,6 +341,7 @@ MealPilot must keep mock evidence clearly labeled as simulated until these gates
 
 - Keep `/api/mcp/catalog` and `/api/swiggy-builders-map` as source-of-truth evidence.
 - Keep `/api/swiggy-website-atlas` as source-of-truth evidence for public website modules, production access page, launch blog, navigation, CTAs, and footer links.
+- Keep `/api/swiggy-builders-launch-story` as source-of-truth evidence for launch-blog narrative, current 35-tool reconciliation, reviewer demo story, showcase assets, ecosystem lanes, CTA paths, and co-marketing gates.
 - Keep `/api/swiggy-faq-policy` as source-of-truth evidence for FAQ themes, access ground rules, footer resources, policy categories, legal signals, support contact, and external policy gates.
 - Keep `/api/swiggy-growth-partnership` as source-of-truth evidence for Swiggy growth-partnership signals, GTM experiments, proof assets, metrics, partner asks, and co-marketing gates.
 - Keep `/api/swiggy-docs-coverage` as source-of-truth evidence for all 69 Swiggy `llms.txt` pages and their implementation or external-gate status.

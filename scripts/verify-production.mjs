@@ -56,6 +56,11 @@ assert(
   "OpenAPI enterprise platform contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-builders-launch-story"]?.get?.summary?.includes("Launch Story") &&
+    openApi.paths["/api/swiggy-builders-launch-story"]?.get?.responses?.["200"]?.description?.includes("35-tool"),
+  "OpenAPI Builders Launch Story contract is missing",
+);
+assert(
   openApi.paths["/api/auth/swiggy/status"].get.summary.includes("OAuth callback"),
   "OpenAPI OAuth status contract is missing",
 );
@@ -333,6 +338,49 @@ assert(
     websiteAtlas.atlas.ctas.some((cta) => cta.label === label),
   ),
   "Swiggy website application/blog CTAs are incomplete",
+);
+
+const launchStory = await request("/api/swiggy-builders-launch-story");
+assert(launchStory.launchStory.score >= 94, "Builders Launch Story score is below target");
+assert(
+  launchStory.launchStory.launchSignal.blogToolSignal.includes("18+") &&
+    launchStory.launchStory.launchSignal.currentDocsToolSnapshot.includes("35 tools") &&
+    launchStory.launchStory.launchSignal.reconciliation.includes("current Swiggy docs"),
+  "Builders Launch Story tool-count reconciliation is incomplete",
+);
+assert(
+  launchStory.launchStory.totals.storyBeats === 5 &&
+    launchStory.launchStory.totals.journeySteps === 5 &&
+    launchStory.launchStory.totals.showcaseAssets === 4 &&
+    launchStory.launchStory.totals.ecosystemLanes === 4 &&
+    launchStory.launchStory.totals.ctaPaths === 3,
+  "Builders Launch Story totals are incomplete",
+);
+assert(
+  ["ai_commerce_infrastructure", "india_first_real_users", "builder_ecosystem", "video_to_access"].every((id) =>
+    launchStory.launchStory.storyBeats.some((beat) => beat.id === id),
+  ),
+  "Builders Launch Story beats are incomplete",
+);
+assert(
+  ["build_locally", "record_demo", "apply_for_access", "staging_review", "ship_and_showcase"].every((id) =>
+    launchStory.launchStory.builderJourney.some((step) => step.id === id),
+  ),
+  "Builders Launch Story journey is incomplete",
+);
+assert(
+  ["demo_script", "visual_gallery", "builder_packet", "ecosystem_narrative"].every((id) =>
+    launchStory.launchStory.showcaseAssets.some((asset) => asset.id === id),
+  ),
+  "Builders Launch Story showcase assets are incomplete",
+);
+assert(
+  ["read_docs", "apply_now", "contact_builders"].every((id) =>
+    launchStory.launchStory.ctaPaths.some((cta) => cta.id === id),
+  ) &&
+    launchStory.launchStory.launchGuardrails.some((guard) => guard.id === "tool_count_reconciliation") &&
+    launchStory.launchStory.externalGates.some((gate) => gate.includes("Showcase placement")),
+  "Builders Launch Story CTA paths or guardrails are incomplete",
 );
 
 const builderIntake = await request("/api/swiggy-builder-intake");
@@ -995,8 +1043,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 24, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 24, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 25, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 25, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -1046,6 +1094,12 @@ assert(
     group.targets.some((target) => target.id === "deep_site_map_card" && target.selector === ".deep-site-map-card"),
   ),
   "visual QA deep site map target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some((target) => target.id === "builders_launch_story_card" && target.selector === ".builders-launch-story-card"),
+  ),
+  "visual QA Builders Launch Story target is missing",
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
@@ -1139,7 +1193,7 @@ assert(
     (command) =>
       command.id === "visual_capture_harness" &&
       command.command === "npm run verify:visual" &&
-      command.expectedSignal.includes("targetCount >= 24"),
+      command.expectedSignal.includes("targetCount >= 25"),
   ),
   "visual QA Playwright command is missing",
 );
@@ -1177,6 +1231,15 @@ assert(
       page.evidenceLinks.includes("/api/enterprise-platform-center"),
   ),
   "Swiggy enterprise platform docs coverage is missing",
+);
+assert(
+  docsCoverage.docsCoverage.pages.some(
+    (page) =>
+      page.id === "launch_blog" &&
+      page.status === "implemented" &&
+      page.evidenceLinks.includes("/api/swiggy-builders-launch-story"),
+  ),
+  "Swiggy launch blog docs coverage is missing",
 );
 
 const docsTwinExplorer = await request("/api/swiggy-docs-twin-explorer");
@@ -2654,6 +2717,10 @@ assert(
   "reviewer proof enterprise delegated-auth artifact is missing",
 );
 assert(
+  proof.proof.artifacts.some((artifact) => artifact.label === "Swiggy Builders Launch Story Center"),
+  "reviewer proof Builders Launch Story artifact is missing",
+);
+assert(
   proof.proof.artifacts.some((artifact) => artifact.label === "Swiggy Enterprise Platform Center"),
   "reviewer proof enterprise platform artifact is missing",
 );
@@ -3524,7 +3591,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 24, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 25, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -3538,7 +3605,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("24")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("25")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -3582,6 +3649,7 @@ assert(
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Reviewer Artifact Vault") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Access Evidence Matrix") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Visual QA Center") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Builders Launch Story Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Docs Coverage") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Docs Twin Explorer") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Upstream Watch") &&
@@ -3648,6 +3716,10 @@ assert(
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-auth-lifecycle-center"),
   "launch bundle Auth Lifecycle handoff link is missing",
+);
+assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-builders-launch-story"),
+  "launch bundle Builders Launch Story handoff link is missing",
 );
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/enterprise-platform-center"),
@@ -3829,6 +3901,9 @@ console.log(
       websiteAtlasCtas: websiteAtlas.atlas.ctasCovered,
       websiteAtlasCrawlPages: websiteAtlas.atlas.liveCrawlPages,
       websiteAtlasCrawlSignals: websiteAtlas.atlas.liveCrawlSignals,
+      buildersLaunchStoryScore: launchStory.launchStory.score,
+      buildersLaunchStoryAssets: launchStory.launchStory.totals.showcaseAssets,
+      buildersLaunchStoryCtas: launchStory.launchStory.totals.ctaPaths,
       builderIntakeScore: builderIntake.intake.score,
       builderIntakeCtas: `${builderIntake.intake.readyCtas}/${builderIntake.intake.totalCtas}`,
       docsCoverageScore: docsCoverage.docsCoverage.score,
