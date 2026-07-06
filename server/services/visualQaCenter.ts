@@ -288,6 +288,17 @@ const targetGroups = [
         "artifacts/visual-qa/meal-window-card.png",
       ),
       target(
+        "customization_studio_card",
+        "Customization Studio card",
+        "/",
+        ".customization-studio-card",
+        "desktop",
+        1280,
+        900,
+        "Customization Studio shows Food add-ons, Instamart pack sizes, allergy cautions, variant truth, and cart readback gates.",
+        "artifacts/visual-qa/customization-studio-card.png",
+      ),
+      target(
         "developer_quickstart_card",
         "Developer Quickstart card",
         "/",
@@ -526,7 +537,7 @@ const commands = [
     "visual_capture_harness",
     "npm run verify:visual",
     "Playwright captures every Visual QA target at desktop, tablet, and mobile sizes and writes report.json.",
-    "ok true with targetCount >= 34 and PNG files under artifacts/visual-qa.",
+    "ok true with targetCount >= 35 and PNG files under artifacts/visual-qa.",
   ),
   command(
     "desktop_capture",

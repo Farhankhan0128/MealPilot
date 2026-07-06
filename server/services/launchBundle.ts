@@ -159,6 +159,15 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
         "Forecasts when to order, cook, reserve, track, or wait with fresh-read timing gates, no scheduled Food orders, tracking cadence caps, and advisory-only ETA risk buckets.",
     },
     {
+      id: "customization_studio",
+      label: "Swiggy Customization Studio",
+      path: "/api/swiggy-customization-studio",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Turns Food add-ons, menu variants, Instamart pack sizes, allergy cautions, voice-safe choice limits, and post-mutation cart readbacks into a visible customization safety layer.",
+    },
+    {
       id: "nutrition_budget_intelligence",
       label: "Nutrition & Budget Intelligence",
       path: "/api/nutrition-budget-intelligence",
@@ -954,6 +963,7 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- Swiggy Ritual Autopilot Center: /api/swiggy-ritual-autopilot-center",
     "- Swiggy Payment Truth Center: /api/swiggy-payment-truth-center",
     "- Swiggy Meal Window Intelligence: /api/swiggy-meal-window-intelligence",
+    "- Swiggy Customization Studio: /api/swiggy-customization-studio",
     "- Nutrition & Budget Intelligence: /api/nutrition-budget-intelligence",
     "- Household Preference Graph: /api/household-preference-graph",
     "- Guest Collaboration & Calendar Center: /api/guest-collaboration-calendar",

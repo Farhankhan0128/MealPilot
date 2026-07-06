@@ -118,6 +118,7 @@ import {
   fetchSwiggyDeepSiteMap,
   fetchSwiggyCancellationCareCenter,
   fetchSwiggyConfirmationCommandCenter,
+  fetchSwiggyCustomizationStudio,
   fetchSwiggyDineoutPrecisionCenter,
   fetchSwiggyDiscoveryFreshness,
   fetchSwiggyCtaExecutionCenter,
@@ -229,6 +230,7 @@ import type {
   SwiggyCartMutationReport,
   SwiggyChannelMultimodalStudio,
   SwiggyConfirmationCommandCenterReport,
+  SwiggyCustomizationStudio,
   SwiggyCtaExecutionCenter,
   SwiggyDeepSiteMap,
   SwiggyDineoutPrecisionCenterReport,
@@ -427,6 +429,7 @@ function App() {
   const [ritualAutopilot, setRitualAutopilot] = useState<SwiggyRitualAutopilotCenter | null>(null);
   const [paymentTruth, setPaymentTruth] = useState<SwiggyPaymentTruthCenter | null>(null);
   const [mealWindow, setMealWindow] = useState<SwiggyMealWindowCenter | null>(null);
+  const [customizationStudio, setCustomizationStudio] = useState<SwiggyCustomizationStudio | null>(null);
   const [nutritionBudget, setNutritionBudget] = useState<NutritionBudgetIntelligence | null>(null);
   const [householdPreference, setHouseholdPreference] = useState<HouseholdPreferenceGraph | null>(null);
   const [guestCollaboration, setGuestCollaboration] = useState<GuestCollaborationCenter | null>(null);
@@ -616,6 +619,7 @@ function App() {
       ritualAutopilotResponse,
       paymentTruthResponse,
       mealWindowResponse,
+      customizationStudioResponse,
       nutritionBudgetResponse,
       householdPreferenceResponse,
       guestCollaborationResponse,
@@ -707,6 +711,7 @@ function App() {
       fetchSwiggyRitualAutopilotCenter(),
       fetchSwiggyPaymentTruthCenter(),
       fetchSwiggyMealWindowCenter(),
+      fetchSwiggyCustomizationStudio(),
       fetchNutritionBudgetIntelligence(),
       fetchHouseholdPreferenceGraph(),
       fetchGuestCollaborationCenter(),
@@ -799,6 +804,7 @@ function App() {
     setRitualAutopilot(ritualAutopilotResponse.ritualAutopilot);
     setPaymentTruth(paymentTruthResponse.paymentTruth);
     setMealWindow(mealWindowResponse.mealWindow);
+    setCustomizationStudio(customizationStudioResponse.customizationStudio);
     setNutritionBudget(nutritionBudgetResponse.nutritionBudget);
     setHouseholdPreference(householdPreferenceResponse.householdPreference);
     setGuestCollaboration(guestCollaborationResponse.guestCollaboration);
@@ -894,6 +900,7 @@ function App() {
       ritualAutopilotResponse,
       paymentTruthResponse,
       mealWindowResponse,
+      customizationStudioResponse,
       nutritionBudgetResponse,
       householdPreferenceResponse,
       guestCollaborationResponse,
@@ -982,6 +989,7 @@ function App() {
       fetchSwiggyRitualAutopilotCenter(),
       fetchSwiggyPaymentTruthCenter(),
       fetchSwiggyMealWindowCenter(),
+      fetchSwiggyCustomizationStudio(),
       fetchNutritionBudgetIntelligence(),
       fetchHouseholdPreferenceGraph(),
       fetchGuestCollaborationCenter(),
@@ -1070,6 +1078,7 @@ function App() {
     setRitualAutopilot(ritualAutopilotResponse.ritualAutopilot);
     setPaymentTruth(paymentTruthResponse.paymentTruth);
     setMealWindow(mealWindowResponse.mealWindow);
+    setCustomizationStudio(customizationStudioResponse.customizationStudio);
     setNutritionBudget(nutritionBudgetResponse.nutritionBudget);
     setHouseholdPreference(householdPreferenceResponse.householdPreference);
     setGuestCollaboration(guestCollaborationResponse.guestCollaboration);
@@ -1732,6 +1741,7 @@ function App() {
                 ritualAutopilot={ritualAutopilot}
                 paymentTruth={paymentTruth}
                 mealWindow={mealWindow}
+                customizationStudio={customizationStudio}
                 nutritionBudget={nutritionBudget}
                 householdPreference={householdPreference}
                 guestCollaboration={guestCollaboration}
@@ -2310,6 +2320,7 @@ function LaunchCenterPanel({
   ritualAutopilot,
   paymentTruth,
   mealWindow,
+  customizationStudio,
   nutritionBudget,
   householdPreference,
   guestCollaboration,
@@ -2372,6 +2383,7 @@ function LaunchCenterPanel({
   ritualAutopilot: SwiggyRitualAutopilotCenter | null;
   paymentTruth: SwiggyPaymentTruthCenter | null;
   mealWindow: SwiggyMealWindowCenter | null;
+  customizationStudio: SwiggyCustomizationStudio | null;
   nutritionBudget: NutritionBudgetIntelligence | null;
   householdPreference: HouseholdPreferenceGraph | null;
   guestCollaboration: GuestCollaborationCenter | null;
@@ -3679,6 +3691,53 @@ function LaunchCenterPanel({
             </a>
             <a href="https://mcp.swiggy.com/builders/docs/build/recipes/combined/" target="_blank" rel="noreferrer">
               Combined timing
+            </a>
+          </div>
+        </article>
+
+        <article className="customization-studio-card">
+          <div className="mini-heading">
+            <Grid3X3 aria-hidden="true" />
+            <strong>Customization Studio</strong>
+          </div>
+          <span>
+            {customizationStudio
+              ? `${customizationStudio.score}/100, ${customizationStudio.totals.readyLanes}/${customizationStudio.totals.lanes} customization lanes safe`
+              : "Reviewing add-ons, variants, pack sizes, substitutions, and cart readbacks"}
+          </span>
+          <div className="customization-studio-grid">
+            <div>
+              <strong>{customizationStudio?.totals.toolsCovered ?? 0}</strong>
+              <span>Tools</span>
+            </div>
+            <div>
+              <strong>
+                {customizationStudio?.totals.readyGuardrails ?? 0}/{customizationStudio?.totals.guardrails ?? 0}
+              </strong>
+              <span>Guards</span>
+            </div>
+            <div>
+              <strong>{customizationStudio?.totals.samples ?? 0}</strong>
+              <span>Samples</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(customizationStudio?.lanes ?? []).slice(0, 5).map((laneItem) => (
+              <li
+                key={laneItem.id}
+                data-status={laneItem.status === "staging_gate" || laneItem.status === "watch" ? "watch" : "healthy"}
+              >
+                <span>{laneItem.label}</span>
+                <strong>{laneItem.server === "combined" ? "Combined" : serverLabel(laneItem.server)}</strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-links">
+            <a href="/api/swiggy-customization-studio" target="_blank" rel="noreferrer">
+              Customization API
+            </a>
+            <a href="https://mcp.swiggy.com/builders/docs/reference/food/search_menu/" target="_blank" rel="noreferrer">
+              Menu truth
             </a>
           </div>
         </article>

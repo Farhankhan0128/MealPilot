@@ -38,6 +38,7 @@ import { buildCommercialActionGuard } from "./services/commercialActionGuard.js"
 import { buildSwiggyCancellationCareCenter } from "./services/cancellationCareCenter.js";
 import { buildSwiggyConfirmationCommandCenter } from "./services/confirmationCommandCenter.js";
 import { buildSwiggyCtaExecutionCenter } from "./services/ctaExecutionCenter.js";
+import { buildSwiggyCustomizationStudio, validateSwiggyCustomization } from "./services/customizationStudio.js";
 import { buildSwiggyAccessEvidenceMatrix } from "./services/accessEvidenceMatrix.js";
 import { buildSwiggyAccessDossier } from "./services/swiggyAccessDossier.js";
 import {
@@ -243,6 +244,15 @@ const mealWindowForecastSchema = z.object({
   window: z.enum(["breakfast", "lunch", "dinner", "late_night", "weekend"]),
   partySize: z.number().int().min(1).max(20),
   urgency: z.enum(["now", "today", "this_week"]),
+  includeDineout: z.boolean(),
+});
+
+const customizationValidationSchema = z.object({
+  server: z.enum(["food", "instamart", "dineout", "combined"]),
+  intent: z.string().trim().min(3).max(240),
+  hasAllergy: z.boolean(),
+  userChangedVariant: z.boolean(),
+  quantity: z.number().int().min(1).max(20),
   includeDineout: z.boolean(),
 });
 
@@ -819,6 +829,20 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
     const body = mealWindowForecastSchema.parse(req.body);
     res.json({
       forecast: forecastSwiggyMealWindow({
+        config,
+        ...body,
+      }),
+    });
+  });
+
+  app.get("/api/swiggy-customization-studio", (_req, res) => {
+    res.json({ customizationStudio: buildSwiggyCustomizationStudio(config) });
+  });
+
+  app.post("/api/swiggy-customization-studio/validate", (req, res) => {
+    const body = customizationValidationSchema.parse(req.body);
+    res.json({
+      validation: validateSwiggyCustomization({
         config,
         ...body,
       }),

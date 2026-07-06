@@ -136,6 +136,8 @@ The verifier also validates `/api/swiggy-payment-truth-center` and `/api/swiggy-
 
 The verifier also validates `/api/swiggy-meal-window-intelligence` and `/api/swiggy-meal-window-intelligence/forecast` for timing safety: Food ETA, Instamart availability, Dineout slots, and tracking cadence resolve to advisory order/cook/reserve/track/wait routes with no scheduled Food orders and fresh-read gates before commercial action.
 
+The verifier also validates `/api/swiggy-customization-studio` and `/api/swiggy-customization-studio/validate` for customization safety: Food add-ons, variants, allergy cautions, Instamart pack sizes, full-cart replacement, voice-safe choice limits, and post-mutation cart readbacks resolve to exact-choice review gates before cart mutation.
+
 The verifier also validates `/api/swiggy-auth-lifecycle-center` for Swiggy OAuth token lifecycle: PKCE S256, 120-second single-use codes, 5-day access tokens, no refresh-token assumption in v1.0, 401/419/403 recovery, exact redirect allowlisting, delegated per-user token boundaries, logout handling, secure storage, and no-token logging.
 
 The verifier also validates `/api/swiggy-source-intelligence` for Builders website inventory, CTA coverage, `llms` and markdown documentation counts, 35-tool reference alignment, drift signals, external gates, and build-queue readiness.
@@ -199,6 +201,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/swiggy-ritual-autopilot-center`
 - `GET /api/swiggy-payment-truth-center`
 - `GET /api/swiggy-meal-window-intelligence`
+- `GET /api/swiggy-customization-studio`
 - `GET /api/nutrition-budget-intelligence`
 - `GET /api/household-preference-graph`
 - `GET /api/guest-collaboration-calendar`
@@ -361,6 +364,8 @@ Production should use an HTTPS redirect URI with exact-match allowlisting.
 
 `/api/swiggy-meal-window-intelligence` is the productized timing proof surface. It maps Food lunch ETA, Instamart dinner backup, Dineout slot windows, post-confirmation tracking, and weekend combined planning into safe timing lanes; `/api/swiggy-meal-window-intelligence/forecast` returns ETA risk buckets, timing steps, and no-scheduled-order telemetry.
 
+`/api/swiggy-customization-studio` is the productized customization proof surface. It maps Food `search_menu` add-ons and variants, Instamart product pack sizes, allergy-sensitive substitution cautions, voice-safe choice limits, and cart readback gates into exact-choice review lanes; `/api/swiggy-customization-studio/validate` returns deterministic mutation-risk buckets without mutating a cart.
+
 `/api/nutrition-budget-intelligence` shows premium nutrition and budget planning routes: protein-per-rupee Food search, COD-safe coupons, Instamart go-to and product search, group-budget allocation, Dineout evening balance, and camera-label macro planning with no medical claims.
 
 `/api/household-preference-graph` shows consent-aware personalization routes: Food active-order taste signals, Instamart go-to items and order history, Dineout saved-location memory, household member weights, pantry forecasts, failure memory, retention rules, and DPDP controls.
@@ -413,6 +418,7 @@ The test suite checks that:
 - Swiggy Ritual Autopilot Center validates recurring routine planning with consented history, reminder-only calendar cadence, fresh reads, explicit confirmations, and no automatic subscription or commercial action.
 - Swiggy Payment Truth Center validates cart totals, coupon savings, COD eligibility, Instamart bills, Dineout free-booking status, paid-cart gates, and no raw payment-instrument retention.
 - Swiggy Meal Window Intelligence validates order/cook/reserve/track/wait timing gates, no scheduled Food orders, fresh reads before action, and redacted ETA/slot telemetry.
+- Swiggy Customization Studio validates Food add-ons, variants, Instamart pack sizes, allergy cautions, raw-id suppression, and post-mutation cart readbacks.
 - Nutrition & Budget Intelligence maps Food, Instamart, Dineout, coupon, cart, group, and camera-label routes to protein-per-rupee estimates, budget controls, safety notes, and external data gates.
 - Household Preference Graph maps active orders, go-to items, order history, saved-location signals, household weights, forecasts, cancellation rules, and retention boundaries to consented personalization evidence.
 - Guest Collaboration & Calendar Center maps group votes, occasion templates, Dineout slot checks, Food reminder handoffs, Instamart prep, calendar artifacts, and Slack/Teams gates to separate Swiggy confirmation controls.

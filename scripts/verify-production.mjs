@@ -145,6 +145,11 @@ assert(
   "OpenAPI meal window intelligence contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-customization-studio"].get.summary.includes("Customization Studio") &&
+    openApi.paths["/api/swiggy-customization-studio/validate"].post.summary.includes("customization"),
+  "OpenAPI customization studio contract is missing",
+);
+assert(
   openApi.paths["/api/nutrition-budget-intelligence"].get.summary.includes("Nutrition and Budget"),
   "OpenAPI nutrition and budget intelligence contract is missing",
 );
@@ -981,6 +986,60 @@ assert(
   ) && mealForecast.forecast.assertions.some((assertion) => assertion.includes("do not schedule Food orders")),
   "meal window forecast safety telemetry is incomplete",
 );
+
+const customizationStudio = await request("/api/swiggy-customization-studio");
+assert(customizationStudio.customizationStudio.score >= 90, "customization studio score is below target");
+assert(
+  customizationStudio.customizationStudio.totals.lanes === 5 &&
+    customizationStudio.customizationStudio.totals.readyLanes === 4 &&
+    customizationStudio.customizationStudio.totals.guardrails === 5 &&
+    customizationStudio.customizationStudio.totals.readyGuardrails === 4 &&
+    customizationStudio.customizationStudio.totals.samples === 4 &&
+    customizationStudio.customizationStudio.totals.toolsCovered >= 8,
+  "customization studio totals are incomplete",
+);
+assert(
+  [
+    "food_addon_variant_truth",
+    "food_allergy_substitution_gate",
+    "instamart_pack_size_truth",
+    "voice_safe_customization",
+    "combined_recipe_customization",
+  ].every((id) => customizationStudio.customizationStudio.lanes.some((lane) => lane.id === id)),
+  "customization studio lanes are incomplete",
+);
+assert(
+  customizationStudio.customizationStudio.guardrails.some(
+    (guard) => guard.id === "post_mutation_cart_readback" && guard.policy.includes("get_food_cart or get_cart"),
+  ),
+  "customization studio cart readback guardrail is missing",
+);
+const customizationValidation = await request("/api/swiggy-customization-studio/validate", {
+  method: "POST",
+  body: JSON.stringify({
+    server: "food",
+    intent: "paneer bowl no peanuts",
+    hasAllergy: true,
+    userChangedVariant: true,
+    quantity: 1,
+    includeDineout: false,
+  }),
+});
+assert(
+  customizationValidation.validation.selectedLaneId === "food_allergy_substitution_gate" &&
+    customizationValidation.validation.mutationRisk === "high" &&
+    customizationValidation.validation.requiredFreshRead === "get_food_cart",
+  "customization validation route is wrong",
+);
+assert(
+  customizationValidation.validation.telemetry.some(
+    (item) => item.field === "raw_item_or_spin_id_retained" && item.value === "false",
+  ) &&
+    customizationValidation.validation.assertions.some((assertion) =>
+      assertion.includes("does not call a cart mutation"),
+    ),
+  "customization validation safety telemetry is incomplete",
+);
 assert(
   paymentReconciliation.reconciliation.telemetry.some(
     (item) => item.field === "raw_payment_instrument_retained" && item.value === "false",
@@ -1417,8 +1476,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 34, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 34, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 35, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 35, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -1535,6 +1594,14 @@ assert(
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some(
+      (target) => target.id === "customization_studio_card" && target.selector === ".customization-studio-card",
+    ),
+  ),
+  "visual QA customization studio target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
     group.targets.some((target) => target.id === "developer_quickstart_card" && target.selector === ".developer-quickstart-card"),
   ),
   "visual QA developer quickstart target is missing",
@@ -1625,7 +1692,7 @@ assert(
     (command) =>
       command.id === "visual_capture_harness" &&
       command.command === "npm run verify:visual" &&
-      command.expectedSignal.includes("targetCount >= 34"),
+      command.expectedSignal.includes("targetCount >= 35"),
   ),
   "visual QA Playwright command is missing",
 );
@@ -3121,6 +3188,10 @@ assert(
   "reviewer proof meal window artifact is missing",
 );
 assert(
+  proof.proof.artifacts.some((artifact) => artifact.label === "Swiggy Customization Studio"),
+  "reviewer proof customization studio artifact is missing",
+);
+assert(
   proof.proof.artifacts.some((artifact) => artifact.label === "Nutrition & Budget Intelligence"),
   "reviewer proof nutrition and budget artifact is missing",
 );
@@ -4125,7 +4196,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 34, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 35, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -4139,7 +4210,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("34")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("35")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -4182,6 +4253,7 @@ assert(
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Ritual Autopilot Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Payment Truth Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Meal Window Intelligence") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Customization Studio") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Nutrition & Budget Intelligence") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Household Preference Graph") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Guest Collaboration & Calendar Center") &&
@@ -4323,6 +4395,10 @@ assert(
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-meal-window-intelligence"),
   "launch bundle meal window handoff link is missing",
+);
+assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-customization-studio"),
+  "launch bundle customization studio handoff link is missing",
 );
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/nutrition-budget-intelligence"),
@@ -4662,6 +4738,9 @@ console.log(
       mealWindowScore: mealWindow.mealWindow.score,
       mealWindowLanes: mealWindow.mealWindow.totals.lanes,
       mealWindowForecastLane: mealForecast.forecast.selectedLaneId,
+      customizationStudioScore: customizationStudio.customizationStudio.score,
+      customizationStudioLanes: customizationStudio.customizationStudio.totals.lanes,
+      customizationValidationLane: customizationValidation.validation.selectedLaneId,
       nutritionBudgetScore: nutritionBudget.nutritionBudget.score,
       nutritionBudgetRoutes: nutritionBudget.nutritionBudget.totalRoutes,
       householdPreferenceScore: householdPreference.householdPreference.score,

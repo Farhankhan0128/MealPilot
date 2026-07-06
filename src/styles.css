@@ -1110,6 +1110,10 @@ select:focus {
   grid-column: span 2;
 }
 
+.customization-studio-card {
+  grid-column: span 2;
+}
+
 .tool-lab-card {
   grid-column: span 2;
 }
@@ -1404,6 +1408,7 @@ select:focus {
   .ritual-autopilot-grid,
   .payment-truth-grid,
   .meal-window-grid,
+  .customization-studio-grid,
   .builder-intake-grid,
 .faq-policy-grid,
 .growth-partnership-grid,
@@ -1447,6 +1452,7 @@ select:focus {
   .ritual-autopilot-grid div,
   .payment-truth-grid div,
   .meal-window-grid div,
+  .customization-studio-grid div,
   .builder-intake-grid div,
 .faq-policy-grid div,
 .growth-partnership-grid div,
@@ -1493,6 +1499,7 @@ select:focus {
   .ritual-autopilot-grid strong,
   .payment-truth-grid strong,
   .meal-window-grid strong,
+  .customization-studio-grid strong,
   .builder-intake-grid strong,
 .faq-policy-grid strong,
 .growth-partnership-grid strong,
@@ -1536,6 +1543,7 @@ select:focus {
   .ritual-autopilot-grid span,
   .payment-truth-grid span,
   .meal-window-grid span,
+  .customization-studio-grid span,
   .builder-intake-grid span,
 .faq-policy-grid span,
 .growth-partnership-grid span,
@@ -2191,6 +2199,7 @@ select:focus {
   .ritual-autopilot-card,
   .payment-truth-card,
   .meal-window-card,
+  .customization-studio-card,
   .tool-lab-card,
   .contract-matrix-card,
   .builder-intake-card,
@@ -2300,6 +2309,7 @@ select:focus {
   .ritual-autopilot-grid,
   .payment-truth-grid,
   .meal-window-grid,
+  .customization-studio-grid,
   .faq-policy-grid,
   .growth-partnership-grid,
   .channel-multimodal-grid,
@@ -2910,6 +2920,7 @@ select:focus {
 .ritual-autopilot-card,
 .payment-truth-card,
 .meal-window-card,
+.customization-studio-card,
 .tool-lab-card,
 .contract-matrix-card,
 .builder-intake-card,
@@ -3004,6 +3015,7 @@ select:focus {
 .ritual-autopilot-grid div,
 .payment-truth-grid div,
 .meal-window-grid div,
+.customization-studio-grid div,
 .visual-dish-capture-grid div,
 .builder-intake-grid div,
 .faq-policy-grid div,
@@ -3209,6 +3221,7 @@ select:focus {
   .ritual-autopilot-card,
   .payment-truth-card,
   .meal-window-card,
+  .customization-studio-card,
   .nutrition-budget-card,
   .preference-graph-card,
   .guest-collaboration-card,
@@ -3385,6 +3398,7 @@ select:focus {
   .ritual-autopilot-grid,
   .payment-truth-grid,
   .meal-window-grid,
+  .customization-studio-grid,
   .staging-cutover-grid,
   .live-signal-calibration-grid,
   .visual-dish-capture-grid,
@@ -3429,6 +3443,7 @@ select:focus {
   .ritual-autopilot-card,
   .payment-truth-card,
   .meal-window-card,
+  .customization-studio-card,
   .nutrition-budget-card,
   .preference-graph-card,
   .guest-collaboration-card,

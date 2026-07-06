@@ -66,6 +66,8 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/swiggy-payment-truth-center/reconcile"].post.summary).toContain("payment");
     expect(openApi.body.paths["/api/swiggy-meal-window-intelligence"].get.summary).toContain("Meal Window");
     expect(openApi.body.paths["/api/swiggy-meal-window-intelligence/forecast"].post.summary).toContain("Forecast");
+    expect(openApi.body.paths["/api/swiggy-customization-studio"].get.summary).toContain("Customization Studio");
+    expect(openApi.body.paths["/api/swiggy-customization-studio/validate"].post.summary).toContain("customization");
     expect(openApi.body.paths["/api/nutrition-budget-intelligence"].get.summary).toContain("Nutrition and Budget");
     expect(openApi.body.paths["/api/household-preference-graph"].get.summary).toContain("Household Preference Graph");
     expect(openApi.body.paths["/api/guest-collaboration-calendar"].get.summary).toContain("Guest Collaboration");
@@ -1130,7 +1132,7 @@ describe("MealPilot API", () => {
     expect(packet.totals.formFields).toBeGreaterThanOrEqual(10);
     expect(packet.totals.requiredAttachments).toBeGreaterThanOrEqual(10);
     expect(packet.totals.launchArtifacts).toBeGreaterThanOrEqual(50);
-    expect(packet.totals.visualTargets).toBe(34);
+    expect(packet.totals.visualTargets).toBe(35);
     expect(packet.files.map((file: { id: string }) => file.id)).toEqual(
       expect.arrayContaining(["packet_json", "packet_markdown", "visual_report", "production_summary"]),
     );
@@ -1142,7 +1144,7 @@ describe("MealPilot API", () => {
     ).toBe(true);
     expect(
       packet.commands.some(
-        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("34"),
+        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("35"),
       ),
     ).toBe(true);
     expect(packet.copyBlocks.formFields).toContain("Redirect URI(s)");
@@ -1626,6 +1628,61 @@ describe("MealPilot API", () => {
     );
   });
 
+  it("returns customization studio and validates exact-choice cart safety", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/swiggy-customization-studio").expect(200);
+    const studio = response.body.customizationStudio;
+
+    expect(studio.score).toBeGreaterThanOrEqual(90);
+    expect(studio.totals.lanes).toBe(5);
+    expect(studio.totals.readyLanes).toBe(4);
+    expect(studio.totals.guardrails).toBe(5);
+    expect(studio.totals.readyGuardrails).toBe(4);
+    expect(studio.totals.samples).toBe(4);
+    expect(studio.totals.toolsCovered).toBeGreaterThanOrEqual(8);
+    expect(studio.lanes.map((lane: { id: string }) => lane.id)).toEqual(
+      expect.arrayContaining([
+        "food_addon_variant_truth",
+        "food_allergy_substitution_gate",
+        "instamart_pack_size_truth",
+        "voice_safe_customization",
+        "combined_recipe_customization",
+      ]),
+    );
+    expect(
+      studio.guardrails.some(
+        (guard: { id: string; policy: string }) =>
+          guard.id === "post_mutation_cart_readback" && guard.policy.includes("get_food_cart or get_cart"),
+      ),
+    ).toBe(true);
+
+    const validationResponse = await request(app)
+      .post("/api/swiggy-customization-studio/validate")
+      .send({
+        server: "food",
+        intent: "paneer bowl no peanuts",
+        hasAllergy: true,
+        userChangedVariant: true,
+        quantity: 1,
+        includeDineout: false,
+      })
+      .expect(200);
+    const validation = validationResponse.body.validation;
+
+    expect(validation.selectedLaneId).toBe("food_allergy_substitution_gate");
+    expect(validation.mutationRisk).toBe("high");
+    expect(validation.requiredFreshRead).toBe("get_food_cart");
+    expect(
+      validation.telemetry.some(
+        (item: { field: string; value: string }) =>
+          item.field === "raw_item_or_spin_id_retained" && item.value === "false",
+      ),
+    ).toBe(true);
+    expect(validation.assertions.some((assertion: string) => assertion.includes("does not call a cart mutation"))).toBe(
+      true,
+    );
+  });
+
   it("returns nutrition and budget intelligence for protein, pantry, coupon, and Dineout routes", async () => {
     const { app } = createMealPilotServer();
     const response = await request(app).get("/api/nutrition-budget-intelligence").expect(200);
@@ -2030,8 +2087,8 @@ describe("MealPilot API", () => {
     const visualQa = response.body.visualQa;
 
     expect(visualQa.score).toBe(100);
-    expect(visualQa.totalTargets).toBe(34);
-    expect(visualQa.readyTargets).toBe(34);
+    expect(visualQa.totalTargets).toBe(35);
+    expect(visualQa.readyTargets).toBe(35);
     expect(visualQa.totalRules).toBe(7);
     expect(visualQa.readyRules).toBe(7);
     expect(visualQa.totalCommands).toBe(5);
@@ -2130,6 +2187,13 @@ describe("MealPilot API", () => {
     ).toBe(true);
     expect(
       visualQa.targetGroups.some((group: { targets: Array<{ id: string; selector: string }> }) =>
+        group.targets.some(
+          (target) => target.id === "customization_studio_card" && target.selector === ".customization-studio-card",
+        ),
+      ),
+    ).toBe(true);
+    expect(
+      visualQa.targetGroups.some((group: { targets: Array<{ id: string; selector: string }> }) =>
         group.targets.some((target) => target.id === "developer_quickstart_card" && target.selector === ".developer-quickstart-card"),
       ),
     ).toBe(true);
@@ -2209,7 +2273,7 @@ describe("MealPilot API", () => {
         (command: { id: string; command: string; expectedSignal: string }) =>
           command.id === "visual_capture_harness" &&
           command.command === "npm run verify:visual" &&
-          command.expectedSignal.includes("targetCount >= 34"),
+          command.expectedSignal.includes("targetCount >= 35"),
       ),
     ).toBe(true);
     expect(visualQa.externalGates.some((gate: string) => gate.includes("Selected PNG screenshots"))).toBe(true);
@@ -3544,6 +3608,7 @@ describe("MealPilot API", () => {
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Swiggy Ritual Autopilot Center")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Swiggy Payment Truth Center")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Swiggy Meal Window Intelligence")).toBe(true);
+    expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Swiggy Customization Studio")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Nutrition & Budget Intelligence")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Household Preference Graph")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Luxury Experience Workspace")).toBe(true);
@@ -3957,6 +4022,7 @@ describe("MealPilot API", () => {
         "Swiggy Ritual Autopilot Center",
         "Swiggy Payment Truth Center",
         "Swiggy Meal Window Intelligence",
+        "Swiggy Customization Studio",
         "Nutrition & Budget Intelligence",
         "Household Preference Graph",
         "Luxury Experience Workspace",
@@ -4035,6 +4101,7 @@ describe("MealPilot API", () => {
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-ritual-autopilot-center");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-payment-truth-center");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-meal-window-intelligence");
+    expect(bundle.handoffEmail.body).toContain("/api/swiggy-customization-studio");
     expect(bundle.handoffEmail.body).toContain("/api/nutrition-budget-intelligence");
     expect(bundle.handoffEmail.body).toContain("/api/household-preference-graph");
     expect(bundle.handoffEmail.body).toContain("/api/luxury-experience-workspace");

@@ -485,6 +485,30 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-customization-studio": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Customization Studio for Food add-ons, variants, and Instamart pack-size truth",
+          responses: {
+            "200": {
+              description:
+                "Food search_menu customization, get_restaurant_menu browsing, update_food_cart readbacks, Instamart product variants, full-cart replacement, allergy cautions, voice-safe choices, and raw-id redaction",
+            },
+          },
+        },
+      },
+      "/api/swiggy-customization-studio/validate": {
+        post: {
+          tags: ["Commerce"],
+          summary: "Validate a Swiggy customization before cart mutation",
+          responses: {
+            "200": {
+              description:
+                "Selected customization lane, mutation risk bucket, required fresh cart readback, exact-tool checklist, redacted telemetry, and allergy-sensitive assertions",
+            },
+          },
+        },
+      },
       "/api/nutrition-budget-intelligence": {
         get: {
           tags: ["Builder Access"],

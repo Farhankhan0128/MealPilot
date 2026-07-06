@@ -1610,6 +1610,90 @@ export interface SwiggyMealWindowCenter {
   externalGates: string[];
 }
 
+export type SwiggyCustomizationStatus = "ready" | "watch" | "confirmation_gate" | "staging_gate";
+export type SwiggyCustomizationRisk = "low" | "medium" | "high";
+export type SwiggyCustomizationSignal =
+  | "food_addons"
+  | "food_variants"
+  | "instamart_pack_size"
+  | "instamart_stock"
+  | "allergy_note"
+  | "cart_readback";
+
+export interface SwiggyCustomizationLane {
+  id: string;
+  label: string;
+  server: SwiggyServer | "combined";
+  status: SwiggyCustomizationStatus;
+  swiggyTools: string[];
+  customizationSignals: SwiggyCustomizationSignal[];
+  decisionSurface: string;
+  sourceTruth: string;
+  mutationBoundary: string;
+  confirmationCopy: string;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyCustomizationGuardrail {
+  id: string;
+  label: string;
+  status: SwiggyCustomizationStatus;
+  policy: string;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyCustomizationSample {
+  id: string;
+  prompt: string;
+  selectedLane: string;
+  server: SwiggyServer | "combined";
+  status: SwiggyCustomizationStatus;
+}
+
+export interface SwiggyCustomizationValidation {
+  generatedAt: string;
+  requestId: string;
+  mode: "mock" | "staging" | "production";
+  input: {
+    server: SwiggyServer | "combined";
+    intent: string;
+    hasAllergy: boolean;
+    userChangedVariant: boolean;
+    quantity: number;
+    includeDineout: boolean;
+  };
+  selectedLaneId: string;
+  mutationRisk: SwiggyCustomizationRisk;
+  requiredFreshRead: string;
+  recommendedAction: string;
+  swiggyRoute: SwiggyCustomizationLane;
+  checklist: Array<{ sequence: number; label: string; tool: string; guardrail: string }>;
+  telemetry: Array<{ field: string; value: string; redaction: string }>;
+  assertions: string[];
+}
+
+export interface SwiggyCustomizationStudio {
+  generatedAt: string;
+  score: number;
+  mode: "mock" | "staging" | "production";
+  officialSources: string[];
+  totals: {
+    lanes: number;
+    readyLanes: number;
+    guardrails: number;
+    readyGuardrails: number;
+    samples: number;
+    toolsCovered: number;
+    externalGates: number;
+  };
+  lanes: SwiggyCustomizationLane[];
+  guardrails: SwiggyCustomizationGuardrail[];
+  samples: SwiggyCustomizationSample[];
+  operatorRunbook: Array<{ sequence: number; label: string; command: string; proves: string }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type NutritionBudgetStatus = "ready" | "needs_live_data" | "external_gate";
 
 export interface NutritionBudgetTarget {

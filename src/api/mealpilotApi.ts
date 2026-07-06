@@ -76,6 +76,8 @@ import type {
   SwiggyCtaExecutionCenter,
   SwiggyWidget,
   SwiggyBuildersMap,
+  SwiggyCustomizationStudio,
+  SwiggyCustomizationValidation,
   SwiggyDocsCoverageReport,
   SwiggyDocsTwinExplorer,
   SwiggyFaqPolicyCenter,
@@ -415,6 +417,24 @@ export function forecastSwiggyMealWindow(input: {
   includeDineout: boolean;
 }) {
   return requestJson<{ forecast: SwiggyMealWindowForecast }>("/api/swiggy-meal-window-intelligence/forecast", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
+}
+
+export function fetchSwiggyCustomizationStudio() {
+  return requestJson<{ customizationStudio: SwiggyCustomizationStudio }>("/api/swiggy-customization-studio");
+}
+
+export function validateSwiggyCustomization(input: {
+  server: "food" | "instamart" | "dineout" | "combined";
+  intent: string;
+  hasAllergy: boolean;
+  userChangedVariant: boolean;
+  quantity: number;
+  includeDineout: boolean;
+}) {
+  return requestJson<{ validation: SwiggyCustomizationValidation }>("/api/swiggy-customization-studio/validate", {
     method: "POST",
     body: JSON.stringify(input),
   });

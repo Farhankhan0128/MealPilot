@@ -212,6 +212,7 @@ Open Production Evidence and show:
 - Ritual Autopilot artifact at `/api/swiggy-ritual-autopilot-center` plus `/api/swiggy-ritual-autopilot-center/plan` for consented recurring routine proof with no automatic commercial action.
 - Payment Truth artifact at `/api/swiggy-payment-truth-center` plus `/api/swiggy-payment-truth-center/reconcile` for cart, coupon, COD, checkout, booking, and paid-cart source-of-truth proof.
 - Meal Window Intelligence artifact at `/api/swiggy-meal-window-intelligence` plus `/api/swiggy-meal-window-intelligence/forecast` for order/cook/reserve/track/wait timing proof with no scheduled Food orders.
+- Customization Studio artifact at `/api/swiggy-customization-studio` plus `/api/swiggy-customization-studio/validate` for add-on, variant, pack-size, allergy-caution, and cart-readback proof.
 - Website Atlas coverage for the production access page, launch blog, apply CTAs, header, footer, and docs subnav.
 - Builders Launch Story Center artifact for launch-blog story beats, 18+ to 35-tool reconciliation, demo journey, showcase packet, CTA paths, and external co-marketing gates.
 - Deep Site Map coverage for every Builders page row, module signal, CTA gate, source section, proof link, assertion, and external gate.
