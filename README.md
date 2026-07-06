@@ -117,7 +117,7 @@ Planned MCP servers:
 - Swiggy Route Optimizer with call-saving journeys, optimization profiles, parallel read batches, cross-server handoffs, cache/retry rules, confirmation gates, and staging assertions.
 - Support Bridge with official `report_error` JSON-RPC payloads for Food, Instamart, and Dineout, plus executable consent-gated reporting with hashed toolContext, SLA routing, redaction rules, and escalation checklist.
 - SLO Incident Command Center with Swiggy uptime targets, latency classes, status-page fallback, S0/S1 comms, maintenance windows, measurement exclusions, and remediation evidence.
-- Error Intelligence catalogue for Swiggy `success:false` envelopes, message/HTTP classification, planned symbolic codes, domain failures, retry budgets, and support actions.
+- Error Intelligence catalogue plus executable classifier for Swiggy `success:false` envelopes, message/HTTP classification, planned symbolic codes, domain failures, retry budgets, reauth, no-blind-retry gates, and support actions.
 - Support report generator that creates a Swiggy-ready `builders@swiggy.in` escalation mail with session IDs.
 - Demo Studio with cart preflight checks, offer opportunities, MCP replay transcripts, staging transcript export, demo progress, and submission-field readiness.
 - Evaluation Lab with multi-scenario persona QA across Bengaluru, Delhi NCR, Mumbai, chat, voice, lean budgets, and same-day cart-safety turns.
@@ -320,6 +320,7 @@ GET  /api/support/bridge
 POST /api/support/bridge/report
 GET  /api/slo-incident-command
 GET  /api/error-intelligence
+POST /api/error-intelligence/classify
 GET  /api/submission-console
 GET  /api/access-submission-studio
 PATCH /api/access-submission-studio/state
@@ -383,7 +384,7 @@ GET  /api/builder-package.md
 29. Open Production Evidence and show widgets, rate limits, Traffic Readiness, MCP Backpressure Governor, SLO Command, Data Governance, version monitor, compliance controls, Source Intelligence artifact, Deep Site Map artifact, Developer Quickstart artifact, CTA Execution artifact, Innovation Radar artifact, Launch Bundle, Trace Monitor, Runtime Telemetry, Audit Ledger, Resilience Lab, Evaluation Lab, and reviewer proof score.
 30. Schedule reminders, open Go-Live Gates, then export the Builder Access packet.
 31. Open Support Bridge to show `report_error` payloads for Food, Instamart, and Dineout, then generate a support report with traceable session context.
-32. Open Error Intelligence to show Swiggy error envelopes, retry buckets, planned codes, and terminal domain failures.
+32. Open Error Intelligence and call `/api/error-intelligence/classify` to show Swiggy error envelopes, retry buckets, planned codes, terminal domain failures, reauth decisions, and no-blind-retry gates.
 
 ## Environment
 

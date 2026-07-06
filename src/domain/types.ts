@@ -3048,6 +3048,13 @@ export interface SupportBridgeExecution {
 }
 
 export type ErrorRetryClass = "reauth" | "fix_arguments" | "safe_backoff" | "domain_terminal" | "single_retry_then_report";
+export type ErrorClassificationDecision =
+  | "reauth"
+  | "fix_arguments"
+  | "retry_safe_step"
+  | "surface_domain_failure"
+  | "single_retry_then_report"
+  | "block_blind_retry";
 
 export interface ErrorIntelligenceBucket {
   id: string;
@@ -3102,6 +3109,39 @@ export interface ErrorIntelligenceReport {
   };
   observabilityHooks: string[];
   supportActions: string[];
+  assertions: string[];
+}
+
+export interface ErrorClassificationResult {
+  generatedAt: string;
+  requestId: string;
+  officialSource: string;
+  input: {
+    server: SwiggyServer;
+    tool: string;
+    httpStatus: number;
+    jsonRpcCode?: number;
+    success: boolean;
+    message: string;
+    symbolicCode?: string;
+    routeClass: "read" | "cart_mutation" | "coupon" | "commercial_action" | "tracking" | "support";
+  };
+  selectedBucketId: string;
+  retryClass: ErrorRetryClass;
+  decision: ErrorClassificationDecision;
+  maxRetries: number;
+  retryScheduleMs: number[];
+  requiredStatusProbe?: string;
+  supportRecommended: boolean;
+  reportErrorAvailable: boolean;
+  userFacingCopy: string;
+  nextActions: string[];
+  riskFlags: string[];
+  telemetry: Array<{
+    field: string;
+    value: string;
+    redaction: string;
+  }>;
   assertions: string[];
 }
 

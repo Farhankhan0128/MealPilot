@@ -5900,6 +5900,16 @@ function ProductionEvidencePanel({
               ? `${errorIntelligence.score}/100, ${errorIntelligence.buckets.length} failure buckets`
               : "Loading error catalogue"}
           </span>
+          <div className="source-intelligence-grid">
+            <div>
+              <strong>{errorIntelligence ? "POST" : "-"}</strong>
+              <span>Classify</span>
+            </div>
+            <div>
+              <strong>{errorIntelligence?.retryPolicy.maxRetries ?? 0}</strong>
+              <span>Retry cap</span>
+            </div>
+          </div>
           <ul className="compact-status-list">
             {(errorIntelligence?.buckets ?? []).slice(0, 5).map((bucket) => (
               <li key={bucket.id} data-status={bucket.reportError ? "watch" : "healthy"}>

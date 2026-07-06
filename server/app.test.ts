@@ -161,6 +161,8 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/support/bridge/report"].post.summary).toContain("report_error");
     expect(openApi.body.paths["/api/support/bridge/report"].post.responses["200"].description).toContain("hashed toolContext");
     expect(openApi.body.paths["/api/error-intelligence"].get.summary).toContain("error envelope");
+    expect(openApi.body.paths["/api/error-intelligence/classify"].post.summary).toContain("Classify");
+    expect(openApi.body.paths["/api/error-intelligence/classify"].post.responses["200"].description).toContain("no-blind-retry");
   });
 
   it("creates a server-side plan session", async () => {
@@ -4678,6 +4680,43 @@ describe("MealPilot API", () => {
     expect(report.retryPolicy.maxRetries).toBe(5);
     expect(report.retryPolicy.nonBlindRetryTools).toEqual(["place_food_order", "checkout", "book_table"]);
     expect(report.assertions.some((assertion: string) => assertion.includes("never blind-retry"))).toBe(true);
+
+    const auth = await request(app)
+      .post("/api/error-intelligence/classify")
+      .send({ server: "food", tool: "place_food_order", httpStatus: 401, jsonRpcCode: -32001, success: false, message: "Token expired", routeClass: "commercial_action" })
+      .expect(200);
+    expect(auth.body.classification.decision).toBe("reauth");
+    expect(auth.body.classification.maxRetries).toBe(0);
+    expect(auth.body.classification.supportRecommended).toBe(false);
+
+    const timeout = await request(app)
+      .post("/api/error-intelligence/classify")
+      .send({ server: "food", tool: "search_restaurants", httpStatus: 504, success: false, message: "upstream timeout", routeClass: "read" })
+      .expect(200);
+    expect(timeout.body.classification.decision).toBe("retry_safe_step");
+    expect(timeout.body.classification.retryScheduleMs).toEqual([500, 1000, 2000, 4000, 8000]);
+    expect(timeout.body.classification.supportRecommended).toBe(true);
+
+    const commercial = await request(app)
+      .post("/api/error-intelligence/classify")
+      .send({ server: "food", tool: "place_food_order", httpStatus: 504, success: false, message: "placement timed out", routeClass: "commercial_action" })
+      .expect(200);
+    expect(commercial.body.classification.decision).toBe("block_blind_retry");
+    expect(commercial.body.classification.requiredStatusProbe).toBe("get_food_orders");
+    expect(commercial.body.classification.riskFlags).toContain("commercial_action_status_probe_required");
+
+    const domain = await request(app)
+      .post("/api/error-intelligence/classify")
+      .send({ server: "food", tool: "update_food_cart", httpStatus: 200, success: false, message: "Item unavailable", symbolicCode: "ITEM_UNAVAILABLE", routeClass: "cart_mutation" })
+      .expect(200);
+    expect(domain.body.classification.decision).toBe("surface_domain_failure");
+    expect(domain.body.classification.selectedBucketId).toBe("domain_failure");
+    expect(domain.body.classification.riskFlags).toContain("domain_failure_not_auto_retried");
+
+    await request(app)
+      .post("/api/error-intelligence/classify")
+      .send({ server: "food", tool: "search_restaurants", httpStatus: 200, success: true, message: "ok" })
+      .expect(400);
   });
 
   it("returns trace spans, log contract, and route optimization evidence", async () => {

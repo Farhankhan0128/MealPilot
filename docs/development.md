@@ -256,6 +256,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/slo-incident-command`
 - `GET /api/data-governance-center`
 - `GET /api/error-intelligence`
+- `POST /api/error-intelligence/classify`
 - `GET /api/demo-studio`
 - `GET /api/submission-console`
 - `GET /api/access-submission-studio`
@@ -480,7 +481,7 @@ The test suite checks that:
 - Audit Ledger Center records redacted plan audit events, support correlation keys, retention posture, DSR routing, and builders@swiggy.in packet fields.
 - Support Bridge prepares official `report_error` payloads for Food, Instamart, and Dineout, and `/api/support/bridge/report` executes consent-gated reports with observed-issue checks, hashed toolContext identifiers, redacted notes, receipt summaries, SLA routing, and builders@swiggy.in escalation.
 - SLO Incident Command maps 99.9% uptime targets, latency classes, status-page fallback, S0-S3 runbooks, 72-hour maintenance notice, measurement exclusions, and remediation evidence.
-- Error Intelligence maps Swiggy's current `success:false` failure envelope, message/HTTP buckets, planned symbolic codes, domain failures, retry policy, observability hooks, and support actions.
+- Error Intelligence maps Swiggy's current `success:false` failure envelope, message/HTTP buckets, planned symbolic codes, domain failures, retry policy, observability hooks, and support actions; `/api/error-intelligence/classify` turns a concrete MCP error sample into reauth, fix-arguments, safe-backoff, domain-failure, support, or no-blind-retry decisions.
 - Swiggy Confirmation Command Center verifies final Food order, Instamart checkout, and Dineout booking proof with fresh cart or slot reads, explicit separate approvals, non-blind retry probes, Swiggy-response payment/free-booking truth, and live credential gates.
 - Swiggy Cancellation & Care Center verifies no-tool cancellation handling, official customer-care copy, Dineout booking recovery, `report_error` support context, incident email routing, and planned error-code gates.
 - Swiggy Auth Lifecycle Center verifies PKCE, token lifetimes, v1 refresh-token gating, re-auth recovery, secure storage, and no-token logging.

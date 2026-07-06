@@ -294,6 +294,13 @@ assert(
   "OpenAPI Support Bridge report route is missing",
 );
 assert(
+  openApi.paths["/api/error-intelligence/classify"]?.post?.summary?.includes("Classify") &&
+    openApi.paths["/api/error-intelligence/classify"]?.post?.responses?.["200"]?.description?.includes(
+      "no-blind-retry",
+    ),
+  "OpenAPI Error Intelligence classifier route is missing",
+);
+assert(
   openApi.paths["/api/mcp/resource-prompt-studio"].get.summary.includes("Resource and Prompt Studio") &&
     openApi.paths["/api/mcp/resource-prompt-studio/execute"].post.summary.includes("resource or prompt") &&
     openApi.paths["/api/mcp/resource-prompt-studio/execute"].post.responses["200"].description.includes("no raw payload"),
@@ -4353,6 +4360,68 @@ assert(
   errorIntelligence.errorIntelligence.retryPolicy.nonBlindRetryTools.includes("book_table"),
   "error intelligence non-blind retry policy is missing",
 );
+const authErrorClassification = await request("/api/error-intelligence/classify", {
+  method: "POST",
+  body: JSON.stringify({
+    server: "food",
+    tool: "place_food_order",
+    httpStatus: 401,
+    jsonRpcCode: -32001,
+    success: false,
+    message: "Token expired",
+    routeClass: "commercial_action",
+  }),
+});
+assert(authErrorClassification.classification.decision === "reauth", "error classifier auth decision is wrong");
+const readTimeoutClassification = await request("/api/error-intelligence/classify", {
+  method: "POST",
+  body: JSON.stringify({
+    server: "food",
+    tool: "search_restaurants",
+    httpStatus: 504,
+    success: false,
+    message: "upstream timeout",
+    routeClass: "read",
+  }),
+});
+assert(
+  readTimeoutClassification.classification.decision === "retry_safe_step" &&
+    readTimeoutClassification.classification.retryScheduleMs.length === 5,
+  "error classifier safe retry decision is wrong",
+);
+const commercialTimeoutClassification = await request("/api/error-intelligence/classify", {
+  method: "POST",
+  body: JSON.stringify({
+    server: "food",
+    tool: "place_food_order",
+    httpStatus: 504,
+    success: false,
+    message: "placement timed out",
+    routeClass: "commercial_action",
+  }),
+});
+assert(
+  commercialTimeoutClassification.classification.decision === "block_blind_retry" &&
+    commercialTimeoutClassification.classification.requiredStatusProbe === "get_food_orders",
+  "error classifier commercial retry gate is wrong",
+);
+const domainErrorClassification = await request("/api/error-intelligence/classify", {
+  method: "POST",
+  body: JSON.stringify({
+    server: "food",
+    tool: "update_food_cart",
+    httpStatus: 200,
+    success: false,
+    message: "Item unavailable",
+    symbolicCode: "ITEM_UNAVAILABLE",
+    routeClass: "cart_mutation",
+  }),
+});
+assert(
+  domainErrorClassification.classification.decision === "surface_domain_failure" &&
+    domainErrorClassification.classification.selectedBucketId === "domain_failure",
+  "error classifier domain failure decision is wrong",
+);
 
 const evaluation = await request("/api/evaluation-lab");
 assert(evaluation.evaluation.scenarios.length >= 4, "evaluation scenarios are incomplete");
@@ -5057,6 +5126,8 @@ console.log(
       supportExecutionTools: supportExecution.supportExecution.executedTools.length,
       errorIntelligenceScore: errorIntelligence.errorIntelligence.score,
       errorBuckets: errorIntelligence.errorIntelligence.buckets.length,
+      errorClassifierCommercialDecision: commercialTimeoutClassification.classification.decision,
+      errorClassifierDomainDecision: domainErrorClassification.classification.decision,
       evaluationScore: evaluation.evaluation.score,
       evaluationScenarios: evaluation.evaluation.scenarios.length,
       submissionFields: submission.package.fields.length,

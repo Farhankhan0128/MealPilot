@@ -55,7 +55,7 @@ import {
 } from "./services/demoStudio.js";
 import { buildMcpCapabilityRegistry } from "./services/capabilityRegistry.js";
 import { buildEvaluationLab } from "./services/evaluationLab.js";
-import { buildErrorIntelligenceReport } from "./services/errorIntelligence.js";
+import { buildErrorIntelligenceReport, classifyMcpError } from "./services/errorIntelligence.js";
 import { buildSwiggyFaqPolicyCenter } from "./services/faqPolicyCenter.js";
 import { buildGuestCollaborationCenter } from "./services/guestCollaborationCenter.js";
 import { buildSwiggyGrowthPartnershipCenter } from "./services/growthPartnership.js";
@@ -343,6 +343,19 @@ const supportReportSchema = z.object({
   sessionId: z.string().trim().min(4).max(120).optional(),
   issueObserved: z.boolean(),
   userConsented: z.boolean(),
+});
+
+const errorClassificationSchema = z.object({
+  server: z.enum(["food", "instamart", "dineout"]),
+  tool: z.string().trim().min(2).max(80),
+  httpStatus: z.number().int().min(100).max(599),
+  jsonRpcCode: z.number().int().optional(),
+  success: z.literal(false).optional(),
+  message: z.string().trim().min(1).max(320),
+  symbolicCode: z.string().trim().min(2).max(80).optional(),
+  routeClass: z
+    .enum(["read", "cart_mutation", "coupon", "commercial_action", "tracking", "support"])
+    .optional(),
 });
 
 const resourcePromptExecutionSchema = z
@@ -1376,6 +1389,11 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/error-intelligence", (_req, res) => {
     res.json({ errorIntelligence: buildErrorIntelligenceReport() });
+  });
+
+  app.post("/api/error-intelligence/classify", (req, res) => {
+    const body = errorClassificationSchema.parse(req.body);
+    res.json({ classification: classifyMcpError(body) });
   });
 
   app.get("/api/demo-studio", (_req, res) => {

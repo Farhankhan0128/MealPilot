@@ -1262,6 +1262,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/error-intelligence/classify": {
+        post: {
+          tags: ["Operations"],
+          summary: "Classify a Swiggy MCP error envelope into a safe recovery action",
+          responses: {
+            "200": {
+              description:
+                "Executable classifier for success:false, HTTP, JSON-RPC, and planned symbolic-code errors with retry, reauth, support, no-blind-retry, redacted telemetry, and user-safe copy decisions",
+            },
+          },
+        },
+      },
       "/api/resilience": {
         get: {
           tags: ["Builder Access"],

@@ -17,6 +17,7 @@ import type {
   DemoStudioStep,
   DeveloperFirstCallExecution,
   EnterpriseDelegatedAuthCenter,
+  ErrorClassificationResult,
   ErrorIntelligenceReport,
   EvaluationLab,
   GoLiveCheck,
@@ -720,6 +721,22 @@ export function fetchSloIncidentCommand() {
 
 export function fetchErrorIntelligence() {
   return requestJson<{ errorIntelligence: ErrorIntelligenceReport }>("/api/error-intelligence");
+}
+
+export function classifySwiggyMcpError(input: {
+  server: "food" | "instamart" | "dineout";
+  tool: string;
+  httpStatus: number;
+  jsonRpcCode?: number;
+  success?: false;
+  message: string;
+  symbolicCode?: string;
+  routeClass?: "read" | "cart_mutation" | "coupon" | "commercial_action" | "tracking" | "support";
+}) {
+  return requestJson<{ classification: ErrorClassificationResult }>("/api/error-intelligence/classify", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
 }
 
 export function fetchDemoStudio() {

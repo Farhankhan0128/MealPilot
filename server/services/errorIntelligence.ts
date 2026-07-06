@@ -1,8 +1,11 @@
 import type {
   DomainErrorCode,
+  ErrorClassificationDecision,
+  ErrorClassificationResult,
   ErrorIntelligenceBucket,
   ErrorIntelligenceReport,
   PlannedErrorCode,
+  SwiggyServer,
 } from "../../src/domain/types.js";
 
 const officialSource = "https://mcp.swiggy.com/builders/docs/reference/errors/";
@@ -169,6 +172,138 @@ const domainCodes: DomainErrorCode[] = [
     userAction: "Offer a later date or nearby walk-in-friendly venue.",
   },
 ];
+
+const commercialStatusProbe: Record<string, string> = {
+  place_food_order: "get_food_orders",
+  checkout: "get_orders",
+  book_table: "get_booking_status",
+};
+
+function retrySchedule(maxRetries: number) {
+  const base = [500, 1000, 2000, 4000, 8000];
+  return base.slice(0, maxRetries);
+}
+
+function bucketById(id: string) {
+  return buckets.find((bucket) => bucket.id === id) ?? buckets.find((bucket) => bucket.id === "internal_error") ?? buckets[0];
+}
+
+function classifyBucket(input: {
+  server: SwiggyServer;
+  httpStatus: number;
+  jsonRpcCode?: number;
+  success: boolean;
+  message: string;
+  symbolicCode?: string;
+}) {
+  const codeMatch = input.symbolicCode
+    ? plannedCoreCodes.find((code) => code.code === input.symbolicCode) ??
+      domainCodes.find((code) => code.server === input.server && code.code === input.symbolicCode)
+    : undefined;
+  if (codeMatch && "bucket" in codeMatch) return bucketById(codeMatch.bucket);
+  if (codeMatch) return bucketById("domain_failure");
+
+  const message = input.message.toLowerCase();
+  if ([401, 403, 419].includes(input.httpStatus) || input.jsonRpcCode === -32001) return bucketById("auth_failure");
+  if (input.httpStatus === 400 || message.startsWith("invalid") || message.startsWith("missing")) return bucketById("bad_input");
+  if (input.httpStatus === 429 || input.httpStatus === 504 || message.includes("timeout") || message.includes("rate limit")) {
+    return bucketById("upstream_timeout");
+  }
+  if ([502, 503].includes(input.httpStatus)) return bucketById("upstream_error");
+  if (input.httpStatus === 500 || input.jsonRpcCode === -32603) return bucketById("internal_error");
+  if (!input.success || input.httpStatus === 200) return bucketById("domain_failure");
+  return bucketById("internal_error");
+}
+
+function decisionFor(bucket: ErrorIntelligenceBucket, input: { tool: string; routeClass: ErrorClassificationResult["input"]["routeClass"] }): ErrorClassificationDecision {
+  if (bucket.retryClass === "reauth") return "reauth";
+  if (bucket.retryClass === "fix_arguments") return "fix_arguments";
+  if (bucket.retryClass === "domain_terminal") return "surface_domain_failure";
+  if (input.routeClass === "commercial_action" || input.tool in commercialStatusProbe) return "block_blind_retry";
+  if (bucket.retryClass === "safe_backoff") return "retry_safe_step";
+  return "single_retry_then_report";
+}
+
+export function classifyMcpError(input: {
+  server: SwiggyServer;
+  tool: string;
+  httpStatus: number;
+  jsonRpcCode?: number;
+  success?: boolean;
+  message: string;
+  symbolicCode?: string;
+  routeClass?: ErrorClassificationResult["input"]["routeClass"];
+}): ErrorClassificationResult {
+  const normalized = {
+    ...input,
+    success: input.success ?? false,
+    routeClass: input.routeClass ?? "read",
+  };
+  const bucket = classifyBucket(normalized);
+  const decision = decisionFor(bucket, normalized);
+  const requiredStatusProbe = decision === "block_blind_retry" ? commercialStatusProbe[normalized.tool] : undefined;
+  const maxRetries = decision === "block_blind_retry" ? 0 : bucket.maxRetries;
+  const supportRecommended = bucket.reportError && decision !== "reauth" && decision !== "fix_arguments";
+  const riskFlags = [
+    decision === "block_blind_retry" ? "commercial_action_status_probe_required" : "",
+    bucket.id === "domain_failure" ? "domain_failure_not_auto_retried" : "",
+    supportRecommended ? "support_packet_ready" : "",
+  ].filter(Boolean);
+
+  return {
+    generatedAt: new Date().toISOString(),
+    requestId: `err_${Date.now().toString(36)}`,
+    officialSource,
+    input: {
+      server: normalized.server,
+      tool: normalized.tool,
+      httpStatus: normalized.httpStatus,
+      jsonRpcCode: normalized.jsonRpcCode,
+      success: normalized.success,
+      message: normalized.message.slice(0, 180),
+      symbolicCode: normalized.symbolicCode,
+      routeClass: normalized.routeClass,
+    },
+    selectedBucketId: bucket.id,
+    retryClass: bucket.retryClass,
+    decision,
+    maxRetries,
+    retryScheduleMs: retrySchedule(maxRetries),
+    requiredStatusProbe,
+    supportRecommended,
+    reportErrorAvailable: supportRecommended,
+    userFacingCopy:
+      decision === "block_blind_retry"
+        ? "I will check the latest Swiggy status before any retry, so nothing is placed twice."
+        : bucket.userCopy,
+    nextActions: [
+      decision === "reauth" ? "Restart Swiggy OAuth and refresh MCP clients." : "",
+      decision === "fix_arguments" ? "Correct the JSON-RPC arguments before trying again." : "",
+      decision === "retry_safe_step" ? "Retry only safe read or idempotent steps with capped backoff and jitter." : "",
+      decision === "surface_domain_failure" ? "Show the user the unavailable item, slot, address, or coupon and ask for an alternative." : "",
+      decision === "single_retry_then_report" ? "Retry once with backoff, then prepare report_error if it persists." : "",
+      requiredStatusProbe ? `Run ${requiredStatusProbe} before any retry or support escalation.` : "",
+      supportRecommended ? "Prepare a redacted report_error payload if the problem persists or Swiggy asks for diagnostics." : "",
+    ].filter(Boolean),
+    riskFlags,
+    telemetry: [
+      { field: "server", value: normalized.server, redaction: "safe enum" },
+      { field: "tool", value: normalized.tool, redaction: "tool name only" },
+      { field: "http_status", value: String(normalized.httpStatus), redaction: "numeric status only" },
+      { field: "jsonrpc_code", value: String(normalized.jsonRpcCode ?? "none"), redaction: "numeric code only" },
+      { field: "selected_bucket", value: bucket.id, redaction: "safe enum" },
+      { field: "raw_payload_retained", value: "false", redaction: "hard-coded privacy invariant" },
+      { field: "blind_retry_executed", value: "false", redaction: "hard-coded safety invariant" },
+    ],
+    assertions: [
+      "Current Swiggy MCP failures are classified primarily from success:false and error.message, with HTTP and JSON-RPC codes as secondary signals.",
+      "Commercial actions never blind-retry; they require a matching status probe first.",
+      "Auth failures restart OAuth instead of retrying the same bearer token.",
+      "Bad input and domain failures are not retried automatically.",
+      "report_error is recommended only with redacted support context and no raw tokens, payment data, or full addresses.",
+    ],
+  };
+}
 
 export function buildErrorIntelligenceReport(): ErrorIntelligenceReport {
   return {

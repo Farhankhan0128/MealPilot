@@ -297,6 +297,7 @@ Briefly show production readiness:
 - `/api/swiggy-auth-lifecycle-center`
 - `/api/slo-incident-command`
 - `/api/audit-ledger`
+- `/api/error-intelligence/classify`
 - `/api/submission-console`
 - `/api/storage/status`
 - `/api/storage/export`
