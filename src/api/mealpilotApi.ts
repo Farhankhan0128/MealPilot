@@ -67,6 +67,7 @@ import type {
   SwiggyChannelMultimodalStudio,
   SwiggyConfirmationCommandCenterReport,
   SwiggyDeepSiteMap,
+  SwiggyDineoutPrecisionCenterReport,
   SwiggyDiscoveryFreshnessReport,
   DeveloperQuickstartWorkbench,
   SwiggyCtaExecutionCenter,
@@ -558,6 +559,12 @@ export function fetchSwiggyConfirmationCommandCenter() {
 export function fetchSwiggyCancellationCareCenter() {
   return requestJson<{ cancellationCareCenter: SwiggyCancellationCareCenterReport }>(
     "/api/swiggy-cancellation-care-center",
+  );
+}
+
+export function fetchSwiggyDineoutPrecisionCenter() {
+  return requestJson<{ dineoutPrecisionCenter: SwiggyDineoutPrecisionCenterReport }>(
+    "/api/swiggy-dineout-precision-center",
   );
 }
 

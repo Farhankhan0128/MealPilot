@@ -177,6 +177,7 @@ Open Production Evidence and show:
 - Swiggy Discovery Freshness at `/api/swiggy-discovery-freshness` with Food search/menu pagination, Instamart variants and go-to items, Dineout restaurant details and slots, coordinate consistency, and stale-result invalidation.
 - Swiggy Confirmation Command Center at `/api/swiggy-confirmation-command-center` with final-commerce proof for Food `place_food_order`, Instamart `checkout`, and Dineout `book_table`: fresh cart or slot reads, explicit separate approvals, status probes before retry, Swiggy-response payment/free-booking truth, and live credential gates.
 - Swiggy Cancellation & Care Center at `/api/swiggy-cancellation-care-center` with Food and Instamart no-tool cancellation handling, official customer-care copy, Dineout booking-status recovery, `report_error` support context, and incident email routing.
+- Swiggy Dineout Precision Center at `/api/swiggy-dineout-precision-center` with free-booking validation, bill-payment `create_cart` modeling, paid-deal blocking, booking-status retry probes, and live payment gates.
 - MCP Backpressure Governor artifact at `/api/mcp/backpressure-governor` with current upstream-shedder handling, future 429/header readiness, token buckets, tracking floor, voice burst shaping, and background-job gates.
 - SLO Command score, uptime targets, commercial p95 latency, maintenance windows, and status-page external gate.
 - Data Governance Center with DPDP roles, India/Singapore residency, data-flow inventory, DSR routing, 90-day Swiggy audit retention, token redaction, and signed-manifest watch.
@@ -266,6 +267,7 @@ Briefly show production readiness:
 - `/api/swiggy-discovery-freshness`
 - `/api/swiggy-confirmation-command-center`
 - `/api/swiggy-cancellation-care-center`
+- `/api/swiggy-dineout-precision-center`
 - `/api/slo-incident-command`
 - `/api/audit-ledger`
 - `/api/submission-console`

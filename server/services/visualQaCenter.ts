@@ -243,6 +243,17 @@ const targetGroups = [
         "Cancellation and Care shows no-tool cancellation guards, customer-care copy, report_error coverage, and support gates.",
         "artifacts/visual-qa/cancellation-care-card.png",
       ),
+      target(
+        "dineout_precision_card",
+        "Dineout Precision card",
+        "/",
+        ".dineout-precision-card",
+        "desktop",
+        1280,
+        900,
+        "Dineout Precision shows free booking guards, bill-payment cart split, paid-deal blocks, and live payment gates.",
+        "artifacts/visual-qa/dineout-precision-card.png",
+      ),
     ],
   },
   {
@@ -383,7 +394,7 @@ const commands = [
     "visual_capture_harness",
     "npm run verify:visual",
     "Playwright captures every Visual QA target at desktop, tablet, and mobile sizes and writes report.json.",
-        "ok true with targetCount >= 21 and PNG files under artifacts/visual-qa.",
+        "ok true with targetCount >= 22 and PNG files under artifacts/visual-qa.",
   ),
   command(
     "desktop_capture",

@@ -3673,6 +3673,75 @@ export interface SwiggyCancellationCareCenterReport {
   externalGates: string[];
 }
 
+export type SwiggyDineoutPrecisionStatus = "ready" | "watch" | "external_gate";
+
+export interface SwiggyDineoutPrecisionLane {
+  id: string;
+  label: string;
+  intent: "free_table_booking" | "standalone_booking_cart" | "bill_payment_cart" | "post_booking_status" | "live_calibration";
+  officialTools: string[];
+  cartType: "DEAL_TICKET_PURCHASE" | "DINEOUT" | "none";
+  requiredFields: string[];
+  allowedAction: string;
+  blockedAction: string;
+  confirmationCopy: string;
+  status: SwiggyDineoutPrecisionStatus;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyDineoutPrecisionGuard {
+  id: string;
+  label: string;
+  policy: string;
+  status: SwiggyDineoutPrecisionStatus;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyDineoutPrecisionScenario {
+  id: string;
+  label: string;
+  trigger: string;
+  expectedDecision: string;
+  protectedTool: string;
+  status: SwiggyDineoutPrecisionStatus;
+}
+
+export interface SwiggyDineoutPrecisionTelemetry {
+  field: string;
+  source: string;
+  redaction: string;
+  status: SwiggyDineoutPrecisionStatus;
+}
+
+export interface SwiggyDineoutPrecisionCenterReport {
+  generatedAt: string;
+  score: number;
+  mode: "mock" | "staging" | "production";
+  officialSources: string[];
+  totals: {
+    lanes: number;
+    toolsCovered: number;
+    freeBookingGuards: number;
+    billPaymentLanes: number;
+    readyGuards: number;
+    scenarios: number;
+    externalGates: number;
+  };
+  lanes: SwiggyDineoutPrecisionLane[];
+  guards: SwiggyDineoutPrecisionGuard[];
+  scenarios: SwiggyDineoutPrecisionScenario[];
+  telemetry: SwiggyDineoutPrecisionTelemetry[];
+  operatorActions: Array<{
+    id: string;
+    label: string;
+    owner: "MealPilot" | "Operator" | "Swiggy";
+    status: SwiggyDineoutPrecisionStatus;
+    evidence: string;
+  }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export interface VersionAlert {
   id: string;
   label: string;

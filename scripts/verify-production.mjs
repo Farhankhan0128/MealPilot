@@ -188,6 +188,13 @@ assert(
   "OpenAPI Swiggy Cancellation and Care Center is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-dineout-precision-center"]?.get?.summary?.includes("Dineout Precision") &&
+    openApi.paths["/api/swiggy-dineout-precision-center"]?.get?.responses?.["200"]?.description?.includes(
+      "bill-payment",
+    ),
+  "OpenAPI Swiggy Dineout Precision Center is missing",
+);
+assert(
   openApi.paths["/api/mcp/resource-prompt-studio"].get.summary.includes("Resource and Prompt Studio"),
   "OpenAPI resource and prompt studio is missing",
 );
@@ -978,8 +985,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 21, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 21, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 22, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 22, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -1073,6 +1080,12 @@ assert(
   "visual QA cancellation care target is missing",
 );
 assert(
+  visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some((target) => target.id === "dineout_precision_card" && target.selector === ".dineout-precision-card"),
+  ),
+  "visual QA Dineout Precision target is missing",
+);
+assert(
   visualQa.visualQa.rules.some(
     (rule) =>
       rule.id === "no_overlap" &&
@@ -1104,7 +1117,7 @@ assert(
     (command) =>
       command.id === "visual_capture_harness" &&
       command.command === "npm run verify:visual" &&
-      command.expectedSignal.includes("targetCount >= 21"),
+      command.expectedSignal.includes("targetCount >= 22"),
   ),
   "visual QA Playwright command is missing",
 );
@@ -2991,6 +3004,35 @@ assert(
   "Cancellation and Care cancellation assertion is missing",
 );
 
+const dineoutPrecision = await request("/api/swiggy-dineout-precision-center");
+assert(
+  Object.keys(dineoutPrecision).join(",") === "dineoutPrecisionCenter",
+  "Dineout Precision Center response shape is incorrect",
+);
+assert(dineoutPrecision.dineoutPrecisionCenter.score >= 90, "Dineout Precision Center score is below target");
+assert(dineoutPrecision.dineoutPrecisionCenter.totals.toolsCovered >= 7, "Dineout Precision tool coverage is incomplete");
+assert(dineoutPrecision.dineoutPrecisionCenter.totals.freeBookingGuards >= 1, "Dineout free-booking guard is missing");
+assert(dineoutPrecision.dineoutPrecisionCenter.totals.billPaymentLanes >= 1, "Dineout bill-payment lane is missing");
+assert(
+  ["free_reservation_direct_booking", "bill_payment_cart", "paid_deal_rejection", "post_booking_status"].every((id) =>
+    dineoutPrecision.dineoutPrecisionCenter.lanes.some((lane) => lane.id === id),
+  ),
+  "Dineout Precision lanes are incomplete",
+);
+assert(
+  JSON.stringify(dineoutPrecision.dineoutPrecisionCenter.guards).includes("isFree=true") &&
+    dineoutPrecision.dineoutPrecisionCenter.lanes.some(
+      (lane) => lane.id === "bill_payment_cart" && lane.cartType === "DINEOUT" && lane.requiredFields.includes("billAmount"),
+    ),
+  "Dineout Precision guardrails are incomplete",
+);
+assert(
+  dineoutPrecision.dineoutPrecisionCenter.assertions.some((assertion) =>
+    assertion.includes("free reservation booking from Dineout bill-payment cart creation"),
+  ),
+  "Dineout Precision assertions are incomplete",
+);
+
 const sloIncident = await request("/api/slo-incident-command");
 assert(sloIncident.sloIncident.score >= 90, "SLO incident command score is below target");
 assert(
@@ -3370,7 +3412,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 21, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 22, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -3384,7 +3426,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("21")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("22")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -3446,6 +3488,7 @@ assert(
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Order Lifecycle") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Confirmation Command Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Cancellation & Care Center") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Dineout Precision Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "SLO Incident Command Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Journey Compiler") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Access Dossier") &&
@@ -3633,6 +3676,10 @@ assert(
   "launch bundle Cancellation and Care handoff link is missing",
 );
 assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-dineout-precision-center"),
+  "launch bundle Dineout Precision handoff link is missing",
+);
+assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/mcp/staging-cutover"),
   "launch bundle staging cutover handoff link is missing",
 );
@@ -3766,6 +3813,10 @@ console.log(
       cancellationCareReportErrorTools: cancellationCare.cancellationCareCenter.totals.reportErrorTools,
       cancellationCareNoToolGuards: cancellationCare.cancellationCareCenter.totals.noToolCancellationGuards,
       cancellationCareExternalGates: cancellationCare.cancellationCareCenter.totals.externalGates,
+      dineoutPrecisionScore: dineoutPrecision.dineoutPrecisionCenter.score,
+      dineoutPrecisionTools: dineoutPrecision.dineoutPrecisionCenter.totals.toolsCovered,
+      dineoutPrecisionFreeGuards: dineoutPrecision.dineoutPrecisionCenter.totals.freeBookingGuards,
+      dineoutPrecisionBillLanes: dineoutPrecision.dineoutPrecisionCenter.totals.billPaymentLanes,
       sloIncidentScore: sloIncident.sloIncident.score,
       sloUptimeTargets: sloIncident.sloIncident.uptimeTargets.length,
       resilienceScore: resilience.runbook.score,

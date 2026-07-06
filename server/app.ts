@@ -73,6 +73,7 @@ import { buildDataGovernanceCenter } from "./services/dataGovernance.js";
 import { buildSwiggyDeepSiteMap } from "./services/deepSiteMap.js";
 import { buildDeveloperQuickstartWorkbench } from "./services/developerQuickstartWorkbench.js";
 import { buildSwiggyDiscoveryFreshness } from "./services/discoveryFreshness.js";
+import { buildSwiggyDineoutPrecisionCenter } from "./services/dineoutPrecisionCenter.js";
 import { buildSwiggyDocsCoverage } from "./services/docsCoverage.js";
 import { buildSwiggyDocsTwinExplorer } from "./services/docsTwinExplorer.js";
 import { buildEnterpriseDelegatedAuthCenter } from "./services/enterpriseDelegatedAuth.js";
@@ -1037,6 +1038,15 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
   app.get("/api/swiggy-cancellation-care-center", (_req, res) => {
     res.json({
       cancellationCareCenter: buildSwiggyCancellationCareCenter({
+        plans: store.getAllPlans(),
+        config,
+      }),
+    });
+  });
+
+  app.get("/api/swiggy-dineout-precision-center", (_req, res) => {
+    res.json({
+      dineoutPrecisionCenter: buildSwiggyDineoutPrecisionCenter({
         plans: store.getAllPlans(),
         config,
       }),

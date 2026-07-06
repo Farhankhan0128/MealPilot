@@ -56,6 +56,7 @@ Planned MCP servers:
 - Commercial Action Guard that locks Food `place_food_order`, Instamart `checkout`, Dineout `book_table`, and combined journeys behind fresh reads, explicit confirmations, check-then-retry drills, telemetry, and support packets.
 - Swiggy Confirmation Command Center at `/api/swiggy-confirmation-command-center` that acts as visible final-commerce confirmation proof for Food `place_food_order`, Instamart `checkout`, and Dineout `book_table`, requiring fresh cart or slot reads, explicit user approval, separate confirmations for combined plans, post-action status probes before retry, Swiggy-response truth for payment and free bookings, and live credential gates before external execution.
 - Swiggy Cancellation & Care Center at `/api/swiggy-cancellation-care-center` that keeps Food and Instamart cancellation requests on official customer-care copy instead of fake MCP cancellation calls, routes Dineout booking issues through `get_booking_status`, and prepares `report_error` plus incident email evidence with redacted toolContext.
+- Swiggy Dineout Precision Center at `/api/swiggy-dineout-precision-center` that separates free table bookings from Dineout bill-payment carts, validates `isFree=true` and `bookingPrice=0` before `book_table`, blocks paid deals from the free booking path, models `create_cart` with `cartType: "DINEOUT"` for bill payment, and keeps live payment evidence behind Swiggy staging credentials.
 - MCP Backpressure Governor that models Swiggy's current upstream-shedder behavior separately from future 429, `Retry-After`, and `X-RateLimit-*` headers with token buckets, tracking cadence, voice burst shaping, and background-job gates.
 - Swiggy Load Lab that composes Traffic Readiness, Backpressure Governor, and Route Optimizer evidence into synthetic launch-load scenarios, cohort ramps, Retry-After drills, and Swiggy capacity gates.
 - Swiggy Offer Intelligence that safely uses Food coupon tools, Dineout deal discovery, Instamart value substitutions, and live-offer disclaimers without bypassing commercial confirmations.
@@ -277,6 +278,9 @@ GET  /api/swiggy-order-lifecycle
 GET  /api/swiggy-location-trust
 GET  /api/swiggy-cart-mutation-workbench
 GET  /api/swiggy-discovery-freshness
+GET  /api/swiggy-confirmation-command-center
+GET  /api/swiggy-cancellation-care-center
+GET  /api/swiggy-dineout-precision-center
 GET  /api/observability/traces
 GET  /api/telemetry/runtime
 GET  /api/audit-ledger
@@ -468,6 +472,8 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 `GET /api/swiggy-confirmation-command-center` is the visible final-commerce confirmation proof for Food `place_food_order`, Instamart `checkout`, and Dineout `book_table`: it shows fresh cart or slot reads, explicit user approval, separate approvals for combined plans, post-action status probes before retry, Swiggy-response payment and free-booking truth, and external gates for live credentials.
 
 `GET /api/swiggy-cancellation-care-center` is the no-tool cancellation and support workbench: it shows official customer-care copy for Food and Instamart cancellation requests, Dineout booking-status recovery, `report_error` payload context across all three servers, incident email boundaries, planned error-code gates, and live support calibration gates.
+
+`GET /api/swiggy-dineout-precision-center` is the Dineout free-booking and bill-payment precision workbench: it separates `book_table` free reservations from `create_cart` bill-payment carts, requires free-deal proof before booking, blocks paid deals, preserves no-blind retry through `get_booking_status`, and leaves live payment validation as a Swiggy credential gate.
 
 `GET /api/slo-incident-command` turns Swiggy's SLA and uptime guidance into operational evidence: 99.9% uptime targets, latency bands for read/write/commercial tools, status-page fallback, S0-S3 communication plans, 72-hour maintenance notice, measurement exclusions, and remediation path.
 

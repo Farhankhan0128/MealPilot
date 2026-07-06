@@ -111,6 +111,7 @@ import {
   fetchSwiggyDeepSiteMap,
   fetchSwiggyCancellationCareCenter,
   fetchSwiggyConfirmationCommandCenter,
+  fetchSwiggyDineoutPrecisionCenter,
   fetchSwiggyDiscoveryFreshness,
   fetchSwiggyCtaExecutionCenter,
   fetchSwiggyInnovationRadar,
@@ -214,6 +215,7 @@ import type {
   SwiggyConfirmationCommandCenterReport,
   SwiggyCtaExecutionCenter,
   SwiggyDeepSiteMap,
+  SwiggyDineoutPrecisionCenterReport,
   SwiggyDiscoveryFreshnessReport,
   SwiggyWidget,
   SwiggyBuildersMap,
@@ -463,6 +465,8 @@ function App() {
     useState<SwiggyConfirmationCommandCenterReport | null>(null);
   const [cancellationCareCenter, setCancellationCareCenter] =
     useState<SwiggyCancellationCareCenterReport | null>(null);
+  const [dineoutPrecisionCenter, setDineoutPrecisionCenter] =
+    useState<SwiggyDineoutPrecisionCenterReport | null>(null);
   const [routeOptimizer, setRouteOptimizer] = useState<SwiggyRouteOptimizationReport | null>(null);
   const [exportText, setExportText] = useState<string | null>(null);
   const [authUrl, setAuthUrl] = useState<string | null>(null);
@@ -618,6 +622,7 @@ function App() {
       discoveryFreshnessResponse,
       confirmationCommandResponse,
       cancellationCareResponse,
+      dineoutPrecisionResponse,
       routeOptimizerResponse,
     ] = await Promise.all([
       fetchPantry(),
@@ -696,6 +701,7 @@ function App() {
       fetchSwiggyDiscoveryFreshness(),
       fetchSwiggyConfirmationCommandCenter(),
       fetchSwiggyCancellationCareCenter(),
+      fetchSwiggyDineoutPrecisionCenter(),
       fetchSwiggyRouteOptimizer(),
     ]);
     setPantry(pantryResponse.pantry);
@@ -779,6 +785,7 @@ function App() {
     setDiscoveryFreshness(discoveryFreshnessResponse.discoveryFreshness);
     setConfirmationCommandCenter(confirmationCommandResponse.confirmationCommandCenter);
     setCancellationCareCenter(cancellationCareResponse.cancellationCareCenter);
+    setDineoutPrecisionCenter(dineoutPrecisionResponse.dineoutPrecisionCenter);
     setRouteOptimizer(routeOptimizerResponse.routeOptimizer);
   }
 
@@ -857,6 +864,7 @@ function App() {
       discoveryFreshnessResponse,
       confirmationCommandResponse,
       cancellationCareResponse,
+      dineoutPrecisionResponse,
       routeOptimizerResponse,
     ] = await Promise.all([
       fetchMcpCatalog(),
@@ -932,6 +940,7 @@ function App() {
       fetchSwiggyDiscoveryFreshness(),
       fetchSwiggyConfirmationCommandCenter(),
       fetchSwiggyCancellationCareCenter(),
+      fetchSwiggyDineoutPrecisionCenter(),
       fetchSwiggyRouteOptimizer(),
     ]);
     setMcpCatalog(catalogResponse);
@@ -1011,6 +1020,7 @@ function App() {
     setDiscoveryFreshness(discoveryFreshnessResponse.discoveryFreshness);
     setConfirmationCommandCenter(confirmationCommandResponse.confirmationCommandCenter);
     setCancellationCareCenter(cancellationCareResponse.cancellationCareCenter);
+    setDineoutPrecisionCenter(dineoutPrecisionResponse.dineoutPrecisionCenter);
     setRouteOptimizer(routeOptimizerResponse.routeOptimizer);
   }
 
@@ -1674,6 +1684,7 @@ function App() {
                 discoveryFreshness={discoveryFreshness}
                 confirmationCommandCenter={confirmationCommandCenter}
                 cancellationCareCenter={cancellationCareCenter}
+                dineoutPrecisionCenter={dineoutPrecisionCenter}
                 routeOptimizer={routeOptimizer}
                 evaluationLab={evaluationLab}
               />
@@ -4393,6 +4404,7 @@ function ProductionEvidencePanel({
   discoveryFreshness,
   confirmationCommandCenter,
   cancellationCareCenter,
+  dineoutPrecisionCenter,
   routeOptimizer,
   evaluationLab,
 }: {
@@ -4421,6 +4433,7 @@ function ProductionEvidencePanel({
   discoveryFreshness: SwiggyDiscoveryFreshnessReport | null;
   confirmationCommandCenter: SwiggyConfirmationCommandCenterReport | null;
   cancellationCareCenter: SwiggyCancellationCareCenterReport | null;
+  dineoutPrecisionCenter: SwiggyDineoutPrecisionCenterReport | null;
   routeOptimizer: SwiggyRouteOptimizationReport | null;
   evaluationLab: EvaluationLab | null;
 }) {
@@ -4877,6 +4890,47 @@ function ProductionEvidencePanel({
               >
                 <span>{lane.label}</span>
                 <strong>{lane.server === "combined" ? "all" : serverLabel(lane.server)}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="dineout-precision-card">
+          <div className="mini-heading">
+            <CalendarCheck aria-hidden="true" />
+            <strong>Dineout Precision</strong>
+          </div>
+          <span>
+            {dineoutPrecisionCenter
+              ? `${dineoutPrecisionCenter.score}/100, ${dineoutPrecisionCenter.totals.freeBookingGuards} free guards, ${dineoutPrecisionCenter.totals.billPaymentLanes} bill lane`
+              : "Loading Dineout booking and bill-payment guards"}
+          </span>
+          <div className="dineout-precision-grid">
+            <div>
+              <strong>{dineoutPrecisionCenter?.totals.lanes ?? 0}</strong>
+              <span>Lanes</span>
+            </div>
+            <div>
+              <strong>{dineoutPrecisionCenter?.totals.toolsCovered ?? 0}</strong>
+              <span>Tools</span>
+            </div>
+            <div>
+              <strong>{dineoutPrecisionCenter?.totals.readyGuards ?? 0}</strong>
+              <span>Guards</span>
+            </div>
+            <div>
+              <strong>{dineoutPrecisionCenter?.totals.externalGates ?? 0}</strong>
+              <span>Live gates</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(dineoutPrecisionCenter?.lanes ?? []).slice(0, 4).map((lane) => (
+              <li
+                key={lane.id}
+                data-status={lane.status === "ready" ? "healthy" : lane.status === "external_gate" ? "blocked" : "watch"}
+              >
+                <span>{lane.label}</span>
+                <strong>{lane.cartType === "none" ? lane.officialTools[0] : lane.cartType.replaceAll("_", " ")}</strong>
               </li>
             ))}
           </ul>

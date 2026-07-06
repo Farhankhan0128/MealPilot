@@ -231,6 +231,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-dineout-precision-center": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Dineout Precision Center for free bookings and bill-payment carts",
+          responses: {
+            "200": {
+              description:
+                "Dineout-specific proof that separates free book_table reservations from create_cart bill-payment carts, validates isFree and bookingPrice before booking, blocks paid deals, requires get_booking_status before retry, and gates live payment evidence on Swiggy credentials",
+            },
+          },
+        },
+      },
       "/api/mcp/backpressure-governor": {
         get: {
           tags: ["Builder Access"],

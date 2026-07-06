@@ -361,6 +361,15 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
         "Separates Food and Instamart no-tool cancellation requests, official customer-care copy, Dineout booking status, report_error toolContext, and incident email routing.",
     },
     {
+      id: "dineout_precision_center",
+      label: "Swiggy Dineout Precision Center",
+      path: "/api/swiggy-dineout-precision-center",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Separates Dineout free reservations from bill-payment carts, validates isFree and bookingPrice before book_table, blocks paid deals, and keeps live payment evidence external-gated.",
+    },
+    {
       id: "slo_incident_command",
       label: "SLO Incident Command Center",
       path: "/api/slo-incident-command",
@@ -860,6 +869,7 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- Swiggy Discovery Freshness: /api/swiggy-discovery-freshness",
     "- Swiggy Confirmation Command Center: /api/swiggy-confirmation-command-center",
     "- Swiggy Cancellation & Care Center: /api/swiggy-cancellation-care-center",
+    "- Swiggy Dineout Precision Center: /api/swiggy-dineout-precision-center",
     "- SLO Incident Command Center: /api/slo-incident-command",
     "- MCP Tool Lab: /api/mcp/tool-lab",
     "- MCP Capability Registry: /api/mcp/capability-registry",
