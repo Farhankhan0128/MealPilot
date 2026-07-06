@@ -240,6 +240,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/guest-collaboration-calendar`
 - `GET /api/luxury-experience-workspace`
 - `GET /api/reviewer-artifact-vault`
+- `GET /api/swiggy-builders-review-decision`
 - `GET /api/visual-qa-center`
 - `GET /api/swiggy-showcase-submission-center`
 - `GET /api/swiggy-demo-evidence-director`
@@ -479,6 +480,8 @@ Production should use an HTTPS redirect URI with exact-match allowlisting.
 
 `/api/swiggy-access-evidence-matrix` is the access-review evidence ledger. It reconciles Access Dossier, Submission Console, Access Submission Studio, and Reviewer Artifact Vault rows into one owner-tagged matrix for official fields, proof attachments, runbook steps, commands, manual operator inputs, and Swiggy approval gates.
 
+`/api/swiggy-builders-review-decision` is the approval-readiness board. It composes Access Submission Studio, Access Evidence Matrix, Access Dossier, Journey Gates, Launch Bundle, Reviewer Artifact Vault, Submission Timeline, and Live Source Resilience into an explicit recommendation, eight decision gates, reviewer Q&A, proof links, and operator-vs-Swiggy blockers.
+
 `/api/builder-packet-export` and `/api/builder-packet-export.md` turn the Submission Console, Access Submission Studio, Access Evidence Matrix, Production Launch Bundle, Reviewer Artifact Vault, Demo Evidence Director, Deep Site Map, and Visual QA Center into a reproducible Swiggy access packet. Run `npm run export:builder-packet` against the production server to write `artifacts/builder-packet/mealpilot-swiggy-access-packet.json`, `mealpilot-swiggy-access-packet.md`, and `verification-summary.json`.
 
 `/api/swiggy-confirmation-command-center` is the final-commerce proof surface for Swiggy Food `place_food_order`, Instamart `checkout`, and Dineout `book_table`. `/api/swiggy-confirmation-command-center/execute` makes that proof executable in mock and credentialed modes: it requires fresh context, separate confirmation, Swiggy payment/free-booking truth, blocks paid Dineout free-booking misuse, runs preflight -> action -> status probe, records no-blind-retry telemetry, and keeps live credentials as an external gate.
@@ -504,6 +507,7 @@ The test suite checks that:
 - Swiggy Builders Homepage Experience Center maps header, hero, how-it-works, benefits, guidelines, FAQ, final CTA, and footer into section proof, mobile checks, reviewer checks, continuity, and external gates.
 - Swiggy Builders Source Evolution Center reconciles homepage 18+ launch copy with current 35/35 callable-tool coverage, llms/docs refresh loops, v1.0/v1.1/v1.2/v2 roadmap drift, signed-manifest/rate-limit gates, visual proof, and reviewer packet regression.
 - Swiggy Builders Live Source Resilience Center reports live homepage fetch mode, Website Atlas fallback, every-page mesh coverage, llms markdown recovery, header/footer/CTA parity, and mandatory browser re-browse gates before reviewer submission.
+- Swiggy Builders Review Decision Center converts official fit, demo, security, API coverage, source-review, credential, ops, and go-live review signals into approval-readiness gates, recommendation, reviewer questions, proof links, operator blockers, and Swiggy-owned gates.
 - CTA Live Audit probes official Builders/docs click targets, keeps form/email/legal CTAs manual, and fails smoke on unsafe or blocked CTA drift.
 - Swiggy Builders Launch Story Center converts the launch blog into a reviewer-ready story, reconciles the launch-era 18+ signal with the current 35-tool docs snapshot, and packages demo journey, showcase assets, ecosystem lanes, CTA paths, and co-marketing guardrails.
 - Swiggy Operating Contract Center joins SLA, rate limits, support, versioning, changelog, and ship-to-production sources into pillars, runbooks, readiness gates, and external approval gates.

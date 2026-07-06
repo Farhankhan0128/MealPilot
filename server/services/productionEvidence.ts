@@ -292,6 +292,7 @@ export function buildReviewerProof(options: {
       { label: "Swiggy Builders Homepage Experience Center", path: "/api/swiggy-builders-homepage-experience" },
       { label: "Swiggy Builders Source Evolution Center", path: "/api/swiggy-builders-source-evolution" },
       { label: "Swiggy Builders Live Source Resilience Center", path: "/api/swiggy-builders-live-source-resilience" },
+      { label: "Swiggy Builders Review Decision Center", path: "/api/swiggy-builders-review-decision" },
       { label: "Builder Intake Command Center", path: "/api/swiggy-builder-intake" },
       { label: "FAQ & Policy Center", path: "/api/swiggy-faq-policy" },
       { label: "Swiggy FAQ Resolution Center", path: "/api/swiggy-faq-resolution-center" },

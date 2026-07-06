@@ -1311,6 +1311,10 @@ select:focus {
   grid-column: span 2;
 }
 
+.review-decision-card {
+  grid-column: span 2;
+}
+
 .visual-qa-card {
   grid-column: span 2;
 }
@@ -1592,6 +1596,7 @@ select:focus {
 .guest-collaboration-grid,
 .luxury-experience-grid,
 .reviewer-artifact-grid,
+.review-decision-grid,
 .visual-qa-grid,
 .access-dossier-grid,
 .access-evidence-grid,
@@ -1652,6 +1657,7 @@ select:focus {
 .guest-collaboration-grid div,
 .luxury-experience-grid div,
 .reviewer-artifact-grid div,
+.review-decision-grid div,
 .visual-qa-grid div,
 .access-dossier-grid div,
 .access-evidence-grid div,
@@ -1713,6 +1719,7 @@ select:focus {
 .guest-collaboration-grid strong,
 .luxury-experience-grid strong,
 .reviewer-artifact-grid strong,
+.review-decision-grid strong,
 .visual-qa-grid strong,
 .access-dossier-grid strong,
 .access-evidence-grid strong,
@@ -1773,6 +1780,7 @@ select:focus {
 .guest-collaboration-grid span,
 .luxury-experience-grid span,
 .reviewer-artifact-grid span,
+.review-decision-grid span,
 .visual-qa-grid span,
 .access-dossier-grid span,
 .access-evidence-grid span,
@@ -2505,6 +2513,7 @@ select:focus {
   .guest-collaboration-card,
   .luxury-experience-card,
   .reviewer-artifact-card,
+  .review-decision-card,
   .visual-qa-card,
   .coding-agent-card,
   .capability-registry-card,
@@ -2645,6 +2654,7 @@ select:focus {
   .guest-collaboration-grid,
   .luxury-experience-grid,
   .reviewer-artifact-grid,
+  .review-decision-grid,
   .visual-qa-grid,
   .source-intelligence-grid,
   .innovation-radar-grid,
@@ -3265,6 +3275,7 @@ select:focus {
 .guest-collaboration-card,
 .luxury-experience-card,
 .reviewer-artifact-card,
+.review-decision-card,
 .visual-qa-card,
 .coding-agent-card,
 .access-dossier-card,
@@ -3375,6 +3386,7 @@ select:focus {
 .guest-collaboration-grid div,
 .luxury-experience-grid div,
 .reviewer-artifact-grid div,
+.review-decision-grid div,
 .visual-qa-grid div,
 .access-dossier-grid div,
 .access-evidence-grid div,
@@ -3587,6 +3599,7 @@ select:focus {
   .guest-collaboration-card,
   .luxury-experience-card,
   .reviewer-artifact-card,
+  .review-decision-card,
   .visual-qa-card,
   .access-dossier-card,
   .access-evidence-card,
@@ -3784,6 +3797,7 @@ select:focus {
   .guest-collaboration-grid,
   .luxury-experience-grid,
   .reviewer-artifact-grid,
+  .review-decision-grid,
   .visual-qa-grid,
   .docs-twin-grid,
   .coding-agent-grid,
@@ -3829,6 +3843,7 @@ select:focus {
   .guest-collaboration-card,
   .luxury-experience-card,
   .reviewer-artifact-card,
+  .review-decision-card,
   .visual-qa-card,
   .coding-agent-card,
   .access-dossier-card,

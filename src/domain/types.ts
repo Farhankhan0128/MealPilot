@@ -1100,6 +1100,57 @@ export interface SwiggyBuildersLiveSourceResilienceCenter {
   externalGates: string[];
 }
 
+export type SwiggyBuildersReviewDecisionStatus = "ready" | "operator_input" | "swiggy_gate" | "watch";
+export type SwiggyBuildersReviewDecisionOwner = "MealPilot" | "Operator" | "Swiggy" | "Joint";
+export type SwiggyBuildersReviewDecisionRecommendation =
+  | "submit_access_packet"
+  | "record_demo_and_submit"
+  | "await_swiggy_credentials"
+  | "refresh_source_review";
+
+export interface SwiggyBuildersReviewDecisionGate {
+  id: string;
+  sequence: number;
+  label: string;
+  officialReviewSignal: string;
+  mealPilotEvidence: string;
+  status: SwiggyBuildersReviewDecisionStatus;
+  owner: SwiggyBuildersReviewDecisionOwner;
+  proofLinks: string[];
+  reviewerQuestion: string;
+  answer: string;
+  blocker: string;
+  nextAction: string;
+}
+
+export interface SwiggyBuildersReviewDecisionCenter {
+  generatedAt: string;
+  score: number;
+  recommendation: SwiggyBuildersReviewDecisionRecommendation;
+  recommendationLabel: string;
+  officialSources: string[];
+  totals: {
+    gates: number;
+    ready: number;
+    operatorInputs: number;
+    swiggyGates: number;
+    watch: number;
+    proofLinks: number;
+    reviewerQuestions: number;
+  };
+  gates: SwiggyBuildersReviewDecisionGate[];
+  decisionRunbook: Array<{
+    sequence: number;
+    label: string;
+    owner: SwiggyBuildersReviewDecisionOwner;
+    action: string;
+    proofLinks: string[];
+  }>;
+  reviewerQuestions: Array<{ id: string; question: string; answer: string; proofLinks: string[] }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type SwiggyBuildersPageMeshStatus = "covered" | "watch" | "blocked";
 
 export interface SwiggyBuildersPageMeshRow {

@@ -88,6 +88,7 @@ Planned MCP servers:
 - Swiggy Builders Homepage Experience Center at `/api/swiggy-builders-homepage-experience` that maps the live homepage header, hero, how-it-works, benefits, guidelines, FAQ, final CTA, and footer into proof routes, mobile checks, reviewer checks, continuity, and external gates.
 - Swiggy Builders Source Evolution Center at `/api/swiggy-builders-source-evolution` that reconciles homepage 18+ launch copy with current 35/35 callable-tool coverage, llms/docs refresh loops, roadmap drift, source gates, and reviewer packet regression proof.
 - Swiggy Builders Live Source Resilience Center at `/api/swiggy-builders-live-source-resilience` that reports live homepage fetch mode, Website Atlas fallback, every-page mesh coverage, llms markdown recovery, header/footer/CTA parity, and mandatory browser re-browse gates.
+- Swiggy Builders Review Decision Center at `/api/swiggy-builders-review-decision` that turns official review signals into approval-readiness gates, recommendation, reviewer questions, proof links, operator inputs, source watches, and Swiggy-owned credential/go-live gates.
 - Swiggy Builders Launch Story Center that turns the launch blog into a reviewer-ready story: 18+ launch-era signal reconciled with the current 35-tool docs snapshot, demo journey, showcase assets, ecosystem lanes, CTA paths, and co-marketing gates.
 - Swiggy Deep Site Map that consolidates every Builders page, module, CTA, header link, docs subnav item, footer resource, source-refresh section, and MealPilot proof path into one reviewer audit.
 - Developer Quickstart Workbench that turns Swiggy's official self-serve developer path into readiness steps, SDK/framework adapters, first-call `get_addresses` JSON-RPC drills, OAuth gates, and recipe handoffs.
@@ -370,6 +371,7 @@ POST /api/error-intelligence/classify
 GET  /api/submission-console
 GET  /api/access-submission-studio
 PATCH /api/access-submission-studio/state
+GET  /api/swiggy-builders-review-decision
 GET  /api/builder-packet-export
 GET  /api/builder-packet-export.md
 GET  /api/sessions/:sessionId/surface?surface=chat
@@ -403,7 +405,7 @@ GET  /api/builder-package.md
 2. Switch the Launch Center between Chat and Voice to prove surface-specific response shaping.
 3. Open MCP Coverage and show all 35 documented tools mapped across the three Swiggy servers.
 4. Open Website Atlas and show header, footer, rendered-page crawl evidence, production access page, launch blog, page module, CTA, docs-subnav, and legal/resource coverage.
-5. Open Builder Intake, FAQ & Policy, Growth Partnership, Conversion Center, Channel & Multimodal Studio, Visual Dish Capture, Nutrition & Budget Intelligence, Household Preference Graph, Guest Collaboration & Calendar, Luxury Experience Workspace, Reviewer Artifact Vault, Visual QA Center, and Deep Site Map to show every signup/apply/demo/contact/docs CTA, final Builders CTA, access-form field, FAQ theme, allowed/restricted/prohibited rule, developer build lane, growth experiment, partner ask, channel contract, screenshot-to-order route, macro/budget route, consented personalization signal, guest vote, calendar handoff, premium review workspace, reviewer artifact, visual QA target, page/module/CTA audit row, email draft, and live credential gate.
+5. Open Builder Intake, FAQ & Policy, Growth Partnership, Conversion Center, Channel & Multimodal Studio, Visual Dish Capture, Nutrition & Budget Intelligence, Household Preference Graph, Guest Collaboration & Calendar, Luxury Experience Workspace, Reviewer Artifact Vault, Review Decision Center, Visual QA Center, and Deep Site Map to show every signup/apply/demo/contact/docs CTA, final Builders CTA, access-form field, FAQ theme, allowed/restricted/prohibited rule, developer build lane, growth experiment, partner ask, channel contract, screenshot-to-order route, macro/budget route, consented personalization signal, guest vote, calendar handoff, premium review workspace, reviewer artifact, approval-readiness gate, visual QA target, page/module/CTA audit row, email draft, and live credential gate.
 6. Open Tool Lab and show 35/35 callable JSON-RPC probes, guarded tools, commercial tools, and innovation lanes.
 7. Open Tool Contract Matrix and show all 35 tool contracts, parameter counts, response envelopes, confirmation gates, retry posture, and planned error codes.
 8. Open Scenario Runner and show the Food, Instamart, Dineout, and combined recipe traces with all 35 tools, confirmation gates, recovery reads, and reminder handling.
@@ -475,6 +477,8 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 `GET /api/swiggy-builders-journey-gates` is the official Builders journey control room: Start Building, Apply for Prod Access, Quick Review, Go Live, and Show Us What You Built are mapped to owners, readiness, criteria, proof links, telemetry, blockers, and external Swiggy gates.
 
 `GET /api/swiggy-builders-homepage-experience` is the homepage section experience map: header, hero, how-it-works, benefits, guidelines, FAQ, final CTA, and footer each get source signals, MealPilot proof routes, mobile checks, reviewer checks, continuity links, and external gates.
+
+`GET /api/swiggy-builders-review-decision` is the approval-readiness decision board: official Swiggy fit, demo, security, API coverage, source-review, credential, ops, and go-live signals are scored into gates, reviewer questions, proof links, recommendation, operator-owned blockers, and Swiggy-owned approval gates.
 
 `GET /api/swiggy-builders-launch-story` is the launch-blog story center: it reconciles the April 2026 Builders Club launch narrative with the current 35-tool docs snapshot, then packages story beats, reviewer demo journey, showcase assets, ecosystem lanes, CTA paths, and co-marketing guardrails.
 

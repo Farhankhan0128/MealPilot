@@ -130,6 +130,7 @@ const artifactSections = [
       artifact("homepage_experience", "Swiggy Builders Homepage Experience Center", "api", "/api/swiggy-builders-homepage-experience", "Header, hero, how-it-works, benefits, guidelines, FAQ, final CTA, and footer mapped to proof, continuity, mobile checks, reviewer checks, and gates.", "Official navigation, legal links, forms, email, credentials, quota, brand, and production approvals stay external."),
       artifact("source_evolution", "Swiggy Builders Source Evolution Center", "api", "/api/swiggy-builders-source-evolution", "Homepage 18+ launch copy reconciled with current 35/35 callable-tool coverage, upstream roadmap drift, docs refresh loops, source gates, and reviewer packet regression.", "Public docs and local proof only; roadmap releases, signed manifests, staging credentials, and production approval stay Swiggy-owned."),
       artifact("live_source_resilience", "Swiggy Builders Live Source Resilience Center", "api", "/api/swiggy-builders-live-source-resilience", "Live homepage fetch mode, Website Atlas fallback, page mesh coverage, llms markdown recovery, header/footer/CTA parity, and re-browse gates.", "Fallback proof is local reviewer evidence only; final access submission still requires live browser review and Swiggy approval."),
+      artifact("review_decision", "Swiggy Builders Review Decision Center", "api", "/api/swiggy-builders-review-decision", "Official review signals converted into approval-readiness gates, recommendation, reviewer questions, proof links, operator inputs, source watches, and Swiggy-owned approval gates.", "Local decision support only; access approval, credentials, co-branding, production go-live, and showcase placement remain Swiggy-owned."),
       artifact("deep_site_map", "Swiggy Deep Site Map", "api", "/api/swiggy-deep-site-map", "Every Builders page, module signal, CTA, header/docs/footer link, proof path, source section, assertion, and external gate in one reviewer audit.", "Public docs and local proof links only; no user data."),
       artifact("developer_quickstart", "Developer Quickstart Workbench", "api", "/api/swiggy-developer-quickstart", "Official self-serve quickstart converted into first-call drills, SDK adapters, auth gates, commands, and recipe handoffs.", "Public docs and local mock calls only; no tokens or live user data."),
       artifact("cta_execution", "CTA Execution Center", "api", "/api/swiggy-cta-execution-center", "Every official Builders CTA, header, docs nav, footer, form, email, and legal link converted into click-ready runbook targets.", "External forms, mailto links, and legal pages stay manual/operator gated."),
@@ -195,6 +196,7 @@ const screenshotTargets = [
   screenshot("developer_quickstart_card", "Developer Quickstart card", "/", ".developer-quickstart-card", "desktop", "Shows first-call drills, framework adapters, OAuth gates, and official quickstart proof.", "Use /api/swiggy-developer-quickstart JSON readback."),
   screenshot("cta_execution_card", "CTA Execution card", "/", ".cta-execution-card", "desktop", "Shows official CTA/header/footer click targets, operator gates, and proof links.", "Use /api/swiggy-cta-execution-center JSON readback."),
   screenshot("luxury_workspace_card", "Luxury workspace card", "/", ".luxury-experience-card", "desktop", "Shows 5/5 workspaces, all-tool coverage, and premium review modes.", "Use /api/luxury-experience-workspace JSON readback."),
+  screenshot("review_decision_card", "Review Decision card", "/", ".review-decision-card", "desktop", "Shows access-approval recommendation, ready gates, operator inputs, Swiggy gates, proof links, and reviewer questions.", "Use /api/swiggy-builders-review-decision JSON readback."),
   screenshot("production_evidence", "Production Evidence", "/", ".production-panel", "desktop", "Shows widgets, rate limits, governance, launch bundle, resilience, and reviewer proof.", "Use /api/reviewer-proof and /api/production-launch-bundle."),
   screenshot("demo_studio", "Demo Studio", "/", ".demo-panel", "desktop", "Shows preflight, replay, submission console, evaluation, and demo readiness.", "Use /api/demo-studio and /api/submission-console."),
   screenshot("mobile_launch_center", "Mobile Launch Center", "/", ".launch-panel", "mobile", "Shows reviewer-critical launch cards collapse without overlap on mobile.", "Use manual browser capture until Playwright screenshot CI is added.", "manual_input"),
@@ -285,6 +287,7 @@ export function buildReviewerArtifactVault(): ReviewerArtifactVault {
     "- Swiggy Builders Homepage Experience Center: /api/swiggy-builders-homepage-experience",
     "- Swiggy Builders Source Evolution Center: /api/swiggy-builders-source-evolution",
     "- Swiggy Builders Live Source Resilience Center: /api/swiggy-builders-live-source-resilience",
+    "- Swiggy Builders Review Decision Center: /api/swiggy-builders-review-decision",
     "- Deep Site Map: /api/swiggy-deep-site-map",
     "- Developer Quickstart Workbench: /api/swiggy-developer-quickstart",
     "- CTA Execution Center: /api/swiggy-cta-execution-center",
@@ -327,7 +330,7 @@ export function buildReviewerArtifactVault(): ReviewerArtifactVault {
     assertions: [
       "The vault packages Swiggy's requested demo video, production-readiness evidence, session/log posture, support context, and proof links in one route.",
       "Every artifact has an explicit redaction rule so the reviewer packet stays safe to share.",
-      "Screenshot targets cover the planner, Launch Center, Access Evidence Matrix, Docs Twin Explorer, Deep Site Map, Developer Quickstart, CTA Execution, Luxury Experience Workspace, Production Evidence, Demo Studio, mobile layout, and widget fallbacks.",
+      "Screenshot targets cover the planner, Launch Center, Access Evidence Matrix, Docs Twin Explorer, Deep Site Map, Developer Quickstart, CTA Execution, Luxury Experience Workspace, Review Decision, Production Evidence, Demo Studio, mobile layout, and widget fallbacks.",
       "Production commands prove lint, build, tests, server start, and the end-to-end verifier before submitting to Swiggy.",
     ],
     externalGates: [

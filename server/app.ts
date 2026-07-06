@@ -31,6 +31,7 @@ import { buildBrandComplianceKit } from "./services/brandCompliance.js";
 import { buildSwiggyBuildersLaunchStoryCenter } from "./services/buildersLaunchStoryCenter.js";
 import { buildSwiggyBuildersLiveSourceResilienceCenter } from "./services/liveSourceResilienceCenter.js";
 import { buildSwiggyBuildersModuleIntelligenceCenter } from "./services/moduleIntelligence.js";
+import { buildSwiggyBuildersReviewDecisionCenter } from "./services/reviewDecisionCenter.js";
 import { buildSwiggyBuildersSourceEvolutionCenter } from "./services/sourceEvolutionCenter.js";
 import { buildSwiggyBuildersPageMeshAuditor } from "./services/buildersPageMeshAuditor.js";
 import { buildSwiggyBuildersSiteParityAuditor } from "./services/buildersSiteParityAuditor.js";
@@ -1064,6 +1065,23 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
         liveSourceResilience: await buildSwiggyBuildersLiveSourceResilienceCenter({
           config,
           profile: store.getProfile(),
+          latestPlan: store.getAllPlans().at(-1),
+          plans: store.getAllPlans(),
+          telemetry: telemetry.buildReport(),
+          handoffState: store.getAccessSubmissionState(),
+        }),
+      });
+    }),
+  );
+
+  app.get(
+    "/api/swiggy-builders-review-decision",
+    asyncRoute(async (_req, res) => {
+      res.json({
+        reviewDecision: await buildSwiggyBuildersReviewDecisionCenter({
+          config,
+          profile: store.getProfile(),
+          coverage: buildMcpCoverage(),
           latestPlan: store.getAllPlans().at(-1),
           plans: store.getAllPlans(),
           telemetry: telemetry.buildReport(),

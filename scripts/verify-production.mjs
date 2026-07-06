@@ -128,6 +128,11 @@ assert(
   "OpenAPI Builders live source resilience contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-builders-review-decision"]?.get?.summary?.includes("Review Decision") &&
+    openApi.paths["/api/swiggy-builders-review-decision"]?.get?.responses?.["200"]?.description?.includes("approval"),
+  "OpenAPI Builders review decision contract is missing",
+);
+assert(
   openApi.paths["/api/swiggy-source-intelligence"]?.get?.summary?.includes("source intelligence"),
   "OpenAPI source intelligence contract is missing",
 );
@@ -802,6 +807,51 @@ assert(
     liveSourceResilience.liveSourceResilience.assertions.some((assertion) => assertion.includes("fallback is explicitly reported")) &&
     liveSourceResilience.liveSourceResilience.externalGates.some((gate) => gate.includes("automated requests")),
   "Builders live source resilience assertions are missing",
+);
+
+const reviewDecision = await request("/api/swiggy-builders-review-decision");
+assert(reviewDecision.reviewDecision.score >= 78, "Builders review decision score is below target");
+assert(
+  ["record_demo_and_submit", "submit_access_packet", "await_swiggy_credentials", "refresh_source_review"].includes(
+    reviewDecision.reviewDecision.recommendation,
+  ),
+  "Builders review decision recommendation is invalid",
+);
+assert(reviewDecision.reviewDecision.recommendationLabel.includes("demo"), "Builders review decision label is incomplete");
+assert(reviewDecision.reviewDecision.totals.gates === 8, "Builders review decision gates are incomplete");
+assert(reviewDecision.reviewDecision.totals.ready >= 4, "Builders review decision ready gates are incomplete");
+assert(reviewDecision.reviewDecision.totals.operatorInputs >= 1, "Builders review decision operator inputs are missing");
+assert(reviewDecision.reviewDecision.totals.swiggyGates >= 2, "Builders review decision Swiggy gates are missing");
+assert(reviewDecision.reviewDecision.totals.proofLinks >= 20, "Builders review decision proof links are incomplete");
+assert(
+  [
+    "builder_fit",
+    "working_demo",
+    "security_privacy",
+    "api_tool_coverage",
+    "source_review",
+    "credential_redirect",
+    "ops_support",
+    "go_live_showcase",
+  ].every((id) => reviewDecision.reviewDecision.gates.some((gate) => gate.id === id)),
+  "Builders review decision gate ids are missing",
+);
+assert(
+  reviewDecision.reviewDecision.gates.some(
+    (gate) =>
+      gate.id === "working_demo" &&
+      gate.status === "operator_input" &&
+      gate.officialReviewSignal.includes("demo") &&
+      gate.proofLinks.includes("/api/reviewer-artifact-vault"),
+  ),
+  "Builders review decision demo gate is incomplete",
+);
+assert(
+  reviewDecision.reviewDecision.decisionRunbook.map((step) => step.sequence).join(",") === "1,2,3,4" &&
+    reviewDecision.reviewDecision.reviewerQuestions.length === 8 &&
+    reviewDecision.reviewDecision.assertions.some((assertion) => assertion.includes("local reviewer-readiness")) &&
+    reviewDecision.reviewDecision.externalGates.some((gate) => gate.includes("Builder Access approval")),
+  "Builders review decision runbook is incomplete",
 );
 
 const buildersPageMesh = await request("/api/swiggy-builders-page-mesh");
@@ -2129,7 +2179,7 @@ const reviewerArtifactVault = await request("/api/reviewer-artifact-vault");
 assert(reviewerArtifactVault.reviewerArtifactVault.score >= 90, "reviewer artifact vault score is below target");
 assert(reviewerArtifactVault.reviewerArtifactVault.totalArtifacts >= 30, "reviewer artifact vault artifacts are incomplete");
 assert(reviewerArtifactVault.reviewerArtifactVault.readyArtifacts >= 30, "reviewer artifact vault ready artifacts are incomplete");
-assert(reviewerArtifactVault.reviewerArtifactVault.totalScreenshotTargets === 12, "reviewer artifact vault screenshot targets are incomplete");
+assert(reviewerArtifactVault.reviewerArtifactVault.totalScreenshotTargets === 13, "reviewer artifact vault screenshot targets are incomplete");
 assert(reviewerArtifactVault.reviewerArtifactVault.readyScreenshotTargets >= 5, "reviewer artifact vault ready screenshots are incomplete");
 assert(reviewerArtifactVault.reviewerArtifactVault.totalCommands === 7, "reviewer artifact vault commands are incomplete");
 assert(reviewerArtifactVault.reviewerArtifactVault.readyCommands >= 6, "reviewer artifact vault ready commands are incomplete");
@@ -2252,6 +2302,17 @@ assert(
   "reviewer artifact vault credential handoff artifact is missing",
 );
 assert(
+  reviewerArtifactVault.reviewerArtifactVault.artifactSections.some((section) =>
+    section.artifacts.some(
+      (artifact) =>
+        artifact.id === "review_decision" &&
+        artifact.label === "Swiggy Builders Review Decision Center" &&
+        artifact.path === "/api/swiggy-builders-review-decision",
+    ),
+  ),
+  "reviewer artifact vault review decision artifact is missing",
+);
+assert(
   reviewerArtifactVault.reviewerArtifactVault.screenshotTargets.some(
     (target) =>
       target.id === "luxury_workspace_card" &&
@@ -2297,6 +2358,15 @@ assert(
   "reviewer artifact vault access evidence screenshot target is missing",
 );
 assert(
+  reviewerArtifactVault.reviewerArtifactVault.screenshotTargets.some(
+    (target) =>
+      target.id === "review_decision_card" &&
+      target.selector === ".review-decision-card" &&
+      target.status === "ready",
+  ),
+  "reviewer artifact vault review decision screenshot target is missing",
+);
+assert(
   reviewerArtifactVault.reviewerArtifactVault.commands.some(
     (command) =>
       command.id === "verify_production" &&
@@ -2324,6 +2394,7 @@ assert(
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-builders-homepage-experience") &&
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-builders-source-evolution") &&
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-builders-live-source-resilience") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-builders-review-decision") &&
     reviewerArtifactVault.reviewerArtifactVault.artifactSections.some((section) =>
       section.artifacts.some((artifact) => artifact.id === "faq_resolution" && artifact.path === "/api/swiggy-faq-resolution-center"),
     ) &&
@@ -2356,6 +2427,9 @@ assert(
         (artifact) =>
           artifact.id === "live_source_resilience" && artifact.path === "/api/swiggy-builders-live-source-resilience",
       ),
+    ) &&
+    reviewerArtifactVault.reviewerArtifactVault.artifactSections.some((section) =>
+      section.artifacts.some((artifact) => artifact.id === "review_decision" && artifact.path === "/api/swiggy-builders-review-decision"),
     ),
   "reviewer artifact vault email draft is incomplete",
 );
@@ -2366,8 +2440,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 58, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 58, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 59, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 59, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -2655,6 +2729,12 @@ assert(
     ),
   ),
   "visual QA Live Source Resilience target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some((target) => target.id === "review_decision_card" && target.selector === ".review-decision-card"),
+  ),
+  "visual QA Review Decision target is missing",
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
@@ -4595,6 +4675,10 @@ assert(
   "reviewer proof live source resilience artifact is missing",
 );
 assert(
+  proof.proof.artifacts.some((artifact) => artifact.label === "Swiggy Builders Review Decision Center"),
+  "reviewer proof review decision artifact is missing",
+);
+assert(
   proof.proof.artifacts.some((artifact) => artifact.label === "Channel & Multimodal Studio"),
   "reviewer proof channel and multimodal artifact is missing",
 );
@@ -5988,7 +6072,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 58, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 59, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -6002,7 +6086,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("58")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("59")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -6037,6 +6121,7 @@ assert(
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Builders Homepage Experience Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Builders Source Evolution Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Builders Live Source Resilience Center") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Builders Review Decision Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Deep Site Map") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Developer Quickstart Workbench") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "CTA Execution Center") &&
@@ -6264,6 +6349,10 @@ assert(
   "launch bundle reviewer artifact vault handoff link is missing",
 );
 assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-builders-review-decision"),
+  "launch bundle review decision handoff link is missing",
+);
+assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-demo-evidence-director"),
   "launch bundle demo evidence director handoff link is missing",
 );
@@ -6429,6 +6518,9 @@ console.log(
       liveSourceResilienceScore: liveSourceResilience.liveSourceResilience.score,
       liveSourceResilienceMode: liveSourceResilience.liveSourceResilience.currentFetch.homepageMode,
       liveSourceResilienceLanes: liveSourceResilience.liveSourceResilience.totals.lanes,
+      reviewDecisionScore: reviewDecision.reviewDecision.score,
+      reviewDecisionRecommendation: reviewDecision.reviewDecision.recommendation,
+      reviewDecisionGates: reviewDecision.reviewDecision.totals.gates,
       buildersPageMeshScore: buildersPageMesh.buildersPageMesh.score,
       buildersPageMeshPages: `${buildersPageMesh.buildersPageMesh.totals.fetchedPages}/${buildersPageMesh.buildersPageMesh.totals.pages}`,
       buildersPageMeshAnchors: buildersPageMesh.buildersPageMesh.totals.liveAnchors,

@@ -294,6 +294,15 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
         "Packages proof links, OpenAPI, smoke commands, screenshot targets, demo-video checklist, logs, traces, redaction rules, support context, and Swiggy handoff copy into one reviewer manifest.",
     },
     {
+      id: "review_decision",
+      label: "Swiggy Builders Review Decision Center",
+      path: "/api/swiggy-builders-review-decision",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Turns official review signals into access-approval gates, recommendation, reviewer questions, proof links, operator-owned inputs, source-review watches, and Swiggy-owned go-live gates.",
+    },
+    {
       id: "demo_evidence_director",
       label: "Swiggy Demo Evidence Director",
       path: "/api/swiggy-demo-evidence-director",
@@ -884,6 +893,7 @@ function buildPhases(config: ServerConfig, latestPlan: MealPlan | undefined, art
         artifact("guest_collaboration_calendar"),
         artifact("luxury_experience_workspace"),
         artifact("reviewer_artifact_vault"),
+        artifact("review_decision"),
         artifact("access_evidence_matrix"),
         artifact("visual_qa_center"),
         artifact("submission_console"),
@@ -1103,6 +1113,7 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- Guest Collaboration & Calendar Center: /api/guest-collaboration-calendar",
     "- Luxury Experience Workspace: /api/luxury-experience-workspace",
     "- Reviewer Artifact Vault: /api/reviewer-artifact-vault",
+    "- Swiggy Builders Review Decision Center: /api/swiggy-builders-review-decision",
     "- Swiggy Demo Evidence Director: /api/swiggy-demo-evidence-director",
     "- Swiggy Partner Support Room: /api/swiggy-partner-support-room",
     "- Swiggy Access Evidence Matrix: /api/swiggy-access-evidence-matrix",

@@ -120,6 +120,7 @@ import {
   fetchSwiggyBuildersHomepageExperience,
   fetchSwiggyBuildersSourceEvolution,
   fetchSwiggyBuildersLiveSourceResilience,
+  fetchSwiggyBuildersReviewDecision,
   fetchSwiggyBenefitsActivationCenter,
   fetchSwiggyOperatingContractCenter,
   fetchSwiggyFaqPolicyCenter,
@@ -256,6 +257,7 @@ import type {
   SwiggyBuildersJourneyGateCenter,
   SwiggyBuildersLiveSourceResilienceCenter,
   SwiggyBuildersModuleIntelligenceCenter,
+  SwiggyBuildersReviewDecisionCenter,
   SwiggyBuildersSourceEvolutionCenter,
   SwiggyBuildersPageMeshAuditor,
   SwiggyBuildersSiteParityAuditor,
@@ -477,6 +479,7 @@ function App() {
   const [sourceEvolution, setSourceEvolution] = useState<SwiggyBuildersSourceEvolutionCenter | null>(null);
   const [liveSourceResilience, setLiveSourceResilience] =
     useState<SwiggyBuildersLiveSourceResilienceCenter | null>(null);
+  const [reviewDecision, setReviewDecision] = useState<SwiggyBuildersReviewDecisionCenter | null>(null);
   const [operatingContract, setOperatingContract] = useState<SwiggyOperatingContractCenterReport | null>(null);
   const [swiggyDeepSiteMap, setSwiggyDeepSiteMap] = useState<SwiggyDeepSiteMap | null>(null);
   const [swiggyBuilderIntake, setSwiggyBuilderIntake] = useState<SwiggyBuilderIntakeCommandCenter | null>(null);
@@ -693,6 +696,7 @@ function App() {
       homepageExperienceResponse,
       sourceEvolutionResponse,
       liveSourceResilienceResponse,
+      reviewDecisionResponse,
       operatingContractResponse,
       deepSiteMapResponse,
       builderIntakeResponse,
@@ -810,6 +814,7 @@ function App() {
       fetchSwiggyBuildersHomepageExperience(),
       fetchSwiggyBuildersSourceEvolution(),
       fetchSwiggyBuildersLiveSourceResilience(),
+      fetchSwiggyBuildersReviewDecision(),
       fetchSwiggyOperatingContractCenter(),
       fetchSwiggyDeepSiteMap(),
       fetchSwiggyBuilderIntake(),
@@ -928,6 +933,7 @@ function App() {
     setHomepageExperience(homepageExperienceResponse.homepageExperience);
     setSourceEvolution(sourceEvolutionResponse.sourceEvolution);
     setLiveSourceResilience(liveSourceResilienceResponse.liveSourceResilience);
+    setReviewDecision(reviewDecisionResponse.reviewDecision);
     setOperatingContract(operatingContractResponse.operatingContract);
     setSwiggyDeepSiteMap(deepSiteMapResponse.deepSiteMap);
     setSwiggyBuilderIntake(builderIntakeResponse.intake);
@@ -1049,6 +1055,7 @@ function App() {
       homepageExperienceResponse,
       sourceEvolutionResponse,
       liveSourceResilienceResponse,
+      reviewDecisionResponse,
       operatingContractResponse,
       deepSiteMapResponse,
       builderIntakeResponse,
@@ -1163,6 +1170,7 @@ function App() {
       fetchSwiggyBuildersHomepageExperience(),
       fetchSwiggyBuildersSourceEvolution(),
       fetchSwiggyBuildersLiveSourceResilience(),
+      fetchSwiggyBuildersReviewDecision(),
       fetchSwiggyOperatingContractCenter(),
       fetchSwiggyDeepSiteMap(),
       fetchSwiggyBuilderIntake(),
@@ -1277,6 +1285,7 @@ function App() {
     setHomepageExperience(homepageExperienceResponse.homepageExperience);
     setSourceEvolution(sourceEvolutionResponse.sourceEvolution);
     setLiveSourceResilience(liveSourceResilienceResponse.liveSourceResilience);
+    setReviewDecision(reviewDecisionResponse.reviewDecision);
     setOperatingContract(operatingContractResponse.operatingContract);
     setSwiggyDeepSiteMap(deepSiteMapResponse.deepSiteMap);
     setSwiggyBuilderIntake(builderIntakeResponse.intake);
@@ -1966,6 +1975,7 @@ function App() {
                 homepageExperience={homepageExperience}
                 sourceEvolution={sourceEvolution}
                 liveSourceResilience={liveSourceResilience}
+                reviewDecision={reviewDecision}
                 operatingContract={operatingContract}
                 deepSiteMap={swiggyDeepSiteMap}
                 builderIntake={swiggyBuilderIntake}
@@ -2598,6 +2608,7 @@ function LaunchCenterPanel({
   guestCollaboration,
   luxuryExperience,
   reviewerArtifactVault,
+  reviewDecision,
   visualQa,
   docsCoverage,
   docsTwinExplorer,
@@ -2685,6 +2696,7 @@ function LaunchCenterPanel({
   guestCollaboration: GuestCollaborationCenter | null;
   luxuryExperience: LuxuryExperienceWorkspace | null;
   reviewerArtifactVault: ReviewerArtifactVault | null;
+  reviewDecision: SwiggyBuildersReviewDecisionCenter | null;
   visualQa: VisualQaCenter | null;
   docsCoverage: SwiggyDocsCoverageReport | null;
   docsTwinExplorer: SwiggyDocsTwinExplorer | null;
@@ -5215,6 +5227,66 @@ function LaunchCenterPanel({
               </li>
             ))}
           </ul>
+        </article>
+
+        <article className="review-decision-card">
+          <div className="mini-heading">
+            <ClipboardCheck aria-hidden="true" />
+            <strong>Review Decision</strong>
+          </div>
+          <span>
+            {reviewDecision
+              ? `${reviewDecision.score}/100, ${reviewDecision.recommendationLabel}`
+              : "Scoring Swiggy review fit, demo, security, source, credentials, ops, and go-live gates"}
+          </span>
+          <div className="review-decision-grid">
+            <div>
+              <strong>
+                {reviewDecision?.totals.ready ?? 0}/{reviewDecision?.totals.gates ?? 0}
+              </strong>
+              <span>Ready</span>
+            </div>
+            <div>
+              <strong>{reviewDecision?.totals.operatorInputs ?? 0}</strong>
+              <span>Operator</span>
+            </div>
+            <div>
+              <strong>{reviewDecision?.totals.swiggyGates ?? 0}</strong>
+              <span>Swiggy</span>
+            </div>
+            <div>
+              <strong>{reviewDecision?.totals.proofLinks ?? 0}</strong>
+              <span>Proofs</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(reviewDecision?.gates ?? []).slice(0, 5).map((gateItem) => (
+              <li
+                key={gateItem.id}
+                data-status={
+                  gateItem.status === "ready"
+                    ? "healthy"
+                    : gateItem.status === "swiggy_gate"
+                      ? "blocked"
+                      : "watch"
+                }
+              >
+                <span>{gateItem.label}</span>
+                <strong>{gateItem.owner}</strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-intelligence-actions" aria-label="Review decision links">
+            <a href="/api/swiggy-builders-review-decision" target="_blank" rel="noreferrer">
+              Decision API
+            </a>
+            <a href="/api/access-submission-studio" target="_blank" rel="noreferrer">
+              Access studio
+            </a>
+            <a href="/api/swiggy-access-evidence-matrix" target="_blank" rel="noreferrer">
+              Evidence
+            </a>
+          </div>
         </article>
 
         <article className="visual-qa-card">

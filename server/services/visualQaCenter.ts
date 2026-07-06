@@ -134,6 +134,17 @@ const targetGroups = [
         "artifacts/visual-qa/reviewer-artifact-card.png",
       ),
       target(
+        "review_decision_card",
+        "Review Decision card",
+        "/",
+        ".review-decision-card",
+        "desktop",
+        1280,
+        900,
+        "Review Decision shows Swiggy approval readiness, recommendation, operator fields, Swiggy gates, proof links, and reviewer questions.",
+        "artifacts/visual-qa/review-decision-card.png",
+      ),
+      target(
         "visual_qa_card",
         "Visual QA card",
         "/",
@@ -854,7 +865,7 @@ export function buildVisualQaCenter(): VisualQaCenter {
       },
     ],
     assertions: [
-      "Visual QA targets cover planner, Launch Center, Access Evidence Matrix, Docs Twin Explorer, Deep Site Map, Developer Quickstart, CTA Execution, Coding Agent Governance, Staging Credential Drill, Confirmation Command, Cancellation and Care, Luxury Experience Workspace, Reviewer Artifact Vault, Production Evidence, Demo Studio, and widget fallbacks.",
+      "Visual QA targets cover planner, Launch Center, Access Evidence Matrix, Docs Twin Explorer, Deep Site Map, Developer Quickstart, CTA Execution, Coding Agent Governance, Staging Credential Drill, Confirmation Command, Cancellation and Care, Luxury Experience Workspace, Reviewer Artifact Vault, Review Decision, Production Evidence, Demo Studio, and widget fallbacks.",
       "Desktop, tablet, and mobile viewports are represented with explicit selectors and artifact paths.",
       "UI rules encode no-overlap, text-fit, widget-security, redaction, confirmation-visibility, and mobile single-column checks.",
       "Playwright screenshot automation captures every manifest target and writes local PNG evidence plus report.json.",

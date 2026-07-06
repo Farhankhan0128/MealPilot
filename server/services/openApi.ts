@@ -413,6 +413,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-builders-review-decision": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Builders Review Decision Center for access-approval readiness",
+          responses: {
+            "200": {
+              description:
+                "Official Swiggy review signals mapped to MealPilot approval-readiness decision gates, recommendation, reviewer questions, proof links, operator-owned fields, source-review watches, credential gates, go-live gates, and access handoff runbook",
+            },
+          },
+        },
+      },
       "/api/swiggy-builder-intake": {
         get: {
           tags: ["Builder Access"],

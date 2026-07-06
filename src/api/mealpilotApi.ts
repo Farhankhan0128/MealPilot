@@ -74,6 +74,7 @@ import type {
   SwiggyBuildersJourneyGateCenter,
   SwiggyBuildersLiveSourceResilienceCenter,
   SwiggyBuildersModuleIntelligenceCenter,
+  SwiggyBuildersReviewDecisionCenter,
   SwiggyBuildersSourceEvolutionCenter,
   SwiggyBuildersPageMeshAuditor,
   SwiggyBuildersSiteParityAuditor,
@@ -427,6 +428,12 @@ export function fetchSwiggyBuildersSourceEvolution() {
 export function fetchSwiggyBuildersLiveSourceResilience() {
   return requestJson<{ liveSourceResilience: SwiggyBuildersLiveSourceResilienceCenter }>(
     "/api/swiggy-builders-live-source-resilience",
+  );
+}
+
+export function fetchSwiggyBuildersReviewDecision() {
+  return requestJson<{ reviewDecision: SwiggyBuildersReviewDecisionCenter }>(
+    "/api/swiggy-builders-review-decision",
   );
 }
 
