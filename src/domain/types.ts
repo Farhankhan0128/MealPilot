@@ -4635,6 +4635,67 @@ export interface SwiggyAuthStatusReport {
   nextActions: string[];
 }
 
+export type SwiggyAuthLifecycleStatus = "ready" | "watch" | "external_gate";
+
+export interface SwiggyAuthLifecycleLane {
+  id: string;
+  label: string;
+  officialContract: string;
+  mealPilotControl: string;
+  status: SwiggyAuthLifecycleStatus;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyAuthRecoveryScenario {
+  id: string;
+  trigger: "401" | "419" | "403" | "code_expired" | "refresh_requested" | "logout";
+  expectedDecision: string;
+  userVisibleAction: string;
+  status: SwiggyAuthLifecycleStatus;
+}
+
+export interface SwiggyAuthLifecycleCenterReport {
+  generatedAt: string;
+  score: number;
+  mode: "mock" | "staging" | "production";
+  officialSources: string[];
+  tokenLifetimes: {
+    authorizationCodeSeconds: number;
+    accessTokenDays: number;
+    idleSessionDays: number;
+    proactiveReauthWindowSeconds: number;
+    refreshTokenAvailableInV1: boolean;
+  };
+  currentState: {
+    tokenSource: "runtime" | "environment" | "none";
+    latestEvent: SwiggyAuthLatestEvent;
+    pendingVerifierCount: number;
+    clientIdConfigured: boolean;
+    redirectUri: string;
+    scope: string;
+  };
+  totals: {
+    lanes: number;
+    recoveryScenarios: number;
+    readyStorageRules: number;
+    troubleshootingCases: number;
+    externalGates: number;
+  };
+  lanes: SwiggyAuthLifecycleLane[];
+  recoveryScenarios: SwiggyAuthRecoveryScenario[];
+  storageRules: Array<{ id: string; rule: string; status: SwiggyAuthLifecycleStatus; evidence: string }>;
+  troubleshooting: Array<{ symptom: string; likelyCause: string; recovery: string; status: SwiggyAuthLifecycleStatus }>;
+  operatorActions: Array<{
+    id: string;
+    label: string;
+    owner: "MealPilot" | "Operator" | "Swiggy";
+    status: SwiggyAuthLifecycleStatus;
+    evidence: string;
+  }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export interface MealPlan {
   id: string;
   summary: string;

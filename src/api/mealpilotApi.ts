@@ -59,6 +59,7 @@ import type {
   TrafficReadinessPlan,
   SupportBridgeReport,
   SwiggyAuthStatusReport,
+  SwiggyAuthLifecycleCenterReport,
   SwiggyAccessDossier,
   SwiggyAccessEvidenceMatrix,
   SwiggyBuilderIntakeCommandCenter,
@@ -394,6 +395,10 @@ export function fetchSandboxCredentialWorkbench() {
 
 export function fetchSwiggyAuthStatus() {
   return requestJson<{ authStatus: SwiggyAuthStatusReport }>("/api/auth/swiggy/status");
+}
+
+export function fetchSwiggyAuthLifecycleCenter() {
+  return requestJson<{ authLifecycleCenter: SwiggyAuthLifecycleCenterReport }>("/api/swiggy-auth-lifecycle-center");
 }
 
 export function fetchEnterpriseDelegatedAuthCenter() {

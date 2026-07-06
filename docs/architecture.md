@@ -124,6 +124,7 @@ Implementation:
 - Exposes `/api/slo-incident-command` as the SLA and incident artifact for 99.9% uptime targets, latency bands, status-page fallback, incident comms, maintenance windows, measurement exclusions, and remediation evidence.
 - Exposes `/api/mcp-gateway` for mock, staging, and production routing status, token posture, cutover steps, fallback behavior, and canary rollout.
 - Exposes `/api/auth/swiggy/status` for Swiggy OAuth lifecycle status, authorize/token/logout endpoints, pending PKCE verifier count, callback outcome, token source, expiry, and storage policy without exposing bearer values.
+- Exposes `/api/swiggy-auth-lifecycle-center` as the OAuth recovery and token-lifetime proof for PKCE S256, 120-second single-use codes, 5-day access tokens, no v1 refresh-token assumption, 401/419/403 re-auth decisions, exact redirect allowlisting, delegated per-user tokens, logout, secure storage, and no-token logging.
 - Exposes `/api/credential-onboarding` for Swiggy OAuth metadata endpoints, Dynamic Client Registration preview, redirect URI audit, scope coverage, access-form fields, and external credential gates.
 - Exposes `/api/sandbox-credential-workbench` for localhost demo proof, DCR, PKCE, redirect allowlisting, staging credentials, seeded data, 48-hour soak, and production-promotion gates.
 - Exposes `/api/enterprise-delegated-auth` for Swiggy enterprise on-behalf-of OAuth, per-user PKCE, token lifecycle, redirect strategies, troubleshooting, architecture review, and partner gates.

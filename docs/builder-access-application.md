@@ -57,6 +57,7 @@ Scale-up after staging:
 ## Technical Readiness
 
 - OAuth 2.1 PKCE flow with HTTPS redirect URI in production.
+- Swiggy Auth Lifecycle Center that proves PKCE S256, 120-second codes, 5-day tokens, no v1 refresh-token assumption, 401/419/403 recovery, delegated per-user token boundaries, logout, secure storage, and no-token logging.
 - Credential Cockpit that previews Dynamic Client Registration at `/auth/register`, audits localhost vs HTTPS redirect URIs, tracks `mcp:tools mcp:resources mcp:prompts`, and labels external gates.
 - Separate MCP clients for Food, Instamart, and Dineout.
 - MCP Gateway that keeps mock demos local, fails closed without staging auth, and routes to Swiggy streamable HTTP once OAuth provides a bearer token.
@@ -225,6 +226,7 @@ Email: add primary engineering email before submission.
 - Data Governance Center: `/api/data-governance-center`
 - Enterprise Delegated Auth Center: `/api/enterprise-delegated-auth`
 - Swiggy OAuth Status: `/api/auth/swiggy/status`
+- Swiggy Auth Lifecycle Center: `/api/swiggy-auth-lifecycle-center`
 - Swiggy Journey Compiler: `/api/swiggy-journey-compiler`
 - Swiggy Access Dossier: `/api/swiggy-access-dossier`
 - Swiggy Access Evidence Matrix: `/api/swiggy-access-evidence-matrix`

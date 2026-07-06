@@ -99,6 +99,7 @@ import {
   fetchSubmissionConsole,
   fetchSubmissionPackage,
   fetchSupportBridge,
+  fetchSwiggyAuthLifecycleCenter,
   fetchSwiggyAuthStatus,
   fetchSwiggyBuildersMap,
   fetchSwiggyBuilderIntake,
@@ -205,6 +206,7 @@ import type {
   StagingCertificationMatrix,
   StagingTranscriptExport,
   SupportBridgeReport,
+  SwiggyAuthLifecycleCenterReport,
   SwiggyAuthStatusReport,
   SwiggyAccessDossier,
   SwiggyAccessEvidenceMatrix,
@@ -471,6 +473,7 @@ function App() {
   const [exportText, setExportText] = useState<string | null>(null);
   const [authUrl, setAuthUrl] = useState<string | null>(null);
   const [swiggyAuthStatus, setSwiggyAuthStatus] = useState<SwiggyAuthStatusReport | null>(null);
+  const [authLifecycleCenter, setAuthLifecycleCenter] = useState<SwiggyAuthLifecycleCenterReport | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [actionNotice, setActionNotice] = useState<string | null>(null);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
@@ -591,6 +594,7 @@ function App() {
       stagingCertificationResponse,
       credentialOnboardingResponse,
       sandboxCredentialResponse,
+      authLifecycleResponse,
       enterpriseDelegatedAuthResponse,
       supportBridgeResponse,
       goLiveResponse,
@@ -670,6 +674,7 @@ function App() {
       fetchStagingCertificationMatrix(),
       fetchCredentialOnboarding(),
       fetchSandboxCredentialWorkbench(),
+      fetchSwiggyAuthLifecycleCenter(),
       fetchEnterpriseDelegatedAuthCenter(),
       fetchSupportBridge(),
       fetchGoLive(),
@@ -750,6 +755,7 @@ function App() {
     setStagingCertification(stagingCertificationResponse.matrix);
     setCredentialOnboarding(credentialOnboardingResponse.onboarding);
     setSandboxCredentialWorkbench(sandboxCredentialResponse.sandboxWorkbench);
+    setAuthLifecycleCenter(authLifecycleResponse.authLifecycleCenter);
     setEnterpriseDelegatedAuth(enterpriseDelegatedAuthResponse.enterpriseAuth);
     setSupportBridge(supportBridgeResponse.supportBridge);
     setGoLiveChecks(goLiveResponse.checks);
@@ -833,6 +839,7 @@ function App() {
       stagingCertificationResponse,
       credentialOnboardingResponse,
       sandboxCredentialResponse,
+      authLifecycleResponse,
       enterpriseDelegatedAuthResponse,
       supportBridgeResponse,
       goLiveResponse,
@@ -909,6 +916,7 @@ function App() {
       fetchStagingCertificationMatrix(),
       fetchCredentialOnboarding(),
       fetchSandboxCredentialWorkbench(),
+      fetchSwiggyAuthLifecycleCenter(),
       fetchEnterpriseDelegatedAuthCenter(),
       fetchSupportBridge(),
       fetchGoLive(),
@@ -985,6 +993,7 @@ function App() {
     setStagingCertification(stagingCertificationResponse.matrix);
     setCredentialOnboarding(credentialOnboardingResponse.onboarding);
     setSandboxCredentialWorkbench(sandboxCredentialResponse.sandboxWorkbench);
+    setAuthLifecycleCenter(authLifecycleResponse.authLifecycleCenter);
     setEnterpriseDelegatedAuth(enterpriseDelegatedAuthResponse.enterpriseAuth);
     setSupportBridge(supportBridgeResponse.supportBridge);
     setGoLiveChecks(goLiveResponse.checks);
@@ -1685,6 +1694,7 @@ function App() {
                 confirmationCommandCenter={confirmationCommandCenter}
                 cancellationCareCenter={cancellationCareCenter}
                 dineoutPrecisionCenter={dineoutPrecisionCenter}
+                authLifecycleCenter={authLifecycleCenter}
                 routeOptimizer={routeOptimizer}
                 evaluationLab={evaluationLab}
               />
@@ -4405,6 +4415,7 @@ function ProductionEvidencePanel({
   confirmationCommandCenter,
   cancellationCareCenter,
   dineoutPrecisionCenter,
+  authLifecycleCenter,
   routeOptimizer,
   evaluationLab,
 }: {
@@ -4434,6 +4445,7 @@ function ProductionEvidencePanel({
   confirmationCommandCenter: SwiggyConfirmationCommandCenterReport | null;
   cancellationCareCenter: SwiggyCancellationCareCenterReport | null;
   dineoutPrecisionCenter: SwiggyDineoutPrecisionCenterReport | null;
+  authLifecycleCenter: SwiggyAuthLifecycleCenterReport | null;
   routeOptimizer: SwiggyRouteOptimizationReport | null;
   evaluationLab: EvaluationLab | null;
 }) {
@@ -4931,6 +4943,47 @@ function ProductionEvidencePanel({
               >
                 <span>{lane.label}</span>
                 <strong>{lane.cartType === "none" ? lane.officialTools[0] : lane.cartType.replaceAll("_", " ")}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="auth-lifecycle-card">
+          <div className="mini-heading">
+            <LockKeyhole aria-hidden="true" />
+            <strong>Auth Lifecycle</strong>
+          </div>
+          <span>
+            {authLifecycleCenter
+              ? `${authLifecycleCenter.score}/100, ${authLifecycleCenter.tokenLifetimes.accessTokenDays}d token, refresh ${authLifecycleCenter.tokenLifetimes.refreshTokenAvailableInV1 ? "on" : "off"}`
+              : "Loading OAuth lifecycle controls"}
+          </span>
+          <div className="auth-lifecycle-grid">
+            <div>
+              <strong>{authLifecycleCenter?.totals.lanes ?? 0}</strong>
+              <span>Lanes</span>
+            </div>
+            <div>
+              <strong>{authLifecycleCenter?.totals.recoveryScenarios ?? 0}</strong>
+              <span>Recoveries</span>
+            </div>
+            <div>
+              <strong>{authLifecycleCenter?.totals.readyStorageRules ?? 0}</strong>
+              <span>Storage</span>
+            </div>
+            <div>
+              <strong>{authLifecycleCenter?.currentState.tokenSource ?? "none"}</strong>
+              <span>Token source</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(authLifecycleCenter?.lanes ?? []).slice(0, 4).map((lane) => (
+              <li
+                key={lane.id}
+                data-status={lane.status === "ready" ? "healthy" : lane.status === "external_gate" ? "blocked" : "watch"}
+              >
+                <span>{lane.label}</span>
+                <strong>{lane.status.replace("_", " ")}</strong>
               </li>
             ))}
           </ul>

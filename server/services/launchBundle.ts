@@ -484,6 +484,15 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
         "Exposes redacted OAuth lifecycle state, authorize/token/logout endpoints, pending PKCE verifier count, callback outcome, token source, storage policy, and exact-match redirect posture.",
     },
     {
+      id: "auth_lifecycle_center",
+      label: "Swiggy Auth Lifecycle Center",
+      path: "/api/swiggy-auth-lifecycle-center",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Turns PKCE, 120-second codes, 5-day tokens, no refresh-token assumption, 401/419 re-auth, exact redirects, per-user tokens, and no-token logging into reviewer evidence.",
+    },
+    {
       id: "runtime_telemetry",
       label: "Runtime Telemetry",
       path: "/api/telemetry/runtime",
@@ -877,6 +886,7 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- Credential Cockpit: /api/credential-onboarding",
     "- Sandbox Credential Workbench: /api/sandbox-credential-workbench",
     "- Swiggy OAuth Status: /api/auth/swiggy/status",
+    "- Swiggy Auth Lifecycle Center: /api/swiggy-auth-lifecycle-center",
     "- Error Intelligence: /api/error-intelligence",
     "- Support Bridge: /api/support/bridge",
     "- Runtime Telemetry: /api/telemetry/runtime",

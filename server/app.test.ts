@@ -89,6 +89,8 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/access-submission-studio"].get.summary).toContain("submission studio");
     expect(openApi.body.paths["/api/access-submission-studio/state"].patch.summary).toContain("handoff state");
     expect(openApi.body.paths["/api/auth/swiggy/status"].get.summary).toContain("OAuth callback");
+    expect(openApi.body.paths["/api/swiggy-auth-lifecycle-center"].get.summary).toContain("Auth Lifecycle");
+    expect(openApi.body.paths["/api/swiggy-auth-lifecycle-center"].get.responses["200"].description).toContain("401/419");
     expect(openApi.body.paths["/api/enterprise-delegated-auth"].get.summary).toContain("Enterprise Delegated Auth");
     expect(openApi.body.paths["/api/observability/traces"].get.summary).toContain("Trace spans");
     expect(openApi.body.paths["/api/telemetry/runtime"].get.summary).toContain("Runtime request telemetry");
@@ -544,6 +546,22 @@ describe("MealPilot API", () => {
     expect(afterStatus.body.authStatus.latestEvent.status).toBe("callback_mocked");
     expect(afterStatus.body.authStatus.storagePolicy.some((item: string) => item.includes("Never log access tokens"))).toBe(true);
 
+    const lifecycle = await request(app).get("/api/swiggy-auth-lifecycle-center").expect(200);
+    expect(lifecycle.body.authLifecycleCenter.score).toBeGreaterThanOrEqual(90);
+    expect(lifecycle.body.authLifecycleCenter.tokenLifetimes).toMatchObject({
+      authorizationCodeSeconds: 120,
+      accessTokenDays: 5,
+      idleSessionDays: 30,
+      refreshTokenAvailableInV1: false,
+    });
+    expect(lifecycle.body.authLifecycleCenter.lanes.map((lane: { id: string }) => lane.id)).toEqual(
+      expect.arrayContaining(["pkce_s256_authorize", "single_use_code_exchange", "five_day_access_token", "no_refresh_token_v1", "reauth_on_401_419"]),
+    );
+    expect(lifecycle.body.authLifecycleCenter.recoveryScenarios.map((scenario: { trigger: string }) => scenario.trigger)).toEqual(
+      expect.arrayContaining(["401", "419", "403", "refresh_requested", "logout"]),
+    );
+    expect(lifecycle.body.authLifecycleCenter.assertions.some((assertion: string) => assertion.includes("does not assume refresh-token"))).toBe(true);
+
     const markdown = await request(app).get("/api/builder-package.md").expect(200);
     expect(markdown.text).toContain("MealPilot India - Swiggy Builder Access Packet");
     expect(markdown.text).toContain("MCP Tool Coverage");
@@ -903,7 +921,7 @@ describe("MealPilot API", () => {
     expect(packet.totals.formFields).toBeGreaterThanOrEqual(10);
     expect(packet.totals.requiredAttachments).toBeGreaterThanOrEqual(10);
     expect(packet.totals.launchArtifacts).toBeGreaterThanOrEqual(50);
-    expect(packet.totals.visualTargets).toBe(22);
+    expect(packet.totals.visualTargets).toBe(23);
     expect(packet.files.map((file: { id: string }) => file.id)).toEqual(
       expect.arrayContaining(["packet_json", "packet_markdown", "visual_report", "production_summary"]),
     );
@@ -915,7 +933,7 @@ describe("MealPilot API", () => {
     ).toBe(true);
     expect(
       packet.commands.some(
-        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("22"),
+        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("23"),
       ),
     ).toBe(true);
     expect(packet.copyBlocks.formFields).toContain("Redirect URI(s)");
@@ -1491,8 +1509,8 @@ describe("MealPilot API", () => {
     const visualQa = response.body.visualQa;
 
     expect(visualQa.score).toBe(100);
-    expect(visualQa.totalTargets).toBe(22);
-    expect(visualQa.readyTargets).toBe(22);
+    expect(visualQa.totalTargets).toBe(23);
+    expect(visualQa.readyTargets).toBe(23);
     expect(visualQa.totalRules).toBe(7);
     expect(visualQa.readyRules).toBe(7);
     expect(visualQa.totalCommands).toBe(5);
@@ -1578,6 +1596,11 @@ describe("MealPilot API", () => {
       ),
     ).toBe(true);
     expect(
+      visualQa.targetGroups.some((group: { targets: Array<{ id: string; selector: string }> }) =>
+        group.targets.some((target) => target.id === "auth_lifecycle_card" && target.selector === ".auth-lifecycle-card"),
+      ),
+    ).toBe(true);
+    expect(
       visualQa.rules.some(
         (rule: { id: string; check: string }) =>
           rule.id === "no_overlap" &&
@@ -1606,7 +1629,7 @@ describe("MealPilot API", () => {
         (command: { id: string; command: string; expectedSignal: string }) =>
           command.id === "visual_capture_harness" &&
           command.command === "npm run verify:visual" &&
-          command.expectedSignal.includes("targetCount >= 22"),
+          command.expectedSignal.includes("targetCount >= 23"),
       ),
     ).toBe(true);
     expect(visualQa.externalGates.some((gate: string) => gate.includes("Selected PNG screenshots"))).toBe(true);
@@ -2907,6 +2930,7 @@ describe("MealPilot API", () => {
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Scenario Runner")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "State Orchestrator")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Swiggy OAuth Status")).toBe(true);
+    expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Swiggy Auth Lifecycle Center")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Resource & Prompt Studio")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Enterprise Delegated Auth Center")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Audit Ledger Center")).toBe(true);
@@ -3341,6 +3365,7 @@ describe("MealPilot API", () => {
         "Brand Compliance Kit",
         "Data Governance Center",
         "Swiggy OAuth Status",
+        "Swiggy Auth Lifecycle Center",
         "Sandbox Credential Workbench",
         "Enterprise Delegated Auth Center",
         "Traffic Readiness Plan",
@@ -3379,6 +3404,7 @@ describe("MealPilot API", () => {
     expect(bundle.goLiveGates.some((gate: { label: string; status: string }) => gate.label.includes("delegated-auth") && gate.status === "external_gate")).toBe(true);
     expect(bundle.handoffEmail.body).toContain("/api/enterprise-delegated-auth");
     expect(bundle.handoffEmail.body).toContain("/api/auth/swiggy/status");
+    expect(bundle.handoffEmail.body).toContain("/api/swiggy-auth-lifecycle-center");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-builder-intake");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-faq-policy");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-growth-partnership");

@@ -122,6 +122,8 @@ The verifier also validates `/api/swiggy-cancellation-care-center` for Food and 
 
 The verifier also validates `/api/swiggy-dineout-precision-center` for the Dineout free-booking and bill-payment split: `book_table` only follows free slot evidence, `create_cart` bill payment uses `cartType: "DINEOUT"`, paid deals are blocked from the free booking path, `get_booking_status` guards retries, and live payment proof stays credential-gated.
 
+The verifier also validates `/api/swiggy-auth-lifecycle-center` for Swiggy OAuth token lifecycle: PKCE S256, 120-second single-use codes, 5-day access tokens, no refresh-token assumption in v1.0, 401/419/403 recovery, exact redirect allowlisting, delegated per-user token boundaries, logout handling, secure storage, and no-token logging.
+
 The verifier also validates `/api/swiggy-source-intelligence` for Builders website inventory, CTA coverage, `llms` and markdown documentation counts, 35-tool reference alignment, drift signals, external gates, and build-queue readiness.
 
 The verifier also validates `/api/coding-agent-governance` for the root `AGENTS.md` file, official Swiggy coding-agent docs, `llms.txt`, `llms-full.txt`, markdown-twin retrieval, reference paths, Food 14 / Instamart 13 / Dineout 8 smoke evidence, commercial confirmation rules, and no-token/no-PII logging guardrails.
@@ -209,6 +211,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/mcp/resource-prompt-studio`
 - `GET /api/mcp-gateway`
 - `GET /api/auth/swiggy/status`
+- `GET /api/swiggy-auth-lifecycle-center`
 - `GET /api/credential-onboarding`
 - `GET /api/sandbox-credential-workbench`
 - `GET /api/enterprise-delegated-auth`
@@ -308,6 +311,8 @@ Production should use an HTTPS redirect URI with exact-match allowlisting.
 
 `/api/auth/swiggy/status` shows the reviewer-safe OAuth lifecycle: Swiggy authorize/token/logout endpoints, redirect URI, scope, pending PKCE verifier count, latest callback event, token source, expiry, callback checklist, and secure token storage rules. The frontend OAuth Status panel calls this endpoint after auth start and callback completion.
 
+`/api/swiggy-auth-lifecycle-center` is the reviewer-safe auth recovery control room. It turns Swiggy's 120-second authorization codes, 5-day access tokens, 30-day idle sessions, no v1 refresh-token issuance, 401/419/403 recovery, exact redirect allowlisting, delegated per-user tokens, logout, and no-token logging into a dashboard card plus production verifier assertions.
+
 `/api/credential-onboarding` shows the OAuth metadata URLs, Dynamic Client Registration dry-run payload for `/auth/register`, redirect URI audit, required MCP scopes, access-form fields, and the external Swiggy gates. Local tests keep this as evidence only and do not create live Swiggy client registrations.
 
 `/api/sandbox-credential-workbench` shows the reviewer-facing localhost-to-staging credential plan: local demo proof, DCR, PKCE, exact redirect allowlisting, staging credentials, seeded Food/Instamart/Dineout data, 48-hour soak, commands, and production-promotion gates.
@@ -406,6 +411,7 @@ The test suite checks that:
 - Error Intelligence maps Swiggy's current `success:false` failure envelope, message/HTTP buckets, planned symbolic codes, domain failures, retry policy, observability hooks, and support actions.
 - Swiggy Confirmation Command Center verifies final Food order, Instamart checkout, and Dineout booking proof with fresh cart or slot reads, explicit separate approvals, non-blind retry probes, Swiggy-response payment/free-booking truth, and live credential gates.
 - Swiggy Cancellation & Care Center verifies no-tool cancellation handling, official customer-care copy, Dineout booking recovery, `report_error` support context, incident email routing, and planned error-code gates.
+- Swiggy Auth Lifecycle Center verifies PKCE, token lifetimes, v1 refresh-token gating, re-auth recovery, secure storage, and no-token logging.
 - Profile, substitution, confirm-all, tracking, and Builder Access package routes work end to end.
 - Pantry, group planning, scheduling, ops, privacy, markdown export, and OAuth callback routes work end to end.
 - Readiness, OpenAPI, preflight, replay, widgets, Widget Runtime, Staging Cutover, submission, Submission Console, Access Evidence Matrix, Production Launch Bundle, rate-limit, version, compliance, data governance, audit ledger, and reviewer proof routes work end to end.

@@ -55,6 +55,11 @@ assert(
   "OpenAPI OAuth status contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-auth-lifecycle-center"]?.get?.summary?.includes("Auth Lifecycle") &&
+    openApi.paths["/api/swiggy-auth-lifecycle-center"]?.get?.responses?.["200"]?.description?.includes("401/419"),
+  "OpenAPI Auth Lifecycle Center contract is missing",
+);
+assert(
   openApi.paths["/api/swiggy-upstream-watch"].get.summary.includes("upstream docs"),
   "OpenAPI upstream watch contract is missing",
 );
@@ -985,8 +990,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 22, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 22, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 23, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 23, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -1086,6 +1091,12 @@ assert(
   "visual QA Dineout Precision target is missing",
 );
 assert(
+  visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some((target) => target.id === "auth_lifecycle_card" && target.selector === ".auth-lifecycle-card"),
+  ),
+  "visual QA Auth Lifecycle target is missing",
+);
+assert(
   visualQa.visualQa.rules.some(
     (rule) =>
       rule.id === "no_overlap" &&
@@ -1117,7 +1128,7 @@ assert(
     (command) =>
       command.id === "visual_capture_harness" &&
       command.command === "npm run verify:visual" &&
-      command.expectedSignal.includes("targetCount >= 22"),
+      command.expectedSignal.includes("targetCount >= 23"),
   ),
   "visual QA Playwright command is missing",
 );
@@ -2162,6 +2173,34 @@ assert(
   "OAuth status did not preserve latest callback event",
 );
 
+const authLifecycle = await request("/api/swiggy-auth-lifecycle-center");
+assert(
+  Object.keys(authLifecycle).join(",") === "authLifecycleCenter",
+  "Auth Lifecycle Center response shape is incorrect",
+);
+assert(authLifecycle.authLifecycleCenter.score >= 90, "Auth Lifecycle Center score is below target");
+assert(authLifecycle.authLifecycleCenter.tokenLifetimes.authorizationCodeSeconds === 120, "auth code lifetime is missing");
+assert(authLifecycle.authLifecycleCenter.tokenLifetimes.accessTokenDays === 5, "access token lifetime is missing");
+assert(authLifecycle.authLifecycleCenter.tokenLifetimes.idleSessionDays === 30, "idle session lifetime is missing");
+assert(authLifecycle.authLifecycleCenter.tokenLifetimes.refreshTokenAvailableInV1 === false, "refresh-token v1 gate is missing");
+assert(
+  ["pkce_s256_authorize", "single_use_code_exchange", "five_day_access_token", "no_refresh_token_v1", "reauth_on_401_419"].every((id) =>
+    authLifecycle.authLifecycleCenter.lanes.some((lane) => lane.id === id),
+  ),
+  "Auth Lifecycle lanes are incomplete",
+);
+assert(
+  ["401", "419", "403", "refresh_requested", "logout"].every((trigger) =>
+    authLifecycle.authLifecycleCenter.recoveryScenarios.some((scenario) => scenario.trigger === trigger),
+  ),
+  "Auth Lifecycle recovery scenarios are incomplete",
+);
+assert(
+  authLifecycle.authLifecycleCenter.storageRules.some((rule) => rule.id === "no_plaintext_logs") &&
+    authLifecycle.authLifecycleCenter.assertions.some((assertion) => assertion.includes("does not assume refresh-token")),
+  "Auth Lifecycle storage or assertions are incomplete",
+);
+
 const enterpriseAuth = await request("/api/enterprise-delegated-auth");
 assert(enterpriseAuth.enterpriseAuth.score >= 90, "enterprise delegated auth score is below target");
 assert(
@@ -2540,6 +2579,10 @@ assert(
 assert(
   proof.proof.artifacts.some((artifact) => artifact.label === "Swiggy OAuth Status"),
   "reviewer proof OAuth status artifact is missing",
+);
+assert(
+  proof.proof.artifacts.some((artifact) => artifact.label === "Swiggy Auth Lifecycle Center"),
+  "reviewer proof Auth Lifecycle artifact is missing",
 );
 assert(
   proof.proof.artifacts.some((artifact) => artifact.label === "Enterprise Delegated Auth Center"),
@@ -3412,7 +3455,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 22, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 23, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -3426,7 +3469,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("22")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("23")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -3479,6 +3522,7 @@ assert(
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Brand Compliance Kit") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Data Governance Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy OAuth Status") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Auth Lifecycle Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Sandbox Credential Workbench") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Enterprise Delegated Auth Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Traffic Readiness Plan") &&
@@ -3530,6 +3574,10 @@ assert(
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/auth/swiggy/status"),
   "launch bundle OAuth status handoff link is missing",
+);
+assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-auth-lifecycle-center"),
+  "launch bundle Auth Lifecycle handoff link is missing",
 );
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/sandbox-credential-workbench"),
@@ -3730,6 +3778,9 @@ console.log(
       innovationRadarScore: innovationRadar.innovationRadar.score,
       innovationRadarLanes: innovationRadar.innovationRadar.opportunityCount,
       enterpriseDelegatedAuthScore: enterpriseAuth.enterpriseAuth.score,
+      authLifecycleScore: authLifecycle.authLifecycleCenter.score,
+      authLifecycleRecoveries: authLifecycle.authLifecycleCenter.totals.recoveryScenarios,
+      authLifecycleRefreshTokenV1: authLifecycle.authLifecycleCenter.tokenLifetimes.refreshTokenAvailableInV1,
       aiClientConnectScore: aiClientConnect.connectKit.score,
       aiClientTargets: aiClientConnect.connectKit.clientTargets.length,
       codingAgentGovernanceScore: codingAgentGovernance.codingAgentGovernance.score,

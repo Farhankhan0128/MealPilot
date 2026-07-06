@@ -254,6 +254,17 @@ const targetGroups = [
         "Dineout Precision shows free booking guards, bill-payment cart split, paid-deal blocks, and live payment gates.",
         "artifacts/visual-qa/dineout-precision-card.png",
       ),
+      target(
+        "auth_lifecycle_card",
+        "Auth Lifecycle card",
+        "/",
+        ".auth-lifecycle-card",
+        "desktop",
+        1280,
+        900,
+        "Auth Lifecycle shows PKCE, token lifetime, re-auth recovery, storage rules, and live credential gates.",
+        "artifacts/visual-qa/auth-lifecycle-card.png",
+      ),
     ],
   },
   {
@@ -394,7 +405,7 @@ const commands = [
     "visual_capture_harness",
     "npm run verify:visual",
     "Playwright captures every Visual QA target at desktop, tablet, and mobile sizes and writes report.json.",
-        "ok true with targetCount >= 22 and PNG files under artifacts/visual-qa.",
+        "ok true with targetCount >= 23 and PNG files under artifacts/visual-qa.",
   ),
   command(
     "desktop_capture",

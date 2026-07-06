@@ -24,6 +24,7 @@ import {
 } from "./services/advancedWorkflows.js";
 import { buildAiClientConnectKit } from "./services/aiClientConnect.js";
 import { buildAccessSubmissionStudio } from "./services/accessSubmissionStudio.js";
+import { buildSwiggyAuthLifecycleCenter } from "./services/authLifecycleCenter.js";
 import { buildAuditLedgerCenter } from "./services/auditLedger.js";
 import { buildBrandComplianceKit } from "./services/brandCompliance.js";
 import { buildBuilderPacketExport, buildBuilderPacketMarkdown } from "./services/builderPacketExport.js";
@@ -1242,6 +1243,10 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/auth/swiggy/status", (_req, res) => {
     res.json({ authStatus: buildAuthStatus() });
+  });
+
+  app.get("/api/swiggy-auth-lifecycle-center", (_req, res) => {
+    res.json({ authLifecycleCenter: buildSwiggyAuthLifecycleCenter(buildAuthStatus()) });
   });
 
   app.get(

@@ -643,6 +643,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-auth-lifecycle-center": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Auth Lifecycle Center for PKCE, token expiry, and re-auth recovery",
+          responses: {
+            "200": {
+              description:
+                "OAuth lifecycle proof for PKCE S256, 120-second single-use codes, 5-day access tokens, no refresh-token assumption in v1.0, 401/419 re-auth recovery, exact redirect allowlisting, delegated per-user tokens, no-token logging, and live credential gates",
+            },
+          },
+        },
+      },
       "/api/enterprise-delegated-auth": {
         get: {
           tags: ["Builder Access"],
