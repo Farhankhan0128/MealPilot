@@ -60,6 +60,15 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
         "Reconciles homepage 18+ launch copy with current 35/35 callable-tool coverage, upstream roadmap drift, docs refresh loops, source gates, and reviewer packet regression.",
     },
     {
+      id: "live_source_resilience",
+      label: "Swiggy Builders Live Source Resilience Center",
+      path: "/api/swiggy-builders-live-source-resilience",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Reports live Builders homepage fetch mode, Website Atlas fallback, page mesh coverage, llms markdown recovery, header/footer/CTA parity, and re-browse gates.",
+    },
+    {
       id: "builders_launch_story",
       label: "Swiggy Builders Launch Story Center",
       path: "/api/swiggy-builders-launch-story",
@@ -1069,6 +1078,7 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- Swiggy Builders Journey Gate Center: /api/swiggy-builders-journey-gates",
     "- Swiggy Builders Homepage Experience Center: /api/swiggy-builders-homepage-experience",
     "- Swiggy Builders Source Evolution Center: /api/swiggy-builders-source-evolution",
+    "- Swiggy Builders Live Source Resilience Center: /api/swiggy-builders-live-source-resilience",
     "- Swiggy Builders Launch Story Center: /api/swiggy-builders-launch-story",
     "- Deep Site Map: /api/swiggy-deep-site-map",
     "- Developer Quickstart Workbench: /api/swiggy-developer-quickstart",

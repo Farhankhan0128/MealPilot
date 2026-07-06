@@ -29,6 +29,7 @@ import { buildAuditLedgerCenter } from "./services/auditLedger.js";
 import { buildSwiggyBenefitsActivationCenter } from "./services/benefitsActivationCenter.js";
 import { buildBrandComplianceKit } from "./services/brandCompliance.js";
 import { buildSwiggyBuildersLaunchStoryCenter } from "./services/buildersLaunchStoryCenter.js";
+import { buildSwiggyBuildersLiveSourceResilienceCenter } from "./services/liveSourceResilienceCenter.js";
 import { buildSwiggyBuildersModuleIntelligenceCenter } from "./services/moduleIntelligence.js";
 import { buildSwiggyBuildersSourceEvolutionCenter } from "./services/sourceEvolutionCenter.js";
 import { buildSwiggyBuildersPageMeshAuditor } from "./services/buildersPageMeshAuditor.js";
@@ -1055,6 +1056,22 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
       }),
     });
   });
+
+  app.get(
+    "/api/swiggy-builders-live-source-resilience",
+    asyncRoute(async (_req, res) => {
+      res.json({
+        liveSourceResilience: await buildSwiggyBuildersLiveSourceResilienceCenter({
+          config,
+          profile: store.getProfile(),
+          latestPlan: store.getAllPlans().at(-1),
+          plans: store.getAllPlans(),
+          telemetry: telemetry.buildReport(),
+          handoffState: store.getAccessSubmissionState(),
+        }),
+      });
+    }),
+  );
 
   app.get("/api/swiggy-builder-intake", (_req, res) => {
     res.json({

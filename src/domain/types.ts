@@ -1049,6 +1049,57 @@ export interface SwiggyBuildersSourceEvolutionCenter {
   externalGates: string[];
 }
 
+export type SwiggyBuildersLiveSourceResilienceStatus = "verified" | "fallback" | "watch" | "swiggy_gate";
+export type SwiggyBuildersLiveSourceResilienceOwner = "MealPilot" | "Operator" | "Swiggy" | "Joint";
+
+export interface SwiggyBuildersLiveSourceResilienceLane {
+  id: string;
+  sequence: number;
+  label: string;
+  sourceSignal: string;
+  mealPilotControl: string;
+  status: SwiggyBuildersLiveSourceResilienceStatus;
+  owner: SwiggyBuildersLiveSourceResilienceOwner;
+  trigger: string;
+  proofLinks: string[];
+  fallbackPolicy: string;
+  nextAction: string;
+}
+
+export interface SwiggyBuildersLiveSourceResilienceCenter {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  currentFetch: {
+    homepageStatusCode?: number;
+    homepageFetchOk: boolean;
+    homepageMode: "live" | "atlas_fallback";
+    homepageAnchors: number;
+    matchedExpectedItems: number;
+    missingExpectedItems: number;
+    pageMeshPages: number;
+    pageMeshFetchedPages: number;
+    pageMeshAnchors: number;
+    docsTwinPages: number;
+    markdownTwins: number;
+    sourceEvolutionCoverage: string;
+  };
+  totals: {
+    lanes: number;
+    verified: number;
+    fallback: number;
+    watch: number;
+    swiggyGates: number;
+    proofLinks: number;
+    pageMeshPages: number;
+    docsTwinPages: number;
+  };
+  lanes: SwiggyBuildersLiveSourceResilienceLane[];
+  fallbackRunbook: Array<{ sequence: number; label: string; action: string; proofLinks: string[] }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type SwiggyBuildersPageMeshStatus = "covered" | "watch" | "blocked";
 
 export interface SwiggyBuildersPageMeshRow {

@@ -401,6 +401,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-builders-live-source-resilience": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Builders Live Source Resilience Center for homepage fallback, page mesh, and llms recovery",
+          responses: {
+            "200": {
+              description:
+                "Live homepage fetch state, Website Atlas fallback mode, public page mesh coverage, llms and markdown twin recovery, header/footer/CTA parity, source evolution re-browse gates, verifier regression, proof links, and external Swiggy source gates",
+            },
+          },
+        },
+      },
       "/api/swiggy-builder-intake": {
         get: {
           tags: ["Builder Access"],

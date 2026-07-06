@@ -222,6 +222,17 @@ const targetGroups = [
         "artifacts/visual-qa/source-evolution-card.png",
       ),
       target(
+        "live_source_resilience_card",
+        "Live Source Resilience card",
+        "/",
+        ".live-source-resilience-card",
+        "desktop",
+        1280,
+        900,
+        "Live Source Resilience shows homepage fetch mode, Website Atlas fallback, page mesh coverage, docs twin recovery, and re-browse gates.",
+        "artifacts/visual-qa/live-source-resilience-card.png",
+      ),
+      target(
         "builders_page_mesh_card",
         "Builders Page Mesh card",
         "/",

@@ -119,6 +119,7 @@ import {
   fetchSwiggyBuildersJourneyGates,
   fetchSwiggyBuildersHomepageExperience,
   fetchSwiggyBuildersSourceEvolution,
+  fetchSwiggyBuildersLiveSourceResilience,
   fetchSwiggyBenefitsActivationCenter,
   fetchSwiggyOperatingContractCenter,
   fetchSwiggyFaqPolicyCenter,
@@ -253,6 +254,7 @@ import type {
   SwiggyBuildersHomepageExperienceCenter,
   SwiggyBuildersLaunchStoryCenterReport,
   SwiggyBuildersJourneyGateCenter,
+  SwiggyBuildersLiveSourceResilienceCenter,
   SwiggyBuildersModuleIntelligenceCenter,
   SwiggyBuildersSourceEvolutionCenter,
   SwiggyBuildersPageMeshAuditor,
@@ -473,6 +475,8 @@ function App() {
   const [journeyGates, setJourneyGates] = useState<SwiggyBuildersJourneyGateCenter | null>(null);
   const [homepageExperience, setHomepageExperience] = useState<SwiggyBuildersHomepageExperienceCenter | null>(null);
   const [sourceEvolution, setSourceEvolution] = useState<SwiggyBuildersSourceEvolutionCenter | null>(null);
+  const [liveSourceResilience, setLiveSourceResilience] =
+    useState<SwiggyBuildersLiveSourceResilienceCenter | null>(null);
   const [operatingContract, setOperatingContract] = useState<SwiggyOperatingContractCenterReport | null>(null);
   const [swiggyDeepSiteMap, setSwiggyDeepSiteMap] = useState<SwiggyDeepSiteMap | null>(null);
   const [swiggyBuilderIntake, setSwiggyBuilderIntake] = useState<SwiggyBuilderIntakeCommandCenter | null>(null);
@@ -688,6 +692,7 @@ function App() {
       journeyGatesResponse,
       homepageExperienceResponse,
       sourceEvolutionResponse,
+      liveSourceResilienceResponse,
       operatingContractResponse,
       deepSiteMapResponse,
       builderIntakeResponse,
@@ -804,6 +809,7 @@ function App() {
       fetchSwiggyBuildersJourneyGates(),
       fetchSwiggyBuildersHomepageExperience(),
       fetchSwiggyBuildersSourceEvolution(),
+      fetchSwiggyBuildersLiveSourceResilience(),
       fetchSwiggyOperatingContractCenter(),
       fetchSwiggyDeepSiteMap(),
       fetchSwiggyBuilderIntake(),
@@ -921,6 +927,7 @@ function App() {
     setJourneyGates(journeyGatesResponse.journeyGates);
     setHomepageExperience(homepageExperienceResponse.homepageExperience);
     setSourceEvolution(sourceEvolutionResponse.sourceEvolution);
+    setLiveSourceResilience(liveSourceResilienceResponse.liveSourceResilience);
     setOperatingContract(operatingContractResponse.operatingContract);
     setSwiggyDeepSiteMap(deepSiteMapResponse.deepSiteMap);
     setSwiggyBuilderIntake(builderIntakeResponse.intake);
@@ -1041,6 +1048,7 @@ function App() {
       journeyGatesResponse,
       homepageExperienceResponse,
       sourceEvolutionResponse,
+      liveSourceResilienceResponse,
       operatingContractResponse,
       deepSiteMapResponse,
       builderIntakeResponse,
@@ -1154,6 +1162,7 @@ function App() {
       fetchSwiggyBuildersJourneyGates(),
       fetchSwiggyBuildersHomepageExperience(),
       fetchSwiggyBuildersSourceEvolution(),
+      fetchSwiggyBuildersLiveSourceResilience(),
       fetchSwiggyOperatingContractCenter(),
       fetchSwiggyDeepSiteMap(),
       fetchSwiggyBuilderIntake(),
@@ -1267,6 +1276,7 @@ function App() {
     setJourneyGates(journeyGatesResponse.journeyGates);
     setHomepageExperience(homepageExperienceResponse.homepageExperience);
     setSourceEvolution(sourceEvolutionResponse.sourceEvolution);
+    setLiveSourceResilience(liveSourceResilienceResponse.liveSourceResilience);
     setOperatingContract(operatingContractResponse.operatingContract);
     setSwiggyDeepSiteMap(deepSiteMapResponse.deepSiteMap);
     setSwiggyBuilderIntake(builderIntakeResponse.intake);
@@ -1955,6 +1965,7 @@ function App() {
                 journeyGates={journeyGates}
                 homepageExperience={homepageExperience}
                 sourceEvolution={sourceEvolution}
+                liveSourceResilience={liveSourceResilience}
                 operatingContract={operatingContract}
                 deepSiteMap={swiggyDeepSiteMap}
                 builderIntake={swiggyBuilderIntake}
@@ -2558,6 +2569,7 @@ function LaunchCenterPanel({
   journeyGates,
   homepageExperience,
   sourceEvolution,
+  liveSourceResilience,
   operatingContract,
   deepSiteMap,
   builderIntake,
@@ -2644,6 +2656,7 @@ function LaunchCenterPanel({
   journeyGates: SwiggyBuildersJourneyGateCenter | null;
   homepageExperience: SwiggyBuildersHomepageExperienceCenter | null;
   sourceEvolution: SwiggyBuildersSourceEvolutionCenter | null;
+  liveSourceResilience: SwiggyBuildersLiveSourceResilienceCenter | null;
   operatingContract: SwiggyOperatingContractCenterReport | null;
   deepSiteMap: SwiggyDeepSiteMap | null;
   builderIntake: SwiggyBuilderIntakeCommandCenter | null;
@@ -3772,6 +3785,68 @@ function LaunchCenterPanel({
             </a>
             <a href="/api/swiggy-upstream-watch" target="_blank" rel="noreferrer">
               Upstream
+            </a>
+          </div>
+        </article>
+
+        <article className="live-source-resilience-card">
+          <div className="mini-heading">
+            <Gauge aria-hidden="true" />
+            <strong>Live Source Resilience</strong>
+          </div>
+          <span>
+            {liveSourceResilience
+              ? `${liveSourceResilience.score}/100, ${liveSourceResilience.currentFetch.homepageMode.replace("_", " ")} mode`
+              : "Checking live Builders fetch, atlas fallback, page mesh, and llms recovery"}
+          </span>
+          <div className="live-source-resilience-grid">
+            <div>
+              <strong>{liveSourceResilience?.currentFetch.homepageStatusCode ?? "n/a"}</strong>
+              <span>Status</span>
+            </div>
+            <div>
+              <strong>{liveSourceResilience?.currentFetch.matchedExpectedItems ?? 0}</strong>
+              <span>Links</span>
+            </div>
+            <div>
+              <strong>
+                {liveSourceResilience
+                  ? `${liveSourceResilience.currentFetch.pageMeshFetchedPages}/${liveSourceResilience.currentFetch.pageMeshPages}`
+                  : "0/0"}
+              </strong>
+              <span>Pages</span>
+            </div>
+            <div>
+              <strong>{liveSourceResilience?.currentFetch.markdownTwins ?? 0}</strong>
+              <span>Twins</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(liveSourceResilience?.lanes ?? []).slice(0, 5).map((laneItem) => (
+              <li
+                key={laneItem.id}
+                data-status={
+                  laneItem.status === "verified"
+                    ? "healthy"
+                    : laneItem.status === "swiggy_gate"
+                      ? "blocked"
+                      : "watch"
+                }
+              >
+                <span>{laneItem.label}</span>
+                <strong>{laneItem.status.replace("_", " ")}</strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-intelligence-actions" aria-label="Live source resilience links">
+            <a href="/api/swiggy-builders-live-source-resilience" target="_blank" rel="noreferrer">
+              Resilience API
+            </a>
+            <a href="/api/swiggy-builders-site-parity" target="_blank" rel="noreferrer">
+              Site parity
+            </a>
+            <a href="/api/swiggy-docs-twin-explorer" target="_blank" rel="noreferrer">
+              Docs twins
             </a>
           </div>
         </article>

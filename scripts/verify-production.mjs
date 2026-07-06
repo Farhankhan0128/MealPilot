@@ -123,6 +123,11 @@ assert(
   "OpenAPI Builders source evolution contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-builders-live-source-resilience"]?.get?.summary?.includes("Live Source Resilience") &&
+    openApi.paths["/api/swiggy-builders-live-source-resilience"]?.get?.responses?.["200"]?.description?.includes("fallback"),
+  "OpenAPI Builders live source resilience contract is missing",
+);
+assert(
   openApi.paths["/api/swiggy-source-intelligence"]?.get?.summary?.includes("source intelligence"),
   "OpenAPI source intelligence contract is missing",
 );
@@ -747,6 +752,56 @@ assert(
     sourceEvolution.sourceEvolution.assertions.some((assertion) => assertion.includes("35/35 callable tools")) &&
     sourceEvolution.sourceEvolution.externalGates.some((gate) => gate.includes("signed client manifest")),
   "Builders source evolution assertions are missing",
+);
+
+const liveSourceResilience = await request("/api/swiggy-builders-live-source-resilience");
+assert(liveSourceResilience.liveSourceResilience.score >= 90, "Builders live source resilience score is below target");
+assert(
+  ["live", "atlas_fallback"].includes(liveSourceResilience.liveSourceResilience.currentFetch.homepageMode) &&
+    liveSourceResilience.liveSourceResilience.currentFetch.matchedExpectedItems >= 20 &&
+    liveSourceResilience.liveSourceResilience.currentFetch.missingExpectedItems === 0,
+  "Builders live source resilience homepage coverage is incomplete",
+);
+assert(
+  liveSourceResilience.liveSourceResilience.currentFetch.pageMeshPages >= 7 &&
+    liveSourceResilience.liveSourceResilience.currentFetch.pageMeshFetchedPages ===
+      liveSourceResilience.liveSourceResilience.currentFetch.pageMeshPages,
+  "Builders live source resilience page mesh coverage is incomplete",
+);
+assert(
+  liveSourceResilience.liveSourceResilience.currentFetch.docsTwinPages === 69 &&
+    liveSourceResilience.liveSourceResilience.currentFetch.markdownTwins === 69 &&
+    liveSourceResilience.liveSourceResilience.currentFetch.sourceEvolutionCoverage === "35/35",
+  "Builders live source resilience docs/source coverage is incomplete",
+);
+assert(liveSourceResilience.liveSourceResilience.totals.lanes === 6, "Builders live source resilience lane count is incomplete");
+assert(liveSourceResilience.liveSourceResilience.totals.verified >= 3, "Builders live source resilience verified lanes are incomplete");
+assert(liveSourceResilience.liveSourceResilience.totals.proofLinks >= 12, "Builders live source resilience proof links are incomplete");
+assert(
+  [
+    "homepage_fetch_resilience",
+    "page_mesh_resilience",
+    "llms_markdown_twin_resilience",
+    "header_footer_cta_resilience",
+    "source_evolution_rebrowse_gate",
+    "packet_regression_resilience",
+  ].every((id) => liveSourceResilience.liveSourceResilience.lanes.some((lane) => lane.id === id)),
+  "Builders live source resilience lanes are missing",
+);
+assert(
+  liveSourceResilience.liveSourceResilience.lanes.some(
+    (lane) =>
+      lane.id === "homepage_fetch_resilience" &&
+      lane.fallbackPolicy.includes("Fallback") &&
+      lane.proofLinks.includes("/api/swiggy-builders-site-parity"),
+  ),
+  "Builders live source resilience fallback proof is missing",
+);
+assert(
+  liveSourceResilience.liveSourceResilience.fallbackRunbook.map((step) => step.sequence).join(",") === "1,2,3,4" &&
+    liveSourceResilience.liveSourceResilience.assertions.some((assertion) => assertion.includes("fallback is explicitly reported")) &&
+    liveSourceResilience.liveSourceResilience.externalGates.some((gate) => gate.includes("automated requests")),
+  "Builders live source resilience assertions are missing",
 );
 
 const buildersPageMesh = await request("/api/swiggy-builders-page-mesh");
@@ -2268,6 +2323,7 @@ assert(
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-builders-journey-gates") &&
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-builders-homepage-experience") &&
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-builders-source-evolution") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-builders-live-source-resilience") &&
     reviewerArtifactVault.reviewerArtifactVault.artifactSections.some((section) =>
       section.artifacts.some((artifact) => artifact.id === "faq_resolution" && artifact.path === "/api/swiggy-faq-resolution-center"),
     ) &&
@@ -2294,6 +2350,12 @@ assert(
       section.artifacts.some(
         (artifact) => artifact.id === "source_evolution" && artifact.path === "/api/swiggy-builders-source-evolution",
       ),
+    ) &&
+    reviewerArtifactVault.reviewerArtifactVault.artifactSections.some((section) =>
+      section.artifacts.some(
+        (artifact) =>
+          artifact.id === "live_source_resilience" && artifact.path === "/api/swiggy-builders-live-source-resilience",
+      ),
     ),
   "reviewer artifact vault email draft is incomplete",
 );
@@ -2304,8 +2366,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 57, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 57, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 58, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 58, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -2585,6 +2647,14 @@ assert(
     group.targets.some((target) => target.id === "source_evolution_card" && target.selector === ".source-evolution-card"),
   ),
   "visual QA Source Evolution target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some(
+      (target) => target.id === "live_source_resilience_card" && target.selector === ".live-source-resilience-card",
+    ),
+  ),
+  "visual QA Live Source Resilience target is missing",
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
@@ -4521,6 +4591,10 @@ assert(
   "reviewer proof source evolution artifact is missing",
 );
 assert(
+  proof.proof.artifacts.some((artifact) => artifact.label === "Swiggy Builders Live Source Resilience Center"),
+  "reviewer proof live source resilience artifact is missing",
+);
+assert(
   proof.proof.artifacts.some((artifact) => artifact.label === "Channel & Multimodal Studio"),
   "reviewer proof channel and multimodal artifact is missing",
 );
@@ -5914,7 +5988,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 57, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 58, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -5928,7 +6002,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("57")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("58")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -5962,6 +6036,7 @@ assert(
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Builders Journey Gate Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Builders Homepage Experience Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Builders Source Evolution Center") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Builders Live Source Resilience Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Deep Site Map") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Developer Quickstart Workbench") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "CTA Execution Center") &&
@@ -6079,6 +6154,10 @@ assert(
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-builders-source-evolution"),
   "launch bundle source evolution handoff link is missing",
+);
+assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-builders-live-source-resilience"),
+  "launch bundle live source resilience handoff link is missing",
 );
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-operating-contract-center"),
@@ -6347,6 +6426,9 @@ console.log(
       sourceEvolutionScore: sourceEvolution.sourceEvolution.score,
       sourceEvolutionCoverage: sourceEvolution.sourceEvolution.toolCountBridge.coverageLabel,
       sourceEvolutionLanes: sourceEvolution.sourceEvolution.totals.lanes,
+      liveSourceResilienceScore: liveSourceResilience.liveSourceResilience.score,
+      liveSourceResilienceMode: liveSourceResilience.liveSourceResilience.currentFetch.homepageMode,
+      liveSourceResilienceLanes: liveSourceResilience.liveSourceResilience.totals.lanes,
       buildersPageMeshScore: buildersPageMesh.buildersPageMesh.score,
       buildersPageMeshPages: `${buildersPageMesh.buildersPageMesh.totals.fetchedPages}/${buildersPageMesh.buildersPageMesh.totals.pages}`,
       buildersPageMeshAnchors: buildersPageMesh.buildersPageMesh.totals.liveAnchors,

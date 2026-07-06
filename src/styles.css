@@ -1151,6 +1151,10 @@ select:focus {
   grid-column: span 2;
 }
 
+.live-source-resilience-card {
+  grid-column: span 2;
+}
+
 .journey-gates-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -1166,6 +1170,13 @@ select:focus {
 }
 
 .source-evolution-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.live-source-resilience-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 8px;
@@ -1199,6 +1210,15 @@ select:focus {
   background: #fff;
 }
 
+.live-source-resilience-grid div {
+  display: grid;
+  gap: 3px;
+  min-height: 64px;
+  border-radius: 8px;
+  padding: 9px;
+  background: #fff;
+}
+
 .journey-gates-grid strong {
   color: var(--green-dark);
   font-size: 1.18rem;
@@ -1212,6 +1232,12 @@ select:focus {
 }
 
 .source-evolution-grid strong {
+  color: var(--green-dark);
+  font-size: 1.18rem;
+  overflow-wrap: anywhere;
+}
+
+.live-source-resilience-grid strong {
   color: var(--green-dark);
   font-size: 1.18rem;
   overflow-wrap: anywhere;
@@ -1232,6 +1258,13 @@ select:focus {
 }
 
 .source-evolution-grid span {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.live-source-resilience-grid span {
   color: var(--muted);
   font-size: 0.78rem;
   font-weight: 800;
@@ -2416,6 +2449,10 @@ select:focus {
     grid-column: auto;
   }
 
+  .live-source-resilience-card {
+    grid-column: auto;
+  }
+
   .journey-gates-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -2425,6 +2462,10 @@ select:focus {
   }
 
   .source-evolution-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .live-source-resilience-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -2541,6 +2582,10 @@ select:focus {
   }
 
   .source-evolution-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .live-source-resilience-grid {
     grid-template-columns: 1fr;
   }
 
