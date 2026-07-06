@@ -172,6 +172,7 @@ MealPilot should become a luxury-grade food and meal intelligence product with t
 | API server | `server/app.ts` |
 | MCP gateway | `server/services/mcpGateway.ts` |
 | Credential onboarding | `server/services/credentialOnboarding.ts` |
+| Credential Vault Center | `server/services/credentialVaultCenter.ts` |
 | Local Swiggy JSON-RPC mock | `server/mock/swiggyToolRouter.ts` |
 | 35-tool coverage matrix | `server/services/advancedWorkflows.ts` |
 | Executable Tool Lab | `server/services/toolLab.ts` |
@@ -249,7 +250,7 @@ MealPilot should become a luxury-grade food and meal intelligence product with t
 | Planner workspace | `src/App.tsx` |
 | Recommendation cards | Food, Instamart, and Dineout cards with item controls |
 | Premium Concierge | Lunch, pantry reset, Dineout evening, dessert reminder, and recovery itinerary slots with official Swiggy route plans |
-| Launch Center | Tool coverage, Tool Contract Matrix, Scenario Runner, State Orchestrator, Widget Runtime Center, Commercial Action Guard, Staging Cutover Rehearsal, Swiggy Handshake Doctor, Capability Registry, Resource & Prompt Studio, Website Atlas, Builder Intake, FAQ & Policy Center, Growth Partnership Center, Showcase Submission Center, Submission Timeline Center, Partner Success Desk, Interaction QA Center, Channel & Multimodal Studio, Nutrition & Budget Intelligence, Household Preference Graph, Guest Collaboration & Calendar Center, Luxury Experience Workspace, Reviewer Artifact Vault, Visual QA Center, Access Evidence Matrix, Docs Coverage, Docs Twin Explorer, llms Manifest Verifier, Upstream Watch, Source Intelligence, Deep Site Map, Developer Quickstart, CTA Execution, Innovation Radar, Tool Lab, gateway, OAuth Status, Credential Cockpit, Delegated Auth Center, Builders map, Support Bridge, go-live, observability, support |
+| Launch Center | Tool coverage, Tool Contract Matrix, Scenario Runner, State Orchestrator, Widget Runtime Center, Commercial Action Guard, Staging Cutover Rehearsal, Swiggy Handshake Doctor, Capability Registry, Resource & Prompt Studio, Website Atlas, Builder Intake, FAQ & Policy Center, Growth Partnership Center, Showcase Submission Center, Submission Timeline Center, Partner Success Desk, Interaction QA Center, Channel & Multimodal Studio, Nutrition & Budget Intelligence, Household Preference Graph, Guest Collaboration & Calendar Center, Luxury Experience Workspace, Reviewer Artifact Vault, Visual QA Center, Access Evidence Matrix, Docs Coverage, Docs Twin Explorer, llms Manifest Verifier, Upstream Watch, Source Intelligence, Deep Site Map, Developer Quickstart, CTA Execution, Innovation Radar, Tool Lab, gateway, OAuth Status, Credential Cockpit, Credential Vault Center, Delegated Auth Center, Builders map, Support Bridge, go-live, observability, support |
 | Guest Collaboration & Calendar | Guest votes, occasion templates, Dineout-first date nights, guests-at-home prep, office lunch, weekday reset, recovery meal, ICS artifacts, Slack/Teams gates, and voice-safe briefs |
 | Luxury Experience Workspace | Lean, premium, family, social, and training modes plus polished Dineout reservation, Food cart, Instamart basket, combined evening, and recovery review surfaces |
 | Reviewer Artifact Vault | Proof links, OpenAPI, smoke commands, screenshot targets, demo-video checklist, logs, traces, redaction rules, support context, and handoff copy |
@@ -298,6 +299,7 @@ Coverage targets:
 - CTA Live Auditor for safe live Builders/docs URL probes, manual form/email/legal gates, approved-origin checks, blocked-link drift, and reviewer runbook evidence
 - Swiggy Innovation Radar for developer ideas, enterprise signals, access rules, support model, MCP references, premium opportunity lanes, route optimizations, build phases, and partner gates
 - Credential onboarding and Dynamic Client Registration preview
+- Credential Vault Center for runtime secret posture, redaction, rotation, and Swiggy support packets
 - Tool Lab probes for all 35 tools
 - Tool Contract Matrix coverage for all 35 tool parameters, response envelopes, source/privacy labels, retry policy, confirmation gates, error buckets, and local fixture previews
 - Scenario Runner traces for official Food, Instamart, Dineout, and combined recipes, including guard/recovery probes and all 35 tools

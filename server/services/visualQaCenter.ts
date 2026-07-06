@@ -244,6 +244,17 @@ const targetGroups = [
         "artifacts/visual-qa/staging-credential-drill-card.png",
       ),
       target(
+        "credential_vault_card",
+        "Credential Vault card",
+        "/",
+        ".credential-vault-card",
+        "desktop",
+        1280,
+        900,
+        "Credential Vault shows configured secrets, redaction rules, rotation runbook, support-safe packet fields, and Swiggy cutover gates.",
+        "artifacts/visual-qa/credential-vault-card.png",
+      ),
+      target(
         "staging_seed_smoke_card",
         "Staging Seed and Smoke card",
         "/",

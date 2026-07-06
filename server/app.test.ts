@@ -135,6 +135,8 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/mcp/resource-prompt-studio/execute"].post.summary).toContain("resource or prompt");
     expect(openApi.body.paths["/api/mcp/resource-prompt-studio/execute"].post.responses["200"].description).toContain("no raw payload");
     expect(openApi.body.paths["/api/credential-onboarding"].get.summary).toContain("Dynamic Client Registration");
+    expect(openApi.body.paths["/api/swiggy-credential-vault-center"].get.summary).toContain("Credential Vault");
+    expect(openApi.body.paths["/api/swiggy-credential-vault-center"].get.responses["200"].description).toContain("without full token exposure");
     expect(openApi.body.paths["/api/sandbox-credential-workbench"].get.summary).toContain("sandbox");
     expect(openApi.body.paths["/api/access-submission-studio"].get.summary).toContain("submission studio");
     expect(openApi.body.paths["/api/access-submission-studio/state"].patch.summary).toContain("handoff state");
@@ -517,6 +519,31 @@ describe("MealPilot API", () => {
     expect(
       response.body.onboarding.accessApplicationFields.some((field: { id: string }) => field.id === "redirect_uris"),
     ).toBe(true);
+  });
+
+  it("returns a Swiggy Credential Vault Center for secret posture and rotation", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/swiggy-credential-vault-center").expect(200);
+    const vault = response.body.credentialVault;
+
+    expect(vault.score).toBeGreaterThanOrEqual(60);
+    expect(vault.totals.secrets).toBe(7);
+    expect(vault.totals.rotations).toBe(4);
+    expect(vault.totals.redactionRules).toBe(4);
+    expect(vault.secrets.map((item: { id: string }) => item.id)).toEqual(
+      expect.arrayContaining(["swiggy_env", "client_id", "redirect_uri", "scope", "access_token", "token_expiry", "data_file"]),
+    );
+    expect(vault.rotationRunbook.map((item: { id: string }) => item.id)).toEqual(
+      expect.arrayContaining(["oauth_reauth", "dcr_client_rotation", "environment_cutover", "support_redaction_review"]),
+    );
+    expect(vault.cutoverChecks.map((item: { id: string }) => item.id)).toEqual(
+      expect.arrayContaining(["gateway_status", "onboarding_status", "sandbox_workbench", "production_verifier"]),
+    );
+    expect(vault.redactionRules.some((rule: { id: string; rule: string }) => rule.id === "no_full_token" && rule.rule.includes("Never return"))).toBe(true);
+    expect(vault.supportPacket.to).toBe("builders@swiggy.in");
+    expect(vault.supportPacket.forbiddenFields).toEqual(expect.arrayContaining(["access_token", "PKCE verifier"]));
+    expect(vault.assertions.some((assertion: string) => assertion.includes("Full bearer tokens"))).toBe(true);
+    expect(vault.externalGates.some((gate: string) => gate.includes("staging credentials"))).toBe(true);
   });
 
   it("returns a Swiggy staging credential drill for first credentialed access", async () => {
@@ -1475,7 +1502,7 @@ describe("MealPilot API", () => {
     expect(packet.totals.formFields).toBeGreaterThanOrEqual(10);
     expect(packet.totals.requiredAttachments).toBeGreaterThanOrEqual(10);
     expect(packet.totals.launchArtifacts).toBeGreaterThanOrEqual(50);
-    expect(packet.totals.visualTargets).toBe(44);
+    expect(packet.totals.visualTargets).toBe(45);
     expect(packet.files.map((file: { id: string }) => file.id)).toEqual(
       expect.arrayContaining(["packet_json", "packet_markdown", "visual_report", "production_summary"]),
     );
@@ -1487,7 +1514,7 @@ describe("MealPilot API", () => {
     ).toBe(true);
     expect(
       packet.commands.some(
-        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("44"),
+        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("45"),
       ),
     ).toBe(true);
     expect(packet.copyBlocks.formFields).toContain("Redirect URI(s)");
@@ -2562,8 +2589,8 @@ describe("MealPilot API", () => {
     const visualQa = response.body.visualQa;
 
     expect(visualQa.score).toBe(100);
-    expect(visualQa.totalTargets).toBe(44);
-    expect(visualQa.readyTargets).toBe(44);
+    expect(visualQa.totalTargets).toBe(45);
+    expect(visualQa.readyTargets).toBe(45);
     expect(visualQa.totalRules).toBe(7);
     expect(visualQa.readyRules).toBe(7);
     expect(visualQa.totalCommands).toBe(5);
@@ -2621,6 +2648,11 @@ describe("MealPilot API", () => {
         group.targets.some(
           (target) => target.id === "staging_credential_drill_card" && target.selector === ".staging-credential-drill-card",
         ),
+      ),
+    ).toBe(true);
+    expect(
+      visualQa.targetGroups.some((group: { targets: Array<{ id: string; selector: string }> }) =>
+        group.targets.some((target) => target.id === "credential_vault_card" && target.selector === ".credential-vault-card"),
       ),
     ).toBe(true);
     expect(

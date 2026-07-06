@@ -1027,6 +1027,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           responses: { "200": { description: "DCR preview, redirect URI audit, scopes, access fields, and external gates" } },
         },
       },
+      "/api/swiggy-credential-vault-center": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Credential Vault Center for secret posture, redaction, rotation, and cutover",
+          responses: {
+            "200": {
+              description:
+                "Runtime credential inventory, configured-secret posture, redaction rules, rotation runbook, support packet, and cutover gates without full token exposure",
+            },
+          },
+        },
+      },
       "/api/sandbox-credential-workbench": {
         get: {
           tags: ["Builder Access"],

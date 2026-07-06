@@ -361,6 +361,11 @@ assert(
   "OpenAPI Staging Credential Drill Center contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-credential-vault-center"].get.summary.includes("Credential Vault") &&
+    openApi.paths["/api/swiggy-credential-vault-center"].get.responses["200"].description.includes("without full token exposure"),
+  "OpenAPI Credential Vault Center contract is missing",
+);
+assert(
   openApi.paths["/api/swiggy-staging-seed-smoke-center"].get.summary.includes("Seed and Smoke"),
   "OpenAPI Staging Seed and Smoke Center contract is missing",
 );
@@ -1757,8 +1762,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 44, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 44, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 45, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 45, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -1828,6 +1833,12 @@ assert(
     ),
   ),
   "visual QA staging credential drill target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some((target) => target.id === "credential_vault_card" && target.selector === ".credential-vault-card"),
+  ),
+  "visual QA credential vault target is missing",
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
@@ -3203,6 +3214,45 @@ assert(
 assert(
   onboarding.onboarding.checks.some((check) => check.id === "pkce" && check.status === "ready"),
   "credential onboarding PKCE evidence is missing",
+);
+
+const credentialVault = await request("/api/swiggy-credential-vault-center");
+assert(credentialVault.credentialVault.score >= 60, "credential vault score is below target");
+assert(
+  credentialVault.credentialVault.totals.secrets === 7 &&
+    credentialVault.credentialVault.totals.rotations === 4 &&
+    credentialVault.credentialVault.totals.redactionRules === 4,
+  "credential vault totals are incomplete",
+);
+assert(
+  ["swiggy_env", "client_id", "redirect_uri", "scope", "access_token", "token_expiry", "data_file"].every((id) =>
+    credentialVault.credentialVault.secrets.some((item) => item.id === id),
+  ),
+  "credential vault secret inventory is incomplete",
+);
+assert(
+  ["oauth_reauth", "dcr_client_rotation", "environment_cutover", "support_redaction_review"].every((id) =>
+    credentialVault.credentialVault.rotationRunbook.some((item) => item.id === id),
+  ),
+  "credential vault rotation runbook is incomplete",
+);
+assert(
+  ["gateway_status", "onboarding_status", "sandbox_workbench", "production_verifier"].every((id) =>
+    credentialVault.credentialVault.cutoverChecks.some((item) => item.id === id),
+  ),
+  "credential vault cutover checks are incomplete",
+);
+assert(
+  credentialVault.credentialVault.redactionRules.some((rule) => rule.id === "no_full_token" && rule.rule.includes("Never return")) &&
+    credentialVault.credentialVault.supportPacket.to === "builders@swiggy.in" &&
+    credentialVault.credentialVault.supportPacket.forbiddenFields.includes("access_token") &&
+    credentialVault.credentialVault.supportPacket.forbiddenFields.includes("PKCE verifier"),
+  "credential vault redaction or support packet is incomplete",
+);
+assert(
+  credentialVault.credentialVault.assertions.some((assertion) => assertion.includes("Full bearer tokens")) &&
+    credentialVault.credentialVault.externalGates.some((gate) => gate.includes("staging credentials")),
+  "credential vault assertions or gates are missing",
 );
 
 const sandboxWorkbench = await request("/api/sandbox-credential-workbench");
@@ -5089,7 +5139,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 44, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 45, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -5103,7 +5153,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("44")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("45")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -5525,6 +5575,9 @@ console.log(
       sandboxCredentialScore: sandboxWorkbench.sandboxWorkbench.score,
       sandboxCredentialLanes: sandboxWorkbench.sandboxWorkbench.lanes.length,
       sandboxSeededServers: sandboxWorkbench.sandboxWorkbench.seededDataPlan.length,
+      credentialVaultScore: credentialVault.credentialVault.score,
+      credentialVaultSecrets: credentialVault.credentialVault.totals.secrets,
+      credentialVaultRedactionRules: credentialVault.credentialVault.totals.redactionRules,
       toolLabScore: toolLab.toolLab.score,
       toolLabCallable: `${toolLab.toolLab.callableTools}/${toolLab.toolLab.totalTools}`,
       toolContractScore: toolContracts.matrix.score,

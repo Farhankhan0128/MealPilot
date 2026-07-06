@@ -61,6 +61,7 @@ import {
   fetchComplianceEvidence,
   fetchDataGovernanceCenter,
   fetchCredentialOnboarding,
+  fetchSwiggyCredentialVaultCenter,
   fetchDeveloperQuickstartWorkbench,
   fetchDemoStudio,
   fetchErrorIntelligence,
@@ -243,6 +244,7 @@ import type {
   SwiggyCartMutationReport,
   SwiggyChannelMultimodalStudio,
   SwiggyConfirmationCommandCenterReport,
+  SwiggyCredentialVaultCenter,
   SwiggyCustomizationStudio,
   SwiggyCtaExecutionCenter,
   SwiggyCtaLiveAuditor,
@@ -488,6 +490,7 @@ function App() {
     useState<PremiumConciergeItineraryReport | null>(null);
   const [stagingCertification, setStagingCertification] = useState<StagingCertificationMatrix | null>(null);
   const [credentialOnboarding, setCredentialOnboarding] = useState<CredentialOnboardingReport | null>(null);
+  const [credentialVault, setCredentialVault] = useState<SwiggyCredentialVaultCenter | null>(null);
   const [sandboxCredentialWorkbench, setSandboxCredentialWorkbench] =
     useState<SandboxCredentialWorkbench | null>(null);
   const [enterpriseDelegatedAuth, setEnterpriseDelegatedAuth] = useState<EnterpriseDelegatedAuthCenter | null>(null);
@@ -687,6 +690,7 @@ function App() {
       conciergeResponse,
       stagingCertificationResponse,
       credentialOnboardingResponse,
+      credentialVaultResponse,
       sandboxCredentialResponse,
       authLifecycleResponse,
       enterpriseDelegatedAuthResponse,
@@ -790,6 +794,7 @@ function App() {
       fetchPremiumConciergeItinerary(),
       fetchStagingCertificationMatrix(),
       fetchCredentialOnboarding(),
+      fetchSwiggyCredentialVaultCenter(),
       fetchSandboxCredentialWorkbench(),
       fetchSwiggyAuthLifecycleCenter(),
       fetchEnterpriseDelegatedAuthCenter(),
@@ -894,6 +899,7 @@ function App() {
     setPremiumConciergeItinerary(conciergeResponse.concierge);
     setStagingCertification(stagingCertificationResponse.matrix);
     setCredentialOnboarding(credentialOnboardingResponse.onboarding);
+    setCredentialVault(credentialVaultResponse.credentialVault);
     setSandboxCredentialWorkbench(sandboxCredentialResponse.sandboxWorkbench);
     setAuthLifecycleCenter(authLifecycleResponse.authLifecycleCenter);
     setEnterpriseDelegatedAuth(enterpriseDelegatedAuthResponse.enterpriseAuth);
@@ -1001,6 +1007,7 @@ function App() {
       conciergeResponse,
       stagingCertificationResponse,
       credentialOnboardingResponse,
+      credentialVaultResponse,
       sandboxCredentialResponse,
       authLifecycleResponse,
       enterpriseDelegatedAuthResponse,
@@ -1101,6 +1108,7 @@ function App() {
       fetchPremiumConciergeItinerary(),
       fetchStagingCertificationMatrix(),
       fetchCredentialOnboarding(),
+      fetchSwiggyCredentialVaultCenter(),
       fetchSandboxCredentialWorkbench(),
       fetchSwiggyAuthLifecycleCenter(),
       fetchEnterpriseDelegatedAuthCenter(),
@@ -1201,6 +1209,7 @@ function App() {
     setPremiumConciergeItinerary(conciergeResponse.concierge);
     setStagingCertification(stagingCertificationResponse.matrix);
     setCredentialOnboarding(credentialOnboardingResponse.onboarding);
+    setCredentialVault(credentialVaultResponse.credentialVault);
     setSandboxCredentialWorkbench(sandboxCredentialResponse.sandboxWorkbench);
     setAuthLifecycleCenter(authLifecycleResponse.authLifecycleCenter);
     setEnterpriseDelegatedAuth(enterpriseDelegatedAuthResponse.enterpriseAuth);
@@ -1874,6 +1883,7 @@ function App() {
                 useCaseStudio={premiumUseCaseStudio}
                 stagingCertification={stagingCertification}
                 credentialOnboarding={credentialOnboarding}
+                credentialVault={credentialVault}
                 sandboxCredentialWorkbench={sandboxCredentialWorkbench}
                 enterpriseDelegatedAuth={enterpriseDelegatedAuth}
                 surfaceMode={surfaceMode}
@@ -2464,6 +2474,7 @@ function LaunchCenterPanel({
   useCaseStudio,
   stagingCertification,
   credentialOnboarding,
+  credentialVault,
   sandboxCredentialWorkbench,
   enterpriseDelegatedAuth,
   surfaceMode,
@@ -2538,6 +2549,7 @@ function LaunchCenterPanel({
   useCaseStudio: PremiumUseCaseStudio | null;
   stagingCertification: StagingCertificationMatrix | null;
   credentialOnboarding: CredentialOnboardingReport | null;
+  credentialVault: SwiggyCredentialVaultCenter | null;
   sandboxCredentialWorkbench: SandboxCredentialWorkbench | null;
   enterpriseDelegatedAuth: EnterpriseDelegatedAuthCenter | null;
   surfaceMode: AgentSurface;
@@ -5101,6 +5113,60 @@ function LaunchCenterPanel({
               </li>
             ))}
           </ul>
+        </article>
+
+        <article className="credential-vault-card">
+          <div className="mini-heading">
+            <LockKeyhole aria-hidden="true" />
+            <strong>Credential Vault</strong>
+          </div>
+          <span>
+            {credentialVault
+              ? `${credentialVault.score}/100, ${credentialVault.totals.configured}/${credentialVault.totals.secrets} configured`
+              : "Checking runtime secrets, redaction, rotation, and cutover gates"}
+          </span>
+          <div className="credential-vault-grid">
+            <div>
+              <strong>{credentialVault?.totals.ready ?? 0}</strong>
+              <span>Ready</span>
+            </div>
+            <div>
+              <strong>{credentialVault?.totals.operatorInputs ?? 0}</strong>
+              <span>Inputs</span>
+            </div>
+            <div>
+              <strong>{credentialVault?.totals.swiggyGates ?? 0}</strong>
+              <span>Swiggy gates</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(credentialVault?.secrets ?? []).slice(0, 5).map((secretItem) => (
+              <li
+                key={secretItem.id}
+                data-status={
+                  secretItem.status === "ready"
+                    ? "healthy"
+                    : secretItem.status === "blocked"
+                      ? "blocked"
+                      : "watch"
+                }
+              >
+                <span>{secretItem.label}</span>
+                <strong>{secretItem.envVar}</strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-intelligence-actions" aria-label="Credential vault links">
+            <a href="/api/swiggy-credential-vault-center" target="_blank" rel="noreferrer">
+              Vault API
+            </a>
+            <a href="/api/credential-onboarding" target="_blank" rel="noreferrer">
+              Onboarding
+            </a>
+            <a href="/api/mcp-gateway" target="_blank" rel="noreferrer">
+              Gateway
+            </a>
+          </div>
         </article>
 
         <article className="sandbox-workbench-card">

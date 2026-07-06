@@ -80,6 +80,7 @@ import type {
   SwiggyChannelMultimodalStudio,
   SwiggyConfirmationCommandCenterReport,
   SwiggyConfirmationExecution,
+  SwiggyCredentialVaultCenter,
   SwiggyDeepSiteMap,
   SwiggyDineoutPrecisionCenterReport,
   SwiggyDiscoveryResolution,
@@ -672,6 +673,10 @@ export function fetchStagingCertificationMatrix() {
 
 export function fetchCredentialOnboarding() {
   return requestJson<{ onboarding: CredentialOnboardingReport }>("/api/credential-onboarding");
+}
+
+export function fetchSwiggyCredentialVaultCenter() {
+  return requestJson<{ credentialVault: SwiggyCredentialVaultCenter }>("/api/swiggy-credential-vault-center");
 }
 
 export function fetchSandboxCredentialWorkbench() {

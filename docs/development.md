@@ -267,6 +267,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/auth/swiggy/status`
 - `GET /api/swiggy-auth-lifecycle-center`
 - `GET /api/credential-onboarding`
+- `GET /api/swiggy-credential-vault-center`
 - `GET /api/sandbox-credential-workbench`
 - `GET /api/swiggy-staging-credential-drill`
 - `GET /api/swiggy-staging-seed-smoke-center`
@@ -381,6 +382,8 @@ Production should use an HTTPS redirect URI with exact-match allowlisting.
 
 `/api/credential-onboarding` shows the OAuth metadata URLs, Dynamic Client Registration dry-run payload for `/auth/register`, redirect URI audit, required MCP scopes, access-form fields, and the external Swiggy gates. Local tests keep this as evidence only and do not create live Swiggy client registrations.
 
+`/api/swiggy-credential-vault-center` shows runtime credential metadata, configured/unconfigured secret posture, redaction rules, OAuth/client rotation runbooks, cutover checks, and a support-safe packet for `builders@swiggy.in`. It intentionally never returns full bearer tokens, authorization codes, refresh tokens, or PKCE verifiers.
+
 `/api/sandbox-credential-workbench` shows the reviewer-facing localhost-to-staging credential plan: local demo proof, DCR, PKCE, exact redirect allowlisting, staging credentials, seeded Food/Instamart/Dineout data, 48-hour soak, commands, and production-promotion gates.
 
 `/api/swiggy-llms-manifest-verifier` fetches only the official Swiggy `llms.txt` URL, parses markdown links, derives rendered twins, compares live page count against Docs Coverage, verifies Swiggy-only origins, and checks Food 14, Instamart 13, and Dineout 8 reference-tool counts. Tests inject fixture text so CI does not depend on live network for parser correctness.
@@ -492,6 +495,7 @@ The test suite checks that:
 - Staging Seed & Smoke Center maps seeded Food, Instamart, and Dineout fixture needs to credential intake, read, mutation, commercial, support, telemetry, and promotion smoke waves.
 - Visual QA Center maps demo-critical selectors, viewport dimensions, screenshot artifact paths, text-fit and no-overlap rules, widget fallback checks, mobile layout checks, redaction visibility, and screenshot automation gates.
 - Swiggy Staging Credential Drill Center composes credential onboarding, sandbox workbench, staging cutover, staging certification, seeded-data needs, first-call JSON-RPC drills, operator commands, and builders@swiggy.in handoff copy into one first-live-credential runbook.
+- Swiggy Credential Vault Center composes credential onboarding, MCP gateway status, sandbox workbench evidence, configured-secret posture, redaction policy, and rotation/cutover runbooks into one safe credential review surface.
 - Tool Lab probes all 35 official tools, preserves JSON-RPC `tools/call` shape, and classifies commercial actions behind confirmation gates.
 - Tool Contract Matrix maps all 35 tool parameters, source/privacy labels, response envelopes, current and planned error buckets, retry posture, fixture previews, and official references.
 - State Orchestrator maps multi-turn cart truth, Food restaurant switches, Instamart address switches, Dineout slot refreshes, stale-cart recovery, and voice/chat/widget response differences to explicit executable guards.
@@ -529,6 +533,7 @@ The test suite checks that:
 - GitHub Actions installs Chromium for Playwright, runs production smoke, captures visual evidence, exports the Swiggy builder packet, and uploads ignored reviewer artifacts for every push and pull request.
 - Swiggy OAuth Status reports authorize/token/logout endpoints, pending PKCE verifier count, callback status, token source, token expiry, storage rules, and no-token-logging posture.
 - Credential onboarding reports DCR preview, redirect URI status, metadata endpoints, PKCE readiness, scopes, and access-form fields.
+- Credential Vault Center reports seven runtime credential slots, four rotation runbooks, four redaction rules, support-safe fields, forbidden fields, and Swiggy-owned credential gates.
 - Runtime telemetry records live API and MCP request events with request IDs, hashed user context, session correlation, status classes, latency, and redaction evidence.
 - Audit Ledger Center records redacted plan audit events, support correlation keys, retention posture, DSR routing, and builders@swiggy.in packet fields.
 - Support Bridge prepares official `report_error` payloads for Food, Instamart, and Dineout, and `/api/support/bridge/report` executes consent-gated reports with observed-issue checks, hashed toolContext identifiers, redacted notes, receipt summaries, SLA routing, and builders@swiggy.in escalation.

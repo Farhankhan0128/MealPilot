@@ -5920,6 +5920,68 @@ export interface SandboxCredentialWorkbench {
   externalGates: string[];
 }
 
+export type SwiggyCredentialVaultStatus = "ready" | "operator_input" | "swiggy_gate" | "blocked";
+export type SwiggyCredentialVaultOwner = "MealPilot" | "Operator" | "Swiggy" | "Joint";
+
+export interface SwiggyCredentialVaultSecret {
+  id: string;
+  label: string;
+  envVar: string;
+  requiredFor: "local_demo" | "staging" | "production" | "optional_persistence";
+  owner: SwiggyCredentialVaultOwner;
+  status: SwiggyCredentialVaultStatus;
+  configured: boolean;
+  redaction: string;
+  evidence: string;
+  nextAction: string;
+}
+
+export interface SwiggyCredentialVaultRotation {
+  id: string;
+  label: string;
+  cadence: string;
+  owner: SwiggyCredentialVaultOwner;
+  status: SwiggyCredentialVaultStatus;
+  trigger: string;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyCredentialVaultCenter {
+  generatedAt: string;
+  mode: "mock" | "staging" | "production";
+  score: number;
+  officialSources: string[];
+  activeTransport: McpGatewayStatus["activeTransport"];
+  totals: {
+    secrets: number;
+    configured: number;
+    ready: number;
+    operatorInputs: number;
+    swiggyGates: number;
+    blocked: number;
+    rotations: number;
+    redactionRules: number;
+  };
+  secrets: SwiggyCredentialVaultSecret[];
+  rotationRunbook: SwiggyCredentialVaultRotation[];
+  cutoverChecks: Array<{
+    id: string;
+    label: string;
+    status: SwiggyCredentialVaultStatus;
+    command: string;
+    evidence: string;
+  }>;
+  redactionRules: Array<{ id: string; rule: string; evidenceLinks: string[] }>;
+  supportPacket: {
+    to: string;
+    subject: string;
+    safeFields: string[];
+    forbiddenFields: string[];
+  };
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type SwiggyStagingCredentialDrillStatus = "ready" | "operator_input" | "swiggy_gate" | "blocked";
 
 export interface SwiggyStagingCredentialDrillLane {
