@@ -1230,6 +1230,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-quota-negotiation-center": {
+        get: {
+          tags: ["Operations"],
+          summary: "Swiggy Quota Negotiation Center for capacity confirmation and bespoke limits",
+          responses: {
+            "200": {
+              description:
+                "capacity request packet composing rate-limit budgets, traffic readiness, backpressure, Load Lab scenarios, route optimization, Retry-After headers, and Swiggy quota gates",
+            },
+          },
+        },
+      },
       "/api/swiggy-offer-intelligence": {
         get: {
           tags: ["Commerce"],

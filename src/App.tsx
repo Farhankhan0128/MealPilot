@@ -144,6 +144,7 @@ import {
   fetchSwiggyUpstreamWatch,
   fetchSwiggyWebsiteAtlas,
   fetchSwiggyLoadLab,
+  fetchSwiggyQuotaNegotiationCenter,
   fetchSwiggyLocationTrust,
   fetchSwiggyOfferIntelligence,
   fetchSwiggyOrderLifecycle,
@@ -266,6 +267,7 @@ import type {
   SwiggyInnovationRadarReport,
   SwiggyJourneyCompilerReport,
   SwiggyLoadLabReport,
+  SwiggyQuotaNegotiationCenter,
   SwiggyLocationTrustReport,
   SwiggyOfferIntelligenceReport,
   SwiggyOperatingContractCenterReport,
@@ -533,6 +535,7 @@ function App() {
   const [auditLedger, setAuditLedger] = useState<AuditLedgerCenter | null>(null);
   const [sloIncident, setSloIncident] = useState<SloIncidentCommandCenter | null>(null);
   const [loadLab, setLoadLab] = useState<SwiggyLoadLabReport | null>(null);
+  const [quotaNegotiation, setQuotaNegotiation] = useState<SwiggyQuotaNegotiationCenter | null>(null);
   const [offerIntelligence, setOfferIntelligence] = useState<SwiggyOfferIntelligenceReport | null>(null);
   const [orderLifecycle, setOrderLifecycle] = useState<SwiggyOrderLifecycleReport | null>(null);
   const [locationTrust, setLocationTrust] = useState<SwiggyLocationTrustReport | null>(null);
@@ -718,6 +721,7 @@ function App() {
       auditLedgerResponse,
       sloIncidentResponse,
       loadLabResponse,
+      quotaNegotiationResponse,
       offerIntelligenceResponse,
       orderLifecycleResponse,
       locationTrustResponse,
@@ -822,6 +826,7 @@ function App() {
       fetchAuditLedger(),
       fetchSloIncidentCommand(),
       fetchSwiggyLoadLab(),
+      fetchSwiggyQuotaNegotiationCenter(),
       fetchSwiggyOfferIntelligence(),
       fetchSwiggyOrderLifecycle(),
       fetchSwiggyLocationTrust(),
@@ -931,6 +936,7 @@ function App() {
     setAuditLedger(auditLedgerResponse.auditLedger);
     setSloIncident(sloIncidentResponse.sloIncident);
     setLoadLab(loadLabResponse.loadLab);
+    setQuotaNegotiation(quotaNegotiationResponse.quotaNegotiation);
     setOfferIntelligence(offerIntelligenceResponse.offerIntelligence);
     setOrderLifecycle(orderLifecycleResponse.orderLifecycle);
     setLocationTrust(locationTrustResponse.locationTrust);
@@ -1035,6 +1041,7 @@ function App() {
       auditLedgerResponse,
       sloIncidentResponse,
       loadLabResponse,
+      quotaNegotiationResponse,
       offerIntelligenceResponse,
       orderLifecycleResponse,
       locationTrustResponse,
@@ -1136,6 +1143,7 @@ function App() {
       fetchAuditLedger(),
       fetchSloIncidentCommand(),
       fetchSwiggyLoadLab(),
+      fetchSwiggyQuotaNegotiationCenter(),
       fetchSwiggyOfferIntelligence(),
       fetchSwiggyOrderLifecycle(),
       fetchSwiggyLocationTrust(),
@@ -1241,6 +1249,7 @@ function App() {
     setAuditLedger(auditLedgerResponse.auditLedger);
     setSloIncident(sloIncidentResponse.sloIncident);
     setLoadLab(loadLabResponse.loadLab);
+    setQuotaNegotiation(quotaNegotiationResponse.quotaNegotiation);
     setOfferIntelligence(offerIntelligenceResponse.offerIntelligence);
     setOrderLifecycle(orderLifecycleResponse.orderLifecycle);
     setLocationTrust(locationTrustResponse.locationTrust);
@@ -1928,6 +1937,7 @@ function App() {
                 auditLedger={auditLedger}
                 sloIncident={sloIncident}
                 loadLab={loadLab}
+                quotaNegotiation={quotaNegotiation}
                 offerIntelligence={offerIntelligence}
                 orderLifecycle={orderLifecycle}
                 locationTrust={locationTrust}
@@ -5825,6 +5835,7 @@ function ProductionEvidencePanel({
   auditLedger,
   sloIncident,
   loadLab,
+  quotaNegotiation,
   offerIntelligence,
   orderLifecycle,
   locationTrust,
@@ -5856,6 +5867,7 @@ function ProductionEvidencePanel({
   auditLedger: AuditLedgerCenter | null;
   sloIncident: SloIncidentCommandCenter | null;
   loadLab: SwiggyLoadLabReport | null;
+  quotaNegotiation: SwiggyQuotaNegotiationCenter | null;
   offerIntelligence: SwiggyOfferIntelligenceReport | null;
   orderLifecycle: SwiggyOrderLifecycleReport | null;
   locationTrust: SwiggyLocationTrustReport | null;
@@ -6038,6 +6050,64 @@ function ProductionEvidencePanel({
               </li>
             ))}
           </ul>
+        </article>
+
+        <article className="quota-negotiation-card">
+          <div className="mini-heading">
+            <Gauge aria-hidden="true" />
+            <strong>Quota Negotiation</strong>
+          </div>
+          <span>
+            {quotaNegotiation
+              ? `${quotaNegotiation.score}/100, ${quotaNegotiation.totals.readyAsks}/${quotaNegotiation.totals.asks} asks ready`
+              : "Loading quota packet"}
+          </span>
+          <div className="quota-negotiation-grid">
+            <div>
+              <strong>{quotaNegotiation ? quotaNegotiation.forecast.peakQps.toFixed(2) : "..."}</strong>
+              <span>Pilot QPS</span>
+            </div>
+            <div>
+              <strong>{quotaNegotiation ? quotaNegotiation.forecast.maxPeakQps.toFixed(2) : "..."}</strong>
+              <span>Max QPS</span>
+            </div>
+            <div>
+              <strong>{quotaNegotiation?.totals.upgradeScenarios ?? 0}</strong>
+              <span>Upgrade gates</span>
+            </div>
+            <div>
+              <strong>{quotaNegotiation?.forecast.retryAfterReady ? "Ready" : "Watch"}</strong>
+              <span>Retry-After</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(quotaNegotiation?.asks ?? []).slice(0, 5).map((quotaAsk) => (
+              <li
+                key={quotaAsk.id}
+                data-status={
+                  quotaAsk.status === "ready"
+                    ? "healthy"
+                    : quotaAsk.status === "swiggy_gate"
+                      ? "blocked"
+                      : "watch"
+                }
+              >
+                <span>{quotaAsk.label}</span>
+                <strong>{quotaAsk.status.replace("_", " ")}</strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-intelligence-actions" aria-label="Quota negotiation links">
+            <a href="/api/swiggy-quota-negotiation-center" target="_blank" rel="noreferrer">
+              Quota API
+            </a>
+            <a href="/api/swiggy-load-lab" target="_blank" rel="noreferrer">
+              Load Lab
+            </a>
+            <a href="/api/mcp/backpressure-governor" target="_blank" rel="noreferrer">
+              Governor
+            </a>
+          </div>
         </article>
 
         <article className="offer-intelligence-card">

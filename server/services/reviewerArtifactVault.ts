@@ -161,6 +161,7 @@ const artifactSections = [
       artifact("slo_incident", "SLO Incident Command", "api", "/api/slo-incident-command", "99.9% targets, latency bands, status-page fallback, maintenance windows, and SEV runbooks.", "Production status remains external until Swiggy status infrastructure is live."),
       artifact("traffic_readiness", "Traffic Readiness Plan", "api", "/api/traffic-readiness-plan", "Expected sessions, projected tool calls, peak QPS, lane budgets, and launch notice.", "Uses estimates until private-pilot traffic exists."),
       artifact("backpressure_governor", "MCP Backpressure Governor", "api", "/api/mcp/backpressure-governor", "Token buckets, queue discipline, Retry-After handling, voice burst shaping, tracking cadence, and background-job gates.", "MCP-layer 429 headers remain future Swiggy roadmap behavior."),
+      artifact("quota_negotiation", "Swiggy Quota Negotiation Center", "api", "/api/swiggy-quota-negotiation-center", "Capacity request packet, pilot/campaign QPS, Retry-After readiness, upgrade gates, and Swiggy quota asks.", "Bespoke campaign or enterprise quotas remain Swiggy approval gates."),
       artifact("data_governance", "Data Governance Center", "api", "/api/data-governance-center", "DPDP roles, residency, PII flows, DSR routing, retention, token redaction, and signed-manifest watch.", "DSR exports exclude Swiggy-originated raw payloads."),
     ],
   },

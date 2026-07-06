@@ -379,6 +379,15 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
         "Composes Traffic Readiness, Backpressure Governor, and Route Optimizer into synthetic launch-load scenarios, cohort ramps, Retry-After drills, and capacity gates.",
     },
     {
+      id: "quota_negotiation",
+      label: "Swiggy Quota Negotiation Center",
+      path: "/api/swiggy-quota-negotiation-center",
+      category: "runtime",
+      status: "ready",
+      evidence:
+        "Packages pilot and campaign capacity asks, QPS forecasts, Retry-After readiness, route optimization, and a builders@swiggy.in capacity request packet.",
+    },
+    {
       id: "offer_intelligence",
       label: "Swiggy Offer Intelligence",
       path: "/api/swiggy-offer-intelligence",
@@ -997,6 +1006,7 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- Traffic Readiness Plan: /api/traffic-readiness-plan",
     "- MCP Backpressure Governor: /api/mcp/backpressure-governor",
     "- Swiggy Load Lab: /api/swiggy-load-lab",
+    "- Swiggy Quota Negotiation Center: /api/swiggy-quota-negotiation-center",
     "- Swiggy Operating Contract Center: /api/swiggy-operating-contract-center",
     "- Swiggy Offer Intelligence: /api/swiggy-offer-intelligence",
     "- Swiggy Order Lifecycle: /api/swiggy-order-lifecycle",

@@ -130,6 +130,7 @@ Implementation:
 - Exposes `/api/traffic-readiness-plan` as the launch capacity artifact for expected volume, peak QPS, per-lane traffic budgets, Retry-After handling, seven-day traffic-event notice, and staged rollout.
 - Exposes `/api/mcp/backpressure-governor` as the adaptive runtime artifact for current Swiggy v1.0 upstream-shedder behavior, future `429`/`Retry-After`/`X-RateLimit-*` readiness, token buckets, voice burst shaping, tracking cadence, and background-job gates.
 - Exposes `/api/swiggy-load-lab` as the capacity simulation workbench for synthetic pilot/campaign scenarios, lane ceilings, Retry-After drills, cohort ramps, operator actions, and external Swiggy gates.
+- Exposes `/api/swiggy-quota-negotiation-center` as the Swiggy capacity request packet for pilot/campaign quota asks, QPS forecasts, Retry-After readiness, route optimization proof, and bespoke-limit gates.
 - Exposes `/api/swiggy-offer-intelligence` as the coupon/deal/value workbench for Food coupon sequencing, Dineout deal validation, Instamart variant savings, offer drills, and no-blind-discount guardrails.
 - Exposes `/api/swiggy-order-lifecycle` as the post-confirmation command center for Food, Instamart, and Dineout status tools, timeline states, non-blind retry probes, tracking cadence, telemetry, and support recovery.
 - Exposes `/api/swiggy-location-trust` as the saved-address and location trust center for Food/Instamart `get_addresses`, Instamart address create/delete, Dineout saved locations, user-choice pauses, address switch refresh, and raw-address redaction.

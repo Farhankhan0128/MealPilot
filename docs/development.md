@@ -116,7 +116,7 @@ The verifier also validates `/api/swiggy-interaction-qa-center` for planner, con
 
 The verifier also validates `/api/swiggy-staging-seed-smoke-center` for Food, Instamart, and Dineout seeded fixtures, read/mutation/commercial/support smoke waves, no-blind-retry stop rules, telemetry evidence, and Swiggy staging credential gates.
 
-The verifier also validates `/api/swiggy-load-lab` for synthetic launch-load scenarios, Retry-After readiness, cohort ramp math, background-job gating, commercial serialization assertions, and external Swiggy capacity actions.
+The verifier also validates `/api/swiggy-load-lab` for synthetic launch-load scenarios, Retry-After readiness, cohort ramp math, background-job gating, commercial serialization assertions, and external Swiggy capacity actions. `/api/swiggy-quota-negotiation-center` composes that evidence into pilot/campaign quota asks, a capacity packet, and Swiggy-owned bespoke-limit gates.
 
 The verifier also validates `/api/swiggy-offer-intelligence` and `/api/swiggy-offer-intelligence/decide` for Food coupon tool sequencing, Dineout deal validation, Instamart value substitutions, no-blind-discount guardrails, apply/surface/block decisions, no-cart-mutation telemetry, offer recovery drills, live-inventory external gates, and launch-bundle handoff coverage.
 
@@ -293,6 +293,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/rate-limit-plan`
 - `GET /api/traffic-readiness-plan`
 - `GET /api/swiggy-load-lab`
+- `GET /api/swiggy-quota-negotiation-center`
 - `GET /api/swiggy-offer-intelligence`
 - `GET /api/swiggy-order-lifecycle`
 - `POST /api/swiggy-order-lifecycle/probe`
@@ -508,6 +509,7 @@ The test suite checks that:
 - CTA Execution Center converts official Builders CTAs, header links, docs nav links, footer resources, mailto links, Google Forms, and legal links into click-ready browser actions, keyboard paths, proof bundles, and manual completion gates.
 - Swiggy Innovation Radar maps Swiggy developer ideas, enterprise signals, access ground rules, support model, and MCP references into premium product lanes, route optimizations, build phases, differentiators, and partner gates.
 - Traffic Readiness maps expected sessions, daily tool calls, peak QPS, Retry-After behavior, seven-day major-event notice, capacity upgrade email, and the 1% -> 10% -> 50% -> 100% rollout.
+- Swiggy Quota Negotiation Center composes Rate Limit Plan, Traffic Readiness, Backpressure Governor, Load Lab, and Route Optimizer into five capacity asks, four launch scenarios, four runbook steps, Retry-After header readiness, and a `builders@swiggy.in` capacity packet.
 - AI Client Connect Kit generates and validates client configs, coding-agent rule files, SDK auth-mode guidance, endpoint correctness, secret redaction, troubleshooting, privacy notes, and delegated-auth gates.
 - Coding Agent Governance verifies `AGENTS.md` against official Swiggy docs retrieval rules, current tool-count smoke tests, commercial confirmation gates, and sensitive-data redaction boundaries.
 - Brand Compliance Kit maps Powered by Swiggy attribution, co-branding rules, asset gates, palette usage, no-endorsement copy, and final screenshot review.

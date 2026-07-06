@@ -258,6 +258,11 @@ assert(
   "OpenAPI Swiggy Load Lab is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-quota-negotiation-center"].get.summary.includes("Quota Negotiation") &&
+    openApi.paths["/api/swiggy-quota-negotiation-center"].get.responses["200"].description.includes("capacity request packet"),
+  "OpenAPI Swiggy Quota Negotiation Center is missing",
+);
+assert(
   openApi.paths["/api/swiggy-offer-intelligence"].get.summary.includes("Offer Intelligence"),
   "OpenAPI Swiggy Offer Intelligence is missing",
 );
@@ -1762,8 +1767,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 45, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 45, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 46, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 46, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -1839,6 +1844,12 @@ assert(
     group.targets.some((target) => target.id === "credential_vault_card" && target.selector === ".credential-vault-card"),
   ),
   "visual QA credential vault target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some((target) => target.id === "quota_negotiation_card" && target.selector === ".quota-negotiation-card"),
+  ),
+  "visual QA quota negotiation target is missing",
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
@@ -3882,6 +3893,10 @@ assert(
   "reviewer proof backpressure governor artifact is missing",
 );
 assert(
+  proof.proof.artifacts.some((artifact) => artifact.label === "Swiggy Quota Negotiation Center"),
+  "reviewer proof quota negotiation artifact is missing",
+);
+assert(
   proof.proof.artifacts.some((artifact) => artifact.label === "Swiggy Source Intelligence"),
   "reviewer proof source intelligence artifact is missing",
 );
@@ -4160,6 +4175,64 @@ assert(
 assert(
   loadLab.loadLab.assertions.some((assertion) => assertion.includes("Commercial actions stay serialized")),
   "Load Lab commercial serialization assertion is missing",
+);
+
+const quotaNegotiation = await request("/api/swiggy-quota-negotiation-center");
+assert(quotaNegotiation.quotaNegotiation.score >= 70, "quota negotiation score is below target");
+assert(
+  quotaNegotiation.quotaNegotiation.totals.asks === 5 &&
+    quotaNegotiation.quotaNegotiation.totals.scenarios === 4 &&
+    quotaNegotiation.quotaNegotiation.totals.runbookSteps === 4,
+  "quota negotiation totals are incomplete",
+);
+assert(
+  quotaNegotiation.quotaNegotiation.totals.upgradeScenarios >= 1,
+  "quota negotiation campaign upgrade gate is missing",
+);
+assert(
+  quotaNegotiation.quotaNegotiation.forecast.projectedDailyToolCalls > 0 &&
+    quotaNegotiation.quotaNegotiation.forecast.maxToolCallsPerHour > 0 &&
+    quotaNegotiation.quotaNegotiation.forecast.retryAfterReady,
+  "quota negotiation forecast is incomplete",
+);
+assert(
+  ["X-RateLimit-Limit", "X-RateLimit-Remaining", "X-RateLimit-Reset", "Retry-After"].every((header) =>
+    quotaNegotiation.quotaNegotiation.forecast.plannedHeaders.includes(header),
+  ),
+  "quota negotiation planned headers are incomplete",
+);
+assert(
+  [
+    "developer_tier_confirmation",
+    "campaign_capacity_gate",
+    "retry_after_header_watch",
+    "commercial_single_flight",
+    "background_jobs_disabled",
+  ].every((id) => quotaNegotiation.quotaNegotiation.asks.some((item) => item.id === id)),
+  "quota negotiation asks are incomplete",
+);
+assert(
+  quotaNegotiation.quotaNegotiation.scenarios.some(
+    (scenario) =>
+      scenario.id === "campaign_launch_spike" &&
+      scenario.quotaDecision === "needs_upgrade" &&
+      scenario.status === "swiggy_gate",
+  ),
+  "quota negotiation campaign scenario gate is missing",
+);
+assert(
+  quotaNegotiation.quotaNegotiation.capacityPacket.to === "builders@swiggy.in" &&
+    quotaNegotiation.quotaNegotiation.capacityPacket.safeFields.includes("peak QPS") &&
+    quotaNegotiation.quotaNegotiation.capacityPacket.safeFields.includes("Retry-After posture"),
+  "quota negotiation capacity packet is incomplete",
+);
+assert(
+  quotaNegotiation.quotaNegotiation.runbook.some(
+    (step) => step.id === "open_quota_center" && step.command.includes("/api/swiggy-quota-negotiation-center"),
+  ) &&
+    quotaNegotiation.quotaNegotiation.assertions.some((assertion) => assertion.includes("Rate Plan")) &&
+    quotaNegotiation.quotaNegotiation.externalGates.some((gate) => gate.includes("bespoke campaign")),
+  "quota negotiation runbook or gates are incomplete",
 );
 
 const offerIntelligence = await request("/api/swiggy-offer-intelligence");
@@ -5139,7 +5212,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 45, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 46, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -5153,7 +5226,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("45")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("46")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -5222,6 +5295,7 @@ assert(
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Traffic Readiness Plan") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "MCP Backpressure Governor") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Load Lab") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Quota Negotiation Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Offer Intelligence") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Order Lifecycle") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Confirmation Command Center") &&
@@ -5440,6 +5514,10 @@ assert(
   "launch bundle Load Lab handoff link is missing",
 );
 assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-quota-negotiation-center"),
+  "launch bundle quota negotiation handoff link is missing",
+);
+assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-offer-intelligence"),
   "launch bundle Offer Intelligence handoff link is missing",
 );
@@ -5625,6 +5703,9 @@ console.log(
       loadLabScenarios: loadLab.loadLab.totals.scenarios,
       loadLabMaxPeakQps: loadLab.loadLab.totals.maxPeakQps,
       loadLabExternalGates: loadLab.loadLab.totals.externalGates,
+      quotaNegotiationScore: quotaNegotiation.quotaNegotiation.score,
+      quotaNegotiationAsks: quotaNegotiation.quotaNegotiation.totals.asks,
+      quotaNegotiationUpgradeScenarios: quotaNegotiation.quotaNegotiation.totals.upgradeScenarios,
       offerIntelligenceScore: offerIntelligence.offerIntelligence.score,
       offerIntelligenceOpportunities: offerIntelligence.offerIntelligence.totals.opportunities,
       offerIntelligenceSavings: offerIntelligence.offerIntelligence.totals.estimatedSavings,

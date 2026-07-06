@@ -4398,6 +4398,73 @@ export interface SwiggyLoadLabReport {
   externalGates: string[];
 }
 
+export type SwiggyQuotaNegotiationStatus = "ready" | "watch" | "operator_input" | "swiggy_gate";
+
+export interface SwiggyQuotaNegotiationAsk {
+  id: string;
+  label: string;
+  currentSignal: string;
+  requestedPosture: string;
+  evidence: string;
+  owner: "MealPilot" | "Operator" | "Swiggy" | "Joint";
+  status: SwiggyQuotaNegotiationStatus;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyQuotaNegotiationScenario {
+  id: string;
+  label: string;
+  projectedQps: number;
+  projectedCallsPerHour: number;
+  quotaDecision: "within_pilot" | "needs_notice" | "needs_upgrade";
+  mitigation: string;
+  status: SwiggyQuotaNegotiationStatus;
+}
+
+export interface SwiggyQuotaNegotiationRunbookStep {
+  id: string;
+  label: string;
+  command: string;
+  proves: string;
+  owner: "MealPilot" | "Operator" | "Swiggy";
+  status: SwiggyQuotaNegotiationStatus;
+}
+
+export interface SwiggyQuotaNegotiationCenter {
+  generatedAt: string;
+  mode: "mock" | "staging" | "production";
+  score: number;
+  officialSources: string[];
+  totals: {
+    asks: number;
+    readyAsks: number;
+    scenarios: number;
+    upgradeScenarios: number;
+    runbookSteps: number;
+    swiggyGates: number;
+  };
+  forecast: {
+    projectedDailyToolCalls: number;
+    peakQps: number;
+    maxPeakQps: number;
+    maxToolCallsPerHour: number;
+    optimizedCallsPerSession: number;
+    retryAfterReady: boolean;
+    plannedHeaders: string[];
+  };
+  asks: SwiggyQuotaNegotiationAsk[];
+  scenarios: SwiggyQuotaNegotiationScenario[];
+  runbook: SwiggyQuotaNegotiationRunbookStep[];
+  capacityPacket: {
+    to: string;
+    subject: string;
+    body: string;
+    safeFields: string[];
+  };
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type SwiggyOfferStatus = "ready" | "watch" | "external_gate";
 
 export interface SwiggyOfferLane {

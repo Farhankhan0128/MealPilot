@@ -219,6 +219,7 @@ MealPilot should become a luxury-grade food and meal intelligence product with t
 | Swiggy Handshake Doctor | `server/services/swiggyHandshakeDoctor.ts` |
 | Staging Transcript Export | `server/services/stagingTranscript.ts` |
 | Traffic Readiness Plan | `server/services/trafficReadiness.ts` |
+| Swiggy Quota Negotiation Center | `server/services/quotaNegotiationCenter.ts` |
 | SLO Incident Command Center | `server/services/sloIncidentCommand.ts` |
 | Resource & Prompt Studio | `server/services/resourcePromptStudio.ts` |
 | Channel & Multimodal Studio | `server/services/channelMultimodalStudio.ts` |
@@ -384,6 +385,7 @@ MealPilot must keep mock evidence clearly labeled as simulated until these gates
 - Keep `/api/sessions/:sessionId/staging-transcript` as source-of-truth session export evidence for Swiggy-ready JSONL, Markdown, redaction, support, and certification-wave mapping.
 - Keep `/api/submission-console` as source-of-truth evidence for the official access-form handoff, prepared fields, proof attachments, demo-video gate, runbook, blockers, and drafts.
 - Keep `/api/traffic-readiness-plan` as source-of-truth evidence for expected volume, peak QPS, lane budgets, Retry-After handling, major-event notice, capacity email, and staged rollout.
+- Keep `/api/swiggy-quota-negotiation-center` as the source-of-truth capacity request packet for developer-tier confirmation, campaign upgrade gates, Retry-After header watch, commercial single-flight proof, disabled background jobs, and Swiggy bespoke quota asks.
 - Keep `/api/slo-incident-command` as source-of-truth evidence for Swiggy uptime targets, latency classes, status-page fallback, maintenance windows, severity comms, and remediation.
 - Keep `/api/data-governance-center` as source-of-truth evidence for Swiggy DPDP role boundaries, residency, PII flows, DSR routing, retention, token handling, security contacts, and signed-manifest watch.
 - Keep `/api/audit-ledger` as source-of-truth evidence for redacted session/tool audit events, support correlation, local retention posture, Swiggy audit-log acknowledgement, DSR routing, and support packet fields.

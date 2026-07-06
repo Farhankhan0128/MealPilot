@@ -94,6 +94,17 @@ const targetGroups = [
         "Production Evidence shows widgets, launch bundle, telemetry, governance, resilience, and reviewer proof.",
         "artifacts/visual-qa/desktop-production-evidence.png",
       ),
+      target(
+        "quota_negotiation_card",
+        "Quota Negotiation card",
+        "/",
+        ".quota-negotiation-card",
+        "desktop",
+        1280,
+        900,
+        "Quota Negotiation shows Swiggy capacity asks, pilot and max QPS, Retry-After readiness, upgrade gates, and capacity packet links.",
+        "artifacts/visual-qa/quota-negotiation-card.png",
+      ),
     ],
   },
   {

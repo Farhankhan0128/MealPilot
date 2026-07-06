@@ -110,6 +110,7 @@ import { buildSwiggyPaymentTruthCenter, reconcileSwiggyPaymentTruth } from "./se
 import { buildSwiggyMealWindowCenter, forecastSwiggyMealWindow } from "./services/mealWindowIntelligence.js";
 import { buildPremiumConciergeItinerary } from "./services/premiumConciergeItinerary.js";
 import { buildPremiumUseCaseStudio } from "./services/premiumUseCaseStudio.js";
+import { buildSwiggyQuotaNegotiationCenter } from "./services/quotaNegotiationCenter.js";
 import { analyzeSwiggyQualityFeedback, buildSwiggyQualityLoopCenter } from "./services/qualityLoopCenter.js";
 import { buildSwiggyRitualAutopilotCenter, planSwiggyRitualAutopilot } from "./services/ritualAutopilotCenter.js";
 import { buildReviewerArtifactVault } from "./services/reviewerArtifactVault.js";
@@ -1641,6 +1642,10 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/swiggy-load-lab", (_req, res) => {
     res.json({ loadLab: buildSwiggyLoadLab({ plans: store.getAllPlans(), config }) });
+  });
+
+  app.get("/api/swiggy-quota-negotiation-center", (_req, res) => {
+    res.json({ quotaNegotiation: buildSwiggyQuotaNegotiationCenter({ plans: store.getAllPlans(), config }) });
   });
 
   app.get("/api/swiggy-offer-intelligence", (_req, res) => {

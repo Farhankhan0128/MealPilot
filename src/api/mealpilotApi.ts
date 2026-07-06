@@ -116,6 +116,7 @@ import type {
   SwiggyMealWindowForecast,
   SwiggyPaymentTruthCenter,
   SwiggyPaymentTruthReconciliation,
+  SwiggyQuotaNegotiationCenter,
   SwiggyScenarioRunnerReport,
   SwiggySourceIntelligenceReport,
   SwiggyQualityFeedbackAnalysis,
@@ -861,6 +862,10 @@ export function fetchMcpBackpressureGovernor() {
 
 export function fetchSwiggyLoadLab() {
   return requestJson<{ loadLab: SwiggyLoadLabReport }>("/api/swiggy-load-lab");
+}
+
+export function fetchSwiggyQuotaNegotiationCenter() {
+  return requestJson<{ quotaNegotiation: SwiggyQuotaNegotiationCenter }>("/api/swiggy-quota-negotiation-center");
 }
 
 export function fetchSwiggyOfferIntelligence() {

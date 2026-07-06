@@ -336,6 +336,7 @@ export function buildReviewerProof(options: {
       { label: "Traffic Readiness Plan", path: "/api/traffic-readiness-plan" },
       { label: "MCP Backpressure Governor", path: "/api/mcp/backpressure-governor" },
       { label: "Swiggy Load Lab", path: "/api/swiggy-load-lab" },
+      { label: "Swiggy Quota Negotiation Center", path: "/api/swiggy-quota-negotiation-center" },
       { label: "Swiggy Operating Contract Center", path: "/api/swiggy-operating-contract-center" },
       { label: "Swiggy Offer Intelligence", path: "/api/swiggy-offer-intelligence" },
       { label: "Swiggy Order Lifecycle", path: "/api/swiggy-order-lifecycle" },
