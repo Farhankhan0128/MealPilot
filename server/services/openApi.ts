@@ -641,6 +641,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-llms-manifest-verifier": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Live Swiggy llms.txt manifest verifier",
+          responses: {
+            "200": {
+              description:
+                "Fetches and parses the official Swiggy llms.txt manifest, verifies markdown/rendered twins, Food 14, Instamart 13, Dineout 8 reference-tool counts, and reports drift without accepting arbitrary URLs",
+            },
+          },
+        },
+      },
       "/api/swiggy-upstream-watch": {
         get: {
           tags: ["Builder Access"],

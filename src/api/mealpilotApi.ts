@@ -92,6 +92,7 @@ import type {
   SwiggyDocsTwinExplorer,
   SwiggyFaqPolicyCenter,
   SwiggyGrowthPartnershipCenter,
+  SwiggyLlmsManifestVerifier,
   SwiggyInnovationRadarReport,
   SwiggyJourneyCompilerReport,
   SwiggyLoadLabReport,
@@ -533,6 +534,10 @@ export function fetchSwiggyDocsCoverage() {
 
 export function fetchSwiggyDocsTwinExplorer() {
   return requestJson<{ docsTwinExplorer: SwiggyDocsTwinExplorer }>("/api/swiggy-docs-twin-explorer");
+}
+
+export function fetchSwiggyLlmsManifestVerifier() {
+  return requestJson<{ llmsManifest: SwiggyLlmsManifestVerifier }>("/api/swiggy-llms-manifest-verifier");
 }
 
 export function fetchSwiggyUpstreamWatch() {

@@ -80,6 +80,7 @@ import { buildSwiggyDiscoveryFreshness, resolveSwiggyDiscoveryFreshness } from "
 import { buildSwiggyDineoutPrecisionCenter } from "./services/dineoutPrecisionCenter.js";
 import { buildSwiggyDocsCoverage } from "./services/docsCoverage.js";
 import { buildSwiggyDocsTwinExplorer } from "./services/docsTwinExplorer.js";
+import { buildSwiggyLlmsManifestVerifier } from "./services/llmsManifestVerifier.js";
 import { buildEnterpriseDelegatedAuthCenter } from "./services/enterpriseDelegatedAuth.js";
 import { buildEnterprisePlatformCenter } from "./services/enterprisePlatformCenter.js";
 import {
@@ -1075,6 +1076,13 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
   app.get("/api/swiggy-docs-twin-explorer", (_req, res) => {
     res.json({ docsTwinExplorer: buildSwiggyDocsTwinExplorer() });
   });
+
+  app.get(
+    "/api/swiggy-llms-manifest-verifier",
+    asyncRoute(async (_req, res) => {
+      res.json({ llmsManifest: await buildSwiggyLlmsManifestVerifier() });
+    }),
+  );
 
   app.get("/api/swiggy-upstream-watch", (_req, res) => {
     res.json({ upstreamWatch: buildSwiggyUpstreamWatch() });

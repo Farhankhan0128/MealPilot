@@ -974,6 +974,65 @@ export interface SwiggyDocsCoverageReport {
   remainingExternalGates: string[];
 }
 
+export type SwiggyLlmsManifestStatus = "covered" | "watch" | "blocked";
+
+export interface SwiggyLlmsManifestLink {
+  id: string;
+  title: string;
+  manifestSection: string;
+  docsSection: SwiggyDocsSection;
+  markdownUrl: string;
+  renderedUrl: string;
+  summary: string;
+  server?: SwiggyServer;
+  tool?: string;
+  status: SwiggyLlmsManifestStatus;
+}
+
+export interface SwiggyLlmsManifestSection {
+  section: SwiggyDocsSection;
+  liveLinks: number;
+  markdownTwins: number;
+  renderedTwins: number;
+  referenceTools: number;
+  status: SwiggyLlmsManifestStatus;
+}
+
+export interface SwiggyLlmsManifestVerifier {
+  generatedAt: string;
+  score: number;
+  status: SwiggyLlmsManifestStatus;
+  officialSources: string[];
+  sourceUrl: string;
+  fetch: {
+    ok: boolean;
+    statusCode?: number;
+    durationMs: number;
+    error?: string;
+  };
+  totals: {
+    liveLinks: number;
+    expectedCoveragePages: number;
+    markdownTwins: number;
+    renderedTwins: number;
+    referenceTools: number;
+    unsafeLinks: number;
+    sections: number;
+  };
+  sections: SwiggyLlmsManifestSection[];
+  serverToolCounts: Array<{
+    server: SwiggyServer;
+    tools: number;
+    expectedTools: number;
+    status: SwiggyLlmsManifestStatus;
+  }>;
+  sampleLinks: SwiggyLlmsManifestLink[];
+  driftSignals: string[];
+  operatorRunbook: Array<{ sequence: number; command: string; proves: string }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type SwiggyDocsTwinStatus = "ready" | "documented" | "watch" | "external_gate";
 
 export interface SwiggyDocsTwinRow {

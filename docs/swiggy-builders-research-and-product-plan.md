@@ -189,6 +189,7 @@ MealPilot should become a luxury-grade food and meal intelligence product with t
 | Swiggy Builders map | `server/services/swiggyBuildersMap.ts` |
 | Swiggy Docs Coverage | `server/services/docsCoverage.ts` |
 | Swiggy Docs Twin Explorer | `server/services/docsTwinExplorer.ts` |
+| Swiggy llms Manifest Verifier | `server/services/llmsManifestVerifier.ts` |
 | Swiggy Upstream Watch | `server/services/upstreamWatch.ts` |
 | Swiggy Source Intelligence | `server/services/sourceIntelligence.ts` |
 | Swiggy Deep Site Map | `server/services/deepSiteMap.ts` |
@@ -239,7 +240,7 @@ MealPilot should become a luxury-grade food and meal intelligence product with t
 | Planner workspace | `src/App.tsx` |
 | Recommendation cards | Food, Instamart, and Dineout cards with item controls |
 | Premium Concierge | Lunch, pantry reset, Dineout evening, dessert reminder, and recovery itinerary slots with official Swiggy route plans |
-| Launch Center | Tool coverage, Tool Contract Matrix, Scenario Runner, State Orchestrator, Widget Runtime Center, Commercial Action Guard, Staging Cutover Rehearsal, Swiggy Handshake Doctor, Capability Registry, Resource & Prompt Studio, Website Atlas, Builder Intake, FAQ & Policy Center, Growth Partnership Center, Channel & Multimodal Studio, Nutrition & Budget Intelligence, Household Preference Graph, Guest Collaboration & Calendar Center, Luxury Experience Workspace, Reviewer Artifact Vault, Visual QA Center, Access Evidence Matrix, Docs Coverage, Docs Twin Explorer, Upstream Watch, Source Intelligence, Deep Site Map, Developer Quickstart, CTA Execution, Innovation Radar, Tool Lab, gateway, OAuth Status, Credential Cockpit, Delegated Auth Center, Builders map, Support Bridge, go-live, observability, support |
+| Launch Center | Tool coverage, Tool Contract Matrix, Scenario Runner, State Orchestrator, Widget Runtime Center, Commercial Action Guard, Staging Cutover Rehearsal, Swiggy Handshake Doctor, Capability Registry, Resource & Prompt Studio, Website Atlas, Builder Intake, FAQ & Policy Center, Growth Partnership Center, Channel & Multimodal Studio, Nutrition & Budget Intelligence, Household Preference Graph, Guest Collaboration & Calendar Center, Luxury Experience Workspace, Reviewer Artifact Vault, Visual QA Center, Access Evidence Matrix, Docs Coverage, Docs Twin Explorer, llms Manifest Verifier, Upstream Watch, Source Intelligence, Deep Site Map, Developer Quickstart, CTA Execution, Innovation Radar, Tool Lab, gateway, OAuth Status, Credential Cockpit, Delegated Auth Center, Builders map, Support Bridge, go-live, observability, support |
 | Guest Collaboration & Calendar | Guest votes, occasion templates, Dineout-first date nights, guests-at-home prep, office lunch, weekday reset, recovery meal, ICS artifacts, Slack/Teams gates, and voice-safe briefs |
 | Luxury Experience Workspace | Lean, premium, family, social, and training modes plus polished Dineout reservation, Food cart, Instamart basket, combined evening, and recovery review surfaces |
 | Reviewer Artifact Vault | Proof links, OpenAPI, smoke commands, screenshot targets, demo-video checklist, logs, traces, redaction rules, support context, and handoff copy |
@@ -309,6 +310,7 @@ Coverage targets:
 - Reviewer Artifact Vault for access-submission proof links, OpenAPI, smoke commands, screenshot targets, demo-video checklist, logs, traces, redaction rules, support context, and reviewer handoff copy
 - Visual QA Center for screenshot targets, selectors, viewport dimensions, artifact paths, no-overlap/text-fit rules, widget fallback checks, mobile layout checks, redaction visibility, and screenshot automation gates
 - Swiggy Deep Site Map for a single reviewer audit of every Builders page, module signal, CTA, header/docs/footer link, source-reconciliation section, MealPilot proof path, assertion, and external gate
+- Swiggy llms Manifest Verifier for live `llms.txt` parsing, markdown/rendered twin derivation, Swiggy-only origin safety, Docs Coverage comparison, and Food 14, Instamart 13, Dineout 8 reference-tool drift checks
 - Swiggy OAuth Status coverage for authorize/token/logout endpoints, callback lifecycle, pending PKCE verifier count, token source, expiry, storage policy, and no-token-logging checklist
 - Local MCP JSON-RPC shape
 - OAuth callback and fail-closed staging behavior

@@ -214,6 +214,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/builder-packet-export.md`
 - `GET /api/swiggy-docs-coverage`
 - `GET /api/swiggy-docs-twin-explorer`
+- `GET /api/swiggy-llms-manifest-verifier`
 - `GET /api/swiggy-upstream-watch`
 - `GET /api/swiggy-source-intelligence`
 - `GET /api/swiggy-deep-site-map`
@@ -360,6 +361,8 @@ Production should use an HTTPS redirect URI with exact-match allowlisting.
 `/api/credential-onboarding` shows the OAuth metadata URLs, Dynamic Client Registration dry-run payload for `/auth/register`, redirect URI audit, required MCP scopes, access-form fields, and the external Swiggy gates. Local tests keep this as evidence only and do not create live Swiggy client registrations.
 
 `/api/sandbox-credential-workbench` shows the reviewer-facing localhost-to-staging credential plan: local demo proof, DCR, PKCE, exact redirect allowlisting, staging credentials, seeded Food/Instamart/Dineout data, 48-hour soak, commands, and production-promotion gates.
+
+`/api/swiggy-llms-manifest-verifier` fetches only the official Swiggy `llms.txt` URL, parses markdown links, derives rendered twins, compares live page count against Docs Coverage, verifies Swiggy-only origins, and checks Food 14, Instamart 13, and Dineout 8 reference-tool counts. Tests inject fixture text so CI does not depend on live network for parser correctness.
 
 `/api/enterprise-delegated-auth` shows the enterprise platform-operator flow: per-user PKCE, authorization-code exchange, per-user bearer token handling, 5-day token lifetime, 30-day Swiggy user session, redirect scheme strategy, logout, 401/419/403 recovery, capacity backoff, and the contract/staging/production gates Swiggy must approve.
 

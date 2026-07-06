@@ -116,6 +116,7 @@ import {
   fetchSwiggyAccessEvidenceMatrix,
   fetchSwiggyDocsCoverage,
   fetchSwiggyDocsTwinExplorer,
+  fetchSwiggyLlmsManifestVerifier,
   fetchSwiggyDeepSiteMap,
   fetchSwiggyCancellationCareCenter,
   fetchSwiggyConfirmationCommandCenter,
@@ -243,6 +244,7 @@ import type {
   SwiggyFaqPolicyCenter,
   SwiggyGrowthPartnershipCenter,
   SwiggyHandshakeDoctor,
+  SwiggyLlmsManifestVerifier,
   SwiggyInnovationRadarReport,
   SwiggyJourneyCompilerReport,
   SwiggyLoadLabReport,
@@ -441,6 +443,7 @@ function App() {
   const [visualQa, setVisualQa] = useState<VisualQaCenter | null>(null);
   const [swiggyDocsCoverage, setSwiggyDocsCoverage] = useState<SwiggyDocsCoverageReport | null>(null);
   const [docsTwinExplorer, setDocsTwinExplorer] = useState<SwiggyDocsTwinExplorer | null>(null);
+  const [llmsManifest, setLlmsManifest] = useState<SwiggyLlmsManifestVerifier | null>(null);
   const [swiggyUpstreamWatch, setSwiggyUpstreamWatch] = useState<SwiggyUpstreamWatchReport | null>(null);
   const [swiggySourceIntelligence, setSwiggySourceIntelligence] =
     useState<SwiggySourceIntelligenceReport | null>(null);
@@ -632,6 +635,7 @@ function App() {
       visualQaResponse,
       docsCoverageResponse,
       docsTwinExplorerResponse,
+      llmsManifestResponse,
       upstreamWatchResponse,
       sourceIntelligenceResponse,
       developerQuickstartResponse,
@@ -725,6 +729,7 @@ function App() {
       fetchVisualQaCenter(),
       fetchSwiggyDocsCoverage(),
       fetchSwiggyDocsTwinExplorer(),
+      fetchSwiggyLlmsManifestVerifier(),
       fetchSwiggyUpstreamWatch(),
       fetchSourceIntelligenceOptional(),
       fetchDeveloperQuickstartWorkbench(),
@@ -819,6 +824,7 @@ function App() {
     setVisualQa(visualQaResponse.visualQa);
     setSwiggyDocsCoverage(docsCoverageResponse.docsCoverage);
     setDocsTwinExplorer(docsTwinExplorerResponse.docsTwinExplorer);
+    setLlmsManifest(llmsManifestResponse.llmsManifest);
     setSwiggyUpstreamWatch(upstreamWatchResponse.upstreamWatch);
     setSwiggySourceIntelligence(sourceIntelligenceResponse.sourceIntelligence);
     setDeveloperQuickstart(developerQuickstartResponse.quickstartWorkbench);
@@ -916,6 +922,7 @@ function App() {
       visualQaResponse,
       docsCoverageResponse,
       docsTwinExplorerResponse,
+      llmsManifestResponse,
       upstreamWatchResponse,
       sourceIntelligenceResponse,
       developerQuickstartResponse,
@@ -1006,6 +1013,7 @@ function App() {
       fetchVisualQaCenter(),
       fetchSwiggyDocsCoverage(),
       fetchSwiggyDocsTwinExplorer(),
+      fetchSwiggyLlmsManifestVerifier(),
       fetchSwiggyUpstreamWatch(),
       fetchSourceIntelligenceOptional(),
       fetchDeveloperQuickstartWorkbench(),
@@ -1096,6 +1104,7 @@ function App() {
     setVisualQa(visualQaResponse.visualQa);
     setSwiggyDocsCoverage(docsCoverageResponse.docsCoverage);
     setDocsTwinExplorer(docsTwinExplorerResponse.docsTwinExplorer);
+    setLlmsManifest(llmsManifestResponse.llmsManifest);
     setSwiggyUpstreamWatch(upstreamWatchResponse.upstreamWatch);
     setSwiggySourceIntelligence(sourceIntelligenceResponse.sourceIntelligence);
     setDeveloperQuickstart(developerQuickstartResponse.quickstartWorkbench);
@@ -1760,6 +1769,7 @@ function App() {
                 visualQa={visualQa}
                 docsCoverage={swiggyDocsCoverage}
                 docsTwinExplorer={docsTwinExplorer}
+                llmsManifest={llmsManifest}
                 upstreamWatch={swiggyUpstreamWatch}
                 sourceIntelligence={swiggySourceIntelligence}
                 developerQuickstart={developerQuickstart}
@@ -2340,6 +2350,7 @@ function LaunchCenterPanel({
   visualQa,
   docsCoverage,
   docsTwinExplorer,
+  llmsManifest,
   upstreamWatch,
   sourceIntelligence,
   developerQuickstart,
@@ -2404,6 +2415,7 @@ function LaunchCenterPanel({
   visualQa: VisualQaCenter | null;
   docsCoverage: SwiggyDocsCoverageReport | null;
   docsTwinExplorer: SwiggyDocsTwinExplorer | null;
+  llmsManifest: SwiggyLlmsManifestVerifier | null;
   upstreamWatch: SwiggyUpstreamWatchReport | null;
   sourceIntelligence: SwiggySourceIntelligenceReport | null;
   developerQuickstart: DeveloperQuickstartWorkbench | null;
@@ -4067,6 +4079,56 @@ function LaunchCenterPanel({
             </a>
             <a href="https://mcp.swiggy.com/builders/llms-full.txt" target="_blank" rel="noreferrer">
               llms-full
+            </a>
+          </div>
+        </article>
+
+        <article className="llms-manifest-card">
+          <div className="mini-heading">
+            <BookOpen aria-hidden="true" />
+            <strong>llms Manifest</strong>
+          </div>
+          <span>
+            {llmsManifest
+              ? `${llmsManifest.score}/100, ${llmsManifest.totals.liveLinks}/${llmsManifest.totals.expectedCoveragePages} live links`
+              : "Parsing live Swiggy llms.txt"}
+          </span>
+          <div className="llms-manifest-grid">
+            <div>
+              <strong>{llmsManifest?.totals.referenceTools ?? 0}</strong>
+              <span>Tool refs</span>
+            </div>
+            <div>
+              <strong>{llmsManifest?.totals.unsafeLinks ?? 0}</strong>
+              <span>Unsafe</span>
+            </div>
+            <div>
+              <strong>{llmsManifest?.fetch.statusCode ?? "..."}</strong>
+              <span>HTTP</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(llmsManifest?.serverToolCounts ?? []).map((server) => (
+              <li
+                key={server.server}
+                data-status={server.status === "covered" ? "healthy" : server.status === "blocked" ? "blocked" : "watch"}
+              >
+                <span>{serverLabel(server.server)}</span>
+                <strong>
+                  {server.tools}/{server.expectedTools}
+                </strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-intelligence-actions" aria-label="llms manifest links">
+            <a href="/api/swiggy-llms-manifest-verifier" target="_blank" rel="noreferrer">
+              Manifest API
+            </a>
+            <a href="https://mcp.swiggy.com/builders/llms.txt" target="_blank" rel="noreferrer">
+              llms.txt
+            </a>
+            <a href="/api/swiggy-docs-coverage" target="_blank" rel="noreferrer">
+              Coverage
             </a>
           </div>
         </article>

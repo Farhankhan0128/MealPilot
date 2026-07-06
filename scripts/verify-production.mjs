@@ -83,6 +83,11 @@ assert(
   "OpenAPI docs twin explorer contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-llms-manifest-verifier"]?.get?.summary?.includes("llms.txt manifest") &&
+    openApi.paths["/api/swiggy-llms-manifest-verifier"]?.get?.responses?.["200"]?.description?.includes("Food 14"),
+  "OpenAPI llms manifest verifier contract is missing",
+);
+assert(
   openApi.paths["/api/swiggy-source-intelligence"]?.get?.summary?.includes("source intelligence"),
   "OpenAPI source intelligence contract is missing",
 );
@@ -1845,6 +1850,27 @@ assert(
   docsTwinExplorer.docsTwinExplorer.assertions.some((assertion) => assertion.includes("markdown twin URL")) &&
     docsTwinExplorer.docsTwinExplorer.externalGates.some((gate) => gate.includes("re-browse llms.txt")),
   "Swiggy docs twin assertions or external gates are missing",
+);
+
+const llmsManifest = await request("/api/swiggy-llms-manifest-verifier");
+assert(llmsManifest.llmsManifest.score >= 95, "Swiggy llms manifest verifier score is below target");
+assert(llmsManifest.llmsManifest.totals.liveLinks === 69, "Swiggy live llms manifest link count is incomplete");
+assert(llmsManifest.llmsManifest.totals.expectedCoveragePages === 69, "Swiggy llms manifest coverage comparison is incomplete");
+assert(llmsManifest.llmsManifest.totals.referenceTools === 35, "Swiggy llms manifest reference tool count is incomplete");
+assert(llmsManifest.llmsManifest.totals.unsafeLinks === 0, "Swiggy llms manifest includes unsafe links");
+assert(
+  llmsManifest.llmsManifest.serverToolCounts.map((server) => `${server.server}:${server.tools}/${server.expectedTools}`).join(",") ===
+    "food:14/14,instamart:13/13,dineout:8/8",
+  "Swiggy llms manifest server tool counts are wrong",
+);
+assert(
+  llmsManifest.llmsManifest.sampleLinks.every((link) => link.markdownUrl.startsWith("https://mcp.swiggy.com/builders/")),
+  "Swiggy llms manifest sample links include an unexpected origin",
+);
+assert(
+  llmsManifest.llmsManifest.assertions.some((assertion) => assertion.includes("user-supplied URLs are never accepted")) &&
+    llmsManifest.llmsManifest.driftSignals.some((signal) => signal.includes("Live llms.txt page count matches")),
+  "Swiggy llms manifest safety assertions or drift signals are missing",
 );
 
 const upstreamWatch = await request("/api/swiggy-upstream-watch");
@@ -4239,6 +4265,16 @@ assert(
   "observability redaction contract is missing",
 );
 
+await request("/api/mcp/food", {
+  method: "POST",
+  body: JSON.stringify({
+    jsonrpc: "2.0",
+    id: "verify-runtime-telemetry",
+    method: "tools/call",
+    params: { name: "get_addresses", arguments: {} },
+  }),
+});
+
 const runtimeTelemetry = await request("/api/telemetry/runtime");
 assert(runtimeTelemetry.telemetry.score >= 80, "runtime telemetry score is below target");
 assert(runtimeTelemetry.telemetry.events.length >= 5, "runtime telemetry events are missing");
@@ -5055,6 +5091,8 @@ console.log(
       docsTwinScore: docsTwinExplorer.docsTwinExplorer.score,
       docsTwinPages: docsTwinExplorer.docsTwinExplorer.totals.pages,
       docsTwinMarkdownTwins: docsTwinExplorer.docsTwinExplorer.totals.markdownTwins,
+      llmsManifestScore: llmsManifest.llmsManifest.score,
+      llmsManifestLiveLinks: llmsManifest.llmsManifest.totals.liveLinks,
       upstreamWatchScore: upstreamWatch.upstreamWatch.score,
       upstreamRoadmapItems: upstreamWatch.upstreamWatch.roadmapItems.length,
       sourceIntelligenceScore: sourceIntelligence.sourceIntelligence.score,

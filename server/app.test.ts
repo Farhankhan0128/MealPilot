@@ -4,6 +4,7 @@ import path from "node:path";
 import request from "supertest";
 import { describe, expect, it, vi } from "vitest";
 import { createMealPilotServer } from "./app.js";
+import { buildSwiggyLlmsManifestVerifier } from "./services/llmsManifestVerifier.js";
 import { buildSwiggyHandshakeDoctor } from "./services/swiggyHandshakeDoctor.js";
 import { createFileSessionStore } from "./store/sessionStore.js";
 
@@ -79,6 +80,8 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/visual-qa-center"].get.summary).toContain("Visual QA Center");
     expect(openApi.body.paths["/api/swiggy-docs-coverage"].get.summary).toContain("llms.txt");
     expect(openApi.body.paths["/api/swiggy-docs-twin-explorer"].get.summary).toContain("docs twin");
+    expect(openApi.body.paths["/api/swiggy-llms-manifest-verifier"].get.summary).toContain("llms.txt manifest");
+    expect(openApi.body.paths["/api/swiggy-llms-manifest-verifier"].get.responses["200"].description).toContain("Instamart 13");
     expect(openApi.body.paths["/api/swiggy-upstream-watch"].get.summary).toContain("upstream docs");
     expect(openApi.body.paths["/api/swiggy-source-intelligence"].get.summary).toContain("source intelligence");
     expect(openApi.body.paths["/api/swiggy-deep-site-map"].get.summary).toContain("deep site map");
@@ -3028,6 +3031,39 @@ describe("MealPilot API", () => {
     expect(JSON.stringify(doctor)).not.toContain("Bearer live_secret");
     expect(JSON.stringify(doctor)).not.toContain("access_token");
     expect(calls.map((call) => call.method)).not.toContain("POST");
+  });
+
+  it("parses the Swiggy llms manifest and detects docs drift safely", async () => {
+    const manifestLines = [
+      "# Swiggy Builders Club",
+      "## Docs",
+      "- [Developer quickstart](https://mcp.swiggy.com/builders/docs/start/developer/index.md): Zero to first successful Swiggy tool call.",
+      "- [Order food end-to-end](https://mcp.swiggy.com/builders/docs/build/recipes/order-food.md): The canonical Food journey.",
+      "- [Rate limits](https://mcp.swiggy.com/builders/docs/operate/rate-limits.md): Current and planned quotas.",
+      "- [place_food_order](https://mcp.swiggy.com/builders/docs/reference/food/place_food_order.md): Place food delivery order.",
+      "- [checkout](https://mcp.swiggy.com/builders/docs/reference/instamart/checkout.md): Place grocery order.",
+      "- [book_table](https://mcp.swiggy.com/builders/docs/reference/dineout/book_table.md): Book a free table.",
+      "## Blog",
+      "- [Swiggy Announces Builders Club](https://mcp.swiggy.com/builders/blog/2026-04-17-builders-club-launch.md): Launch story.",
+    ].join("\n");
+    const verifier = await buildSwiggyLlmsManifestVerifier(async () => ({
+      ok: true,
+      statusCode: 200,
+      durationMs: 7,
+      text: manifestLines,
+    }));
+
+    expect(verifier.fetch.ok).toBe(true);
+    expect(verifier.status).toBe("watch");
+    expect(verifier.totals.liveLinks).toBe(7);
+    expect(verifier.totals.expectedCoveragePages).toBe(69);
+    expect(verifier.totals.unsafeLinks).toBe(0);
+    expect(verifier.sampleLinks.find((link) => link.title === "Developer quickstart")?.renderedUrl).toBe(
+      "https://mcp.swiggy.com/builders/docs/start/developer/",
+    );
+    expect(verifier.serverToolCounts.map((server) => server.server)).toEqual(["food", "instamart", "dineout"]);
+    expect(verifier.driftSignals.some((signal) => signal.includes("Live llms.txt has 7 links"))).toBe(true);
+    expect(verifier.assertions.some((assertion) => assertion.includes("user-supplied URLs are never accepted"))).toBe(true);
   });
 
   it("returns coding-agent governance grounded in the root AGENTS.md file", async () => {
