@@ -52,8 +52,8 @@ MealPilot should not be a thin order bot. The best product direction is a premiu
 | Agent patterns | Voice vs chat and multi-turn cart state. | `/api/sessions/:sessionId/surface`, cart preflight, replay, voice-safe constraints |
 | Widgets | Planned widget registry and iframe/postMessage contract. | Semantic widget fallbacks, sandbox policy, origin verification, Capability Registry resource inventory |
 | Ship to production | Retries, observability, idempotency, go-live checklist. | Request IDs, trace spans, route optimizer, resilience drills, Error Intelligence, Support Bridge, SLO Incident Command, Data Governance Center, support report, Traffic Readiness Plan, Production Launch Bundle, non-blind commercial action policy |
-| Reference | Every tool grouped by server and journey stage, plus current error envelope guidance. | 35-tool catalog plus executable Tool Lab, `/api/swiggy-docs-coverage`, `/api/swiggy-upstream-watch`, `/api/swiggy-source-intelligence`, and `/api/error-intelligence` in API and UI |
-| Operate | Access, SLA, rate limits, compliance, versioning, changelog, support. | Launch Center, Production Evidence, Data Governance Center, compliance evidence, version monitor, rate-limit plan, Traffic Readiness Plan, SLO Incident Command |
+| Reference | Every tool grouped by server and journey stage, plus current error envelope guidance. | 35-tool catalog plus executable Tool Lab, `/api/swiggy-docs-coverage`, `/api/swiggy-upstream-watch`, `/api/swiggy-source-intelligence`, `/api/swiggy-innovation-radar`, and `/api/error-intelligence` in API and UI |
+| Operate | Access, SLA, rate limits, compliance, versioning, changelog, support. | Launch Center, Production Evidence, Innovation Radar, Data Governance Center, compliance evidence, version monitor, rate-limit plan, Traffic Readiness Plan, SLO Incident Command |
 | Blog | Launch and ecosystem narrative. | Product strategy aligns with Swiggy-native, India-first agent commerce |
 | Footer | Developers, enterprises, guidelines, FAQ, apply, llms, legal, builders email. | Website Atlas, FAQ & Policy Center, README/docs, and support/reporting artifacts cover these links |
 
@@ -173,6 +173,7 @@ MealPilot should become a luxury-grade food and meal intelligence product with t
 | Swiggy Docs Coverage | `server/services/docsCoverage.ts` |
 | Swiggy Upstream Watch | `server/services/upstreamWatch.ts` |
 | Swiggy Source Intelligence | `server/services/sourceIntelligence.ts` |
+| Swiggy Innovation Radar | `server/services/innovationRadar.ts` |
 | AI Client Connect Kit | `server/services/aiClientConnect.ts` |
 | Brand Compliance Kit | `server/services/brandCompliance.ts` |
 | Data Governance Center | `server/services/dataGovernance.ts` |
@@ -215,14 +216,14 @@ MealPilot should become a luxury-grade food and meal intelligence product with t
 | Planner workspace | `src/App.tsx` |
 | Recommendation cards | Food, Instamart, and Dineout cards with item controls |
 | Premium Concierge | Lunch, pantry reset, Dineout evening, dessert reminder, and recovery itinerary slots with official Swiggy route plans |
-| Launch Center | Tool coverage, Tool Contract Matrix, Scenario Runner, State Orchestrator, Widget Runtime Center, Commercial Action Guard, Staging Cutover Rehearsal, Capability Registry, Resource & Prompt Studio, Website Atlas, Builder Intake, FAQ & Policy Center, Growth Partnership Center, Channel & Multimodal Studio, Nutrition & Budget Intelligence, Household Preference Graph, Guest Collaboration & Calendar Center, Luxury Experience Workspace, Reviewer Artifact Vault, Visual QA Center, Docs Coverage, Upstream Watch, Source Intelligence, Tool Lab, gateway, OAuth Status, Credential Cockpit, Delegated Auth Center, Builders map, Support Bridge, go-live, observability, support |
+| Launch Center | Tool coverage, Tool Contract Matrix, Scenario Runner, State Orchestrator, Widget Runtime Center, Commercial Action Guard, Staging Cutover Rehearsal, Capability Registry, Resource & Prompt Studio, Website Atlas, Builder Intake, FAQ & Policy Center, Growth Partnership Center, Channel & Multimodal Studio, Nutrition & Budget Intelligence, Household Preference Graph, Guest Collaboration & Calendar Center, Luxury Experience Workspace, Reviewer Artifact Vault, Visual QA Center, Docs Coverage, Upstream Watch, Source Intelligence, Innovation Radar, Tool Lab, gateway, OAuth Status, Credential Cockpit, Delegated Auth Center, Builders map, Support Bridge, go-live, observability, support |
 | Guest Collaboration & Calendar | Guest votes, occasion templates, Dineout-first date nights, guests-at-home prep, office lunch, weekday reset, recovery meal, ICS artifacts, Slack/Teams gates, and voice-safe briefs |
 | Luxury Experience Workspace | Lean, premium, family, social, and training modes plus polished Dineout reservation, Food cart, Instamart basket, combined evening, and recovery review surfaces |
 | Reviewer Artifact Vault | Proof links, OpenAPI, smoke commands, screenshot targets, demo-video checklist, logs, traces, redaction rules, support context, and handoff copy |
 | Visual QA Center | Viewport targets, selector manifests, artifact paths, no-overlap rules, text-fit rules, widget fallback checks, mobile layout checks, redaction visibility, and screenshot automation gates |
 | Demo Studio | Preflight, offers, replay, demo progress, submission package |
 | Submission Console | Developer/enterprise form targets, official access requirements, prepared fields, proof attachments, packet order, runbook steps, blockers, and handoff drafts |
-| Production Evidence | Widgets, rate limits, Traffic Readiness, SLO Incident Command, Data Governance, Source Intelligence, Audit Ledger, versioning, compliance, Production Launch Bundle, Error Intelligence, reviewer proof, resilience, telemetry, evaluation |
+| Production Evidence | Widgets, rate limits, Traffic Readiness, SLO Incident Command, Data Governance, Source Intelligence, Innovation Radar, Audit Ledger, versioning, compliance, Production Launch Bundle, Error Intelligence, reviewer proof, resilience, telemetry, evaluation |
 | Trace Monitor | Span-level MCP traces, log contract, and redaction evidence |
 | Runtime Telemetry | Live API/MCP request events, status classes, request IDs, session correlation, and redaction contract |
 | Audit Ledger | Redacted session/tool events, support correlation, retention posture, DSR routing, and support packet fields |
@@ -250,6 +251,7 @@ Coverage targets:
 - Growth Partnership Center for get-noticed, hiring, co-branding, direct support, co-marketing, analytics dashboards, strategic guidance, launch experiments, metrics, assets, and partner asks
 - Swiggy Upstream Watch for `llms.txt`, `llms-full.txt`, changelog limitations, v1.1/v1.2/v2 roadmap items, signed manifests, and new-tool action queues
 - Swiggy Source Intelligence for website, CTA, `llms`, markdown twin, reference count, drift signal, external gate, and build-queue reconciliation
+- Swiggy Innovation Radar for developer ideas, enterprise signals, access rules, support model, MCP references, premium opportunity lanes, route optimizations, build phases, and partner gates
 - Credential onboarding and Dynamic Client Registration preview
 - Tool Lab probes for all 35 tools
 - Tool Contract Matrix coverage for all 35 tool parameters, response envelopes, source/privacy labels, retry policy, confirmation gates, error buckets, and local fixture previews
@@ -314,6 +316,7 @@ MealPilot must keep mock evidence clearly labeled as simulated until these gates
 - Keep `/api/swiggy-docs-coverage` as source-of-truth evidence for all 69 Swiggy `llms.txt` pages and their implementation or external-gate status.
 - Keep `/api/swiggy-upstream-watch` as source-of-truth evidence for Swiggy docs retrieval contracts, changelog limitations, roadmap watches, signed-manifest readiness, and release-drift action queues.
 - Keep `/api/swiggy-source-intelligence` as source-of-truth evidence for website/docs/API count reconciliation, drift interpretation, external credential gates, and the next build queue before every access submission.
+- Keep `/api/swiggy-innovation-radar` as source-of-truth evidence for differentiated product strategy, route optimizations, premium opportunity sequencing, and staging or partnership gates.
 - Keep `/api/ai-client-connect-kit` as source-of-truth evidence for consumer AI-client configs, coding-agent rules, SDK auth modes, and delegated-auth readiness.
 - Keep `/api/brand-compliance-kit` as source-of-truth evidence for Powered by Swiggy attribution, co-branding guardrails, brand asset gates, and palette usage.
 - Keep `/api/swiggy-journey-compiler` as source-of-truth evidence for official recipe routes, premium three-server orchestration, confirmation gates, and all-tool indexing.

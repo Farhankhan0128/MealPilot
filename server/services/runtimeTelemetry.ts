@@ -126,6 +126,15 @@ export function createRuntimeTelemetry(limit = 200): RuntimeTelemetryRecorder {
 
     buildReport() {
       const metrics = buildMetrics(events);
+      const recentEvents = events.slice(-50);
+      const recentMcpEvents = events.filter((event) => event.event === "mcp_tool_call").slice(-3);
+      const reportEvents = [...recentEvents];
+      for (const mcpEvent of recentMcpEvents) {
+        if (!reportEvents.some((event) => event.requestId === mcpEvent.requestId)) {
+          reportEvents.push(mcpEvent);
+        }
+      }
+      reportEvents.sort((a, b) => Date.parse(b.ts) - Date.parse(a.ts));
       const scoreValue = metrics.reduce((sum, metric) => {
         if (metric.status === "healthy") return sum + 1;
         if (metric.status === "watch") return sum + 0.75;
@@ -139,7 +148,7 @@ export function createRuntimeTelemetry(limit = 200): RuntimeTelemetryRecorder {
       return {
         generatedAt: new Date().toISOString(),
         score: Math.round((scoreValue / metrics.length) * 100),
-        events: events.slice(-50).reverse(),
+        events: reportEvents,
         metrics,
         logShape: {
           requiredFields: [

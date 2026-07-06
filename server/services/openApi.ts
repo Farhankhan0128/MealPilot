@@ -401,6 +401,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-innovation-radar": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy innovation radar for premium product lanes, route optimization, and build phases",
+          responses: {
+            "200": {
+              description:
+                "Maps Swiggy developer ideas, enterprise signals, access rules, support model, and all-server MCP references into differentiated MealPilot opportunity lanes, route optimizations, build phases, assertions, and external gates",
+            },
+          },
+        },
+      },
       "/api/ai-client-connect-kit": {
         get: {
           tags: ["Builder Access"],

@@ -140,6 +140,15 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
         "Reconciles Swiggy website pages, CTAs, llms docs, markdown twins, 35 MCP tools, source drift signals, build queue, and external credential gates in one reviewer surface.",
     },
     {
+      id: "innovation_radar",
+      label: "Swiggy Innovation Radar",
+      path: "/api/swiggy-innovation-radar",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Turns Swiggy developer ideas, enterprise signals, access ground rules, support model, and all MCP servers into premium MealPilot opportunity lanes, route optimizations, build phases, and partner gates.",
+    },
+    {
       id: "ai_client_connect",
       label: "AI Client Connect Kit",
       path: "/api/ai-client-connect-kit",
@@ -488,6 +497,7 @@ function buildPhases(config: ServerConfig, latestPlan: MealPlan | undefined, art
         artifact("submission_console"),
         artifact("upstream_watch"),
         artifact("source_intelligence"),
+        artifact("innovation_radar"),
         artifact("premium_concierge_itinerary"),
         artifact("tool_lab"),
         artifact("tool_contract_matrix"),
@@ -668,6 +678,7 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- Swiggy Docs Coverage: /api/swiggy-docs-coverage",
     "- Swiggy Upstream Watch: /api/swiggy-upstream-watch",
     "- Swiggy Source Intelligence: /api/swiggy-source-intelligence",
+    "- Swiggy Innovation Radar: /api/swiggy-innovation-radar",
     "- AI Client Connect Kit: /api/ai-client-connect-kit",
     "- Swiggy Journey Compiler: /api/swiggy-journey-compiler",
     "- Swiggy Access Dossier: /api/swiggy-access-dossier",

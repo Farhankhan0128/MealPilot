@@ -57,6 +57,7 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/swiggy-docs-coverage"].get.summary).toContain("llms.txt");
     expect(openApi.body.paths["/api/swiggy-upstream-watch"].get.summary).toContain("upstream docs");
     expect(openApi.body.paths["/api/swiggy-source-intelligence"].get.summary).toContain("source intelligence");
+    expect(openApi.body.paths["/api/swiggy-innovation-radar"].get.summary).toContain("innovation radar");
     expect(openApi.body.paths["/api/ai-client-connect-kit"].get.summary).toContain("AI client");
     expect(openApi.body.paths["/api/brand-compliance-kit"].get.summary).toContain("brand");
     expect(openApi.body.paths["/api/swiggy-journey-compiler"].get.summary).toContain("journey compiler");
@@ -1090,6 +1091,16 @@ describe("MealPilot API", () => {
       ),
     ).toBe(true);
     expect(
+      vault.artifactSections.some((section: { artifacts: Array<{ id: string; label: string; path: string }> }) =>
+        section.artifacts.some(
+          (artifact) =>
+            artifact.id === "innovation_radar" &&
+            artifact.label === "Swiggy Innovation Radar" &&
+            artifact.path === "/api/swiggy-innovation-radar",
+        ),
+      ),
+    ).toBe(true);
+    expect(
       vault.screenshotTargets.some(
         (target: { id: string; selector: string; status: string }) =>
           target.id === "luxury_workspace_card" &&
@@ -1283,6 +1294,49 @@ describe("MealPilot API", () => {
       ),
     ).toBe(true);
     expect(report.assertions.some((assertion: string) => assertion.includes("source-intelligence"))).toBe(true);
+  });
+
+  it("returns innovation radar that turns Swiggy signals into premium product lanes", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/swiggy-innovation-radar").expect(200);
+    const radar = response.body.innovationRadar;
+
+    expect(radar.score).toBeGreaterThanOrEqual(70);
+    expect(radar.opportunityCount).toBe(8);
+    expect(radar.officialInputs.map((input: { id: string }) => input.id)).toEqual(
+      expect.arrayContaining([
+        "developers_build_ideas",
+        "enterprise_backend",
+        "access_ground_rules",
+        "support_contract",
+        "reference_contract",
+      ]),
+    );
+    expect(radar.opportunityLanes.map((lane: { id: string }) => lane.id)).toEqual(
+      expect.arrayContaining([
+        "voice_dinner_concierge",
+        "pantry_autopilot",
+        "group_office_lunch",
+        "dineout_first_evening",
+        "screenshot_to_order",
+        "enterprise_tenant_lane",
+      ]),
+    );
+    expect(
+      radar.opportunityLanes.some(
+        (lane: { id: string; swiggyServers: string[]; swiggyTools: string[]; status: string }) =>
+          lane.id === "dineout_first_evening" &&
+          ["dineout", "food", "instamart"].every((server) => lane.swiggyServers.includes(server)) &&
+          lane.swiggyTools.includes("dineout.book_table") &&
+          lane.status === "ready",
+      ),
+    ).toBe(true);
+    expect(radar.routeOptimizations.some((item: string) => item.includes("cart"))).toBe(true);
+    expect(radar.buildPhases.map((phase: { id: string }) => phase.id)).toEqual(
+      expect.arrayContaining(["local_os", "access_submission", "credentialed_staging", "premium_launch", "growth_compounding"]),
+    );
+    expect(radar.buildPhases.some((phase: { id: string; status: string }) => phase.id === "credentialed_staging" && phase.status === "staging_gate")).toBe(true);
+    expect(radar.externalGates.some((gate: string) => gate.includes("Enterprise tenant"))).toBe(true);
   });
 
   it("returns AI client and coding-agent connection kit", async () => {
@@ -2060,6 +2114,7 @@ describe("MealPilot API", () => {
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Data Governance Center")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Swiggy Upstream Watch")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Swiggy Source Intelligence")).toBe(true);
+    expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Swiggy Innovation Radar")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Premium Concierge Itinerary")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Tool Contract Matrix")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Scenario Runner")).toBe(true);
@@ -2153,6 +2208,7 @@ describe("MealPilot API", () => {
         "Swiggy Docs Coverage",
         "Swiggy Upstream Watch",
         "Swiggy Source Intelligence",
+        "Swiggy Innovation Radar",
         "AI Client Connect Kit",
         "Brand Compliance Kit",
         "Data Governance Center",
@@ -2197,6 +2253,7 @@ describe("MealPilot API", () => {
     expect(bundle.handoffEmail.body).toContain("/api/submission-console");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-upstream-watch");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-source-intelligence");
+    expect(bundle.handoffEmail.body).toContain("/api/swiggy-innovation-radar");
     expect(bundle.handoffEmail.body).toContain("/api/premium-concierge-itinerary");
     expect(bundle.handoffEmail.body).toContain("/api/mcp/tool-contract-matrix");
     expect(bundle.handoffEmail.body).toContain("/api/mcp/scenario-runner");

@@ -49,6 +49,7 @@ import { buildSwiggyFaqPolicyCenter } from "./services/faqPolicyCenter.js";
 import { buildGuestCollaborationCenter } from "./services/guestCollaborationCenter.js";
 import { buildSwiggyGrowthPartnershipCenter } from "./services/growthPartnership.js";
 import { buildHouseholdPreferenceGraph } from "./services/householdPreferenceGraph.js";
+import { buildSwiggyInnovationRadar } from "./services/innovationRadar.js";
 import { buildSwiggyJourneyCompiler } from "./services/journeyCompiler.js";
 import { buildLaunchBundle } from "./services/launchBundle.js";
 import { buildLuxuryExperienceWorkspace } from "./services/luxuryExperienceWorkspace.js";
@@ -620,6 +621,10 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/swiggy-source-intelligence", (_req, res) => {
     res.json({ sourceIntelligence: buildSwiggySourceIntelligence() });
+  });
+
+  app.get("/api/swiggy-innovation-radar", (_req, res) => {
+    res.json({ innovationRadar: buildSwiggyInnovationRadar() });
   });
 
   app.get("/api/ai-client-connect-kit", (_req, res) => {

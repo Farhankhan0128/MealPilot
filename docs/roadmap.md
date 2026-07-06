@@ -30,6 +30,7 @@ Status: in progress.
 - Add OAuth Status panel, callback URL cleanup, redacted token posture, and token exchange path. Complete.
 - Add Swiggy Upstream Watch for `llms.txt`, `llms-full.txt`, changelog limitations, roadmap items, signed manifests, and release-drift action queues. Complete.
 - Add Swiggy Source Intelligence for Builders website, CTA, `llms`, markdown twin, reference count, drift signal, and build-queue reconciliation. Complete.
+- Add Swiggy Innovation Radar for official source signals, premium product lanes, route optimizations, build phases, differentiators, and partner gates. Complete.
 - Add Builder Intake Command Center for signup, apply, demo, contact, docs, footer CTA actions, application fields, storyboard, and drafts. Complete.
 - Add Premium Concierge Itinerary for official Swiggy recipe routes, 35-tool coverage, route savings, reminders, and confirmation gates. Complete.
 - Add Tool Contract Matrix for all 35 Swiggy tools, parameters, response envelopes, error buckets, retry posture, and fixture previews. Complete.

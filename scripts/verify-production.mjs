@@ -55,6 +55,10 @@ assert(
   "OpenAPI source intelligence contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-innovation-radar"]?.get?.summary?.includes("innovation radar"),
+  "OpenAPI innovation radar contract is missing",
+);
+assert(
   openApi.paths["/api/swiggy-builder-intake"].get.summary.includes("Builder Intake"),
   "OpenAPI builder intake contract is missing",
 );
@@ -970,6 +974,40 @@ assert(
   "source intelligence staging replay queue is missing",
 );
 
+const innovationRadar = await request("/api/swiggy-innovation-radar");
+assert(innovationRadar.innovationRadar.score >= 70, "innovation radar score is below target");
+assert(innovationRadar.innovationRadar.opportunityCount === 8, "innovation radar opportunity count is incomplete");
+assert(
+  ["developers_build_ideas", "enterprise_backend", "access_ground_rules", "support_contract", "reference_contract"].every((id) =>
+    innovationRadar.innovationRadar.officialInputs.some((input) => input.id === id),
+  ),
+  "innovation radar official inputs are incomplete",
+);
+assert(
+  ["voice_dinner_concierge", "pantry_autopilot", "group_office_lunch", "dineout_first_evening", "screenshot_to_order", "enterprise_tenant_lane"].every(
+    (id) => innovationRadar.innovationRadar.opportunityLanes.some((lane) => lane.id === id),
+  ),
+  "innovation radar opportunity lanes are incomplete",
+);
+assert(
+  innovationRadar.innovationRadar.opportunityLanes.some(
+    (lane) =>
+      lane.id === "dineout_first_evening" &&
+      ["dineout", "food", "instamart"].every((server) => lane.swiggyServers.includes(server)) &&
+      lane.swiggyTools.includes("dineout.book_table") &&
+      lane.status === "ready",
+  ),
+  "innovation radar Dineout-first lane is missing",
+);
+assert(
+  innovationRadar.innovationRadar.routeOptimizations.some((item) => item.includes("cart")),
+  "innovation radar route optimization evidence is missing",
+);
+assert(
+  innovationRadar.innovationRadar.buildPhases.some((phase) => phase.id === "credentialed_staging" && phase.status === "staging_gate"),
+  "innovation radar staging gate phase is missing",
+);
+
 const aiClientConnect = await request("/api/ai-client-connect-kit");
 assert(aiClientConnect.connectKit.score >= 95, "AI client connect kit score is below target");
 assert(aiClientConnect.connectKit.clientTargets.length === 6, "AI client connect kit must cover six official clients");
@@ -1797,6 +1835,10 @@ assert(
   "reviewer proof source intelligence artifact is missing",
 );
 assert(
+  proof.proof.artifacts.some((artifact) => artifact.label === "Swiggy Innovation Radar"),
+  "reviewer proof innovation radar artifact is missing",
+);
+assert(
   proof.proof.artifacts.some((artifact) => artifact.label === "Staging Cutover Rehearsal"),
   "reviewer proof staging cutover artifact is missing",
 );
@@ -2226,6 +2268,7 @@ assert(
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Docs Coverage") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Upstream Watch") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Source Intelligence") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Innovation Radar") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "AI Client Connect Kit") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Brand Compliance Kit") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Data Governance Center") &&
@@ -2328,6 +2371,10 @@ assert(
   "launch bundle source intelligence handoff link is missing",
 );
 assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-innovation-radar"),
+  "launch bundle innovation radar handoff link is missing",
+);
+assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/premium-concierge-itinerary"),
   "launch bundle premium concierge handoff link is missing",
 );
@@ -2393,6 +2440,8 @@ console.log(
       upstreamRoadmapItems: upstreamWatch.upstreamWatch.roadmapItems.length,
       sourceIntelligenceScore: sourceIntelligence.sourceIntelligence.score,
       sourceDriftSignals: sourceIntelligence.sourceIntelligence.driftSignals.length,
+      innovationRadarScore: innovationRadar.innovationRadar.score,
+      innovationRadarLanes: innovationRadar.innovationRadar.opportunityCount,
       enterpriseDelegatedAuthScore: enterpriseAuth.enterpriseAuth.score,
       aiClientConnectScore: aiClientConnect.connectKit.score,
       aiClientTargets: aiClientConnect.connectKit.clientTargets.length,

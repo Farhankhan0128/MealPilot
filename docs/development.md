@@ -54,6 +54,7 @@ server/
     productionEvidence.ts
     runtimeTelemetry.ts
     sourceIntelligence.ts
+    innovationRadar.ts
     submissionConsole.ts
     supportBridge.ts
     toolLab.ts
@@ -99,6 +100,8 @@ The verifier creates a plan, checks 35-tool coverage, verifies Website Atlas cov
 The verifier also validates Commercial Action Guard for Food order placement, Instamart checkout, Dineout booking, combined-flow confirmation locks, non-blind retry drills, telemetry, and support packet fields.
 
 The verifier also validates `/api/swiggy-source-intelligence` for Builders website inventory, CTA coverage, `llms` and markdown documentation counts, 35-tool reference alignment, drift signals, external gates, and build-queue readiness.
+
+The verifier also validates `/api/swiggy-innovation-radar` for official source inputs, premium opportunity lanes, all-server Dineout-first orchestration, route optimization evidence, staged build phases, and partner/staging gates.
 
 The UI test suite validates the premium portal shell, mobile navigation, Swiggy OAuth start behavior, builder-packet export feedback, reminder scheduling feedback, group-member feedback, privacy export feedback, support-report feedback, and guarded confirmation flow.
 
@@ -156,6 +159,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/swiggy-docs-coverage`
 - `GET /api/swiggy-upstream-watch`
 - `GET /api/swiggy-source-intelligence`
+- `GET /api/swiggy-innovation-radar`
 - `GET /api/ai-client-connect-kit`
 - `GET /api/brand-compliance-kit`
 - `GET /api/swiggy-journey-compiler`
@@ -302,6 +306,7 @@ The test suite checks that:
 - Swiggy Docs Coverage maps all 69 `llms.txt` pages across Start, Build, Operate, Reference, and Blog to app evidence and external gates.
 - Swiggy Upstream Watch maps Swiggy's changelog, `llms.txt`, `llms-full.txt`, v1.0 limitations, v1.1/v1.2/v2 roadmap, signed manifests, and action queues to MealPilot proof surfaces.
 - Swiggy Source Intelligence reconciles Builders website pages, CTAs, `llms` docs, markdown twins, reference tool counts, drift signals, and build-queue items into one Launch Center surface.
+- Swiggy Innovation Radar maps Swiggy developer ideas, enterprise signals, access ground rules, support model, and MCP references into premium product lanes, route optimizations, build phases, differentiators, and partner gates.
 - Traffic Readiness maps expected sessions, daily tool calls, peak QPS, Retry-After behavior, seven-day major-event notice, capacity upgrade email, and the 1% -> 10% -> 50% -> 100% rollout.
 - AI Client Connect Kit generates client configs, coding-agent rule files, SDK auth-mode guidance, troubleshooting, privacy notes, and delegated-auth gates.
 - Brand Compliance Kit maps Powered by Swiggy attribution, co-branding rules, asset gates, palette usage, no-endorsement copy, and final screenshot review.

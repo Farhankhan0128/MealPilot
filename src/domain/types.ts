@@ -1456,6 +1456,52 @@ export interface SwiggySourceIntelligenceReport {
   externalGates: string[];
 }
 
+export type SwiggyInnovationStatus = "ready" | "staging_gate" | "partner_gate";
+
+export interface SwiggyInnovationInput {
+  id: string;
+  label: string;
+  officialSignal: string;
+  sourceUrl: string;
+  mealPilotResponse: string;
+}
+
+export interface SwiggyInnovationLane {
+  id: string;
+  label: string;
+  userPromise: string;
+  sourceSignals: string[];
+  swiggyServers: SwiggyServer[];
+  swiggyTools: string[];
+  productSurfaces: string[];
+  routeOptimization: string;
+  premiumDifferentiator: string;
+  status: SwiggyInnovationStatus;
+}
+
+export interface SwiggyInnovationPhase {
+  id: string;
+  label: string;
+  status: SwiggyInnovationStatus;
+  focus: string;
+  proofLinks: string[];
+  exitCriteria: string[];
+}
+
+export interface SwiggyInnovationRadarReport {
+  generatedAt: string;
+  score: number;
+  opportunityCount: number;
+  officialInputs: SwiggyInnovationInput[];
+  opportunityLanes: SwiggyInnovationLane[];
+  routeOptimizations: string[];
+  buildPhases: SwiggyInnovationPhase[];
+  differentiators: string[];
+  nextBuilds: string[];
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type AiClientTarget = "claude_desktop" | "chatgpt" | "cursor" | "vs_code" | "windsurf" | "generic_mcp";
 export type AiClientInstallStatus = "ready_to_copy" | "external_client" | "requires_oauth";
 export type AgentSdkAuthMode = "native_auth_provider" | "bearer_header" | "mixed";

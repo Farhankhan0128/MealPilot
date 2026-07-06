@@ -96,6 +96,7 @@ import {
   fetchSwiggyGrowthPartnershipCenter,
   fetchSwiggyAccessDossier,
   fetchSwiggyDocsCoverage,
+  fetchSwiggyInnovationRadar,
   fetchSwiggyJourneyCompiler,
   fetchSwiggyScenarioRunner,
   fetchSwiggySourceIntelligence,
@@ -184,6 +185,7 @@ import type {
   SwiggyDocsCoverageReport,
   SwiggyFaqPolicyCenter,
   SwiggyGrowthPartnershipCenter,
+  SwiggyInnovationRadarReport,
   SwiggyJourneyCompilerReport,
   SwiggyScenarioRunnerReport,
   SwiggySourceIntelligenceReport,
@@ -282,6 +284,14 @@ async function fetchSourceIntelligenceOptional(): Promise<{ sourceIntelligence: 
   }
 }
 
+async function fetchInnovationRadarOptional(): Promise<{ innovationRadar: SwiggyInnovationRadarReport | null }> {
+  try {
+    return await fetchSwiggyInnovationRadar();
+  } catch {
+    return { innovationRadar: null };
+  }
+}
+
 function MealPilotLogo({ compact = false }: { compact?: boolean }) {
   return (
     <span className={compact ? "mealpilot-logo compact" : "mealpilot-logo"}>
@@ -336,6 +346,7 @@ function App() {
   const [swiggyUpstreamWatch, setSwiggyUpstreamWatch] = useState<SwiggyUpstreamWatchReport | null>(null);
   const [swiggySourceIntelligence, setSwiggySourceIntelligence] =
     useState<SwiggySourceIntelligenceReport | null>(null);
+  const [swiggyInnovationRadar, setSwiggyInnovationRadar] = useState<SwiggyInnovationRadarReport | null>(null);
   const [aiClientConnectKit, setAiClientConnectKit] = useState<AiClientConnectKit | null>(null);
   const [brandCompliance, setBrandCompliance] = useState<BrandComplianceKit | null>(null);
   const [swiggyJourneyCompiler, setSwiggyJourneyCompiler] = useState<SwiggyJourneyCompilerReport | null>(null);
@@ -472,6 +483,7 @@ function App() {
       docsCoverageResponse,
       upstreamWatchResponse,
       sourceIntelligenceResponse,
+      innovationRadarResponse,
       aiClientConnectResponse,
       brandComplianceResponse,
       journeyCompilerResponse,
@@ -532,6 +544,7 @@ function App() {
       fetchSwiggyDocsCoverage(),
       fetchSwiggyUpstreamWatch(),
       fetchSourceIntelligenceOptional(),
+      fetchInnovationRadarOptional(),
       fetchAiClientConnectKit(),
       fetchBrandComplianceKit(),
       fetchSwiggyJourneyCompiler(),
@@ -593,6 +606,7 @@ function App() {
     setSwiggyDocsCoverage(docsCoverageResponse.docsCoverage);
     setSwiggyUpstreamWatch(upstreamWatchResponse.upstreamWatch);
     setSwiggySourceIntelligence(sourceIntelligenceResponse.sourceIntelligence);
+    setSwiggyInnovationRadar(innovationRadarResponse.innovationRadar);
     setAiClientConnectKit(aiClientConnectResponse.connectKit);
     setBrandCompliance(brandComplianceResponse.brandCompliance);
     setSwiggyJourneyCompiler(journeyCompilerResponse.journeyCompiler);
@@ -656,6 +670,7 @@ function App() {
       docsCoverageResponse,
       upstreamWatchResponse,
       sourceIntelligenceResponse,
+      innovationRadarResponse,
       aiClientConnectResponse,
       brandComplianceResponse,
       journeyCompilerResponse,
@@ -713,6 +728,7 @@ function App() {
       fetchSwiggyDocsCoverage(),
       fetchSwiggyUpstreamWatch(),
       fetchSourceIntelligenceOptional(),
+      fetchInnovationRadarOptional(),
       fetchAiClientConnectKit(),
       fetchBrandComplianceKit(),
       fetchSwiggyJourneyCompiler(),
@@ -770,6 +786,7 @@ function App() {
     setSwiggyDocsCoverage(docsCoverageResponse.docsCoverage);
     setSwiggyUpstreamWatch(upstreamWatchResponse.upstreamWatch);
     setSwiggySourceIntelligence(sourceIntelligenceResponse.sourceIntelligence);
+    setSwiggyInnovationRadar(innovationRadarResponse.innovationRadar);
     setAiClientConnectKit(aiClientConnectResponse.connectKit);
     setBrandCompliance(brandComplianceResponse.brandCompliance);
     setSwiggyJourneyCompiler(journeyCompilerResponse.journeyCompiler);
@@ -1400,6 +1417,7 @@ function App() {
                 docsCoverage={swiggyDocsCoverage}
                 upstreamWatch={swiggyUpstreamWatch}
                 sourceIntelligence={swiggySourceIntelligence}
+                innovationRadar={swiggyInnovationRadar}
                 aiClientConnectKit={aiClientConnectKit}
                 brandCompliance={brandCompliance}
                 journeyCompiler={swiggyJourneyCompiler}
@@ -1944,6 +1962,7 @@ function LaunchCenterPanel({
   docsCoverage,
   upstreamWatch,
   sourceIntelligence,
+  innovationRadar,
   aiClientConnectKit,
   brandCompliance,
   journeyCompiler,
@@ -1988,6 +2007,7 @@ function LaunchCenterPanel({
   docsCoverage: SwiggyDocsCoverageReport | null;
   upstreamWatch: SwiggyUpstreamWatchReport | null;
   sourceIntelligence: SwiggySourceIntelligenceReport | null;
+  innovationRadar: SwiggyInnovationRadarReport | null;
   aiClientConnectKit: AiClientConnectKit | null;
   brandCompliance: BrandComplianceKit | null;
   journeyCompiler: SwiggyJourneyCompilerReport | null;
@@ -3047,6 +3067,54 @@ function LaunchCenterPanel({
                 Official source
               </a>
             ))}
+          </div>
+        </article>
+
+        <article className="innovation-radar-card">
+          <div className="mini-heading">
+            <Sparkles aria-hidden="true" />
+            <strong>Innovation Radar</strong>
+          </div>
+          <span>
+            {innovationRadar
+              ? `${innovationRadar.score}/100, ${innovationRadar.opportunityCount} premium lanes`
+              : "Mapping Swiggy source signals to premium MealPilot product lanes"}
+          </span>
+          <div className="innovation-radar-grid">
+            <div>
+              <strong>{innovationRadar?.officialInputs.length ?? 0}</strong>
+              <span>Source signals</span>
+            </div>
+            <div>
+              <strong>{innovationRadar?.routeOptimizations.length ?? 0}</strong>
+              <span>Route wins</span>
+            </div>
+            <div>
+              <strong>{innovationRadar?.buildPhases.length ?? 0}</strong>
+              <span>Phases</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(innovationRadar?.opportunityLanes ?? []).slice(0, 5).map((lane) => (
+              <li
+                key={lane.id}
+                data-status={lane.status === "ready" ? "healthy" : lane.status === "staging_gate" ? "watch" : "blocked"}
+              >
+                <span>{lane.label}</span>
+                <strong>{lane.status.replace("_", " ")}</strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-intelligence-actions" aria-label="Innovation radar links">
+            <a href="/api/swiggy-innovation-radar" target="_blank" rel="noreferrer">
+              Open radar
+            </a>
+            <a href="/api/premium-use-case-studio" target="_blank" rel="noreferrer">
+              Use cases
+            </a>
+            <a href="/api/swiggy-growth-partnership" target="_blank" rel="noreferrer">
+              Growth
+            </a>
           </div>
         </article>
 

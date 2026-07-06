@@ -62,6 +62,7 @@ import type {
   SwiggyDocsCoverageReport,
   SwiggyFaqPolicyCenter,
   SwiggyGrowthPartnershipCenter,
+  SwiggyInnovationRadarReport,
   SwiggyJourneyCompilerReport,
   SwiggyScenarioRunnerReport,
   SwiggySourceIntelligenceReport,
@@ -306,6 +307,10 @@ export function fetchSwiggyUpstreamWatch() {
 
 export function fetchSwiggySourceIntelligence() {
   return requestJson<{ sourceIntelligence: SwiggySourceIntelligenceReport }>("/api/swiggy-source-intelligence");
+}
+
+export function fetchSwiggyInnovationRadar() {
+  return requestJson<{ innovationRadar: SwiggyInnovationRadarReport }>("/api/swiggy-innovation-radar");
 }
 
 export function fetchAiClientConnectKit() {
