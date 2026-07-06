@@ -65,6 +65,7 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/swiggy-growth-partnership"].get.summary).toContain("Growth Partnership");
     expect(openApi.body.paths["/api/swiggy-partner-success-desk"].get.summary).toContain("Partner Success");
     expect(openApi.body.paths["/api/swiggy-interaction-qa-center"].get.summary).toContain("Interaction QA");
+    expect(openApi.body.paths["/api/swiggy-staging-seed-smoke-center"].get.summary).toContain("Seed and Smoke");
     expect(openApi.body.paths["/api/channel-multimodal-studio"].get.summary).toContain("Channel and Multimodal");
     expect(openApi.body.paths["/api/swiggy-visual-dish-capture"].get.summary).toContain("Visual Dish Capture");
     expect(openApi.body.paths["/api/swiggy-visual-dish-capture/analyze"].post.summary).toContain("visual dish");
@@ -546,6 +547,43 @@ describe("MealPilot API", () => {
     ).toBe(true);
     expect(drill.handoffEmail.to).toBe("builders@swiggy.in");
     expect(drill.externalGates.some((gate: string) => gate.includes("staging credentials"))).toBe(true);
+  });
+
+  it("returns a Swiggy staging seed and smoke center for credentialed certification", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/swiggy-staging-seed-smoke-center").expect(200);
+    const center = response.body.stagingSeedSmoke;
+
+    expect(center.score).toBeGreaterThanOrEqual(70);
+    expect(center.totals.servers).toBe(3);
+    expect(center.totals.seededFixtures).toBeGreaterThanOrEqual(15);
+    expect(center.totals.smokeWaves).toBe(6);
+    expect(center.totals.credentialGates).toBeGreaterThanOrEqual(8);
+    expect(center.totals.stopRules).toBeGreaterThanOrEqual(6);
+    expect(center.serverMatrix.map((server: { server: string; firstReadTool: string }) => `${server.server}:${server.firstReadTool}`)).toEqual(
+      ["food:get_addresses", "instamart:get_addresses", "dineout:search_restaurants_dineout"],
+    );
+    expect(center.smokeWaves.map((wave: { id: string }) => wave.id)).toEqual(
+      expect.arrayContaining([
+        "credential_and_seed",
+        "read_discovery",
+        "mutation_refresh",
+        "commercial_confirmation",
+        "support_escalation",
+        "promotion_soak",
+      ]),
+    );
+    expect(
+      center.smokeWaves.some(
+        (wave: { id: string; stopRules: string[]; tools: string[] }) =>
+          wave.id === "commercial_confirmation" &&
+          wave.tools.includes("food.place_food_order") &&
+          wave.stopRules.some((rule) => rule.includes("Never blind-retry")),
+      ),
+    ).toBe(true);
+    expect(center.telemetryEvidence.some((item: { id: string }) => item.id === "runtime_event_contract")).toBe(true);
+    expect(center.assertions.some((assertion: string) => assertion.includes("Seeded staging data"))).toBe(true);
+    expect(center.externalGates.some((gate: string) => gate.includes("staging credentials"))).toBe(true);
   });
 
   it("returns a Swiggy live signal calibration center for staging personalization proof", async () => {
@@ -1435,7 +1473,7 @@ describe("MealPilot API", () => {
     expect(packet.totals.formFields).toBeGreaterThanOrEqual(10);
     expect(packet.totals.requiredAttachments).toBeGreaterThanOrEqual(10);
     expect(packet.totals.launchArtifacts).toBeGreaterThanOrEqual(50);
-    expect(packet.totals.visualTargets).toBe(41);
+    expect(packet.totals.visualTargets).toBe(42);
     expect(packet.files.map((file: { id: string }) => file.id)).toEqual(
       expect.arrayContaining(["packet_json", "packet_markdown", "visual_report", "production_summary"]),
     );
@@ -1447,7 +1485,7 @@ describe("MealPilot API", () => {
     ).toBe(true);
     expect(
       packet.commands.some(
-        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("41"),
+        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("42"),
       ),
     ).toBe(true);
     expect(packet.copyBlocks.formFields).toContain("Redirect URI(s)");
@@ -2464,8 +2502,8 @@ describe("MealPilot API", () => {
     const visualQa = response.body.visualQa;
 
     expect(visualQa.score).toBe(100);
-    expect(visualQa.totalTargets).toBe(41);
-    expect(visualQa.readyTargets).toBe(41);
+    expect(visualQa.totalTargets).toBe(42);
+    expect(visualQa.readyTargets).toBe(42);
     expect(visualQa.totalRules).toBe(7);
     expect(visualQa.readyRules).toBe(7);
     expect(visualQa.totalCommands).toBe(5);
@@ -2530,6 +2568,11 @@ describe("MealPilot API", () => {
         group.targets.some(
           (target) => target.id === "live_signal_calibration_card" && target.selector === ".live-signal-calibration-card",
         ),
+      ),
+    ).toBe(true);
+    expect(
+      visualQa.targetGroups.some((group: { targets: Array<{ id: string; selector: string }> }) =>
+        group.targets.some((target) => target.id === "staging_seed_smoke_card" && target.selector === ".staging-seed-smoke-card"),
       ),
     ).toBe(true);
     expect(

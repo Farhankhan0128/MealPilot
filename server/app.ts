@@ -114,6 +114,7 @@ import { createPkcePair, createState } from "./services/pkce.js";
 import { buildMcpResourcePromptStudio, executeMcpResourcePrompt } from "./services/resourcePromptStudio.js";
 import { buildSwiggyStagingCredentialDrill } from "./services/stagingCredentialDrill.js";
 import { buildSwiggyStagingCutoverRehearsal } from "./services/stagingCutover.js";
+import { buildSwiggyStagingSeedSmokeCenter } from "./services/stagingSeedSmokeCenter.js";
 import { buildStagingCertificationMatrix } from "./services/stagingCertification.js";
 import { buildStagingTranscriptExport } from "./services/stagingTranscript.js";
 import { buildSubmissionConsole } from "./services/submissionConsole.js";
@@ -602,6 +603,37 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
         onboarding: buildCredentialOnboardingReport(runtimeConfig),
         sandbox: buildSandboxCredentialWorkbench(runtimeConfig),
         certification: buildStagingCertificationMatrix(runtimeConfig),
+      }),
+    });
+  });
+
+  app.get("/api/swiggy-staging-seed-smoke-center", (_req, res) => {
+    const runtimeConfig = {
+      ...config,
+      swiggyAccessToken: runtimeAccessToken,
+      swiggyTokenExpiresAt: runtimeTokenExpiresAt,
+    };
+    const cutover = buildSwiggyStagingCutoverRehearsal({
+      config,
+      credentials: runtimeCredentials(),
+      latestPlan: store.getAllPlans().at(-1),
+    });
+    const sandbox = buildSandboxCredentialWorkbench(runtimeConfig);
+    const certification = buildStagingCertificationMatrix(runtimeConfig);
+    const drill = buildSwiggyStagingCredentialDrill({
+      config: runtimeConfig,
+      cutover,
+      onboarding: buildCredentialOnboardingReport(runtimeConfig),
+      sandbox,
+      certification,
+    });
+
+    res.json({
+      stagingSeedSmoke: buildSwiggyStagingSeedSmokeCenter({
+        config: runtimeConfig,
+        sandbox,
+        drill,
+        certification,
       }),
     });
   });

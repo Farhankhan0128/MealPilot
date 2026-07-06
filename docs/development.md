@@ -110,6 +110,8 @@ The verifier also validates `/api/swiggy-partner-success-desk` for access handof
 
 The verifier also validates `/api/swiggy-interaction-qa-center` for planner, confirmation, support-report, privacy, packet-export, first-call, access-submission, and partner-support CTA contracts with automated proof and explicit Swiggy/operator gates.
 
+The verifier also validates `/api/swiggy-staging-seed-smoke-center` for Food, Instamart, and Dineout seeded fixtures, read/mutation/commercial/support smoke waves, no-blind-retry stop rules, telemetry evidence, and Swiggy staging credential gates.
+
 The verifier also validates `/api/swiggy-load-lab` for synthetic launch-load scenarios, Retry-After readiness, cohort ramp math, background-job gating, commercial serialization assertions, and external Swiggy capacity actions.
 
 The verifier also validates `/api/swiggy-offer-intelligence` and `/api/swiggy-offer-intelligence/decide` for Food coupon tool sequencing, Dineout deal validation, Instamart value substitutions, no-blind-discount guardrails, apply/surface/block decisions, no-cart-mutation telemetry, offer recovery drills, live-inventory external gates, and launch-bundle handoff coverage.
@@ -261,6 +263,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/credential-onboarding`
 - `GET /api/sandbox-credential-workbench`
 - `GET /api/swiggy-staging-credential-drill`
+- `GET /api/swiggy-staging-seed-smoke-center`
 - `GET /api/enterprise-delegated-auth`
 - `GET /api/enterprise-platform-center`
 - `GET /api/observability/traces`
@@ -474,6 +477,7 @@ The test suite checks that:
 - Guest Collaboration & Calendar Center maps group votes, occasion templates, Dineout slot checks, Food reminder handoffs, Instamart prep, calendar artifacts, and Slack/Teams gates to separate Swiggy confirmation controls.
 - Luxury Experience Workspace maps reservation, Food cart, Instamart basket, combined evening, and recovery review surfaces to authoritative Swiggy reads, all-tool coverage, widget fallbacks, voice contracts, telemetry, and separate confirmation gates.
 - Reviewer Artifact Vault maps proof links, screenshots, logs, traces, OpenAPI, commands, video checklist, handoff checklist, and redaction rules into one safe Swiggy access-review manifest.
+- Staging Seed & Smoke Center maps seeded Food, Instamart, and Dineout fixture needs to credential intake, read, mutation, commercial, support, telemetry, and promotion smoke waves.
 - Visual QA Center maps demo-critical selectors, viewport dimensions, screenshot artifact paths, text-fit and no-overlap rules, widget fallback checks, mobile layout checks, redaction visibility, and screenshot automation gates.
 - Swiggy Staging Credential Drill Center composes credential onboarding, sandbox workbench, staging cutover, staging certification, seeded-data needs, first-call JSON-RPC drills, operator commands, and builders@swiggy.in handoff copy into one first-live-credential runbook.
 - Tool Lab probes all 35 official tools, preserves JSON-RPC `tools/call` shape, and classifies commercial actions behind confirmation gates.

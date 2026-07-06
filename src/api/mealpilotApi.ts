@@ -121,6 +121,7 @@ import type {
   SwiggyRitualAutopilotCenter,
   SwiggyRitualAutopilotPlan,
   SwiggyStagingCredentialDrillReport,
+  SwiggyStagingSeedSmokeCenter,
   SwiggyStagingCutoverRehearsal,
   SwiggyLiveSignalCalibrationReport,
   SwiggySurfaceContractRehearsal,
@@ -348,6 +349,12 @@ export function fetchSwiggyStagingCutover() {
 export function fetchSwiggyStagingCredentialDrill() {
   return requestJson<{ stagingCredentialDrill: SwiggyStagingCredentialDrillReport }>(
     "/api/swiggy-staging-credential-drill",
+  );
+}
+
+export function fetchSwiggyStagingSeedSmokeCenter() {
+  return requestJson<{ stagingSeedSmoke: SwiggyStagingSeedSmokeCenter }>(
+    "/api/swiggy-staging-seed-smoke-center",
   );
 }
 

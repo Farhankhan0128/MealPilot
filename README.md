@@ -41,6 +41,7 @@ Planned MCP servers:
 - Swiggy Auth Lifecycle Center at `/api/swiggy-auth-lifecycle-center` that turns PKCE S256, 120-second single-use authorization codes, 5-day access tokens, no refresh-token assumption in v1.0, 401/419 re-auth recovery, exact redirect allowlisting, per-user delegated tokens, and no-token logging into reviewer evidence.
 - Credential Cockpit with Dynamic Client Registration preview, redirect URI audit, scope coverage, OAuth metadata endpoints, and external gate tracking.
 - Sandbox Credential Workbench that joins localhost demo proof, Dynamic Client Registration, PKCE, exact redirect allowlisting, Swiggy staging credentials, seeded-data plans, 48-hour soak, and production-promotion gates.
+- Swiggy Staging Seed & Smoke Center at `/api/swiggy-staging-seed-smoke-center` that turns Food, Instamart, and Dineout seeded-data needs into read, mutation, commercial, support, telemetry, and promotion smoke waves.
 - Swiggy Live Signal Calibration Center at `/api/swiggy-live-signal-calibration` that reconciles local preference, discovery, offer, order, location, and support signals with future Food, Instamart, and Dineout staging reads while preserving privacy redaction, drift thresholds, and external credential gates.
 - Server-backed household profile with consent-aware preference storage.
 - Plan variants for balanced, budget, protein, and social evening strategies.
@@ -473,6 +474,8 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 `GET /api/sandbox-credential-workbench` is the localhost-to-staging credential runbook: demo-video readiness, Dynamic Client Registration, PKCE, exact redirect allowlisting, Swiggy-issued staging credentials, seeded Food/Instamart/Dineout data, 48-hour soak, and production-promotion gates.
 
 `GET /api/swiggy-staging-credential-drill` is the first-live-credential drill room: credential signal, first read-only JSON-RPC probes, seeded-data requirements, fail-closed OAuth/token posture, operator commands, builders@swiggy.in handoff email, and production-promotion gates.
+
+`GET /api/swiggy-staging-seed-smoke-center` is the seeded staging smoke matrix: Food, Instamart, and Dineout fixtures, first reads, mutation refresh checks, commercial no-blind-retry stop rules, support payload smoke, telemetry evidence, and 48-hour promotion blockers are all visible before Swiggy issues credentials.
 
 `GET /api/enterprise-delegated-auth` turns Swiggy's enterprise delegated-auth guidance into reviewer evidence: platform DCR preregistration, per-user PKCE, authorize URL shape, token exchange, per-user token storage, MCP on-behalf-of calls, 401/419/403 recovery, logout, platform redirect schemes, architecture review, and partner contract/capacity gates.
 

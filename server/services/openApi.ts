@@ -941,6 +941,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-staging-seed-smoke-center": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Staging Seed and Smoke Center",
+          responses: {
+            "200": {
+              description:
+                "Seeded data matrix, read/mutation/commercial/support smoke waves, telemetry evidence, stop rules, and promotion blockers for Swiggy staging certification",
+            },
+          },
+        },
+      },
       "/api/swiggy-live-signal-calibration": {
         get: {
           tags: ["Builder Access"],

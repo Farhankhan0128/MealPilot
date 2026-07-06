@@ -5916,6 +5916,53 @@ export interface SwiggyStagingCredentialDrillReport {
   externalGates: string[];
 }
 
+export type SwiggyStagingSeedSmokeStatus = "ready" | "operator_input" | "credential_gate";
+
+export interface SwiggyStagingSeedServerMatrix {
+  server: SwiggyServer;
+  endpoint: string;
+  seededIdentity: string;
+  requiredFixtures: string[];
+  firstReadTool: string;
+  mutationSmokeTools: string[];
+  commercialSmokeTool: string;
+  supportSmokeTool: string;
+  status: SwiggyStagingSeedSmokeStatus;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyStagingSmokeWave {
+  sequence: number;
+  id: string;
+  label: string;
+  scope: "credential" | "read" | "mutation" | "commercial" | "support" | "promotion";
+  tools: string[];
+  exitCriteria: string[];
+  stopRules: string[];
+  status: SwiggyStagingSeedSmokeStatus;
+}
+
+export interface SwiggyStagingSeedSmokeCenter {
+  generatedAt: string;
+  score: number;
+  mode: "mock" | "staging" | "production";
+  officialSources: string[];
+  totals: {
+    servers: number;
+    seededFixtures: number;
+    smokeWaves: number;
+    credentialGates: number;
+    stopRules: number;
+    evidenceLinks: number;
+  };
+  serverMatrix: SwiggyStagingSeedServerMatrix[];
+  smokeWaves: SwiggyStagingSmokeWave[];
+  telemetryEvidence: Array<{ id: string; label: string; requiredFields: string[]; evidenceLinks: string[] }>;
+  operatorRunbook: Array<{ sequence: number; label: string; command: string; proves: string }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type SwiggyLiveSignalCalibrationStatus = "ready" | "watch" | "staging_gate" | "privacy_gate";
 
 export interface SwiggyLiveSignalCalibrationLane {

@@ -353,6 +353,10 @@ assert(
   "OpenAPI Staging Credential Drill Center contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-staging-seed-smoke-center"].get.summary.includes("Seed and Smoke"),
+  "OpenAPI Staging Seed and Smoke Center contract is missing",
+);
+assert(
   openApi.paths["/api/swiggy-live-signal-calibration"].get.summary.includes("Live Signal Calibration") &&
     openApi.paths["/api/swiggy-live-signal-calibration"].get.responses["200"].description.includes("privacy controls"),
   "OpenAPI Live Signal Calibration Center contract is missing",
@@ -1672,8 +1676,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 41, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 41, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 42, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 42, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -1743,6 +1747,12 @@ assert(
     ),
   ),
   "visual QA staging credential drill target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some((target) => target.id === "staging_seed_smoke_card" && target.selector === ".staging-seed-smoke-card"),
+  ),
+  "visual QA staging seed and smoke target is missing",
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
@@ -3213,6 +3223,43 @@ assert(
   stagingCredentialDrill.stagingCredentialDrill.handoffEmail.to === "builders@swiggy.in" &&
     stagingCredentialDrill.stagingCredentialDrill.externalGates.some((gate) => gate.includes("staging credentials")),
   "staging credential drill handoff or external gate is missing",
+);
+
+const stagingSeedSmoke = await request("/api/swiggy-staging-seed-smoke-center");
+assert(stagingSeedSmoke.stagingSeedSmoke.score >= 70, "staging seed and smoke score is below target");
+assert(
+  stagingSeedSmoke.stagingSeedSmoke.totals.servers === 3 &&
+    stagingSeedSmoke.stagingSeedSmoke.totals.seededFixtures >= 15 &&
+    stagingSeedSmoke.stagingSeedSmoke.totals.smokeWaves === 6 &&
+    stagingSeedSmoke.stagingSeedSmoke.totals.credentialGates >= 8 &&
+    stagingSeedSmoke.stagingSeedSmoke.totals.stopRules >= 6,
+  "staging seed and smoke totals are incomplete",
+);
+assert(
+  stagingSeedSmoke.stagingSeedSmoke.serverMatrix.map((server) => `${server.server}:${server.firstReadTool}`).join(",") ===
+    "food:get_addresses,instamart:get_addresses,dineout:search_restaurants_dineout",
+  "staging seed and smoke server matrix is incomplete",
+);
+assert(
+  ["credential_and_seed", "read_discovery", "mutation_refresh", "commercial_confirmation", "support_escalation", "promotion_soak"].every((id) =>
+    stagingSeedSmoke.stagingSeedSmoke.smokeWaves.some((wave) => wave.id === id),
+  ),
+  "staging seed and smoke waves are incomplete",
+);
+assert(
+  stagingSeedSmoke.stagingSeedSmoke.smokeWaves.some(
+    (wave) =>
+      wave.id === "commercial_confirmation" &&
+      wave.tools.includes("food.place_food_order") &&
+      wave.stopRules.some((rule) => rule.includes("Never blind-retry")),
+  ),
+  "staging seed and smoke commercial stop rule is missing",
+);
+assert(
+  stagingSeedSmoke.stagingSeedSmoke.telemetryEvidence.some((item) => item.id === "runtime_event_contract") &&
+    stagingSeedSmoke.stagingSeedSmoke.assertions.some((assertion) => assertion.includes("Seeded staging data")) &&
+    stagingSeedSmoke.stagingSeedSmoke.externalGates.some((gate) => gate.includes("staging credentials")),
+  "staging seed and smoke telemetry assertions or gates are missing",
 );
 
 const liveSignalCalibration = await request("/api/swiggy-live-signal-calibration");
@@ -4949,7 +4996,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 41, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 42, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -4963,7 +5010,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("41")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("42")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -5411,6 +5458,9 @@ console.log(
       stagingCutoverDryRuns: stagingCutover.stagingCutover.dryRunCalls,
       stagingCredentialDrillScore: stagingCredentialDrill.stagingCredentialDrill.score,
       stagingCredentialFirstCalls: stagingCredentialDrill.stagingCredentialDrill.totals.firstCallDrills,
+      stagingSeedSmokeScore: stagingSeedSmoke.stagingSeedSmoke.score,
+      stagingSeedSmokeWaves: stagingSeedSmoke.stagingSeedSmoke.totals.smokeWaves,
+      stagingSeedSmokeFixtures: stagingSeedSmoke.stagingSeedSmoke.totals.seededFixtures,
       authStatus: authStatusAfter.authStatus.latestEvent.status,
       onboardingScore: onboarding.onboarding.score,
       preflightChecks: preflight.preflight.checks.length,

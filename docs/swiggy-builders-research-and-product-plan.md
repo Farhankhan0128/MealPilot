@@ -188,6 +188,7 @@ MealPilot should become a luxury-grade food and meal intelligence product with t
 | Growth Partnership Center | `server/services/growthPartnership.ts` |
 | Partner Success Desk | `server/services/partnerSuccessDesk.ts` |
 | Interaction QA Center | `server/services/interactionQaCenter.ts` |
+| Staging Seed & Smoke Center | `server/services/stagingSeedSmokeCenter.ts` |
 | Swiggy Builders map | `server/services/swiggyBuildersMap.ts` |
 | Swiggy Docs Coverage | `server/services/docsCoverage.ts` |
 | Swiggy Docs Twin Explorer | `server/services/docsTwinExplorer.ts` |
@@ -283,6 +284,7 @@ Coverage targets:
 - Growth Partnership Center for get-noticed, hiring, co-branding, direct support, co-marketing, analytics dashboards, strategic guidance, launch experiments, metrics, assets, and partner asks
 - Partner Success Desk for access handoff, support, SLO incidents, capacity review, backpressure, growth showcase, escalation emails, and enterprise Slack/partner-manager external gates
 - Interaction QA Center for clickable portal CTAs, route contracts, visible feedback expectations, automation proof, and explicit Swiggy/operator gates
+- Staging Seed & Smoke Center for seeded server fixtures, read-first staging probes, mutation refreshes, commercial stop rules, support smoke, telemetry evidence, and promotion blockers
 - Swiggy Upstream Watch for `llms.txt`, `llms-full.txt`, changelog limitations, v1.1/v1.2/v2 roadmap items, signed manifests, and new-tool action queues
 - Swiggy Source Intelligence for website, CTA, `llms`, markdown twin, reference count, drift signal, external gate, and build-queue reconciliation
 - Swiggy Docs Twin Explorer for all 69 official markdown/rendered page pairs, retrieval lanes, proof routes, assertions, and drift gates
@@ -372,6 +374,7 @@ MealPilot must keep mock evidence clearly labeled as simulated until these gates
 - Keep `/api/premium-use-case-studio` as source-of-truth evidence for differentiated MealPilot product lanes and all-tool use-case coverage.
 - Keep `/api/premium-concierge-itinerary` as source-of-truth evidence for the productized luxury itinerary, official recipe route execution, saved-call optimizations, reminders, and confirmation gates.
 - Keep `/api/staging-certification-matrix` as source-of-truth evidence for credentialed staging waves, all-tool smoke assignments, 48-hour soak, telemetry, rollback, and production-promotion gates.
+- Keep `/api/swiggy-staging-seed-smoke-center` as source-of-truth evidence for seeded Food, Instamart, and Dineout staging fixtures, smoke wave order, stop rules, telemetry evidence, and production blockers.
 - Keep `/api/sessions/:sessionId/staging-transcript` as source-of-truth session export evidence for Swiggy-ready JSONL, Markdown, redaction, support, and certification-wave mapping.
 - Keep `/api/submission-console` as source-of-truth evidence for the official access-form handoff, prepared fields, proof attachments, demo-video gate, runbook, blockers, and drafts.
 - Keep `/api/traffic-readiness-plan` as source-of-truth evidence for expected volume, peak QPS, lane budgets, Retry-After handling, major-event notice, capacity email, and staged rollout.

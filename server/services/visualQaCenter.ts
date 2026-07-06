@@ -244,6 +244,17 @@ const targetGroups = [
         "artifacts/visual-qa/staging-credential-drill-card.png",
       ),
       target(
+        "staging_seed_smoke_card",
+        "Staging Seed and Smoke card",
+        "/",
+        ".staging-seed-smoke-card",
+        "desktop",
+        1280,
+        900,
+        "Staging Seed and Smoke Center shows seeded fixtures, credential gates, stop rules, and smoke waves.",
+        "artifacts/visual-qa/staging-seed-smoke-card.png",
+      ),
+      target(
         "live_signal_calibration_card",
         "Live Signal Calibration card",
         "/",

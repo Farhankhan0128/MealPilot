@@ -99,6 +99,7 @@ import {
   fetchSloIncidentCommand,
   fetchStagingCertificationMatrix,
   fetchSwiggyStagingCredentialDrill,
+  fetchSwiggyStagingSeedSmokeCenter,
   fetchSwiggyLiveSignalCalibration,
   fetchStagingTranscript,
   fetchSubmissionConsole,
@@ -270,6 +271,7 @@ import type {
   SwiggyScenarioRunnerReport,
   SwiggySourceIntelligenceReport,
   SwiggyStagingCredentialDrillReport,
+  SwiggyStagingSeedSmokeCenter,
   SwiggyStagingCutoverRehearsal,
   SwiggyLiveSignalCalibrationReport,
   SwiggyStateOrchestratorReport,
@@ -427,6 +429,7 @@ function App() {
   const [stagingCutover, setStagingCutover] = useState<SwiggyStagingCutoverRehearsal | null>(null);
   const [stagingCredentialDrill, setStagingCredentialDrill] =
     useState<SwiggyStagingCredentialDrillReport | null>(null);
+  const [stagingSeedSmoke, setStagingSeedSmoke] = useState<SwiggyStagingSeedSmokeCenter | null>(null);
   const [liveSignalCalibration, setLiveSignalCalibration] =
     useState<SwiggyLiveSignalCalibrationReport | null>(null);
   const [mcpToolLab, setMcpToolLab] = useState<McpToolLabReport | null>(null);
@@ -627,6 +630,7 @@ function App() {
       commercialActionGuardResponse,
       stagingCutoverResponse,
       stagingCredentialDrillResponse,
+      stagingSeedSmokeResponse,
       liveSignalCalibrationResponse,
       toolLabResponse,
       buildersMapResponse,
@@ -727,6 +731,7 @@ function App() {
       fetchCommercialActionGuard(),
       fetchSwiggyStagingCutover(),
       fetchSwiggyStagingCredentialDrill(),
+      fetchSwiggyStagingSeedSmokeCenter(),
       fetchSwiggyLiveSignalCalibration(),
       fetchMcpToolLab(),
       fetchSwiggyBuildersMap(),
@@ -828,6 +833,7 @@ function App() {
     setCommercialActionGuard(commercialActionGuardResponse.commercialActionGuard);
     setStagingCutover(stagingCutoverResponse.stagingCutover);
     setStagingCredentialDrill(stagingCredentialDrillResponse.stagingCredentialDrill);
+    setStagingSeedSmoke(stagingSeedSmokeResponse.stagingSeedSmoke);
     setLiveSignalCalibration(liveSignalCalibrationResponse.liveSignalCalibration);
     setMcpToolLab(toolLabResponse.toolLab);
     setSwiggyBuildersMap(buildersMapResponse.map);
@@ -932,6 +938,7 @@ function App() {
       commercialActionGuardResponse,
       stagingCutoverResponse,
       stagingCredentialDrillResponse,
+      stagingSeedSmokeResponse,
       liveSignalCalibrationResponse,
       toolLabResponse,
       buildersMapResponse,
@@ -1029,6 +1036,7 @@ function App() {
       fetchCommercialActionGuard(),
       fetchSwiggyStagingCutover(),
       fetchSwiggyStagingCredentialDrill(),
+      fetchSwiggyStagingSeedSmokeCenter(),
       fetchSwiggyLiveSignalCalibration(),
       fetchMcpToolLab(),
       fetchSwiggyBuildersMap(),
@@ -1126,6 +1134,7 @@ function App() {
     setCommercialActionGuard(commercialActionGuardResponse.commercialActionGuard);
     setStagingCutover(stagingCutoverResponse.stagingCutover);
     setStagingCredentialDrill(stagingCredentialDrillResponse.stagingCredentialDrill);
+    setStagingSeedSmoke(stagingSeedSmokeResponse.stagingSeedSmoke);
     setLiveSignalCalibration(liveSignalCalibrationResponse.liveSignalCalibration);
     setMcpToolLab(toolLabResponse.toolLab);
     setSwiggyBuildersMap(buildersMapResponse.map);
@@ -1798,6 +1807,7 @@ function App() {
                 commercialActionGuard={commercialActionGuard}
                 stagingCutover={stagingCutover}
                 stagingCredentialDrill={stagingCredentialDrill}
+                stagingSeedSmoke={stagingSeedSmoke}
                 liveSignalCalibration={liveSignalCalibration}
                 toolLab={mcpToolLab}
                 buildersMap={swiggyBuildersMap}
@@ -2385,6 +2395,7 @@ function LaunchCenterPanel({
   commercialActionGuard,
   stagingCutover,
   stagingCredentialDrill,
+  stagingSeedSmoke,
   liveSignalCalibration,
   toolLab,
   buildersMap,
@@ -2456,6 +2467,7 @@ function LaunchCenterPanel({
   commercialActionGuard: CommercialActionGuardReport | null;
   stagingCutover: SwiggyStagingCutoverRehearsal | null;
   stagingCredentialDrill: SwiggyStagingCredentialDrillReport | null;
+  stagingSeedSmoke: SwiggyStagingSeedSmokeCenter | null;
   liveSignalCalibration: SwiggyLiveSignalCalibrationReport | null;
   toolLab: McpToolLabReport | null;
   buildersMap: SwiggyBuildersMap | null;
@@ -2978,6 +2990,51 @@ function LaunchCenterPanel({
             </a>
             <a href="https://mcp.swiggy.com/builders/docs/operate/access/" target="_blank" rel="noreferrer">
               Access docs
+            </a>
+          </div>
+        </article>
+
+        <article className="staging-seed-smoke-card">
+          <div className="mini-heading">
+            <ShieldCheck aria-hidden="true" />
+            <strong>Seed & Smoke</strong>
+          </div>
+          <span>
+            {stagingSeedSmoke
+              ? `${stagingSeedSmoke.score}/100, ${stagingSeedSmoke.totals.servers} servers, ${stagingSeedSmoke.totals.smokeWaves} waves`
+              : "Mapping seeded staging data and smoke waves"}
+          </span>
+          <div className="staging-seed-smoke-grid">
+            <div>
+              <strong>{stagingSeedSmoke?.totals.seededFixtures ?? 0}</strong>
+              <span>Fixtures</span>
+            </div>
+            <div>
+              <strong>{stagingSeedSmoke?.totals.credentialGates ?? 0}</strong>
+              <span>Cred gates</span>
+            </div>
+            <div>
+              <strong>{stagingSeedSmoke?.totals.stopRules ?? 0}</strong>
+              <span>Stop rules</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(stagingSeedSmoke?.smokeWaves ?? []).slice(0, 5).map((wave) => (
+              <li
+                key={wave.id}
+                data-status={wave.status === "ready" ? "healthy" : wave.status === "credential_gate" ? "blocked" : "watch"}
+              >
+                <span>{wave.label}</span>
+                <strong>{wave.scope}</strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-links">
+            <a href="/api/swiggy-staging-seed-smoke-center" target="_blank" rel="noreferrer">
+              Seed smoke API
+            </a>
+            <a href="/api/staging-certification-matrix" target="_blank" rel="noreferrer">
+              Certification
             </a>
           </div>
         </article>
