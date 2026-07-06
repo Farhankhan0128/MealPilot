@@ -106,7 +106,7 @@ The verifier also validates `/api/swiggy-route-optimizer` for official source li
 
 The verifier also validates `/api/swiggy-load-lab` for synthetic launch-load scenarios, Retry-After readiness, cohort ramp math, background-job gating, commercial serialization assertions, and external Swiggy capacity actions.
 
-The verifier also validates `/api/swiggy-offer-intelligence` for Food coupon tool sequencing, Dineout deal validation, Instamart value substitutions, no-blind-discount guardrails, offer recovery drills, live-inventory external gates, and launch-bundle handoff coverage.
+The verifier also validates `/api/swiggy-offer-intelligence` and `/api/swiggy-offer-intelligence/decide` for Food coupon tool sequencing, Dineout deal validation, Instamart value substitutions, no-blind-discount guardrails, apply/surface/block decisions, no-cart-mutation telemetry, offer recovery drills, live-inventory external gates, and launch-bundle handoff coverage.
 
 The verifier also validates `/api/swiggy-order-lifecycle` for Food, Instamart, and Dineout status tools, tracking cadence, non-blind retry recovery, timeline telemetry redaction, support-ready lifecycle packets, and launch-bundle handoff coverage.
 

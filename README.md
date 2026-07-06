@@ -69,7 +69,7 @@ Planned MCP servers:
 - MCP Backpressure Governor that models Swiggy's current upstream-shedder behavior separately from future 429, `Retry-After`, and `X-RateLimit-*` headers with token buckets, tracking cadence, voice burst shaping, and background-job gates.
 - Swiggy Load Lab that composes Traffic Readiness, Backpressure Governor, and Route Optimizer evidence into synthetic launch-load scenarios, cohort ramps, Retry-After drills, and Swiggy capacity gates.
 - Swiggy Operating Contract Center that consolidates official SLA, rate-limit, support, versioning, changelog, and ship-to-production guidance into one reviewer contract with pillars, runbooks, readiness gates, and a `builders@swiggy.in` launch email.
-- Swiggy Offer Intelligence that safely uses Food coupon tools, Dineout deal discovery, Instamart value substitutions, and live-offer disclaimers without bypassing commercial confirmations.
+- Swiggy Offer Intelligence at `/api/swiggy-offer-intelligence` plus `/api/swiggy-offer-intelligence/decide` that safely uses Food coupon tools, Dineout deal discovery, Instamart value substitutions, and live-offer decision gates without bypassing commercial confirmations or executing cart mutations.
 - Swiggy Order Lifecycle Command Center that maps Food, Instamart, and Dineout status tools into post-confirmation timelines, non-blind retry probes, tracking cadence, telemetry, and support-ready recovery.
 - MCP Capability Registry that maps and locally exercises `mcp:tools`, `mcp:resources`, `mcp:prompts`, OAuth metadata, widgets, prompt contracts, and external Swiggy gates.
 - Resource & Prompt Studio that exercises `resources/list`, `resources/read`, `prompts/list`, and `prompts/get` across Food, Instamart, and Dineout with samples, smoke calls, and live Swiggy gates.
@@ -506,7 +506,7 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 
 `GET /api/swiggy-load-lab` is the launch-load workbench: it simulates pilot, evening-peak, voice-burst, and campaign-spike scenarios without sending live Swiggy traffic; checks per-lane ceilings, Retry-After readiness, 1% to 100% cohort gates, commercial serialization, and capacity-approval actions.
 
-`GET /api/swiggy-offer-intelligence` is the discount-safety workbench: it sequences Food `fetch_food_coupons` before `apply_food_coupon`, validates Dineout deal context before booking, treats Instamart savings as product-variant and cart-bill optimization, and blocks exact live-savings claims until Swiggy credentials return real offer inventory.
+`GET /api/swiggy-offer-intelligence` and `POST /api/swiggy-offer-intelligence/decide` are the discount-safety workbench: they sequence Food `fetch_food_coupons` before `apply_food_coupon`, validate Dineout deal context before booking, treat Instamart savings as product-variant and cart-bill optimization, and return apply/surface/block decisions without executing cart mutations.
 
 `GET /api/swiggy-order-lifecycle` is the post-confirmation command center: it maps Food `get_food_orders`, `get_food_order_details`, `track_food_order`, Instamart `get_orders`, `get_order_details`, `track_order`, and Dineout `get_booking_status` into status timelines, non-blind retry probes, tracking cadence, redacted telemetry, and support packet rules.
 

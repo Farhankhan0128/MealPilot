@@ -2,6 +2,7 @@ import type { ServerConfig } from "../config.js";
 import type {
   MealPlan,
   OfferOpportunity,
+  SwiggyOfferDecision,
   SwiggyOfferDrill,
   SwiggyOfferGuardrail,
   SwiggyOfferIntelligenceReport,
@@ -285,5 +286,87 @@ export function buildSwiggyOfferIntelligence(options: {
       "Offer copy is blocked from exact live-savings claims until Swiggy credentials return live offer inventory.",
     ],
     externalGates,
+  };
+}
+
+export function decideSwiggyOffer(input: {
+  config: ServerConfig;
+  server: "food" | "instamart" | "dineout" | "combined";
+  offerType: "food_coupon" | "dineout_deal" | "instamart_value" | "combined_savings";
+  cartFresh: boolean;
+  paymentMode: "cod" | "online" | "free_booking" | "unknown";
+  claimedSavings: number;
+  userConfirmed: boolean;
+}): SwiggyOfferDecision {
+  const riskFlags: string[] = [];
+  let selectedLaneId: string;
+  let requiredTool: string;
+  let decision: SwiggyOfferDecision["decision"];
+
+  if (input.offerType === "food_coupon") {
+    selectedLaneId = input.cartFresh ? "food_coupon_application" : "food_coupon_discovery";
+    requiredTool = input.cartFresh ? "apply_food_coupon then get_food_cart" : "get_food_cart then fetch_food_coupons";
+    if (!input.cartFresh) riskFlags.push("cart_requires_refresh_before_coupon");
+    if (!input.userConfirmed) riskFlags.push("coupon_requires_user_confirmation");
+    if (input.paymentMode === "online") riskFlags.push("online_payment_coupon_requires_live_payment_truth");
+    decision = input.cartFresh && input.userConfirmed && input.paymentMode !== "online" ? "apply_after_confirmation" : "block";
+  } else if (input.offerType === "dineout_deal") {
+    selectedLaneId = "dineout_offer_discovery";
+    requiredTool = "get_restaurant_details";
+    decision = "surface_only";
+    if (input.paymentMode !== "free_booking") riskFlags.push("paid_dineout_deal_not_book_table_path");
+    if (!input.cartFresh) riskFlags.push("restaurant_details_require_refresh");
+  } else if (input.offerType === "instamart_value") {
+    selectedLaneId = "instamart_value_substitution";
+    requiredTool = "search_products then get_cart";
+    decision = "surface_only";
+    if (!input.cartFresh) riskFlags.push("instamart_bill_requires_get_cart");
+  } else {
+    selectedLaneId = "combined_savings_guard";
+    requiredTool = "refresh selected server cart or details";
+    decision = input.userConfirmed && input.cartFresh ? "surface_only" : "block";
+    if (!input.userConfirmed) riskFlags.push("combined_savings_requires_separate_confirmation");
+    if (!input.cartFresh) riskFlags.push("combined_savings_requires_fresh_read");
+  }
+
+  if (input.claimedSavings > 0 && input.config.swiggyMode === "mock") {
+    riskFlags.push("claimed_savings_are_mock_estimates");
+  }
+
+  return {
+    generatedAt: new Date().toISOString(),
+    requestId: `offer_${Date.now().toString(36)}`,
+    mode: input.config.swiggyMode,
+    input: {
+      server: input.server,
+      offerType: input.offerType,
+      cartFresh: input.cartFresh,
+      paymentMode: input.paymentMode,
+      claimedSavings: input.claimedSavings,
+      userConfirmed: input.userConfirmed,
+    },
+    decision,
+    selectedLaneId,
+    requiredTool,
+    userFacingCopy:
+      decision === "apply_after_confirmation"
+        ? "I can apply this Food coupon after your confirmation, then I will read the cart total back before any order."
+        : decision === "surface_only"
+          ? "I can show this saving as a planning hint, but it does not confirm a paid action or live discount."
+          : "I need fresh Swiggy truth and explicit confirmation before using this offer.",
+    riskFlags,
+    telemetry: [
+      { field: "offer_type", value: input.offerType, redaction: "safe enum" },
+      { field: "offer_decision", value: decision, redaction: "safe enum" },
+      { field: "claimed_savings_bucket", value: input.claimedSavings > 0 ? "positive" : "none", redaction: "bucket only" },
+      { field: "raw_coupon_or_deal_payload_retained", value: "false", redaction: "hard-coded privacy invariant" },
+      { field: "cart_mutation_executed", value: "false", redaction: "hard-coded safety invariant" },
+    ],
+    assertions: [
+      "Offer decisions do not execute cart mutations.",
+      "Food coupons require fresh cart truth before apply_food_coupon.",
+      "Dineout deals are discovery context unless Swiggy proves a compatible free booking path.",
+      "Instamart savings are value substitutions and cart-bill checks, not undocumented coupon application.",
+    ],
   };
 }

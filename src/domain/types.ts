@@ -3799,6 +3799,27 @@ export interface SwiggyOfferDrill {
   status: SwiggyOfferStatus;
 }
 
+export interface SwiggyOfferDecision {
+  generatedAt: string;
+  requestId: string;
+  mode: "mock" | "staging" | "production";
+  input: {
+    server: SwiggyServer | "combined";
+    offerType: "food_coupon" | "dineout_deal" | "instamart_value" | "combined_savings";
+    cartFresh: boolean;
+    paymentMode: "cod" | "online" | "free_booking" | "unknown";
+    claimedSavings: number;
+    userConfirmed: boolean;
+  };
+  decision: "apply_after_confirmation" | "surface_only" | "block";
+  selectedLaneId: string;
+  requiredTool: string;
+  userFacingCopy: string;
+  riskFlags: string[];
+  telemetry: Array<{ field: string; value: string; redaction: string }>;
+  assertions: string[];
+}
+
 export interface SwiggyOfferIntelligenceReport {
   generatedAt: string;
   score: number;

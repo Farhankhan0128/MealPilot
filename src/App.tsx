@@ -5280,6 +5280,10 @@ function ProductionEvidencePanel({
               <strong>{offerIntelligence?.totals.externalGates ?? 0}</strong>
               <span>Live gates</span>
             </div>
+            <div>
+              <strong>{offerIntelligence ? "POST" : "-"}</strong>
+              <span>Decision gate</span>
+            </div>
           </div>
           <ul className="compact-status-list">
             {(offerIntelligence?.opportunities ?? []).slice(0, 4).map((opportunity) => (
@@ -5292,6 +5296,14 @@ function ProductionEvidencePanel({
               </li>
             ))}
           </ul>
+          <div className="source-links">
+            <a href="/api/swiggy-offer-intelligence" target="_blank" rel="noreferrer">
+              Offer API
+            </a>
+            <a href="/api/openapi.json" target="_blank" rel="noreferrer">
+              Decision schema
+            </a>
+          </div>
         </article>
 
         <article className="order-lifecycle-card">

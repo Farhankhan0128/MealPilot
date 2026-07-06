@@ -1026,6 +1026,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-offer-intelligence/decide": {
+        post: {
+          tags: ["Commerce"],
+          summary: "Decide whether a Swiggy offer can be applied, surfaced, or blocked",
+          responses: {
+            "200": {
+              description:
+                "Offer decision, selected savings lane, required fresh tool, user-facing copy, risk flags, redacted telemetry, and no-cart-mutation assertions",
+            },
+          },
+        },
+      },
       "/api/swiggy-order-lifecycle": {
         get: {
           tags: ["Commerce"],

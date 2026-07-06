@@ -94,7 +94,7 @@ import { buildOpenApiDocument } from "./services/openApi.js";
 import { buildSandboxCredentialWorkbench } from "./services/sandboxCredentialWorkbench.js";
 import { buildNutritionBudgetIntelligence } from "./services/nutritionBudgetIntelligence.js";
 import { buildObservabilityTraceReport, buildSwiggyRouteOptimizationReport } from "./services/observability.js";
-import { buildSwiggyOfferIntelligence } from "./services/offerIntelligence.js";
+import { buildSwiggyOfferIntelligence, decideSwiggyOffer } from "./services/offerIntelligence.js";
 import { buildSwiggyOperatingContractCenter } from "./services/operatingContractCenter.js";
 import { buildSwiggyOrderLifecycle } from "./services/orderLifecycle.js";
 import { buildSwiggyPaymentTruthCenter, reconcileSwiggyPaymentTruth } from "./services/paymentTruthCenter.js";
@@ -254,6 +254,15 @@ const customizationValidationSchema = z.object({
   userChangedVariant: z.boolean(),
   quantity: z.number().int().min(1).max(20),
   includeDineout: z.boolean(),
+});
+
+const offerDecisionSchema = z.object({
+  server: z.enum(["food", "instamart", "dineout", "combined"]),
+  offerType: z.enum(["food_coupon", "dineout_deal", "instamart_value", "combined_savings"]),
+  cartFresh: z.boolean(),
+  paymentMode: z.enum(["cod", "online", "free_booking", "unknown"]),
+  claimedSavings: z.number().min(0).max(100000),
+  userConfirmed: z.boolean(),
 });
 
 const mcpServerSchema = z.enum(["food", "instamart", "dineout"]);
@@ -1240,6 +1249,16 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/swiggy-offer-intelligence", (_req, res) => {
     res.json({ offerIntelligence: buildSwiggyOfferIntelligence({ plans: store.getAllPlans(), config }) });
+  });
+
+  app.post("/api/swiggy-offer-intelligence/decide", (req, res) => {
+    const body = offerDecisionSchema.parse(req.body);
+    res.json({
+      offerDecision: decideSwiggyOffer({
+        config,
+        ...body,
+      }),
+    });
   });
 
   app.get("/api/swiggy-order-lifecycle", (_req, res) => {

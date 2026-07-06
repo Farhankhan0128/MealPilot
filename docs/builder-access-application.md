@@ -255,7 +255,7 @@ Email: add primary engineering email before submission.
 - Staging Transcript Export: `/api/sessions/:sessionId/staging-transcript`
 - Traffic Readiness Plan: `/api/traffic-readiness-plan`
 - Swiggy Load Lab: `/api/swiggy-load-lab`
-- Swiggy Offer Intelligence: `/api/swiggy-offer-intelligence`
+- Swiggy Offer Intelligence: `/api/swiggy-offer-intelligence` and `/api/swiggy-offer-intelligence/decide`
 - Swiggy Order Lifecycle: `/api/swiggy-order-lifecycle`
 - Swiggy Location Trust: `/api/swiggy-location-trust`
 - Swiggy Cart Mutation Workbench: `/api/swiggy-cart-mutation-workbench`

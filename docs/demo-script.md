@@ -174,7 +174,7 @@ Open Production Evidence and show:
 - Rate-limit budgets under planned developer-tier ceilings.
 - Traffic Readiness Plan with per-lane budgets, capacity upgrade email, and major-event notification gates.
 - Swiggy Load Lab at `/api/swiggy-load-lab` with synthetic launch-load scenarios, 1% to 100% cohort ramps, Retry-After drill proof, commercial serialization, and campaign capacity gates.
-- Swiggy Offer Intelligence at `/api/swiggy-offer-intelligence` with Food coupon sequencing, Dineout deal validation, Instamart value substitutions, no-blind-discount guardrails, and live-offer gates.
+- Swiggy Offer Intelligence at `/api/swiggy-offer-intelligence` plus `/api/swiggy-offer-intelligence/decide` with Food coupon sequencing, Dineout deal validation, Instamart value substitutions, no-blind-discount guardrails, no-mutation offer decisions, and live-offer gates.
 - Swiggy Order Lifecycle at `/api/swiggy-order-lifecycle` with order-history/status tools, 10-second tracking cadence, non-blind retry probes, and support-safe timeline telemetry.
 - Swiggy Location Trust at `/api/swiggy-location-trust` with Food/Instamart saved-address reads, Instamart create/delete address intent, Dineout saved locations, address-choice pauses, switch refresh guards, and raw-address redaction.
 - Swiggy Cart Mutation Workbench at `/api/swiggy-cart-mutation-workbench` with Food cart readback, Instamart full-cart replacement, Dineout create_cart gates, payment-method truth, add-on confirmation, and staging cart-write gates.

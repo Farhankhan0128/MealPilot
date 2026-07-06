@@ -127,6 +127,7 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/swiggy-load-lab"].get.responses["200"].description).toContain("cohort ramps");
     expect(openApi.body.paths["/api/swiggy-offer-intelligence"].get.summary).toContain("Offer Intelligence");
     expect(openApi.body.paths["/api/swiggy-offer-intelligence"].get.responses["200"].description).toContain("Food coupon");
+    expect(openApi.body.paths["/api/swiggy-offer-intelligence/decide"].post.summary).toContain("offer");
     expect(openApi.body.paths["/api/swiggy-order-lifecycle"].get.summary).toContain("Order Lifecycle");
     expect(openApi.body.paths["/api/swiggy-order-lifecycle"].get.responses["200"].description).toContain("non-blind retry");
     expect(openApi.body.paths["/api/swiggy-location-trust"].get.summary).toContain("Location Trust");
@@ -3721,6 +3722,29 @@ describe("MealPilot API", () => {
       intelligence.assertions.some((assertion: string) => assertion.includes("fetch_food_coupons before apply_food_coupon")),
     ).toBe(true);
     expect(intelligence.externalGates.some((gate: string) => gate.includes("Live Food coupon inventory"))).toBe(true);
+
+    const decisionResponse = await request(app)
+      .post("/api/swiggy-offer-intelligence/decide")
+      .send({
+        server: "food",
+        offerType: "food_coupon",
+        cartFresh: true,
+        paymentMode: "cod",
+        claimedSavings: 50,
+        userConfirmed: true,
+      })
+      .expect(200);
+    const decision = decisionResponse.body.offerDecision;
+
+    expect(decision.decision).toBe("apply_after_confirmation");
+    expect(decision.selectedLaneId).toBe("food_coupon_application");
+    expect(decision.requiredTool).toContain("apply_food_coupon");
+    expect(
+      decision.telemetry.some(
+        (item: { field: string; value: string }) => item.field === "cart_mutation_executed" && item.value === "false",
+      ),
+    ).toBe(true);
+    expect(decision.assertions.some((assertion: string) => assertion.includes("do not execute cart mutations"))).toBe(true);
   });
 
   it("returns Swiggy Order Lifecycle for status, tracking, and non-blind recovery", async () => {

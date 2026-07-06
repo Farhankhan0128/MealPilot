@@ -210,6 +210,10 @@ assert(
   "OpenAPI Swiggy Offer Intelligence is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-offer-intelligence/decide"].post.summary.includes("offer"),
+  "OpenAPI Swiggy Offer decision route is missing",
+);
+assert(
   openApi.paths["/api/swiggy-order-lifecycle"].get.summary.includes("Order Lifecycle"),
   "OpenAPI Swiggy Order Lifecycle is missing",
 );
@@ -3555,6 +3559,29 @@ assert(
   ),
   "Offer Intelligence coupon sequence assertion is missing",
 );
+const offerDecision = await request("/api/swiggy-offer-intelligence/decide", {
+  method: "POST",
+  body: JSON.stringify({
+    server: "food",
+    offerType: "food_coupon",
+    cartFresh: true,
+    paymentMode: "cod",
+    claimedSavings: 50,
+    userConfirmed: true,
+  }),
+});
+assert(
+  offerDecision.offerDecision.decision === "apply_after_confirmation" &&
+    offerDecision.offerDecision.selectedLaneId === "food_coupon_application" &&
+    offerDecision.offerDecision.requiredTool.includes("apply_food_coupon"),
+  "Offer decision route is wrong",
+);
+assert(
+  offerDecision.offerDecision.telemetry.some(
+    (item) => item.field === "cart_mutation_executed" && item.value === "false",
+  ) && offerDecision.offerDecision.assertions.some((assertion) => assertion.includes("do not execute cart mutations")),
+  "Offer decision safety telemetry is incomplete",
+);
 
 const orderLifecycle = await request("/api/swiggy-order-lifecycle");
 assert(orderLifecycle.orderLifecycle.score >= 80, "Order Lifecycle score is below target");
@@ -4656,6 +4683,7 @@ console.log(
       offerIntelligenceScore: offerIntelligence.offerIntelligence.score,
       offerIntelligenceOpportunities: offerIntelligence.offerIntelligence.totals.opportunities,
       offerIntelligenceSavings: offerIntelligence.offerIntelligence.totals.estimatedSavings,
+      offerDecision: offerDecision.offerDecision.decision,
       orderLifecycleScore: orderLifecycle.orderLifecycle.score,
       orderLifecycleTools: orderLifecycle.orderLifecycle.totals.toolsCovered,
       orderLifecycleRecoveries: orderLifecycle.orderLifecycle.totals.recoveryDrills,

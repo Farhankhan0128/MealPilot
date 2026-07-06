@@ -86,6 +86,7 @@ import type {
   SwiggyJourneyCompilerReport,
   SwiggyLoadLabReport,
   SwiggyLocationTrustReport,
+  SwiggyOfferDecision,
   SwiggyOfferIntelligenceReport,
   SwiggyOperatingContractCenterReport,
   SwiggyOrderLifecycleReport,
@@ -704,6 +705,20 @@ export function fetchSwiggyLoadLab() {
 
 export function fetchSwiggyOfferIntelligence() {
   return requestJson<{ offerIntelligence: SwiggyOfferIntelligenceReport }>("/api/swiggy-offer-intelligence");
+}
+
+export function decideSwiggyOffer(input: {
+  server: "food" | "instamart" | "dineout" | "combined";
+  offerType: "food_coupon" | "dineout_deal" | "instamart_value" | "combined_savings";
+  cartFresh: boolean;
+  paymentMode: "cod" | "online" | "free_booking" | "unknown";
+  claimedSavings: number;
+  userConfirmed: boolean;
+}) {
+  return requestJson<{ offerDecision: SwiggyOfferDecision }>("/api/swiggy-offer-intelligence/decide", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
 }
 
 export function fetchSwiggyOrderLifecycle() {
