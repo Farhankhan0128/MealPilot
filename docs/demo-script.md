@@ -136,7 +136,7 @@ Open the Launch Center and show:
 - Staging Cutover Rehearsal showing first read-only MCP probes, fail-closed bearer-token behavior, retry branches, support packet fields, and 48-hour green gates.
 - Staging Certification Matrix showing all 35 tools assigned to staging smoke waves, 48-hour soak, telemetry, rollback, and production-promotion gates.
 - Staging Transcript Export showing session-scoped JSONL, Markdown replay, redaction manifest, support envelope, and non-blind retry evidence.
-- Local MCP resources/prompts calls: `resources/list`, `resources/read`, `prompts/list`, and `prompts/get`.
+- Local MCP resources/prompts calls: `resources/list`, `resources/read`, `prompts/list`, and `prompts/get`, including executable redacted summaries.
 - MCP Gateway showing mock transport now and the exact staging/production endpoint cutover path.
 - OAuth Status showing authorize/token/logout endpoints, pending PKCE verifier count, callback outcome, token source, expiry, and no-token-logging checklist.
 - Delegated Auth Center showing enterprise on-behalf-of PKCE, per-user token storage, 5-day access token, 30-day user session, logout, troubleshooting, redirect schemes, and platform-operator gates.
@@ -271,6 +271,7 @@ Briefly show production readiness:
 - `/api/mcp/scenario-runner`
 - `/api/mcp/state-orchestrator`
 - `/api/mcp/resource-prompt-studio`
+- `/api/mcp/resource-prompt-studio/execute`
 - `/api/mcp/staging-cutover`
 - `/api/mcp-gateway`
 - `/api/auth/swiggy/status`

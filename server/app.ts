@@ -105,7 +105,7 @@ import { analyzeSwiggyQualityFeedback, buildSwiggyQualityLoopCenter } from "./se
 import { buildSwiggyRitualAutopilotCenter, planSwiggyRitualAutopilot } from "./services/ritualAutopilotCenter.js";
 import { buildReviewerArtifactVault } from "./services/reviewerArtifactVault.js";
 import { createPkcePair, createState } from "./services/pkce.js";
-import { buildMcpResourcePromptStudio } from "./services/resourcePromptStudio.js";
+import { buildMcpResourcePromptStudio, executeMcpResourcePrompt } from "./services/resourcePromptStudio.js";
 import { buildSwiggyStagingCredentialDrill } from "./services/stagingCredentialDrill.js";
 import { buildSwiggyStagingCutoverRehearsal } from "./services/stagingCutover.js";
 import { buildStagingCertificationMatrix } from "./services/stagingCertification.js";
@@ -344,6 +344,21 @@ const supportReportSchema = z.object({
   issueObserved: z.boolean(),
   userConsented: z.boolean(),
 });
+
+const resourcePromptExecutionSchema = z
+  .object({
+    server: z.enum(["food", "instamart", "dineout"]),
+    method: z.enum(["resources/list", "resources/read", "prompts/list", "prompts/get"]),
+    params: z.record(z.string(), z.unknown()).default({}),
+  })
+  .superRefine((value, ctx) => {
+    if (value.method === "resources/read" && typeof value.params.uri !== "string") {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message: "resources/read requires params.uri" });
+    }
+    if (value.method === "prompts/get" && typeof value.params.name !== "string") {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message: "prompts/get requires params.name" });
+    }
+  });
 
 const mcpServerSchema = z.enum(["food", "instamart", "dineout"]);
 const agentSurfaceSchema = z.enum(["chat", "voice"]);
@@ -776,6 +791,45 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
   app.get("/api/mcp/resource-prompt-studio", (_req, res) => {
     res.json({ resourcePromptStudio: buildMcpResourcePromptStudio() });
   });
+
+  app.post(
+    "/api/mcp/resource-prompt-studio/execute",
+    asyncRoute(async (req, res) => {
+      const body = resourcePromptExecutionSchema.parse(req.body);
+      const executeJsonRpc = async (
+        server: SwiggyServer,
+        method: "resources/list" | "resources/read" | "prompts/list" | "prompts/get",
+        params: Record<string, unknown>,
+      ) => {
+        const request = {
+          jsonrpc: "2.0",
+          id: `resource-prompt-${Date.now().toString(36)}`,
+          method,
+          params,
+        } as JsonRpcRequest;
+
+        if (config.swiggyMode === "mock") {
+          return handleMockJsonRpc(server, request);
+        }
+
+        return callConfiguredSwiggyTool({
+          config,
+          server,
+          request,
+          accessToken: runtimeAccessToken,
+        });
+      };
+
+      res.json({
+        resourcePromptExecution: await executeMcpResourcePrompt({
+          config,
+          ...body,
+          liveCredentialReady: Boolean(runtimeAccessToken),
+          executeJsonRpc,
+        }),
+      });
+    }),
+  );
 
   app.get(
     "/api/mcp/tool-contract-matrix",

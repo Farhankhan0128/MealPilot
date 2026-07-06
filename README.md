@@ -288,6 +288,7 @@ GET  /api/mcp/backpressure-governor
 GET  /api/mcp/staging-cutover
 GET  /api/mcp/capability-registry
 GET  /api/mcp/resource-prompt-studio
+POST /api/mcp/resource-prompt-studio/execute
 GET  /api/mcp-gateway
 GET  /api/auth/swiggy/status
 GET  /api/swiggy-auth-lifecycle-center
@@ -431,7 +432,7 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 
 `GET /api/mcp/commercial-action-guard` is the Swiggy commercial-action safety proof: Food order placement, Instamart checkout, Dineout booking, and combined evening flows mapped to fresh authoritative reads, explicit confirmations, non-blind check-then-retry policies, redacted telemetry fields, support packet context, and staging/production gates.
 
-`GET /api/mcp/resource-prompt-studio` is the MCP resource and prompt proof: every Food, Instamart, and Dineout widget/static resource plus every planner, safety, and recovery prompt is listed with sample `resources/read` and `prompts/get` payloads, JSON-RPC smoke requests, MealPilot uses, and live Swiggy staging gates.
+`GET /api/mcp/resource-prompt-studio` plus `POST /api/mcp/resource-prompt-studio/execute` is the MCP resource and prompt proof: every Food, Instamart, and Dineout widget/static resource plus every planner, safety, and recovery prompt is listed and executable through `resources/list`, `resources/read`, `prompts/list`, and `prompts/get` with JSON-RPC smoke requests, hashed response summaries, no raw payload retention, MealPilot uses, and live Swiggy staging gates.
 
 `GET /api/mcp/staging-cutover` is the real-transport rehearsal: Swiggy Streamable HTTP endpoint map, first read-only staging probes, OAuth/DCR readiness, fail-closed bearer-token behavior, retry and reauth branches, support packet fields, and production promotion gates.
 

@@ -147,6 +147,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/mcp/resource-prompt-studio/execute": {
+        post: {
+          tags: ["Builder Access"],
+          summary: "Execute a Swiggy MCP resource or prompt method with redacted summary",
+          responses: {
+            "200": {
+              description:
+                "Executable MCP resources/list, resources/read, prompts/list, and prompts/get gate across Food, Instamart, and Dineout with response hashing, no raw payload retention, server-scoped execution, and live credential gates",
+            },
+          },
+        },
+      },
       "/api/mcp/tool-contract-matrix": {
         get: {
           tags: ["Builder Access"],

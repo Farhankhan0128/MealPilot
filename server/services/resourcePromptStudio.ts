@@ -1,4 +1,7 @@
+import crypto from "node:crypto";
+import type { ServerConfig } from "../config.js";
 import type {
+  McpResourcePromptExecution,
   McpPromptStudioItem,
   McpResourcePromptServerSummary,
   McpResourcePromptSmokeRequest,
@@ -17,6 +20,60 @@ const serverLabels: Record<SwiggyServer, string> = {
 
 function endpointFor(server: SwiggyServer) {
   return server === "instamart" ? "POST mcp.swiggy.com/im" : `POST mcp.swiggy.com/${server}`;
+}
+
+type ResourcePromptMethod = McpResourcePromptExecution["input"]["method"];
+
+function hashValue(value: unknown) {
+  return crypto.createHash("sha256").update(JSON.stringify(value ?? {})).digest("hex").slice(0, 16);
+}
+
+function responseResult(response: unknown): unknown {
+  if (response && typeof response === "object" && "result" in response) return (response as { result?: unknown }).result;
+  return response;
+}
+
+function summaryKind(method: ResourcePromptMethod): McpResourcePromptExecution["responseSummary"]["kind"] {
+  if (method === "resources/list") return "resource_list";
+  if (method === "resources/read") return "resource_read";
+  if (method === "prompts/list") return "prompt_list";
+  if (method === "prompts/get") return "prompt_get";
+  return "unknown";
+}
+
+function firstLabel(value: unknown): string {
+  if (Array.isArray(value)) return value.length > 0 ? firstLabel(value[0]) : "empty";
+  if (!value || typeof value !== "object") return typeof value === "string" ? value.slice(0, 80) : "available";
+  const record = value as Record<string, unknown>;
+  for (const key of ["name", "uri", "title", "description", "text", "role", "mimeType"]) {
+    const item = record[key];
+    if (typeof item === "string" || typeof item === "number") return String(item).slice(0, 80);
+  }
+  return "available";
+}
+
+function summarizeResponse(method: ResourcePromptMethod, response: unknown): McpResourcePromptExecution["responseSummary"] {
+  const result = responseResult(response);
+  const resultRecord = result && typeof result === "object" ? (result as Record<string, unknown>) : {};
+  const candidates =
+    method === "resources/list"
+      ? resultRecord.resources
+      : method === "prompts/list"
+        ? resultRecord.prompts
+        : method === "resources/read"
+          ? resultRecord.contents ?? resultRecord.content
+          : method === "prompts/get"
+            ? resultRecord.messages
+            : result;
+  const itemCount = Array.isArray(candidates) ? candidates.length : result ? 1 : 0;
+
+  return {
+    available: Boolean(result),
+    kind: summaryKind(method),
+    itemCount,
+    primaryLabel: firstLabel(candidates ?? result),
+    responseHash: result ? hashValue(result) : "not_executed",
+  };
 }
 
 function resourcePayload(server: SwiggyServer, uri: string, resourceType: McpResourceStudioItem["resourceType"]) {
@@ -302,6 +359,62 @@ export function buildMcpResourcePromptStudio(): McpResourcePromptStudio {
       "Live resources/list and resources/read must be re-run against Swiggy staging after Builder Access credentials are issued.",
       "Live prompts/list and prompts/get must be compared against the local prompt contracts before production promotion.",
       "Hosted Swiggy widget iframe URLs, prompt-template ownership, and static metadata freshness remain Swiggy-controlled.",
+    ],
+  };
+}
+
+export async function executeMcpResourcePrompt(input: {
+  config: ServerConfig;
+  server: SwiggyServer;
+  method: ResourcePromptMethod;
+  params: Record<string, unknown>;
+  liveCredentialReady: boolean;
+  executeJsonRpc: (server: SwiggyServer, method: ResourcePromptMethod, params: Record<string, unknown>) => Promise<unknown>;
+}): Promise<McpResourcePromptExecution> {
+  const riskFlags: string[] = [];
+  if (input.config.swiggyMode !== "mock" && !input.liveCredentialReady) {
+    riskFlags.push("live_swiggy_token_required_for_resource_prompt_method");
+  }
+
+  const decision: McpResourcePromptExecution["decision"] =
+    input.config.swiggyMode !== "mock" && !input.liveCredentialReady ? "external_gate" : "executed";
+  const response =
+    decision === "executed" ? await input.executeJsonRpc(input.server, input.method, input.params) : undefined;
+  const paramKeys = Object.keys(input.params).sort();
+
+  return {
+    generatedAt: new Date().toISOString(),
+    requestId: `resource_prompt_${Date.now().toString(36)}`,
+    mode: input.config.swiggyMode,
+    input: {
+      server: input.server,
+      method: input.method,
+    },
+    decision,
+    executedMethod: decision === "executed" ? input.method : undefined,
+    requestShape: {
+      jsonrpc: "2.0",
+      method: input.method,
+      paramKeys,
+    },
+    responseSummary: summarizeResponse(input.method, response),
+    riskFlags,
+    userFacingCopy:
+      decision === "executed"
+        ? `Executed ${input.server}.${input.method} and retained only a redacted response summary.`
+        : "Live resources and prompts are gated until Swiggy credentials are available for this environment.",
+    telemetry: [
+      { field: "server", value: input.server, redaction: "safe enum" },
+      { field: "method", value: input.method, redaction: "MCP method only" },
+      { field: "param_keys", value: paramKeys.join(",") || "none", redaction: "keys only" },
+      { field: "response_hash", value: summarizeResponse(input.method, response).responseHash, redaction: "sha256 prefix only" },
+      { field: "raw_resource_prompt_payload_retained", value: "false", redaction: "hard-coded privacy invariant" },
+    ],
+    assertions: [
+      "Resource and prompt execution is limited to MCP resources/list, resources/read, prompts/list, and prompts/get.",
+      "Raw resource bodies, prompt messages, widget metadata, and prompt arguments are not retained by the execution response.",
+      "Live Swiggy resource and prompt execution remains credential-gated outside mock mode.",
+      "Food, Instamart, and Dineout resource/prompt methods stay server-scoped.",
     ],
   };
 }

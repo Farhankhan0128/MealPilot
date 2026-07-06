@@ -236,6 +236,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/mcp/state-orchestrator`
 - `GET /api/mcp/capability-registry`
 - `GET /api/mcp/resource-prompt-studio`
+- `POST /api/mcp/resource-prompt-studio/execute`
 - `GET /api/mcp-gateway`
 - `GET /api/auth/swiggy/status`
 - `GET /api/swiggy-auth-lifecycle-center`
@@ -460,7 +461,7 @@ The test suite checks that:
 - Staging Certification Matrix assigns all 35 tools to OAuth, read, mutation, commercial, support, 48-hour soak, and production-promotion waves while preserving staging credentials and production approval as external gates.
 - Staging Transcript Export converts one plan session into Swiggy-ready JSONL, Markdown replay, redaction manifest, support envelope, certification-wave mapping, and non-blind retry evidence.
 - MCP Capability Registry maps `mcp:tools`, `mcp:resources`, `mcp:prompts`, OAuth metadata, widget registry, static metadata, prompt templates, and external gates.
-- Resource & Prompt Studio exercises all local `resources/list`, `resources/read`, `prompts/list`, and `prompts/get` paths across Food, Instamart, and Dineout.
+- Resource & Prompt Studio exercises all local `resources/list`, `resources/read`, `prompts/list`, and `prompts/get` paths across Food, Instamart, and Dineout; `/api/mcp/resource-prompt-studio/execute` runs each method with hashed response summaries, no raw payload retention, and live credential gates.
 - Swiggy Visual Dish Capture Center validates the camera-to-commerce lane with no raw-image retention, user-confirmed labels, Food/Instamart/Dineout route plans, and vision or staging gates before live execution.
 - Swiggy Voice Commerce Rehearsal Center validates short spoken scripts, visual card fallbacks, no raw-audio retention, and confirmation prompts across Food, Instamart, Dineout, and combined journeys.
 - Local MCP JSON-RPC supports `resources/list`, `resources/read`, `prompts/list`, and `prompts/get` for review-time evidence before live Swiggy credentials.

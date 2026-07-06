@@ -106,6 +106,8 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/swiggy-live-signal-calibration"].get.responses["200"].description).toContain("privacy controls");
     expect(openApi.body.paths["/api/mcp/capability-registry"].get.summary).toContain("capability registry");
     expect(openApi.body.paths["/api/mcp/resource-prompt-studio"].get.summary).toContain("Resource and Prompt Studio");
+    expect(openApi.body.paths["/api/mcp/resource-prompt-studio/execute"].post.summary).toContain("resource or prompt");
+    expect(openApi.body.paths["/api/mcp/resource-prompt-studio/execute"].post.responses["200"].description).toContain("no raw payload");
     expect(openApi.body.paths["/api/credential-onboarding"].get.summary).toContain("Dynamic Client Registration");
     expect(openApi.body.paths["/api/sandbox-credential-workbench"].get.summary).toContain("sandbox");
     expect(openApi.body.paths["/api/access-submission-studio"].get.summary).toContain("submission studio");
@@ -3564,6 +3566,33 @@ describe("MealPilot API", () => {
     );
     expect(studio.smokeRequests).toHaveLength(12);
     expect(studio.externalGates.some((gate: string) => gate.includes("Live resources/list"))).toBe(true);
+
+    const resourceExecution = await request(app)
+      .post("/api/mcp/resource-prompt-studio/execute")
+      .send({
+        server: "food",
+        method: "resources/read",
+        params: { uri: "swiggy://food/widgets" },
+      })
+      .expect(200);
+    expect(resourceExecution.body.resourcePromptExecution.decision).toBe("executed");
+    expect(resourceExecution.body.resourcePromptExecution.executedMethod).toBe("resources/read");
+    expect(resourceExecution.body.resourcePromptExecution.responseSummary.kind).toBe("resource_read");
+    expect(resourceExecution.body.resourcePromptExecution.responseSummary.available).toBe(true);
+    expect(resourceExecution.body.resourcePromptExecution.telemetry.some((field: { field: string; value: string }) => field.field === "raw_resource_prompt_payload_retained" && field.value === "false")).toBe(true);
+
+    const promptExecution = await request(app)
+      .post("/api/mcp/resource-prompt-studio/execute")
+      .send({
+        server: "dineout",
+        method: "prompts/get",
+        params: { name: "dineout_evening_planner", arguments: { guests: 4, date: "saturday" } },
+      })
+      .expect(200);
+    expect(promptExecution.body.resourcePromptExecution.decision).toBe("executed");
+    expect(promptExecution.body.resourcePromptExecution.executedMethod).toBe("prompts/get");
+    expect(promptExecution.body.resourcePromptExecution.responseSummary.kind).toBe("prompt_get");
+    expect(promptExecution.body.resourcePromptExecution.responseSummary.itemCount).toBeGreaterThan(0);
   });
 
   it("returns cart preflight, replay, demo studio, and submission package evidence", async () => {

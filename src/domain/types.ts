@@ -532,6 +532,40 @@ export interface McpResourcePromptStudio {
   externalGates: string[];
 }
 
+export type McpResourcePromptExecutionDecision = "executed" | "external_gate";
+
+export interface McpResourcePromptExecution {
+  generatedAt: string;
+  requestId: string;
+  mode: "mock" | "staging" | "production";
+  input: {
+    server: SwiggyServer;
+    method: "resources/list" | "resources/read" | "prompts/list" | "prompts/get";
+  };
+  decision: McpResourcePromptExecutionDecision;
+  executedMethod?: "resources/list" | "resources/read" | "prompts/list" | "prompts/get";
+  requestShape: {
+    jsonrpc: "2.0";
+    method: "resources/list" | "resources/read" | "prompts/list" | "prompts/get";
+    paramKeys: string[];
+  };
+  responseSummary: {
+    available: boolean;
+    kind: "resource_list" | "resource_read" | "prompt_list" | "prompt_get" | "unknown";
+    itemCount: number;
+    primaryLabel: string;
+    responseHash: string;
+  };
+  riskFlags: string[];
+  userFacingCopy: string;
+  telemetry: Array<{
+    field: string;
+    value: string;
+    redaction: string;
+  }>;
+  assertions: string[];
+}
+
 export interface SwiggyBuilderPageCoverage {
   id: string;
   section: "home" | "start" | "build" | "reference" | "operate" | "blog" | "footer";

@@ -29,6 +29,7 @@ import type {
   MealPlan,
   McpBackpressureGovernorReport,
   McpCapabilityRegistry,
+  McpResourcePromptExecution,
   McpGatewayStatus,
   McpResourcePromptStudio,
   McpToolLabReport,
@@ -272,6 +273,20 @@ export function fetchMcpCapabilityRegistry() {
 
 export function fetchMcpResourcePromptStudio() {
   return requestJson<{ resourcePromptStudio: McpResourcePromptStudio }>("/api/mcp/resource-prompt-studio");
+}
+
+export function executeMcpResourcePrompt(input: {
+  server: "food" | "instamart" | "dineout";
+  method: "resources/list" | "resources/read" | "prompts/list" | "prompts/get";
+  params?: Record<string, unknown>;
+}) {
+  return requestJson<{ resourcePromptExecution: McpResourcePromptExecution }>(
+    "/api/mcp/resource-prompt-studio/execute",
+    {
+      method: "POST",
+      body: JSON.stringify(input),
+    },
+  );
 }
 
 export function fetchSwiggyToolContractMatrix() {

@@ -172,7 +172,7 @@ The application will include a 2-3 minute Loom or unlisted YouTube demo showing:
 14. Show `/api/submission-console`, `/api/access-submission-studio`, and `/api/swiggy-access-evidence-matrix` with developer/enterprise targets, official CTAs, copy blocks, attachments, browser runbook steps, blockers, owners, proof commands, and drafts. Save demo URL, primary contact, production redirect URI, static egress/IP, environment summary, terms acknowledgement, submitted-form timestamp, and sent-email timestamp through `PATCH /api/access-submission-studio/state` before recording the final reviewer packet.
 15. Show `/api/swiggy-route-optimizer` with call-saving routes, optimizer profiles, parallel read batches, cache/retry policies, cross-server handoffs, redaction rules, confirmation gates, and staging assertions.
 16. Show `/api/mcp/capability-registry` with tools, resources, prompts, metadata, widgets, and external gates.
-17. Show `/api/mcp/resource-prompt-studio` with all six resource reads, all six prompt samples, and twelve JSON-RPC smoke requests.
+17. Show `/api/mcp/resource-prompt-studio` and `/api/mcp/resource-prompt-studio/execute` with all six resource reads, all six prompt samples, twelve JSON-RPC smoke requests, executable method calls, and no-raw-payload summaries.
 18. Show `/api/support/bridge` and `/api/support/bridge/report` with Food, Instamart, and Dineout `report_error` payloads, consent gates, redacted toolContext, and receipt evidence.
 19. Show `/api/swiggy-docs-coverage` and `/api/swiggy-docs-twin-explorer` with 69 docs pages mapped to evidence, markdown twins, rendered URLs, retrieval lanes, and external gates.
 20. Show `/api/ai-client-connect-kit` with six client configs, coding-agent rules, SDK auth modes, and delegated-auth gates.
@@ -225,7 +225,7 @@ Email: add primary engineering email before submission.
 - Access Submission Studio saved handoff state: `PATCH /api/access-submission-studio/state`
 - Swiggy Access Evidence Matrix: `/api/swiggy-access-evidence-matrix`
 - MCP Capability Registry: `/api/mcp/capability-registry`
-- Resource & Prompt Studio: `/api/mcp/resource-prompt-studio`
+- Resource & Prompt Studio: `/api/mcp/resource-prompt-studio`, `/api/mcp/resource-prompt-studio/execute`
 - Swiggy Docs Coverage: `/api/swiggy-docs-coverage`
 - Swiggy Docs Twin Explorer: `/api/swiggy-docs-twin-explorer`
 - Swiggy Upstream Watch: `/api/swiggy-upstream-watch`

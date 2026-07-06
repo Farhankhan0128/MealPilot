@@ -283,7 +283,9 @@ assert(
   "OpenAPI Support Bridge report route is missing",
 );
 assert(
-  openApi.paths["/api/mcp/resource-prompt-studio"].get.summary.includes("Resource and Prompt Studio"),
+  openApi.paths["/api/mcp/resource-prompt-studio"].get.summary.includes("Resource and Prompt Studio") &&
+    openApi.paths["/api/mcp/resource-prompt-studio/execute"].post.summary.includes("resource or prompt") &&
+    openApi.paths["/api/mcp/resource-prompt-studio/execute"].post.responses["200"].description.includes("no raw payload"),
   "OpenAPI resource and prompt studio is missing",
 );
 assert(
@@ -2610,6 +2612,38 @@ assert(
   resourcePromptStudio.resourcePromptStudio.externalGates.some((gate) => gate.includes("Live resources/list")),
   "resource and prompt studio live Swiggy gates are missing",
 );
+const resourcePromptExecution = await request("/api/mcp/resource-prompt-studio/execute", {
+  method: "POST",
+  body: JSON.stringify({
+    server: "food",
+    method: "resources/read",
+    params: { uri: "swiggy://food/widgets" },
+  }),
+});
+assert(resourcePromptExecution.resourcePromptExecution.decision === "executed", "resource prompt execution decision is wrong");
+assert(resourcePromptExecution.resourcePromptExecution.executedMethod === "resources/read", "resource prompt executed method is wrong");
+assert(
+  resourcePromptExecution.resourcePromptExecution.responseSummary.kind === "resource_read" &&
+    resourcePromptExecution.resourcePromptExecution.responseSummary.available === true,
+  "resource prompt execution summary is incomplete",
+);
+assert(
+  resourcePromptExecution.resourcePromptExecution.telemetry.some(
+    (field) => field.field === "raw_resource_prompt_payload_retained" && field.value === "false",
+  ),
+  "resource prompt execution raw-payload telemetry is missing",
+);
+const promptExecution = await request("/api/mcp/resource-prompt-studio/execute", {
+  method: "POST",
+  body: JSON.stringify({
+    server: "dineout",
+    method: "prompts/get",
+    params: { name: "dineout_evening_planner", arguments: { guests: 4, date: "saturday" } },
+  }),
+});
+assert(promptExecution.resourcePromptExecution.decision === "executed", "prompt execution decision is wrong");
+assert(promptExecution.resourcePromptExecution.responseSummary.kind === "prompt_get", "prompt execution summary is wrong");
+assert(promptExecution.resourcePromptExecution.responseSummary.itemCount > 0, "prompt execution message count is missing");
 
 const gateway = await request("/api/mcp-gateway");
 assert(gateway.gateway.readinessScore >= 90, "MCP gateway readiness score is below target");
@@ -4882,6 +4916,8 @@ console.log(
       resourcePromptScore: resourcePromptStudio.resourcePromptStudio.score,
       resourcePromptResources: resourcePromptStudio.resourcePromptStudio.totalResources,
       resourcePromptPrompts: resourcePromptStudio.resourcePromptStudio.totalPrompts,
+      resourcePromptExecutionDecision: resourcePromptExecution.resourcePromptExecution.decision,
+      resourcePromptExecutionMethod: resourcePromptExecution.resourcePromptExecution.executedMethod,
       gatewayScore: gateway.gateway.readinessScore,
       stagingCutoverScore: stagingCutover.stagingCutover.score,
       stagingCutoverDryRuns: stagingCutover.stagingCutover.dryRunCalls,

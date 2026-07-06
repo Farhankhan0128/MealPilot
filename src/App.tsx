@@ -2545,6 +2545,10 @@ function LaunchCenterPanel({
               <strong>{resourcePromptStudio?.smokeRequests.length ?? 0}</strong>
               <span>Smoke calls</span>
             </div>
+            <div>
+              <strong>{resourcePromptStudio ? "POST" : "-"}</strong>
+              <span>Execute gate</span>
+            </div>
           </div>
           <ul className="compact-status-list">
             {(resourcePromptStudio?.serverSummaries ?? []).map((server) => (
@@ -2556,6 +2560,14 @@ function LaunchCenterPanel({
               </li>
             ))}
           </ul>
+          <div className="source-links">
+            <a href="/api/mcp/resource-prompt-studio" target="_blank" rel="noreferrer">
+              Studio API
+            </a>
+            <a href="/api/openapi.json" target="_blank" rel="noreferrer">
+              Execute schema
+            </a>
+          </div>
         </article>
 
         <article className="contract-matrix-card">
