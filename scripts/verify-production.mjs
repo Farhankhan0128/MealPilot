@@ -140,6 +140,11 @@ assert(
   "OpenAPI payment truth contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-meal-window-intelligence"].get.summary.includes("Meal Window") &&
+    openApi.paths["/api/swiggy-meal-window-intelligence/forecast"].post.summary.includes("Forecast"),
+  "OpenAPI meal window intelligence contract is missing",
+);
+assert(
   openApi.paths["/api/nutrition-budget-intelligence"].get.summary.includes("Nutrition and Budget"),
   "OpenAPI nutrition and budget intelligence contract is missing",
 );
@@ -928,6 +933,54 @@ assert(
     paymentReconciliation.reconciliation.riskFlags.includes("cod_must_come_from_cart_payment_methods"),
   "payment truth reconciliation route is wrong",
 );
+
+const mealWindow = await request("/api/swiggy-meal-window-intelligence");
+assert(mealWindow.mealWindow.score >= 88, "meal window intelligence score is below target");
+assert(
+  mealWindow.mealWindow.totals.lanes === 5 &&
+    mealWindow.mealWindow.totals.readyLanes === 4 &&
+    mealWindow.mealWindow.totals.guardrails === 5 &&
+    mealWindow.mealWindow.totals.readyGuardrails === 4 &&
+    mealWindow.mealWindow.totals.samples === 4,
+  "meal window intelligence totals are incomplete",
+);
+assert(
+  [
+    "weekday_lunch_eta_guard",
+    "dinner_pantry_vs_delivery",
+    "dineout_slot_window",
+    "post_confirmation_tracking_window",
+    "weekend_combined_window",
+  ].every((id) => mealWindow.mealWindow.lanes.some((lane) => lane.id === id)),
+  "meal window intelligence lanes are incomplete",
+);
+assert(
+  mealWindow.mealWindow.guardrails.some(
+    (guard) => guard.id === "no_scheduled_food_order" && guard.policy.includes("no scheduled-delivery tool"),
+  ),
+  "meal window no-scheduled-order guardrail is missing",
+);
+const mealForecast = await request("/api/swiggy-meal-window-intelligence/forecast", {
+  method: "POST",
+  body: JSON.stringify({
+    city: "Bengaluru",
+    window: "lunch",
+    partySize: 2,
+    urgency: "now",
+    includeDineout: false,
+  }),
+});
+assert(
+  mealForecast.forecast.selectedLaneId === "weekday_lunch_eta_guard" &&
+    mealForecast.forecast.etaRisk === "high",
+  "meal window forecast route is wrong",
+);
+assert(
+  mealForecast.forecast.telemetry.some(
+    (item) => item.field === "scheduled_food_order" && item.value === "false",
+  ) && mealForecast.forecast.assertions.some((assertion) => assertion.includes("do not schedule Food orders")),
+  "meal window forecast safety telemetry is incomplete",
+);
 assert(
   paymentReconciliation.reconciliation.telemetry.some(
     (item) => item.field === "raw_payment_instrument_retained" && item.value === "false",
@@ -1364,8 +1417,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 33, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 33, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 34, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 34, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -1476,6 +1529,12 @@ assert(
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some((target) => target.id === "meal_window_card" && target.selector === ".meal-window-card"),
+  ),
+  "visual QA meal window target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
     group.targets.some((target) => target.id === "developer_quickstart_card" && target.selector === ".developer-quickstart-card"),
   ),
   "visual QA developer quickstart target is missing",
@@ -1566,7 +1625,7 @@ assert(
     (command) =>
       command.id === "visual_capture_harness" &&
       command.command === "npm run verify:visual" &&
-      command.expectedSignal.includes("targetCount >= 33"),
+      command.expectedSignal.includes("targetCount >= 34"),
   ),
   "visual QA Playwright command is missing",
 );
@@ -3058,6 +3117,10 @@ assert(
   "reviewer proof payment truth artifact is missing",
 );
 assert(
+  proof.proof.artifacts.some((artifact) => artifact.label === "Swiggy Meal Window Intelligence"),
+  "reviewer proof meal window artifact is missing",
+);
+assert(
   proof.proof.artifacts.some((artifact) => artifact.label === "Nutrition & Budget Intelligence"),
   "reviewer proof nutrition and budget artifact is missing",
 );
@@ -4062,7 +4125,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 33, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 34, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -4076,7 +4139,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("33")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("34")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -4118,6 +4181,7 @@ assert(
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Quality Loop Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Ritual Autopilot Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Payment Truth Center") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Meal Window Intelligence") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Nutrition & Budget Intelligence") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Household Preference Graph") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Guest Collaboration & Calendar Center") &&
@@ -4255,6 +4319,10 @@ assert(
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-payment-truth-center"),
   "launch bundle payment truth handoff link is missing",
+);
+assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-meal-window-intelligence"),
+  "launch bundle meal window handoff link is missing",
 );
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/nutrition-budget-intelligence"),
@@ -4591,6 +4659,9 @@ console.log(
       paymentTruthScore: paymentTruth.paymentTruth.score,
       paymentTruthLanes: paymentTruth.paymentTruth.totals.lanes,
       paymentTruthStatus: paymentReconciliation.reconciliation.settlementStatus,
+      mealWindowScore: mealWindow.mealWindow.score,
+      mealWindowLanes: mealWindow.mealWindow.totals.lanes,
+      mealWindowForecastLane: mealForecast.forecast.selectedLaneId,
       nutritionBudgetScore: nutritionBudget.nutritionBudget.score,
       nutritionBudgetRoutes: nutritionBudget.nutritionBudget.totalRoutes,
       householdPreferenceScore: householdPreference.householdPreference.score,

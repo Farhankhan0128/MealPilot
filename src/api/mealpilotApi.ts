@@ -87,6 +87,9 @@ import type {
   SwiggyOfferIntelligenceReport,
   SwiggyOperatingContractCenterReport,
   SwiggyOrderLifecycleReport,
+  SwiggyMealWindow,
+  SwiggyMealWindowCenter,
+  SwiggyMealWindowForecast,
   SwiggyPaymentTruthCenter,
   SwiggyPaymentTruthReconciliation,
   SwiggyScenarioRunnerReport,
@@ -398,6 +401,23 @@ export function planSwiggyRitualAutopilot(input: {
 
 export function fetchSwiggyPaymentTruthCenter() {
   return requestJson<{ paymentTruth: SwiggyPaymentTruthCenter }>("/api/swiggy-payment-truth-center");
+}
+
+export function fetchSwiggyMealWindowCenter() {
+  return requestJson<{ mealWindow: SwiggyMealWindowCenter }>("/api/swiggy-meal-window-intelligence");
+}
+
+export function forecastSwiggyMealWindow(input: {
+  city: "Bengaluru" | "Delhi NCR" | "Mumbai";
+  window: SwiggyMealWindow;
+  partySize: number;
+  urgency: "now" | "today" | "this_week";
+  includeDineout: boolean;
+}) {
+  return requestJson<{ forecast: SwiggyMealWindowForecast }>("/api/swiggy-meal-window-intelligence/forecast", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
 }
 
 export function reconcileSwiggyPaymentTruth(input: {

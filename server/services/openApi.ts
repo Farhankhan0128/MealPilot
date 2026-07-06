@@ -461,6 +461,30 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-meal-window-intelligence": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Meal Window Intelligence for order, cook, reserve, and track timing gates",
+          responses: {
+            "200": {
+              description:
+                "Timing-aware Food, Instamart, Dineout, combined, and tracking lanes with no scheduled Food order invariant, fresh-read windows, cadence caps, samples, and official Swiggy source links",
+            },
+          },
+        },
+      },
+      "/api/swiggy-meal-window-intelligence/forecast": {
+        post: {
+          tags: ["Commerce"],
+          summary: "Forecast a safe meal window route before Swiggy cart, checkout, booking, or tracking actions",
+          responses: {
+            "200": {
+              description:
+                "Selected timing lane, ETA risk bucket, route plan, redacted telemetry, no-scheduled-order assertion, and fresh-read confirmation requirements",
+            },
+          },
+        },
+      },
       "/api/nutrition-budget-intelligence": {
         get: {
           tags: ["Builder Access"],

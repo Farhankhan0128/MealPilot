@@ -277,6 +277,17 @@ const targetGroups = [
         "artifacts/visual-qa/payment-truth-card.png",
       ),
       target(
+        "meal_window_card",
+        "Meal Window Intelligence card",
+        "/",
+        ".meal-window-card",
+        "desktop",
+        1280,
+        900,
+        "Meal Window Intelligence shows order, cook, reserve, track, and wait timing gates with no scheduled Food order invariant.",
+        "artifacts/visual-qa/meal-window-card.png",
+      ),
+      target(
         "developer_quickstart_card",
         "Developer Quickstart card",
         "/",
@@ -515,7 +526,7 @@ const commands = [
     "visual_capture_harness",
     "npm run verify:visual",
     "Playwright captures every Visual QA target at desktop, tablet, and mobile sizes and writes report.json.",
-    "ok true with targetCount >= 33 and PNG files under artifacts/visual-qa.",
+    "ok true with targetCount >= 34 and PNG files under artifacts/visual-qa.",
   ),
   command(
     "desktop_capture",

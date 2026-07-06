@@ -1534,6 +1534,82 @@ export interface SwiggyPaymentTruthCenter {
   externalGates: string[];
 }
 
+export type SwiggyMealWindowStatus = "ready" | "watch" | "confirmation_gate" | "staging_gate";
+export type SwiggyMealWindow = "breakfast" | "lunch" | "dinner" | "late_night" | "weekend";
+export type SwiggyMealWindowSignal = "restaurant_eta" | "menu_availability" | "product_availability" | "dineout_slots" | "tracking_cadence" | "reminder_time";
+
+export interface SwiggyMealWindowLane {
+  id: string;
+  label: string;
+  window: SwiggyMealWindow;
+  server: SwiggyServer | "combined";
+  status: SwiggyMealWindowStatus;
+  swiggyTools: string[];
+  timingSignals: SwiggyMealWindowSignal[];
+  userPromise: string;
+  optimizationRule: string;
+  confirmationBoundary: string;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyMealWindowGuardrail {
+  id: string;
+  label: string;
+  status: SwiggyMealWindowStatus;
+  policy: string;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyMealWindowSample {
+  id: string;
+  prompt: string;
+  selectedLane: string;
+  window: SwiggyMealWindow;
+  status: SwiggyMealWindowStatus;
+}
+
+export interface SwiggyMealWindowForecast {
+  generatedAt: string;
+  requestId: string;
+  mode: "mock" | "staging" | "production";
+  input: {
+    city: string;
+    window: SwiggyMealWindow;
+    partySize: number;
+    urgency: "now" | "today" | "this_week";
+    includeDineout: boolean;
+  };
+  selectedLaneId: string;
+  etaRisk: "low" | "medium" | "high";
+  recommendedRoute: SwiggyServer | "combined";
+  recommendedAction: string;
+  timingPlan: Array<{ sequence: number; label: string; server: SwiggyServer | "combined"; tool: string; guardrail: string }>;
+  swiggyRoute: SwiggyMealWindowLane;
+  telemetry: Array<{ field: string; value: string; redaction: string }>;
+  assertions: string[];
+}
+
+export interface SwiggyMealWindowCenter {
+  generatedAt: string;
+  score: number;
+  mode: "mock" | "staging" | "production";
+  officialSources: string[];
+  totals: {
+    lanes: number;
+    readyLanes: number;
+    guardrails: number;
+    readyGuardrails: number;
+    samples: number;
+    externalGates: number;
+  };
+  lanes: SwiggyMealWindowLane[];
+  guardrails: SwiggyMealWindowGuardrail[];
+  samples: SwiggyMealWindowSample[];
+  operatorRunbook: Array<{ sequence: number; label: string; command: string; proves: string }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type NutritionBudgetStatus = "ready" | "needs_live_data" | "external_gate";
 
 export interface NutritionBudgetTarget {

@@ -58,6 +58,7 @@ Status: in progress.
 - Add Swiggy Quality Loop Center for consented post-experience learning, support-safe feedback analysis, repeat optimization, and no raw Swiggy payload retention. Complete.
 - Add Swiggy Ritual Autopilot Center for consented recurring household routines, reminder-only cadence, fresh reads, and no automatic checkout, order, booking, or subscription behavior. Complete.
 - Add Swiggy Payment Truth Center for cart totals, coupons, COD eligibility, Instamart bills, Dineout free-booking proof, paid-cart gates, and no raw payment-instrument retention. Complete.
+- Add Swiggy Meal Window Intelligence for order/cook/reserve/track/wait timing gates, advisory ETA risk, no scheduled Food orders, and fresh reads before action. Complete.
 - Add Nutrition & Budget Intelligence for protein-per-rupee planning, coupon-safe cart review, Instamart pantry gaps, group budgets, Dineout balance, and nutrition-estimate gates. Complete.
 - Add Household Preference Graph for consented active-order, go-to item, order-history, Dineout location, household weighting, forecast, and retention evidence. Complete.
 - Add Guest Collaboration & Calendar Center for guest votes, occasion templates, Dineout-first planning, Food reminder handoffs, Instamart prep, calendar artifacts, Slack/Teams gates, and voice-safe briefs. Complete.

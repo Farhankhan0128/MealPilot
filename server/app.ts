@@ -97,6 +97,7 @@ import { buildSwiggyOfferIntelligence } from "./services/offerIntelligence.js";
 import { buildSwiggyOperatingContractCenter } from "./services/operatingContractCenter.js";
 import { buildSwiggyOrderLifecycle } from "./services/orderLifecycle.js";
 import { buildSwiggyPaymentTruthCenter, reconcileSwiggyPaymentTruth } from "./services/paymentTruthCenter.js";
+import { buildSwiggyMealWindowCenter, forecastSwiggyMealWindow } from "./services/mealWindowIntelligence.js";
 import { buildPremiumConciergeItinerary } from "./services/premiumConciergeItinerary.js";
 import { buildPremiumUseCaseStudio } from "./services/premiumUseCaseStudio.js";
 import { analyzeSwiggyQualityFeedback, buildSwiggyQualityLoopCenter } from "./services/qualityLoopCenter.js";
@@ -235,6 +236,14 @@ const paymentTruthReconcileSchema = z.object({
   expectedDiscount: z.number().min(0).max(50000),
   paymentPreference: z.enum(["cod", "online", "free_booking", "unknown"]),
   city: z.enum(["Bengaluru", "Delhi NCR", "Mumbai"]),
+});
+
+const mealWindowForecastSchema = z.object({
+  city: z.enum(["Bengaluru", "Delhi NCR", "Mumbai"]),
+  window: z.enum(["breakfast", "lunch", "dinner", "late_night", "weekend"]),
+  partySize: z.number().int().min(1).max(20),
+  urgency: z.enum(["now", "today", "this_week"]),
+  includeDineout: z.boolean(),
 });
 
 const mcpServerSchema = z.enum(["food", "instamart", "dineout"]);
@@ -796,6 +805,20 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
     const body = paymentTruthReconcileSchema.parse(req.body);
     res.json({
       reconciliation: reconcileSwiggyPaymentTruth({
+        config,
+        ...body,
+      }),
+    });
+  });
+
+  app.get("/api/swiggy-meal-window-intelligence", (_req, res) => {
+    res.json({ mealWindow: buildSwiggyMealWindowCenter(config) });
+  });
+
+  app.post("/api/swiggy-meal-window-intelligence/forecast", (req, res) => {
+    const body = mealWindowForecastSchema.parse(req.body);
+    res.json({
+      forecast: forecastSwiggyMealWindow({
         config,
         ...body,
       }),

@@ -150,6 +150,15 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
         "Reconciles Food cart totals, coupons, COD, Instamart checkout bills, Dineout free bookings, and paid-cart gates from Swiggy source-of-truth readbacks without storing payment instruments.",
     },
     {
+      id: "meal_window_intelligence",
+      label: "Swiggy Meal Window Intelligence",
+      path: "/api/swiggy-meal-window-intelligence",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Forecasts when to order, cook, reserve, track, or wait with fresh-read timing gates, no scheduled Food orders, tracking cadence caps, and advisory-only ETA risk buckets.",
+    },
+    {
       id: "nutrition_budget_intelligence",
       label: "Nutrition & Budget Intelligence",
       path: "/api/nutrition-budget-intelligence",
@@ -944,6 +953,7 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- Swiggy Quality Loop Center: /api/swiggy-quality-loop-center",
     "- Swiggy Ritual Autopilot Center: /api/swiggy-ritual-autopilot-center",
     "- Swiggy Payment Truth Center: /api/swiggy-payment-truth-center",
+    "- Swiggy Meal Window Intelligence: /api/swiggy-meal-window-intelligence",
     "- Nutrition & Budget Intelligence: /api/nutrition-budget-intelligence",
     "- Household Preference Graph: /api/household-preference-graph",
     "- Guest Collaboration & Calendar Center: /api/guest-collaboration-calendar",

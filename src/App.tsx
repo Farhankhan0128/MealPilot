@@ -134,6 +134,7 @@ import {
   fetchSwiggyLocationTrust,
   fetchSwiggyOfferIntelligence,
   fetchSwiggyOrderLifecycle,
+  fetchSwiggyMealWindowCenter,
   fetchSwiggyPaymentTruthCenter,
   fetchSwiggyQualityLoopCenter,
   fetchSwiggyRitualAutopilotCenter,
@@ -245,6 +246,7 @@ import type {
   SwiggyOfferIntelligenceReport,
   SwiggyOperatingContractCenterReport,
   SwiggyOrderLifecycleReport,
+  SwiggyMealWindowCenter,
   SwiggyPaymentTruthCenter,
   SwiggyQualityLoopCenter,
   SwiggyRitualAutopilotCenter,
@@ -424,6 +426,7 @@ function App() {
   const [qualityLoop, setQualityLoop] = useState<SwiggyQualityLoopCenter | null>(null);
   const [ritualAutopilot, setRitualAutopilot] = useState<SwiggyRitualAutopilotCenter | null>(null);
   const [paymentTruth, setPaymentTruth] = useState<SwiggyPaymentTruthCenter | null>(null);
+  const [mealWindow, setMealWindow] = useState<SwiggyMealWindowCenter | null>(null);
   const [nutritionBudget, setNutritionBudget] = useState<NutritionBudgetIntelligence | null>(null);
   const [householdPreference, setHouseholdPreference] = useState<HouseholdPreferenceGraph | null>(null);
   const [guestCollaboration, setGuestCollaboration] = useState<GuestCollaborationCenter | null>(null);
@@ -612,6 +615,7 @@ function App() {
       qualityLoopResponse,
       ritualAutopilotResponse,
       paymentTruthResponse,
+      mealWindowResponse,
       nutritionBudgetResponse,
       householdPreferenceResponse,
       guestCollaborationResponse,
@@ -702,6 +706,7 @@ function App() {
       fetchSwiggyQualityLoopCenter(),
       fetchSwiggyRitualAutopilotCenter(),
       fetchSwiggyPaymentTruthCenter(),
+      fetchSwiggyMealWindowCenter(),
       fetchNutritionBudgetIntelligence(),
       fetchHouseholdPreferenceGraph(),
       fetchGuestCollaborationCenter(),
@@ -793,6 +798,7 @@ function App() {
     setQualityLoop(qualityLoopResponse.qualityLoop);
     setRitualAutopilot(ritualAutopilotResponse.ritualAutopilot);
     setPaymentTruth(paymentTruthResponse.paymentTruth);
+    setMealWindow(mealWindowResponse.mealWindow);
     setNutritionBudget(nutritionBudgetResponse.nutritionBudget);
     setHouseholdPreference(householdPreferenceResponse.householdPreference);
     setGuestCollaboration(guestCollaborationResponse.guestCollaboration);
@@ -887,6 +893,7 @@ function App() {
       qualityLoopResponse,
       ritualAutopilotResponse,
       paymentTruthResponse,
+      mealWindowResponse,
       nutritionBudgetResponse,
       householdPreferenceResponse,
       guestCollaborationResponse,
@@ -974,6 +981,7 @@ function App() {
       fetchSwiggyQualityLoopCenter(),
       fetchSwiggyRitualAutopilotCenter(),
       fetchSwiggyPaymentTruthCenter(),
+      fetchSwiggyMealWindowCenter(),
       fetchNutritionBudgetIntelligence(),
       fetchHouseholdPreferenceGraph(),
       fetchGuestCollaborationCenter(),
@@ -1061,6 +1069,7 @@ function App() {
     setQualityLoop(qualityLoopResponse.qualityLoop);
     setRitualAutopilot(ritualAutopilotResponse.ritualAutopilot);
     setPaymentTruth(paymentTruthResponse.paymentTruth);
+    setMealWindow(mealWindowResponse.mealWindow);
     setNutritionBudget(nutritionBudgetResponse.nutritionBudget);
     setHouseholdPreference(householdPreferenceResponse.householdPreference);
     setGuestCollaboration(guestCollaborationResponse.guestCollaboration);
@@ -1722,6 +1731,7 @@ function App() {
                 qualityLoop={qualityLoop}
                 ritualAutopilot={ritualAutopilot}
                 paymentTruth={paymentTruth}
+                mealWindow={mealWindow}
                 nutritionBudget={nutritionBudget}
                 householdPreference={householdPreference}
                 guestCollaboration={guestCollaboration}
@@ -2299,6 +2309,7 @@ function LaunchCenterPanel({
   qualityLoop,
   ritualAutopilot,
   paymentTruth,
+  mealWindow,
   nutritionBudget,
   householdPreference,
   guestCollaboration,
@@ -2360,6 +2371,7 @@ function LaunchCenterPanel({
   qualityLoop: SwiggyQualityLoopCenter | null;
   ritualAutopilot: SwiggyRitualAutopilotCenter | null;
   paymentTruth: SwiggyPaymentTruthCenter | null;
+  mealWindow: SwiggyMealWindowCenter | null;
   nutritionBudget: NutritionBudgetIntelligence | null;
   householdPreference: HouseholdPreferenceGraph | null;
   guestCollaboration: GuestCollaborationCenter | null;
@@ -3620,6 +3632,53 @@ function LaunchCenterPanel({
             </a>
             <a href="https://mcp.swiggy.com/builders/docs/reference/food/get_food_cart/" target="_blank" rel="noreferrer">
               Cart truth
+            </a>
+          </div>
+        </article>
+
+        <article className="meal-window-card">
+          <div className="mini-heading">
+            <CalendarCheck aria-hidden="true" />
+            <strong>Meal Window Intelligence</strong>
+          </div>
+          <span>
+            {mealWindow
+              ? `${mealWindow.score}/100, ${mealWindow.totals.readyLanes}/${mealWindow.totals.lanes} timing lanes safe`
+              : "Forecasting when to order, cook, reserve, track, or wait"}
+          </span>
+          <div className="meal-window-grid">
+            <div>
+              <strong>{mealWindow?.totals.samples ?? 0}</strong>
+              <span>Samples</span>
+            </div>
+            <div>
+              <strong>
+                {mealWindow?.totals.readyGuardrails ?? 0}/{mealWindow?.totals.guardrails ?? 0}
+              </strong>
+              <span>Guards</span>
+            </div>
+            <div>
+              <strong>{mealWindow?.totals.externalGates ?? 0}</strong>
+              <span>Gates</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(mealWindow?.lanes ?? []).slice(0, 5).map((laneItem) => (
+              <li
+                key={laneItem.id}
+                data-status={laneItem.status === "staging_gate" || laneItem.status === "watch" ? "watch" : "healthy"}
+              >
+                <span>{laneItem.label}</span>
+                <strong>{laneItem.server === "combined" ? "Combined" : serverLabel(laneItem.server)}</strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-links">
+            <a href="/api/swiggy-meal-window-intelligence" target="_blank" rel="noreferrer">
+              Window API
+            </a>
+            <a href="https://mcp.swiggy.com/builders/docs/build/recipes/combined/" target="_blank" rel="noreferrer">
+              Combined timing
             </a>
           </div>
         </article>
