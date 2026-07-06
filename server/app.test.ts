@@ -82,6 +82,7 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/credential-onboarding"].get.summary).toContain("Dynamic Client Registration");
     expect(openApi.body.paths["/api/sandbox-credential-workbench"].get.summary).toContain("sandbox");
     expect(openApi.body.paths["/api/access-submission-studio"].get.summary).toContain("submission studio");
+    expect(openApi.body.paths["/api/access-submission-studio/state"].patch.summary).toContain("handoff state");
     expect(openApi.body.paths["/api/auth/swiggy/status"].get.summary).toContain("OAuth callback");
     expect(openApi.body.paths["/api/enterprise-delegated-auth"].get.summary).toContain("Enterprise Delegated Auth");
     expect(openApi.body.paths["/api/observability/traces"].get.summary).toContain("Trace spans");
@@ -789,6 +790,73 @@ describe("MealPilot API", () => {
     expect(studio.totals.operatorBlocks).toBeGreaterThanOrEqual(1);
     expect(studio.externalGates.some((gate: string) => gate.includes("official Swiggy access form"))).toBe(true);
     expect(studio.assertions.some((assertion: string) => assertion.includes("never auto-submits"))).toBe(true);
+  });
+
+  it("persists operator Swiggy access handoff state and updates submission readiness", async () => {
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "mealpilot-access-handoff-"));
+    const dataFile = path.join(tempDir, "store.json");
+    const first = createMealPilotServer({ store: createFileSessionStore(dataFile) });
+    await request(first.app).post("/api/plan").send(planningRequest).expect(201);
+
+    const saved = await request(first.app)
+      .patch("/api/access-submission-studio/state")
+      .send({
+        demoVideoUrl: "https://loom.com/share/mealpilot-demo",
+        technicalContactEmail: "eng@example.com",
+        productionRedirectUri: "https://mealpilot.example.com/auth/swiggy/callback",
+        staticEgressIp: "203.0.113.10/32",
+        environmentSummary: "Render web service, HTTPS redirect, secret env vars, production build.",
+        termsAcknowledged: true,
+      })
+      .expect(200);
+
+    const studio = saved.body.accessSubmissionStudio;
+    expect(studio.canSubmitNow).toBe(true);
+    expect(studio.handoffState.demoVideoUrl).toBe("https://loom.com/share/mealpilot-demo");
+    expect(
+      studio.copyBlocks.some(
+        (block: { id: string; status: string; value: string }) =>
+          block.id === "security_contact" && block.status === "ready" && block.value === "eng@example.com",
+      ),
+    ).toBe(true);
+    expect(
+      studio.copyBlocks.some(
+        (block: { id: string; status: string; value: string }) =>
+          block.id === "redirect_uris" &&
+          block.status === "ready" &&
+          block.value === "https://mealpilot.example.com/auth/swiggy/callback",
+      ),
+    ).toBe(true);
+    expect(
+      studio.attachmentChecklist.some(
+        (attachment: { id: string; status: string; path: string }) =>
+          attachment.id === "demo_video" &&
+          attachment.status === "ready" &&
+          attachment.path === "https://loom.com/share/mealpilot-demo",
+      ),
+    ).toBe(true);
+    expect(
+      studio.browserRunbook.some(
+        (step: { id: string; status: string }) => step.id === "copy_form_values" && step.status === "ready",
+      ),
+    ).toBe(true);
+    expect(studio.officialTargets.some((target: { id: string; status: string }) => target.id === "request_access" && target.status === "operator_input")).toBe(true);
+
+    const completed = await request(first.app)
+      .patch("/api/access-submission-studio/state")
+      .send({
+        formSubmittedAt: "2026-07-06T05:00:00.000Z",
+        handoffEmailSentAt: "2026-07-06T05:05:00.000Z",
+      })
+      .expect(200);
+    expect(completed.body.accessSubmissionStudio.canSubmitNow).toBe(false);
+    expect(completed.body.accessSubmissionStudio.officialTargets.every((target: { status: string }) => target.status !== "operator_input")).toBe(true);
+
+    const second = createMealPilotServer({ store: createFileSessionStore(dataFile) });
+    const reloaded = await request(second.app).get("/api/access-submission-studio").expect(200);
+    expect(reloaded.body.accessSubmissionStudio.handoffState.technicalContactEmail).toBe("eng@example.com");
+    expect(reloaded.body.accessSubmissionStudio.handoffState.formSubmittedAt).toBe("2026-07-06T05:00:00.000Z");
+    expect(reloaded.body.accessSubmissionStudio.officialTargets.every((target: { status: string }) => target.status !== "operator_input")).toBe(true);
   });
 
   it("returns an executable Swiggy builder packet export with Markdown output", async () => {

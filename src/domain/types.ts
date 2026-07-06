@@ -2395,6 +2395,19 @@ export interface AccessSubmissionStudioStep {
   action: string;
 }
 
+export interface AccessSubmissionHandoffState {
+  demoVideoUrl: string;
+  technicalContactEmail: string;
+  productionRedirectUri: string;
+  staticEgressIp: string;
+  environmentSummary: string;
+  termsAcknowledged: boolean;
+  formSubmittedAt?: string;
+  handoffEmailSentAt?: string;
+  notes: string;
+  updatedAt: string;
+}
+
 export interface AccessSubmissionStudio {
   generatedAt: string;
   score: number;
@@ -2406,6 +2419,7 @@ export interface AccessSubmissionStudio {
   copyBlocks: AccessSubmissionStudioCopyBlock[];
   attachmentChecklist: AccessSubmissionStudioAttachment[];
   browserRunbook: AccessSubmissionStudioStep[];
+  handoffState: AccessSubmissionHandoffState;
   mailto: {
     to: string;
     subject: string;

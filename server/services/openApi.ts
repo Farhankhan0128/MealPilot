@@ -611,6 +611,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/access-submission-studio/state": {
+        patch: {
+          tags: ["Builder Access"],
+          summary: "Save local Swiggy access handoff state",
+          responses: {
+            "200": {
+              description:
+                "Updated local demo URL, security contact, production redirect, egress, environment, terms, form submission, and handoff email state reflected in the access submission studio",
+            },
+          },
+        },
+      },
       "/api/builder-packet-export": {
         get: {
           tags: ["Builder Access"],

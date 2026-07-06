@@ -1,6 +1,13 @@
 import fs from "node:fs";
 import path from "node:path";
-import type { GroupPlan, MealPlan, PantryItem, Reminder, UserProfile } from "../../src/domain/types.js";
+import type {
+  AccessSubmissionHandoffState,
+  GroupPlan,
+  MealPlan,
+  PantryItem,
+  Reminder,
+  UserProfile,
+} from "../../src/domain/types.js";
 import { defaultUserProfile } from "../../src/domain/profile.js";
 
 export interface AuthSession {
@@ -21,6 +28,7 @@ export interface StoreSnapshot {
   plans: MealPlan[];
   reminders: Reminder[];
   authSessions: AuthSession[];
+  accessSubmission: AccessSubmissionHandoffState;
 }
 
 export interface StoreDiagnostics {
@@ -32,6 +40,7 @@ export interface StoreDiagnostics {
   pantryCount: number;
   authSessionCount: number;
   groupMemberCount: number;
+  accessSubmissionUpdatedAt?: string;
   lastSavedAt?: string;
 }
 
@@ -57,6 +66,8 @@ export interface SessionStore {
   updateGroupPlan(groupPlan: GroupPlan): GroupPlan;
   saveReminder(reminder: Reminder): void;
   getReminders(sessionId?: string): Reminder[];
+  getAccessSubmissionState(): AccessSubmissionHandoffState;
+  updateAccessSubmissionState(state: AccessSubmissionHandoffState): AccessSubmissionHandoffState;
   clearUserData(): void;
   getSnapshot(): StoreSnapshot;
   replaceSnapshot(snapshot: StoreSnapshot): StoreSnapshot;
@@ -94,6 +105,19 @@ function emptyGroupPlan(): GroupPlan {
   };
 }
 
+export function defaultAccessSubmissionState(): AccessSubmissionHandoffState {
+  return {
+    demoVideoUrl: "",
+    technicalContactEmail: "",
+    productionRedirectUri: "",
+    staticEgressIp: "",
+    environmentSummary: "",
+    termsAcknowledged: false,
+    notes: "",
+    updatedAt: new Date().toISOString(),
+  };
+}
+
 function snapshotNow(args: {
   profile: UserProfile;
   pantry: PantryItem[];
@@ -101,6 +125,7 @@ function snapshotNow(args: {
   plans: MealPlan[];
   reminders: Reminder[];
   authSessions: AuthSession[];
+  accessSubmission: AccessSubmissionHandoffState;
 }): StoreSnapshot {
   return {
     version: 1,
@@ -119,6 +144,10 @@ function normalizeSnapshot(input: Partial<StoreSnapshot> | undefined): StoreSnap
     plans: input?.plans ?? [],
     reminders: input?.reminders ?? [],
     authSessions: input?.authSessions ?? [],
+    accessSubmission: {
+      ...defaultAccessSubmissionState(),
+      ...(input?.accessSubmission ?? {}),
+    },
   };
 }
 
@@ -130,6 +159,7 @@ export function createMemorySessionStore(initial?: Partial<StoreSnapshot>): Sess
   let profile = snapshot.profile;
   let pantry: PantryItem[] = snapshot.pantry;
   let groupPlan: GroupPlan = snapshot.groupPlan;
+  let accessSubmission: AccessSubmissionHandoffState = snapshot.accessSubmission;
   let lastSavedAt = snapshot.savedAt;
 
   snapshot.plans.forEach((plan) => plans.set(plan.id, plan));
@@ -145,6 +175,7 @@ export function createMemorySessionStore(initial?: Partial<StoreSnapshot>): Sess
       plans: [...plans.values()],
       reminders: [...reminders.values()],
       authSessions: [...authSessions.values()],
+      accessSubmission,
     });
   }
 
@@ -197,6 +228,13 @@ export function createMemorySessionStore(initial?: Partial<StoreSnapshot>): Sess
       const allReminders = [...reminders.values()];
       return sessionId ? allReminders.filter((reminder) => reminder.sessionId === sessionId) : allReminders;
     },
+    getAccessSubmissionState() {
+      return accessSubmission;
+    },
+    updateAccessSubmissionState(nextState) {
+      accessSubmission = nextState;
+      return accessSubmission;
+    },
     clearUserData() {
       plans.clear();
       authSessions.clear();
@@ -204,6 +242,7 @@ export function createMemorySessionStore(initial?: Partial<StoreSnapshot>): Sess
       profile = defaultUserProfile;
       pantry = [];
       groupPlan = emptyGroupPlan();
+      accessSubmission = defaultAccessSubmissionState();
       lastSavedAt = new Date().toISOString();
     },
     getSnapshot() {
@@ -220,6 +259,7 @@ export function createMemorySessionStore(initial?: Partial<StoreSnapshot>): Sess
       profile = normalized.profile;
       pantry = normalized.pantry;
       groupPlan = normalized.groupPlan;
+      accessSubmission = normalized.accessSubmission;
       lastSavedAt = normalized.savedAt;
       return currentSnapshot();
     },
@@ -269,6 +309,7 @@ export function createMemorySessionStore(initial?: Partial<StoreSnapshot>): Sess
         pantryCount: pantry.length,
         authSessionCount: authSessions.size,
         groupMemberCount: groupPlan.members.length,
+        accessSubmissionUpdatedAt: accessSubmission.updatedAt,
         lastSavedAt,
       };
     },
@@ -342,6 +383,12 @@ export function createFileSessionStore(filePath: string): SessionStore {
     },
     getReminders(sessionId) {
       return memoryStore.getReminders(sessionId);
+    },
+    getAccessSubmissionState() {
+      return memoryStore.getAccessSubmissionState();
+    },
+    updateAccessSubmissionState(state) {
+      return withPersist(() => memoryStore.updateAccessSubmissionState(state));
     },
     clearUserData() {
       return withPersist(() => memoryStore.clearUserData());

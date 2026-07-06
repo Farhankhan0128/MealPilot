@@ -2482,6 +2482,45 @@ assert(
   "access submission studio external-gate assertions are incomplete",
 );
 
+const savedAccessSubmissionStudio = await request("/api/access-submission-studio/state", {
+  method: "PATCH",
+  body: JSON.stringify({
+    demoVideoUrl: "https://loom.com/share/mealpilot-demo",
+    technicalContactEmail: "eng@example.com",
+    productionRedirectUri: "https://mealpilot.example.com/auth/swiggy/callback",
+    staticEgressIp: "203.0.113.10/32",
+    environmentSummary: "Production HTTPS web service with secret environment variables and redacted logs.",
+    termsAcknowledged: true,
+  }),
+});
+assert(savedAccessSubmissionStudio.accessSubmissionStudio.canSubmitNow, "access submission handoff state did not become locally submit-ready");
+assert(
+  savedAccessSubmissionStudio.accessSubmissionStudio.handoffState.demoVideoUrl ===
+    "https://loom.com/share/mealpilot-demo",
+  "access submission demo URL was not saved",
+);
+assert(
+  savedAccessSubmissionStudio.accessSubmissionStudio.copyBlocks.some(
+    (block) => block.id === "security_contact" && block.status === "ready" && block.value === "eng@example.com",
+  ) &&
+    savedAccessSubmissionStudio.accessSubmissionStudio.copyBlocks.some(
+      (block) =>
+        block.id === "redirect_uris" &&
+        block.status === "ready" &&
+        block.value === "https://mealpilot.example.com/auth/swiggy/callback",
+    ),
+  "access submission saved copy blocks are incomplete",
+);
+assert(
+  savedAccessSubmissionStudio.accessSubmissionStudio.attachmentChecklist.some(
+    (attachment) =>
+      attachment.id === "demo_video" &&
+      attachment.status === "ready" &&
+      attachment.path === "https://loom.com/share/mealpilot-demo",
+  ),
+  "access submission saved demo attachment is incomplete",
+);
+
 const builderPacket = await request("/api/builder-packet-export");
 assert(builderPacket.packet.score >= 85, "builder packet export score is below target");
 assert(builderPacket.packet.recommendedTrack === "developer", "builder packet export recommended track is wrong");

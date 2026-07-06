@@ -164,6 +164,18 @@ const groupMemberSchema = z.object({
   budget: z.number().int().min(100).max(5000),
 });
 
+const accessSubmissionStateSchema = z.object({
+  demoVideoUrl: z.string().trim().optional(),
+  technicalContactEmail: z.string().trim().optional(),
+  productionRedirectUri: z.string().trim().optional(),
+  staticEgressIp: z.string().trim().optional(),
+  environmentSummary: z.string().trim().optional(),
+  termsAcknowledged: z.boolean().optional(),
+  formSubmittedAt: z.string().trim().optional(),
+  handoffEmailSentAt: z.string().trim().optional(),
+  notes: z.string().trim().optional(),
+});
+
 const mcpServerSchema = z.enum(["food", "instamart", "dineout"]);
 const agentSurfaceSchema = z.enum(["chat", "voice"]);
 
@@ -884,6 +896,27 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
         profile: store.getProfile(),
         coverage: buildMcpCoverage(),
         latestPlan: store.getAllPlans().at(-1),
+        handoffState: store.getAccessSubmissionState(),
+      }),
+    });
+  });
+
+  app.patch("/api/access-submission-studio/state", (req, res) => {
+    const body = accessSubmissionStateSchema.parse(req.body);
+    const current = store.getAccessSubmissionState();
+    const nextState = store.updateAccessSubmissionState({
+      ...current,
+      ...body,
+      updatedAt: new Date().toISOString(),
+    });
+
+    res.json({
+      accessSubmissionStudio: buildAccessSubmissionStudio({
+        config,
+        profile: store.getProfile(),
+        coverage: buildMcpCoverage(),
+        latestPlan: store.getAllPlans().at(-1),
+        handoffState: nextState,
       }),
     });
   });

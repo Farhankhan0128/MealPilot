@@ -1,5 +1,6 @@
 import type { ServerConfig } from "../config.js";
 import type {
+  AccessSubmissionHandoffState,
   AccessSubmissionStudio,
   AccessSubmissionStudioCopyBlock,
   AccessSubmissionStudioStep,
@@ -13,6 +14,7 @@ import type {
 import { buildBuilderPacketExport } from "./builderPacketExport.js";
 import { buildSandboxCredentialWorkbench } from "./sandboxCredentialWorkbench.js";
 import { buildSubmissionConsole } from "./submissionConsole.js";
+import { defaultAccessSubmissionState } from "../store/sessionStore.js";
 
 const officialSources = [
   "https://mcp.swiggy.com/builders/",
@@ -66,8 +68,45 @@ function requiredAttachmentStatus(attachments: SubmissionConsoleAttachment[], id
   return attachments.find((attachment) => attachment.id === id)?.status ?? "operator_input";
 }
 
+function isFilled(value: string | undefined) {
+  return Boolean(value?.trim());
+}
+
+function isHttps(value: string | undefined) {
+  return Boolean(value?.trim().startsWith("https://"));
+}
+
 function buildMailto(to: string, subject: string, body: string) {
   return `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+
+function overrideFieldStatus(
+  fieldId: string,
+  original: { status: SubmissionConsoleStatus; suggestedValue: string },
+  state: AccessSubmissionHandoffState,
+) {
+  if (fieldId === "who_you_are" && isFilled(state.technicalContactEmail)) {
+    return {
+      status: "ready" as const,
+      value: `Farhan Khan / MealPilot India. Primary technical and security contact: ${state.technicalContactEmail}.`,
+    };
+  }
+  if (fieldId === "security_contact" && isFilled(state.technicalContactEmail)) {
+    return { status: "ready" as const, value: state.technicalContactEmail };
+  }
+  if (fieldId === "redirect_uris" && isHttps(state.productionRedirectUri)) {
+    return { status: "ready" as const, value: state.productionRedirectUri };
+  }
+  if (fieldId === "static_ip_ranges" && isFilled(state.staticEgressIp)) {
+    return { status: "ready" as const, value: state.staticEgressIp };
+  }
+  if (fieldId === "environment_details" && isFilled(state.environmentSummary)) {
+    return { status: "ready" as const, value: state.environmentSummary };
+  }
+  if (fieldId === "terms_acknowledgement" && state.termsAcknowledged) {
+    return { status: "ready" as const, value: `Acknowledged locally at ${state.updatedAt}` };
+  }
+  return { status: original.status, value: original.suggestedValue };
 }
 
 export function buildAccessSubmissionStudio(options: {
@@ -75,14 +114,21 @@ export function buildAccessSubmissionStudio(options: {
   profile: UserProfile;
   coverage: McpServerCoverage[];
   latestPlan?: MealPlan;
+  handoffState?: AccessSubmissionHandoffState;
 }): AccessSubmissionStudio {
+  const handoffState = { ...defaultAccessSubmissionState(), ...(options.handoffState ?? {}) };
   const submissionConsole = buildSubmissionConsole(options);
   const builderPacket = buildBuilderPacketExport(options);
   const sandboxWorkbench = buildSandboxCredentialWorkbench(options.config);
   const requiredAttachments = submissionConsole.attachments.filter((attachment) => attachment.mustAttach);
-  const readyRequiredAttachments = requiredAttachments.filter((attachment) => attachment.status === "ready");
-  const operatorFields = submissionConsole.fields.filter((field) => field.status === "operator_input");
-  const operatorAttachments = requiredAttachments.filter((attachment) => attachment.status === "operator_input");
+  const attachmentChecklist = requiredAttachments.map((attachment) => ({
+    id: attachment.id,
+    label: attachment.label,
+    status: attachment.id === "demo_video" && isFilled(handoffState.demoVideoUrl) ? "ready" as const : attachment.status,
+    path: attachment.id === "demo_video" && isFilled(handoffState.demoVideoUrl) ? handoffState.demoVideoUrl : attachment.path,
+    required: attachment.mustAttach,
+  }));
+  const readyRequiredAttachments = attachmentChecklist.filter((attachment) => attachment.status === "ready");
   const externalGatedItems = [
     ...submissionConsole.runbook.filter((item) => item.status === "external_gate"),
     ...submissionConsole.requirements.filter((item) => item.status === "external_gate"),
@@ -97,9 +143,10 @@ export function buildAccessSubmissionStudio(options: {
       submissionConsole.recommendedTrack,
       "Choose this track on the official Swiggy access page.",
     ),
-    ...submissionConsole.fields.map((field) =>
-      copyBlock(field.id, field.label, field.status, field.suggestedValue, "Paste into the matching Swiggy access form field."),
-    ),
+    ...submissionConsole.fields.map((field) => {
+      const override = overrideFieldStatus(field.id, field, handoffState);
+      return copyBlock(field.id, field.label, override.status, override.value, "Paste into the matching Swiggy access form field.");
+    }),
     copyBlock(
       "handoff_email_subject",
       "Handoff email subject",
@@ -109,6 +156,11 @@ export function buildAccessSubmissionStudio(options: {
     ),
   ];
   const readyCopyBlocks = copyBlocks.filter((block) => block.status === "ready").length;
+  const requiredFieldIds = new Set(submissionConsole.fields.filter((field) => field.required).map((field) => field.id));
+  const operatorFields = copyBlocks.filter(
+    (block) => block.status === "operator_input" && (requiredFieldIds.size === 0 || requiredFieldIds.has(block.id)),
+  );
+  const operatorAttachments = attachmentChecklist.filter((attachment) => attachment.required && attachment.status === "operator_input");
   const targets = [
     target(
       "start_building",
@@ -124,7 +176,7 @@ export function buildAccessSubmissionStudio(options: {
       "Request Access",
       "https://mcp.swiggy.com/builders/access/",
       "Request access",
-      "operator_input",
+      handoffState.formSubmittedAt ? "ready" : "operator_input",
       "Official production access form entry point for developer and enterprise tracks.",
       "Open in browser, paste prepared values, attach proof links, and submit manually.",
     ),
@@ -133,29 +185,30 @@ export function buildAccessSubmissionStudio(options: {
       "Send Us a Demo",
       "mailto:builders@swiggy.in",
       "Send Us a Demo",
-      "operator_input",
+      handoffState.handoffEmailSentAt ? "ready" : "operator_input",
       "Follow-up channel advertised by Swiggy for builders with a working demo.",
       "Send the generated handoff email after the access form is submitted.",
     ),
   ];
   const browserRunbook = [
     step(1, "run_verifiers", "Run local verification", "MealPilot", "ready", "Run build, tests, lint, production smoke, visual QA, and packet export."),
-    step(2, "record_demo", "Record demo video", "Operator", requiredAttachmentStatus(requiredAttachments, "demo_video"), "Record the 2-3 minute MealPilot flow and paste the URL into the form."),
+    step(2, "record_demo", "Record demo video", "Operator", isFilled(handoffState.demoVideoUrl) ? "ready" : requiredAttachmentStatus(requiredAttachments, "demo_video"), "Record the 2-3 minute MealPilot flow and paste the URL into the form."),
     step(3, "copy_form_values", "Copy form values", "Operator", operatorFields.length === 0 ? "ready" : "operator_input", `Resolve ${operatorFields.length} operator-owned field(s), then paste all copy blocks.`),
     step(4, "attach_packet", "Attach packet and evidence", "Operator", readyRequiredAttachments.length >= 8 ? "ready" : "operator_input", `Attach ${readyRequiredAttachments.length}/${requiredAttachments.length} required evidence links.`),
-    step(5, "submit_access_form", "Submit official access form", "Operator", "operator_input", "Open Request access, choose developer track, paste values, attach proof, and submit."),
-    step(6, "send_handoff", "Send builders handoff", "Operator", "operator_input", "Send the generated email to builders@swiggy.in with the demo URL and packet links."),
+    step(5, "submit_access_form", "Submit official access form", "Operator", handoffState.formSubmittedAt ? "ready" : "operator_input", "Open Request access, choose developer track, paste values, attach proof, and submit."),
+    step(6, "send_handoff", "Send builders handoff", "Operator", handoffState.handoffEmailSentAt ? "ready" : "operator_input", "Send the generated email to builders@swiggy.in with the demo URL and packet links."),
     step(7, "await_credentials", "Await staging credentials", "Swiggy", "external_gate", "Swiggy reviews the use case, security setup, demo, and rollout plan before issuing staging credentials."),
   ];
   const blockers = [
     ...operatorFields.map((field) => `${field.label}: operator input required`),
     ...operatorAttachments.map((attachment) => `${attachment.label}: operator input required`),
-    "Official Swiggy access form must be submitted in the browser.",
+    ...(handoffState.formSubmittedAt ? [] : ["Official Swiggy access form must be submitted in the browser."]),
+    ...(handoffState.handoffEmailSentAt ? [] : ["builders@swiggy.in handoff email must be sent by the operator."]),
     "Swiggy staging and production credentials require Swiggy approval.",
   ];
   const scoreItems = [
     ...copyBlocks.map((block) => block.status),
-    ...requiredAttachments.map((attachment) => attachment.status),
+    ...attachmentChecklist.map((attachment) => attachment.status),
     ...targets.map((item) => item.status),
     ...browserRunbook.map((item) => item.status),
   ];
@@ -167,18 +220,13 @@ export function buildAccessSubmissionStudio(options: {
     score,
     officialSources,
     recommendedTrack: submissionConsole.recommendedTrack,
-    canSubmitNow: false,
-    submitReadinessLabel: `${readyCopyBlocks}/${copyBlocks.length} copy blocks, ${readyRequiredAttachments.length}/${requiredAttachments.length} required attachments`,
+    canSubmitNow: operatorFields.length === 0 && operatorAttachments.length === 0 && !handoffState.formSubmittedAt,
+    submitReadinessLabel: `${readyCopyBlocks}/${copyBlocks.length} copy blocks, ${readyRequiredAttachments.length}/${attachmentChecklist.length} required attachments`,
     officialTargets: targets,
     copyBlocks,
-    attachmentChecklist: requiredAttachments.map((attachment) => ({
-      id: attachment.id,
-      label: attachment.label,
-      status: attachment.status,
-      path: attachment.path,
-      required: attachment.mustAttach,
-    })),
+    attachmentChecklist,
     browserRunbook,
+    handoffState,
     mailto: {
       to: email.to,
       subject: email.subject,
@@ -189,7 +237,7 @@ export function buildAccessSubmissionStudio(options: {
       readyCopyBlocks,
       totalCopyBlocks: copyBlocks.length,
       readyRequiredAttachments: readyRequiredAttachments.length,
-      totalRequiredAttachments: requiredAttachments.length,
+      totalRequiredAttachments: attachmentChecklist.length,
       operatorBlocks: operatorFields.length + operatorAttachments.length + targets.filter((item) => item.status === "operator_input").length,
       externalGates: externalGatedItems.length,
     },

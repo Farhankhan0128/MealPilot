@@ -152,7 +152,7 @@ The application will include a 2-3 minute Loom or unlisted YouTube demo showing:
 11. Show `/api/observability/traces` with trace IDs, no raw PII, and safe log fields.
 12. Show `/api/telemetry/runtime` with live request IDs, session IDs, redaction fields, and MCP event coverage.
 13. Show `/api/audit-ledger` with redacted audit events, support correlation, retention, DSR routing, and Swiggy support packet fields.
-14. Show `/api/submission-console` and `/api/access-submission-studio` with developer/enterprise targets, official CTAs, copy blocks, attachments, browser runbook steps, blockers, and drafts.
+14. Show `/api/submission-console` and `/api/access-submission-studio` with developer/enterprise targets, official CTAs, copy blocks, attachments, browser runbook steps, blockers, and drafts. Save demo URL, primary contact, production redirect URI, static egress/IP, environment summary, terms acknowledgement, submitted-form timestamp, and sent-email timestamp through `PATCH /api/access-submission-studio/state` before recording the final reviewer packet.
 15. Show `/api/swiggy-route-optimizer` with call-saving routes and confirmation gates.
 16. Show `/api/mcp/capability-registry` with tools, resources, prompts, metadata, widgets, and external gates.
 17. Show `/api/mcp/resource-prompt-studio` with all six resource reads, all six prompt samples, and twelve JSON-RPC smoke requests.
@@ -190,6 +190,7 @@ Email: add primary engineering email before submission.
 - Visual QA Center: `/api/visual-qa-center`
 - Submission Console: `/api/submission-console`
 - Access Submission Studio: `/api/access-submission-studio`
+- Access Submission Studio saved handoff state: `PATCH /api/access-submission-studio/state`
 - MCP Capability Registry: `/api/mcp/capability-registry`
 - Resource & Prompt Studio: `/api/mcp/resource-prompt-studio`
 - Swiggy Docs Coverage: `/api/swiggy-docs-coverage`

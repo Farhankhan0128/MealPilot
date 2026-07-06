@@ -119,6 +119,7 @@ import {
   schedulePlan,
   startSwiggyAuth,
   substituteRecommendationItem,
+  updateAccessSubmissionState,
   updateProfile,
   fetchAiClientConnectKit,
   type BuilderPackageResponse,
@@ -132,6 +133,7 @@ import { buildConfirmationMessage } from "./domain/safety";
 import type {
   AgentSurface,
   AgentSurfaceResponse,
+  AccessSubmissionHandoffState,
   AccessSubmissionStudio,
   AuditLedgerCenter,
   AiClientConnectKit,
@@ -221,6 +223,17 @@ const initialRequest: UserPlanningRequest = {
   diet: "high-protein vegetarian",
   guests: 4,
   day: "saturday",
+};
+
+const emptyAccessSubmissionState: AccessSubmissionHandoffState = {
+  demoVideoUrl: "",
+  technicalContactEmail: "",
+  productionRedirectUri: "",
+  staticEgressIp: "",
+  environmentSummary: "",
+  termsAcknowledged: false,
+  notes: "",
+  updatedAt: "",
 };
 
 const scenarios: Array<{
@@ -384,6 +397,8 @@ function App() {
   const [submissionConsole, setSubmissionConsole] = useState<SubmissionConsole | null>(null);
   const [builderPacketExport, setBuilderPacketExport] = useState<BuilderPacketExport | null>(null);
   const [accessSubmissionStudio, setAccessSubmissionStudio] = useState<AccessSubmissionStudio | null>(null);
+  const [accessSubmissionForm, setAccessSubmissionForm] =
+    useState<AccessSubmissionHandoffState>(emptyAccessSubmissionState);
   const [widgets, setWidgets] = useState<SwiggyWidget[]>([]);
   const [widgetBridge, setWidgetBridge] = useState<{ origin: string; sandbox: string; verifyOrigin: boolean } | null>(
     null,
@@ -462,6 +477,19 @@ function App() {
       setBuilderPackage(packageResponse);
     } catch (profileError) {
       setError(profileError instanceof Error ? profileError.message : "Unable to save profile.");
+    }
+  }
+
+  async function saveAccessSubmissionHandoff(nextState = accessSubmissionForm) {
+    setError(null);
+    setActionNotice(null);
+    try {
+      const response = await updateAccessSubmissionState(nextState);
+      setAccessSubmissionStudio(response.accessSubmissionStudio);
+      setAccessSubmissionForm(response.accessSubmissionStudio.handoffState);
+      setActionNotice("Swiggy access handoff state saved locally.");
+    } catch (handoffError) {
+      setError(handoffError instanceof Error ? handoffError.message : "Unable to save access handoff state.");
     }
   }
 
@@ -648,6 +676,7 @@ function App() {
     setSubmissionPackage(submissionResponse.package);
     setSubmissionConsole(submissionConsoleResponse.submissionConsole);
     setAccessSubmissionStudio(accessSubmissionStudioResponse.accessSubmissionStudio);
+    setAccessSubmissionForm(accessSubmissionStudioResponse.accessSubmissionStudio.handoffState);
     setBuilderPacketExport(packetExportResponse.packet);
     setRateLimit(rateLimitResponse.rateLimit);
     setTrafficReadiness(trafficReadinessResponse.trafficReadiness);
@@ -840,6 +869,7 @@ function App() {
     setSubmissionPackage(submissionResponse.package);
     setSubmissionConsole(submissionConsoleResponse.submissionConsole);
     setAccessSubmissionStudio(accessSubmissionStudioResponse.accessSubmissionStudio);
+    setAccessSubmissionForm(accessSubmissionStudioResponse.accessSubmissionStudio.handoffState);
     setBuilderPacketExport(packetExportResponse.packet);
     setRateLimit(rateLimitResponse.rateLimit);
     setTrafficReadiness(trafficReadinessResponse.trafficReadiness);
@@ -1483,7 +1513,10 @@ function App() {
                 submissionPackage={submissionPackage}
                 submissionConsole={submissionConsole}
                 accessSubmissionStudio={accessSubmissionStudio}
+                accessSubmissionForm={accessSubmissionForm}
                 builderPacketExport={builderPacketExport}
+                onAccessSubmissionFormChange={setAccessSubmissionForm}
+                onAccessSubmissionSave={() => void saveAccessSubmissionHandoff()}
               />
               <ProductionEvidencePanel
                 widgets={widgets}
@@ -3585,7 +3618,10 @@ function DemoStudioPanel({
   submissionPackage,
   submissionConsole,
   accessSubmissionStudio,
+  accessSubmissionForm,
   builderPacketExport,
+  onAccessSubmissionFormChange,
+  onAccessSubmissionSave,
 }: {
   preflight: CartPreflightReport | null;
   replay: McpReplayStep[];
@@ -3594,10 +3630,16 @@ function DemoStudioPanel({
   submissionPackage: SubmissionPackage | null;
   submissionConsole: SubmissionConsole | null;
   accessSubmissionStudio: AccessSubmissionStudio | null;
+  accessSubmissionForm: AccessSubmissionHandoffState;
   builderPacketExport: BuilderPacketExport | null;
+  onAccessSubmissionFormChange: (state: AccessSubmissionHandoffState) => void;
+  onAccessSubmissionSave: () => void;
 }) {
   const readyFields = submissionPackage?.fields.filter((field) => field.status === "ready").length ?? 0;
   const totalFields = submissionPackage?.fields.length ?? 0;
+  const updateAccessField = (field: keyof AccessSubmissionHandoffState, value: string | boolean | undefined) => {
+    onAccessSubmissionFormChange({ ...accessSubmissionForm, [field]: value });
+  };
 
   return (
     <section className="analysis-panel demo-studio-panel" id="demo-studio">
@@ -3820,6 +3862,73 @@ function DemoStudioPanel({
               </a>
             ))}
             {accessSubmissionStudio ? <a href={accessSubmissionStudio.mailto.href}>Email builders@swiggy.in</a> : null}
+          </div>
+          <div className="access-submission-form">
+            <label>
+              <span>Demo URL</span>
+              <input
+                value={accessSubmissionForm.demoVideoUrl}
+                onChange={(event) => updateAccessField("demoVideoUrl", event.target.value)}
+                placeholder="https://loom.com/share/..."
+              />
+            </label>
+            <label>
+              <span>Security contact</span>
+              <input
+                value={accessSubmissionForm.technicalContactEmail}
+                onChange={(event) => updateAccessField("technicalContactEmail", event.target.value)}
+                placeholder="engineering@example.com"
+              />
+            </label>
+            <label>
+              <span>Production redirect</span>
+              <input
+                value={accessSubmissionForm.productionRedirectUri}
+                onChange={(event) => updateAccessField("productionRedirectUri", event.target.value)}
+                placeholder="https://app.example.com/auth/swiggy/callback"
+              />
+            </label>
+            <label>
+              <span>Static egress/IP</span>
+              <input
+                value={accessSubmissionForm.staticEgressIp}
+                onChange={(event) => updateAccessField("staticEgressIp", event.target.value)}
+                placeholder="203.0.113.10/32"
+              />
+            </label>
+            <label className="access-submission-wide">
+              <span>Environment summary</span>
+              <input
+                value={accessSubmissionForm.environmentSummary}
+                onChange={(event) => updateAccessField("environmentSummary", event.target.value)}
+                placeholder="Render web service, HTTPS, secret env vars, production build"
+              />
+            </label>
+            <label className="access-submission-check">
+              <input
+                type="checkbox"
+                checked={accessSubmissionForm.termsAcknowledged}
+                onChange={(event) => updateAccessField("termsAcknowledged", event.target.checked)}
+              />
+              <span>Terms acknowledged</span>
+            </label>
+            <div className="access-submission-actions access-submission-wide">
+              <button
+                type="button"
+                onClick={() => updateAccessField("formSubmittedAt", new Date().toISOString())}
+              >
+                Mark form submitted
+              </button>
+              <button
+                type="button"
+                onClick={() => updateAccessField("handoffEmailSentAt", new Date().toISOString())}
+              >
+                Mark email sent
+              </button>
+              <button type="button" onClick={onAccessSubmissionSave}>
+                Save handoff state
+              </button>
+            </div>
           </div>
         </article>
 

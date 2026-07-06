@@ -2,6 +2,7 @@ import type {
   AgentSurface,
   AgentSurfaceResponse,
   AccessSubmissionStudio,
+  AccessSubmissionHandoffState,
   AuditLedgerCenter,
   AiClientConnectKit,
   BrandComplianceKit,
@@ -464,6 +465,15 @@ export function fetchSubmissionConsole() {
 
 export function fetchAccessSubmissionStudio() {
   return requestJson<{ accessSubmissionStudio: AccessSubmissionStudio }>("/api/access-submission-studio");
+}
+
+export function updateAccessSubmissionState(
+  state: Partial<Omit<AccessSubmissionHandoffState, "updatedAt">>,
+) {
+  return requestJson<{ accessSubmissionStudio: AccessSubmissionStudio }>("/api/access-submission-studio/state", {
+    method: "PATCH",
+    body: JSON.stringify(state),
+  });
 }
 
 export function fetchBuilderPacketExport() {

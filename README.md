@@ -265,6 +265,7 @@ GET  /api/slo-incident-command
 GET  /api/error-intelligence
 GET  /api/submission-console
 GET  /api/access-submission-studio
+PATCH /api/access-submission-studio/state
 GET  /api/builder-packet-export
 GET  /api/builder-packet-export.md
 GET  /api/sessions/:sessionId/surface?surface=chat
@@ -367,7 +368,7 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 
 `GET /api/submission-console` is the operator handoff console for signing up end to end: developer/enterprise form targets, official access fields, required attachments, demo-video gate, final contact/redirect/static-egress gates, runbook steps, and builders@swiggy.in drafts.
 
-`GET /api/access-submission-studio` is the final Swiggy access submission room: official Start Building, Request access, and Send Us a Demo targets; copy-ready form blocks; required proof attachments; browser runbook; generated mailto draft; and explicit operator/Swiggy gates.
+`GET /api/access-submission-studio` is the final Swiggy access submission room: official Start Building, Request access, and Send Us a Demo targets; copy-ready form blocks; required proof attachments; browser runbook; generated mailto draft; and explicit operator/Swiggy gates. `PATCH /api/access-submission-studio/state` persists the operator-owned demo URL, primary contact, production redirect URI, egress/IP, environment summary, terms acknowledgement, form-submitted timestamp, handoff-email timestamp, and notes so the studio can move from ready-to-submit into submitted handoff state without calling Swiggy automatically.
 
 `GET /api/credential-onboarding` previews the Dynamic Client Registration payload for Swiggy's `POST /auth/register`, audits the redirect URI, and lists the exact access-form fields. It does not create external Swiggy state during local tests.
 

@@ -198,6 +198,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/demo-studio`
 - `GET /api/submission-console`
 - `GET /api/access-submission-studio`
+- `PATCH /api/access-submission-studio/state`
 - `GET /api/evaluation-lab`
 - `GET /api/submission-package`
 - `GET /api/production-launch-bundle`
@@ -297,7 +298,7 @@ Production should use an HTTPS redirect URI with exact-match allowlisting.
 
 `/api/coding-agent-governance` reads the root `AGENTS.md` and scores the rules future coding agents must follow before editing Swiggy integrations: fetch official docs first, prefer page `.md` twins, never invent tools or parameters, preserve commercial confirmation gates, and keep sensitive data out of logs.
 
-`/api/access-submission-studio` is the final operator room before Swiggy submission. It joins official Start Building, Request access, and Send Us a Demo targets with copy-ready form values, required attachments, browser runbook steps, generated builders@swiggy.in mailto draft, blockers, and external gates.
+`/api/access-submission-studio` is the final operator room before Swiggy submission. It joins official Start Building, Request access, and Send Us a Demo targets with copy-ready form values, required attachments, browser runbook steps, generated builders@swiggy.in mailto draft, blockers, and external gates. `PATCH /api/access-submission-studio/state` saves the local handoff fields for demo URL, contact, production redirect, static egress, environment, terms, form submission, handoff email, and notes; it never submits the official Swiggy form or sends email during local tests.
 
 `/api/builder-packet-export` and `/api/builder-packet-export.md` turn the Submission Console, Access Submission Studio, Production Launch Bundle, and Visual QA Center into a reproducible Swiggy access packet. Run `npm run export:builder-packet` against the production server to write `artifacts/builder-packet/mealpilot-swiggy-access-packet.json`, `mealpilot-swiggy-access-packet.md`, and `verification-summary.json`.
 
