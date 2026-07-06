@@ -42,6 +42,15 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
         "Turns Swiggy's self-serve developer quickstart into readiness steps, framework adapters, first-call JSON-RPC drills, auth gates, and recipe handoffs.",
     },
     {
+      id: "cta_execution",
+      label: "CTA Execution Center",
+      path: "/api/swiggy-cta-execution-center",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Turns every official Builders CTA, global header link, docs nav link, footer resource, mailto, form, and legal link into a click-ready action matrix with proof links and manual gates.",
+    },
+    {
       id: "builder_intake",
       label: "Builder Intake Command Center",
       path: "/api/swiggy-builder-intake",
@@ -522,6 +531,7 @@ function buildPhases(config: ServerConfig, latestPlan: MealPlan | undefined, art
         artifact("website_atlas"),
         artifact("deep_site_map"),
         artifact("developer_quickstart"),
+        artifact("cta_execution"),
         artifact("builder_intake"),
         artifact("faq_policy"),
         artifact("growth_partnership"),
@@ -706,6 +716,7 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- Website Atlas: /api/swiggy-website-atlas",
     "- Deep Site Map: /api/swiggy-deep-site-map",
     "- Developer Quickstart Workbench: /api/swiggy-developer-quickstart",
+    "- CTA Execution Center: /api/swiggy-cta-execution-center",
     "- Builder Intake Command Center: /api/swiggy-builder-intake",
     "- FAQ & Policy Center: /api/swiggy-faq-policy",
     "- Growth Partnership Center: /api/swiggy-growth-partnership",

@@ -119,6 +119,7 @@ const artifactSections = [
       artifact("website_atlas", "Website Atlas", "api", "/api/swiggy-website-atlas", "Header, footer, page modules, CTAs, launch blog, and access page coverage.", "Public docs only; no user data."),
       artifact("deep_site_map", "Swiggy Deep Site Map", "api", "/api/swiggy-deep-site-map", "Every Builders page, module signal, CTA, header/docs/footer link, proof path, source section, assertion, and external gate in one reviewer audit.", "Public docs and local proof links only; no user data."),
       artifact("developer_quickstart", "Developer Quickstart Workbench", "api", "/api/swiggy-developer-quickstart", "Official self-serve quickstart converted into first-call drills, SDK adapters, auth gates, commands, and recipe handoffs.", "Public docs and local mock calls only; no tokens or live user data."),
+      artifact("cta_execution", "CTA Execution Center", "api", "/api/swiggy-cta-execution-center", "Every official Builders CTA, header, docs nav, footer, form, email, and legal link converted into click-ready runbook targets.", "External forms, mailto links, and legal pages stay manual/operator gated."),
       artifact("source_intelligence", "Swiggy Source Intelligence", "api", "/api/swiggy-source-intelligence", "Source-to-product reconciliation for Swiggy website, docs, CTAs, API tools, source drift, and build queue.", "Public docs and local evidence only; no user data."),
       artifact("innovation_radar", "Swiggy Innovation Radar", "api", "/api/swiggy-innovation-radar", "Premium product opportunity lanes, route optimizations, build phases, and partner gates derived from Swiggy source signals.", "Uses public docs and local proof links only; no user data."),
       artifact("builder_intake", "Builder Intake", "api", "/api/swiggy-builder-intake", "Every signup/apply/demo/contact/docs CTA converted into owner-assigned actions.", "Manual contact values stay labelled."),
@@ -168,6 +169,7 @@ const screenshotTargets = [
   screenshot("launch_center", "Launch Center", "/", ".launch-panel", "desktop", "Shows MCP coverage, proof cards, luxury workspace, and launch gates in one reviewer surface.", "Use /api/production-launch-bundle proof links if screenshot capture is manual."),
   screenshot("deep_site_map_card", "Deep Site Map card", "/", ".deep-site-map-card", "desktop", "Shows page/module/CTA/header/footer proof coverage for the complete Swiggy Builders website audit.", "Use /api/swiggy-deep-site-map JSON readback."),
   screenshot("developer_quickstart_card", "Developer Quickstart card", "/", ".developer-quickstart-card", "desktop", "Shows first-call drills, framework adapters, OAuth gates, and official quickstart proof.", "Use /api/swiggy-developer-quickstart JSON readback."),
+  screenshot("cta_execution_card", "CTA Execution card", "/", ".cta-execution-card", "desktop", "Shows official CTA/header/footer click targets, operator gates, and proof links.", "Use /api/swiggy-cta-execution-center JSON readback."),
   screenshot("luxury_workspace_card", "Luxury workspace card", "/", ".luxury-experience-card", "desktop", "Shows 5/5 workspaces, all-tool coverage, and premium review modes.", "Use /api/luxury-experience-workspace JSON readback."),
   screenshot("production_evidence", "Production Evidence", "/", ".production-panel", "desktop", "Shows widgets, rate limits, governance, launch bundle, resilience, and reviewer proof.", "Use /api/reviewer-proof and /api/production-launch-bundle."),
   screenshot("demo_studio", "Demo Studio", "/", ".demo-panel", "desktop", "Shows preflight, replay, submission console, evaluation, and demo readiness.", "Use /api/demo-studio and /api/submission-console."),
@@ -255,6 +257,7 @@ export function buildReviewerArtifactVault(): ReviewerArtifactVault {
     "- Production Launch Bundle: /api/production-launch-bundle",
     "- Deep Site Map: /api/swiggy-deep-site-map",
     "- Developer Quickstart Workbench: /api/swiggy-developer-quickstart",
+    "- CTA Execution Center: /api/swiggy-cta-execution-center",
     "- Builder packet: /api/builder-package.md",
     "- OpenAPI: /api/openapi.json",
     "- Demo script: docs/demo-script.md",
@@ -287,7 +290,7 @@ export function buildReviewerArtifactVault(): ReviewerArtifactVault {
     assertions: [
       "The vault packages Swiggy's requested demo video, production-readiness evidence, session/log posture, support context, and proof links in one route.",
       "Every artifact has an explicit redaction rule so the reviewer packet stays safe to share.",
-      "Screenshot targets cover the planner, Launch Center, Deep Site Map, Developer Quickstart, Luxury Experience Workspace, Production Evidence, Demo Studio, mobile layout, and widget fallbacks.",
+      "Screenshot targets cover the planner, Launch Center, Deep Site Map, Developer Quickstart, CTA Execution, Luxury Experience Workspace, Production Evidence, Demo Studio, mobile layout, and widget fallbacks.",
       "Production commands prove lint, build, tests, server start, and the end-to-end verifier before submitting to Swiggy.",
     ],
     externalGates: [

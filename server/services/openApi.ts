@@ -425,6 +425,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-cta-execution-center": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy CTA execution center for every Builders CTA, header, docs nav, and footer link",
+          responses: {
+            "200": {
+              description:
+                "Click-ready execution matrix for official Builders CTAs, global header links, docs subnav links, footer resources, mailto/form/legal gates, proof links, keyboard paths, and production verification commands",
+            },
+          },
+        },
+      },
       "/api/swiggy-innovation-radar": {
         get: {
           tags: ["Builder Access"],

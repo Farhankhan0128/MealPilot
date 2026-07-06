@@ -300,6 +300,7 @@ export function buildReviewerProof(options: {
       { label: "Swiggy Source Intelligence", path: "/api/swiggy-source-intelligence" },
       { label: "Swiggy Deep Site Map", path: "/api/swiggy-deep-site-map" },
       { label: "Developer Quickstart Workbench", path: "/api/swiggy-developer-quickstart" },
+      { label: "CTA Execution Center", path: "/api/swiggy-cta-execution-center" },
       { label: "Swiggy Innovation Radar", path: "/api/swiggy-innovation-radar" },
       { label: "AI Client Connect Kit", path: "/api/ai-client-connect-kit" },
       { label: "Brand Compliance Kit", path: "/api/brand-compliance-kit" },

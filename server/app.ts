@@ -32,6 +32,7 @@ import { buildSwiggyBuilderIntakeCommandCenter } from "./services/builderIntake.
 import { buildSwiggyChannelMultimodalStudio } from "./services/channelMultimodalStudio.js";
 import { buildCodingAgentGovernance } from "./services/codingAgentGovernance.js";
 import { buildCommercialActionGuard } from "./services/commercialActionGuard.js";
+import { buildSwiggyCtaExecutionCenter } from "./services/ctaExecutionCenter.js";
 import { buildSwiggyAccessDossier } from "./services/swiggyAccessDossier.js";
 import {
   buildReadinessChecklist,
@@ -652,6 +653,15 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/swiggy-developer-quickstart", (_req, res) => {
     res.json({ quickstartWorkbench: buildDeveloperQuickstartWorkbench() });
+  });
+
+  app.get("/api/swiggy-cta-execution-center", (_req, res) => {
+    res.json({
+      ctaExecution: buildSwiggyCtaExecutionCenter({
+        config,
+        latestPlan: store.getAllPlans().at(-1),
+      }),
+    });
   });
 
   app.get("/api/swiggy-innovation-radar", (_req, res) => {

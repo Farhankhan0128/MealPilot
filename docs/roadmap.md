@@ -32,6 +32,7 @@ Status: in progress.
 - Add Swiggy Source Intelligence for Builders website, CTA, `llms`, markdown twin, reference count, drift signal, and build-queue reconciliation. Complete.
 - Add Swiggy Deep Site Map for every Builders page, module signal, CTA, header/docs/footer link, source section, proof path, assertion, and external gate. Complete.
 - Add Developer Quickstart Workbench for official first-call readiness, framework adapters, OAuth gates, JSON-RPC drills, and recipe handoffs. Complete.
+- Add CTA Execution Center for official Builders CTAs, header/docs/footer links, browser actions, keyboard paths, proof links, and manual gates. Complete.
 - Add Swiggy Innovation Radar for official source signals, premium product lanes, route optimizations, build phases, differentiators, and partner gates. Complete.
 - Add Builder Intake Command Center for signup, apply, demo, contact, docs, footer CTA actions, application fields, storyboard, and drafts. Complete.
 - Add Premium Concierge Itinerary for official Swiggy recipe routes, 35-tool coverage, route savings, reminders, and confirmation gates. Complete.

@@ -64,6 +64,7 @@ import type {
   SwiggyChannelMultimodalStudio,
   SwiggyDeepSiteMap,
   DeveloperQuickstartWorkbench,
+  SwiggyCtaExecutionCenter,
   SwiggyWidget,
   SwiggyBuildersMap,
   SwiggyDocsCoverageReport,
@@ -322,6 +323,10 @@ export function fetchSwiggyDeepSiteMap() {
 
 export function fetchDeveloperQuickstartWorkbench() {
   return requestJson<{ quickstartWorkbench: DeveloperQuickstartWorkbench }>("/api/swiggy-developer-quickstart");
+}
+
+export function fetchSwiggyCtaExecutionCenter() {
+  return requestJson<{ ctaExecution: SwiggyCtaExecutionCenter }>("/api/swiggy-cta-execution-center");
 }
 
 export function fetchSwiggyInnovationRadar() {

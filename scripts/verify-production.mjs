@@ -67,6 +67,10 @@ assert(
   "OpenAPI developer quickstart contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-cta-execution-center"]?.get?.summary?.includes("CTA execution"),
+  "OpenAPI CTA execution contract is missing",
+);
+assert(
   openApi.paths["/api/swiggy-innovation-radar"]?.get?.summary?.includes("innovation radar"),
   "OpenAPI innovation radar contract is missing",
 );
@@ -776,7 +780,7 @@ const reviewerArtifactVault = await request("/api/reviewer-artifact-vault");
 assert(reviewerArtifactVault.reviewerArtifactVault.score >= 90, "reviewer artifact vault score is below target");
 assert(reviewerArtifactVault.reviewerArtifactVault.totalArtifacts >= 30, "reviewer artifact vault artifacts are incomplete");
 assert(reviewerArtifactVault.reviewerArtifactVault.readyArtifacts >= 30, "reviewer artifact vault ready artifacts are incomplete");
-assert(reviewerArtifactVault.reviewerArtifactVault.totalScreenshotTargets === 9, "reviewer artifact vault screenshot targets are incomplete");
+assert(reviewerArtifactVault.reviewerArtifactVault.totalScreenshotTargets === 10, "reviewer artifact vault screenshot targets are incomplete");
 assert(reviewerArtifactVault.reviewerArtifactVault.readyScreenshotTargets >= 5, "reviewer artifact vault ready screenshots are incomplete");
 assert(reviewerArtifactVault.reviewerArtifactVault.totalCommands === 7, "reviewer artifact vault commands are incomplete");
 assert(reviewerArtifactVault.reviewerArtifactVault.readyCommands >= 6, "reviewer artifact vault ready commands are incomplete");
@@ -822,6 +826,17 @@ assert(
   "reviewer artifact vault developer quickstart artifact is missing",
 );
 assert(
+  reviewerArtifactVault.reviewerArtifactVault.artifactSections.some((section) =>
+    section.artifacts.some(
+      (artifact) =>
+        artifact.id === "cta_execution" &&
+        artifact.label === "CTA Execution Center" &&
+        artifact.path === "/api/swiggy-cta-execution-center",
+    ),
+  ),
+  "reviewer artifact vault CTA execution artifact is missing",
+);
+assert(
   reviewerArtifactVault.reviewerArtifactVault.screenshotTargets.some(
     (target) =>
       target.id === "luxury_workspace_card" &&
@@ -838,6 +853,15 @@ assert(
       target.status === "ready",
   ),
   "reviewer artifact vault developer quickstart screenshot target is missing",
+);
+assert(
+  reviewerArtifactVault.reviewerArtifactVault.screenshotTargets.some(
+    (target) =>
+      target.id === "cta_execution_card" &&
+      target.selector === ".cta-execution-card" &&
+      target.status === "ready",
+  ),
+  "reviewer artifact vault CTA execution screenshot target is missing",
 );
 assert(
   reviewerArtifactVault.reviewerArtifactVault.commands.some(
@@ -865,8 +889,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 16, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 16, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 17, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 17, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -925,6 +949,12 @@ assert(
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some((target) => target.id === "cta_execution_card" && target.selector === ".cta-execution-card"),
+  ),
+  "visual QA CTA execution target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
     group.targets.some((target) => target.id === "coding_agent_card" && target.selector === ".coding-agent-card"),
   ),
   "visual QA coding agent governance target is missing",
@@ -961,7 +991,7 @@ assert(
     (command) =>
       command.id === "visual_capture_harness" &&
       command.command === "npm run verify:visual" &&
-      command.expectedSignal.includes("targetCount >= 16"),
+      command.expectedSignal.includes("targetCount >= 17"),
   ),
   "visual QA Playwright command is missing",
 );
@@ -1180,6 +1210,70 @@ assert(
 assert(
   developerQuickstart.quickstartWorkbench.authGates.some((gate) => gate.id === "staging" && gate.status === "external_gate"),
   "developer quickstart staging auth gate is missing",
+);
+
+const ctaExecution = await request("/api/swiggy-cta-execution-center");
+assert(ctaExecution.ctaExecution.score >= 85, "CTA execution score is below target");
+assert(ctaExecution.ctaExecution.totals.targets >= 28, "CTA execution target coverage is incomplete");
+assert(ctaExecution.ctaExecution.totals.ctas === 11, "CTA execution official CTA count is incomplete");
+assert(ctaExecution.ctaExecution.totals.headerLinks >= 7, "CTA execution header link count is incomplete");
+assert(ctaExecution.ctaExecution.totals.docsLinks >= 5, "CTA execution docs link count is incomplete");
+assert(ctaExecution.ctaExecution.totals.footerLinks >= 6, "CTA execution footer link count is incomplete");
+assert(ctaExecution.ctaExecution.totals.operatorActions > 0, "CTA execution operator actions are missing");
+assert(ctaExecution.ctaExecution.totals.externalGates > 0, "CTA execution external gates are missing");
+assert(
+  ["cta_paths", "global_header", "docs_subnav", "footer_links"].every((id) =>
+    ctaExecution.ctaExecution.groups.some((group) => group.id === id),
+  ),
+  "CTA execution groups are incomplete",
+);
+assert(
+  ctaExecution.ctaExecution.targets.some(
+    (target) =>
+      target.id === "cta_start_building" &&
+      target.label === "Start Building" &&
+      target.kind === "docs" &&
+      target.status === "ready" &&
+      target.proofLinks.includes("/api/mcp/tool-lab") &&
+      target.keyboardPath.includes("Confirm Start Building loads"),
+  ),
+  "CTA execution Start Building target is missing",
+);
+assert(
+  ctaExecution.ctaExecution.targets.some(
+    (target) =>
+      target.id === "cta_apply_developer" &&
+      target.kind === "form" &&
+      target.completionGate === "operator_submit" &&
+      target.status === "operator_action" &&
+      target.browserAction.includes("official Swiggy access form"),
+  ),
+  "CTA execution developer form gate is missing",
+);
+assert(
+  ctaExecution.ctaExecution.targets.some(
+    (target) =>
+      target.id === "cta_contact_us" &&
+      target.kind === "email" &&
+      target.officialUrl === "mailto:builders@swiggy.in" &&
+      target.status === "operator_action",
+  ),
+  "CTA execution contact email gate is missing",
+);
+assert(
+  ctaExecution.ctaExecution.targets.some((target) => target.label === "Privacy Policy" && target.kind === "legal"),
+  "CTA execution legal footer target is missing",
+);
+assert(
+  ctaExecution.ctaExecution.commands.some(
+    (command) => command.id === "production_gate" && command.expectedSignal.includes("ctaExecutionScore"),
+  ),
+  "CTA execution production verifier command is missing",
+);
+assert(
+  ctaExecution.ctaExecution.assertions.some((assertion) => assertion.includes("Global header")) &&
+    ctaExecution.ctaExecution.externalGates.some((gate) => gate.includes("Google Forms")),
+  "CTA execution assertions or external gates are missing",
 );
 
 const innovationRadar = await request("/api/swiggy-innovation-radar");
@@ -2170,6 +2264,12 @@ assert(
   "reviewer proof developer quickstart artifact is missing",
 );
 assert(
+  proof.proof.artifacts.some(
+    (artifact) => artifact.label === "CTA Execution Center" && artifact.path === "/api/swiggy-cta-execution-center",
+  ),
+  "reviewer proof CTA execution artifact is missing",
+);
+assert(
   proof.proof.artifacts.some((artifact) => artifact.label === "Swiggy Innovation Radar"),
   "reviewer proof innovation radar artifact is missing",
 );
@@ -2685,7 +2785,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 16, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 17, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -2699,7 +2799,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("16")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("17")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -2731,6 +2831,7 @@ assert(
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Website Atlas") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Deep Site Map") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Developer Quickstart Workbench") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "CTA Execution Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Builder Intake Command Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "FAQ & Policy Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Growth Partnership Center") &&
@@ -2860,6 +2961,10 @@ assert(
   "launch bundle developer quickstart handoff link is missing",
 );
 assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-cta-execution-center"),
+  "launch bundle CTA execution handoff link is missing",
+);
+assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-innovation-radar"),
   "launch bundle innovation radar handoff link is missing",
 );
@@ -2937,6 +3042,9 @@ console.log(
       developerQuickstartScore: developerQuickstart.quickstartWorkbench.score,
       developerQuickstartFirstCalls: developerQuickstart.quickstartWorkbench.totals.firstCallDrills,
       developerQuickstartFrameworks: developerQuickstart.quickstartWorkbench.totals.frameworks,
+      ctaExecutionScore: ctaExecution.ctaExecution.score,
+      ctaExecutionTargets: ctaExecution.ctaExecution.totals.targets,
+      ctaExecutionOperatorActions: ctaExecution.ctaExecution.totals.operatorActions,
       innovationRadarScore: innovationRadar.innovationRadar.score,
       innovationRadarLanes: innovationRadar.innovationRadar.opportunityCount,
       enterpriseDelegatedAuthScore: enterpriseAuth.enterpriseAuth.score,

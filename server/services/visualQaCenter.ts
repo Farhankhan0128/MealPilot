@@ -167,6 +167,17 @@ const targetGroups = [
         "artifacts/visual-qa/developer-quickstart-card.png",
       ),
       target(
+        "cta_execution_card",
+        "CTA Execution card",
+        "/",
+        ".cta-execution-card",
+        "desktop",
+        1280,
+        900,
+        "CTA Execution shows every official CTA, header, footer, docs nav, form, email, and legal click target.",
+        "artifacts/visual-qa/cta-execution-card.png",
+      ),
+      target(
         "innovation_radar_card",
         "Innovation Radar card",
         "/",
@@ -328,7 +339,7 @@ const commands = [
     "visual_capture_harness",
     "npm run verify:visual",
     "Playwright captures every Visual QA target at desktop, tablet, and mobile sizes and writes report.json.",
-    "ok true with targetCount >= 16 and PNG files under artifacts/visual-qa.",
+        "ok true with targetCount >= 17 and PNG files under artifacts/visual-qa.",
   ),
   command(
     "desktop_capture",
@@ -392,7 +403,7 @@ export function buildVisualQaCenter(): VisualQaCenter {
       },
     ],
     assertions: [
-      "Visual QA targets cover planner, Launch Center, Deep Site Map, Developer Quickstart, Coding Agent Governance, Luxury Experience Workspace, Reviewer Artifact Vault, Production Evidence, Demo Studio, and widget fallbacks.",
+      "Visual QA targets cover planner, Launch Center, Deep Site Map, Developer Quickstart, CTA Execution, Coding Agent Governance, Luxury Experience Workspace, Reviewer Artifact Vault, Production Evidence, Demo Studio, and widget fallbacks.",
       "Desktop, tablet, and mobile viewports are represented with explicit selectors and artifact paths.",
       "UI rules encode no-overlap, text-fit, widget-security, redaction, confirmation-visibility, and mobile single-column checks.",
       "Playwright screenshot automation captures every manifest target and writes local PNG evidence plus report.json.",

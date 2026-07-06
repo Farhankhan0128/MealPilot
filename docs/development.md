@@ -168,6 +168,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/swiggy-source-intelligence`
 - `GET /api/swiggy-deep-site-map`
 - `GET /api/swiggy-developer-quickstart`
+- `GET /api/swiggy-cta-execution-center`
 - `GET /api/swiggy-innovation-radar`
 - `GET /api/ai-client-connect-kit`
 - `GET /api/coding-agent-governance`
@@ -298,6 +299,8 @@ Production should use an HTTPS redirect URI with exact-match allowlisting.
 
 `/api/visual-qa-center` shows reviewer screenshot targets, desktop/tablet/mobile viewport sizes, selector manifests, Playwright screenshot artifact paths, no-overlap rules, text-fit rules, widget fallback checks, redaction visibility, commercial confirmation visibility, mobile layout checks, Source Intelligence, Deep Site Map, Innovation Radar, and automation gates. Run `npm run verify:visual` against the production server to generate PNGs plus `artifacts/visual-qa/report.json`.
 
+`/api/swiggy-cta-execution-center` shows the click-readiness workbench for every official Swiggy Builders CTA, global header link, docs subnav item, footer resource, mailto, Google Form, and legal link. Each target includes a browser action, keyboard path, proof links, completion gate, assertion coverage, and an operator-vs-Swiggy external gate.
+
 `/api/coding-agent-governance` reads the root `AGENTS.md` and scores the rules future coding agents must follow before editing Swiggy integrations: fetch official docs first, prefer page `.md` twins, never invent tools or parameters, preserve commercial confirmation gates, and keep sensitive data out of logs.
 
 `/api/access-submission-studio` is the final operator room before Swiggy submission. It joins official Start Building, Request access, and Send Us a Demo targets with copy-ready form values, required attachments, browser runbook steps, generated builders@swiggy.in mailto draft, blockers, and external gates. `PATCH /api/access-submission-studio/state` saves the local handoff fields for demo URL, contact, production redirect, static egress, environment, terms, form submission, handoff email, and notes; it never submits the official Swiggy form or sends email during local tests.
@@ -331,6 +334,7 @@ The test suite checks that:
 - Swiggy Source Intelligence reconciles Builders website pages, CTAs, `llms` docs, markdown twins, reference tool counts, drift signals, and build-queue items into one Launch Center surface.
 - Swiggy Deep Site Map consolidates every Builders page, rendered module signal, CTA, header link, docs subnav item, footer resource, proof link, source-reconciliation section, assertion, and external gate into one Launch Center audit surface.
 - Developer Quickstart Workbench maps Swiggy's official quickstart, build-agent, OAuth, and `llms.txt` sources to readiness steps, SDK adapters, first-call JSON-RPC drills, recipe handoffs, auth gates, and verifier commands.
+- CTA Execution Center converts official Builders CTAs, header links, docs nav links, footer resources, mailto links, Google Forms, and legal links into click-ready browser actions, keyboard paths, proof bundles, and manual completion gates.
 - Swiggy Innovation Radar maps Swiggy developer ideas, enterprise signals, access ground rules, support model, and MCP references into premium product lanes, route optimizations, build phases, differentiators, and partner gates.
 - Traffic Readiness maps expected sessions, daily tool calls, peak QPS, Retry-After behavior, seven-day major-event notice, capacity upgrade email, and the 1% -> 10% -> 50% -> 100% rollout.
 - AI Client Connect Kit generates client configs, coding-agent rule files, SDK auth-mode guidance, troubleshooting, privacy notes, and delegated-auth gates.

@@ -798,6 +798,65 @@ export interface SwiggyBuilderIntakeCommandCenter {
   externalGates: string[];
 }
 
+export type SwiggyCtaExecutionStatus = "ready" | "operator_action" | "external_gate";
+export type SwiggyCtaExecutionKind = "navigate" | "docs" | "form" | "email" | "legal" | "proof";
+
+export interface SwiggyCtaExecutionTarget {
+  id: string;
+  label: string;
+  location: SwiggyWebsiteNavLink["location"] | "footer" | "page_body" | "external";
+  kind: SwiggyCtaExecutionKind;
+  officialUrl: string;
+  sourcePages: string[];
+  officialIntent: string;
+  mealPilotAction: string;
+  browserAction: string;
+  keyboardPath: string[];
+  proofLinks: string[];
+  status: SwiggyCtaExecutionStatus;
+  completionGate: SwiggyBuilderCtaCompletionGate;
+  nextAction: string;
+}
+
+export interface SwiggyCtaExecutionGroup {
+  id: string;
+  label: string;
+  total: number;
+  ready: number;
+  operatorActions: number;
+  externalGates: number;
+  proofLinks: string[];
+}
+
+export interface SwiggyCtaExecutionCommand {
+  id: string;
+  command: string;
+  proves: string;
+  expectedSignal: string;
+  status: SwiggyCtaExecutionStatus;
+}
+
+export interface SwiggyCtaExecutionCenter {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  totals: {
+    targets: number;
+    ready: number;
+    operatorActions: number;
+    externalGates: number;
+    headerLinks: number;
+    docsLinks: number;
+    footerLinks: number;
+    ctas: number;
+  };
+  groups: SwiggyCtaExecutionGroup[];
+  targets: SwiggyCtaExecutionTarget[];
+  commands: SwiggyCtaExecutionCommand[];
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type SwiggyDocsSection = "start" | "build" | "operate" | "reference" | "blog";
 export type SwiggyDocsCoverageStatus = "implemented" | "documented" | "requires_credentials";
 
