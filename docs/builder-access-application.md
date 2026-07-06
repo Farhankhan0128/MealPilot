@@ -186,7 +186,7 @@ The application will include a 2-3 minute Loom or unlisted YouTube demo showing:
 28. Show `/api/traffic-readiness-plan` with expected volume, lane budgets, Retry-After handling, seven-day notice, capacity email, and staged rollout.
 29. Show `/api/swiggy-load-lab` with synthetic pilot/campaign load scenarios, cohort ramps, Retry-After drills, commercial single-flight proof, and external capacity gates.
 30. Show `/api/swiggy-offer-intelligence` with Food coupon sequencing, Dineout deal validation, Instamart value substitutions, savings disclaimers, and no-blind-discount drills.
-31. Show `/api/swiggy-order-lifecycle` with Food/Instamart/Dineout status tools, tracking cadence, non-blind retry probes, and support-safe lifecycle telemetry.
+31. Show `/api/swiggy-order-lifecycle` and `/api/swiggy-order-lifecycle/probe` with Food/Instamart/Dineout status tools, tracking cadence, executable non-blind retry decisions, and support-safe lifecycle telemetry.
 32. Show `/api/swiggy-location-trust` and `/api/swiggy-location-trust/select` with Food/Instamart saved-address tools, Dineout saved locations, executable address-choice decisions, address switch refresh, and raw-address redaction.
 33. Show `/api/swiggy-cart-mutation-workbench` with Food cart readback, Instamart full-cart replacement, Dineout create_cart gates, payment-method truth, and checkout-safe mutation rules.
 34. Show `/api/swiggy-discovery-freshness` with Food search/menu truth, Instamart product variants, Dineout details/slots, pagination, coordinate consistency, and stale-result invalidation.
@@ -256,7 +256,7 @@ Email: add primary engineering email before submission.
 - Traffic Readiness Plan: `/api/traffic-readiness-plan`
 - Swiggy Load Lab: `/api/swiggy-load-lab`
 - Swiggy Offer Intelligence: `/api/swiggy-offer-intelligence` and `/api/swiggy-offer-intelligence/decide`
-- Swiggy Order Lifecycle: `/api/swiggy-order-lifecycle`
+- Swiggy Order Lifecycle: `/api/swiggy-order-lifecycle`, `/api/swiggy-order-lifecycle/probe`
 - Swiggy Location Trust: `/api/swiggy-location-trust`, `/api/swiggy-location-trust/select`
 - Swiggy Cart Mutation Workbench: `/api/swiggy-cart-mutation-workbench`
 - Swiggy Discovery Freshness: `/api/swiggy-discovery-freshness`

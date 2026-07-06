@@ -175,7 +175,7 @@ Open Production Evidence and show:
 - Traffic Readiness Plan with per-lane budgets, capacity upgrade email, and major-event notification gates.
 - Swiggy Load Lab at `/api/swiggy-load-lab` with synthetic launch-load scenarios, 1% to 100% cohort ramps, Retry-After drill proof, commercial serialization, and campaign capacity gates.
 - Swiggy Offer Intelligence at `/api/swiggy-offer-intelligence` plus `/api/swiggy-offer-intelligence/decide` with Food coupon sequencing, Dineout deal validation, Instamart value substitutions, no-blind-discount guardrails, no-mutation offer decisions, and live-offer gates.
-- Swiggy Order Lifecycle at `/api/swiggy-order-lifecycle` with order-history/status tools, 10-second tracking cadence, non-blind retry probes, and support-safe timeline telemetry.
+- Swiggy Order Lifecycle at `/api/swiggy-order-lifecycle` plus `/api/swiggy-order-lifecycle/probe` with order-history/status tools, 10-second tracking cadence, executable non-blind retry decisions, and support-safe timeline telemetry.
 - Swiggy Location Trust at `/api/swiggy-location-trust` plus `/api/swiggy-location-trust/select` with Food/Instamart saved-address reads, Instamart create/delete address intent, Dineout saved locations, executable address-choice decisions, switch refresh guards, and raw-address redaction.
 - Swiggy Cart Mutation Workbench at `/api/swiggy-cart-mutation-workbench` with Food cart readback, Instamart full-cart replacement, Dineout create_cart gates, payment-method truth, add-on confirmation, and staging cart-write gates.
 - Swiggy Discovery Freshness at `/api/swiggy-discovery-freshness` with Food search/menu pagination, Instamart variants and go-to items, Dineout restaurant details and slots, coordinate consistency, and stale-result invalidation.
@@ -280,6 +280,7 @@ Briefly show production readiness:
 - `/api/swiggy-load-lab`
 - `/api/swiggy-offer-intelligence`
 - `/api/swiggy-order-lifecycle`
+- `/api/swiggy-order-lifecycle/probe`
 - `/api/swiggy-location-trust`
 - `/api/swiggy-location-trust/select`
 - `/api/swiggy-cart-mutation-workbench`

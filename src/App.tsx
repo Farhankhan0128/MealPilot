@@ -5333,6 +5333,10 @@ function ProductionEvidencePanel({
               <strong>{orderLifecycle?.totals.externalGates ?? 0}</strong>
               <span>Live gates</span>
             </div>
+            <div>
+              <strong>{orderLifecycle ? "POST" : "-"}</strong>
+              <span>Status probe</span>
+            </div>
           </div>
           <ul className="compact-status-list">
             {(orderLifecycle?.timelines ?? []).slice(0, 4).map((timeline) => (
@@ -5345,6 +5349,14 @@ function ProductionEvidencePanel({
               </li>
             ))}
           </ul>
+          <div className="source-links">
+            <a href="/api/swiggy-order-lifecycle" target="_blank" rel="noreferrer">
+              Lifecycle API
+            </a>
+            <a href="/api/openapi.json" target="_blank" rel="noreferrer">
+              Probe schema
+            </a>
+          </div>
         </article>
 
         <article className="location-trust-card">

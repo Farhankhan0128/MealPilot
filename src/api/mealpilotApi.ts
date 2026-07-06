@@ -90,6 +90,7 @@ import type {
   SwiggyOfferDecision,
   SwiggyOfferIntelligenceReport,
   SwiggyOperatingContractCenterReport,
+  SwiggyOrderLifecycleProbe,
   SwiggyOrderLifecycleReport,
   SwiggyMealWindow,
   SwiggyMealWindowCenter,
@@ -724,6 +725,20 @@ export function decideSwiggyOffer(input: {
 
 export function fetchSwiggyOrderLifecycle() {
   return requestJson<{ orderLifecycle: SwiggyOrderLifecycleReport }>("/api/swiggy-order-lifecycle");
+}
+
+export function probeSwiggyOrderLifecycle(input: {
+  server: "food" | "instamart" | "dineout";
+  trigger: "user_tracking_refresh" | "commercial_action_timeout" | "commercial_action_5xx" | "user_retry_request" | "support_request";
+  currentStatus: "known_active" | "known_completed" | "not_found" | "unknown";
+  statusAgeSeconds: number;
+  orderOrBookingId?: string;
+  userConfirmedRetry: boolean;
+}) {
+  return requestJson<{ lifecycleProbe: SwiggyOrderLifecycleProbe }>("/api/swiggy-order-lifecycle/probe", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
 }
 
 export function fetchSwiggyLocationTrust() {

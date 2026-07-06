@@ -71,7 +71,7 @@ Planned MCP servers:
 - Swiggy Load Lab that composes Traffic Readiness, Backpressure Governor, and Route Optimizer evidence into synthetic launch-load scenarios, cohort ramps, Retry-After drills, and Swiggy capacity gates.
 - Swiggy Operating Contract Center that consolidates official SLA, rate-limit, support, versioning, changelog, and ship-to-production guidance into one reviewer contract with pillars, runbooks, readiness gates, and a `builders@swiggy.in` launch email.
 - Swiggy Offer Intelligence at `/api/swiggy-offer-intelligence` plus `/api/swiggy-offer-intelligence/decide` that safely uses Food coupon tools, Dineout deal discovery, Instamart value substitutions, and live-offer decision gates without bypassing commercial confirmations or executing cart mutations.
-- Swiggy Order Lifecycle Command Center that maps Food, Instamart, and Dineout status tools into post-confirmation timelines, non-blind retry probes, tracking cadence, telemetry, and support-ready recovery.
+- Swiggy Order Lifecycle Command Center at `/api/swiggy-order-lifecycle` plus `/api/swiggy-order-lifecycle/probe` that maps Food, Instamart, and Dineout status tools into post-confirmation timelines, executable non-blind retry decisions, tracking cadence, telemetry, and support-ready recovery.
 - MCP Capability Registry that maps and locally exercises `mcp:tools`, `mcp:resources`, `mcp:prompts`, OAuth metadata, widgets, prompt contracts, and external Swiggy gates.
 - Resource & Prompt Studio that exercises `resources/list`, `resources/read`, `prompts/list`, and `prompts/get` across Food, Instamart, and Dineout with samples, smoke calls, and live Swiggy gates.
 - Swiggy Website Atlas that maps the Builders header, docs subnav, footer groups, production access page, launch blog, rendered-page crawl evidence, page modules, CTAs, and legal/resource links to MealPilot evidence.
@@ -298,6 +298,7 @@ GET  /api/enterprise-platform-center
 GET  /api/swiggy-load-lab
 GET  /api/swiggy-offer-intelligence
 GET  /api/swiggy-order-lifecycle
+POST /api/swiggy-order-lifecycle/probe
 GET  /api/swiggy-location-trust
 POST /api/swiggy-location-trust/select
 GET  /api/swiggy-cart-mutation-workbench
@@ -510,7 +511,7 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 
 `GET /api/swiggy-offer-intelligence` and `POST /api/swiggy-offer-intelligence/decide` are the discount-safety workbench: they sequence Food `fetch_food_coupons` before `apply_food_coupon`, validate Dineout deal context before booking, treat Instamart savings as product-variant and cart-bill optimization, and return apply/surface/block decisions without executing cart mutations.
 
-`GET /api/swiggy-order-lifecycle` is the post-confirmation command center: it maps Food `get_food_orders`, `get_food_order_details`, `track_food_order`, Instamart `get_orders`, `get_order_details`, `track_order`, and Dineout `get_booking_status` into status timelines, non-blind retry probes, tracking cadence, redacted telemetry, and support packet rules.
+`GET /api/swiggy-order-lifecycle` plus `POST /api/swiggy-order-lifecycle/probe` is the post-confirmation command center: it maps Food `get_food_orders`, `get_food_order_details`, `track_food_order`, Instamart `get_orders`, `get_order_details`, `track_order`, and Dineout `get_booking_status` into status timelines, executable status-refresh/defer/support/retry decisions, non-blind retry probes, tracking cadence, redacted telemetry, and support packet rules.
 
 `GET /api/swiggy-location-trust` plus `POST /api/swiggy-location-trust/select` is the saved-address and location trust center: it covers shared Food/Instamart `get_addresses`, Instamart `create_address` and `delete_address`, Dineout `get_saved_locations`, address-choice pauses, executable ready/pause/block/mutation decisions, address switch refresh guards, raw-address redaction, and staging credential gates.
 

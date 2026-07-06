@@ -218,6 +218,10 @@ assert(
   "OpenAPI Swiggy Order Lifecycle is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-order-lifecycle/probe"].post.summary.includes("Probe"),
+  "OpenAPI Swiggy Order Lifecycle probe route is missing",
+);
+assert(
   openApi.paths["/api/swiggy-location-trust"].get.summary.includes("Location Trust") &&
     openApi.paths["/api/swiggy-location-trust"].get.responses["200"].description.includes("address"),
   "OpenAPI Swiggy Location Trust is missing",
@@ -3633,6 +3637,28 @@ assert(
   orderLifecycle.orderLifecycle.assertions.some((assertion) => assertion.includes("never blindly retried")),
   "Order Lifecycle non-blind retry assertion is missing",
 );
+const lifecycleProbe = await request("/api/swiggy-order-lifecycle/probe", {
+  method: "POST",
+  body: JSON.stringify({
+    server: "food",
+    trigger: "user_tracking_refresh",
+    currentStatus: "known_active",
+    statusAgeSeconds: 3,
+    orderOrBookingId: "food_order_123",
+    userConfirmedRetry: false,
+  }),
+});
+assert(lifecycleProbe.lifecycleProbe.decision === "defer_tracking", "Order Lifecycle probe defer decision is wrong");
+assert(
+  lifecycleProbe.lifecycleProbe.requiredTool === "get_food_order_details then track_food_order",
+  "Order Lifecycle probe required tool is wrong",
+);
+assert(lifecycleProbe.lifecycleProbe.blockedRetry === true, "Order Lifecycle probe should block retry");
+assert(/^[a-f0-9]{16}$/.test(lifecycleProbe.lifecycleProbe.input.identifierHash), "Order Lifecycle probe identifier hash is missing");
+assert(
+  lifecycleProbe.lifecycleProbe.telemetry.some((field) => field.field === "raw_status_payload_retained" && field.value === "false"),
+  "Order Lifecycle probe raw-payload telemetry invariant is missing",
+);
 
 const locationTrust = await request("/api/swiggy-location-trust");
 assert(locationTrust.locationTrust.score >= 85, "Location Trust score is below target");
@@ -4718,6 +4744,7 @@ console.log(
       orderLifecycleScore: orderLifecycle.orderLifecycle.score,
       orderLifecycleTools: orderLifecycle.orderLifecycle.totals.toolsCovered,
       orderLifecycleRecoveries: orderLifecycle.orderLifecycle.totals.recoveryDrills,
+      orderLifecycleProbeDecision: lifecycleProbe.lifecycleProbe.decision,
       locationTrustScore: locationTrust.locationTrust.score,
       locationTrustTools: locationTrust.locationTrust.totals.toolsCovered,
       locationTrustScenarios: locationTrust.locationTrust.totals.scenarios,

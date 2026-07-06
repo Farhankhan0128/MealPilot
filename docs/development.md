@@ -108,7 +108,7 @@ The verifier also validates `/api/swiggy-load-lab` for synthetic launch-load sce
 
 The verifier also validates `/api/swiggy-offer-intelligence` and `/api/swiggy-offer-intelligence/decide` for Food coupon tool sequencing, Dineout deal validation, Instamart value substitutions, no-blind-discount guardrails, apply/surface/block decisions, no-cart-mutation telemetry, offer recovery drills, live-inventory external gates, and launch-bundle handoff coverage.
 
-The verifier also validates `/api/swiggy-order-lifecycle` for Food, Instamart, and Dineout status tools, tracking cadence, non-blind retry recovery, timeline telemetry redaction, support-ready lifecycle packets, and launch-bundle handoff coverage.
+The verifier also validates `/api/swiggy-order-lifecycle` and `/api/swiggy-order-lifecycle/probe` for Food, Instamart, and Dineout status tools, tracking cadence, executable refresh/defer/support/retry decisions, non-blind retry recovery, timeline telemetry redaction, support-ready lifecycle packets, and launch-bundle handoff coverage.
 
 The verifier also validates `/api/swiggy-location-trust` and `/api/swiggy-location-trust/select` for Food/Instamart saved-address tools, Instamart create/delete address flows, Dineout saved locations, address-choice pauses, executable ready/pause/block/mutation decisions, address switch refresh guards, raw-address redaction, and staging credential gates.
 
@@ -264,6 +264,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/swiggy-load-lab`
 - `GET /api/swiggy-offer-intelligence`
 - `GET /api/swiggy-order-lifecycle`
+- `POST /api/swiggy-order-lifecycle/probe`
 - `GET /api/swiggy-location-trust`
 - `POST /api/swiggy-location-trust/select`
 - `GET /api/swiggy-cart-mutation-workbench`

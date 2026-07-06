@@ -1,7 +1,9 @@
+import crypto from "node:crypto";
 import type { ServerConfig } from "../config.js";
 import type {
   MealPlan,
   Recommendation,
+  SwiggyOrderLifecycleProbe,
   SwiggyOrderLifecycleLane,
   SwiggyOrderLifecycleRecovery,
   SwiggyOrderLifecycleReport,
@@ -82,6 +84,21 @@ function statusWeight(status: SwiggyOrderLifecycleStatus) {
   if (status === "ready") return 1;
   if (status === "watch") return 0.78;
   return 0.48;
+}
+
+function hashIdentifier(value?: string) {
+  if (!value) return null;
+  return crypto.createHash("sha256").update(value).digest("hex").slice(0, 16);
+}
+
+function lifecycleToolsFor(server: SwiggyServer, hasOrderOrBookingId: boolean) {
+  if (server === "food") return hasOrderOrBookingId ? "get_food_order_details then track_food_order" : "get_food_orders";
+  if (server === "instamart") return hasOrderOrBookingId ? "get_order_details then track_order" : "get_orders";
+  return "get_booking_status";
+}
+
+function cadenceFor(server: SwiggyServer) {
+  return server === "dineout" ? 30 : 10;
 }
 
 function timelineForRecommendation(recommendation: Recommendation): SwiggyOrderLifecycleTimeline {
@@ -300,5 +317,88 @@ export function buildSwiggyOrderLifecycle(options: { config: ServerConfig; plans
       "Support packets contain redacted lifecycle evidence, not raw Swiggy payloads or bearer tokens.",
     ],
     externalGates,
+  };
+}
+
+export function probeSwiggyOrderLifecycle(input: {
+  config: ServerConfig;
+  server: SwiggyServer;
+  trigger: "user_tracking_refresh" | "commercial_action_timeout" | "commercial_action_5xx" | "user_retry_request" | "support_request";
+  currentStatus: "known_active" | "known_completed" | "not_found" | "unknown";
+  statusAgeSeconds: number;
+  orderOrBookingId?: string;
+  userConfirmedRetry: boolean;
+}): SwiggyOrderLifecycleProbe {
+  const cadenceSeconds = cadenceFor(input.server);
+  const hasOrderOrBookingId = Boolean(input.orderOrBookingId);
+  const requiredTool = lifecycleToolsFor(input.server, hasOrderOrBookingId);
+  const riskFlags: string[] = [];
+
+  if (!hasOrderOrBookingId && input.server === "dineout") riskFlags.push("dineout_status_requires_booking_or_order_id");
+  if (input.statusAgeSeconds < cadenceSeconds && input.trigger === "user_tracking_refresh") riskFlags.push("tracking_cadence_floor_active");
+  if (input.currentStatus === "unknown") riskFlags.push("status_probe_required_before_retry");
+  if (input.trigger === "user_retry_request" && !input.userConfirmedRetry) riskFlags.push("retry_requires_explicit_confirmation");
+  if (input.config.swiggyMode === "mock") riskFlags.push("mock_status_probe_is_not_live_swiggy_truth");
+
+  let decision: SwiggyOrderLifecycleProbe["decision"];
+  if (input.trigger === "support_request") {
+    decision = "escalate_support";
+  } else if (input.trigger === "user_tracking_refresh" && input.statusAgeSeconds < cadenceSeconds) {
+    decision = "defer_tracking";
+  } else if (input.currentStatus === "known_active" || input.currentStatus === "known_completed") {
+    decision = "show_existing_status";
+  } else if (input.trigger === "user_retry_request") {
+    decision = input.userConfirmedRetry && input.currentStatus === "not_found" ? "allow_retry_after_fresh_probe" : "block_retry";
+  } else {
+    decision = "refresh_status";
+  }
+
+  const blockedRetry = decision !== "allow_retry_after_fresh_probe";
+  if (blockedRetry && (input.trigger === "commercial_action_timeout" || input.trigger === "commercial_action_5xx" || input.trigger === "user_retry_request")) {
+    riskFlags.push("blind_commercial_retry_blocked");
+  }
+
+  return {
+    generatedAt: new Date().toISOString(),
+    requestId: `lifecycle_${Date.now().toString(36)}`,
+    mode: input.config.swiggyMode,
+    input: {
+      server: input.server,
+      trigger: input.trigger,
+      currentStatus: input.currentStatus,
+      statusAgeSeconds: input.statusAgeSeconds,
+      hasOrderOrBookingId,
+      identifierHash: hashIdentifier(input.orderOrBookingId),
+      userConfirmedRetry: input.userConfirmedRetry,
+    },
+    decision,
+    requiredTool,
+    cadenceSeconds,
+    blockedRetry,
+    userFacingCopy:
+      decision === "defer_tracking"
+        ? `I refreshed this too recently. I will wait until the ${cadenceSeconds}-second tracking floor passes.`
+        : decision === "show_existing_status"
+          ? "I can show the latest known Swiggy status and refresh only when the cadence allows it."
+          : decision === "allow_retry_after_fresh_probe"
+            ? "A fresh status probe found no order or booking, and you confirmed retry. I can ask for final confirmation again."
+            : decision === "escalate_support"
+              ? "I will prepare a redacted support packet with lifecycle context and no raw Swiggy payload."
+              : "I need an official Swiggy status read before any retry or duplicate action.",
+    riskFlags,
+    telemetry: [
+      { field: "server", value: input.server, redaction: "safe enum" },
+      { field: "trigger", value: input.trigger, redaction: "safe enum" },
+      { field: "order_or_booking_id_hash", value: hashIdentifier(input.orderOrBookingId) ?? "none", redaction: "sha256 prefix only" },
+      { field: "required_status_tool", value: requiredTool, redaction: "tool names only" },
+      { field: "raw_status_payload_retained", value: "false", redaction: "hard-coded privacy invariant" },
+      { field: "blind_retry_blocked", value: String(blockedRetry), redaction: "boolean only" },
+    ],
+    assertions: [
+      "Commercial actions are never retried without an official Swiggy status or booking probe.",
+      "Tracking refreshes obey the server-specific cadence floor before another status call.",
+      "Order and booking identifiers are hashed before telemetry or support handoff.",
+      "Support packets include lifecycle state and request ids, not raw Swiggy payloads or bearer tokens.",
+    ],
   };
 }

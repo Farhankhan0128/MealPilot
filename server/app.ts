@@ -96,7 +96,7 @@ import { buildNutritionBudgetIntelligence } from "./services/nutritionBudgetInte
 import { buildObservabilityTraceReport, buildSwiggyRouteOptimizationReport } from "./services/observability.js";
 import { buildSwiggyOfferIntelligence, decideSwiggyOffer } from "./services/offerIntelligence.js";
 import { buildSwiggyOperatingContractCenter } from "./services/operatingContractCenter.js";
-import { buildSwiggyOrderLifecycle } from "./services/orderLifecycle.js";
+import { buildSwiggyOrderLifecycle, probeSwiggyOrderLifecycle } from "./services/orderLifecycle.js";
 import { buildSwiggyPaymentTruthCenter, reconcileSwiggyPaymentTruth } from "./services/paymentTruthCenter.js";
 import { buildSwiggyMealWindowCenter, forecastSwiggyMealWindow } from "./services/mealWindowIntelligence.js";
 import { buildPremiumConciergeItinerary } from "./services/premiumConciergeItinerary.js";
@@ -280,6 +280,15 @@ const locationSelectionSchema = z.object({
     "address_delete",
   ]),
   previousContextFresh: z.boolean(),
+});
+
+const orderLifecycleProbeSchema = z.object({
+  server: z.enum(["food", "instamart", "dineout"]),
+  trigger: z.enum(["user_tracking_refresh", "commercial_action_timeout", "commercial_action_5xx", "user_retry_request", "support_request"]),
+  currentStatus: z.enum(["known_active", "known_completed", "not_found", "unknown"]),
+  statusAgeSeconds: z.number().int().min(0).max(86400),
+  orderOrBookingId: z.string().min(1).max(120).optional(),
+  userConfirmedRetry: z.boolean(),
 });
 
 const mcpServerSchema = z.enum(["food", "instamart", "dineout"]);
@@ -1280,6 +1289,16 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/swiggy-order-lifecycle", (_req, res) => {
     res.json({ orderLifecycle: buildSwiggyOrderLifecycle({ plans: store.getAllPlans(), config }) });
+  });
+
+  app.post("/api/swiggy-order-lifecycle/probe", (req, res) => {
+    const body = orderLifecycleProbeSchema.parse(req.body);
+    res.json({
+      lifecycleProbe: probeSwiggyOrderLifecycle({
+        config,
+        ...body,
+      }),
+    });
   });
 
   app.get("/api/swiggy-location-trust", (_req, res) => {

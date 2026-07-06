@@ -1050,6 +1050,20 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-order-lifecycle/probe": {
+        post: {
+          tags: ["Commerce"],
+          summary: "Probe Swiggy order or booking status before tracking, support, or retry decisions",
+          description:
+            "Lifecycle decision, required official status tool, cadence floor, blind-retry block, user-facing copy, redacted telemetry, and no-raw-payload assertions",
+          responses: {
+            "200": {
+              description:
+                "Order lifecycle probe for Food, Instamart, and Dineout that blocks blind commercial retries until official Swiggy status is refreshed",
+            },
+          },
+        },
+      },
       "/api/swiggy-location-trust": {
         get: {
           tags: ["Commerce"],

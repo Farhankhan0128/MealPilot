@@ -3913,6 +3913,39 @@ export interface SwiggyOrderLifecycleReport {
   externalGates: string[];
 }
 
+export interface SwiggyOrderLifecycleProbe {
+  generatedAt: string;
+  requestId: string;
+  mode: "mock" | "staging" | "production";
+  input: {
+    server: SwiggyServer;
+    trigger: "user_tracking_refresh" | "commercial_action_timeout" | "commercial_action_5xx" | "user_retry_request" | "support_request";
+    currentStatus: "known_active" | "known_completed" | "not_found" | "unknown";
+    statusAgeSeconds: number;
+    hasOrderOrBookingId: boolean;
+    identifierHash: string | null;
+    userConfirmedRetry: boolean;
+  };
+  decision:
+    | "defer_tracking"
+    | "refresh_status"
+    | "show_existing_status"
+    | "block_retry"
+    | "allow_retry_after_fresh_probe"
+    | "escalate_support";
+  requiredTool: string;
+  cadenceSeconds: number;
+  blockedRetry: boolean;
+  userFacingCopy: string;
+  riskFlags: string[];
+  telemetry: Array<{
+    field: string;
+    value: string;
+    redaction: string;
+  }>;
+  assertions: string[];
+}
+
 export type SwiggyLocationTrustStatus = "ready" | "watch" | "external_gate";
 
 export interface SwiggyLocationTrustLane {

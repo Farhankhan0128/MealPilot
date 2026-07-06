@@ -130,6 +130,7 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/swiggy-offer-intelligence/decide"].post.summary).toContain("offer");
     expect(openApi.body.paths["/api/swiggy-order-lifecycle"].get.summary).toContain("Order Lifecycle");
     expect(openApi.body.paths["/api/swiggy-order-lifecycle"].get.responses["200"].description).toContain("non-blind retry");
+    expect(openApi.body.paths["/api/swiggy-order-lifecycle/probe"].post.summary).toContain("Probe");
     expect(openApi.body.paths["/api/swiggy-location-trust"].get.summary).toContain("Location Trust");
     expect(openApi.body.paths["/api/swiggy-location-trust"].get.responses["200"].description).toContain("address");
     expect(openApi.body.paths["/api/swiggy-location-trust/select"].post.summary).toContain("Select");
@@ -3849,6 +3850,42 @@ describe("MealPilot API", () => {
     expect(lifecycle.telemetry.some((field: { field: string }) => field.field === "order_id_hash")).toBe(true);
     expect(lifecycle.assertions.some((assertion: string) => assertion.includes("never blindly retried"))).toBe(true);
     expect(lifecycle.externalGates.some((gate: string) => gate.includes("staging credentials"))).toBe(true);
+
+    const deferredProbe = await request(app)
+      .post("/api/swiggy-order-lifecycle/probe")
+      .send({
+        server: "food",
+        trigger: "user_tracking_refresh",
+        currentStatus: "known_active",
+        statusAgeSeconds: 3,
+        orderOrBookingId: "food_order_123",
+        userConfirmedRetry: false,
+      })
+      .expect(200);
+
+    expect(deferredProbe.body.lifecycleProbe.decision).toBe("defer_tracking");
+    expect(deferredProbe.body.lifecycleProbe.requiredTool).toBe("get_food_order_details then track_food_order");
+    expect(deferredProbe.body.lifecycleProbe.blockedRetry).toBe(true);
+    expect(deferredProbe.body.lifecycleProbe.input.identifierHash).toMatch(/^[a-f0-9]{16}$/);
+    expect(
+      deferredProbe.body.lifecycleProbe.telemetry.some(
+        (field: { field: string; value: string }) => field.field === "raw_status_payload_retained" && field.value === "false",
+      ),
+    ).toBe(true);
+
+    const retryProbe = await request(app)
+      .post("/api/swiggy-order-lifecycle/probe")
+      .send({
+        server: "instamart",
+        trigger: "user_retry_request",
+        currentStatus: "not_found",
+        statusAgeSeconds: 14,
+        userConfirmedRetry: true,
+      })
+      .expect(200);
+
+    expect(retryProbe.body.lifecycleProbe.decision).toBe("allow_retry_after_fresh_probe");
+    expect(retryProbe.body.lifecycleProbe.blockedRetry).toBe(false);
   });
 
   it("returns Swiggy Location Trust for saved addresses, Dineout locations, and redaction", async () => {
