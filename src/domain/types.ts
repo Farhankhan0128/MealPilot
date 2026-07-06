@@ -4877,6 +4877,78 @@ export interface SwiggyAgentExperienceBenchmark {
   externalGates: string[];
 }
 
+export type SwiggyPrivatePilotStatus = "ready" | "watch" | "operator_input" | "swiggy_gate";
+
+export interface SwiggyPrivatePilotCohort {
+  id: string;
+  label: string;
+  audience: string;
+  targetUsers: number;
+  city: string;
+  assignedJourneys: string[];
+  consentArtifacts: string[];
+  successMetrics: string[];
+  supportPath: string;
+  status: SwiggyPrivatePilotStatus;
+  proofLinks: string[];
+}
+
+export interface SwiggyPrivatePilotGate {
+  id: string;
+  label: string;
+  owner: "MealPilot" | "Operator" | "Swiggy";
+  status: SwiggyPrivatePilotStatus;
+  requiredEvidence: string;
+  proofLinks: string[];
+  nextAction: string;
+}
+
+export interface SwiggyPrivatePilotMetric {
+  id: string;
+  label: string;
+  target: string;
+  currentEvidence: string;
+  telemetryField: string;
+  status: SwiggyPrivatePilotStatus;
+}
+
+export interface SwiggyPrivatePilotControlRoom {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  totals: {
+    cohorts: number;
+    targetUsers: number;
+    assignedJourneys: number;
+    consentArtifacts: number;
+    successMetrics: number;
+    readyGates: number;
+    totalGates: number;
+    telemetryMetrics: number;
+    swiggyGates: number;
+  };
+  cohorts: SwiggyPrivatePilotCohort[];
+  launchGates: SwiggyPrivatePilotGate[];
+  telemetryMetrics: SwiggyPrivatePilotMetric[];
+  operatorRunbook: Array<{
+    sequence: number;
+    label: string;
+    owner: "MealPilot" | "Operator" | "Swiggy";
+    status: SwiggyPrivatePilotStatus;
+    action: string;
+    proofLinks: string[];
+  }>;
+  pilotPacket: {
+    title: string;
+    recommendedDuration: string;
+    minimumEvidenceBeforeSubmit: string[];
+    goNoGoRule: string;
+    handoffDraft: string;
+  };
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type CommercialActionGuardStatus = "ready" | "watch" | "external_gate";
 export type CommercialActionLaneId = "food_order" | "instamart_checkout" | "dineout_booking" | "combined_evening";
 export type CommercialActionRouteClass = "commercial_action" | "cart_mutation" | "tracking_read";

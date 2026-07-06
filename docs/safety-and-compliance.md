@@ -170,6 +170,8 @@ The `/api/swiggy-widget-experience-composer` endpoint keeps the user-facing widg
 
 The `/api/swiggy-agent-experience-benchmark` endpoint keeps premium and competitive claims tied to proof. It scores journeys only against local evidence from route optimization, use-case blueprints, commercial guards, widget fallbacks, and review artifacts; live cohort benchmarks, co-branding claims, and hosted-widget superiority claims remain gated on Swiggy staging credentials, operator-run pilots, and production approval.
 
+The `/api/swiggy-private-pilot-control-room` endpoint keeps real-user pilot planning explicit without storing participant identities in the repo. It counts consent artifacts, maps success metrics, names support paths, and keeps live cohort results, participant manifests, staging credentials, and any public launch claim gated outside local proof until Swiggy and the operator approve the pilot.
+
 The `/api/mcp/commercial-action-guard` endpoint keeps Food order placement, Instamart checkout, Dineout booking, and combined commercial journeys behind explicit confirmation locks. It maps each non-idempotent action to a fresh authoritative read, a verification tool, a check-then-retry drill, redacted telemetry fields, and support packet context so ambiguous 5xx or network failures cannot create duplicate orders or bookings.
 
 The `/api/mcp/resource-prompt-studio` endpoint keeps `mcp:resources` and `mcp:prompts` evidence reviewable without implying live Swiggy ownership. Local `resources/list`, `resources/read`, `prompts/list`, and `prompts/get` samples can be used for verifier proof, but live server resources, prompt templates, hosted widget URLs, and metadata freshness remain gated on Swiggy staging credentials and production review.

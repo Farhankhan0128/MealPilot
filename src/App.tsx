@@ -156,6 +156,7 @@ import {
   fetchSwiggyStateOrchestrator,
   fetchSwiggyWidgetExperienceComposer,
   fetchSwiggyAgentExperienceBenchmark,
+  fetchSwiggyPrivatePilotControlRoom,
   fetchSwiggyWidgetRuntime,
   fetchSwiggyUpstreamWatch,
   fetchSwiggyWebsiteAtlas,
@@ -318,6 +319,7 @@ import type {
   SwiggyUpstreamWatchReport,
   SwiggyWidgetExperienceComposer,
   SwiggyAgentExperienceBenchmark,
+  SwiggyPrivatePilotControlRoom,
   SwiggyWidgetRuntimeReport,
   SwiggyVisualDishCaptureCenter,
   SwiggyVoiceCommerceCenter,
@@ -466,6 +468,7 @@ function App() {
   const [widgetRuntime, setWidgetRuntime] = useState<SwiggyWidgetRuntimeReport | null>(null);
   const [widgetExperience, setWidgetExperience] = useState<SwiggyWidgetExperienceComposer | null>(null);
   const [agentBenchmark, setAgentBenchmark] = useState<SwiggyAgentExperienceBenchmark | null>(null);
+  const [privatePilot, setPrivatePilot] = useState<SwiggyPrivatePilotControlRoom | null>(null);
   const [commercialActionGuard, setCommercialActionGuard] = useState<CommercialActionGuardReport | null>(null);
   const [stagingCutover, setStagingCutover] = useState<SwiggyStagingCutoverRehearsal | null>(null);
   const [stagingCredentialDrill, setStagingCredentialDrill] =
@@ -688,6 +691,7 @@ function App() {
       widgetRuntimeResponse,
       widgetExperienceResponse,
       agentBenchmarkResponse,
+      privatePilotResponse,
       commercialActionGuardResponse,
       stagingCutoverResponse,
       stagingCredentialDrillResponse,
@@ -808,6 +812,7 @@ function App() {
       fetchSwiggyWidgetRuntime(),
       fetchSwiggyWidgetExperienceComposer(),
       fetchSwiggyAgentExperienceBenchmark(),
+      fetchSwiggyPrivatePilotControlRoom(),
       fetchCommercialActionGuard(),
       fetchSwiggyStagingCutover(),
       fetchSwiggyStagingCredentialDrill(),
@@ -929,6 +934,7 @@ function App() {
     setWidgetRuntime(widgetRuntimeResponse.widgetRuntime);
     setWidgetExperience(widgetExperienceResponse.widgetExperience);
     setAgentBenchmark(agentBenchmarkResponse.agentBenchmark);
+    setPrivatePilot(privatePilotResponse.privatePilot);
     setCommercialActionGuard(commercialActionGuardResponse.commercialActionGuard);
     setStagingCutover(stagingCutoverResponse.stagingCutover);
     setStagingCredentialDrill(stagingCredentialDrillResponse.stagingCredentialDrill);
@@ -1053,6 +1059,7 @@ function App() {
       widgetRuntimeResponse,
       widgetExperienceResponse,
       agentBenchmarkResponse,
+      privatePilotResponse,
       commercialActionGuardResponse,
       stagingCutoverResponse,
       stagingCredentialDrillResponse,
@@ -1170,6 +1177,7 @@ function App() {
       fetchSwiggyWidgetRuntime(),
       fetchSwiggyWidgetExperienceComposer(),
       fetchSwiggyAgentExperienceBenchmark(),
+      fetchSwiggyPrivatePilotControlRoom(),
       fetchCommercialActionGuard(),
       fetchSwiggyStagingCutover(),
       fetchSwiggyStagingCredentialDrill(),
@@ -1287,6 +1295,7 @@ function App() {
     setWidgetRuntime(widgetRuntimeResponse.widgetRuntime);
     setWidgetExperience(widgetExperienceResponse.widgetExperience);
     setAgentBenchmark(agentBenchmarkResponse.agentBenchmark);
+    setPrivatePilot(privatePilotResponse.privatePilot);
     setCommercialActionGuard(commercialActionGuardResponse.commercialActionGuard);
     setStagingCutover(stagingCutoverResponse.stagingCutover);
     setStagingCredentialDrill(stagingCredentialDrillResponse.stagingCredentialDrill);
@@ -1979,6 +1988,7 @@ function App() {
                 widgetRuntime={widgetRuntime}
                 widgetExperience={widgetExperience}
                 agentBenchmark={agentBenchmark}
+                privatePilot={privatePilot}
                 commercialActionGuard={commercialActionGuard}
                 stagingCutover={stagingCutover}
                 stagingCredentialDrill={stagingCredentialDrill}
@@ -2586,6 +2596,7 @@ function LaunchCenterPanel({
   widgetRuntime,
   widgetExperience,
   agentBenchmark,
+  privatePilot,
   commercialActionGuard,
   stagingCutover,
   stagingCredentialDrill,
@@ -2676,6 +2687,7 @@ function LaunchCenterPanel({
   widgetRuntime: SwiggyWidgetRuntimeReport | null;
   widgetExperience: SwiggyWidgetExperienceComposer | null;
   agentBenchmark: SwiggyAgentExperienceBenchmark | null;
+  privatePilot: SwiggyPrivatePilotControlRoom | null;
   commercialActionGuard: CommercialActionGuardReport | null;
   stagingCutover: SwiggyStagingCutoverRehearsal | null;
   stagingCredentialDrill: SwiggyStagingCredentialDrillReport | null;
@@ -3163,6 +3175,40 @@ function LaunchCenterPanel({
               <li key={journey.id} data-status={journey.status === "external_gate" ? "watch" : "healthy"}>
                 <span>{journey.label}</span>
                 <strong>{journey.benchmarkScore}/100</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="private-pilot-card">
+          <div className="mini-heading">
+            <Users aria-hidden="true" />
+            <strong>Private Pilot</strong>
+          </div>
+          <span>
+            {privatePilot
+              ? `${privatePilot.score}/100, ${privatePilot.totals.cohorts} cohorts, ${privatePilot.totals.targetUsers} users`
+              : "Preparing real-user pilot cohorts"}
+          </span>
+          <div className="private-pilot-grid">
+            <div>
+              <strong>{privatePilot?.totals.assignedJourneys ?? 0}</strong>
+              <span>Journeys</span>
+            </div>
+            <div>
+              <strong>{privatePilot?.totals.readyGates ?? 0}/{privatePilot?.totals.totalGates ?? 0}</strong>
+              <span>Gates</span>
+            </div>
+            <div>
+              <strong>{privatePilot?.totals.telemetryMetrics ?? 0}</strong>
+              <span>Metrics</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(privatePilot?.cohorts ?? []).map((cohort) => (
+              <li key={cohort.id} data-status={cohort.status === "swiggy_gate" ? "watch" : "healthy"}>
+                <span>{cohort.label}</span>
+                <strong>{cohort.targetUsers} users</strong>
               </li>
             ))}
           </ul>

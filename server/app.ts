@@ -122,6 +122,7 @@ import { buildSwiggyPartnerSuccessDesk } from "./services/partnerSuccessDesk.js"
 import { buildSwiggyPartnerSupportRoom } from "./services/partnerSupportRoom.js";
 import { buildSwiggyPaymentTruthCenter, reconcileSwiggyPaymentTruth } from "./services/paymentTruthCenter.js";
 import { buildSwiggyMealWindowCenter, forecastSwiggyMealWindow } from "./services/mealWindowIntelligence.js";
+import { buildSwiggyPrivatePilotControlRoom } from "./services/privatePilotControlRoom.js";
 import { buildPremiumConciergeItinerary } from "./services/premiumConciergeItinerary.js";
 import { buildPremiumUseCaseStudio } from "./services/premiumUseCaseStudio.js";
 import { buildSwiggyQuotaNegotiationCenter } from "./services/quotaNegotiationCenter.js";
@@ -989,6 +990,10 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/swiggy-agent-experience-benchmark", (_req, res) => {
     res.json({ agentBenchmark: buildSwiggyAgentExperienceBenchmark(store.getAllPlans().at(-1)) });
+  });
+
+  app.get("/api/swiggy-private-pilot-control-room", (_req, res) => {
+    res.json({ privatePilot: buildSwiggyPrivatePilotControlRoom() });
   });
 
   app.get("/api/mcp/commercial-action-guard", (_req, res) => {

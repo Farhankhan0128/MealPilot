@@ -639,6 +639,15 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
         "Benchmarks premium Swiggy journeys against speed, trust, personalization, multimodal continuity, resilience, commercial safety, UX acceptance criteria, and innovation moats.",
     },
     {
+      id: "private_pilot_control_room",
+      label: "Swiggy Private Pilot Control Room",
+      path: "/api/swiggy-private-pilot-control-room",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Turns benchmark journeys into private-pilot cohorts, consent artifacts, telemetry metrics, support paths, traffic gates, and staging credential handoff actions.",
+    },
+    {
       id: "commercial_action_guard",
       label: "Commercial Action Guard",
       path: "/api/mcp/commercial-action-guard",
@@ -1155,6 +1164,7 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- Widget Runtime Center: /api/mcp/widget-runtime",
     "- Swiggy Widget Experience Composer: /api/swiggy-widget-experience-composer",
     "- Swiggy Agent Experience Benchmark: /api/swiggy-agent-experience-benchmark",
+    "- Swiggy Private Pilot Control Room: /api/swiggy-private-pilot-control-room",
     "- Commercial Action Guard: /api/mcp/commercial-action-guard",
     "- Staging Cutover Rehearsal: /api/mcp/staging-cutover",
     "- Swiggy Staging Credential Drill Center: /api/swiggy-staging-credential-drill",

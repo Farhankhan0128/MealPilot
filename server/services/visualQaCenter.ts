@@ -740,6 +740,17 @@ const targetGroups = [
         "artifacts/visual-qa/agent-experience-benchmark.png",
       ),
       target(
+        "private_pilot_control_room",
+        "Swiggy Private Pilot Control Room",
+        "/",
+        ".private-pilot-card",
+        "desktop",
+        1280,
+        900,
+        "Private-pilot cohort count, target users, assigned journeys, gates, and telemetry metrics are visible.",
+        "artifacts/visual-qa/private-pilot-control-room.png",
+      ),
+      target(
         "food_cart_widget_fallback",
         "Food cart fallback",
         "/",

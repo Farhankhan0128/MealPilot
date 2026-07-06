@@ -1075,6 +1075,10 @@ select:focus {
   grid-column: span 2;
 }
 
+.private-pilot-card {
+  grid-column: span 2;
+}
+
 .commercial-guard-card {
   grid-column: span 2;
 }
@@ -1571,6 +1575,7 @@ select:focus {
 .widget-runtime-grid,
 .widget-experience-grid,
 .agent-benchmark-grid,
+.private-pilot-grid,
   .commercial-guard-grid,
   .staging-cutover-grid,
   .staging-credential-drill-grid,
@@ -1634,6 +1639,7 @@ select:focus {
 .widget-runtime-grid div,
 .widget-experience-grid div,
 .agent-benchmark-grid div,
+.private-pilot-grid div,
   .commercial-guard-grid div,
   .staging-cutover-grid div,
   .staging-credential-drill-grid div,
@@ -1698,6 +1704,7 @@ select:focus {
 .widget-runtime-grid strong,
 .widget-experience-grid strong,
 .agent-benchmark-grid strong,
+.private-pilot-grid strong,
   .commercial-guard-grid strong,
   .staging-cutover-grid strong,
   .staging-credential-drill-grid strong,
@@ -1761,6 +1768,7 @@ select:focus {
 .widget-runtime-grid span,
 .widget-experience-grid span,
 .agent-benchmark-grid span,
+.private-pilot-grid span,
   .commercial-guard-grid span,
   .staging-cutover-grid span,
   .staging-credential-drill-grid span,
@@ -2500,6 +2508,7 @@ select:focus {
   .widget-runtime-card,
   .widget-experience-card,
   .agent-benchmark-card,
+  .private-pilot-card,
   .commercial-guard-card,
   .staging-cutover-card,
   .staging-credential-drill-card,
@@ -2640,6 +2649,7 @@ select:focus {
   .widget-runtime-grid,
   .widget-experience-grid,
   .agent-benchmark-grid,
+  .private-pilot-grid,
   .commercial-guard-grid,
   .staging-cutover-grid,
   .staging-credential-drill-grid,
@@ -3266,6 +3276,7 @@ select:focus {
 .widget-runtime-card,
 .widget-experience-card,
 .agent-benchmark-card,
+.private-pilot-card,
 .commercial-guard-card,
 .staging-cutover-card,
 .staging-credential-drill-card,
@@ -3375,6 +3386,7 @@ select:focus {
 .widget-runtime-grid div,
 .widget-experience-grid div,
 .agent-benchmark-grid div,
+.private-pilot-grid div,
 .commercial-guard-grid div,
 .staging-cutover-grid div,
 .staging-credential-drill-grid div,
@@ -3597,6 +3609,7 @@ select:focus {
   .widget-runtime-card,
   .widget-experience-card,
   .agent-benchmark-card,
+  .private-pilot-card,
   .commercial-guard-card,
   .staging-cutover-card,
   .tool-lab-card,
@@ -3792,6 +3805,7 @@ select:focus {
   .widget-runtime-grid,
   .widget-experience-grid,
   .agent-benchmark-grid,
+  .private-pilot-grid,
   .commercial-guard-grid,
   .voice-commerce-grid,
   .quality-loop-grid,
@@ -3845,6 +3859,7 @@ select:focus {
   .widget-runtime-card,
   .widget-experience-card,
   .agent-benchmark-card,
+  .private-pilot-card,
   .commercial-guard-card,
   .staging-cutover-card,
   .tool-lab-card,

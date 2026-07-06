@@ -100,6 +100,7 @@ import type {
   SwiggyWidget,
   SwiggyWidgetExperienceComposer,
   SwiggyAgentExperienceBenchmark,
+  SwiggyPrivatePilotControlRoom,
   SwiggyBuildersMap,
   SwiggyCustomizationStudio,
   SwiggyCustomizationValidation,
@@ -363,6 +364,10 @@ export function fetchSwiggyWidgetExperienceComposer() {
 
 export function fetchSwiggyAgentExperienceBenchmark() {
   return requestJson<{ agentBenchmark: SwiggyAgentExperienceBenchmark }>("/api/swiggy-agent-experience-benchmark");
+}
+
+export function fetchSwiggyPrivatePilotControlRoom() {
+  return requestJson<{ privatePilot: SwiggyPrivatePilotControlRoom }>("/api/swiggy-private-pilot-control-room");
 }
 
 export function fetchCommercialActionGuard() {

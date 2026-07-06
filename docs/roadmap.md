@@ -46,6 +46,7 @@ Status: in progress.
 - Add Widget Runtime Center for Swiggy iframe contracts, postMessage handlers, activation checks, render contracts, semantic fallbacks, voice exclusions, and hosted-widget gates. Complete.
 - Add Swiggy Widget Experience Composer for responsive widget placements, premium gallery states, event-handler safety gates, and hosted-widget activation runbooks. Complete.
 - Add Swiggy Agent Experience Benchmark for premium journey scoring, UX acceptance criteria, competitive moats, route savings, multimodal continuity, and staged innovation gates. Complete.
+- Add Swiggy Private Pilot Control Room for real-user cohorts, consent artifacts, success metrics, telemetry targets, operator runbooks, support paths, and Swiggy staging replay gates. Complete.
 - Add Commercial Action Guard for Food order, Instamart checkout, Dineout booking, combined-flow confirmation locks, non-blind retry drills, telemetry, and support packets. Complete.
 - Add Staging Cutover Rehearsal for real MCP transport, first-call probes, fail-closed token behavior, retry branches, support packet fields, and 48-hour promotion gates. Complete.
 - Add Audit Ledger Center for redacted session/tool events, support correlation, retention posture, DSR routing, and support packet fields. Complete.

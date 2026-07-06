@@ -314,6 +314,10 @@ assert(
   "OpenAPI agent experience benchmark is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-private-pilot-control-room"].get.summary.includes("Private Pilot Control Room"),
+  "OpenAPI private pilot control room is missing",
+);
+assert(
   openApi.paths["/api/mcp/commercial-action-guard"].get.summary.includes("commercial action"),
   "OpenAPI commercial action guard is missing",
 );
@@ -2187,7 +2191,7 @@ const reviewerArtifactVault = await request("/api/reviewer-artifact-vault");
 assert(reviewerArtifactVault.reviewerArtifactVault.score >= 90, "reviewer artifact vault score is below target");
 assert(reviewerArtifactVault.reviewerArtifactVault.totalArtifacts >= 30, "reviewer artifact vault artifacts are incomplete");
 assert(reviewerArtifactVault.reviewerArtifactVault.readyArtifacts >= 30, "reviewer artifact vault ready artifacts are incomplete");
-assert(reviewerArtifactVault.reviewerArtifactVault.totalScreenshotTargets === 15, "reviewer artifact vault screenshot targets are incomplete");
+assert(reviewerArtifactVault.reviewerArtifactVault.totalScreenshotTargets === 16, "reviewer artifact vault screenshot targets are incomplete");
 assert(reviewerArtifactVault.reviewerArtifactVault.readyScreenshotTargets >= 5, "reviewer artifact vault ready screenshots are incomplete");
 assert(reviewerArtifactVault.reviewerArtifactVault.totalCommands === 7, "reviewer artifact vault commands are incomplete");
 assert(reviewerArtifactVault.reviewerArtifactVault.readyCommands >= 6, "reviewer artifact vault ready commands are incomplete");
@@ -2343,6 +2347,17 @@ assert(
   "reviewer artifact vault agent experience benchmark artifact is missing",
 );
 assert(
+  reviewerArtifactVault.reviewerArtifactVault.artifactSections.some((section) =>
+    section.artifacts.some(
+      (artifact) =>
+        artifact.id === "private_pilot_control_room" &&
+        artifact.label === "Swiggy Private Pilot Control Room" &&
+        artifact.path === "/api/swiggy-private-pilot-control-room",
+    ),
+  ),
+  "reviewer artifact vault private pilot control room artifact is missing",
+);
+assert(
   reviewerArtifactVault.reviewerArtifactVault.screenshotTargets.some(
     (target) =>
       target.id === "luxury_workspace_card" &&
@@ -2386,6 +2401,15 @@ assert(
       target.status === "ready",
   ),
   "reviewer artifact vault agent benchmark screenshot target is missing",
+);
+assert(
+  reviewerArtifactVault.reviewerArtifactVault.screenshotTargets.some(
+    (target) =>
+      target.id === "private_pilot_control_room" &&
+      target.selector === ".private-pilot-card" &&
+      target.status === "ready",
+  ),
+  "reviewer artifact vault private pilot screenshot target is missing",
 );
 assert(
   reviewerArtifactVault.reviewerArtifactVault.screenshotTargets.some(
@@ -2488,8 +2512,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 61, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 61, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 62, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 62, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -2795,6 +2819,12 @@ assert(
     group.targets.some((target) => target.id === "agent_experience_benchmark" && target.selector === ".agent-benchmark-card"),
   ),
   "visual QA agent experience benchmark target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some((target) => target.id === "private_pilot_control_room" && target.selector === ".private-pilot-card"),
+  ),
+  "visual QA private pilot control room target is missing",
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
@@ -4701,6 +4731,45 @@ assert(
   "agent experience benchmark staging credential gate is missing",
 );
 
+const privatePilot = await request("/api/swiggy-private-pilot-control-room");
+assert(privatePilot.privatePilot.score >= 80, "private pilot score is below target");
+assert(privatePilot.privatePilot.totals.cohorts === 4, "private pilot cohorts are incomplete");
+assert(privatePilot.privatePilot.totals.targetUsers >= 30, "private pilot target users are incomplete");
+assert(privatePilot.privatePilot.totals.assignedJourneys >= 8, "private pilot assigned journeys are incomplete");
+assert(privatePilot.privatePilot.totals.consentArtifacts >= 10, "private pilot consent artifacts are incomplete");
+assert(privatePilot.privatePilot.totals.telemetryMetrics === 5, "private pilot telemetry metrics are incomplete");
+assert(privatePilot.privatePilot.totals.swiggyGates >= 1, "private pilot Swiggy gates are missing");
+assert(
+  ["bengaluru_household_alpha", "voice_office_alpha", "dineout_social_alpha", "staging_seed_beta"].every((cohortId) =>
+    privatePilot.privatePilot.cohorts.some((cohort) => cohort.id === cohortId),
+  ),
+  "private pilot cohort coverage is incomplete",
+);
+assert(
+  privatePilot.privatePilot.launchGates.some(
+    (gate) => gate.id === "swiggy_staging_credentials" && gate.owner === "Swiggy" && gate.status === "swiggy_gate",
+  ),
+  "private pilot staging credential gate is missing",
+);
+assert(
+  privatePilot.privatePilot.telemetryMetrics.some(
+    (metric) => metric.id === "confirmation_clarity" && metric.telemetryField === "confirmation_clarity_score",
+  ),
+  "private pilot confirmation telemetry is missing",
+);
+assert(
+  privatePilot.privatePilot.operatorRunbook.map((step) => step.sequence).join(",") === "1,2,3,4",
+  "private pilot operator runbook is incomplete",
+);
+assert(
+  privatePilot.privatePilot.pilotPacket.handoffDraft.includes("builders@swiggy.in"),
+  "private pilot handoff draft is missing",
+);
+assert(
+  privatePilot.privatePilot.externalGates.some((gate) => gate.includes("participant identities")),
+  "private pilot participant external gate is missing",
+);
+
 const commercialActionGuard = await request("/api/mcp/commercial-action-guard");
 assert(commercialActionGuard.commercialActionGuard.score >= 95, "commercial action guard score is below target");
 assert(commercialActionGuard.commercialActionGuard.totalLanes === 4, "commercial action guard lanes are incomplete");
@@ -4884,6 +4953,10 @@ assert(
 assert(
   proof.proof.artifacts.some((artifact) => artifact.label === "Swiggy Agent Experience Benchmark"),
   "reviewer proof agent experience benchmark artifact is missing",
+);
+assert(
+  proof.proof.artifacts.some((artifact) => artifact.label === "Swiggy Private Pilot Control Room"),
+  "reviewer proof private pilot control room artifact is missing",
 );
 assert(
   proof.proof.artifacts.some((artifact) => artifact.label === "Commercial Action Guard"),
@@ -6213,7 +6286,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 61, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 62, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -6227,7 +6300,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("61")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("62")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -6325,6 +6398,7 @@ assert(
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Widget Runtime Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Widget Experience Composer") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Agent Experience Benchmark") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Private Pilot Control Room") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Commercial Action Guard") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Staging Cutover Rehearsal") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Staging Credential Drill Center") &&
@@ -6576,6 +6650,10 @@ assert(
   "launch bundle agent experience benchmark handoff link is missing",
 );
 assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-private-pilot-control-room"),
+  "launch bundle private pilot control room handoff link is missing",
+);
+assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/mcp/commercial-action-guard"),
   "launch bundle commercial action guard handoff link is missing",
 );
@@ -6767,6 +6845,9 @@ console.log(
       widgetExperiencePlacements: widgetExperience.widgetExperience.totals.placements,
       agentBenchmarkScore: agentBenchmark.agentBenchmark.score,
       agentBenchmarkJourneys: agentBenchmark.agentBenchmark.totals.journeys,
+      privatePilotScore: privatePilot.privatePilot.score,
+      privatePilotCohorts: privatePilot.privatePilot.totals.cohorts,
+      privatePilotTargetUsers: privatePilot.privatePilot.totals.targetUsers,
       commercialActionGuardScore: commercialActionGuard.commercialActionGuard.score,
       commercialActionLanes: commercialActionGuard.commercialActionGuard.totalLanes,
       capabilityRegistryScore: capabilityRegistry.registry.score,

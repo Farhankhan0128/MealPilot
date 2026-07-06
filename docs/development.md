@@ -102,6 +102,8 @@ The verifier creates a plan, checks 35-tool coverage, verifies Website Atlas cov
 
 The verifier also validates Commercial Action Guard for Food order placement, Instamart checkout, Dineout booking, combined-flow confirmation locks, non-blind retry drills, telemetry, and support packet fields.
 
+The verifier also validates `/api/swiggy-private-pilot-control-room` for real-user cohort readiness, assigned benchmark journeys, consent artifact counts, telemetry fields, operator runbooks, support paths, Swiggy staging replay gates, and copy-ready `builders@swiggy.in` handoff evidence.
+
 The verifier also validates `/api/swiggy-route-optimizer` for official source links, call-saving rollups, optimizer profiles, explicit parallel batches, commercial-action exclusion from parallel batches, cross-server handoff redaction, and source-linked route assertions.
 
 The verifier also validates `/api/swiggy-cta-live-audit` for safe live Builders/docs CTA probes, manual form/email/legal gates, approved-origin checks, blocked-link drift, and reviewer runbook evidence.
@@ -195,6 +197,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/mcp/widget-runtime`
 - `GET /api/swiggy-widget-experience-composer`
 - `GET /api/swiggy-agent-experience-benchmark`
+- `GET /api/swiggy-private-pilot-control-room`
 - `GET /api/mcp/backpressure-governor`
 - `GET /api/mcp/staging-cutover`
 - `POST /api/confirm`
@@ -588,7 +591,7 @@ The test suite checks that:
 - Swiggy Auth Lifecycle Center verifies PKCE, token lifetimes, v1 refresh-token gating, re-auth recovery, secure storage, and no-token logging.
 - Profile, substitution, confirm-all, tracking, and Builder Access package routes work end to end.
 - Pantry, group planning, scheduling, ops, privacy, markdown export, and OAuth callback routes work end to end.
-- Readiness, OpenAPI, preflight, replay, widgets, Widget Runtime, Widget Experience Composer, Agent Experience Benchmark, Staging Cutover, submission, Submission Console, Access Evidence Matrix, Production Launch Bundle, rate-limit, version, compliance, data governance, audit ledger, and reviewer proof routes work end to end.
+- Readiness, OpenAPI, preflight, replay, widgets, Widget Runtime, Widget Experience Composer, Agent Experience Benchmark, Private Pilot Control Room, Staging Cutover, submission, Submission Console, Access Evidence Matrix, Production Launch Bundle, rate-limit, version, compliance, data governance, audit ledger, and reviewer proof routes work end to end.
 - Resilience drills cover safe 5xx retries, 429 Retry-After handling, 401 reauth, non-idempotent check-then-retry, and deprecation monitoring.
 - Evaluation Lab checks multi-persona city coverage, voice-safe responses, budget fit, preflight gates, confirmation locks, and PII minimization.
 - File-backed storage persists plans across server instances and exposes export/compaction diagnostics.

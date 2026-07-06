@@ -108,6 +108,7 @@ Open the Launch Center and show:
 - Widget Runtime Center showing iframe sandbox policy, origin checks, postMessage handlers, semantic fallbacks, voice exclusions, and hosted-widget gates.
 - Swiggy Widget Experience Composer showing premium widget placements, responsive gallery states, event-handler safety gates, and hosted-widget activation runbook.
 - Swiggy Agent Experience Benchmark showing route speed, trust, personalization, multimodal continuity, resilience, commercial safety, UX gates, and innovation moats.
+- Swiggy Private Pilot Control Room showing real-user pilot cohorts, assigned journeys, consent artifacts, telemetry targets, support paths, operator runbook, and Swiggy staging replay gates.
 - Commercial Action Guard showing fresh-read requirements, chat/voice confirmations, non-blind retry drills, telemetry fields, and support packets for Food orders, Instamart checkout, Dineout bookings, and combined journeys.
 - Capability Registry and Resource & Prompt Studio showing `mcp:tools`, `mcp:resources`, `mcp:prompts`, metadata, widgets, prompt contracts, sample reads, and prompt messages.
 - FAQ & Policy Center showing homepage/developer/enterprise FAQ coverage, footer resources, access ground rules, legal signals, and external gates.
@@ -176,6 +177,7 @@ Open Production Evidence and show:
 - Widget Runtime Center artifact at `/api/mcp/widget-runtime` with secure iframe, postMessage, and fallback behavior.
 - Swiggy Widget Experience Composer artifact at `/api/swiggy-widget-experience-composer` with responsive placements, gallery states, and activation proof.
 - Swiggy Agent Experience Benchmark artifact at `/api/swiggy-agent-experience-benchmark` with premium journey scores, UX acceptance criteria, and competitive moats.
+- Swiggy Private Pilot Control Room artifact at `/api/swiggy-private-pilot-control-room` with cohort readiness, consent metrics, success gates, telemetry fields, support routes, and staging credential dependencies.
 - Commercial Action Guard artifact at `/api/mcp/commercial-action-guard` with confirmation locks, check-then-retry recovery, and support-safe telemetry.
 - Rate-limit budgets under planned developer-tier ceilings.
 - Traffic Readiness Plan with per-lane budgets, capacity upgrade email, and major-event notification gates.
@@ -290,6 +292,7 @@ Briefly show production readiness:
 - `/api/mcp/state-orchestrator/rehearse-surface`
 - `/api/swiggy-widget-experience-composer`
 - `/api/swiggy-agent-experience-benchmark`
+- `/api/swiggy-private-pilot-control-room`
 - `/api/mcp/resource-prompt-studio`
 - `/api/mcp/resource-prompt-studio/execute`
 - `/api/mcp/staging-cutover`

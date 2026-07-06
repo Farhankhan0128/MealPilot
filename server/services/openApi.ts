@@ -243,6 +243,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-private-pilot-control-room": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Private Pilot Control Room for real-user cohort readiness and staging replay gates",
+          responses: {
+            "200": {
+              description:
+                "Operator-ready private pilot room with cohorts, consent artifacts, assigned benchmark journeys, success metrics, support paths, telemetry targets, go/no-go gates, staging credential dependencies, and Swiggy handoff packet copy",
+            },
+          },
+        },
+      },
       "/api/mcp/commercial-action-guard": {
         get: {
           tags: ["Builder Access"],
