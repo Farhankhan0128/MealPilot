@@ -1395,6 +1395,39 @@ export interface SwiggyGrowthPartnershipCenter {
   externalGates: string[];
 }
 
+export type SwiggyShowcaseSubmissionStatus = "ready" | "operator_input" | "swiggy_gate";
+
+export interface SwiggyShowcaseSubmissionAsset {
+  id: string;
+  label: string;
+  format: "video" | "narrative" | "metric_pack" | "visual" | "email" | "co_branding";
+  status: SwiggyShowcaseSubmissionStatus;
+  owner: "MealPilot" | "Operator" | "Swiggy" | "Joint";
+  purpose: string;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyShowcaseSubmissionCenter {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  totals: {
+    assets: number;
+    readyAssets: number;
+    operatorInputs: number;
+    swiggyGates: number;
+    evidenceLinks: number;
+    pitchBlocks: number;
+  };
+  pitchBlocks: Array<{ id: string; label: string; copy: string; evidenceLinks: string[] }>;
+  assets: SwiggyShowcaseSubmissionAsset[];
+  demoStoryboard: Array<{ sequence: number; label: string; shot: string; proofLinks: string[] }>;
+  metricPack: Array<{ id: string; label: string; target: string; source: string }>;
+  outreachEmail: { to: string; subject: string; bodyPreview: string; evidenceLinks: string[] };
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type SwiggyPartnerSuccessStatus = "ready" | "manual_input" | "external_gate";
 
 export interface SwiggyPartnerSuccessLane {

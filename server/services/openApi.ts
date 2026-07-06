@@ -389,6 +389,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-showcase-submission-center": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Showcase Submission Center for demo, feature, and co-marketing review",
+          responses: {
+            "200": {
+              description:
+                "Feature-ready pitch blocks, demo storyboard, metric pack, visual proof, outreach email, co-branding gates, and Swiggy-owned showcase approvals",
+            },
+          },
+        },
+      },
       "/api/swiggy-partner-success-desk": {
         get: {
           tags: ["Builder Access"],

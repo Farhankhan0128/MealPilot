@@ -96,6 +96,7 @@ import type {
   SwiggyFaqPolicyCenter,
   SwiggyGrowthPartnershipCenter,
   SwiggyInteractionQaCenter,
+  SwiggyShowcaseSubmissionCenter,
   SwiggyPartnerSuccessDesk,
   SwiggyLlmsManifestVerifier,
   SwiggyInnovationRadarReport,
@@ -400,6 +401,12 @@ export function fetchSwiggyFaqPolicyCenter() {
 
 export function fetchSwiggyGrowthPartnershipCenter() {
   return requestJson<{ growthPartnership: SwiggyGrowthPartnershipCenter }>("/api/swiggy-growth-partnership");
+}
+
+export function fetchSwiggyShowcaseSubmissionCenter() {
+  return requestJson<{ showcaseSubmission: SwiggyShowcaseSubmissionCenter }>(
+    "/api/swiggy-showcase-submission-center",
+  );
 }
 
 export function fetchSwiggyPartnerSuccessDesk() {

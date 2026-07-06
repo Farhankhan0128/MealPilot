@@ -97,6 +97,7 @@ import {
 import { buildResilienceDrills, buildResilienceRunbook } from "./services/resilienceDrills.js";
 import { buildOpenApiDocument } from "./services/openApi.js";
 import { buildSandboxCredentialWorkbench } from "./services/sandboxCredentialWorkbench.js";
+import { buildSwiggyShowcaseSubmissionCenter } from "./services/showcaseSubmissionCenter.js";
 import { buildNutritionBudgetIntelligence } from "./services/nutritionBudgetIntelligence.js";
 import { buildObservabilityTraceReport, buildSwiggyRouteOptimizationReport } from "./services/observability.js";
 import { buildSwiggyOfferIntelligence, decideSwiggyOffer } from "./services/offerIntelligence.js";
@@ -993,6 +994,10 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/swiggy-growth-partnership", (_req, res) => {
     res.json({ growthPartnership: buildSwiggyGrowthPartnershipCenter() });
+  });
+
+  app.get("/api/swiggy-showcase-submission-center", (_req, res) => {
+    res.json({ showcaseSubmission: buildSwiggyShowcaseSubmissionCenter() });
   });
 
   app.get("/api/swiggy-partner-success-desk", (_req, res) => {

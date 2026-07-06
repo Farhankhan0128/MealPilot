@@ -140,6 +140,10 @@ assert(
   "OpenAPI growth partnership contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-showcase-submission-center"].get.summary.includes("Showcase Submission"),
+  "OpenAPI showcase submission center contract is missing",
+);
+assert(
   openApi.paths["/api/swiggy-partner-success-desk"].get.summary.includes("Partner Success"),
   "OpenAPI partner success desk contract is missing",
 );
@@ -770,6 +774,42 @@ assert(
 assert(
   growthPartnership.growthPartnership.externalGates.some((gate) => gate.includes("co-marketing")),
   "growth partnership co-marketing gate is missing",
+);
+
+const showcaseSubmission = await request("/api/swiggy-showcase-submission-center");
+assert(showcaseSubmission.showcaseSubmission.score >= 80, "showcase submission score is below target");
+assert(
+  showcaseSubmission.showcaseSubmission.totals.assets === 6 &&
+    showcaseSubmission.showcaseSubmission.totals.readyAssets >= 3 &&
+    showcaseSubmission.showcaseSubmission.totals.operatorInputs === 2 &&
+    showcaseSubmission.showcaseSubmission.totals.swiggyGates === 1 &&
+    showcaseSubmission.showcaseSubmission.totals.pitchBlocks === 4,
+  "showcase submission totals are incomplete",
+);
+assert(
+  ["one_liner", "why_swiggy", "differentiator", "safety"].every((id) =>
+    showcaseSubmission.showcaseSubmission.pitchBlocks.some((block) => block.id === id),
+  ),
+  "showcase submission pitch blocks are incomplete",
+);
+assert(
+  ["two_minute_demo:operator_input", "powered_by_swiggy:swiggy_gate"].every((entry) =>
+    showcaseSubmission.showcaseSubmission.assets.some((asset) => `${asset.id}:${asset.status}` === entry),
+  ),
+  "showcase submission assets or gates are incomplete",
+);
+assert(
+  showcaseSubmission.showcaseSubmission.demoStoryboard.map((step) => step.sequence).join(",") === "1,2,3,4,5" &&
+    ["tool_coverage", "visual_targets", "growth_experiments", "staging_smoke"].every((id) =>
+      showcaseSubmission.showcaseSubmission.metricPack.some((metric) => metric.id === id),
+    ),
+  "showcase submission storyboard or metrics are incomplete",
+);
+assert(
+  showcaseSubmission.showcaseSubmission.outreachEmail.to === "builders@swiggy.in" &&
+    showcaseSubmission.showcaseSubmission.assertions.some((assertion) => assertion.includes("no email")) &&
+    showcaseSubmission.showcaseSubmission.externalGates.some((gate) => gate.includes("co-branding")),
+  "showcase submission outreach, assertions, or gates are missing",
 );
 
 const partnerSuccess = await request("/api/swiggy-partner-success-desk");
@@ -1676,8 +1716,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 42, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 42, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 43, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 43, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -1829,6 +1869,12 @@ assert(
     group.targets.some((target) => target.id === "partner_success_card" && target.selector === ".partner-success-card"),
   ),
   "visual QA Partner Success target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some((target) => target.id === "showcase_submission_card" && target.selector === ".showcase-submission-card"),
+  ),
+  "visual QA Showcase Submission target is missing",
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
@@ -4996,7 +5042,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 42, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 43, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -5010,7 +5056,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("42")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("43")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -5553,6 +5599,9 @@ console.log(
       faqPolicyQuestions: faqPolicy.faqPolicy.totalQuestions,
       growthPartnershipScore: growthPartnership.growthPartnership.score,
       growthExperiments: growthPartnership.growthPartnership.totalExperiments,
+      showcaseSubmissionScore: showcaseSubmission.showcaseSubmission.score,
+      showcaseSubmissionAssets: showcaseSubmission.showcaseSubmission.totals.assets,
+      showcaseSubmissionGates: showcaseSubmission.showcaseSubmission.totals.swiggyGates,
       partnerSuccessScore: partnerSuccess.partnerSuccess.score,
       partnerSuccessLanes: partnerSuccess.partnerSuccess.totals.lanes,
       partnerSuccessExternalGates: partnerSuccess.partnerSuccess.totals.externalGates,

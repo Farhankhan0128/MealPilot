@@ -115,6 +115,7 @@ import {
   fetchSwiggyOperatingContractCenter,
   fetchSwiggyFaqPolicyCenter,
   fetchSwiggyGrowthPartnershipCenter,
+  fetchSwiggyShowcaseSubmissionCenter,
   fetchSwiggyInteractionQaCenter,
   fetchSwiggyAccessDossier,
   fetchSwiggyAccessEvidenceMatrix,
@@ -253,6 +254,7 @@ import type {
   SwiggyDocsTwinExplorer,
   SwiggyFaqPolicyCenter,
   SwiggyGrowthPartnershipCenter,
+  SwiggyShowcaseSubmissionCenter,
   SwiggyInteractionQaCenter,
   SwiggyPartnerSuccessDesk,
   SwiggyHandshakeDoctor,
@@ -443,6 +445,7 @@ function App() {
   const [swiggyBuilderIntake, setSwiggyBuilderIntake] = useState<SwiggyBuilderIntakeCommandCenter | null>(null);
   const [swiggyFaqPolicy, setSwiggyFaqPolicy] = useState<SwiggyFaqPolicyCenter | null>(null);
   const [swiggyGrowthPartnership, setSwiggyGrowthPartnership] = useState<SwiggyGrowthPartnershipCenter | null>(null);
+  const [showcaseSubmission, setShowcaseSubmission] = useState<SwiggyShowcaseSubmissionCenter | null>(null);
   const [partnerSuccess, setPartnerSuccess] = useState<SwiggyPartnerSuccessDesk | null>(null);
   const [interactionQa, setInteractionQa] = useState<SwiggyInteractionQaCenter | null>(null);
   const [channelMultimodalStudio, setChannelMultimodalStudio] =
@@ -643,6 +646,7 @@ function App() {
       builderIntakeResponse,
       faqPolicyResponse,
       growthPartnershipResponse,
+      showcaseSubmissionResponse,
       partnerSuccessResponse,
       interactionQaResponse,
       channelMultimodalResponse,
@@ -744,6 +748,7 @@ function App() {
       fetchSwiggyBuilderIntake(),
       fetchSwiggyFaqPolicyCenter(),
       fetchSwiggyGrowthPartnershipCenter(),
+      fetchSwiggyShowcaseSubmissionCenter(),
       fetchSwiggyPartnerSuccessDesk(),
       fetchSwiggyInteractionQaCenter(),
       fetchChannelMultimodalStudio(),
@@ -846,6 +851,7 @@ function App() {
     setSwiggyBuilderIntake(builderIntakeResponse.intake);
     setSwiggyFaqPolicy(faqPolicyResponse.faqPolicy);
     setSwiggyGrowthPartnership(growthPartnershipResponse.growthPartnership);
+    setShowcaseSubmission(showcaseSubmissionResponse.showcaseSubmission);
     setPartnerSuccess(partnerSuccessResponse.partnerSuccess);
     setInteractionQa(interactionQaResponse.interactionQa);
     setChannelMultimodalStudio(channelMultimodalResponse.channelMultimodalStudio);
@@ -951,6 +957,7 @@ function App() {
       builderIntakeResponse,
       faqPolicyResponse,
       growthPartnershipResponse,
+      showcaseSubmissionResponse,
       partnerSuccessResponse,
       interactionQaResponse,
       channelMultimodalResponse,
@@ -1049,6 +1056,7 @@ function App() {
       fetchSwiggyBuilderIntake(),
       fetchSwiggyFaqPolicyCenter(),
       fetchSwiggyGrowthPartnershipCenter(),
+      fetchSwiggyShowcaseSubmissionCenter(),
       fetchSwiggyPartnerSuccessDesk(),
       fetchSwiggyInteractionQaCenter(),
       fetchChannelMultimodalStudio(),
@@ -1147,6 +1155,7 @@ function App() {
     setSwiggyBuilderIntake(builderIntakeResponse.intake);
     setSwiggyFaqPolicy(faqPolicyResponse.faqPolicy);
     setSwiggyGrowthPartnership(growthPartnershipResponse.growthPartnership);
+    setShowcaseSubmission(showcaseSubmissionResponse.showcaseSubmission);
     setPartnerSuccess(partnerSuccessResponse.partnerSuccess);
     setInteractionQa(interactionQaResponse.interactionQa);
     setChannelMultimodalStudio(channelMultimodalResponse.channelMultimodalStudio);
@@ -1820,6 +1829,7 @@ function App() {
                 builderIntake={swiggyBuilderIntake}
                 faqPolicy={swiggyFaqPolicy}
                 growthPartnership={swiggyGrowthPartnership}
+                showcaseSubmission={showcaseSubmission}
                 partnerSuccess={partnerSuccess}
                 interactionQa={interactionQa}
                 channelMultimodalStudio={channelMultimodalStudio}
@@ -2408,6 +2418,7 @@ function LaunchCenterPanel({
   builderIntake,
   faqPolicy,
   growthPartnership,
+  showcaseSubmission,
   partnerSuccess,
   interactionQa,
   channelMultimodalStudio,
@@ -2480,6 +2491,7 @@ function LaunchCenterPanel({
   builderIntake: SwiggyBuilderIntakeCommandCenter | null;
   faqPolicy: SwiggyFaqPolicyCenter | null;
   growthPartnership: SwiggyGrowthPartnershipCenter | null;
+  showcaseSubmission: SwiggyShowcaseSubmissionCenter | null;
   partnerSuccess: SwiggyPartnerSuccessDesk | null;
   interactionQa: SwiggyInteractionQaCenter | null;
   channelMultimodalStudio: SwiggyChannelMultimodalStudio | null;
@@ -3714,6 +3726,54 @@ function LaunchCenterPanel({
               </li>
             ))}
           </ul>
+        </article>
+
+        <article className="showcase-submission-card">
+          <div className="mini-heading">
+            <Sparkles aria-hidden="true" />
+            <strong>Showcase Submission</strong>
+          </div>
+          <span>
+            {showcaseSubmission
+              ? `${showcaseSubmission.score}/100, ${showcaseSubmission.totals.readyAssets}/${showcaseSubmission.totals.assets} assets ready`
+              : "Preparing demo, feature, and co-marketing packet"}
+          </span>
+          <div className="showcase-submission-grid">
+            <div>
+              <strong>{showcaseSubmission?.totals.pitchBlocks ?? 0}</strong>
+              <span>Pitch blocks</span>
+            </div>
+            <div>
+              <strong>{showcaseSubmission?.totals.operatorInputs ?? 0}</strong>
+              <span>Inputs</span>
+            </div>
+            <div>
+              <strong>{showcaseSubmission?.totals.swiggyGates ?? 0}</strong>
+              <span>Gates</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(showcaseSubmission?.assets ?? []).slice(0, 5).map((item) => (
+              <li
+                key={item.id}
+                data-status={item.status === "ready" ? "healthy" : item.status === "swiggy_gate" ? "blocked" : "watch"}
+              >
+                <span>{item.label}</span>
+                <strong>{item.format.replaceAll("_", " ")}</strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-intelligence-actions" aria-label="Showcase submission links">
+            <a href="/api/swiggy-showcase-submission-center" target="_blank" rel="noreferrer">
+              Showcase API
+            </a>
+            <a href="/api/builder-packet-export" target="_blank" rel="noreferrer">
+              Packet
+            </a>
+            <a href="/api/swiggy-builders-launch-story" target="_blank" rel="noreferrer">
+              Story
+            </a>
+          </div>
         </article>
 
         <article className="partner-success-card">

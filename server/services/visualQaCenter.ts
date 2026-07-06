@@ -387,6 +387,17 @@ const targetGroups = [
         "artifacts/visual-qa/partner-success-card.png",
       ),
       target(
+        "showcase_submission_card",
+        "Showcase Submission card",
+        "/",
+        ".showcase-submission-card",
+        "desktop",
+        1280,
+        900,
+        "Showcase Submission Center shows demo assets, pitch blocks, operator inputs, and Swiggy co-branding gates.",
+        "artifacts/visual-qa/showcase-submission-card.png",
+      ),
+      target(
         "interaction_qa_card",
         "Interaction QA card",
         "/",

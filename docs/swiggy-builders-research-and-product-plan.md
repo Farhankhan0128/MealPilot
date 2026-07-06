@@ -186,6 +186,7 @@ MealPilot should become a luxury-grade food and meal intelligence product with t
 | Builder Intake Command Center | `server/services/builderIntake.ts` |
 | FAQ & Policy Center | `server/services/faqPolicyCenter.ts` |
 | Growth Partnership Center | `server/services/growthPartnership.ts` |
+| Showcase Submission Center | `server/services/showcaseSubmissionCenter.ts` |
 | Partner Success Desk | `server/services/partnerSuccessDesk.ts` |
 | Interaction QA Center | `server/services/interactionQaCenter.ts` |
 | Staging Seed & Smoke Center | `server/services/stagingSeedSmokeCenter.ts` |
@@ -247,7 +248,7 @@ MealPilot should become a luxury-grade food and meal intelligence product with t
 | Planner workspace | `src/App.tsx` |
 | Recommendation cards | Food, Instamart, and Dineout cards with item controls |
 | Premium Concierge | Lunch, pantry reset, Dineout evening, dessert reminder, and recovery itinerary slots with official Swiggy route plans |
-| Launch Center | Tool coverage, Tool Contract Matrix, Scenario Runner, State Orchestrator, Widget Runtime Center, Commercial Action Guard, Staging Cutover Rehearsal, Swiggy Handshake Doctor, Capability Registry, Resource & Prompt Studio, Website Atlas, Builder Intake, FAQ & Policy Center, Growth Partnership Center, Partner Success Desk, Interaction QA Center, Channel & Multimodal Studio, Nutrition & Budget Intelligence, Household Preference Graph, Guest Collaboration & Calendar Center, Luxury Experience Workspace, Reviewer Artifact Vault, Visual QA Center, Access Evidence Matrix, Docs Coverage, Docs Twin Explorer, llms Manifest Verifier, Upstream Watch, Source Intelligence, Deep Site Map, Developer Quickstart, CTA Execution, Innovation Radar, Tool Lab, gateway, OAuth Status, Credential Cockpit, Delegated Auth Center, Builders map, Support Bridge, go-live, observability, support |
+| Launch Center | Tool coverage, Tool Contract Matrix, Scenario Runner, State Orchestrator, Widget Runtime Center, Commercial Action Guard, Staging Cutover Rehearsal, Swiggy Handshake Doctor, Capability Registry, Resource & Prompt Studio, Website Atlas, Builder Intake, FAQ & Policy Center, Growth Partnership Center, Showcase Submission Center, Partner Success Desk, Interaction QA Center, Channel & Multimodal Studio, Nutrition & Budget Intelligence, Household Preference Graph, Guest Collaboration & Calendar Center, Luxury Experience Workspace, Reviewer Artifact Vault, Visual QA Center, Access Evidence Matrix, Docs Coverage, Docs Twin Explorer, llms Manifest Verifier, Upstream Watch, Source Intelligence, Deep Site Map, Developer Quickstart, CTA Execution, Innovation Radar, Tool Lab, gateway, OAuth Status, Credential Cockpit, Delegated Auth Center, Builders map, Support Bridge, go-live, observability, support |
 | Guest Collaboration & Calendar | Guest votes, occasion templates, Dineout-first date nights, guests-at-home prep, office lunch, weekday reset, recovery meal, ICS artifacts, Slack/Teams gates, and voice-safe briefs |
 | Luxury Experience Workspace | Lean, premium, family, social, and training modes plus polished Dineout reservation, Food cart, Instamart basket, combined evening, and recovery review surfaces |
 | Reviewer Artifact Vault | Proof links, OpenAPI, smoke commands, screenshot targets, demo-video checklist, logs, traces, redaction rules, support context, and handoff copy |
@@ -282,6 +283,7 @@ Coverage targets:
 - Swiggy Builders Page Mesh Auditor for live public page reachability, title/anchor extraction, module signal parity, CTA matching, and safe-origin drift checks across every non-external Website Atlas page
 - FAQ & Policy Center for homepage/developer/enterprise FAQ themes, access ground rules, footer resources, allowed/restricted/prohibited policy categories, legal signals, and support contact
 - Growth Partnership Center for get-noticed, hiring, co-branding, direct support, co-marketing, analytics dashboards, strategic guidance, launch experiments, metrics, assets, and partner asks
+- Showcase Submission Center for demo video readiness, pitch blocks, metric packs, visual proof, outreach email, operator inputs, and co-branding/feature approval gates
 - Partner Success Desk for access handoff, support, SLO incidents, capacity review, backpressure, growth showcase, escalation emails, and enterprise Slack/partner-manager external gates
 - Interaction QA Center for clickable portal CTAs, route contracts, visible feedback expectations, automation proof, and explicit Swiggy/operator gates
 - Staging Seed & Smoke Center for seeded server fixtures, read-first staging probes, mutation refreshes, commercial stop rules, support smoke, telemetry evidence, and promotion blockers
