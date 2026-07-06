@@ -1374,6 +1374,87 @@ export interface SwiggyQualityLoopCenter {
   externalGates: string[];
 }
 
+export type SwiggyRitualAutopilotStatus = "ready" | "needs_consent" | "confirmation_gate" | "staging_gate";
+export type SwiggyRitualAutopilotCadence = "weekday" | "weekend" | "weekly" | "occasion";
+export type SwiggyRitualAutopilotSignal = "food_history" | "go_to_items" | "booking_slots" | "quality_feedback" | "calendar" | "voice_or_visual";
+
+export interface SwiggyRitualAutopilotLane {
+  id: string;
+  label: string;
+  cadence: SwiggyRitualAutopilotCadence;
+  server: SwiggyServer | "combined";
+  status: SwiggyRitualAutopilotStatus;
+  swiggyTools: string[];
+  consentedSignals: SwiggyRitualAutopilotSignal[];
+  userPromise: string;
+  planningAction: string;
+  confirmationBoundary: string;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyRitualAutopilotGuardrail {
+  id: string;
+  label: string;
+  status: SwiggyRitualAutopilotStatus;
+  policy: string;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyRitualAutopilotSample {
+  id: string;
+  request: string;
+  selectedLane: string;
+  cadence: SwiggyRitualAutopilotCadence;
+  status: SwiggyRitualAutopilotStatus;
+}
+
+export interface SwiggyRitualAutopilotPlan {
+  generatedAt: string;
+  requestId: string;
+  mode: "mock" | "staging" | "production";
+  input: {
+    cadence: SwiggyRitualAutopilotCadence;
+    householdMode: "solo" | "couple" | "family" | "team";
+    city: string;
+    budget: number;
+    consentToUseHistory: boolean;
+  };
+  selectedLaneId: string;
+  confidence: number;
+  weeklyTheme: string;
+  routineSlots: Array<{
+    day: string;
+    action: string;
+    swiggyPath: SwiggyServer | "combined";
+    requiresConfirmation: boolean;
+  }>;
+  recommendedNextAction: string;
+  swiggyRoute: SwiggyRitualAutopilotLane;
+  telemetry: Array<{ field: string; value: string; redaction: string }>;
+  assertions: string[];
+}
+
+export interface SwiggyRitualAutopilotCenter {
+  generatedAt: string;
+  score: number;
+  mode: "mock" | "staging" | "production";
+  officialSources: string[];
+  totals: {
+    lanes: number;
+    readyLanes: number;
+    guardrails: number;
+    readyGuardrails: number;
+    samples: number;
+    externalGates: number;
+  };
+  lanes: SwiggyRitualAutopilotLane[];
+  guardrails: SwiggyRitualAutopilotGuardrail[];
+  samples: SwiggyRitualAutopilotSample[];
+  operatorRunbook: Array<{ sequence: number; label: string; command: string; proves: string }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type NutritionBudgetStatus = "ready" | "needs_live_data" | "external_gate";
 
 export interface NutritionBudgetTarget {

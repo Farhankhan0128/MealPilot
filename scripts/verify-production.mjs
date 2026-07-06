@@ -130,6 +130,11 @@ assert(
   "OpenAPI quality loop contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-ritual-autopilot-center"].get.summary.includes("Ritual Autopilot") &&
+    openApi.paths["/api/swiggy-ritual-autopilot-center/plan"].post.summary.includes("ritual"),
+  "OpenAPI ritual autopilot contract is missing",
+);
+assert(
   openApi.paths["/api/nutrition-budget-intelligence"].get.summary.includes("Nutrition and Budget"),
   "OpenAPI nutrition and budget intelligence contract is missing",
 );
@@ -831,6 +836,50 @@ assert(
   "quality issue feedback did not preserve support/consent boundaries",
 );
 
+const ritualAutopilot = await request("/api/swiggy-ritual-autopilot-center");
+assert(ritualAutopilot.ritualAutopilot.score >= 86, "ritual autopilot score is below target");
+assert(
+  ritualAutopilot.ritualAutopilot.totals.lanes === 4 &&
+    ritualAutopilot.ritualAutopilot.totals.readyLanes === 4 &&
+    ritualAutopilot.ritualAutopilot.totals.guardrails === 6 &&
+    ritualAutopilot.ritualAutopilot.totals.readyGuardrails === 4 &&
+    ritualAutopilot.ritualAutopilot.totals.samples === 4,
+  "ritual autopilot totals are incomplete",
+);
+assert(
+  ["weekday_lunch_repeat", "pantry_reset", "date_night_slotwatch", "family_weekend_route"].every((id) =>
+    ritualAutopilot.ritualAutopilot.lanes.some((lane) => lane.id === id),
+  ),
+  "ritual autopilot lanes are incomplete",
+);
+assert(
+  ritualAutopilot.ritualAutopilot.guardrails.some(
+    (guard) => guard.id === "no_auto_commercial_action" && guard.policy.includes("never places Food orders"),
+  ),
+  "ritual autopilot no-auto-action guardrail is missing",
+);
+const ritualPlan = await request("/api/swiggy-ritual-autopilot-center/plan", {
+  method: "POST",
+  body: JSON.stringify({
+    cadence: "weekly",
+    householdMode: "family",
+    city: "Bengaluru",
+    budget: 2500,
+    consentToUseHistory: true,
+  }),
+});
+assert(
+  ritualPlan.ritualPlan.selectedLaneId === "pantry_reset" &&
+    ritualPlan.ritualPlan.confidence >= 0.8 &&
+    ritualPlan.ritualPlan.routineSlots.some((slot) => slot.requiresConfirmation),
+  "ritual autopilot plan route is wrong",
+);
+assert(
+  ritualPlan.ritualPlan.telemetry.some((item) => item.field === "auto_commercial_action" && item.value === "false") &&
+    ritualPlan.ritualPlan.assertions.some((assertion) => assertion.includes("not a subscription")),
+  "ritual autopilot safety telemetry is incomplete",
+);
+
 const nutritionBudget = await request("/api/nutrition-budget-intelligence");
 assert(nutritionBudget.nutritionBudget.score >= 91, "nutrition and budget intelligence score is below target");
 assert(nutritionBudget.nutritionBudget.totalTargets === 4, "nutrition and budget targets are incomplete");
@@ -1260,8 +1309,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 31, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 31, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 32, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 32, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -1360,6 +1409,12 @@ assert(
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some((target) => target.id === "ritual_autopilot_card" && target.selector === ".ritual-autopilot-card"),
+  ),
+  "visual QA ritual autopilot target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
     group.targets.some((target) => target.id === "developer_quickstart_card" && target.selector === ".developer-quickstart-card"),
   ),
   "visual QA developer quickstart target is missing",
@@ -1450,7 +1505,7 @@ assert(
     (command) =>
       command.id === "visual_capture_harness" &&
       command.command === "npm run verify:visual" &&
-      command.expectedSignal.includes("targetCount >= 31"),
+      command.expectedSignal.includes("targetCount >= 32"),
   ),
   "visual QA Playwright command is missing",
 );
@@ -2934,6 +2989,10 @@ assert(
   "reviewer proof quality loop artifact is missing",
 );
 assert(
+  proof.proof.artifacts.some((artifact) => artifact.label === "Swiggy Ritual Autopilot Center"),
+  "reviewer proof ritual autopilot artifact is missing",
+);
+assert(
   proof.proof.artifacts.some((artifact) => artifact.label === "Nutrition & Budget Intelligence"),
   "reviewer proof nutrition and budget artifact is missing",
 );
@@ -3938,7 +3997,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 31, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 32, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -3952,7 +4011,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("31")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("32")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -3992,6 +4051,7 @@ assert(
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Visual Dish Capture Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Voice Commerce Rehearsal Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Quality Loop Center") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Ritual Autopilot Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Nutrition & Budget Intelligence") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Household Preference Graph") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Guest Collaboration & Calendar Center") &&
@@ -4121,6 +4181,10 @@ assert(
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-quality-loop-center"),
   "launch bundle quality loop handoff link is missing",
+);
+assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-ritual-autopilot-center"),
+  "launch bundle ritual autopilot handoff link is missing",
 );
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/nutrition-budget-intelligence"),

@@ -32,6 +32,7 @@ flowchart LR
   API --> DishCapture["Visual Dish Capture"]
   API --> VoiceCommerce["Voice Commerce"]
   API --> QualityLoop["Quality Loop"]
+  API --> Ritual["Ritual Autopilot"]
   Mock --> Food["Swiggy MCP shape: food"]
   Mock --> IM["Swiggy MCP shape: im"]
   Mock --> Dineout["Swiggy MCP shape: dineout"]
@@ -51,7 +52,7 @@ flowchart LR
 - Separate confirmation panels for Food, Instamart, and Dineout.
 - Simulated tracking after confirmation.
 - Pantry, group planning, reminders, privacy export/delete, and ops status panels.
-- Launch Center with MCP coverage, Journey Compiler, Access Dossier, Access Evidence Matrix, Growth Partnership Center, Channel & Multimodal Studio, Visual Dish Capture Center, Voice Commerce Rehearsal Center, Quality Loop Center, Nutrition & Budget Intelligence, Household Preference Graph, Guest Collaboration & Calendar Center, Luxury Experience Workspace, Reviewer Artifact Vault, Visual QA Center, Premium Use Case Studio, Staging Cutover Rehearsal, Swiggy Staging Credential Drill Center, Staging Certification Matrix, Brand Compliance Kit, Capability Registry, Resource & Prompt Studio, Tool Contract Matrix, Widget Runtime Center, Commercial Action Guard, Website Atlas with access-page and launch-blog coverage, Builders Launch Story Center, Docs Coverage, Docs Twin Explorer, Upstream Watch, Source Intelligence, Deep Site Map, Developer Quickstart, CTA Execution, Innovation Radar, Tool Lab, Credential Cockpit, Support Bridge, chat/voice response contracts, go-live checks, observability metrics, rollout plan, and support report generation.
+- Launch Center with MCP coverage, Journey Compiler, Access Dossier, Access Evidence Matrix, Growth Partnership Center, Channel & Multimodal Studio, Visual Dish Capture Center, Voice Commerce Rehearsal Center, Quality Loop Center, Ritual Autopilot Center, Nutrition & Budget Intelligence, Household Preference Graph, Guest Collaboration & Calendar Center, Luxury Experience Workspace, Reviewer Artifact Vault, Visual QA Center, Premium Use Case Studio, Staging Cutover Rehearsal, Swiggy Staging Credential Drill Center, Staging Certification Matrix, Brand Compliance Kit, Capability Registry, Resource & Prompt Studio, Tool Contract Matrix, Widget Runtime Center, Commercial Action Guard, Website Atlas with access-page and launch-blog coverage, Builders Launch Story Center, Docs Coverage, Docs Twin Explorer, Upstream Watch, Source Intelligence, Deep Site Map, Developer Quickstart, CTA Execution, Innovation Radar, Tool Lab, Credential Cockpit, Support Bridge, chat/voice response contracts, go-live checks, observability metrics, rollout plan, and support report generation.
 - Demo Studio with cart preflight checks, offer opportunities, MCP replay transcripts, staging transcript export, demo progress, and submission readiness.
 - Production Evidence panel with Swiggy widget contracts, rate-limit budgets, version/deprecation monitoring, compliance controls, Source Intelligence, Deep Site Map, Developer Quickstart, CTA Execution, and Innovation Radar artifact links, Data Governance Center, Production Launch Bundle, Error Intelligence, Resilience Lab drills, Evaluation Lab persona QA, and reviewer proof score.
 - No checkout, order, or booking call is hidden inside a generic "continue" button.
@@ -96,6 +97,7 @@ Implementation:
 - Exposes `/api/swiggy-visual-dish-capture` and `/api/swiggy-visual-dish-capture/analyze` as the productized visual capture layer for dish photos, menu screenshots, pantry photos, and chat images, with label confirmation, no raw-image retention, Food/Instamart/Dineout route plans, telemetry, and vision or staging gates.
 - Exposes `/api/swiggy-voice-commerce-center` and `/api/swiggy-voice-commerce-center/rehearse` as the productized voice layer for Food quick orders, Instamart restock, Dineout bookings, and combined plans, with short TTS scripts, card fallbacks, no raw ids, no raw-audio retention, and confirmation readbacks.
 - Exposes `/api/swiggy-quality-loop-center` and `/api/swiggy-quality-loop-center/feedback` as the post-experience learning layer for consented preference tags, support-safe feedback routing, repeat optimization, and no raw Swiggy payload retention.
+- Exposes `/api/swiggy-ritual-autopilot-center` and `/api/swiggy-ritual-autopilot-center/plan` as the recurring-routine layer for lunches, pantry resets, slotwatch, and weekend route planning with consented history, reminders, fresh reads, and no automatic commercial action.
 - Exposes `/api/nutrition-budget-intelligence` as the protein-per-rupee, coupon-safe cart, pantry-gap, group-budget, and Dineout balance layer for premium nutrition planning.
 - Exposes `/api/household-preference-graph` as the consented personalization layer for Food active orders, Instamart go-to items/order history, Dineout saved-location signals, household weights, forecasts, and retention rules.
 - Exposes `/api/guest-collaboration-calendar` as the group planning layer for guest votes, occasion templates, Dineout-first date nights, Food reminders, Instamart prep, calendar/share handoffs, and Slack/Teams gates.
@@ -181,6 +183,7 @@ Implementation:
 - `server/services/visualDishCapture.ts`
 - `server/services/voiceCommerceCenter.ts`
 - `server/services/qualityLoopCenter.ts`
+- `server/services/ritualAutopilotCenter.ts`
 - `server/services/nutritionBudgetIntelligence.ts`
 - `server/services/householdPreferenceGraph.ts`
 - `server/services/guestCollaborationCenter.ts`

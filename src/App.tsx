@@ -135,6 +135,7 @@ import {
   fetchSwiggyOfferIntelligence,
   fetchSwiggyOrderLifecycle,
   fetchSwiggyQualityLoopCenter,
+  fetchSwiggyRitualAutopilotCenter,
   fetchSwiggyVisualDishCapture,
   fetchSwiggyVoiceCommerceCenter,
   fetchSwiggyRouteOptimizer,
@@ -244,6 +245,7 @@ import type {
   SwiggyOperatingContractCenterReport,
   SwiggyOrderLifecycleReport,
   SwiggyQualityLoopCenter,
+  SwiggyRitualAutopilotCenter,
   SwiggyScenarioRunnerReport,
   SwiggySourceIntelligenceReport,
   SwiggyStagingCredentialDrillReport,
@@ -418,6 +420,7 @@ function App() {
   const [visualDishCapture, setVisualDishCapture] = useState<SwiggyVisualDishCaptureCenter | null>(null);
   const [voiceCommerce, setVoiceCommerce] = useState<SwiggyVoiceCommerceCenter | null>(null);
   const [qualityLoop, setQualityLoop] = useState<SwiggyQualityLoopCenter | null>(null);
+  const [ritualAutopilot, setRitualAutopilot] = useState<SwiggyRitualAutopilotCenter | null>(null);
   const [nutritionBudget, setNutritionBudget] = useState<NutritionBudgetIntelligence | null>(null);
   const [householdPreference, setHouseholdPreference] = useState<HouseholdPreferenceGraph | null>(null);
   const [guestCollaboration, setGuestCollaboration] = useState<GuestCollaborationCenter | null>(null);
@@ -604,6 +607,7 @@ function App() {
       visualDishCaptureResponse,
       voiceCommerceResponse,
       qualityLoopResponse,
+      ritualAutopilotResponse,
       nutritionBudgetResponse,
       householdPreferenceResponse,
       guestCollaborationResponse,
@@ -692,6 +696,7 @@ function App() {
       fetchSwiggyVisualDishCapture(),
       fetchSwiggyVoiceCommerceCenter(),
       fetchSwiggyQualityLoopCenter(),
+      fetchSwiggyRitualAutopilotCenter(),
       fetchNutritionBudgetIntelligence(),
       fetchHouseholdPreferenceGraph(),
       fetchGuestCollaborationCenter(),
@@ -781,6 +786,7 @@ function App() {
     setVisualDishCapture(visualDishCaptureResponse.visualDishCapture);
     setVoiceCommerce(voiceCommerceResponse.voiceCommerce);
     setQualityLoop(qualityLoopResponse.qualityLoop);
+    setRitualAutopilot(ritualAutopilotResponse.ritualAutopilot);
     setNutritionBudget(nutritionBudgetResponse.nutritionBudget);
     setHouseholdPreference(householdPreferenceResponse.householdPreference);
     setGuestCollaboration(guestCollaborationResponse.guestCollaboration);
@@ -873,6 +879,7 @@ function App() {
       visualDishCaptureResponse,
       voiceCommerceResponse,
       qualityLoopResponse,
+      ritualAutopilotResponse,
       nutritionBudgetResponse,
       householdPreferenceResponse,
       guestCollaborationResponse,
@@ -958,6 +965,7 @@ function App() {
       fetchSwiggyVisualDishCapture(),
       fetchSwiggyVoiceCommerceCenter(),
       fetchSwiggyQualityLoopCenter(),
+      fetchSwiggyRitualAutopilotCenter(),
       fetchNutritionBudgetIntelligence(),
       fetchHouseholdPreferenceGraph(),
       fetchGuestCollaborationCenter(),
@@ -1043,6 +1051,7 @@ function App() {
     setVisualDishCapture(visualDishCaptureResponse.visualDishCapture);
     setVoiceCommerce(voiceCommerceResponse.voiceCommerce);
     setQualityLoop(qualityLoopResponse.qualityLoop);
+    setRitualAutopilot(ritualAutopilotResponse.ritualAutopilot);
     setNutritionBudget(nutritionBudgetResponse.nutritionBudget);
     setHouseholdPreference(householdPreferenceResponse.householdPreference);
     setGuestCollaboration(guestCollaborationResponse.guestCollaboration);
@@ -1702,6 +1711,7 @@ function App() {
                 visualDishCapture={visualDishCapture}
                 voiceCommerce={voiceCommerce}
                 qualityLoop={qualityLoop}
+                ritualAutopilot={ritualAutopilot}
                 nutritionBudget={nutritionBudget}
                 householdPreference={householdPreference}
                 guestCollaboration={guestCollaboration}
@@ -2277,6 +2287,7 @@ function LaunchCenterPanel({
   visualDishCapture,
   voiceCommerce,
   qualityLoop,
+  ritualAutopilot,
   nutritionBudget,
   householdPreference,
   guestCollaboration,
@@ -2336,6 +2347,7 @@ function LaunchCenterPanel({
   visualDishCapture: SwiggyVisualDishCaptureCenter | null;
   voiceCommerce: SwiggyVoiceCommerceCenter | null;
   qualityLoop: SwiggyQualityLoopCenter | null;
+  ritualAutopilot: SwiggyRitualAutopilotCenter | null;
   nutritionBudget: NutritionBudgetIntelligence | null;
   householdPreference: HouseholdPreferenceGraph | null;
   guestCollaboration: GuestCollaborationCenter | null;
@@ -3508,6 +3520,50 @@ function LaunchCenterPanel({
             </a>
             <a href="https://mcp.swiggy.com/builders/docs/operate/support/" target="_blank" rel="noreferrer">
               Support docs
+            </a>
+          </div>
+        </article>
+
+        <article className="ritual-autopilot-card">
+          <div className="mini-heading">
+            <CalendarCheck aria-hidden="true" />
+            <strong>Ritual Autopilot Center</strong>
+          </div>
+          <span>
+            {ritualAutopilot
+              ? `${ritualAutopilot.score}/100, ${ritualAutopilot.totals.readyLanes}/${ritualAutopilot.totals.lanes} routines safe`
+              : "Preparing consented weekly routines across Food, Instamart, and Dineout"}
+          </span>
+          <div className="ritual-autopilot-grid">
+            <div>
+              <strong>{ritualAutopilot?.totals.samples ?? 0}</strong>
+              <span>Samples</span>
+            </div>
+            <div>
+              <strong>
+                {ritualAutopilot?.totals.readyGuardrails ?? 0}/{ritualAutopilot?.totals.guardrails ?? 0}
+              </strong>
+              <span>Guards</span>
+            </div>
+            <div>
+              <strong>{ritualAutopilot?.totals.externalGates ?? 0}</strong>
+              <span>Gates</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(ritualAutopilot?.lanes ?? []).slice(0, 4).map((laneItem) => (
+              <li key={laneItem.id} data-status={laneItem.status === "staging_gate" ? "watch" : "healthy"}>
+                <span>{laneItem.label}</span>
+                <strong>{laneItem.server === "combined" ? "Combined" : serverLabel(laneItem.server)}</strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-links">
+            <a href="/api/swiggy-ritual-autopilot-center" target="_blank" rel="noreferrer">
+              Ritual API
+            </a>
+            <a href="https://mcp.swiggy.com/builders/docs/build/recipes/combined/" target="_blank" rel="noreferrer">
+              Combined recipe
             </a>
           </div>
         </article>

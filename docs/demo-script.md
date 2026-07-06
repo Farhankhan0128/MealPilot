@@ -209,6 +209,7 @@ Open Production Evidence and show:
 - Visual Dish Capture artifact at `/api/swiggy-visual-dish-capture` plus `/api/swiggy-visual-dish-capture/analyze` for screenshot-to-order smoke proof.
 - Voice Commerce artifact at `/api/swiggy-voice-commerce-center` plus `/api/swiggy-voice-commerce-center/rehearse` for spoken Swiggy route rehearsal.
 - Quality Loop artifact at `/api/swiggy-quality-loop-center` plus `/api/swiggy-quality-loop-center/feedback` for post-experience learning and support-safe feedback proof.
+- Ritual Autopilot artifact at `/api/swiggy-ritual-autopilot-center` plus `/api/swiggy-ritual-autopilot-center/plan` for consented recurring routine proof with no automatic commercial action.
 - Website Atlas coverage for the production access page, launch blog, apply CTAs, header, footer, and docs subnav.
 - Builders Launch Story Center artifact for launch-blog story beats, 18+ to 35-tool reconciliation, demo journey, showcase packet, CTA paths, and external co-marketing gates.
 - Deep Site Map coverage for every Builders page row, module signal, CTA gate, source section, proof link, assertion, and external gate.

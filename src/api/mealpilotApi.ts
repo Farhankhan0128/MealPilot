@@ -91,6 +91,9 @@ import type {
   SwiggySourceIntelligenceReport,
   SwiggyQualityFeedbackAnalysis,
   SwiggyQualityLoopCenter,
+  SwiggyRitualAutopilotCadence,
+  SwiggyRitualAutopilotCenter,
+  SwiggyRitualAutopilotPlan,
   SwiggyStagingCredentialDrillReport,
   SwiggyStagingCutoverRehearsal,
   SwiggyLiveSignalCalibrationReport,
@@ -369,6 +372,23 @@ export function analyzeSwiggyQualityFeedback(input: {
   consentToLearn: boolean;
 }) {
   return requestJson<{ analysis: SwiggyQualityFeedbackAnalysis }>("/api/swiggy-quality-loop-center/feedback", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
+}
+
+export function fetchSwiggyRitualAutopilotCenter() {
+  return requestJson<{ ritualAutopilot: SwiggyRitualAutopilotCenter }>("/api/swiggy-ritual-autopilot-center");
+}
+
+export function planSwiggyRitualAutopilot(input: {
+  cadence: SwiggyRitualAutopilotCadence;
+  householdMode: "solo" | "couple" | "family" | "team";
+  city: "Bengaluru" | "Delhi NCR" | "Mumbai";
+  budget: number;
+  consentToUseHistory: boolean;
+}) {
+  return requestJson<{ ritualPlan: SwiggyRitualAutopilotPlan }>("/api/swiggy-ritual-autopilot-center/plan", {
     method: "POST",
     body: JSON.stringify(input),
   });

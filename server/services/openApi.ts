@@ -413,6 +413,30 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-ritual-autopilot-center": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Ritual Autopilot Center for consented household routines",
+          responses: {
+            "200": {
+              description:
+                "Weekday lunch, pantry reset, Dineout slotwatch, and combined weekend ritual lanes with consent gates, fresh-read boundaries, reminder-only calendar use, and no automatic Swiggy commercial actions",
+            },
+          },
+        },
+      },
+      "/api/swiggy-ritual-autopilot-center/plan": {
+        post: {
+          tags: ["Commerce"],
+          summary: "Plan a consented Swiggy ritual without automatic checkout or booking",
+          responses: {
+            "200": {
+              description:
+                "Generated ritual routine slots, selected Swiggy lane, consent status, confirmation boundaries, no-auto-commercial-action telemetry, and next review action",
+            },
+          },
+        },
+      },
       "/api/nutrition-budget-intelligence": {
         get: {
           tags: ["Builder Access"],

@@ -132,6 +132,15 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
         "Turns post-order, grocery, booking, and combined feedback into consented learning tags, support-safe redaction, repeat optimization, and external history gates.",
     },
     {
+      id: "ritual_autopilot_center",
+      label: "Swiggy Ritual Autopilot Center",
+      path: "/api/swiggy-ritual-autopilot-center",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Turns recurring household routines into consented Food, Instamart, Dineout, and combined plans with reminder-only cadence, fresh reads, and no automatic commercial actions.",
+    },
+    {
       id: "nutrition_budget_intelligence",
       label: "Nutrition & Budget Intelligence",
       path: "/api/nutrition-budget-intelligence",
@@ -924,6 +933,7 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- Swiggy Visual Dish Capture Center: /api/swiggy-visual-dish-capture",
     "- Swiggy Voice Commerce Rehearsal Center: /api/swiggy-voice-commerce-center",
     "- Swiggy Quality Loop Center: /api/swiggy-quality-loop-center",
+    "- Swiggy Ritual Autopilot Center: /api/swiggy-ritual-autopilot-center",
     "- Nutrition & Budget Intelligence: /api/nutrition-budget-intelligence",
     "- Household Preference Graph: /api/household-preference-graph",
     "- Guest Collaboration & Calendar Center: /api/guest-collaboration-calendar",

@@ -99,6 +99,7 @@ import { buildSwiggyOrderLifecycle } from "./services/orderLifecycle.js";
 import { buildPremiumConciergeItinerary } from "./services/premiumConciergeItinerary.js";
 import { buildPremiumUseCaseStudio } from "./services/premiumUseCaseStudio.js";
 import { analyzeSwiggyQualityFeedback, buildSwiggyQualityLoopCenter } from "./services/qualityLoopCenter.js";
+import { buildSwiggyRitualAutopilotCenter, planSwiggyRitualAutopilot } from "./services/ritualAutopilotCenter.js";
 import { buildReviewerArtifactVault } from "./services/reviewerArtifactVault.js";
 import { createPkcePair, createState } from "./services/pkce.js";
 import { buildMcpResourcePromptStudio } from "./services/resourcePromptStudio.js";
@@ -217,6 +218,14 @@ const qualityFeedbackSchema = z.object({
   comment: z.string().trim().min(3).max(280),
   city: z.enum(["Bengaluru", "Delhi NCR", "Mumbai"]),
   consentToLearn: z.boolean(),
+});
+
+const ritualAutopilotPlanSchema = z.object({
+  cadence: z.enum(["weekday", "weekend", "weekly", "occasion"]),
+  householdMode: z.enum(["solo", "couple", "family", "team"]),
+  city: z.enum(["Bengaluru", "Delhi NCR", "Mumbai"]),
+  budget: z.number().int().min(300).max(20000),
+  consentToUseHistory: z.boolean(),
 });
 
 const mcpServerSchema = z.enum(["food", "instamart", "dineout"]);
@@ -750,6 +759,20 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
     const body = qualityFeedbackSchema.parse(req.body);
     res.json({
       analysis: analyzeSwiggyQualityFeedback({
+        config,
+        ...body,
+      }),
+    });
+  });
+
+  app.get("/api/swiggy-ritual-autopilot-center", (_req, res) => {
+    res.json({ ritualAutopilot: buildSwiggyRitualAutopilotCenter(config) });
+  });
+
+  app.post("/api/swiggy-ritual-autopilot-center/plan", (req, res) => {
+    const body = ritualAutopilotPlanSchema.parse(req.body);
+    res.json({
+      ritualPlan: planSwiggyRitualAutopilot({
         config,
         ...body,
       }),

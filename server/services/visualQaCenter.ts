@@ -255,6 +255,17 @@ const targetGroups = [
         "artifacts/visual-qa/quality-loop-card.png",
       ),
       target(
+        "ritual_autopilot_card",
+        "Ritual Autopilot Center card",
+        "/",
+        ".ritual-autopilot-card",
+        "desktop",
+        1280,
+        900,
+        "Ritual Autopilot shows consented recurring routines, reminder-only cadence, confirmation gates, and no automatic commercial actions.",
+        "artifacts/visual-qa/ritual-autopilot-card.png",
+      ),
+      target(
         "developer_quickstart_card",
         "Developer Quickstart card",
         "/",
@@ -493,7 +504,7 @@ const commands = [
     "visual_capture_harness",
     "npm run verify:visual",
     "Playwright captures every Visual QA target at desktop, tablet, and mobile sizes and writes report.json.",
-    "ok true with targetCount >= 31 and PNG files under artifacts/visual-qa.",
+    "ok true with targetCount >= 32 and PNG files under artifacts/visual-qa.",
   ),
   command(
     "desktop_capture",
