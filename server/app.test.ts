@@ -62,6 +62,8 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/swiggy-builders-module-intelligence"].get.responses["200"].description).toContain("route optimization");
     expect(openApi.body.paths["/api/swiggy-builders-journey-gates"].get.summary).toContain("Journey Gate");
     expect(openApi.body.paths["/api/swiggy-builders-journey-gates"].get.responses["200"].description).toContain("Quick Review");
+    expect(openApi.body.paths["/api/swiggy-builders-homepage-experience"].get.summary).toContain("Homepage Experience");
+    expect(openApi.body.paths["/api/swiggy-builders-homepage-experience"].get.responses["200"].description).toContain("footer");
     expect(openApi.body.paths["/api/swiggy-operating-contract-center"].get.summary).toContain("Operating Contract");
     expect(openApi.body.paths["/api/swiggy-operating-contract-center"].get.responses["200"].description).toContain("99.9%");
     expect(openApi.body.paths["/api/swiggy-builder-intake"].get.summary).toContain("Builder Intake");
@@ -1561,7 +1563,7 @@ describe("MealPilot API", () => {
     expect(packet.totals.formFields).toBeGreaterThanOrEqual(10);
     expect(packet.totals.requiredAttachments).toBeGreaterThanOrEqual(10);
     expect(packet.totals.launchArtifacts).toBeGreaterThanOrEqual(50);
-    expect(packet.totals.visualTargets).toBe(55);
+    expect(packet.totals.visualTargets).toBe(56);
     expect(packet.files.map((file: { id: string }) => file.id)).toEqual(
       expect.arrayContaining(["packet_json", "packet_markdown", "visual_report", "production_summary"]),
     );
@@ -1573,7 +1575,7 @@ describe("MealPilot API", () => {
     ).toBe(true);
     expect(
       packet.commands.some(
-        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("55"),
+        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("56"),
       ),
     ).toBe(true);
     expect(packet.copyBlocks.formFields).toContain("Redirect URI(s)");
@@ -2889,6 +2891,13 @@ describe("MealPilot API", () => {
         section.artifacts.some((artifact) => artifact.id === "journey_gates" && artifact.path === "/api/swiggy-builders-journey-gates"),
       ),
     ).toBe(true);
+    expect(
+      vault.artifactSections.some((section: { artifacts: Array<{ id: string; path: string }> }) =>
+        section.artifacts.some(
+          (artifact) => artifact.id === "homepage_experience" && artifact.path === "/api/swiggy-builders-homepage-experience",
+        ),
+      ),
+    ).toBe(true);
     expect(vault.externalGates.some((gate: string) => gate.includes("staging credentials"))).toBe(true);
   });
 
@@ -2898,8 +2907,8 @@ describe("MealPilot API", () => {
     const visualQa = response.body.visualQa;
 
     expect(visualQa.score).toBe(100);
-    expect(visualQa.totalTargets).toBe(55);
-    expect(visualQa.readyTargets).toBe(55);
+    expect(visualQa.totalTargets).toBe(56);
+    expect(visualQa.readyTargets).toBe(56);
     expect(visualQa.totalRules).toBe(7);
     expect(visualQa.readyRules).toBe(7);
     expect(visualQa.totalCommands).toBe(5);
@@ -2963,6 +2972,16 @@ describe("MealPilot API", () => {
           (target) =>
             target.id === "journey_gates_card" &&
             target.selector === ".journey-gates-card" &&
+            target.viewport === "desktop",
+        ),
+      ),
+    ).toBe(true);
+    expect(
+      visualQa.targetGroups.some((group: { targets: Array<{ id: string; selector: string; viewport: string }> }) =>
+        group.targets.some(
+          (target) =>
+            target.id === "homepage_experience_card" &&
+            target.selector === ".homepage-experience-card" &&
             target.viewport === "desktop",
         ),
       ),
@@ -3430,6 +3449,39 @@ describe("MealPilot API", () => {
     expect(center.operatorRunbook.map((step: { sequence: number }) => step.sequence)).toEqual([1, 2, 3, 4, 5]);
     expect(center.assertions.some((assertion: string) => assertion.includes("official five-step Builders journey"))).toBe(true);
     expect(center.externalGates.some((gate: string) => gate.includes("credentials"))).toBe(true);
+  });
+
+  it("returns Swiggy Builders Homepage Experience for every primary homepage section", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/swiggy-builders-homepage-experience").expect(200);
+    const center = response.body.homepageExperience;
+
+    expect(center.score).toBeGreaterThanOrEqual(85);
+    expect(center.totals.sections).toBe(8);
+    expect(center.totals.ready).toBeGreaterThanOrEqual(3);
+    expect(center.totals.operatorGates).toBeGreaterThanOrEqual(3);
+    expect(center.totals.headerLinks).toBeGreaterThanOrEqual(7);
+    expect(center.totals.footerLinks).toBeGreaterThanOrEqual(8);
+    expect(center.totals.ctas).toBeGreaterThanOrEqual(25);
+    expect(center.totals.proofLinks).toBeGreaterThanOrEqual(20);
+    expect(center.sections.map((section: { id: string }) => section.id)).toEqual(
+      expect.arrayContaining(["global_header", "hero", "how_it_works", "benefits", "guidelines", "faq", "final_cta", "footer"]),
+    );
+    expect(
+      center.sections.some(
+        (section: { id: string; proofLinks: string[]; mobileCheck: string; reviewerCheck: string }) =>
+          section.id === "final_cta" &&
+          section.proofLinks.includes("/api/swiggy-conversion-center") &&
+          section.mobileCheck.includes("manual") &&
+          section.reviewerCheck.includes("CTA steps"),
+      ),
+    ).toBe(true);
+    expect(center.continuityMap.map((row: { from: string; to: string }) => `${row.from}->${row.to}`)).toEqual(
+      expect.arrayContaining(["global_header->hero", "hero->how_it_works", "faq->final_cta", "final_cta->footer"]),
+    );
+    expect(center.reviewerRunbook.map((step: { sequence: number }) => step.sequence)).toEqual([1, 2, 3]);
+    expect(center.assertions.some((assertion: string) => assertion.includes("homepage section"))).toBe(true);
+    expect(center.externalGates.some((gate: string) => gate.includes("legal pages"))).toBe(true);
   });
 
   it("returns source intelligence that reconciles website, docs, API tools, and drift signals", async () => {
@@ -4889,6 +4941,9 @@ describe("MealPilot API", () => {
     expect(
       proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Swiggy Builders Journey Gate Center"),
     ).toBe(true);
+    expect(
+      proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Swiggy Builders Homepage Experience Center"),
+    ).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Premium Concierge Itinerary")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Tool Contract Matrix")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Scenario Runner")).toBe(true);
@@ -5608,6 +5663,7 @@ describe("MealPilot API", () => {
         "Swiggy Builders Launch Story Center",
         "Swiggy Builders Module Intelligence Center",
         "Swiggy Builders Journey Gate Center",
+        "Swiggy Builders Homepage Experience Center",
         "Swiggy Operating Contract Center",
         "Swiggy Deep Site Map",
         "Developer Quickstart Workbench",

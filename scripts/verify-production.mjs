@@ -113,6 +113,11 @@ assert(
   "OpenAPI Builders journey gates contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-builders-homepage-experience"]?.get?.summary?.includes("Homepage Experience") &&
+    openApi.paths["/api/swiggy-builders-homepage-experience"]?.get?.responses?.["200"]?.description?.includes("footer"),
+  "OpenAPI Builders homepage experience contract is missing",
+);
+assert(
   openApi.paths["/api/swiggy-source-intelligence"]?.get?.summary?.includes("source intelligence"),
   "OpenAPI source intelligence contract is missing",
 );
@@ -645,6 +650,44 @@ assert(
     journeyGates.journeyGates.assertions.some((assertion) => assertion.includes("official five-step Builders journey")) &&
     journeyGates.journeyGates.externalGates.some((gate) => gate.includes("credentials")),
   "Builders journey gate assertions are missing",
+);
+
+const homepageExperience = await request("/api/swiggy-builders-homepage-experience");
+assert(homepageExperience.homepageExperience.score >= 85, "Builders homepage experience score is below target");
+assert(homepageExperience.homepageExperience.totals.sections === 8, "Builders homepage experience section count is incomplete");
+assert(homepageExperience.homepageExperience.totals.ready >= 3, "Builders homepage experience ready sections are incomplete");
+assert(homepageExperience.homepageExperience.totals.operatorGates >= 3, "Builders homepage experience operator gates are incomplete");
+assert(homepageExperience.homepageExperience.totals.headerLinks >= 7, "Builders homepage experience header links are incomplete");
+assert(homepageExperience.homepageExperience.totals.footerLinks >= 8, "Builders homepage experience footer links are incomplete");
+assert(homepageExperience.homepageExperience.totals.ctas >= 25, "Builders homepage experience CTA coverage is incomplete");
+assert(homepageExperience.homepageExperience.totals.proofLinks >= 20, "Builders homepage experience proof links are incomplete");
+assert(
+  ["global_header", "hero", "how_it_works", "benefits", "guidelines", "faq", "final_cta", "footer"].every((id) =>
+    homepageExperience.homepageExperience.sections.some((section) => section.id === id),
+  ),
+  "Builders homepage experience key sections are missing",
+);
+assert(
+  homepageExperience.homepageExperience.sections.some(
+    (section) =>
+      section.id === "final_cta" &&
+      section.proofLinks.includes("/api/swiggy-conversion-center") &&
+      section.mobileCheck.includes("manual") &&
+      section.reviewerCheck.includes("CTA steps"),
+  ),
+  "Builders homepage experience final CTA proof is missing",
+);
+assert(
+  ["global_header->hero", "hero->how_it_works", "faq->final_cta", "final_cta->footer"].every((pair) =>
+    homepageExperience.homepageExperience.continuityMap.some((row) => `${row.from}->${row.to}` === pair),
+  ),
+  "Builders homepage experience continuity map is incomplete",
+);
+assert(
+  homepageExperience.homepageExperience.reviewerRunbook.map((step) => step.sequence).join(",") === "1,2,3" &&
+    homepageExperience.homepageExperience.assertions.some((assertion) => assertion.includes("homepage section")) &&
+    homepageExperience.homepageExperience.externalGates.some((gate) => gate.includes("legal pages")),
+  "Builders homepage experience assertions are missing",
 );
 
 const buildersPageMesh = await request("/api/swiggy-builders-page-mesh");
@@ -2164,6 +2207,7 @@ assert(
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-conversion-center") &&
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-builders-module-intelligence") &&
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-builders-journey-gates") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-builders-homepage-experience") &&
     reviewerArtifactVault.reviewerArtifactVault.artifactSections.some((section) =>
       section.artifacts.some((artifact) => artifact.id === "faq_resolution" && artifact.path === "/api/swiggy-faq-resolution-center"),
     ) &&
@@ -2180,6 +2224,11 @@ assert(
     ) &&
     reviewerArtifactVault.reviewerArtifactVault.artifactSections.some((section) =>
       section.artifacts.some((artifact) => artifact.id === "journey_gates" && artifact.path === "/api/swiggy-builders-journey-gates"),
+    ) &&
+    reviewerArtifactVault.reviewerArtifactVault.artifactSections.some((section) =>
+      section.artifacts.some(
+        (artifact) => artifact.id === "homepage_experience" && artifact.path === "/api/swiggy-builders-homepage-experience",
+      ),
     ),
   "reviewer artifact vault email draft is incomplete",
 );
@@ -2190,8 +2239,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 55, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 55, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 56, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 56, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -2459,6 +2508,12 @@ assert(
     group.targets.some((target) => target.id === "journey_gates_card" && target.selector === ".journey-gates-card"),
   ),
   "visual QA Journey Gates target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some((target) => target.id === "homepage_experience_card" && target.selector === ".homepage-experience-card"),
+  ),
+  "visual QA Homepage Experience target is missing",
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
@@ -4387,6 +4442,10 @@ assert(
   "reviewer proof journey gate artifact is missing",
 );
 assert(
+  proof.proof.artifacts.some((artifact) => artifact.label === "Swiggy Builders Homepage Experience Center"),
+  "reviewer proof homepage experience artifact is missing",
+);
+assert(
   proof.proof.artifacts.some((artifact) => artifact.label === "Channel & Multimodal Studio"),
   "reviewer proof channel and multimodal artifact is missing",
 );
@@ -5780,7 +5839,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 55, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 56, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -5794,7 +5853,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("55")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("56")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -5826,6 +5885,7 @@ assert(
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Website Atlas") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Builders Module Intelligence Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Builders Journey Gate Center") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Builders Homepage Experience Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Deep Site Map") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Developer Quickstart Workbench") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "CTA Execution Center") &&
@@ -5935,6 +5995,10 @@ assert(
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-builders-journey-gates"),
   "launch bundle journey gate handoff link is missing",
+);
+assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-builders-homepage-experience"),
+  "launch bundle homepage experience handoff link is missing",
 );
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-operating-contract-center"),
@@ -6197,6 +6261,9 @@ console.log(
       journeyGateScore: journeyGates.journeyGates.score,
       journeyGateGates: journeyGates.journeyGates.totals.gates,
       journeyGateProofLinks: journeyGates.journeyGates.totals.proofLinks,
+      homepageExperienceScore: homepageExperience.homepageExperience.score,
+      homepageExperienceSections: homepageExperience.homepageExperience.totals.sections,
+      homepageExperienceProofLinks: homepageExperience.homepageExperience.totals.proofLinks,
       buildersPageMeshScore: buildersPageMesh.buildersPageMesh.score,
       buildersPageMeshPages: `${buildersPageMesh.buildersPageMesh.totals.fetchedPages}/${buildersPageMesh.buildersPageMesh.totals.pages}`,
       buildersPageMeshAnchors: buildersPageMesh.buildersPageMesh.totals.liveAnchors,

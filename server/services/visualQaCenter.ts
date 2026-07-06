@@ -200,6 +200,17 @@ const targetGroups = [
         "artifacts/visual-qa/journey-gates-card.png",
       ),
       target(
+        "homepage_experience_card",
+        "Homepage Experience card",
+        "/",
+        ".homepage-experience-card",
+        "desktop",
+        1280,
+        900,
+        "Homepage Experience shows header, hero, sections, CTA continuity, mobile checks, reviewer checks, and external gates.",
+        "artifacts/visual-qa/homepage-experience-card.png",
+      ),
+      target(
         "builders_page_mesh_card",
         "Builders Page Mesh card",
         "/",

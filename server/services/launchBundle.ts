@@ -42,6 +42,15 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
         "Maps the official five-step Builders path into owner-assigned gates, criteria, proof links, telemetry, blockers, and external Swiggy approvals.",
     },
     {
+      id: "homepage_experience",
+      label: "Swiggy Builders Homepage Experience Center",
+      path: "/api/swiggy-builders-homepage-experience",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Maps header, hero, how-it-works, benefits, guidelines, FAQ, final CTA, and footer sections into proof, mobile checks, reviewer checks, and external gates.",
+    },
+    {
       id: "builders_launch_story",
       label: "Swiggy Builders Launch Story Center",
       path: "/api/swiggy-builders-launch-story",
@@ -837,6 +846,7 @@ function buildPhases(config: ServerConfig, latestPlan: MealPlan | undefined, art
         artifact("website_atlas"),
         artifact("module_intelligence"),
         artifact("journey_gates"),
+        artifact("homepage_experience"),
         artifact("deep_site_map"),
         artifact("developer_quickstart"),
         artifact("cta_execution"),
@@ -1048,6 +1058,7 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- Website Atlas: /api/swiggy-website-atlas",
     "- Swiggy Builders Module Intelligence Center: /api/swiggy-builders-module-intelligence",
     "- Swiggy Builders Journey Gate Center: /api/swiggy-builders-journey-gates",
+    "- Swiggy Builders Homepage Experience Center: /api/swiggy-builders-homepage-experience",
     "- Swiggy Builders Launch Story Center: /api/swiggy-builders-launch-story",
     "- Deep Site Map: /api/swiggy-deep-site-map",
     "- Developer Quickstart Workbench: /api/swiggy-developer-quickstart",

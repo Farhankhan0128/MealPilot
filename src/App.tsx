@@ -117,6 +117,7 @@ import {
   fetchSwiggyBuildersLaunchStory,
   fetchSwiggyBuildersModuleIntelligence,
   fetchSwiggyBuildersJourneyGates,
+  fetchSwiggyBuildersHomepageExperience,
   fetchSwiggyBenefitsActivationCenter,
   fetchSwiggyOperatingContractCenter,
   fetchSwiggyFaqPolicyCenter,
@@ -248,6 +249,7 @@ import type {
   SwiggyBenefitsActivationCenter,
   SwiggyAccessDossier,
   SwiggyAccessEvidenceMatrix,
+  SwiggyBuildersHomepageExperienceCenter,
   SwiggyBuildersLaunchStoryCenterReport,
   SwiggyBuildersJourneyGateCenter,
   SwiggyBuildersModuleIntelligenceCenter,
@@ -467,6 +469,7 @@ function App() {
   const [buildersLaunchStory, setBuildersLaunchStory] = useState<SwiggyBuildersLaunchStoryCenterReport | null>(null);
   const [moduleIntelligence, setModuleIntelligence] = useState<SwiggyBuildersModuleIntelligenceCenter | null>(null);
   const [journeyGates, setJourneyGates] = useState<SwiggyBuildersJourneyGateCenter | null>(null);
+  const [homepageExperience, setHomepageExperience] = useState<SwiggyBuildersHomepageExperienceCenter | null>(null);
   const [operatingContract, setOperatingContract] = useState<SwiggyOperatingContractCenterReport | null>(null);
   const [swiggyDeepSiteMap, setSwiggyDeepSiteMap] = useState<SwiggyDeepSiteMap | null>(null);
   const [swiggyBuilderIntake, setSwiggyBuilderIntake] = useState<SwiggyBuilderIntakeCommandCenter | null>(null);
@@ -680,6 +683,7 @@ function App() {
       buildersLaunchStoryResponse,
       moduleIntelligenceResponse,
       journeyGatesResponse,
+      homepageExperienceResponse,
       operatingContractResponse,
       deepSiteMapResponse,
       builderIntakeResponse,
@@ -794,6 +798,7 @@ function App() {
       fetchSwiggyBuildersLaunchStory(),
       fetchSwiggyBuildersModuleIntelligence(),
       fetchSwiggyBuildersJourneyGates(),
+      fetchSwiggyBuildersHomepageExperience(),
       fetchSwiggyOperatingContractCenter(),
       fetchSwiggyDeepSiteMap(),
       fetchSwiggyBuilderIntake(),
@@ -909,6 +914,7 @@ function App() {
     setBuildersLaunchStory(buildersLaunchStoryResponse.launchStory);
     setModuleIntelligence(moduleIntelligenceResponse.moduleIntelligence);
     setJourneyGates(journeyGatesResponse.journeyGates);
+    setHomepageExperience(homepageExperienceResponse.homepageExperience);
     setOperatingContract(operatingContractResponse.operatingContract);
     setSwiggyDeepSiteMap(deepSiteMapResponse.deepSiteMap);
     setSwiggyBuilderIntake(builderIntakeResponse.intake);
@@ -1027,6 +1033,7 @@ function App() {
       buildersLaunchStoryResponse,
       moduleIntelligenceResponse,
       journeyGatesResponse,
+      homepageExperienceResponse,
       operatingContractResponse,
       deepSiteMapResponse,
       builderIntakeResponse,
@@ -1138,6 +1145,7 @@ function App() {
       fetchSwiggyBuildersLaunchStory(),
       fetchSwiggyBuildersModuleIntelligence(),
       fetchSwiggyBuildersJourneyGates(),
+      fetchSwiggyBuildersHomepageExperience(),
       fetchSwiggyOperatingContractCenter(),
       fetchSwiggyDeepSiteMap(),
       fetchSwiggyBuilderIntake(),
@@ -1249,6 +1257,7 @@ function App() {
     setBuildersLaunchStory(buildersLaunchStoryResponse.launchStory);
     setModuleIntelligence(moduleIntelligenceResponse.moduleIntelligence);
     setJourneyGates(journeyGatesResponse.journeyGates);
+    setHomepageExperience(homepageExperienceResponse.homepageExperience);
     setOperatingContract(operatingContractResponse.operatingContract);
     setSwiggyDeepSiteMap(deepSiteMapResponse.deepSiteMap);
     setSwiggyBuilderIntake(builderIntakeResponse.intake);
@@ -1935,6 +1944,7 @@ function App() {
                 buildersLaunchStory={buildersLaunchStory}
                 moduleIntelligence={moduleIntelligence}
                 journeyGates={journeyGates}
+                homepageExperience={homepageExperience}
                 operatingContract={operatingContract}
                 deepSiteMap={swiggyDeepSiteMap}
                 builderIntake={swiggyBuilderIntake}
@@ -2536,6 +2546,7 @@ function LaunchCenterPanel({
   buildersLaunchStory,
   moduleIntelligence,
   journeyGates,
+  homepageExperience,
   operatingContract,
   deepSiteMap,
   builderIntake,
@@ -2620,6 +2631,7 @@ function LaunchCenterPanel({
   buildersLaunchStory: SwiggyBuildersLaunchStoryCenterReport | null;
   moduleIntelligence: SwiggyBuildersModuleIntelligenceCenter | null;
   journeyGates: SwiggyBuildersJourneyGateCenter | null;
+  homepageExperience: SwiggyBuildersHomepageExperienceCenter | null;
   operatingContract: SwiggyOperatingContractCenterReport | null;
   deepSiteMap: SwiggyDeepSiteMap | null;
   builderIntake: SwiggyBuilderIntakeCommandCenter | null;
@@ -3632,6 +3644,64 @@ function LaunchCenterPanel({
             </a>
             <a href="/api/swiggy-conversion-center" target="_blank" rel="noreferrer">
               Conversion
+            </a>
+          </div>
+        </article>
+
+        <article className="homepage-experience-card">
+          <div className="mini-heading">
+            <BookOpen aria-hidden="true" />
+            <strong>Homepage Experience</strong>
+          </div>
+          <span>
+            {homepageExperience
+              ? `${homepageExperience.score}/100, ${homepageExperience.totals.ready}/${homepageExperience.totals.sections} sections ready`
+              : "Header, hero, benefits, FAQ, CTA, and footer mapped to proof"}
+          </span>
+          <div className="homepage-experience-grid">
+            <div>
+              <strong>{homepageExperience?.totals.headerLinks ?? 0}</strong>
+              <span>Header</span>
+            </div>
+            <div>
+              <strong>{homepageExperience?.totals.footerLinks ?? 0}</strong>
+              <span>Footer</span>
+            </div>
+            <div>
+              <strong>{homepageExperience?.totals.ctas ?? 0}</strong>
+              <span>CTAs</span>
+            </div>
+            <div>
+              <strong>{homepageExperience?.totals.proofLinks ?? 0}</strong>
+              <span>Proofs</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(homepageExperience?.sections ?? []).slice(0, 5).map((sectionItem) => (
+              <li
+                key={sectionItem.id}
+                data-status={
+                  sectionItem.status === "ready"
+                    ? "healthy"
+                    : sectionItem.status === "swiggy_gate"
+                      ? "blocked"
+                      : "watch"
+                }
+              >
+                <span>{sectionItem.label}</span>
+                <strong>{sectionItem.ctaIds.length}</strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-intelligence-actions" aria-label="Homepage experience links">
+            <a href="/api/swiggy-builders-homepage-experience" target="_blank" rel="noreferrer">
+              Section API
+            </a>
+            <a href="/api/swiggy-builders-site-parity" target="_blank" rel="noreferrer">
+              Live parity
+            </a>
+            <a href="/api/swiggy-cta-execution-center" target="_blank" rel="noreferrer">
+              CTAs
             </a>
           </div>
         </article>

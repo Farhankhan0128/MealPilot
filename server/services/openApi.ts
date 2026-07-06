@@ -377,6 +377,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-builders-homepage-experience": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Builders Homepage Experience Center for section-by-section proof",
+          responses: {
+            "200": {
+              description:
+                "Header, hero, how-it-works, benefits, guidelines, FAQ, final CTA, and footer sections mapped to source signals, MealPilot surfaces, CTA continuity, mobile checks, reviewer checks, proof links, and external Swiggy gates",
+            },
+          },
+        },
+      },
       "/api/swiggy-builder-intake": {
         get: {
           tags: ["Builder Access"],

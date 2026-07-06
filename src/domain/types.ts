@@ -959,6 +959,47 @@ export interface SwiggyBuildersJourneyGateCenter {
   externalGates: string[];
 }
 
+export type SwiggyBuildersHomepageExperienceStatus = "ready" | "watch" | "operator_gate" | "swiggy_gate";
+
+export interface SwiggyBuildersHomepageSection {
+  id: string;
+  sequence: number;
+  label: string;
+  anchor: string;
+  sourceSignal: string;
+  experiencePromise: string;
+  mealPilotSurface: string;
+  status: SwiggyBuildersHomepageExperienceStatus;
+  ctaIds: string[];
+  proofLinks: string[];
+  mobileCheck: string;
+  reviewerCheck: string;
+  externalGate: string;
+  nextAction: string;
+}
+
+export interface SwiggyBuildersHomepageExperienceCenter {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  totals: {
+    sections: number;
+    ready: number;
+    watch: number;
+    operatorGates: number;
+    swiggyGates: number;
+    headerLinks: number;
+    footerLinks: number;
+    ctas: number;
+    proofLinks: number;
+  };
+  sections: SwiggyBuildersHomepageSection[];
+  continuityMap: Array<{ from: string; to: string; continuity: string; proofLinks: string[] }>;
+  reviewerRunbook: Array<{ sequence: number; label: string; action: string; proofLinks: string[] }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type SwiggyBuildersPageMeshStatus = "covered" | "watch" | "blocked";
 
 export interface SwiggyBuildersPageMeshRow {

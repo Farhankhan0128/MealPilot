@@ -69,6 +69,7 @@ import type {
   SwiggyAuthLifecycleCenterReport,
   SwiggyBenefitsActivationCenter,
   EnterprisePlatformCenterReport,
+  SwiggyBuildersHomepageExperienceCenter,
   SwiggyBuildersLaunchStoryCenterReport,
   SwiggyBuildersJourneyGateCenter,
   SwiggyBuildersModuleIntelligenceCenter,
@@ -406,6 +407,12 @@ export function fetchSwiggyBuildersModuleIntelligence() {
 export function fetchSwiggyBuildersJourneyGates() {
   return requestJson<{ journeyGates: SwiggyBuildersJourneyGateCenter }>(
     "/api/swiggy-builders-journey-gates",
+  );
+}
+
+export function fetchSwiggyBuildersHomepageExperience() {
+  return requestJson<{ homepageExperience: SwiggyBuildersHomepageExperienceCenter }>(
+    "/api/swiggy-builders-homepage-experience",
   );
 }
 
