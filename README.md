@@ -38,6 +38,7 @@ Planned MCP servers:
 - OAuth 2.1 PKCE helper for the Swiggy authorization flow.
 - Swiggy OAuth Status panel and endpoint for redacted authorize URL, callback outcome, pending PKCE verifier count, token source, expiry, storage policy, and exact-match redirect readiness.
 - Credential Cockpit with Dynamic Client Registration preview, redirect URI audit, scope coverage, OAuth metadata endpoints, and external gate tracking.
+- Sandbox Credential Workbench that joins localhost demo proof, Dynamic Client Registration, PKCE, exact redirect allowlisting, Swiggy staging credentials, seeded-data plans, 48-hour soak, and production-promotion gates.
 - Server-backed household profile with consent-aware preference storage.
 - Plan variants for balanced, budget, protein, and social evening strategies.
 - Cart editing with visible item removal and smart substitutions before confirmation.
@@ -252,6 +253,7 @@ GET  /api/mcp/resource-prompt-studio
 GET  /api/mcp-gateway
 GET  /api/auth/swiggy/status
 GET  /api/credential-onboarding
+GET  /api/sandbox-credential-workbench
 GET  /api/enterprise-delegated-auth
 GET  /api/observability/traces
 GET  /api/telemetry/runtime
@@ -364,6 +366,8 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 `GET /api/submission-console` is the operator handoff console for signing up end to end: developer/enterprise form targets, official access fields, required attachments, demo-video gate, final contact/redirect/static-egress gates, runbook steps, and builders@swiggy.in drafts.
 
 `GET /api/credential-onboarding` previews the Dynamic Client Registration payload for Swiggy's `POST /auth/register`, audits the redirect URI, and lists the exact access-form fields. It does not create external Swiggy state during local tests.
+
+`GET /api/sandbox-credential-workbench` is the localhost-to-staging credential runbook: demo-video readiness, Dynamic Client Registration, PKCE, exact redirect allowlisting, Swiggy-issued staging credentials, seeded Food/Instamart/Dineout data, 48-hour soak, and production-promotion gates.
 
 `GET /api/enterprise-delegated-auth` turns Swiggy's enterprise delegated-auth guidance into reviewer evidence: platform DCR preregistration, per-user PKCE, authorize URL shape, token exchange, per-user token storage, MCP on-behalf-of calls, 401/419/403 recovery, logout, platform redirect schemes, architecture review, and partner contract/capacity gates.
 

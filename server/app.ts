@@ -73,6 +73,7 @@ import {
 } from "./services/productionEvidence.js";
 import { buildResilienceDrills, buildResilienceRunbook } from "./services/resilienceDrills.js";
 import { buildOpenApiDocument } from "./services/openApi.js";
+import { buildSandboxCredentialWorkbench } from "./services/sandboxCredentialWorkbench.js";
 import { buildNutritionBudgetIntelligence } from "./services/nutritionBudgetIntelligence.js";
 import { buildObservabilityTraceReport, buildSwiggyRouteOptimizationReport } from "./services/observability.js";
 import { buildPremiumConciergeItinerary } from "./services/premiumConciergeItinerary.js";
@@ -346,6 +347,16 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
   app.get("/api/credential-onboarding", (_req, res) => {
     res.json({
       onboarding: buildCredentialOnboardingReport({
+        ...config,
+        swiggyAccessToken: runtimeAccessToken,
+        swiggyTokenExpiresAt: runtimeTokenExpiresAt,
+      }),
+    });
+  });
+
+  app.get("/api/sandbox-credential-workbench", (_req, res) => {
+    res.json({
+      sandboxWorkbench: buildSandboxCredentialWorkbench({
         ...config,
         swiggyAccessToken: runtimeAccessToken,
         swiggyTokenExpiresAt: runtimeTokenExpiresAt,

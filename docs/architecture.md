@@ -106,6 +106,7 @@ Implementation:
 - Exposes `/api/mcp-gateway` for mock, staging, and production routing status, token posture, cutover steps, fallback behavior, and canary rollout.
 - Exposes `/api/auth/swiggy/status` for Swiggy OAuth lifecycle status, authorize/token/logout endpoints, pending PKCE verifier count, callback outcome, token source, expiry, and storage policy without exposing bearer values.
 - Exposes `/api/credential-onboarding` for Swiggy OAuth metadata endpoints, Dynamic Client Registration preview, redirect URI audit, scope coverage, access-form fields, and external credential gates.
+- Exposes `/api/sandbox-credential-workbench` for localhost demo proof, DCR, PKCE, redirect allowlisting, staging credentials, seeded data, 48-hour soak, and production-promotion gates.
 - Exposes `/api/enterprise-delegated-auth` for Swiggy enterprise on-behalf-of OAuth, per-user PKCE, token lifecycle, redirect strategies, troubleshooting, architecture review, and partner gates.
 - Generates chat-safe and voice-safe response payloads from the same plan session.
 - Generates Swiggy-ready support reports with session IDs for escalation.
@@ -228,6 +229,8 @@ The API keeps localhost demos on the deterministic mock router, but staging and 
 
 `/api/credential-onboarding` keeps Swiggy OAuth readiness explicit. It previews the standard Dynamic Client Registration payload for `POST /auth/register`, audits whether the configured redirect URI is localhost-only or production-safe HTTPS, lists the OAuth metadata discovery endpoints, confirms `mcp:tools`, `mcp:resources`, and `mcp:prompts`, and keeps production blockers labeled as external gates until Swiggy access is issued.
 
+`/api/sandbox-credential-workbench` turns that onboarding posture into an operator runbook. It joins local demo proof, Dynamic Client Registration, PKCE, redirect allowlisting, Swiggy-issued staging credentials, seeded Food/Instamart/Dineout data, 48-hour soak evidence, and production-promotion commands in one proof surface.
+
 `/api/enterprise-delegated-auth` extends the credential model for platform operators. It records Swiggy as Data Fiduciary, MealPilot/platform as Data Processor, the on-behalf-of PKCE flow, 120-second auth codes, 5-day access tokens, 30-day Swiggy user sessions, per-user token storage, logout, 401/419/403 recovery, platform redirect schemes, and the architecture-review topics Swiggy checks before enterprise production.
 
 Implementation:
@@ -235,6 +238,7 @@ Implementation:
 - `server/services/mcpGateway.ts`
 - `server/services/swiggyAuthStatus.ts`
 - `server/services/credentialOnboarding.ts`
+- `server/services/sandboxCredentialWorkbench.ts`
 - `server/services/enterpriseDelegatedAuth.ts`
 - `src/integrations/swiggy/client.ts`
 

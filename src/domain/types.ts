@@ -3255,6 +3255,53 @@ export interface CredentialOnboardingReport {
   externalGates: string[];
 }
 
+export type SandboxCredentialStatus = "ready" | "operator_input" | "swiggy_gate" | "blocked";
+
+export interface SandboxCredentialLane {
+  id: string;
+  label: string;
+  status: SandboxCredentialStatus;
+  owner: "MealPilot" | "Operator" | "Swiggy";
+  officialSignal: string;
+  mealPilotProof: string[];
+  nextAction: string;
+}
+
+export interface SandboxSeededDataPlan {
+  server: SwiggyServer;
+  stagingEndpoint: string;
+  firstReadTool: string;
+  seededDataNeed: string;
+  guardedWrite: string;
+  confirmationProof: string;
+  status: SandboxCredentialStatus;
+}
+
+export interface SandboxCredentialWorkbench {
+  generatedAt: string;
+  mode: "mock" | "staging" | "production";
+  score: number;
+  officialSources: string[];
+  localReadiness: {
+    redirectUriStatus: CredentialReadinessStatus;
+    dcrMode: DynamicClientRegistrationPlan["mode"];
+    scopesReady: boolean;
+    pkceReady: boolean;
+    tokenStorageReady: boolean;
+  };
+  lanes: SandboxCredentialLane[];
+  seededDataPlan: SandboxSeededDataPlan[];
+  stagingPromotion: {
+    soakHoursRequired: number;
+    assignedTools: number;
+    totalTools: number;
+    requiredEvidence: string[];
+  };
+  commands: Array<{ id: string; command: string; proves: string }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type EnterpriseDelegatedAuthStatus = "ready" | "watch" | "external_gate";
 
 export interface EnterpriseDelegatedAuthStep {

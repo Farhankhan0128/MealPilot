@@ -48,6 +48,7 @@ import type {
   SwiggyRouteOptimizationReport,
   RestockSuggestion,
   RuntimeTelemetryReport,
+  SandboxCredentialWorkbench,
   SloIncidentCommandCenter,
   SubmissionConsole,
   SubmissionPackage,
@@ -349,6 +350,10 @@ export function fetchStagingCertificationMatrix() {
 
 export function fetchCredentialOnboarding() {
   return requestJson<{ onboarding: CredentialOnboardingReport }>("/api/credential-onboarding");
+}
+
+export function fetchSandboxCredentialWorkbench() {
+  return requestJson<{ sandboxWorkbench: SandboxCredentialWorkbench }>("/api/sandbox-credential-workbench");
 }
 
 export function fetchSwiggyAuthStatus() {

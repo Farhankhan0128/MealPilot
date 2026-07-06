@@ -185,6 +185,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/mcp-gateway`
 - `GET /api/auth/swiggy/status`
 - `GET /api/credential-onboarding`
+- `GET /api/sandbox-credential-workbench`
 - `GET /api/enterprise-delegated-auth`
 - `GET /api/observability/traces`
 - `GET /api/telemetry/runtime`
@@ -231,6 +232,7 @@ It runs:
 - `npm run build`
 - production smoke verification against `npm start`
 - CI reviewer evidence capture: `npm run verify:production`, `npm run verify:visual`, `npm run export:builder-packet`, and uploaded `artifacts/visual-qa` plus `artifacts/builder-packet`
+- Sandbox credential verification: `npm run verify:production` checks local OAuth readiness, DCR, seeded-data lanes, staging cutover commands, and 48-hour soak gates before the packet is sent.
 
 Docker:
 
@@ -271,6 +273,8 @@ Production should use an HTTPS redirect URI with exact-match allowlisting.
 `/api/auth/swiggy/status` shows the reviewer-safe OAuth lifecycle: Swiggy authorize/token/logout endpoints, redirect URI, scope, pending PKCE verifier count, latest callback event, token source, expiry, callback checklist, and secure token storage rules. The frontend OAuth Status panel calls this endpoint after auth start and callback completion.
 
 `/api/credential-onboarding` shows the OAuth metadata URLs, Dynamic Client Registration dry-run payload for `/auth/register`, redirect URI audit, required MCP scopes, access-form fields, and the external Swiggy gates. Local tests keep this as evidence only and do not create live Swiggy client registrations.
+
+`/api/sandbox-credential-workbench` shows the reviewer-facing localhost-to-staging credential plan: local demo proof, DCR, PKCE, exact redirect allowlisting, staging credentials, seeded Food/Instamart/Dineout data, 48-hour soak, commands, and production-promotion gates.
 
 `/api/enterprise-delegated-auth` shows the enterprise platform-operator flow: per-user PKCE, authorization-code exchange, per-user bearer token handling, 5-day token lifetime, 30-day Swiggy user session, redirect scheme strategy, logout, 401/419/403 recovery, capacity backoff, and the contract/staging/production gates Swiggy must approve.
 

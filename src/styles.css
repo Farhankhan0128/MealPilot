@@ -1050,6 +1050,10 @@ select:focus {
   grid-column: span 2;
 }
 
+.sandbox-workbench-card {
+  grid-column: span 2;
+}
+
 .enterprise-auth-card {
   grid-column: span 2;
 }
@@ -1234,7 +1238,8 @@ select:focus {
   font-weight: 900;
 }
 
-.credential-meta-grid {
+.credential-meta-grid,
+.sandbox-workbench-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
@@ -1246,7 +1251,8 @@ select:focus {
   gap: 8px;
 }
 
-.credential-meta-grid div {
+.credential-meta-grid div,
+.sandbox-workbench-grid div {
   display: grid;
   gap: 3px;
   min-height: 64px;
@@ -1264,7 +1270,8 @@ select:focus {
   background: #fff;
 }
 
-.credential-meta-grid strong {
+.credential-meta-grid strong,
+.sandbox-workbench-grid strong {
   color: var(--green-dark);
   font-size: 0.88rem;
   text-transform: capitalize;
@@ -1277,7 +1284,8 @@ select:focus {
   overflow-wrap: anywhere;
 }
 
-.credential-meta-grid span {
+.credential-meta-grid span,
+.sandbox-workbench-grid span {
   font-size: 0.75rem;
   font-weight: 900;
 }
@@ -1789,6 +1797,7 @@ select:focus {
   .surface-card,
   .builders-map-card,
   .credential-card,
+  .sandbox-workbench-card,
   .enterprise-auth-card,
   .scenario-runner-card,
   .state-orchestrator-card,
@@ -2475,6 +2484,7 @@ select:focus {
 .surface-card,
 .builders-map-card,
 .credential-card,
+.sandbox-workbench-card,
 .enterprise-auth-card,
 .scenario-runner-card,
 .state-orchestrator-card,
@@ -2736,6 +2746,7 @@ select:focus {
   .surface-card,
   .builders-map-card,
   .credential-card,
+  .sandbox-workbench-card,
   .enterprise-auth-card,
   .scenario-runner-card,
   .state-orchestrator-card,
@@ -2922,6 +2933,7 @@ select:focus {
   .surface-card,
   .builders-map-card,
   .credential-card,
+  .sandbox-workbench-card,
   .enterprise-auth-card,
   .scenario-runner-card,
   .state-orchestrator-card,

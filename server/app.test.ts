@@ -80,6 +80,7 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/mcp/capability-registry"].get.summary).toContain("capability registry");
     expect(openApi.body.paths["/api/mcp/resource-prompt-studio"].get.summary).toContain("Resource and Prompt Studio");
     expect(openApi.body.paths["/api/credential-onboarding"].get.summary).toContain("Dynamic Client Registration");
+    expect(openApi.body.paths["/api/sandbox-credential-workbench"].get.summary).toContain("sandbox");
     expect(openApi.body.paths["/api/auth/swiggy/status"].get.summary).toContain("OAuth callback");
     expect(openApi.body.paths["/api/enterprise-delegated-auth"].get.summary).toContain("Enterprise Delegated Auth");
     expect(openApi.body.paths["/api/observability/traces"].get.summary).toContain("Trace spans");
@@ -298,6 +299,56 @@ describe("MealPilot API", () => {
     expect(
       response.body.onboarding.accessApplicationFields.some((field: { id: string }) => field.id === "redirect_uris"),
     ).toBe(true);
+  });
+
+  it("returns a sandbox credential workbench for localhost-to-staging readiness", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/sandbox-credential-workbench").expect(200);
+    const workbench = response.body.sandboxWorkbench;
+
+    expect(workbench.score).toBeGreaterThanOrEqual(82);
+    expect(workbench.officialSources).toEqual(
+      expect.arrayContaining([
+        "https://mcp.swiggy.com/builders/docs/start/authenticate/",
+        "https://mcp.swiggy.com/builders/docs/operate/access/",
+      ]),
+    );
+    expect(workbench.localReadiness.scopesReady).toBe(true);
+    expect(workbench.localReadiness.pkceReady).toBe(true);
+    expect(workbench.lanes.map((laneItem: { id: string }) => laneItem.id)).toEqual(
+      expect.arrayContaining([
+        "local_video",
+        "dcr_client_identity",
+        "pkce_oauth",
+        "redirect_allowlist",
+        "staging_credentials",
+        "production_promotion",
+      ]),
+    );
+    expect(
+      workbench.seededDataPlan.map((plan: { server: string; guardedWrite: string }) => [
+        plan.server,
+        plan.guardedWrite,
+      ]),
+    ).toEqual(
+      expect.arrayContaining([
+        ["food", "place_food_order"],
+        ["instamart", "checkout"],
+        ["dineout", "book_table"],
+      ]),
+    );
+    expect(workbench.stagingPromotion.soakHoursRequired).toBe(48);
+    expect(workbench.stagingPromotion.assignedTools).toBe(35);
+    expect(
+      workbench.commands.some(
+        (command: { id: string; command: string }) =>
+          command.id === "staging_cutover" && command.command.includes("/api/mcp/staging-cutover"),
+      ),
+    ).toBe(true);
+    expect(workbench.assertions.some((assertion: string) => assertion.includes("locally without Swiggy credentials"))).toBe(
+      true,
+    );
+    expect(workbench.externalGates.some((gate: string) => gate.includes("staging credentials"))).toBe(true);
   });
 
   it("models Swiggy enterprise delegated auth and on-behalf-of gates", async () => {

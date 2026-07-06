@@ -85,6 +85,7 @@ import {
   fetchReviewerArtifactVault,
   fetchResilience,
   fetchRuntimeTelemetry,
+  fetchSandboxCredentialWorkbench,
   fetchSloIncidentCommand,
   fetchStagingCertificationMatrix,
   fetchStagingTranscript,
@@ -174,6 +175,7 @@ import type {
   ReviewerArtifactVault,
   RestockSuggestion,
   RuntimeTelemetryReport,
+  SandboxCredentialWorkbench,
   SloIncidentCommandCenter,
   SubmissionConsole,
   SubmissionPackage,
@@ -361,6 +363,8 @@ function App() {
     useState<PremiumConciergeItineraryReport | null>(null);
   const [stagingCertification, setStagingCertification] = useState<StagingCertificationMatrix | null>(null);
   const [credentialOnboarding, setCredentialOnboarding] = useState<CredentialOnboardingReport | null>(null);
+  const [sandboxCredentialWorkbench, setSandboxCredentialWorkbench] =
+    useState<SandboxCredentialWorkbench | null>(null);
   const [enterpriseDelegatedAuth, setEnterpriseDelegatedAuth] = useState<EnterpriseDelegatedAuthCenter | null>(null);
   const [surfaceMode, setSurfaceMode] = useState<AgentSurface>("chat");
   const [agentSurface, setAgentSurface] = useState<AgentSurfaceResponse | null>(null);
@@ -499,6 +503,7 @@ function App() {
       conciergeResponse,
       stagingCertificationResponse,
       credentialOnboardingResponse,
+      sandboxCredentialResponse,
       enterpriseDelegatedAuthResponse,
       supportBridgeResponse,
       goLiveResponse,
@@ -562,6 +567,7 @@ function App() {
       fetchPremiumConciergeItinerary(),
       fetchStagingCertificationMatrix(),
       fetchCredentialOnboarding(),
+      fetchSandboxCredentialWorkbench(),
       fetchEnterpriseDelegatedAuthCenter(),
       fetchSupportBridge(),
       fetchGoLive(),
@@ -626,6 +632,7 @@ function App() {
     setPremiumConciergeItinerary(conciergeResponse.concierge);
     setStagingCertification(stagingCertificationResponse.matrix);
     setCredentialOnboarding(credentialOnboardingResponse.onboarding);
+    setSandboxCredentialWorkbench(sandboxCredentialResponse.sandboxWorkbench);
     setEnterpriseDelegatedAuth(enterpriseDelegatedAuthResponse.enterpriseAuth);
     setSupportBridge(supportBridgeResponse.supportBridge);
     setGoLiveChecks(goLiveResponse.checks);
@@ -692,6 +699,7 @@ function App() {
       conciergeResponse,
       stagingCertificationResponse,
       credentialOnboardingResponse,
+      sandboxCredentialResponse,
       enterpriseDelegatedAuthResponse,
       supportBridgeResponse,
       goLiveResponse,
@@ -752,6 +760,7 @@ function App() {
       fetchPremiumConciergeItinerary(),
       fetchStagingCertificationMatrix(),
       fetchCredentialOnboarding(),
+      fetchSandboxCredentialWorkbench(),
       fetchEnterpriseDelegatedAuthCenter(),
       fetchSupportBridge(),
       fetchGoLive(),
@@ -812,6 +821,7 @@ function App() {
     setPremiumConciergeItinerary(conciergeResponse.concierge);
     setStagingCertification(stagingCertificationResponse.matrix);
     setCredentialOnboarding(credentialOnboardingResponse.onboarding);
+    setSandboxCredentialWorkbench(sandboxCredentialResponse.sandboxWorkbench);
     setEnterpriseDelegatedAuth(enterpriseDelegatedAuthResponse.enterpriseAuth);
     setSupportBridge(supportBridgeResponse.supportBridge);
     setGoLiveChecks(goLiveResponse.checks);
@@ -1444,6 +1454,7 @@ function App() {
                 useCaseStudio={premiumUseCaseStudio}
                 stagingCertification={stagingCertification}
                 credentialOnboarding={credentialOnboarding}
+                sandboxCredentialWorkbench={sandboxCredentialWorkbench}
                 enterpriseDelegatedAuth={enterpriseDelegatedAuth}
                 surfaceMode={surfaceMode}
                 agentSurface={agentSurface}
@@ -1991,6 +2002,7 @@ function LaunchCenterPanel({
   useCaseStudio,
   stagingCertification,
   credentialOnboarding,
+  sandboxCredentialWorkbench,
   enterpriseDelegatedAuth,
   surfaceMode,
   agentSurface,
@@ -2037,6 +2049,7 @@ function LaunchCenterPanel({
   useCaseStudio: PremiumUseCaseStudio | null;
   stagingCertification: StagingCertificationMatrix | null;
   credentialOnboarding: CredentialOnboardingReport | null;
+  sandboxCredentialWorkbench: SandboxCredentialWorkbench | null;
   enterpriseDelegatedAuth: EnterpriseDelegatedAuthCenter | null;
   surfaceMode: AgentSurface;
   agentSurface: AgentSurfaceResponse | null;
@@ -3351,6 +3364,53 @@ function LaunchCenterPanel({
               <li key={check.id} data-status={check.status}>
                 <span>{check.label}</span>
                 <strong>{check.status}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="sandbox-workbench-card">
+          <div className="mini-heading">
+            <ShieldCheck aria-hidden="true" />
+            <strong>Sandbox Credentials</strong>
+          </div>
+          <span>
+            {sandboxCredentialWorkbench
+              ? `${sandboxCredentialWorkbench.score}/100, ${sandboxCredentialWorkbench.lanes.length} credential lanes`
+              : "Mapping localhost, staging, and production credential gates"}
+          </span>
+          <div className="sandbox-workbench-grid">
+            <div>
+              <strong>{sandboxCredentialWorkbench?.seededDataPlan.length ?? 0}</strong>
+              <span>Seeded servers</span>
+            </div>
+            <div>
+              <strong>{sandboxCredentialWorkbench?.stagingPromotion.soakHoursRequired ?? 0}h</strong>
+              <span>Soak</span>
+            </div>
+            <div>
+              <strong>
+                {sandboxCredentialWorkbench
+                  ? `${sandboxCredentialWorkbench.stagingPromotion.assignedTools}/${sandboxCredentialWorkbench.stagingPromotion.totalTools}`
+                  : "0/35"}
+              </strong>
+              <span>Tools</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(sandboxCredentialWorkbench?.lanes ?? []).slice(0, 5).map((laneItem) => (
+              <li
+                key={laneItem.id}
+                data-status={
+                  laneItem.status === "ready"
+                    ? "healthy"
+                    : laneItem.status === "blocked"
+                      ? "blocked"
+                      : "watch"
+                }
+              >
+                <span>{laneItem.label}</span>
+                <strong>{laneItem.status.replaceAll("_", " ")}</strong>
               </li>
             ))}
           </ul>

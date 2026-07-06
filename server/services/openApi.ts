@@ -523,6 +523,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           responses: { "200": { description: "DCR preview, redirect URI audit, scopes, access fields, and external gates" } },
         },
       },
+      "/api/sandbox-credential-workbench": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy sandbox and staging credential workbench",
+          responses: {
+            "200": {
+              description:
+                "Local demo, DCR, PKCE, redirect allowlist, staging credential, seeded-data, 48-hour soak, production-promotion, command, and external-gate evidence for Swiggy access review",
+            },
+          },
+        },
+      },
       "/api/auth/swiggy/status": {
         get: {
           tags: ["Builder Access"],

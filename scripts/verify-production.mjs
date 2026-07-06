@@ -1596,6 +1596,68 @@ assert(
   "credential onboarding PKCE evidence is missing",
 );
 
+const sandboxWorkbench = await request("/api/sandbox-credential-workbench");
+assert(sandboxWorkbench.sandboxWorkbench.score >= 82, "sandbox credential workbench score is below target");
+assert(
+  sandboxWorkbench.sandboxWorkbench.officialSources.includes(
+    "https://mcp.swiggy.com/builders/docs/start/authenticate/",
+  ) &&
+    sandboxWorkbench.sandboxWorkbench.officialSources.includes(
+      "https://mcp.swiggy.com/builders/docs/operate/access/",
+    ),
+  "sandbox credential workbench official source coverage is incomplete",
+);
+assert(
+  sandboxWorkbench.sandboxWorkbench.localReadiness.scopesReady &&
+    sandboxWorkbench.sandboxWorkbench.localReadiness.pkceReady,
+  "sandbox credential local OAuth readiness is incomplete",
+);
+for (const laneId of [
+  "local_video",
+  "dcr_client_identity",
+  "pkce_oauth",
+  "redirect_allowlist",
+  "staging_credentials",
+  "production_promotion",
+]) {
+  assert(
+    sandboxWorkbench.sandboxWorkbench.lanes.some((lane) => lane.id === laneId),
+    `sandbox credential lane ${laneId} is missing`,
+  );
+}
+for (const [server, guardedWrite] of [
+  ["food", "place_food_order"],
+  ["instamart", "checkout"],
+  ["dineout", "book_table"],
+]) {
+  assert(
+    sandboxWorkbench.sandboxWorkbench.seededDataPlan.some(
+      (plan) => plan.server === server && plan.guardedWrite === guardedWrite,
+    ),
+    `sandbox credential seeded data plan for ${server} is missing`,
+  );
+}
+assert(sandboxWorkbench.sandboxWorkbench.stagingPromotion.soakHoursRequired === 48, "sandbox credential 48-hour soak is missing");
+assert(
+  sandboxWorkbench.sandboxWorkbench.stagingPromotion.assignedTools === 35 &&
+    sandboxWorkbench.sandboxWorkbench.stagingPromotion.totalTools === 35,
+  "sandbox credential workbench does not cover all 35 tools",
+);
+assert(
+  sandboxWorkbench.sandboxWorkbench.commands.some(
+    (command) => command.id === "staging_cutover" && command.command.includes("/api/mcp/staging-cutover"),
+  ) &&
+    sandboxWorkbench.sandboxWorkbench.commands.some((command) => command.id === "production_smoke"),
+  "sandbox credential workbench commands are incomplete",
+);
+assert(
+  sandboxWorkbench.sandboxWorkbench.assertions.some((assertion) =>
+    assertion.includes("locally without Swiggy credentials"),
+  ) &&
+    sandboxWorkbench.sandboxWorkbench.externalGates.some((gate) => gate.includes("staging credentials")),
+  "sandbox credential workbench readiness assertions are incomplete",
+);
+
 const authStatusBefore = await request("/api/auth/swiggy/status");
 assert(authStatusBefore.authStatus.endpoints.authorize.includes("/auth/authorize"), "OAuth authorize endpoint is missing");
 assert(authStatusBefore.authStatus.endpoints.token.includes("/auth/token"), "OAuth token endpoint is missing");
@@ -2599,6 +2661,9 @@ console.log(
       conciergeSlots: concierge.concierge.itinerary.length,
       stagingCertificationScore: stagingCertification.matrix.score,
       stagingCertificationTools: `${stagingCertification.matrix.assignedTools}/${stagingCertification.matrix.totalTools}`,
+      sandboxCredentialScore: sandboxWorkbench.sandboxWorkbench.score,
+      sandboxCredentialLanes: sandboxWorkbench.sandboxWorkbench.lanes.length,
+      sandboxSeededServers: sandboxWorkbench.sandboxWorkbench.seededDataPlan.length,
       toolLabScore: toolLab.toolLab.score,
       toolLabCallable: `${toolLab.toolLab.callableTools}/${toolLab.toolLab.totalTools}`,
       toolContractScore: toolContracts.matrix.score,
