@@ -3381,38 +3381,47 @@ function LaunchCenterPanel({
           </span>
           <div className="sandbox-workbench-grid">
             <div>
-              <strong>{sandboxCredentialWorkbench?.seededDataPlan.length ?? 0}</strong>
+              <strong>{sandboxCredentialWorkbench ? sandboxCredentialWorkbench.seededDataPlan.length : "Loading"}</strong>
               <span>Seeded servers</span>
             </div>
             <div>
-              <strong>{sandboxCredentialWorkbench?.stagingPromotion.soakHoursRequired ?? 0}h</strong>
+              <strong>
+                {sandboxCredentialWorkbench ? `${sandboxCredentialWorkbench.stagingPromotion.soakHoursRequired}h` : "Loading"}
+              </strong>
               <span>Soak</span>
             </div>
             <div>
               <strong>
                 {sandboxCredentialWorkbench
                   ? `${sandboxCredentialWorkbench.stagingPromotion.assignedTools}/${sandboxCredentialWorkbench.stagingPromotion.totalTools}`
-                  : "0/35"}
+                  : "Loading"}
               </strong>
               <span>Tools</span>
             </div>
           </div>
           <ul className="compact-status-list">
-            {(sandboxCredentialWorkbench?.lanes ?? []).slice(0, 5).map((laneItem) => (
-              <li
-                key={laneItem.id}
-                data-status={
-                  laneItem.status === "ready"
-                    ? "healthy"
-                    : laneItem.status === "blocked"
-                      ? "blocked"
-                      : "watch"
-                }
-              >
-                <span>{laneItem.label}</span>
-                <strong>{laneItem.status.replaceAll("_", " ")}</strong>
+            {sandboxCredentialWorkbench ? (
+              sandboxCredentialWorkbench.lanes.map((laneItem) => (
+                <li
+                  key={laneItem.id}
+                  data-status={
+                    laneItem.status === "ready"
+                      ? "healthy"
+                      : laneItem.status === "blocked"
+                        ? "blocked"
+                        : "watch"
+                  }
+                >
+                  <span>{laneItem.label}</span>
+                  <strong>{laneItem.status.replaceAll("_", " ")}</strong>
+                </li>
+              ))
+            ) : (
+              <li data-status="watch">
+                <span>Credential lanes</span>
+                <strong>Loading</strong>
               </li>
-            ))}
+            )}
           </ul>
         </article>
 

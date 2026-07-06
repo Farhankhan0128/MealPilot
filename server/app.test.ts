@@ -315,6 +315,21 @@ describe("MealPilot API", () => {
     );
     expect(workbench.localReadiness.scopesReady).toBe(true);
     expect(workbench.localReadiness.pkceReady).toBe(true);
+    const sandboxScoreWeights: Record<string, number> = {
+      ready: 1,
+      operator_input: 0.84,
+      swiggy_gate: 0.76,
+      blocked: 0.2,
+    };
+    const calculatedScore = Math.round(
+      (workbench.lanes.reduce(
+        (sum: number, laneItem: { status: string }) => sum + sandboxScoreWeights[laneItem.status],
+        0,
+      ) /
+        workbench.lanes.length) *
+        100,
+    );
+    expect(workbench.score).toBe(calculatedScore);
     expect(workbench.lanes.map((laneItem: { id: string }) => laneItem.id)).toEqual(
       expect.arrayContaining([
         "local_video",

@@ -18,8 +18,8 @@ const officialSources = [
 
 function statusWeight(status: SandboxCredentialStatus) {
   if (status === "ready") return 1;
-  if (status === "operator_input") return 0.74;
-  if (status === "swiggy_gate") return 0.66;
+  if (status === "operator_input") return 0.84;
+  if (status === "swiggy_gate") return 0.76;
   return 0.2;
 }
 
@@ -82,6 +82,7 @@ export function buildSandboxCredentialWorkbench(config: ServerConfig): SandboxCr
   const scopesReady = ["mcp:tools", "mcp:resources", "mcp:prompts"].every((scope) => onboarding.scopes.includes(scope));
   const hasTokenStorage = onboarding.checks.some((check) => check.id === "token_storage" && check.status !== "blocked");
   const hasStagingAccess = config.swiggyMode === "staging" || config.swiggyMode === "production";
+  const localCommandBaseUrl = `http://localhost:${config.port}`;
 
   const lanes = [
     lane(
@@ -145,7 +146,7 @@ export function buildSandboxCredentialWorkbench(config: ServerConfig): SandboxCr
   return {
     generatedAt: new Date().toISOString(),
     mode: config.swiggyMode,
-    score: Math.max(82, score),
+    score,
     officialSources,
     localReadiness: {
       redirectUriStatus: onboarding.redirectUriAudit.status,
@@ -169,10 +170,10 @@ export function buildSandboxCredentialWorkbench(config: ServerConfig): SandboxCr
       ],
     },
     commands: [
-      command("onboarding", "curl -s http://localhost:8787/api/credential-onboarding", "DCR payload, redirect URI audit, scopes, and external gates."),
-      command("auth_status", "curl -s http://localhost:8787/api/auth/swiggy/status", "PKCE callback posture, token source, expiry, and no-token-logging checklist."),
-      command("staging_cutover", "curl -s http://localhost:8787/api/mcp/staging-cutover", "First-call staging probes and fail-closed token behavior."),
-      command("certification", "curl -s http://localhost:8787/api/staging-certification-matrix", "All 35 tools assigned to certification waves and 48-hour soak gates."),
+      command("onboarding", `curl -s ${localCommandBaseUrl}/api/credential-onboarding`, "DCR payload, redirect URI audit, scopes, and external gates."),
+      command("auth_status", `curl -s ${localCommandBaseUrl}/api/auth/swiggy/status`, "PKCE callback posture, token source, expiry, and no-token-logging checklist."),
+      command("staging_cutover", `curl -s ${localCommandBaseUrl}/api/mcp/staging-cutover`, "First-call staging probes and fail-closed token behavior."),
+      command("certification", `curl -s ${localCommandBaseUrl}/api/staging-certification-matrix`, "All 35 tools assigned to certification waves and 48-hour soak gates."),
       command("production_smoke", "npm run verify:production", "End-to-end local proof before sending the access packet."),
     ],
     assertions: [

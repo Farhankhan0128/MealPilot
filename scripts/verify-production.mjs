@@ -1598,6 +1598,21 @@ assert(
 
 const sandboxWorkbench = await request("/api/sandbox-credential-workbench");
 assert(sandboxWorkbench.sandboxWorkbench.score >= 82, "sandbox credential workbench score is below target");
+const sandboxScoreWeights = {
+  ready: 1,
+  operator_input: 0.84,
+  swiggy_gate: 0.76,
+  blocked: 0.2,
+};
+const calculatedSandboxScore = Math.round(
+  (sandboxWorkbench.sandboxWorkbench.lanes.reduce((sum, lane) => sum + sandboxScoreWeights[lane.status], 0) /
+    sandboxWorkbench.sandboxWorkbench.lanes.length) *
+    100,
+);
+assert(
+  sandboxWorkbench.sandboxWorkbench.score === calculatedSandboxScore,
+  "sandbox credential score must match lane status weights",
+);
 assert(
   sandboxWorkbench.sandboxWorkbench.officialSources.includes(
     "https://mcp.swiggy.com/builders/docs/start/authenticate/",
