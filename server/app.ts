@@ -84,6 +84,7 @@ import { buildSandboxCredentialWorkbench } from "./services/sandboxCredentialWor
 import { buildNutritionBudgetIntelligence } from "./services/nutritionBudgetIntelligence.js";
 import { buildObservabilityTraceReport, buildSwiggyRouteOptimizationReport } from "./services/observability.js";
 import { buildSwiggyOfferIntelligence } from "./services/offerIntelligence.js";
+import { buildSwiggyOrderLifecycle } from "./services/orderLifecycle.js";
 import { buildPremiumConciergeItinerary } from "./services/premiumConciergeItinerary.js";
 import { buildPremiumUseCaseStudio } from "./services/premiumUseCaseStudio.js";
 import { buildReviewerArtifactVault } from "./services/reviewerArtifactVault.js";
@@ -1001,6 +1002,10 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/swiggy-offer-intelligence", (_req, res) => {
     res.json({ offerIntelligence: buildSwiggyOfferIntelligence({ plans: store.getAllPlans(), config }) });
+  });
+
+  app.get("/api/swiggy-order-lifecycle", (_req, res) => {
+    res.json({ orderLifecycle: buildSwiggyOrderLifecycle({ plans: store.getAllPlans(), config }) });
   });
 
   app.get("/api/version-monitor", (_req, res) => {

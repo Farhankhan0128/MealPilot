@@ -119,6 +119,7 @@ import {
   fetchSwiggyWebsiteAtlas,
   fetchSwiggyLoadLab,
   fetchSwiggyOfferIntelligence,
+  fetchSwiggyOrderLifecycle,
   fetchSwiggyRouteOptimizer,
   fetchTrafficReadinessPlan,
   fetchTracking,
@@ -214,6 +215,7 @@ import type {
   SwiggyJourneyCompilerReport,
   SwiggyLoadLabReport,
   SwiggyOfferIntelligenceReport,
+  SwiggyOrderLifecycleReport,
   SwiggyScenarioRunnerReport,
   SwiggySourceIntelligenceReport,
   SwiggyStagingCutoverRehearsal,
@@ -442,6 +444,7 @@ function App() {
   const [sloIncident, setSloIncident] = useState<SloIncidentCommandCenter | null>(null);
   const [loadLab, setLoadLab] = useState<SwiggyLoadLabReport | null>(null);
   const [offerIntelligence, setOfferIntelligence] = useState<SwiggyOfferIntelligenceReport | null>(null);
+  const [orderLifecycle, setOrderLifecycle] = useState<SwiggyOrderLifecycleReport | null>(null);
   const [routeOptimizer, setRouteOptimizer] = useState<SwiggyRouteOptimizationReport | null>(null);
   const [exportText, setExportText] = useState<string | null>(null);
   const [authUrl, setAuthUrl] = useState<string | null>(null);
@@ -591,6 +594,7 @@ function App() {
       sloIncidentResponse,
       loadLabResponse,
       offerIntelligenceResponse,
+      orderLifecycleResponse,
       routeOptimizerResponse,
     ] = await Promise.all([
       fetchPantry(),
@@ -663,6 +667,7 @@ function App() {
       fetchSloIncidentCommand(),
       fetchSwiggyLoadLab(),
       fetchSwiggyOfferIntelligence(),
+      fetchSwiggyOrderLifecycle(),
       fetchSwiggyRouteOptimizer(),
     ]);
     setPantry(pantryResponse.pantry);
@@ -740,6 +745,7 @@ function App() {
     setSloIncident(sloIncidentResponse.sloIncident);
     setLoadLab(loadLabResponse.loadLab);
     setOfferIntelligence(offerIntelligenceResponse.offerIntelligence);
+    setOrderLifecycle(orderLifecycleResponse.orderLifecycle);
     setRouteOptimizer(routeOptimizerResponse.routeOptimizer);
   }
 
@@ -812,6 +818,7 @@ function App() {
       sloIncidentResponse,
       loadLabResponse,
       offerIntelligenceResponse,
+      orderLifecycleResponse,
       routeOptimizerResponse,
     ] = await Promise.all([
       fetchMcpCatalog(),
@@ -881,6 +888,7 @@ function App() {
       fetchSloIncidentCommand(),
       fetchSwiggyLoadLab(),
       fetchSwiggyOfferIntelligence(),
+      fetchSwiggyOrderLifecycle(),
       fetchSwiggyRouteOptimizer(),
     ]);
     setMcpCatalog(catalogResponse);
@@ -954,6 +962,7 @@ function App() {
     setSloIncident(sloIncidentResponse.sloIncident);
     setLoadLab(loadLabResponse.loadLab);
     setOfferIntelligence(offerIntelligenceResponse.offerIntelligence);
+    setOrderLifecycle(orderLifecycleResponse.orderLifecycle);
     setRouteOptimizer(routeOptimizerResponse.routeOptimizer);
   }
 
@@ -1611,6 +1620,7 @@ function App() {
                 sloIncident={sloIncident}
                 loadLab={loadLab}
                 offerIntelligence={offerIntelligence}
+                orderLifecycle={orderLifecycle}
                 routeOptimizer={routeOptimizer}
                 evaluationLab={evaluationLab}
               />
@@ -4324,6 +4334,7 @@ function ProductionEvidencePanel({
   sloIncident,
   loadLab,
   offerIntelligence,
+  orderLifecycle,
   routeOptimizer,
   evaluationLab,
 }: {
@@ -4346,6 +4357,7 @@ function ProductionEvidencePanel({
   sloIncident: SloIncidentCommandCenter | null;
   loadLab: SwiggyLoadLabReport | null;
   offerIntelligence: SwiggyOfferIntelligenceReport | null;
+  orderLifecycle: SwiggyOrderLifecycleReport | null;
   routeOptimizer: SwiggyRouteOptimizationReport | null;
   evaluationLab: EvaluationLab | null;
 }) {
@@ -4556,6 +4568,47 @@ function ProductionEvidencePanel({
               >
                 <span>{opportunity.label}</span>
                 <strong>Rs {opportunity.estimatedSavings.toLocaleString("en-IN")}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="order-lifecycle-card">
+          <div className="mini-heading">
+            <Radio aria-hidden="true" />
+            <strong>Order Lifecycle</strong>
+          </div>
+          <span>
+            {orderLifecycle
+              ? `${orderLifecycle.score}/100, ${orderLifecycle.totals.toolsCovered} status tools, ${orderLifecycle.totals.trackingCadenceSeconds}s cadence`
+              : "Loading lifecycle command center"}
+          </span>
+          <div className="order-lifecycle-grid">
+            <div>
+              <strong>{orderLifecycle?.totals.activeTimelines ?? 0}</strong>
+              <span>Timelines</span>
+            </div>
+            <div>
+              <strong>{orderLifecycle?.totals.recoveryDrills ?? 0}</strong>
+              <span>Recovery drills</span>
+            </div>
+            <div>
+              <strong>{orderLifecycle?.telemetry.length ?? 0}</strong>
+              <span>Telemetry fields</span>
+            </div>
+            <div>
+              <strong>{orderLifecycle?.totals.externalGates ?? 0}</strong>
+              <span>Live gates</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(orderLifecycle?.timelines ?? []).slice(0, 4).map((timeline) => (
+              <li
+                key={timeline.id}
+                data-status={timeline.status === "ready" ? "healthy" : timeline.status === "external_gate" ? "blocked" : "watch"}
+              >
+                <span>{timeline.label}</span>
+                <strong>{timeline.state.replaceAll("_", " ")}</strong>
               </li>
             ))}
           </ul>

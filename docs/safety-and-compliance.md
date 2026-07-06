@@ -104,6 +104,8 @@ The `/api/swiggy-load-lab` endpoint validates capacity without generating live u
 
 The `/api/swiggy-offer-intelligence` endpoint keeps discounts honest and confirmation-safe. Food coupons are fetched before application and cart totals are re-read after coupon mutations; Dineout deals are treated as discovery and restaurant-detail signals before free booking confirmation; Instamart savings are derived from product variants and cart bill breakdowns rather than undocumented coupon behavior.
 
+The `/api/swiggy-order-lifecycle` endpoint protects users after confirmation. It probes Food and Instamart order-history/detail tools and Dineout booking status before any retry, keeps tracking refreshes at 10 seconds or slower, redacts order and booking identifiers, and turns lifecycle state into support-safe packets.
+
 The `/api/mcp/backpressure-governor` endpoint keeps current and future rate-limit behavior separate. Current Swiggy v1.0 upstream shedding is treated as bounded `UPSTREAM_ERROR` retry behavior; future MCP-layer 429 responses, `Retry-After`, `X-RateLimit-Limit`, `X-RateLimit-Remaining`, and `X-RateLimit-Reset` are reserved as first-class telemetry and governor signals. Tracking calls stay at 10 seconds or slower, voice bursts are shaped before broad search, commercial writes remain single-flight, and background jobs stay disabled until Swiggy approves bespoke ceilings.
 
 The `/api/slo-incident-command` endpoint turns Swiggy SLA and uptime guidance into operational evidence. It maps 99.9% uptime targets, read/write/commercial latency bands, status-page fallback, S0-S3 incident comms, 72-hour maintenance notice, SLO measurement exclusions, and partnership-based remediation.

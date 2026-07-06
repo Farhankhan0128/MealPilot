@@ -108,6 +108,8 @@ The verifier also validates `/api/swiggy-load-lab` for synthetic launch-load sce
 
 The verifier also validates `/api/swiggy-offer-intelligence` for Food coupon tool sequencing, Dineout deal validation, Instamart value substitutions, no-blind-discount guardrails, offer recovery drills, live-inventory external gates, and launch-bundle handoff coverage.
 
+The verifier also validates `/api/swiggy-order-lifecycle` for Food, Instamart, and Dineout status tools, tracking cadence, non-blind retry recovery, timeline telemetry redaction, support-ready lifecycle packets, and launch-bundle handoff coverage.
+
 The verifier also validates `/api/swiggy-source-intelligence` for Builders website inventory, CTA coverage, `llms` and markdown documentation counts, 35-tool reference alignment, drift signals, external gates, and build-queue readiness.
 
 The verifier also validates `/api/coding-agent-governance` for the root `AGENTS.md` file, official Swiggy coding-agent docs, `llms.txt`, `llms-full.txt`, markdown-twin retrieval, reference paths, Food 14 / Instamart 13 / Dineout 8 smoke evidence, commercial confirmation rules, and no-token/no-PII logging guardrails.
@@ -217,6 +219,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/traffic-readiness-plan`
 - `GET /api/swiggy-load-lab`
 - `GET /api/swiggy-offer-intelligence`
+- `GET /api/swiggy-order-lifecycle`
 - `GET /api/version-monitor`
 - `GET /api/compliance-evidence`
 - `GET /api/reviewer-proof`

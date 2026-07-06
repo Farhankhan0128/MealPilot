@@ -3267,6 +3267,77 @@ export interface SwiggyOfferIntelligenceReport {
   externalGates: string[];
 }
 
+export type SwiggyOrderLifecycleStatus = "ready" | "watch" | "external_gate";
+
+export interface SwiggyOrderLifecycleLane {
+  id: string;
+  server: SwiggyServer | "combined";
+  label: string;
+  officialTools: string[];
+  cadenceSeconds: number;
+  retryPolicy: string;
+  supportEscalation: string;
+  status: SwiggyOrderLifecycleStatus;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyOrderLifecycleTimeline {
+  id: string;
+  server: SwiggyServer;
+  label: string;
+  state: string;
+  etaMinutes: number | null;
+  visibleCopy: string;
+  supportTrigger: string;
+  status: SwiggyOrderLifecycleStatus;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyOrderLifecycleRecovery {
+  id: string;
+  trigger: string;
+  statusProbe: string;
+  decision: string;
+  blockedRetry: string;
+  supportPacket: string;
+  status: SwiggyOrderLifecycleStatus;
+}
+
+export interface SwiggyOrderLifecycleTelemetry {
+  field: string;
+  source: string;
+  redaction: string;
+  status: SwiggyOrderLifecycleStatus;
+}
+
+export interface SwiggyOrderLifecycleReport {
+  generatedAt: string;
+  score: number;
+  mode: "mock" | "staging" | "production";
+  officialSources: string[];
+  totals: {
+    lanes: number;
+    toolsCovered: number;
+    activeTimelines: number;
+    recoveryDrills: number;
+    trackingCadenceSeconds: number;
+    externalGates: number;
+  };
+  lanes: SwiggyOrderLifecycleLane[];
+  timelines: SwiggyOrderLifecycleTimeline[];
+  recoveries: SwiggyOrderLifecycleRecovery[];
+  telemetry: SwiggyOrderLifecycleTelemetry[];
+  operatorActions: Array<{
+    id: string;
+    label: string;
+    owner: "MealPilot" | "Operator" | "Swiggy";
+    status: SwiggyOrderLifecycleStatus;
+    evidence: string;
+  }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export interface VersionAlert {
   id: string;
   label: string;

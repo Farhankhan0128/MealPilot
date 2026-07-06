@@ -762,6 +762,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-order-lifecycle": {
+        get: {
+          tags: ["Commerce"],
+          summary: "Swiggy Order Lifecycle Command Center for status, tracking, and recovery",
+          responses: {
+            "200": {
+              description:
+                "Food order, Instamart order, Dineout booking, tracking cadence, non-blind retry probes, lifecycle telemetry, and support-ready recovery evidence",
+            },
+          },
+        },
+      },
       "/api/support/bridge": {
         get: {
           tags: ["Operations"],

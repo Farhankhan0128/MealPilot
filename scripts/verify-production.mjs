@@ -155,6 +155,10 @@ assert(
   "OpenAPI Swiggy Offer Intelligence is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-order-lifecycle"].get.summary.includes("Order Lifecycle"),
+  "OpenAPI Swiggy Order Lifecycle is missing",
+);
+assert(
   openApi.paths["/api/mcp/resource-prompt-studio"].get.summary.includes("Resource and Prompt Studio"),
   "OpenAPI resource and prompt studio is missing",
 );
@@ -2714,6 +2718,53 @@ assert(
   "Offer Intelligence coupon sequence assertion is missing",
 );
 
+const orderLifecycle = await request("/api/swiggy-order-lifecycle");
+assert(orderLifecycle.orderLifecycle.score >= 80, "Order Lifecycle score is below target");
+assert(orderLifecycle.orderLifecycle.totals.toolsCovered >= 7, "Order Lifecycle status tools are incomplete");
+assert(orderLifecycle.orderLifecycle.totals.trackingCadenceSeconds === 10, "Order Lifecycle tracking cadence is missing");
+assert(
+  orderLifecycle.orderLifecycle.officialSources.includes("https://mcp.swiggy.com/builders/llms.txt") &&
+    orderLifecycle.orderLifecycle.officialSources.some((source) => source.includes("/reference/food/get_food_orders/")) &&
+    orderLifecycle.orderLifecycle.officialSources.some((source) => source.includes("/reference/instamart/track_order/")) &&
+    orderLifecycle.orderLifecycle.officialSources.some((source) => source.includes("/reference/dineout/get_booking_status/")),
+  "Order Lifecycle official sources are incomplete",
+);
+assert(
+  ["food_order_lifecycle", "instamart_order_lifecycle", "dineout_booking_lifecycle", "combined_recovery_desk"].every((id) =>
+    orderLifecycle.orderLifecycle.lanes.some((lane) => lane.id === id),
+  ),
+  "Order Lifecycle lanes are incomplete",
+);
+assert(
+  orderLifecycle.orderLifecycle.timelines.some(
+    (timeline) =>
+      timeline.server === "food" &&
+      ["preparing", "awaiting_confirmation"].includes(timeline.state) &&
+      ["ready", "watch"].includes(timeline.status),
+  ),
+  "Order Lifecycle Food timeline is missing",
+);
+assert(
+  ["food_timeout_after_place", "instamart_checkout_uncertain", "dineout_booking_uncertain"].every((id) =>
+    orderLifecycle.orderLifecycle.recoveries.some((recovery) => recovery.id === id),
+  ),
+  "Order Lifecycle recovery drills are incomplete",
+);
+assert(
+  orderLifecycle.orderLifecycle.recoveries.some((recovery) =>
+    recovery.blockedRetry.includes("Blind place_food_order retry is blocked"),
+  ),
+  "Order Lifecycle blind retry block is missing",
+);
+assert(
+  orderLifecycle.orderLifecycle.telemetry.some((field) => field.field === "order_id_hash" && field.status === "ready"),
+  "Order Lifecycle telemetry redaction is missing",
+);
+assert(
+  orderLifecycle.orderLifecycle.assertions.some((assertion) => assertion.includes("never blindly retried")),
+  "Order Lifecycle non-blind retry assertion is missing",
+);
+
 const sloIncident = await request("/api/slo-incident-command");
 assert(sloIncident.sloIncident.score >= 90, "SLO incident command score is below target");
 assert(
@@ -3166,6 +3217,7 @@ assert(
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "MCP Backpressure Governor") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Load Lab") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Offer Intelligence") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Order Lifecycle") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "SLO Incident Command Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Journey Compiler") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Access Dossier") &&
@@ -3329,6 +3381,10 @@ assert(
   "launch bundle Offer Intelligence handoff link is missing",
 );
 assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-order-lifecycle"),
+  "launch bundle Order Lifecycle handoff link is missing",
+);
+assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/mcp/staging-cutover"),
   "launch bundle staging cutover handoff link is missing",
 );
@@ -3442,6 +3498,9 @@ console.log(
       offerIntelligenceScore: offerIntelligence.offerIntelligence.score,
       offerIntelligenceOpportunities: offerIntelligence.offerIntelligence.totals.opportunities,
       offerIntelligenceSavings: offerIntelligence.offerIntelligence.totals.estimatedSavings,
+      orderLifecycleScore: orderLifecycle.orderLifecycle.score,
+      orderLifecycleTools: orderLifecycle.orderLifecycle.totals.toolsCovered,
+      orderLifecycleRecoveries: orderLifecycle.orderLifecycle.totals.recoveryDrills,
       sloIncidentScore: sloIncident.sloIncident.score,
       sloUptimeTargets: sloIncident.sloIncident.uptimeTargets.length,
       resilienceScore: resilience.runbook.score,

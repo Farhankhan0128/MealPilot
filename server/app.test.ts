@@ -101,6 +101,8 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/swiggy-load-lab"].get.responses["200"].description).toContain("cohort ramps");
     expect(openApi.body.paths["/api/swiggy-offer-intelligence"].get.summary).toContain("Offer Intelligence");
     expect(openApi.body.paths["/api/swiggy-offer-intelligence"].get.responses["200"].description).toContain("Food coupon");
+    expect(openApi.body.paths["/api/swiggy-order-lifecycle"].get.summary).toContain("Order Lifecycle");
+    expect(openApi.body.paths["/api/swiggy-order-lifecycle"].get.responses["200"].description).toContain("non-blind retry");
     expect(openApi.body.paths["/api/slo-incident-command"].get.summary).toContain("SLO Incident");
     expect(openApi.body.paths["/api/data-governance-center"].get.summary).toContain("Data Governance");
     expect(openApi.body.paths["/api/production-launch-bundle"].get.summary).toContain("Production Launch Bundle");
@@ -2817,6 +2819,7 @@ describe("MealPilot API", () => {
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "MCP Backpressure Governor")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Swiggy Load Lab")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Swiggy Offer Intelligence")).toBe(true);
+    expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Swiggy Order Lifecycle")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "SLO Incident Command Center")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Data Governance Center")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Swiggy Upstream Watch")).toBe(true);
@@ -2972,6 +2975,47 @@ describe("MealPilot API", () => {
     expect(intelligence.externalGates.some((gate: string) => gate.includes("Live Food coupon inventory"))).toBe(true);
   });
 
+  it("returns Swiggy Order Lifecycle for status, tracking, and non-blind recovery", async () => {
+    const { app } = createMealPilotServer();
+    const created = await request(app).post("/api/plan").send(planningRequest).expect(201);
+    await request(app).post("/api/confirm").send({ sessionId: created.body.plan.id, recommendationId: "rec_food" }).expect(200);
+
+    const response = await request(app).get("/api/swiggy-order-lifecycle").expect(200);
+    const lifecycle = response.body.orderLifecycle;
+
+    expect(lifecycle.score).toBeGreaterThanOrEqual(80);
+    expect(lifecycle.mode).toBe("mock");
+    expect(lifecycle.officialSources).toEqual(
+      expect.arrayContaining([
+        "https://mcp.swiggy.com/builders/",
+        "https://mcp.swiggy.com/builders/llms.txt",
+        "https://mcp.swiggy.com/builders/docs/reference/food/get_food_orders/",
+        "https://mcp.swiggy.com/builders/docs/reference/instamart/track_order/",
+        "https://mcp.swiggy.com/builders/docs/reference/dineout/get_booking_status/",
+      ]),
+    );
+    expect(lifecycle.totals.toolsCovered).toBeGreaterThanOrEqual(7);
+    expect(lifecycle.totals.trackingCadenceSeconds).toBe(10);
+    expect(lifecycle.lanes.map((lane: { id: string }) => lane.id)).toEqual(
+      expect.arrayContaining(["food_order_lifecycle", "instamart_order_lifecycle", "dineout_booking_lifecycle", "combined_recovery_desk"]),
+    );
+    expect(
+      lifecycle.timelines.some(
+        (timeline: { server: string; state: string; status: string }) =>
+          timeline.server === "food" && timeline.state === "preparing" && timeline.status === "ready",
+      ),
+    ).toBe(true);
+    expect(lifecycle.recoveries.map((recovery: { id: string }) => recovery.id)).toEqual(
+      expect.arrayContaining(["food_timeout_after_place", "instamart_checkout_uncertain", "dineout_booking_uncertain"]),
+    );
+    expect(
+      lifecycle.recoveries.some((recovery: { blockedRetry: string }) => recovery.blockedRetry.includes("Blind place_food_order retry is blocked")),
+    ).toBe(true);
+    expect(lifecycle.telemetry.some((field: { field: string }) => field.field === "order_id_hash")).toBe(true);
+    expect(lifecycle.assertions.some((assertion: string) => assertion.includes("never blindly retried"))).toBe(true);
+    expect(lifecycle.externalGates.some((gate: string) => gate.includes("staging credentials"))).toBe(true);
+  });
+
   it("returns SLO and incident command evidence for Swiggy operations", async () => {
     const { app } = createMealPilotServer();
     const created = await request(app).post("/api/plan").send(planningRequest).expect(201);
@@ -3041,6 +3085,7 @@ describe("MealPilot API", () => {
         "MCP Backpressure Governor",
         "Swiggy Load Lab",
         "Swiggy Offer Intelligence",
+        "Swiggy Order Lifecycle",
         "SLO Incident Command Center",
         "Swiggy Journey Compiler",
         "Swiggy Access Dossier",
@@ -3091,6 +3136,7 @@ describe("MealPilot API", () => {
     expect(bundle.handoffEmail.body).toContain("/api/mcp/backpressure-governor");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-load-lab");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-offer-intelligence");
+    expect(bundle.handoffEmail.body).toContain("/api/swiggy-order-lifecycle");
     expect(bundle.handoffEmail.body).toContain("/api/mcp/staging-cutover");
     expect(bundle.handoffEmail.body).toContain("/api/audit-ledger");
     expect(bundle.commands.some((command: { command: string }) => command.command.includes("npm run verify:production"))).toBe(

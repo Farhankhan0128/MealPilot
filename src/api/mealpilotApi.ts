@@ -76,6 +76,7 @@ import type {
   SwiggyJourneyCompilerReport,
   SwiggyLoadLabReport,
   SwiggyOfferIntelligenceReport,
+  SwiggyOrderLifecycleReport,
   SwiggyScenarioRunnerReport,
   SwiggySourceIntelligenceReport,
   SwiggyStagingCutoverRehearsal,
@@ -525,6 +526,10 @@ export function fetchSwiggyLoadLab() {
 
 export function fetchSwiggyOfferIntelligence() {
   return requestJson<{ offerIntelligence: SwiggyOfferIntelligenceReport }>("/api/swiggy-offer-intelligence");
+}
+
+export function fetchSwiggyOrderLifecycle() {
+  return requestJson<{ orderLifecycle: SwiggyOrderLifecycleReport }>("/api/swiggy-order-lifecycle");
 }
 
 export function fetchVersionMonitor() {
