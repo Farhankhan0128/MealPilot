@@ -459,6 +459,15 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
         "Rehearses real Swiggy Streamable HTTP cutover with OAuth, first read-only probes, fail-closed token behavior, retry branches, support packet, and 48-hour staging gates.",
     },
     {
+      id: "staging_credential_drill",
+      label: "Swiggy Staging Credential Drill Center",
+      path: "/api/swiggy-staging-credential-drill",
+      category: "runtime",
+      status: "ready",
+      evidence:
+        "Combines credential signal, first-call JSON-RPC drills, seeded-data requirements, operator runbook, handoff email, and Swiggy-owned promotion gates.",
+    },
+    {
       id: "capability_registry",
       label: "MCP Capability Registry",
       path: "/api/mcp/capability-registry",
@@ -723,6 +732,7 @@ function buildPhases(config: ServerConfig, latestPlan: MealPlan | undefined, art
         artifact("offer_intelligence"),
         artifact("order_lifecycle"),
         artifact("demo_video"),
+        artifact("staging_credential_drill"),
       ],
     },
     {
@@ -737,6 +747,7 @@ function buildPhases(config: ServerConfig, latestPlan: MealPlan | undefined, art
         artifact("staging_credentials"),
         artifact("staging_certification"),
         artifact("staging_cutover"),
+        artifact("staging_credential_drill"),
         "/api/mcp-gateway",
         "/api/telemetry/runtime",
         artifact("audit_ledger"),
@@ -894,6 +905,7 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- Widget Runtime Center: /api/mcp/widget-runtime",
     "- Commercial Action Guard: /api/mcp/commercial-action-guard",
     "- Staging Cutover Rehearsal: /api/mcp/staging-cutover",
+    "- Swiggy Staging Credential Drill Center: /api/swiggy-staging-credential-drill",
     "- Data Governance Center: /api/data-governance-center",
     "- Enterprise Delegated Auth Center: /api/enterprise-delegated-auth",
     "- Traffic Readiness Plan: /api/traffic-readiness-plan",

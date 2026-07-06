@@ -223,6 +223,10 @@ assert(
   "OpenAPI staging cutover is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-staging-credential-drill"].get.summary.includes("Staging Credential Drill"),
+  "OpenAPI Staging Credential Drill Center contract is missing",
+);
+assert(
   openApi.paths["/api/audit-ledger"].get.summary.includes("audit ledger"),
   "OpenAPI audit ledger is missing",
 );
@@ -1089,8 +1093,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 26, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 26, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 27, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 27, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -1152,6 +1156,14 @@ assert(
     group.targets.some((target) => target.id === "operating_contract_card" && target.selector === ".operating-contract-card"),
   ),
   "visual QA operating contract target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some(
+      (target) => target.id === "staging_credential_drill_card" && target.selector === ".staging-credential-drill-card",
+    ),
+  ),
+  "visual QA staging credential drill target is missing",
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
@@ -1245,7 +1257,7 @@ assert(
     (command) =>
       command.id === "visual_capture_harness" &&
       command.command === "npm run verify:visual" &&
-      command.expectedSignal.includes("targetCount >= 26"),
+      command.expectedSignal.includes("targetCount >= 27"),
   ),
   "visual QA Playwright command is missing",
 );
@@ -2274,6 +2286,42 @@ assert(
   "sandbox credential workbench readiness assertions are incomplete",
 );
 
+const stagingCredentialDrill = await request("/api/swiggy-staging-credential-drill");
+assert(stagingCredentialDrill.stagingCredentialDrill.score >= 70, "staging credential drill score is below target");
+assert(
+  stagingCredentialDrill.stagingCredentialDrill.credentialSignal.currentGate === "swiggy_gate",
+  "staging credential drill must preserve Swiggy credential external gate",
+);
+assert(
+  stagingCredentialDrill.stagingCredentialDrill.totals.lanes === 6 &&
+    stagingCredentialDrill.stagingCredentialDrill.totals.firstCallDrills === 3 &&
+    stagingCredentialDrill.stagingCredentialDrill.totals.seededDataRequirements === 3 &&
+    stagingCredentialDrill.stagingCredentialDrill.totals.promotionGates === 4,
+  "staging credential drill totals are incomplete",
+);
+assert(
+  ["oauth_dcr", "seeded_data", "first_call_wave", "operating_contract"].every((id) =>
+    stagingCredentialDrill.stagingCredentialDrill.lanes.some((lane) => lane.id === id),
+  ),
+  "staging credential drill lanes are incomplete",
+);
+assert(
+  stagingCredentialDrill.stagingCredentialDrill.firstCallDrills.map((drill) => `${drill.server}:${drill.firstTool}`).join(",") ===
+    "food:get_addresses,instamart:get_addresses,dineout:get_saved_locations",
+  "staging credential drill first-call drills are incomplete",
+);
+assert(
+  stagingCredentialDrill.stagingCredentialDrill.operatorRunbook.some(
+    (step) => step.command.includes("SWIGGY_ENV=staging") && step.proves.includes("Swiggy staging"),
+  ),
+  "staging credential drill operator runbook is incomplete",
+);
+assert(
+  stagingCredentialDrill.stagingCredentialDrill.handoffEmail.to === "builders@swiggy.in" &&
+    stagingCredentialDrill.stagingCredentialDrill.externalGates.some((gate) => gate.includes("staging credentials")),
+  "staging credential drill handoff or external gate is missing",
+);
+
 const authStatusBefore = await request("/api/auth/swiggy/status");
 assert(authStatusBefore.authStatus.endpoints.authorize.includes("/auth/authorize"), "OAuth authorize endpoint is missing");
 assert(authStatusBefore.authStatus.endpoints.token.includes("/auth/token"), "OAuth token endpoint is missing");
@@ -2717,6 +2765,10 @@ assert(
 assert(
   proof.proof.artifacts.some((artifact) => artifact.label === "Staging Cutover Rehearsal"),
   "reviewer proof staging cutover artifact is missing",
+);
+assert(
+  proof.proof.artifacts.some((artifact) => artifact.label === "Swiggy Staging Credential Drill Center"),
+  "reviewer proof staging credential drill artifact is missing",
 );
 assert(
   proof.proof.artifacts.some((artifact) => artifact.label === "SLO Incident Command Center"),
@@ -3647,7 +3699,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 26, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 27, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -3661,7 +3713,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("26")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("27")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -3740,6 +3792,7 @@ assert(
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Widget Runtime Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Commercial Action Guard") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Staging Cutover Rehearsal") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Staging Credential Drill Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Staging Certification Matrix") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Staging Transcript Export"),
   "launch bundle proof artifacts are incomplete",
@@ -3789,6 +3842,10 @@ assert(
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/sandbox-credential-workbench"),
   "launch bundle sandbox credential handoff link is missing",
+);
+assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-staging-credential-drill"),
+  "launch bundle staging credential drill handoff link is missing",
 );
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-builder-intake"),
@@ -4039,6 +4096,8 @@ console.log(
       gatewayScore: gateway.gateway.readinessScore,
       stagingCutoverScore: stagingCutover.stagingCutover.score,
       stagingCutoverDryRuns: stagingCutover.stagingCutover.dryRunCalls,
+      stagingCredentialDrillScore: stagingCredentialDrill.stagingCredentialDrill.score,
+      stagingCredentialFirstCalls: stagingCredentialDrill.stagingCredentialDrill.totals.firstCallDrills,
       authStatus: authStatusAfter.authStatus.latestEvent.status,
       onboardingScore: onboarding.onboarding.score,
       preflightChecks: preflight.preflight.checks.length,

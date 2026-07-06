@@ -89,6 +89,7 @@ import type {
   SwiggyOrderLifecycleReport,
   SwiggyScenarioRunnerReport,
   SwiggySourceIntelligenceReport,
+  SwiggyStagingCredentialDrillReport,
   SwiggyStagingCutoverRehearsal,
   SwiggyStateOrchestratorReport,
   SwiggyToolContractMatrix,
@@ -270,6 +271,12 @@ export function fetchCommercialActionGuard() {
 
 export function fetchSwiggyStagingCutover() {
   return requestJson<{ stagingCutover: SwiggyStagingCutoverRehearsal }>("/api/mcp/staging-cutover");
+}
+
+export function fetchSwiggyStagingCredentialDrill() {
+  return requestJson<{ stagingCredentialDrill: SwiggyStagingCredentialDrillReport }>(
+    "/api/swiggy-staging-credential-drill",
+  );
 }
 
 export function fetchSwiggyBuildersMap() {

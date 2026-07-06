@@ -200,6 +200,17 @@ const targetGroups = [
         "artifacts/visual-qa/operating-contract-card.png",
       ),
       target(
+        "staging_credential_drill_card",
+        "Staging Credential Drill card",
+        "/",
+        ".staging-credential-drill-card",
+        "desktop",
+        1280,
+        900,
+        "Staging Credential Drill shows credential signal, first-call probes, seeded-data requirements, operator runbook, and Swiggy gates.",
+        "artifacts/visual-qa/staging-credential-drill-card.png",
+      ),
+      target(
         "developer_quickstart_card",
         "Developer Quickstart card",
         "/",
@@ -438,7 +449,7 @@ const commands = [
     "visual_capture_harness",
     "npm run verify:visual",
     "Playwright captures every Visual QA target at desktop, tablet, and mobile sizes and writes report.json.",
-        "ok true with targetCount >= 26 and PNG files under artifacts/visual-qa.",
+    "ok true with targetCount >= 27 and PNG files under artifacts/visual-qa.",
   ),
   command(
     "desktop_capture",
@@ -502,7 +513,7 @@ export function buildVisualQaCenter(): VisualQaCenter {
       },
     ],
     assertions: [
-      "Visual QA targets cover planner, Launch Center, Access Evidence Matrix, Docs Twin Explorer, Deep Site Map, Developer Quickstart, CTA Execution, Coding Agent Governance, Confirmation Command, Cancellation and Care, Luxury Experience Workspace, Reviewer Artifact Vault, Production Evidence, Demo Studio, and widget fallbacks.",
+      "Visual QA targets cover planner, Launch Center, Access Evidence Matrix, Docs Twin Explorer, Deep Site Map, Developer Quickstart, CTA Execution, Coding Agent Governance, Staging Credential Drill, Confirmation Command, Cancellation and Care, Luxury Experience Workspace, Reviewer Artifact Vault, Production Evidence, Demo Studio, and widget fallbacks.",
       "Desktop, tablet, and mobile viewports are represented with explicit selectors and artifact paths.",
       "UI rules encode no-overlap, text-fit, widget-security, redaction, confirmation-visibility, and mobile single-column checks.",
       "Playwright screenshot automation captures every manifest target and writes local PNG evidence plus report.json.",

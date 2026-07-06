@@ -617,6 +617,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-staging-credential-drill": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Staging Credential Drill Center",
+          responses: {
+            "200": {
+              description:
+                "Credential issuance signal, first read-only probes, seeded data requirements, fail-closed token posture, operator runbook, handoff email, and promotion gates for Swiggy staging access",
+            },
+          },
+        },
+      },
       "/api/mcp-gateway": {
         get: {
           tags: ["Builder Access"],

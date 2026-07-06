@@ -100,6 +100,7 @@ import { buildPremiumUseCaseStudio } from "./services/premiumUseCaseStudio.js";
 import { buildReviewerArtifactVault } from "./services/reviewerArtifactVault.js";
 import { createPkcePair, createState } from "./services/pkce.js";
 import { buildMcpResourcePromptStudio } from "./services/resourcePromptStudio.js";
+import { buildSwiggyStagingCredentialDrill } from "./services/stagingCredentialDrill.js";
 import { buildSwiggyStagingCutoverRehearsal } from "./services/stagingCutover.js";
 import { buildStagingCertificationMatrix } from "./services/stagingCertification.js";
 import { buildStagingTranscriptExport } from "./services/stagingTranscript.js";
@@ -371,6 +372,29 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
         config,
         credentials: runtimeCredentials(),
         latestPlan: store.getAllPlans().at(-1),
+      }),
+    });
+  });
+
+  app.get("/api/swiggy-staging-credential-drill", (_req, res) => {
+    const runtimeConfig = {
+      ...config,
+      swiggyAccessToken: runtimeAccessToken,
+      swiggyTokenExpiresAt: runtimeTokenExpiresAt,
+    };
+    const cutover = buildSwiggyStagingCutoverRehearsal({
+      config,
+      credentials: runtimeCredentials(),
+      latestPlan: store.getAllPlans().at(-1),
+    });
+
+    res.json({
+      stagingCredentialDrill: buildSwiggyStagingCredentialDrill({
+        config: runtimeConfig,
+        cutover,
+        onboarding: buildCredentialOnboardingReport(runtimeConfig),
+        sandbox: buildSandboxCredentialWorkbench(runtimeConfig),
+        certification: buildStagingCertificationMatrix(runtimeConfig),
       }),
     });
   });

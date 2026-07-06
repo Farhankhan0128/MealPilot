@@ -86,6 +86,8 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/mcp/commercial-action-guard"].get.summary).toContain("commercial action");
     expect(openApi.body.paths["/api/mcp/backpressure-governor"].get.summary).toContain("backpressure");
     expect(openApi.body.paths["/api/mcp/staging-cutover"].get.summary).toContain("staging cutover");
+    expect(openApi.body.paths["/api/swiggy-staging-credential-drill"].get.summary).toContain("Staging Credential Drill");
+    expect(openApi.body.paths["/api/swiggy-staging-credential-drill"].get.responses["200"].description).toContain("first read-only probes");
     expect(openApi.body.paths["/api/mcp/capability-registry"].get.summary).toContain("capability registry");
     expect(openApi.body.paths["/api/mcp/resource-prompt-studio"].get.summary).toContain("Resource and Prompt Studio");
     expect(openApi.body.paths["/api/credential-onboarding"].get.summary).toContain("Dynamic Client Registration");
@@ -334,6 +336,38 @@ describe("MealPilot API", () => {
     expect(
       response.body.onboarding.accessApplicationFields.some((field: { id: string }) => field.id === "redirect_uris"),
     ).toBe(true);
+  });
+
+  it("returns a Swiggy staging credential drill for first credentialed access", async () => {
+    const { app } = createMealPilotServer();
+    await request(app).post("/api/plan").send(planningRequest).expect(201);
+    const response = await request(app).get("/api/swiggy-staging-credential-drill").expect(200);
+    const drill = response.body.stagingCredentialDrill;
+
+    expect(drill.score).toBeGreaterThanOrEqual(70);
+    expect(drill.credentialSignal.currentGate).toBe("swiggy_gate");
+    expect(drill.totals.lanes).toBe(6);
+    expect(drill.totals.firstCallDrills).toBe(3);
+    expect(drill.totals.seededDataRequirements).toBe(3);
+    expect(drill.totals.promotionGates).toBe(4);
+    expect(drill.lanes.map((laneItem: { id: string }) => laneItem.id)).toEqual(
+      expect.arrayContaining(["oauth_dcr", "seeded_data", "first_call_wave", "operating_contract"]),
+    );
+    expect(
+      drill.firstCallDrills.map((item: { server: string; firstTool: string }) => [item.server, item.firstTool]),
+    ).toEqual([
+      ["food", "get_addresses"],
+      ["instamart", "get_addresses"],
+      ["dineout", "get_saved_locations"],
+    ]);
+    expect(
+      drill.operatorRunbook.some(
+        (step: { command: string; proves: string }) =>
+          step.command.includes("SWIGGY_ENV=staging") && step.proves.includes("Swiggy staging"),
+      ),
+    ).toBe(true);
+    expect(drill.handoffEmail.to).toBe("builders@swiggy.in");
+    expect(drill.externalGates.some((gate: string) => gate.includes("staging credentials"))).toBe(true);
   });
 
   it("returns a sandbox credential workbench for localhost-to-staging readiness", async () => {
@@ -1038,7 +1072,7 @@ describe("MealPilot API", () => {
     expect(packet.totals.formFields).toBeGreaterThanOrEqual(10);
     expect(packet.totals.requiredAttachments).toBeGreaterThanOrEqual(10);
     expect(packet.totals.launchArtifacts).toBeGreaterThanOrEqual(50);
-    expect(packet.totals.visualTargets).toBe(26);
+    expect(packet.totals.visualTargets).toBe(27);
     expect(packet.files.map((file: { id: string }) => file.id)).toEqual(
       expect.arrayContaining(["packet_json", "packet_markdown", "visual_report", "production_summary"]),
     );
@@ -1050,7 +1084,7 @@ describe("MealPilot API", () => {
     ).toBe(true);
     expect(
       packet.commands.some(
-        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("26"),
+        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("27"),
       ),
     ).toBe(true);
     expect(packet.copyBlocks.formFields).toContain("Redirect URI(s)");
@@ -1626,8 +1660,8 @@ describe("MealPilot API", () => {
     const visualQa = response.body.visualQa;
 
     expect(visualQa.score).toBe(100);
-    expect(visualQa.totalTargets).toBe(26);
-    expect(visualQa.readyTargets).toBe(26);
+    expect(visualQa.totalTargets).toBe(27);
+    expect(visualQa.readyTargets).toBe(27);
     expect(visualQa.totalRules).toBe(7);
     expect(visualQa.readyRules).toBe(7);
     expect(visualQa.totalCommands).toBe(5);
@@ -1678,6 +1712,13 @@ describe("MealPilot API", () => {
     expect(
       visualQa.targetGroups.some((group: { targets: Array<{ id: string; selector: string }> }) =>
         group.targets.some((target) => target.id === "operating_contract_card" && target.selector === ".operating-contract-card"),
+      ),
+    ).toBe(true);
+    expect(
+      visualQa.targetGroups.some((group: { targets: Array<{ id: string; selector: string }> }) =>
+        group.targets.some(
+          (target) => target.id === "staging_credential_drill_card" && target.selector === ".staging-credential-drill-card",
+        ),
       ),
     ).toBe(true);
     expect(
@@ -1761,7 +1802,7 @@ describe("MealPilot API", () => {
         (command: { id: string; command: string; expectedSignal: string }) =>
           command.id === "visual_capture_harness" &&
           command.command === "npm run verify:visual" &&
-          command.expectedSignal.includes("targetCount >= 26"),
+          command.expectedSignal.includes("targetCount >= 27"),
       ),
     ).toBe(true);
     expect(visualQa.externalGates.some((gate: string) => gate.includes("Selected PNG screenshots"))).toBe(true);
@@ -3013,6 +3054,7 @@ describe("MealPilot API", () => {
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Widget contracts")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Widget Runtime Center")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Staging Cutover Rehearsal")).toBe(true);
+    expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Swiggy Staging Credential Drill Center")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Staging Transcript Export")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Builder Intake Command Center")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Traffic Readiness Plan")).toBe(true);
@@ -3544,6 +3586,7 @@ describe("MealPilot API", () => {
         "Resource & Prompt Studio",
         "Widget Runtime Center",
         "Staging Cutover Rehearsal",
+        "Swiggy Staging Credential Drill Center",
         "Staging Transcript Export",
       ]),
     );
@@ -3595,6 +3638,7 @@ describe("MealPilot API", () => {
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-cancellation-care-center");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-dineout-precision-center");
     expect(bundle.handoffEmail.body).toContain("/api/mcp/staging-cutover");
+    expect(bundle.handoffEmail.body).toContain("/api/swiggy-staging-credential-drill");
     expect(bundle.handoffEmail.body).toContain("/api/audit-ledger");
     expect(bundle.commands.some((command: { command: string }) => command.command.includes("npm run verify:production"))).toBe(
       true,

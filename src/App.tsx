@@ -96,6 +96,7 @@ import {
   fetchSandboxCredentialWorkbench,
   fetchSloIncidentCommand,
   fetchStagingCertificationMatrix,
+  fetchSwiggyStagingCredentialDrill,
   fetchStagingTranscript,
   fetchSubmissionConsole,
   fetchSubmissionPackage,
@@ -239,6 +240,7 @@ import type {
   SwiggyOrderLifecycleReport,
   SwiggyScenarioRunnerReport,
   SwiggySourceIntelligenceReport,
+  SwiggyStagingCredentialDrillReport,
   SwiggyStagingCutoverRehearsal,
   SwiggyStateOrchestratorReport,
   SwiggyToolContractMatrix,
@@ -389,6 +391,8 @@ function App() {
   const [widgetRuntime, setWidgetRuntime] = useState<SwiggyWidgetRuntimeReport | null>(null);
   const [commercialActionGuard, setCommercialActionGuard] = useState<CommercialActionGuardReport | null>(null);
   const [stagingCutover, setStagingCutover] = useState<SwiggyStagingCutoverRehearsal | null>(null);
+  const [stagingCredentialDrill, setStagingCredentialDrill] =
+    useState<SwiggyStagingCredentialDrillReport | null>(null);
   const [mcpToolLab, setMcpToolLab] = useState<McpToolLabReport | null>(null);
   const [swiggyBuildersMap, setSwiggyBuildersMap] = useState<SwiggyBuildersMap | null>(null);
   const [swiggyWebsiteAtlas, setSwiggyWebsiteAtlas] = useState<SwiggyWebsiteAtlas | null>(null);
@@ -571,6 +575,7 @@ function App() {
       widgetRuntimeResponse,
       commercialActionGuardResponse,
       stagingCutoverResponse,
+      stagingCredentialDrillResponse,
       toolLabResponse,
       buildersMapResponse,
       websiteAtlasResponse,
@@ -654,6 +659,7 @@ function App() {
       fetchSwiggyWidgetRuntime(),
       fetchCommercialActionGuard(),
       fetchSwiggyStagingCutover(),
+      fetchSwiggyStagingCredentialDrill(),
       fetchMcpToolLab(),
       fetchSwiggyBuildersMap(),
       fetchSwiggyWebsiteAtlas(),
@@ -738,6 +744,7 @@ function App() {
     setWidgetRuntime(widgetRuntimeResponse.widgetRuntime);
     setCommercialActionGuard(commercialActionGuardResponse.commercialActionGuard);
     setStagingCutover(stagingCutoverResponse.stagingCutover);
+    setStagingCredentialDrill(stagingCredentialDrillResponse.stagingCredentialDrill);
     setMcpToolLab(toolLabResponse.toolLab);
     setSwiggyBuildersMap(buildersMapResponse.map);
     setSwiggyWebsiteAtlas(websiteAtlasResponse.atlas);
@@ -825,6 +832,7 @@ function App() {
       widgetRuntimeResponse,
       commercialActionGuardResponse,
       stagingCutoverResponse,
+      stagingCredentialDrillResponse,
       toolLabResponse,
       buildersMapResponse,
       websiteAtlasResponse,
@@ -905,6 +913,7 @@ function App() {
       fetchSwiggyWidgetRuntime(),
       fetchCommercialActionGuard(),
       fetchSwiggyStagingCutover(),
+      fetchSwiggyStagingCredentialDrill(),
       fetchMcpToolLab(),
       fetchSwiggyBuildersMap(),
       fetchSwiggyWebsiteAtlas(),
@@ -985,6 +994,7 @@ function App() {
     setWidgetRuntime(widgetRuntimeResponse.widgetRuntime);
     setCommercialActionGuard(commercialActionGuardResponse.commercialActionGuard);
     setStagingCutover(stagingCutoverResponse.stagingCutover);
+    setStagingCredentialDrill(stagingCredentialDrillResponse.stagingCredentialDrill);
     setMcpToolLab(toolLabResponse.toolLab);
     setSwiggyBuildersMap(buildersMapResponse.map);
     setSwiggyWebsiteAtlas(websiteAtlasResponse.atlas);
@@ -1639,6 +1649,7 @@ function App() {
                 widgetRuntime={widgetRuntime}
                 commercialActionGuard={commercialActionGuard}
                 stagingCutover={stagingCutover}
+                stagingCredentialDrill={stagingCredentialDrill}
                 toolLab={mcpToolLab}
                 buildersMap={swiggyBuildersMap}
                 websiteAtlas={swiggyWebsiteAtlas}
@@ -2209,6 +2220,7 @@ function LaunchCenterPanel({
   widgetRuntime,
   commercialActionGuard,
   stagingCutover,
+  stagingCredentialDrill,
   toolLab,
   buildersMap,
   websiteAtlas,
@@ -2263,6 +2275,7 @@ function LaunchCenterPanel({
   widgetRuntime: SwiggyWidgetRuntimeReport | null;
   commercialActionGuard: CommercialActionGuardReport | null;
   stagingCutover: SwiggyStagingCutoverRehearsal | null;
+  stagingCredentialDrill: SwiggyStagingCredentialDrillReport | null;
   toolLab: McpToolLabReport | null;
   buildersMap: SwiggyBuildersMap | null;
   websiteAtlas: SwiggyWebsiteAtlas | null;
@@ -2656,6 +2669,57 @@ function LaunchCenterPanel({
               </li>
             ))}
           </ul>
+        </article>
+
+        <article className="staging-credential-drill-card">
+          <div className="mini-heading">
+            <LockKeyhole aria-hidden="true" />
+            <strong>Staging Credential Drill</strong>
+          </div>
+          <span>
+            {stagingCredentialDrill
+              ? `${stagingCredentialDrill.score}/100, ${stagingCredentialDrill.totals.readyLanes}/${stagingCredentialDrill.totals.lanes} lanes ready`
+              : "Composing first credentialed staging run"}
+          </span>
+          <div className="staging-credential-drill-grid">
+            <div>
+              <strong>{stagingCredentialDrill?.totals.firstCallDrills ?? 0}</strong>
+              <span>First calls</span>
+            </div>
+            <div>
+              <strong>{stagingCredentialDrill?.totals.seededDataRequirements ?? 0}</strong>
+              <span>Seed needs</span>
+            </div>
+            <div>
+              <strong>{stagingCredentialDrill?.totals.promotionGates ?? 0}</strong>
+              <span>Promo gates</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(stagingCredentialDrill?.lanes ?? []).slice(0, 5).map((laneItem) => (
+              <li
+                key={laneItem.id}
+                data-status={
+                  laneItem.status === "ready"
+                    ? "healthy"
+                    : laneItem.status === "blocked"
+                      ? "blocked"
+                      : "watch"
+                }
+              >
+                <span>{laneItem.label}</span>
+                <strong>{laneItem.status.replaceAll("_", " ")}</strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-links">
+            <a href="/api/swiggy-staging-credential-drill" target="_blank" rel="noreferrer">
+              Drill API
+            </a>
+            <a href="https://mcp.swiggy.com/builders/docs/operate/access/" target="_blank" rel="noreferrer">
+              Access docs
+            </a>
+          </div>
         </article>
 
         <article className="tool-lab-card">

@@ -48,7 +48,7 @@ flowchart LR
 - Separate confirmation panels for Food, Instamart, and Dineout.
 - Simulated tracking after confirmation.
 - Pantry, group planning, reminders, privacy export/delete, and ops status panels.
-- Launch Center with MCP coverage, Journey Compiler, Access Dossier, Access Evidence Matrix, Growth Partnership Center, Channel & Multimodal Studio, Nutrition & Budget Intelligence, Household Preference Graph, Guest Collaboration & Calendar Center, Luxury Experience Workspace, Reviewer Artifact Vault, Visual QA Center, Premium Use Case Studio, Staging Cutover Rehearsal, Staging Certification Matrix, Brand Compliance Kit, Capability Registry, Resource & Prompt Studio, Tool Contract Matrix, Widget Runtime Center, Commercial Action Guard, Website Atlas with access-page and launch-blog coverage, Builders Launch Story Center, Docs Coverage, Docs Twin Explorer, Upstream Watch, Source Intelligence, Deep Site Map, Developer Quickstart, CTA Execution, Innovation Radar, Tool Lab, Credential Cockpit, Support Bridge, chat/voice response contracts, go-live checks, observability metrics, rollout plan, and support report generation.
+- Launch Center with MCP coverage, Journey Compiler, Access Dossier, Access Evidence Matrix, Growth Partnership Center, Channel & Multimodal Studio, Nutrition & Budget Intelligence, Household Preference Graph, Guest Collaboration & Calendar Center, Luxury Experience Workspace, Reviewer Artifact Vault, Visual QA Center, Premium Use Case Studio, Staging Cutover Rehearsal, Swiggy Staging Credential Drill Center, Staging Certification Matrix, Brand Compliance Kit, Capability Registry, Resource & Prompt Studio, Tool Contract Matrix, Widget Runtime Center, Commercial Action Guard, Website Atlas with access-page and launch-blog coverage, Builders Launch Story Center, Docs Coverage, Docs Twin Explorer, Upstream Watch, Source Intelligence, Deep Site Map, Developer Quickstart, CTA Execution, Innovation Radar, Tool Lab, Credential Cockpit, Support Bridge, chat/voice response contracts, go-live checks, observability metrics, rollout plan, and support report generation.
 - Demo Studio with cart preflight checks, offer opportunities, MCP replay transcripts, staging transcript export, demo progress, and submission readiness.
 - Production Evidence panel with Swiggy widget contracts, rate-limit budgets, version/deprecation monitoring, compliance controls, Source Intelligence, Deep Site Map, Developer Quickstart, CTA Execution, and Innovation Radar artifact links, Data Governance Center, Production Launch Bundle, Error Intelligence, Resilience Lab drills, Evaluation Lab persona QA, and reviewer proof score.
 - No checkout, order, or booking call is hidden inside a generic "continue" button.
@@ -198,6 +198,7 @@ Implementation:
 - `server/services/runtimeTelemetry.ts`
 - `server/services/submissionConsole.ts`
 - `server/services/stagingCutover.ts`
+- `server/services/stagingCredentialDrill.ts`
 - `server/services/swiggyAuthStatus.ts`
 - `server/services/supportBridge.ts`
 - `server/services/swiggyAccessDossier.ts`
@@ -271,6 +272,7 @@ Implementation:
 - `server/services/swiggyAuthStatus.ts`
 - `server/services/credentialOnboarding.ts`
 - `server/services/sandboxCredentialWorkbench.ts`
+- `server/services/stagingCredentialDrill.ts`
 - `server/services/enterpriseDelegatedAuth.ts`
 - `src/integrations/swiggy/client.ts`
 

@@ -1078,6 +1078,10 @@ select:focus {
   grid-column: span 2;
 }
 
+.staging-credential-drill-card {
+  grid-column: span 2;
+}
+
 .tool-lab-card {
   grid-column: span 2;
 }
@@ -1362,9 +1366,10 @@ select:focus {
 .state-orchestrator-grid,
 .resource-prompt-grid,
 .widget-runtime-grid,
-.commercial-guard-grid,
-.staging-cutover-grid,
-.builder-intake-grid,
+  .commercial-guard-grid,
+  .staging-cutover-grid,
+  .staging-credential-drill-grid,
+  .builder-intake-grid,
 .faq-policy-grid,
 .growth-partnership-grid,
 .channel-multimodal-grid,
@@ -1397,9 +1402,10 @@ select:focus {
 .state-orchestrator-grid div,
 .resource-prompt-grid div,
 .widget-runtime-grid div,
-.commercial-guard-grid div,
-.staging-cutover-grid div,
-.builder-intake-grid div,
+  .commercial-guard-grid div,
+  .staging-cutover-grid div,
+  .staging-credential-drill-grid div,
+  .builder-intake-grid div,
 .faq-policy-grid div,
 .growth-partnership-grid div,
 .channel-multimodal-grid div,
@@ -1435,9 +1441,10 @@ select:focus {
 .state-orchestrator-grid strong,
 .resource-prompt-grid strong,
 .widget-runtime-grid strong,
-.commercial-guard-grid strong,
-.staging-cutover-grid strong,
-.builder-intake-grid strong,
+  .commercial-guard-grid strong,
+  .staging-cutover-grid strong,
+  .staging-credential-drill-grid strong,
+  .builder-intake-grid strong,
 .faq-policy-grid strong,
 .growth-partnership-grid strong,
 .channel-multimodal-grid strong,
@@ -1470,9 +1477,10 @@ select:focus {
 .state-orchestrator-grid span,
 .resource-prompt-grid span,
 .widget-runtime-grid span,
-.commercial-guard-grid span,
-.staging-cutover-grid span,
-.builder-intake-grid span,
+  .commercial-guard-grid span,
+  .staging-cutover-grid span,
+  .staging-credential-drill-grid span,
+  .builder-intake-grid span,
 .faq-policy-grid span,
 .growth-partnership-grid span,
 .channel-multimodal-grid span,
@@ -2119,6 +2127,7 @@ select:focus {
   .widget-runtime-card,
   .commercial-guard-card,
   .staging-cutover-card,
+  .staging-credential-drill-card,
   .tool-lab-card,
   .contract-matrix-card,
   .builder-intake-card,
@@ -2220,6 +2229,7 @@ select:focus {
   .widget-runtime-grid,
   .commercial-guard-grid,
   .staging-cutover-grid,
+  .staging-credential-drill-grid,
   .faq-policy-grid,
   .growth-partnership-grid,
   .channel-multimodal-grid,
@@ -2822,6 +2832,7 @@ select:focus {
 .widget-runtime-card,
 .commercial-guard-card,
 .staging-cutover-card,
+.staging-credential-drill-card,
 .tool-lab-card,
 .contract-matrix-card,
 .builder-intake-card,
@@ -2909,6 +2920,7 @@ select:focus {
 .widget-runtime-grid div,
 .commercial-guard-grid div,
 .staging-cutover-grid div,
+.staging-credential-drill-grid div,
 .builder-intake-grid div,
 .faq-policy-grid div,
 .growth-partnership-grid div,

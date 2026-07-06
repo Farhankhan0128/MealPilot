@@ -4451,6 +4451,79 @@ export interface SandboxCredentialWorkbench {
   externalGates: string[];
 }
 
+export type SwiggyStagingCredentialDrillStatus = "ready" | "operator_input" | "swiggy_gate" | "blocked";
+
+export interface SwiggyStagingCredentialDrillLane {
+  id: string;
+  label: string;
+  owner: "MealPilot" | "Operator" | "Swiggy" | "Joint";
+  status: SwiggyStagingCredentialDrillStatus;
+  officialSignal: string;
+  localProof: string[];
+  drillCommand: string;
+  exitCriteria: string[];
+}
+
+export interface SwiggyStagingFirstCallDrill {
+  id: string;
+  server: SwiggyServer;
+  endpoint: string;
+  firstTool: string;
+  seededDataNeed: string;
+  status: SwiggyStagingCredentialDrillStatus;
+  dryRunRequest: {
+    jsonrpc: "2.0";
+    method: "tools/call";
+    params: {
+      name: string;
+      arguments: Record<string, unknown>;
+    };
+  };
+  successEvidence: string[];
+  failureStopRule: string;
+}
+
+export interface SwiggyStagingCredentialDrillReport {
+  generatedAt: string;
+  mode: "mock" | "staging" | "production";
+  score: number;
+  officialSources: string[];
+  credentialSignal: {
+    clientIdConfigured: boolean;
+    tokenSource: McpGatewayStatus["auth"]["tokenSource"];
+    redirectUri: string;
+    stagingVerified: boolean;
+    currentGate: SwiggyStagingCredentialDrillStatus;
+    evidence: string;
+  };
+  totals: {
+    lanes: number;
+    readyLanes: number;
+    firstCallDrills: number;
+    seededDataRequirements: number;
+    promotionGates: number;
+    externalGates: number;
+  };
+  lanes: SwiggyStagingCredentialDrillLane[];
+  firstCallDrills: SwiggyStagingFirstCallDrill[];
+  seededDataRequirements: SandboxSeededDataPlan[];
+  promotionGates: Array<{
+    id: string;
+    label: string;
+    status: SwiggyStagingCredentialDrillStatus;
+    requirement: string;
+    evidence: string[];
+  }>;
+  operatorRunbook: Array<{ sequence: number; label: string; command: string; proves: string }>;
+  handoffEmail: {
+    to: string;
+    subject: string;
+    bodyPreview: string;
+  };
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type EnterpriseDelegatedAuthStatus = "ready" | "watch" | "external_gate";
 
 export interface EnterpriseDelegatedAuthStep {

@@ -284,6 +284,7 @@ export function buildReviewerProof(options: {
       { label: "Widget contracts", path: latest ? `/api/sessions/${latest.id}/widgets` : "/api/widgets/latest" },
       { label: "Widget Runtime Center", path: "/api/mcp/widget-runtime" },
       { label: "Staging Cutover Rehearsal", path: "/api/mcp/staging-cutover" },
+      { label: "Swiggy Staging Credential Drill Center", path: "/api/swiggy-staging-credential-drill" },
       { label: "Website Atlas", path: "/api/swiggy-website-atlas" },
       { label: "Builder Intake Command Center", path: "/api/swiggy-builder-intake" },
       { label: "FAQ & Policy Center", path: "/api/swiggy-faq-policy" },
