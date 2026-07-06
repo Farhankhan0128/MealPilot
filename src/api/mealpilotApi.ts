@@ -100,6 +100,8 @@ import type {
   SwiggyVisualDishCaptureAnalysis,
   SwiggyVisualDishCaptureCenter,
   SwiggyVisualDishCaptureIntent,
+  SwiggyVoiceCommerceCenter,
+  SwiggyVoiceCommerceRehearsal,
   TrackingEvent,
   UserPlanningRequest,
   UserProfile,
@@ -334,6 +336,20 @@ export function analyzeSwiggyVisualDishCapture(input: {
   imageName?: string;
 }) {
   return requestJson<{ analysis: SwiggyVisualDishCaptureAnalysis }>("/api/swiggy-visual-dish-capture/analyze", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
+}
+
+export function fetchSwiggyVoiceCommerceCenter() {
+  return requestJson<{ voiceCommerce: SwiggyVoiceCommerceCenter }>("/api/swiggy-voice-commerce-center");
+}
+
+export function rehearseSwiggyVoiceCommerce(input: {
+  utterance: string;
+  city: "Bengaluru" | "Delhi NCR" | "Mumbai";
+}) {
+  return requestJson<{ rehearsal: SwiggyVoiceCommerceRehearsal }>("/api/swiggy-voice-commerce-center/rehearse", {
     method: "POST",
     body: JSON.stringify(input),
   });

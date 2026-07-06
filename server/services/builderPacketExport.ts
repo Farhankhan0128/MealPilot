@@ -224,7 +224,7 @@ export function buildBuilderPacketExport(options: {
       command("unit_tests", "npm test -- --run", "Runs planner, API, UI, and retry safety tests."),
       command("lint", "npm run lint", "Checks frontend, backend, and scripts."),
       command("production_smoke", "npm run verify:production", "Exercises the full local Swiggy proof surface and API contract."),
-      command("visual_capture", "MEALPILOT_URL=http://localhost:8787 npm run verify:visual", "Captures 29 desktop/tablet/mobile screenshots and fails on overflow."),
+      command("visual_capture", "MEALPILOT_URL=http://localhost:8787 npm run verify:visual", "Captures 30 desktop/tablet/mobile screenshots and fails on overflow."),
       command("packet_export", "MEALPILOT_URL=http://localhost:8787 npm run export:builder-packet", "Writes the access packet JSON and Markdown artifacts."),
     ],
     copyBlocks: {

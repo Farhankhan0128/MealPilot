@@ -1219,6 +1219,85 @@ export interface SwiggyVisualDishCaptureCenter {
   externalGates: string[];
 }
 
+export type SwiggyVoiceCommerceStatus = "ready" | "needs_confirmation" | "voice_sdk_gate" | "staging_gate";
+export type SwiggyVoiceCommerceIntent = "quick_order" | "pantry_restock" | "book_table" | "combined_evening";
+
+export interface SwiggyVoiceCommerceScenario {
+  id: string;
+  label: string;
+  intent: SwiggyVoiceCommerceIntent;
+  server: SwiggyServer | "combined";
+  status: SwiggyVoiceCommerceStatus;
+  swiggyTools: string[];
+  spokenContract: string;
+  cardFallback: string;
+  confirmationPrompt: string;
+  safetyRule: string;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyVoiceCommerceGuardrail {
+  id: string;
+  label: string;
+  status: SwiggyVoiceCommerceStatus;
+  policy: string;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyVoiceCommerceSample {
+  id: string;
+  utterance: string;
+  detectedIntent: SwiggyVoiceCommerceIntent;
+  selectedScenario: string;
+  status: SwiggyVoiceCommerceStatus;
+}
+
+export interface SwiggyVoiceCommerceRehearsal {
+  generatedAt: string;
+  requestId: string;
+  mode: "mock" | "staging" | "production";
+  input: {
+    utterance: string;
+    city: string;
+    surface: "voice";
+    rawAudioRetained: false;
+  };
+  detected: {
+    intent: SwiggyVoiceCommerceIntent;
+    confidence: number;
+    entities: string[];
+    requiresUserConfirmation: boolean;
+  };
+  selectedScenarioId: string;
+  spokenScript: string[];
+  cardFallback: string[];
+  confirmationPrompt: string;
+  swiggyRoute: SwiggyVoiceCommerceScenario;
+  telemetry: Array<{ field: string; value: string; redaction: string }>;
+  assertions: string[];
+}
+
+export interface SwiggyVoiceCommerceCenter {
+  generatedAt: string;
+  score: number;
+  mode: "mock" | "staging" | "production";
+  officialSources: string[];
+  totals: {
+    scenarios: number;
+    readyScenarios: number;
+    guardrails: number;
+    readyGuardrails: number;
+    samples: number;
+    externalGates: number;
+  };
+  scenarios: SwiggyVoiceCommerceScenario[];
+  guardrails: SwiggyVoiceCommerceGuardrail[];
+  samples: SwiggyVoiceCommerceSample[];
+  operatorRunbook: Array<{ sequence: number; label: string; command: string; proves: string }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type NutritionBudgetStatus = "ready" | "needs_live_data" | "external_gate";
 
 export interface NutritionBudgetTarget {

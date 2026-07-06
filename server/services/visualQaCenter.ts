@@ -233,6 +233,17 @@ const targetGroups = [
         "artifacts/visual-qa/visual-dish-capture-card.png",
       ),
       target(
+        "voice_commerce_card",
+        "Voice Commerce Rehearsal card",
+        "/",
+        ".voice-commerce-card",
+        "desktop",
+        1280,
+        900,
+        "Voice Commerce shows spoken Swiggy route rehearsal, samples, guardrails, and external voice/staging gates.",
+        "artifacts/visual-qa/voice-commerce-card.png",
+      ),
+      target(
         "developer_quickstart_card",
         "Developer Quickstart card",
         "/",
@@ -471,7 +482,7 @@ const commands = [
     "visual_capture_harness",
     "npm run verify:visual",
     "Playwright captures every Visual QA target at desktop, tablet, and mobile sizes and writes report.json.",
-    "ok true with targetCount >= 29 and PNG files under artifacts/visual-qa.",
+    "ok true with targetCount >= 30 and PNG files under artifacts/visual-qa.",
   ),
   command(
     "desktop_capture",

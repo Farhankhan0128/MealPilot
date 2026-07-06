@@ -292,6 +292,7 @@ export function buildReviewerProof(options: {
       { label: "Growth Partnership Center", path: "/api/swiggy-growth-partnership" },
       { label: "Channel & Multimodal Studio", path: "/api/channel-multimodal-studio" },
       { label: "Swiggy Visual Dish Capture Center", path: "/api/swiggy-visual-dish-capture" },
+      { label: "Swiggy Voice Commerce Rehearsal Center", path: "/api/swiggy-voice-commerce-center" },
       { label: "Nutrition & Budget Intelligence", path: "/api/nutrition-budget-intelligence" },
       { label: "Household Preference Graph", path: "/api/household-preference-graph" },
       { label: "Guest Collaboration & Calendar Center", path: "/api/guest-collaboration-calendar" },

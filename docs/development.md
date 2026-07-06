@@ -126,6 +126,8 @@ The verifier also validates `/api/swiggy-dineout-precision-center` for the Dineo
 
 The verifier also validates `/api/swiggy-visual-dish-capture` and `/api/swiggy-visual-dish-capture/analyze` for camera-to-commerce routing: dish photos, menu screenshots, pantry photos, and chat images resolve to confirmed labels before Food, Instamart, Dineout, or combined route plans; raw images are not retained; and vision, staging, and confirmation gates remain visible.
 
+The verifier also validates `/api/swiggy-voice-commerce-center` and `/api/swiggy-voice-commerce-center/rehearse` for spoken-commerce routing: Food quick orders, Instamart restock, Dineout bookings, and combined evening plans become short TTS scripts, visual card fallbacks, confirmation prompts, no-raw-id readbacks, and no-raw-audio telemetry.
+
 The verifier also validates `/api/swiggy-auth-lifecycle-center` for Swiggy OAuth token lifecycle: PKCE S256, 120-second single-use codes, 5-day access tokens, no refresh-token assumption in v1.0, 401/419/403 recovery, exact redirect allowlisting, delegated per-user token boundaries, logout handling, secure storage, and no-token logging.
 
 The verifier also validates `/api/swiggy-source-intelligence` for Builders website inventory, CTA coverage, `llms` and markdown documentation counts, 35-tool reference alignment, drift signals, external gates, and build-queue readiness.
@@ -183,6 +185,8 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/swiggy-faq-policy`
 - `GET /api/swiggy-growth-partnership`
 - `GET /api/channel-multimodal-studio`
+- `GET /api/swiggy-visual-dish-capture`
+- `GET /api/swiggy-voice-commerce-center`
 - `GET /api/nutrition-budget-intelligence`
 - `GET /api/household-preference-graph`
 - `GET /api/guest-collaboration-calendar`
@@ -335,6 +339,8 @@ Production should use an HTTPS redirect URI with exact-match allowlisting.
 
 `/api/swiggy-visual-dish-capture` is the productized screenshot-to-order proof surface. It maps dish photos, menu screenshots, pantry photos, and chat images into safe Food menu search, Instamart ingredient rescue, Dineout discovery, or combined evening routes; `/api/swiggy-visual-dish-capture/analyze` returns deterministic label, confidence, route, confirmation, telemetry, and no-raw-image-retention evidence for reviewer smoke tests.
 
+`/api/swiggy-voice-commerce-center` is the productized voice-commerce proof surface. It maps spoken quick orders, pantry restock, table booking, and combined evening intents into short TTS scripts, visual fallbacks, Swiggy toolchains, confirmation prompts, no-raw-id policies, and no-raw-audio telemetry; `/api/swiggy-voice-commerce-center/rehearse` provides deterministic local smoke proof.
+
 `/api/nutrition-budget-intelligence` shows premium nutrition and budget planning routes: protein-per-rupee Food search, COD-safe coupons, Instamart go-to and product search, group-budget allocation, Dineout evening balance, and camera-label macro planning with no medical claims.
 
 `/api/household-preference-graph` shows consent-aware personalization routes: Food active-order taste signals, Instamart go-to items and order history, Dineout saved-location memory, household member weights, pantry forecasts, failure memory, retention rules, and DPDP controls.
@@ -382,6 +388,7 @@ The test suite checks that:
 - FAQ & Policy Center maps homepage, developer, enterprise, access-guideline, footer-resource, allowed/restricted/prohibited, operating-principle, and legal signals to MealPilot evidence links.
 - Growth Partnership Center maps get-noticed, hiring, co-branding, direct support, co-marketing, analytics, strategic guidance, launch experiments, metrics, proof assets, and external partner asks.
 - Channel & Multimodal Studio maps voice, web chat, Slack/Teams, mobile camera, enterprise, and screenshot-to-order channels to Swiggy MCP toolchains, local execution packets, response contracts, telemetry, and external platform gates.
+- Swiggy Voice Commerce Rehearsal Center validates spoken Swiggy route planning with no raw-audio retention, no raw ids in TTS, short scripts, visual fallbacks, and confirmation readbacks before live execution.
 - Nutrition & Budget Intelligence maps Food, Instamart, Dineout, coupon, cart, group, and camera-label routes to protein-per-rupee estimates, budget controls, safety notes, and external data gates.
 - Household Preference Graph maps active orders, go-to items, order history, saved-location signals, household weights, forecasts, cancellation rules, and retention boundaries to consented personalization evidence.
 - Guest Collaboration & Calendar Center maps group votes, occasion templates, Dineout slot checks, Food reminder handoffs, Instamart prep, calendar artifacts, and Slack/Teams gates to separate Swiggy confirmation controls.
@@ -417,6 +424,7 @@ The test suite checks that:
 - MCP Capability Registry maps `mcp:tools`, `mcp:resources`, `mcp:prompts`, OAuth metadata, widget registry, static metadata, prompt templates, and external gates.
 - Resource & Prompt Studio exercises all local `resources/list`, `resources/read`, `prompts/list`, and `prompts/get` paths across Food, Instamart, and Dineout.
 - Swiggy Visual Dish Capture Center validates the camera-to-commerce lane with no raw-image retention, user-confirmed labels, Food/Instamart/Dineout route plans, and vision or staging gates before live execution.
+- Swiggy Voice Commerce Rehearsal Center validates short spoken scripts, visual card fallbacks, no raw-audio retention, and confirmation prompts across Food, Instamart, Dineout, and combined journeys.
 - Local MCP JSON-RPC supports `resources/list`, `resources/read`, `prompts/list`, and `prompts/get` for review-time evidence before live Swiggy credentials.
 - Submission Console consolidates developer/enterprise access targets, official access requirements, prepared form fields, required attachments, packet order, demo-video gate, runbook steps, blockers, and builders@swiggy.in drafts.
 - Access Submission Studio validates official CTA targets, copy blocks, required proof attachments, browser runbook, generated mailto handoff, and non-auto-submission gates.

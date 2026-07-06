@@ -365,6 +365,30 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-voice-commerce-center": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Voice Commerce Rehearsal Center for spoken agent flows",
+          responses: {
+            "200": {
+              description:
+                "Voice Food, Instamart, Dineout, and combined scenario contracts with TTS limits, card fallbacks, confirmation prompts, guardrails, and staging gates",
+            },
+          },
+        },
+      },
+      "/api/swiggy-voice-commerce-center/rehearse": {
+        post: {
+          tags: ["Commerce"],
+          summary: "Rehearse a spoken MealPilot request into a safe Swiggy voice route",
+          responses: {
+            "200": {
+              description:
+                "Detected voice intent, short spoken script, visual fallback, confirmation prompt, selected Swiggy route, no-raw-audio telemetry, and commerce-lock assertions",
+            },
+          },
+        },
+      },
       "/api/nutrition-budget-intelligence": {
         get: {
           tags: ["Builder Access"],

@@ -120,6 +120,11 @@ assert(
   "OpenAPI visual dish capture contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-voice-commerce-center"].get.summary.includes("Voice Commerce") &&
+    openApi.paths["/api/swiggy-voice-commerce-center/rehearse"].post.summary.includes("spoken"),
+  "OpenAPI voice commerce contract is missing",
+);
+assert(
   openApi.paths["/api/nutrition-budget-intelligence"].get.summary.includes("Nutrition and Budget"),
   "OpenAPI nutrition and budget intelligence contract is missing",
 );
@@ -718,6 +723,49 @@ assert(
   "visual dish analysis route or telemetry is incomplete",
 );
 
+const voiceCommerce = await request("/api/swiggy-voice-commerce-center");
+assert(voiceCommerce.voiceCommerce.score >= 80, "voice commerce score is below target");
+assert(
+  voiceCommerce.voiceCommerce.totals.scenarios === 4 &&
+    voiceCommerce.voiceCommerce.totals.readyScenarios === 4 &&
+    voiceCommerce.voiceCommerce.totals.guardrails === 6 &&
+    voiceCommerce.voiceCommerce.totals.readyGuardrails === 4 &&
+    voiceCommerce.voiceCommerce.totals.samples === 4,
+  "voice commerce totals are incomplete",
+);
+assert(
+  ["voice_food_quick_order", "voice_instamart_restock", "voice_dineout_booking", "voice_combined_evening"].every((id) =>
+    voiceCommerce.voiceCommerce.scenarios.some((scenario) => scenario.id === id),
+  ),
+  "voice commerce scenarios are incomplete",
+);
+assert(
+  voiceCommerce.voiceCommerce.guardrails.some(
+    (guard) => guard.id === "no_raw_audio_retention" && guard.policy.includes("never raw audio"),
+  ),
+  "voice commerce no-audio-retention guardrail is missing",
+);
+const voiceRehearsal = await request("/api/swiggy-voice-commerce-center/rehearse", {
+  method: "POST",
+  body: JSON.stringify({
+    utterance: "Order paneer tikka near home under 600 rupees",
+    city: "Bengaluru",
+  }),
+});
+assert(voiceRehearsal.rehearsal.input.rawAudioRetained === false, "voice rehearsal retained raw audio");
+assert(
+  voiceRehearsal.rehearsal.detected.intent === "quick_order" &&
+    voiceRehearsal.rehearsal.detected.requiresUserConfirmation &&
+    voiceRehearsal.rehearsal.selectedScenarioId === "voice_food_quick_order",
+  "voice rehearsal intent or route is wrong",
+);
+assert(
+  voiceRehearsal.rehearsal.spokenScript.length <= 3 &&
+    voiceRehearsal.rehearsal.swiggyRoute.swiggyTools.includes("place_food_order") &&
+    voiceRehearsal.rehearsal.telemetry.some((item) => item.field === "raw_audio_retained" && item.value === "false"),
+  "voice rehearsal script, route, or telemetry is incomplete",
+);
+
 const nutritionBudget = await request("/api/nutrition-budget-intelligence");
 assert(nutritionBudget.nutritionBudget.score >= 91, "nutrition and budget intelligence score is below target");
 assert(nutritionBudget.nutritionBudget.totalTargets === 4, "nutrition and budget targets are incomplete");
@@ -1147,8 +1195,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 29, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 29, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 30, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 30, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -1232,6 +1280,12 @@ assert(
     group.targets.some((target) => target.id === "visual_dish_capture_card" && target.selector === ".visual-dish-capture-card"),
   ),
   "visual QA visual dish capture target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some((target) => target.id === "voice_commerce_card" && target.selector === ".voice-commerce-card"),
+  ),
+  "visual QA voice commerce target is missing",
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
@@ -1325,7 +1379,7 @@ assert(
     (command) =>
       command.id === "visual_capture_harness" &&
       command.command === "npm run verify:visual" &&
-      command.expectedSignal.includes("targetCount >= 29"),
+      command.expectedSignal.includes("targetCount >= 30"),
   ),
   "visual QA Playwright command is missing",
 );
@@ -2801,6 +2855,10 @@ assert(
   "reviewer proof visual dish capture artifact is missing",
 );
 assert(
+  proof.proof.artifacts.some((artifact) => artifact.label === "Swiggy Voice Commerce Rehearsal Center"),
+  "reviewer proof voice commerce artifact is missing",
+);
+assert(
   proof.proof.artifacts.some((artifact) => artifact.label === "Nutrition & Budget Intelligence"),
   "reviewer proof nutrition and budget artifact is missing",
 );
@@ -3805,7 +3863,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 29, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 30, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -3819,7 +3877,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("29")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("30")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -3857,6 +3915,7 @@ assert(
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Growth Partnership Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Channel & Multimodal Studio") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Visual Dish Capture Center") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Voice Commerce Rehearsal Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Nutrition & Budget Intelligence") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Household Preference Graph") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Guest Collaboration & Calendar Center") &&
@@ -3978,6 +4037,10 @@ assert(
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-visual-dish-capture"),
   "launch bundle visual dish capture handoff link is missing",
+);
+assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-voice-commerce-center"),
+  "launch bundle voice commerce handoff link is missing",
 );
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/nutrition-budget-intelligence"),
@@ -4302,6 +4365,9 @@ console.log(
       visualDishCaptureScore: visualDishCapture.visualDishCapture.score,
       visualDishCaptureRoutes: visualDishCapture.visualDishCapture.totals.routes,
       visualDishAnalysisRoute: visualDishAnalysis.analysis.selectedRouteId,
+      voiceCommerceScore: voiceCommerce.voiceCommerce.score,
+      voiceCommerceScenarios: voiceCommerce.voiceCommerce.totals.scenarios,
+      voiceRehearsalRoute: voiceRehearsal.rehearsal.selectedScenarioId,
       nutritionBudgetScore: nutritionBudget.nutritionBudget.score,
       nutritionBudgetRoutes: nutritionBudget.nutritionBudget.totalRoutes,
       householdPreferenceScore: householdPreference.householdPreference.score,

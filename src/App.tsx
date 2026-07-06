@@ -19,6 +19,7 @@ import {
   MapPin,
   Menu,
   MessageSquare,
+  Mic,
   MousePointerClick,
   Play,
   Radio,
@@ -134,6 +135,7 @@ import {
   fetchSwiggyOfferIntelligence,
   fetchSwiggyOrderLifecycle,
   fetchSwiggyVisualDishCapture,
+  fetchSwiggyVoiceCommerceCenter,
   fetchSwiggyRouteOptimizer,
   fetchTrafficReadinessPlan,
   fetchTracking,
@@ -251,6 +253,7 @@ import type {
   SwiggyUpstreamWatchReport,
   SwiggyWidgetRuntimeReport,
   SwiggyVisualDishCaptureCenter,
+  SwiggyVoiceCommerceCenter,
   SwiggyRouteOptimizationReport,
   SwiggyServer,
   TrafficReadinessPlan,
@@ -411,6 +414,7 @@ function App() {
   const [channelMultimodalStudio, setChannelMultimodalStudio] =
     useState<SwiggyChannelMultimodalStudio | null>(null);
   const [visualDishCapture, setVisualDishCapture] = useState<SwiggyVisualDishCaptureCenter | null>(null);
+  const [voiceCommerce, setVoiceCommerce] = useState<SwiggyVoiceCommerceCenter | null>(null);
   const [nutritionBudget, setNutritionBudget] = useState<NutritionBudgetIntelligence | null>(null);
   const [householdPreference, setHouseholdPreference] = useState<HouseholdPreferenceGraph | null>(null);
   const [guestCollaboration, setGuestCollaboration] = useState<GuestCollaborationCenter | null>(null);
@@ -595,6 +599,7 @@ function App() {
       growthPartnershipResponse,
       channelMultimodalResponse,
       visualDishCaptureResponse,
+      voiceCommerceResponse,
       nutritionBudgetResponse,
       householdPreferenceResponse,
       guestCollaborationResponse,
@@ -681,6 +686,7 @@ function App() {
       fetchSwiggyGrowthPartnershipCenter(),
       fetchChannelMultimodalStudio(),
       fetchSwiggyVisualDishCapture(),
+      fetchSwiggyVoiceCommerceCenter(),
       fetchNutritionBudgetIntelligence(),
       fetchHouseholdPreferenceGraph(),
       fetchGuestCollaborationCenter(),
@@ -768,6 +774,7 @@ function App() {
     setSwiggyGrowthPartnership(growthPartnershipResponse.growthPartnership);
     setChannelMultimodalStudio(channelMultimodalResponse.channelMultimodalStudio);
     setVisualDishCapture(visualDishCaptureResponse.visualDishCapture);
+    setVoiceCommerce(voiceCommerceResponse.voiceCommerce);
     setNutritionBudget(nutritionBudgetResponse.nutritionBudget);
     setHouseholdPreference(householdPreferenceResponse.householdPreference);
     setGuestCollaboration(guestCollaborationResponse.guestCollaboration);
@@ -858,6 +865,7 @@ function App() {
       growthPartnershipResponse,
       channelMultimodalResponse,
       visualDishCaptureResponse,
+      voiceCommerceResponse,
       nutritionBudgetResponse,
       householdPreferenceResponse,
       guestCollaborationResponse,
@@ -941,6 +949,7 @@ function App() {
       fetchSwiggyGrowthPartnershipCenter(),
       fetchChannelMultimodalStudio(),
       fetchSwiggyVisualDishCapture(),
+      fetchSwiggyVoiceCommerceCenter(),
       fetchNutritionBudgetIntelligence(),
       fetchHouseholdPreferenceGraph(),
       fetchGuestCollaborationCenter(),
@@ -1024,6 +1033,7 @@ function App() {
     setSwiggyGrowthPartnership(growthPartnershipResponse.growthPartnership);
     setChannelMultimodalStudio(channelMultimodalResponse.channelMultimodalStudio);
     setVisualDishCapture(visualDishCaptureResponse.visualDishCapture);
+    setVoiceCommerce(voiceCommerceResponse.voiceCommerce);
     setNutritionBudget(nutritionBudgetResponse.nutritionBudget);
     setHouseholdPreference(householdPreferenceResponse.householdPreference);
     setGuestCollaboration(guestCollaborationResponse.guestCollaboration);
@@ -1681,6 +1691,7 @@ function App() {
                 growthPartnership={swiggyGrowthPartnership}
                 channelMultimodalStudio={channelMultimodalStudio}
                 visualDishCapture={visualDishCapture}
+                voiceCommerce={voiceCommerce}
                 nutritionBudget={nutritionBudget}
                 householdPreference={householdPreference}
                 guestCollaboration={guestCollaboration}
@@ -2254,6 +2265,7 @@ function LaunchCenterPanel({
   growthPartnership,
   channelMultimodalStudio,
   visualDishCapture,
+  voiceCommerce,
   nutritionBudget,
   householdPreference,
   guestCollaboration,
@@ -2311,6 +2323,7 @@ function LaunchCenterPanel({
   growthPartnership: SwiggyGrowthPartnershipCenter | null;
   channelMultimodalStudio: SwiggyChannelMultimodalStudio | null;
   visualDishCapture: SwiggyVisualDishCaptureCenter | null;
+  voiceCommerce: SwiggyVoiceCommerceCenter | null;
   nutritionBudget: NutritionBudgetIntelligence | null;
   householdPreference: HouseholdPreferenceGraph | null;
   guestCollaboration: GuestCollaborationCenter | null;
@@ -3395,6 +3408,50 @@ function LaunchCenterPanel({
             </a>
             <a href="https://mcp.swiggy.com/builders/developers/" target="_blank" rel="noreferrer">
               Developer lanes
+            </a>
+          </div>
+        </article>
+
+        <article className="voice-commerce-card">
+          <div className="mini-heading">
+            <Mic aria-hidden="true" />
+            <strong>Voice Commerce Rehearsal</strong>
+          </div>
+          <span>
+            {voiceCommerce
+              ? `${voiceCommerce.score}/100, ${voiceCommerce.totals.readyScenarios}/${voiceCommerce.totals.scenarios} scenarios safe`
+              : "Rehearsing spoken Swiggy journeys"}
+          </span>
+          <div className="voice-commerce-grid">
+            <div>
+              <strong>{voiceCommerce?.totals.samples ?? 0}</strong>
+              <span>Samples</span>
+            </div>
+            <div>
+              <strong>
+                {voiceCommerce?.totals.readyGuardrails ?? 0}/{voiceCommerce?.totals.guardrails ?? 0}
+              </strong>
+              <span>Guards</span>
+            </div>
+            <div>
+              <strong>{voiceCommerce?.totals.externalGates ?? 0}</strong>
+              <span>Gates</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(voiceCommerce?.scenarios ?? []).slice(0, 4).map((scenarioItem) => (
+              <li key={scenarioItem.id} data-status={scenarioItem.status === "ready" ? "healthy" : "watch"}>
+                <span>{scenarioItem.label}</span>
+                <strong>{scenarioItem.server === "combined" ? "Combined" : serverLabel(scenarioItem.server)}</strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-links">
+            <a href="/api/swiggy-voice-commerce-center" target="_blank" rel="noreferrer">
+              Voice API
+            </a>
+            <a href="https://mcp.swiggy.com/builders/docs/build/agent-patterns/voice-vs-chat/" target="_blank" rel="noreferrer">
+              Voice pattern
             </a>
           </div>
         </article>

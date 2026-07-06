@@ -114,6 +114,15 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
         "Productizes screenshot-to-order with Food menu matches, Instamart ingredient rescue, Dineout place discovery, sample capture analysis, privacy guardrails, and confirmation gates.",
     },
     {
+      id: "voice_commerce_center",
+      label: "Swiggy Voice Commerce Rehearsal Center",
+      path: "/api/swiggy-voice-commerce-center",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Productizes voice-vs-chat guidance with short TTS scripts, card fallbacks, no raw ids, no raw-audio retention, confirmation readbacks, and Swiggy route rehearsal.",
+    },
+    {
       id: "nutrition_budget_intelligence",
       label: "Nutrition & Budget Intelligence",
       path: "/api/nutrition-budget-intelligence",
@@ -699,6 +708,7 @@ function buildPhases(config: ServerConfig, latestPlan: MealPlan | undefined, art
         artifact("growth_partnership"),
         artifact("channel_multimodal_studio"),
         artifact("visual_dish_capture"),
+        artifact("voice_commerce_center"),
         artifact("nutrition_budget_intelligence"),
         artifact("household_preference_graph"),
         artifact("guest_collaboration_calendar"),
@@ -902,6 +912,7 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- Growth Partnership Center: /api/swiggy-growth-partnership",
     "- Channel & Multimodal Studio: /api/channel-multimodal-studio",
     "- Swiggy Visual Dish Capture Center: /api/swiggy-visual-dish-capture",
+    "- Swiggy Voice Commerce Rehearsal Center: /api/swiggy-voice-commerce-center",
     "- Nutrition & Budget Intelligence: /api/nutrition-budget-intelligence",
     "- Household Preference Graph: /api/household-preference-graph",
     "- Guest Collaboration & Calendar Center: /api/guest-collaboration-calendar",

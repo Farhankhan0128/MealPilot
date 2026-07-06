@@ -120,6 +120,7 @@ import { buildSwiggySourceIntelligence } from "./services/sourceIntelligence.js"
 import { buildSwiggyUpstreamWatch } from "./services/upstreamWatch.js";
 import { buildVisualQaCenter } from "./services/visualQaCenter.js";
 import { analyzeSwiggyVisualDishCapture, buildSwiggyVisualDishCaptureCenter } from "./services/visualDishCapture.js";
+import { buildSwiggyVoiceCommerceCenter, rehearseSwiggyVoiceCommerce } from "./services/voiceCommerceCenter.js";
 import { buildSwiggyWebsiteAtlas } from "./services/websiteAtlas.js";
 import { createRuntimeTelemetry, type RuntimeTelemetryRecorder } from "./services/runtimeTelemetry.js";
 import { createMemorySessionStore, type SessionStore } from "./store/sessionStore.js";
@@ -202,6 +203,11 @@ const visualDishAnalyzeSchema = z.object({
   caption: z.string().trim().min(3).max(240),
   city: z.enum(["Bengaluru", "Delhi NCR", "Mumbai"]),
   imageName: z.string().trim().max(120).optional(),
+});
+
+const voiceCommerceRehearsalSchema = z.object({
+  utterance: z.string().trim().min(4).max(240),
+  city: z.enum(["Bengaluru", "Delhi NCR", "Mumbai"]),
 });
 
 const mcpServerSchema = z.enum(["food", "instamart", "dineout"]);
@@ -707,6 +713,20 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
     const body = visualDishAnalyzeSchema.parse(req.body);
     res.json({
       analysis: analyzeSwiggyVisualDishCapture({
+        config,
+        ...body,
+      }),
+    });
+  });
+
+  app.get("/api/swiggy-voice-commerce-center", (_req, res) => {
+    res.json({ voiceCommerce: buildSwiggyVoiceCommerceCenter(config) });
+  });
+
+  app.post("/api/swiggy-voice-commerce-center/rehearse", (req, res) => {
+    const body = voiceCommerceRehearsalSchema.parse(req.body);
+    res.json({
+      rehearsal: rehearseSwiggyVoiceCommerce({
         config,
         ...body,
       }),
