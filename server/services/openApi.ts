@@ -365,6 +365,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-builders-journey-gates": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Builders Journey Gate Center for the official five-step path",
+          responses: {
+            "200": {
+              description:
+                "Start Building, Apply for Prod Access, Quick Review, Go Live, and Show Us What You Built mapped to owners, statuses, entry and exit criteria, proof links, telemetry, blockers, runbook actions, and external Swiggy gates",
+            },
+          },
+        },
+      },
       "/api/swiggy-builder-intake": {
         get: {
           tags: ["Builder Access"],

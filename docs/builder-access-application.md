@@ -65,6 +65,7 @@ Scale-up after staging:
 - Local MCP JSON-RPC mock supports `tools/call`, `resources/list`, `resources/read`, `prompts/list`, and `prompts/get` so all requested scopes have executable review evidence.
 - Swiggy Website Atlas that maps the Builders global header, docs subnav, footer groups, production access page, launch blog, page modules, CTAs, and legal/resource links to MealPilot artifacts.
 - Swiggy Builders Module Intelligence Center that maps every official website module to owner, audience, product promise, Swiggy surface, MealPilot proof, route optimization, risk boundary, CTA links, journeys, and gates.
+- Swiggy Builders Journey Gate Center that maps Start Building, Apply for Prod Access, Quick Review, Go Live, and Show Us What You Built to owner gates, entry and exit criteria, proof routes, telemetry, blockers, and explicit external Swiggy decisions.
 - Swiggy Builders Launch Story Center that reconciles the April 2026 launch-blog 18+ tool narrative with the current 35-tool docs snapshot, reviewer demo journey, showcase assets, ecosystem lanes, CTA paths, and co-marketing gates.
 - Swiggy Deep Site Map that consolidates every Builders page, module signal, CTA, header/docs/footer link, proof path, source-reconciliation section, assertion, and external gate into one reviewer audit.
 - Developer Quickstart Workbench that converts Swiggy's official self-serve developer path into readiness steps, framework adapters, first-call `get_addresses` drills, OAuth gates, and recipe handoffs.
@@ -207,6 +208,7 @@ Email: add primary engineering email before submission.
 - Demo video: add Loom, Drive, or unlisted YouTube link before submission.
 - Swiggy Builders Launch Story Center: `/api/swiggy-builders-launch-story`
 - Swiggy Builders Module Intelligence Center: `/api/swiggy-builders-module-intelligence`
+- Swiggy Builders Journey Gate Center: `/api/swiggy-builders-journey-gates`
 - Builder Intake Command Center: `/api/swiggy-builder-intake`
 - FAQ & Policy Center: `/api/swiggy-faq-policy`
 - Swiggy FAQ Resolution Center: `/api/swiggy-faq-resolution-center`

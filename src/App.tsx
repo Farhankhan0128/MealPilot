@@ -25,6 +25,7 @@ import {
   Radio,
   RefreshCw,
   Rocket,
+  Route,
   ScrollText,
   Search,
   ShieldCheck,
@@ -115,6 +116,7 @@ import {
   fetchSwiggyBuilderIntake,
   fetchSwiggyBuildersLaunchStory,
   fetchSwiggyBuildersModuleIntelligence,
+  fetchSwiggyBuildersJourneyGates,
   fetchSwiggyBenefitsActivationCenter,
   fetchSwiggyOperatingContractCenter,
   fetchSwiggyFaqPolicyCenter,
@@ -247,6 +249,7 @@ import type {
   SwiggyAccessDossier,
   SwiggyAccessEvidenceMatrix,
   SwiggyBuildersLaunchStoryCenterReport,
+  SwiggyBuildersJourneyGateCenter,
   SwiggyBuildersModuleIntelligenceCenter,
   SwiggyBuildersPageMeshAuditor,
   SwiggyBuildersSiteParityAuditor,
@@ -463,6 +466,7 @@ function App() {
   const [buildersPageMesh, setBuildersPageMesh] = useState<SwiggyBuildersPageMeshAuditor | null>(null);
   const [buildersLaunchStory, setBuildersLaunchStory] = useState<SwiggyBuildersLaunchStoryCenterReport | null>(null);
   const [moduleIntelligence, setModuleIntelligence] = useState<SwiggyBuildersModuleIntelligenceCenter | null>(null);
+  const [journeyGates, setJourneyGates] = useState<SwiggyBuildersJourneyGateCenter | null>(null);
   const [operatingContract, setOperatingContract] = useState<SwiggyOperatingContractCenterReport | null>(null);
   const [swiggyDeepSiteMap, setSwiggyDeepSiteMap] = useState<SwiggyDeepSiteMap | null>(null);
   const [swiggyBuilderIntake, setSwiggyBuilderIntake] = useState<SwiggyBuilderIntakeCommandCenter | null>(null);
@@ -675,6 +679,7 @@ function App() {
       buildersPageMeshResponse,
       buildersLaunchStoryResponse,
       moduleIntelligenceResponse,
+      journeyGatesResponse,
       operatingContractResponse,
       deepSiteMapResponse,
       builderIntakeResponse,
@@ -788,6 +793,7 @@ function App() {
       fetchSwiggyBuildersPageMesh(),
       fetchSwiggyBuildersLaunchStory(),
       fetchSwiggyBuildersModuleIntelligence(),
+      fetchSwiggyBuildersJourneyGates(),
       fetchSwiggyOperatingContractCenter(),
       fetchSwiggyDeepSiteMap(),
       fetchSwiggyBuilderIntake(),
@@ -902,6 +908,7 @@ function App() {
     setBuildersPageMesh(buildersPageMeshResponse.buildersPageMesh);
     setBuildersLaunchStory(buildersLaunchStoryResponse.launchStory);
     setModuleIntelligence(moduleIntelligenceResponse.moduleIntelligence);
+    setJourneyGates(journeyGatesResponse.journeyGates);
     setOperatingContract(operatingContractResponse.operatingContract);
     setSwiggyDeepSiteMap(deepSiteMapResponse.deepSiteMap);
     setSwiggyBuilderIntake(builderIntakeResponse.intake);
@@ -1019,6 +1026,7 @@ function App() {
       buildersPageMeshResponse,
       buildersLaunchStoryResponse,
       moduleIntelligenceResponse,
+      journeyGatesResponse,
       operatingContractResponse,
       deepSiteMapResponse,
       builderIntakeResponse,
@@ -1129,6 +1137,7 @@ function App() {
       fetchSwiggyBuildersPageMesh(),
       fetchSwiggyBuildersLaunchStory(),
       fetchSwiggyBuildersModuleIntelligence(),
+      fetchSwiggyBuildersJourneyGates(),
       fetchSwiggyOperatingContractCenter(),
       fetchSwiggyDeepSiteMap(),
       fetchSwiggyBuilderIntake(),
@@ -1239,6 +1248,7 @@ function App() {
     setBuildersPageMesh(buildersPageMeshResponse.buildersPageMesh);
     setBuildersLaunchStory(buildersLaunchStoryResponse.launchStory);
     setModuleIntelligence(moduleIntelligenceResponse.moduleIntelligence);
+    setJourneyGates(journeyGatesResponse.journeyGates);
     setOperatingContract(operatingContractResponse.operatingContract);
     setSwiggyDeepSiteMap(deepSiteMapResponse.deepSiteMap);
     setSwiggyBuilderIntake(builderIntakeResponse.intake);
@@ -1924,6 +1934,7 @@ function App() {
                 buildersPageMesh={buildersPageMesh}
                 buildersLaunchStory={buildersLaunchStory}
                 moduleIntelligence={moduleIntelligence}
+                journeyGates={journeyGates}
                 operatingContract={operatingContract}
                 deepSiteMap={swiggyDeepSiteMap}
                 builderIntake={swiggyBuilderIntake}
@@ -2524,6 +2535,7 @@ function LaunchCenterPanel({
   buildersPageMesh,
   buildersLaunchStory,
   moduleIntelligence,
+  journeyGates,
   operatingContract,
   deepSiteMap,
   builderIntake,
@@ -2607,6 +2619,7 @@ function LaunchCenterPanel({
   buildersPageMesh: SwiggyBuildersPageMeshAuditor | null;
   buildersLaunchStory: SwiggyBuildersLaunchStoryCenterReport | null;
   moduleIntelligence: SwiggyBuildersModuleIntelligenceCenter | null;
+  journeyGates: SwiggyBuildersJourneyGateCenter | null;
   operatingContract: SwiggyOperatingContractCenterReport | null;
   deepSiteMap: SwiggyDeepSiteMap | null;
   builderIntake: SwiggyBuilderIntakeCommandCenter | null;
@@ -3567,6 +3580,58 @@ function LaunchCenterPanel({
             </a>
             <a href="https://mcp.swiggy.com/builders/" target="_blank" rel="noreferrer">
               Builders
+            </a>
+          </div>
+        </article>
+
+        <article className="journey-gates-card">
+          <div className="mini-heading">
+            <Route aria-hidden="true" />
+            <strong>Journey Gates</strong>
+          </div>
+          <span>
+            {journeyGates
+              ? `${journeyGates.score}/100, ${journeyGates.totals.ready}/${journeyGates.totals.gates} gates ready`
+              : "Official Builders journey mapped to owner, proof, telemetry, and external gates"}
+          </span>
+          <div className="journey-gates-grid">
+            <div>
+              <strong>{journeyGates?.totals.operatorGates ?? 0}</strong>
+              <span>Operator</span>
+            </div>
+            <div>
+              <strong>{journeyGates?.totals.swiggyGates ?? 0}</strong>
+              <span>Swiggy</span>
+            </div>
+            <div>
+              <strong>{journeyGates?.totals.proofLinks ?? 0}</strong>
+              <span>Proofs</span>
+            </div>
+            <div>
+              <strong>{journeyGates?.totals.telemetryLinks ?? 0}</strong>
+              <span>Signals</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(journeyGates?.gates ?? []).slice(0, 5).map((gate) => (
+              <li
+                key={gate.id}
+                data-status={gate.status === "ready" ? "healthy" : gate.status === "swiggy_gate" ? "blocked" : "watch"}
+              >
+                <span>{gate.officialStep}</span>
+                <strong>{gate.owner}</strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-intelligence-actions" aria-label="Journey gate links">
+            <a href="/api/swiggy-builders-journey-gates" target="_blank" rel="noreferrer">
+              Gate API
+            </a>
+            <a href="/api/swiggy-builders-module-intelligence" target="_blank" rel="noreferrer">
+              Modules
+            </a>
+            <a href="/api/swiggy-conversion-center" target="_blank" rel="noreferrer">
+              Conversion
             </a>
           </div>
         </article>

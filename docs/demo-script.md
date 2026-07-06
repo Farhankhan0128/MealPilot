@@ -217,6 +217,7 @@ Open Production Evidence and show:
 - Customization Studio artifact at `/api/swiggy-customization-studio` plus `/api/swiggy-customization-studio/validate` for add-on, variant, pack-size, allergy-caution, and cart-readback proof.
 - Website Atlas coverage for the production access page, launch blog, apply CTAs, header, footer, and docs subnav.
 - Module Intelligence coverage for page-module owners, product promises, route optimizations, risk boundaries, journey placement, and operator or Swiggy gates.
+- Journey Gates coverage for the official Start Building, Apply for Prod Access, Quick Review, Go Live, and Show Us What You Built path with criteria, proof links, telemetry, blockers, and external approvals.
 - Builders Launch Story Center artifact for launch-blog story beats, 18+ to 35-tool reconciliation, demo journey, showcase packet, CTA paths, and external co-marketing gates.
 - Deep Site Map coverage for every Builders page row, module signal, CTA gate, source section, proof link, assertion, and external gate.
 - Builder Intake Command Center for CTA ownership, access-form values, demo storyboard, outbound drafts, and live credential gates.

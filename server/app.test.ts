@@ -60,6 +60,8 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/swiggy-builders-launch-story"].get.responses["200"].description).toContain("35-tool");
     expect(openApi.body.paths["/api/swiggy-builders-module-intelligence"].get.summary).toContain("Module Intelligence");
     expect(openApi.body.paths["/api/swiggy-builders-module-intelligence"].get.responses["200"].description).toContain("route optimization");
+    expect(openApi.body.paths["/api/swiggy-builders-journey-gates"].get.summary).toContain("Journey Gate");
+    expect(openApi.body.paths["/api/swiggy-builders-journey-gates"].get.responses["200"].description).toContain("Quick Review");
     expect(openApi.body.paths["/api/swiggy-operating-contract-center"].get.summary).toContain("Operating Contract");
     expect(openApi.body.paths["/api/swiggy-operating-contract-center"].get.responses["200"].description).toContain("99.9%");
     expect(openApi.body.paths["/api/swiggy-builder-intake"].get.summary).toContain("Builder Intake");
@@ -1559,7 +1561,7 @@ describe("MealPilot API", () => {
     expect(packet.totals.formFields).toBeGreaterThanOrEqual(10);
     expect(packet.totals.requiredAttachments).toBeGreaterThanOrEqual(10);
     expect(packet.totals.launchArtifacts).toBeGreaterThanOrEqual(50);
-    expect(packet.totals.visualTargets).toBe(54);
+    expect(packet.totals.visualTargets).toBe(55);
     expect(packet.files.map((file: { id: string }) => file.id)).toEqual(
       expect.arrayContaining(["packet_json", "packet_markdown", "visual_report", "production_summary"]),
     );
@@ -1571,7 +1573,7 @@ describe("MealPilot API", () => {
     ).toBe(true);
     expect(
       packet.commands.some(
-        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("54"),
+        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("55"),
       ),
     ).toBe(true);
     expect(packet.copyBlocks.formFields).toContain("Redirect URI(s)");
@@ -2882,6 +2884,11 @@ describe("MealPilot API", () => {
         ),
       ),
     ).toBe(true);
+    expect(
+      vault.artifactSections.some((section: { artifacts: Array<{ id: string; path: string }> }) =>
+        section.artifacts.some((artifact) => artifact.id === "journey_gates" && artifact.path === "/api/swiggy-builders-journey-gates"),
+      ),
+    ).toBe(true);
     expect(vault.externalGates.some((gate: string) => gate.includes("staging credentials"))).toBe(true);
   });
 
@@ -2891,8 +2898,8 @@ describe("MealPilot API", () => {
     const visualQa = response.body.visualQa;
 
     expect(visualQa.score).toBe(100);
-    expect(visualQa.totalTargets).toBe(54);
-    expect(visualQa.readyTargets).toBe(54);
+    expect(visualQa.totalTargets).toBe(55);
+    expect(visualQa.readyTargets).toBe(55);
     expect(visualQa.totalRules).toBe(7);
     expect(visualQa.readyRules).toBe(7);
     expect(visualQa.totalCommands).toBe(5);
@@ -2946,6 +2953,16 @@ describe("MealPilot API", () => {
           (target) =>
             target.id === "module_intelligence_card" &&
             target.selector === ".module-intelligence-card" &&
+            target.viewport === "desktop",
+        ),
+      ),
+    ).toBe(true);
+    expect(
+      visualQa.targetGroups.some((group: { targets: Array<{ id: string; selector: string; viewport: string }> }) =>
+        group.targets.some(
+          (target) =>
+            target.id === "journey_gates_card" &&
+            target.selector === ".journey-gates-card" &&
             target.viewport === "desktop",
         ),
       ),
@@ -3382,6 +3399,37 @@ describe("MealPilot API", () => {
     expect(center.operatorRunbook.map((step: { sequence: number }) => step.sequence)).toEqual([1, 2, 3]);
     expect(center.assertions.some((assertion: string) => assertion.includes("Every Website Atlas module"))).toBe(true);
     expect(center.externalGates.some((gate: string) => gate.includes("Access forms"))).toBe(true);
+  });
+
+  it("returns Swiggy Builders Journey Gates for the official five-step path", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/swiggy-builders-journey-gates").expect(200);
+    const center = response.body.journeyGates;
+
+    expect(center.score).toBeGreaterThanOrEqual(80);
+    expect(center.currentGate).toBe("Apply for Prod Access");
+    expect(center.totals.gates).toBe(5);
+    expect(center.totals.ready).toBeGreaterThanOrEqual(1);
+    expect(center.totals.operatorGates).toBe(2);
+    expect(center.totals.swiggyGates).toBe(2);
+    expect(center.totals.entryCriteria + center.totals.exitCriteria).toBeGreaterThanOrEqual(35);
+    expect(center.totals.proofLinks).toBeGreaterThanOrEqual(20);
+    expect(center.totals.telemetryLinks).toBeGreaterThanOrEqual(10);
+    expect(center.gates.map((gate: { id: string }) => gate.id)).toEqual(
+      expect.arrayContaining(["start_building", "apply_prod_access", "quick_review", "go_live", "show_built"]),
+    );
+    expect(
+      center.gates.some(
+        (gate: { id: string; status: string; proofLinks: string[]; telemetryLinks: string[] }) =>
+          gate.id === "go_live" &&
+          gate.status === "swiggy_gate" &&
+          gate.proofLinks.includes("/api/staging-certification-matrix") &&
+          gate.telemetryLinks.includes("/api/mcp/backpressure-governor"),
+      ),
+    ).toBe(true);
+    expect(center.operatorRunbook.map((step: { sequence: number }) => step.sequence)).toEqual([1, 2, 3, 4, 5]);
+    expect(center.assertions.some((assertion: string) => assertion.includes("official five-step Builders journey"))).toBe(true);
+    expect(center.externalGates.some((gate: string) => gate.includes("credentials"))).toBe(true);
   });
 
   it("returns source intelligence that reconciles website, docs, API tools, and drift signals", async () => {
@@ -4838,6 +4886,9 @@ describe("MealPilot API", () => {
     expect(
       proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Swiggy Builders Module Intelligence Center"),
     ).toBe(true);
+    expect(
+      proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Swiggy Builders Journey Gate Center"),
+    ).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Premium Concierge Itinerary")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Tool Contract Matrix")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Scenario Runner")).toBe(true);
@@ -5556,6 +5607,7 @@ describe("MealPilot API", () => {
         "Swiggy Website Atlas",
         "Swiggy Builders Launch Story Center",
         "Swiggy Builders Module Intelligence Center",
+        "Swiggy Builders Journey Gate Center",
         "Swiggy Operating Contract Center",
         "Swiggy Deep Site Map",
         "Developer Quickstart Workbench",

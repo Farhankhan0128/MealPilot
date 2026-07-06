@@ -71,6 +71,7 @@ import { buildHouseholdPreferenceGraph } from "./services/householdPreferenceGra
 import { buildSwiggyInteractionQaCenter } from "./services/interactionQaCenter.js";
 import { buildSwiggyInnovationRadar } from "./services/innovationRadar.js";
 import { buildSwiggyJourneyCompiler } from "./services/journeyCompiler.js";
+import { buildSwiggyBuildersJourneyGateCenter } from "./services/journeyGateCenter.js";
 import { buildLaunchBundle } from "./services/launchBundle.js";
 import { buildSwiggyLiveSignalCalibration } from "./services/liveSignalCalibration.js";
 import { buildSwiggyLoadLab } from "./services/loadLab.js";
@@ -1012,6 +1013,18 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/swiggy-builders-module-intelligence", (_req, res) => {
     res.json({ moduleIntelligence: buildSwiggyBuildersModuleIntelligenceCenter() });
+  });
+
+  app.get("/api/swiggy-builders-journey-gates", (_req, res) => {
+    res.json({
+      journeyGates: buildSwiggyBuildersJourneyGateCenter({
+        config,
+        profile: store.getProfile(),
+        coverage: buildMcpCoverage(),
+        latestPlan: store.getAllPlans().at(-1),
+        handoffState: store.getAccessSubmissionState(),
+      }),
+    });
   });
 
   app.get("/api/swiggy-builder-intake", (_req, res) => {

@@ -914,6 +914,51 @@ export interface SwiggyBuildersModuleIntelligenceCenter {
   externalGates: string[];
 }
 
+export type SwiggyBuildersJourneyGateStatus = "ready" | "watch" | "operator_gate" | "swiggy_gate";
+export type SwiggyBuildersJourneyGateOwner = "MealPilot" | "Operator" | "Swiggy" | "Joint";
+
+export interface SwiggyBuildersJourneyGate {
+  id: string;
+  sequence: number;
+  officialStep: string;
+  sourceSignal: string;
+  owner: SwiggyBuildersJourneyGateOwner;
+  status: SwiggyBuildersJourneyGateStatus;
+  entryCriteria: string[];
+  exitCriteria: string[];
+  localAutomation: string[];
+  proofLinks: string[];
+  telemetryLinks: string[];
+  blockerResolution: string[];
+  riskBoundary: string;
+  nextAction: string;
+  linkedTimelinePhaseIds: string[];
+  linkedConversionStepIds: string[];
+}
+
+export interface SwiggyBuildersJourneyGateCenter {
+  generatedAt: string;
+  score: number;
+  currentGate: string;
+  officialSources: string[];
+  totals: {
+    gates: number;
+    ready: number;
+    watch: number;
+    operatorGates: number;
+    swiggyGates: number;
+    entryCriteria: number;
+    exitCriteria: number;
+    proofLinks: number;
+    telemetryLinks: number;
+  };
+  gates: SwiggyBuildersJourneyGate[];
+  operatorRunbook: Array<{ sequence: number; label: string; action: string; proofLinks: string[] }>;
+  readinessMap: Array<{ gateId: string; label: string; status: SwiggyBuildersJourneyGateStatus; evidence: string }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type SwiggyBuildersPageMeshStatus = "covered" | "watch" | "blocked";
 
 export interface SwiggyBuildersPageMeshRow {

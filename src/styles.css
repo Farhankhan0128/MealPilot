@@ -1139,6 +1139,39 @@ select:focus {
   grid-column: span 2;
 }
 
+.journey-gates-card {
+  grid-column: span 2;
+}
+
+.journey-gates-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.journey-gates-grid div {
+  display: grid;
+  gap: 3px;
+  min-height: 64px;
+  border-radius: 8px;
+  padding: 9px;
+  background: #fff;
+}
+
+.journey-gates-grid strong {
+  color: var(--green-dark);
+  font-size: 1.18rem;
+  overflow-wrap: anywhere;
+}
+
+.journey-gates-grid span {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
 .talent-signal-card {
   grid-column: span 2;
 }
@@ -2305,6 +2338,14 @@ select:focus {
     grid-template-columns: 1fr;
   }
 
+  .journey-gates-card {
+    grid-column: auto;
+  }
+
+  .journey-gates-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .surface-card,
   .builders-map-card,
   .credential-card,
@@ -2407,6 +2448,10 @@ select:focus {
   .modal-actions {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .journey-gates-grid {
+    grid-template-columns: 1fr;
   }
 
   .input-grid,

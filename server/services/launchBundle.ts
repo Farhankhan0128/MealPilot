@@ -33,6 +33,15 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
         "Turns every Builders website module into owner, audience, product promise, route optimization, risk boundary, proof links, and module journeys.",
     },
     {
+      id: "journey_gates",
+      label: "Swiggy Builders Journey Gate Center",
+      path: "/api/swiggy-builders-journey-gates",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Maps the official five-step Builders path into owner-assigned gates, criteria, proof links, telemetry, blockers, and external Swiggy approvals.",
+    },
+    {
       id: "builders_launch_story",
       label: "Swiggy Builders Launch Story Center",
       path: "/api/swiggy-builders-launch-story",
@@ -827,6 +836,7 @@ function buildPhases(config: ServerConfig, latestPlan: MealPlan | undefined, art
         artifact("staging_transcript"),
         artifact("website_atlas"),
         artifact("module_intelligence"),
+        artifact("journey_gates"),
         artifact("deep_site_map"),
         artifact("developer_quickstart"),
         artifact("cta_execution"),
@@ -1037,6 +1047,7 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- Packet Markdown export: /api/builder-packet-export.md",
     "- Website Atlas: /api/swiggy-website-atlas",
     "- Swiggy Builders Module Intelligence Center: /api/swiggy-builders-module-intelligence",
+    "- Swiggy Builders Journey Gate Center: /api/swiggy-builders-journey-gates",
     "- Swiggy Builders Launch Story Center: /api/swiggy-builders-launch-story",
     "- Deep Site Map: /api/swiggy-deep-site-map",
     "- Developer Quickstart Workbench: /api/swiggy-developer-quickstart",

@@ -126,6 +126,7 @@ const artifactSections = [
     artifacts: [
       artifact("website_atlas", "Website Atlas", "api", "/api/swiggy-website-atlas", "Header, footer, page modules, CTAs, launch blog, and access page coverage.", "Public docs only; no user data."),
       artifact("module_intelligence", "Swiggy Builders Module Intelligence Center", "api", "/api/swiggy-builders-module-intelligence", "Every Builders website module mapped to owner, audience, product promise, route optimization, risk boundary, proof links, and module journeys.", "External forms, legal review, co-branding, quotas, credentials, and production approval stay operator or Swiggy-owned."),
+      artifact("journey_gates", "Swiggy Builders Journey Gate Center", "api", "/api/swiggy-builders-journey-gates", "Official Start Building, Apply for Prod Access, Quick Review, Go Live, and Show Us What You Built path mapped to owner gates, criteria, proof links, telemetry, and blockers.", "Forms, email, terms, credentials, approval, showcase, and public Swiggy claims stay operator or Swiggy-owned."),
       artifact("deep_site_map", "Swiggy Deep Site Map", "api", "/api/swiggy-deep-site-map", "Every Builders page, module signal, CTA, header/docs/footer link, proof path, source section, assertion, and external gate in one reviewer audit.", "Public docs and local proof links only; no user data."),
       artifact("developer_quickstart", "Developer Quickstart Workbench", "api", "/api/swiggy-developer-quickstart", "Official self-serve quickstart converted into first-call drills, SDK adapters, auth gates, commands, and recipe handoffs.", "Public docs and local mock calls only; no tokens or live user data."),
       artifact("cta_execution", "CTA Execution Center", "api", "/api/swiggy-cta-execution-center", "Every official Builders CTA, header, docs nav, footer, form, email, and legal link converted into click-ready runbook targets.", "External forms, mailto links, and legal pages stay manual/operator gated."),
@@ -277,6 +278,7 @@ export function buildReviewerArtifactVault(): ReviewerArtifactVault {
     "- Production Launch Bundle: /api/production-launch-bundle",
     "- Swiggy Docs Twin Explorer: /api/swiggy-docs-twin-explorer",
     "- Swiggy Builders Module Intelligence Center: /api/swiggy-builders-module-intelligence",
+    "- Swiggy Builders Journey Gate Center: /api/swiggy-builders-journey-gates",
     "- Deep Site Map: /api/swiggy-deep-site-map",
     "- Developer Quickstart Workbench: /api/swiggy-developer-quickstart",
     "- CTA Execution Center: /api/swiggy-cta-execution-center",

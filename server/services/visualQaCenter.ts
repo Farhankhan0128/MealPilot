@@ -189,6 +189,17 @@ const targetGroups = [
         "artifacts/visual-qa/module-intelligence-card.png",
       ),
       target(
+        "journey_gates_card",
+        "Journey Gates card",
+        "/",
+        ".journey-gates-card",
+        "desktop",
+        1280,
+        900,
+        "Journey Gates shows the official Builders five-step path, owners, readiness, proof links, telemetry, and external gates.",
+        "artifacts/visual-qa/journey-gates-card.png",
+      ),
+      target(
         "builders_page_mesh_card",
         "Builders Page Mesh card",
         "/",

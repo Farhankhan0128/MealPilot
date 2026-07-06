@@ -108,6 +108,11 @@ assert(
   "OpenAPI Builders module intelligence contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-builders-journey-gates"]?.get?.summary?.includes("Journey Gate") &&
+    openApi.paths["/api/swiggy-builders-journey-gates"]?.get?.responses?.["200"]?.description?.includes("Quick Review"),
+  "OpenAPI Builders journey gates contract is missing",
+);
+assert(
   openApi.paths["/api/swiggy-source-intelligence"]?.get?.summary?.includes("source intelligence"),
   "OpenAPI source intelligence contract is missing",
 );
@@ -604,6 +609,42 @@ assert(
   moduleIntelligence.moduleIntelligence.assertions.some((assertion) => assertion.includes("Every Website Atlas module")) &&
     moduleIntelligence.moduleIntelligence.externalGates.some((gate) => gate.includes("Access forms")),
   "Builders module intelligence assertions are missing",
+);
+
+const journeyGates = await request("/api/swiggy-builders-journey-gates");
+assert(journeyGates.journeyGates.score >= 80, "Builders journey gate score is below target");
+assert(journeyGates.journeyGates.currentGate === "Apply for Prod Access", "Builders journey current gate is wrong");
+assert(journeyGates.journeyGates.totals.gates === 5, "Builders journey gate count is incomplete");
+assert(journeyGates.journeyGates.totals.ready >= 1, "Builders journey ready gate is missing");
+assert(journeyGates.journeyGates.totals.operatorGates === 2, "Builders journey operator gates are incomplete");
+assert(journeyGates.journeyGates.totals.swiggyGates === 2, "Builders journey Swiggy gates are incomplete");
+assert(
+  journeyGates.journeyGates.totals.entryCriteria + journeyGates.journeyGates.totals.exitCriteria >= 35,
+  "Builders journey gate criteria are incomplete",
+);
+assert(journeyGates.journeyGates.totals.proofLinks >= 20, "Builders journey proof links are incomplete");
+assert(journeyGates.journeyGates.totals.telemetryLinks >= 10, "Builders journey telemetry links are incomplete");
+assert(
+  ["start_building", "apply_prod_access", "quick_review", "go_live", "show_built"].every((id) =>
+    journeyGates.journeyGates.gates.some((gate) => gate.id === id),
+  ),
+  "Builders journey gate ids are missing",
+);
+assert(
+  journeyGates.journeyGates.gates.some(
+    (gate) =>
+      gate.id === "go_live" &&
+      gate.status === "swiggy_gate" &&
+      gate.proofLinks.includes("/api/staging-certification-matrix") &&
+      gate.telemetryLinks.includes("/api/mcp/backpressure-governor"),
+  ),
+  "Builders journey go-live gate proof is missing",
+);
+assert(
+  journeyGates.journeyGates.operatorRunbook.map((step) => step.sequence).join(",") === "1,2,3,4,5" &&
+    journeyGates.journeyGates.assertions.some((assertion) => assertion.includes("official five-step Builders journey")) &&
+    journeyGates.journeyGates.externalGates.some((gate) => gate.includes("credentials")),
+  "Builders journey gate assertions are missing",
 );
 
 const buildersPageMesh = await request("/api/swiggy-builders-page-mesh");
@@ -2122,6 +2163,7 @@ assert(
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-talent-signal-center") &&
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-conversion-center") &&
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-builders-module-intelligence") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-builders-journey-gates") &&
     reviewerArtifactVault.reviewerArtifactVault.artifactSections.some((section) =>
       section.artifacts.some((artifact) => artifact.id === "faq_resolution" && artifact.path === "/api/swiggy-faq-resolution-center"),
     ) &&
@@ -2135,6 +2177,9 @@ assert(
       section.artifacts.some(
         (artifact) => artifact.id === "module_intelligence" && artifact.path === "/api/swiggy-builders-module-intelligence",
       ),
+    ) &&
+    reviewerArtifactVault.reviewerArtifactVault.artifactSections.some((section) =>
+      section.artifacts.some((artifact) => artifact.id === "journey_gates" && artifact.path === "/api/swiggy-builders-journey-gates"),
     ),
   "reviewer artifact vault email draft is incomplete",
 );
@@ -2145,8 +2190,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 54, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 54, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 55, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 55, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -2408,6 +2453,12 @@ assert(
     group.targets.some((target) => target.id === "module_intelligence_card" && target.selector === ".module-intelligence-card"),
   ),
   "visual QA Module Intelligence target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some((target) => target.id === "journey_gates_card" && target.selector === ".journey-gates-card"),
+  ),
+  "visual QA Journey Gates target is missing",
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
@@ -4332,6 +4383,10 @@ assert(
   "reviewer proof module intelligence artifact is missing",
 );
 assert(
+  proof.proof.artifacts.some((artifact) => artifact.label === "Swiggy Builders Journey Gate Center"),
+  "reviewer proof journey gate artifact is missing",
+);
+assert(
   proof.proof.artifacts.some((artifact) => artifact.label === "Channel & Multimodal Studio"),
   "reviewer proof channel and multimodal artifact is missing",
 );
@@ -5725,7 +5780,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 54, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 55, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -5739,7 +5794,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("54")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("55")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -5770,6 +5825,7 @@ assert(
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Submission Console") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Website Atlas") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Builders Module Intelligence Center") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Builders Journey Gate Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Deep Site Map") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Developer Quickstart Workbench") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "CTA Execution Center") &&
@@ -5875,6 +5931,10 @@ assert(
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-builders-module-intelligence"),
   "launch bundle module intelligence handoff link is missing",
+);
+assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-builders-journey-gates"),
+  "launch bundle journey gate handoff link is missing",
 );
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-operating-contract-center"),
@@ -6134,6 +6194,9 @@ console.log(
       moduleIntelligenceScore: moduleIntelligence.moduleIntelligence.score,
       moduleIntelligenceModules: moduleIntelligence.moduleIntelligence.totals.modules,
       moduleIntelligenceJourneys: moduleIntelligence.moduleIntelligence.totals.journeys,
+      journeyGateScore: journeyGates.journeyGates.score,
+      journeyGateGates: journeyGates.journeyGates.totals.gates,
+      journeyGateProofLinks: journeyGates.journeyGates.totals.proofLinks,
       buildersPageMeshScore: buildersPageMesh.buildersPageMesh.score,
       buildersPageMeshPages: `${buildersPageMesh.buildersPageMesh.totals.fetchedPages}/${buildersPageMesh.buildersPageMesh.totals.pages}`,
       buildersPageMeshAnchors: buildersPageMesh.buildersPageMesh.totals.liveAnchors,
