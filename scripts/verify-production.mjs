@@ -772,7 +772,7 @@ const reviewerArtifactVault = await request("/api/reviewer-artifact-vault");
 assert(reviewerArtifactVault.reviewerArtifactVault.score >= 90, "reviewer artifact vault score is below target");
 assert(reviewerArtifactVault.reviewerArtifactVault.totalArtifacts >= 30, "reviewer artifact vault artifacts are incomplete");
 assert(reviewerArtifactVault.reviewerArtifactVault.readyArtifacts >= 30, "reviewer artifact vault ready artifacts are incomplete");
-assert(reviewerArtifactVault.reviewerArtifactVault.totalScreenshotTargets === 7, "reviewer artifact vault screenshot targets are incomplete");
+assert(reviewerArtifactVault.reviewerArtifactVault.totalScreenshotTargets === 8, "reviewer artifact vault screenshot targets are incomplete");
 assert(reviewerArtifactVault.reviewerArtifactVault.readyScreenshotTargets >= 5, "reviewer artifact vault ready screenshots are incomplete");
 assert(reviewerArtifactVault.reviewerArtifactVault.totalCommands === 7, "reviewer artifact vault commands are incomplete");
 assert(reviewerArtifactVault.reviewerArtifactVault.readyCommands >= 6, "reviewer artifact vault ready commands are incomplete");
@@ -794,6 +794,17 @@ assert(
     section.artifacts.some((artifact) => artifact.id === "luxury_experience" && artifact.path === "/api/luxury-experience-workspace"),
   ),
   "reviewer artifact vault luxury workspace artifact is missing",
+);
+assert(
+  reviewerArtifactVault.reviewerArtifactVault.artifactSections.some((section) =>
+    section.artifacts.some(
+      (artifact) =>
+        artifact.id === "deep_site_map" &&
+        artifact.label === "Swiggy Deep Site Map" &&
+        artifact.path === "/api/swiggy-deep-site-map",
+    ),
+  ),
+  "reviewer artifact vault deep site map artifact is missing",
 );
 assert(
   reviewerArtifactVault.reviewerArtifactVault.screenshotTargets.some(
@@ -830,8 +841,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 14, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 14, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 15, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 15, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -878,6 +889,12 @@ assert(
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some((target) => target.id === "deep_site_map_card" && target.selector === ".deep-site-map-card"),
+  ),
+  "visual QA deep site map target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
     group.targets.some((target) => target.id === "coding_agent_card" && target.selector === ".coding-agent-card"),
   ),
   "visual QA coding agent governance target is missing",
@@ -914,7 +931,7 @@ assert(
     (command) =>
       command.id === "visual_capture_harness" &&
       command.command === "npm run verify:visual" &&
-      command.expectedSignal.includes("targetCount >= 14"),
+      command.expectedSignal.includes("targetCount >= 15"),
   ),
   "visual QA Playwright command is missing",
 );
@@ -2064,6 +2081,12 @@ assert(
   "reviewer proof source intelligence artifact is missing",
 );
 assert(
+  proof.proof.artifacts.some(
+    (artifact) => artifact.label === "Swiggy Deep Site Map" && artifact.path === "/api/swiggy-deep-site-map",
+  ),
+  "reviewer proof deep site map artifact is missing",
+);
+assert(
   proof.proof.artifacts.some((artifact) => artifact.label === "Swiggy Innovation Radar"),
   "reviewer proof innovation radar artifact is missing",
 );
@@ -2579,7 +2602,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 14, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 15, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -2591,6 +2614,10 @@ assert(
     (command) => command.id === "packet_export" && command.command.includes("npm run export:builder-packet"),
   ),
   "builder packet export command is missing",
+);
+assert(
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("15")),
+  "builder packet visual capture command is stale",
 );
 assert(
   builderPacket.packet.copyBlocks.formFields.includes("Redirect URI(s)") &&
@@ -2619,6 +2646,7 @@ assert(
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Audit Ledger Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Submission Console") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Website Atlas") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Deep Site Map") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Builder Intake Command Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "FAQ & Policy Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Growth Partnership Center") &&
@@ -2738,6 +2766,10 @@ assert(
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-source-intelligence"),
   "launch bundle source intelligence handoff link is missing",
+);
+assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-deep-site-map"),
+  "launch bundle deep site map handoff link is missing",
 );
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-innovation-radar"),

@@ -298,6 +298,7 @@ export function buildReviewerProof(options: {
       { label: "Swiggy Docs Coverage", path: "/api/swiggy-docs-coverage" },
       { label: "Swiggy Upstream Watch", path: "/api/swiggy-upstream-watch" },
       { label: "Swiggy Source Intelligence", path: "/api/swiggy-source-intelligence" },
+      { label: "Swiggy Deep Site Map", path: "/api/swiggy-deep-site-map" },
       { label: "Swiggy Innovation Radar", path: "/api/swiggy-innovation-radar" },
       { label: "AI Client Connect Kit", path: "/api/ai-client-connect-kit" },
       { label: "Brand Compliance Kit", path: "/api/brand-compliance-kit" },

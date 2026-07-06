@@ -234,7 +234,7 @@ export function buildSwiggyInnovationRadar(): SwiggyInnovationRadarReport {
     ],
     nextBuilds: [
       "Record the premium demo using the Innovation Radar lanes as the narrative spine.",
-      "Attach Source Intelligence, Innovation Radar, and Production Launch Bundle to the Swiggy access submission.",
+      "Attach Source Intelligence, Deep Site Map, Innovation Radar, and Production Launch Bundle to the Swiggy access submission.",
       "When staging credentials arrive, replay the top three ready lanes through Staging Certification before enabling screenshots or enterprise lanes.",
       "Ask Swiggy for feedback on voice, screenshot-to-order, and enterprise tenant lanes as distinct growth partnership proposals.",
     ],

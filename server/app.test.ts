@@ -879,7 +879,7 @@ describe("MealPilot API", () => {
     expect(packet.totals.formFields).toBeGreaterThanOrEqual(10);
     expect(packet.totals.requiredAttachments).toBeGreaterThanOrEqual(10);
     expect(packet.totals.launchArtifacts).toBeGreaterThanOrEqual(50);
-    expect(packet.totals.visualTargets).toBe(14);
+    expect(packet.totals.visualTargets).toBe(15);
     expect(packet.files.map((file: { id: string }) => file.id)).toEqual(
       expect.arrayContaining(["packet_json", "packet_markdown", "visual_report", "production_summary"]),
     );
@@ -887,6 +887,11 @@ describe("MealPilot API", () => {
       packet.commands.some(
         (command: { id: string; command: string }) =>
           command.id === "packet_export" && command.command.includes("npm run export:builder-packet"),
+      ),
+    ).toBe(true);
+    expect(
+      packet.commands.some(
+        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("15"),
       ),
     ).toBe(true);
     expect(packet.copyBlocks.formFields).toContain("Redirect URI(s)");
@@ -1313,7 +1318,7 @@ describe("MealPilot API", () => {
     expect(vault.score).toBeGreaterThanOrEqual(90);
     expect(vault.totalArtifacts).toBeGreaterThanOrEqual(30);
     expect(vault.readyArtifacts).toBeGreaterThanOrEqual(30);
-    expect(vault.totalScreenshotTargets).toBe(7);
+    expect(vault.totalScreenshotTargets).toBe(8);
     expect(vault.readyScreenshotTargets).toBeGreaterThanOrEqual(5);
     expect(vault.totalCommands).toBe(7);
     expect(vault.readyCommands).toBeGreaterThanOrEqual(6);
@@ -1338,6 +1343,16 @@ describe("MealPilot API", () => {
             artifact.id === "source_intelligence" &&
             artifact.label === "Swiggy Source Intelligence" &&
             artifact.path === "/api/swiggy-source-intelligence",
+        ),
+      ),
+    ).toBe(true);
+    expect(
+      vault.artifactSections.some((section: { artifacts: Array<{ id: string; label: string; path: string }> }) =>
+        section.artifacts.some(
+          (artifact) =>
+            artifact.id === "deep_site_map" &&
+            artifact.label === "Swiggy Deep Site Map" &&
+            artifact.path === "/api/swiggy-deep-site-map",
         ),
       ),
     ).toBe(true);
@@ -1380,8 +1395,8 @@ describe("MealPilot API", () => {
     const visualQa = response.body.visualQa;
 
     expect(visualQa.score).toBe(100);
-    expect(visualQa.totalTargets).toBe(14);
-    expect(visualQa.readyTargets).toBe(14);
+    expect(visualQa.totalTargets).toBe(15);
+    expect(visualQa.readyTargets).toBe(15);
     expect(visualQa.totalRules).toBe(7);
     expect(visualQa.readyRules).toBe(7);
     expect(visualQa.totalCommands).toBe(5);
@@ -1421,6 +1436,11 @@ describe("MealPilot API", () => {
     ).toBe(true);
     expect(
       visualQa.targetGroups.some((group: { targets: Array<{ id: string; selector: string }> }) =>
+        group.targets.some((target) => target.id === "deep_site_map_card" && target.selector === ".deep-site-map-card"),
+      ),
+    ).toBe(true);
+    expect(
+      visualQa.targetGroups.some((group: { targets: Array<{ id: string; selector: string }> }) =>
         group.targets.some((target) => target.id === "coding_agent_card" && target.selector === ".coding-agent-card"),
       ),
     ).toBe(true);
@@ -1453,7 +1473,7 @@ describe("MealPilot API", () => {
         (command: { id: string; command: string; expectedSignal: string }) =>
           command.id === "visual_capture_harness" &&
           command.command === "npm run verify:visual" &&
-          command.expectedSignal.includes("targetCount >= 14"),
+          command.expectedSignal.includes("targetCount >= 15"),
       ),
     ).toBe(true);
     expect(visualQa.externalGates.some((gate: string) => gate.includes("Selected PNG screenshots"))).toBe(true);
@@ -2467,6 +2487,12 @@ describe("MealPilot API", () => {
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Data Governance Center")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Swiggy Upstream Watch")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Swiggy Source Intelligence")).toBe(true);
+    expect(
+      proof.body.proof.artifacts.some(
+        (artifact: { label: string; path: string }) =>
+          artifact.label === "Swiggy Deep Site Map" && artifact.path === "/api/swiggy-deep-site-map",
+      ),
+    ).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Swiggy Innovation Radar")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Premium Concierge Itinerary")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Tool Contract Matrix")).toBe(true);
@@ -2557,6 +2583,7 @@ describe("MealPilot API", () => {
         "Reviewer Artifact Vault",
         "Visual QA Center",
         "Swiggy Website Atlas",
+        "Swiggy Deep Site Map",
         "Builder Intake Command Center",
         "Swiggy Docs Coverage",
         "Swiggy Upstream Watch",

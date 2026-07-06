@@ -24,6 +24,15 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
       evidence: "Maps Builders header, docs subnav, footer, page modules, CTAs, and legal/resource links.",
     },
     {
+      id: "deep_site_map",
+      label: "Swiggy Deep Site Map",
+      path: "/api/swiggy-deep-site-map",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Consolidates every Builders page, module signal, CTA, header/docs/footer link, proof path, source section, assertion, and external gate into one reviewer audit.",
+    },
+    {
       id: "builder_intake",
       label: "Builder Intake Command Center",
       path: "/api/swiggy-builder-intake",
@@ -502,6 +511,7 @@ function buildPhases(config: ServerConfig, latestPlan: MealPlan | undefined, art
         artifact("latest_plan"),
         artifact("staging_transcript"),
         artifact("website_atlas"),
+        artifact("deep_site_map"),
         artifact("builder_intake"),
         artifact("faq_policy"),
         artifact("growth_partnership"),
@@ -684,6 +694,7 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- Executable packet export: /api/builder-packet-export",
     "- Packet Markdown export: /api/builder-packet-export.md",
     "- Website Atlas: /api/swiggy-website-atlas",
+    "- Deep Site Map: /api/swiggy-deep-site-map",
     "- Builder Intake Command Center: /api/swiggy-builder-intake",
     "- FAQ & Policy Center: /api/swiggy-faq-policy",
     "- Growth Partnership Center: /api/swiggy-growth-partnership",

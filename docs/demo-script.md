@@ -113,6 +113,7 @@ Open the Launch Center and show:
 - Docs Coverage showing all 69 Swiggy `llms.txt` pages mapped to MealPilot evidence and external gates.
 - Upstream Watch showing `llms.txt`, `llms-full.txt`, v1.0 limitations, v1.1/v1.2/v2 roadmap items, signed-manifest watch, and new-tool action queues.
 - Source Intelligence showing official website pages, CTA inventory, `llms` docs, markdown twins, 35-tool reference counts, drift signals, and build-queue actions.
+- Deep Site Map showing every Builders page, rendered module signal, CTA, header/docs/footer link, proof path, source-reconciliation section, assertion, and external gate in one reviewer audit.
 - Innovation Radar showing premium opportunity lanes, route optimizations, build phases, differentiators, and staging or partner gates derived from Swiggy source signals.
 - AI Client Connect Kit showing Claude Desktop, ChatGPT, Cursor, VS Code, Windsurf, generic MCP config, coding-agent rules, and SDK auth modes.
 - Brand Compliance Kit showing Powered by Swiggy attribution, co-branding asset gates, palette audit, and no-endorsement copy.
@@ -174,6 +175,7 @@ Open Production Evidence and show:
 - Swiggy Docs Coverage artifact in reviewer proof and launch handoff.
 - Swiggy Upstream Watch artifact for changelog, coding-agent docs, roadmap, signed-manifest, and release-drift control.
 - Swiggy Source Intelligence artifact for website/docs/API drift reconciliation, 35-tool count alignment, and external gate tracking.
+- Swiggy Deep Site Map artifact for page/module/CTA/header/footer proof coverage and reviewer readback.
 - Swiggy Innovation Radar artifact for premium product strategy, opportunity lanes, route optimization, build phases, and partner gates.
 - Tool Contract Matrix artifact for all-tool schema, response envelope, retry, confirmation, and error-bucket evidence.
 - State Orchestrator artifact for official multi-turn cart state, switch guards, stale-cart recovery, and voice/chat response contracts.
@@ -181,6 +183,7 @@ Open Production Evidence and show:
 - Resource & Prompt Studio artifact for MCP resource and prompt reads across all three Swiggy servers.
 - Staging Cutover Rehearsal artifact for real MCP transport readiness, OAuth gates, first-call probes, support packet fields, and production promotion checks.
 - Website Atlas coverage for the production access page, launch blog, apply CTAs, header, footer, and docs subnav.
+- Deep Site Map coverage for every Builders page row, module signal, CTA gate, source section, proof link, assertion, and external gate.
 - Builder Intake Command Center for CTA ownership, access-form values, demo storyboard, outbound drafts, and live credential gates.
 - Channel & Multimodal Studio for voice, auto-restock, group ordering, dietary planner, reservation, and screenshot-to-order channel contracts plus local execution packets for route plans, response rules, confirmation gates, and telemetry.
 - Nutrition & Budget Intelligence for protein-per-rupee, coupon-safe cart review, Instamart pantry gaps, group budgets, Dineout balance, and nutrition safety controls.
@@ -188,7 +191,7 @@ Open Production Evidence and show:
 - Guest Collaboration & Calendar Center for guest votes, date-night and guests-at-home templates, Dineout slot checks, Food reminder handoffs, Instamart prep, ICS artifacts, Slack/Teams gates, and voice-safe briefs.
 - Luxury Experience Workspace for polished reservation, Food cart, Instamart basket, combined evening, and recovery review surfaces with all-tool coverage and separate confirmations.
 - Reviewer Artifact Vault for proof links, screenshot targets, verification commands, redaction rules, and access-review handoff email.
-- Visual QA Center for reviewer screenshot selectors, viewport coverage, no-overlap/text-fit rules, widget fallback checks, and screenshot automation gates.
+- Visual QA Center for reviewer screenshot selectors, viewport coverage, Deep Site Map card proof, no-overlap/text-fit rules, widget fallback checks, and screenshot automation gates.
 - AI Client Connect Kit artifact for consumer AI-client, coding-agent, SDK, and delegated-auth readiness.
 - Brand Compliance Kit artifact for attribution, co-branding, palette, and external asset gates.
 - Swiggy Journey Compiler artifact for official recipe routes and all-tool coverage.
@@ -210,6 +213,7 @@ Briefly show production readiness:
 - `/api/openapi.json`
 - `/api/swiggy-upstream-watch`
 - `/api/swiggy-source-intelligence`
+- `/api/swiggy-deep-site-map`
 - `/api/swiggy-innovation-radar`
 - `/api/swiggy-builder-intake`
 - `/api/swiggy-faq-policy`
