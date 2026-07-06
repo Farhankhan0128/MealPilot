@@ -737,6 +737,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/ai-client-connect-kit/validate-config": {
+        post: {
+          tags: ["Builder Access"],
+          summary: "Validate a Swiggy AI client MCP configuration",
+          responses: {
+            "200": {
+              description:
+                "Executable validation for Claude Desktop, ChatGPT, Cursor, VS Code, Windsurf, and generic MCP configs covering Food, Instamart /im, Dineout, OAuth readiness, secret redaction, and verification prompts",
+            },
+          },
+        },
+      },
       "/api/coding-agent-governance": {
         get: {
           tags: ["Builder Access"],

@@ -94,7 +94,7 @@ Planned MCP servers:
 - Swiggy Upstream Watch that tracks `llms.txt`, `llms-full.txt`, the changelog, v1.1/v1.2/v2 roadmap, signed manifests, and update actions for future Swiggy MCP changes.
 - Swiggy Source Intelligence that reconciles Builders website pages, CTAs, `llms` docs, markdown twins, reference tool counts, drift signals, and the next build queue against MealPilot evidence.
 - Swiggy Innovation Radar that turns Swiggy developer ideas, enterprise signals, access ground rules, support model, and all MCP servers into premium opportunity lanes, route optimizations, build phases, and partner gates.
-- AI Client Connect Kit that generates Swiggy MCP configs for Claude Desktop, ChatGPT, Cursor, VS Code, Windsurf, generic MCP clients, coding-agent rules, SDK auth modes, and delegated-auth gates.
+- AI Client Connect Kit that generates and validates Swiggy MCP configs for Claude Desktop, ChatGPT, Cursor, VS Code, Windsurf, generic MCP clients, coding-agent rules, SDK auth modes, endpoint correctness, secret redaction, and delegated-auth gates.
 - Coding Agent Governance that ships root `AGENTS.md`, scores it against official Swiggy `llms.txt`, `llms-full.txt`, markdown-twin, reference, auth, rate-limit, production, confirmation, and redaction rules, and exposes smoke tests for future coding agents.
 - Brand Compliance Kit that maps Powered by Swiggy attribution, co-branding rules, brand asset gates, palette usage, no-endorsement copy, and launch screenshot checks.
 - Data Governance Center that maps Swiggy DPDP roles, India/Singapore residency, tool-call PII flows, DSR routing, 90-day audit logs, token redaction, and signed-manifest watch items.
@@ -270,6 +270,7 @@ POST /api/swiggy-developer-quickstart/run-first-call
 GET  /api/swiggy-cta-execution-center
 GET  /api/swiggy-innovation-radar
 GET  /api/ai-client-connect-kit
+POST /api/ai-client-connect-kit/validate-config
 GET  /api/brand-compliance-kit
 GET  /api/swiggy-journey-compiler
 GET  /api/swiggy-access-dossier
@@ -369,7 +370,7 @@ GET  /api/builder-package.md
 14. Open Upstream Watch to show `llms.txt`, `llms-full.txt`, v1.0 shipped capabilities, v1.1/v1.2/v2 roadmap items, signed-manifest watch, and the new-tool action queue.
 15. Open Source Intelligence, Deep Site Map, Developer Quickstart, and CTA Execution to show website, docs, API tool counts, CTA inventory, rendered page modules, header/footer links, proof paths, first-call drills, framework adapters, OAuth gates, click targets, keyboard paths, drift signals, and the next build queue in one reviewer-ready panel.
 16. Open Innovation Radar to show premium product lanes, route optimizations, build phases, differentiators, and partner gates derived from Swiggy signals.
-17. Open AI Client Connect Kit to show six client configs, coding-agent rules, SDK auth modes, and delegated-auth gates.
+17. Open AI Client Connect Kit and run `/api/ai-client-connect-kit/validate-config` to show six client configs, Instamart `/im` validation, coding-agent rules, SDK auth modes, secret redaction, and delegated-auth gates.
 18. Open Journey Compiler to show official recipe routes, all 35 tools indexed, confirmation gates, and call savings.
 19. Open Access Dossier and Access Evidence Matrix to show production-access fields, review checks, allowed/restricted/prohibited rules, legal readiness, proof attachments, runbook steps, owners, and remaining manual inputs.
 20. Open Use Case Studio to show ten premium playbooks, cross-server routing, all 35 tools placed, saved calls, surfaces, safety gates, and launch stages.

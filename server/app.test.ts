@@ -85,6 +85,8 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/swiggy-cta-execution-center"].get.summary).toContain("CTA execution");
     expect(openApi.body.paths["/api/swiggy-innovation-radar"].get.summary).toContain("innovation radar");
     expect(openApi.body.paths["/api/ai-client-connect-kit"].get.summary).toContain("AI client");
+    expect(openApi.body.paths["/api/ai-client-connect-kit/validate-config"].post.summary).toContain("Validate");
+    expect(openApi.body.paths["/api/ai-client-connect-kit/validate-config"].post.responses["200"].description).toContain("Instamart /im");
     expect(openApi.body.paths["/api/coding-agent-governance"].get.summary).toContain("coding-agent governance");
     expect(openApi.body.paths["/api/brand-compliance-kit"].get.summary).toContain("brand");
     expect(openApi.body.paths["/api/swiggy-journey-compiler"].get.summary).toContain("journey compiler");
@@ -2910,6 +2912,66 @@ describe("MealPilot API", () => {
     expect(kit.sdkAdapters.some((adapter: { authMode: string }) => adapter.authMode === "bearer_header")).toBe(true);
     expect(kit.enterpriseDelegatedAuth.tokenLifecycle.some((item: { item: string; lifetime: string }) => item.item === "Access token" && item.lifetime.includes("5 days"))).toBe(true);
     expect(kit.safetyAssertions.some((assertion: string) => assertion.includes("35 Swiggy tools"))).toBe(true);
+
+    for (const targetId of ["claude_desktop", "chatgpt", "cursor", "vs_code", "windsurf", "generic_mcp"]) {
+      const generatedValidation = await request(app)
+        .post("/api/ai-client-connect-kit/validate-config")
+        .send({ targetId })
+        .expect(200);
+      expect(generatedValidation.body.validation.score).toBe(100);
+      expect(generatedValidation.body.validation.issues).toEqual([]);
+      expect(generatedValidation.body.validation.requiredServers.every((server: { present: boolean; urlMatches: boolean }) => server.present && server.urlMatches)).toBe(true);
+      expect(generatedValidation.body.validation.secretLeakDetected).toBe(false);
+      expect(generatedValidation.body.validation.requiredServers.find((server: { id: string }) => server.id === "swiggy-instamart").expectedUrl).toBe("https://mcp.swiggy.com/im");
+    }
+
+    const genericValidation = await request(app)
+      .post("/api/ai-client-connect-kit/validate-config")
+      .send({ targetId: "generic_mcp" })
+      .expect(200);
+    expect(genericValidation.body.validation.sanitizedConfig.metadata.authorizationServer).toBe(
+      "https://mcp.swiggy.com/.well-known/oauth-authorization-server",
+    );
+
+    const submittedValidation = await request(app)
+      .post("/api/ai-client-connect-kit/validate-config")
+      .send({
+        targetId: "cursor",
+        config: {
+          mcpServers: {
+            "swiggy-food": { url: "https://mcp.swiggy.com/food" },
+            "swiggy-instamart": { url: "https://mcp.swiggy.com/instamart" },
+          },
+          accessToken: "Bearer live_secret",
+        },
+      })
+      .expect(200);
+    expect(submittedValidation.body.validation.score).toBeLessThan(100);
+    expect(submittedValidation.body.validation.issues).toEqual(
+      expect.arrayContaining(["missing_swiggy-dineout", "wrong_url_swiggy-instamart", "secret_or_token_present"]),
+    );
+    expect(submittedValidation.body.validation.sanitizedConfig.accessToken).toBe("[redacted]");
+    expect(JSON.stringify(submittedValidation.body.validation)).not.toContain("live_secret");
+    expect(
+      submittedValidation.body.validation.telemetry.some(
+        (field: { field: string; value: string }) => field.field === "raw_token_retained" && field.value === "false",
+      ),
+    ).toBe(true);
+
+    const wrongShape = await request(app)
+      .post("/api/ai-client-connect-kit/validate-config")
+      .send({
+        targetId: "claude_desktop",
+        config: {
+          mcpServers: {
+            "swiggy-food": { url: "https://mcp.swiggy.com/food" },
+            "swiggy-instamart": { url: "https://mcp.swiggy.com/im" },
+            "swiggy-dineout": { url: "https://mcp.swiggy.com/dineout" },
+          },
+        },
+      })
+      .expect(200);
+    expect(wrongShape.body.validation.issues).toContain("invalid_claude_mcp_remote_shape");
   });
 
   it("returns coding-agent governance grounded in the root AGENTS.md file", async () => {

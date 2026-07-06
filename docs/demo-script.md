@@ -122,7 +122,7 @@ Open the Launch Center and show:
 - Developer Quickstart Workbench showing official first-call steps, SDK/framework adapters, executable `get_addresses` JSON-RPC drills, OAuth gates, and recipe handoffs.
 - CTA Execution Center showing official CTA/header/footer/docs click targets, keyboard paths, proof links, operator gates, and non-auto-submission rules.
 - Innovation Radar showing premium opportunity lanes, route optimizations, build phases, differentiators, and staging or partner gates derived from Swiggy source signals.
-- AI Client Connect Kit showing Claude Desktop, ChatGPT, Cursor, VS Code, Windsurf, generic MCP config, coding-agent rules, and SDK auth modes.
+- AI Client Connect Kit showing Claude Desktop, ChatGPT, Cursor, VS Code, Windsurf, generic MCP config, config validation, coding-agent rules, and SDK auth modes.
 - Brand Compliance Kit showing Powered by Swiggy attribution, co-branding asset gates, palette audit, and no-endorsement copy.
 - Journey Compiler showing official recipe routes, all 35 tools, confirmation gates, recovery reads, and call savings.
 - Access Dossier showing Swiggy application fields, review checks, ground rules, legal readiness, and the developer-track submission path.
@@ -227,7 +227,7 @@ Open Production Evidence and show:
 - Luxury Experience Workspace for polished reservation, Food cart, Instamart basket, combined evening, and recovery review surfaces with all-tool coverage and separate confirmations.
 - Reviewer Artifact Vault for proof links, screenshot targets, verification commands, redaction rules, and access-review handoff email.
 - Visual QA Center for reviewer screenshot selectors, viewport coverage, Deep Site Map and Access Evidence Matrix card proof, no-overlap/text-fit rules, widget fallback checks, and screenshot automation gates.
-- AI Client Connect Kit artifact for consumer AI-client, coding-agent, SDK, and delegated-auth readiness.
+- AI Client Connect Kit artifact for consumer AI-client, config validation, coding-agent, SDK, and delegated-auth readiness.
 - Brand Compliance Kit artifact for attribution, co-branding, palette, and external asset gates.
 - Swiggy Journey Compiler artifact for official recipe routes and all-tool coverage.
 - Swiggy Access Dossier artifact for access-page fields, ground rules, and manual inputs.

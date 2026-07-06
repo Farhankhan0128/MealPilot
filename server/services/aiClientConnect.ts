@@ -1,8 +1,10 @@
 import type {
   AgentSdkAdapter,
+  AiClientConfigValidation,
   AiClientConfigTarget,
   AiClientConnectKit,
   AiClientServerConfig,
+  AiClientTarget,
   CodingAgentRule,
   EnterpriseDelegatedAuthBlueprint,
 } from "../../src/domain/types.js";
@@ -14,6 +16,10 @@ const officialSources = [
   "https://mcp.swiggy.com/builders/docs/start/developer/build-an-agent/",
   "https://mcp.swiggy.com/builders/docs/start/enterprise/delegated-auth/",
 ];
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+}
 
 function buildServers(): AiClientServerConfig[] {
   return buildMcpCoverage().map((coverage) => ({
@@ -46,6 +52,93 @@ function mcpRemoteCommandConfig(servers: AiClientServerConfig[]) {
       },
     ]),
   );
+}
+
+function redactSecrets(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(redactSecrets);
+  if (!isRecord(value)) return value;
+  return Object.fromEntries(
+    Object.entries(value).map(([key, nested]) => {
+      if (/token|secret|bearer|api[_-]?key/i.test(key)) return [key, "[redacted]"];
+      if (typeof nested === "string" && /bearer\s+|access[_-]?token|sk-[a-z0-9]/i.test(nested)) return [key, "[redacted]"];
+      return [key, redactSecrets(nested)];
+    }),
+  );
+}
+
+function containsSecret(value: unknown): boolean {
+  if (Array.isArray(value)) return value.some(containsSecret);
+  if (!isRecord(value)) return typeof value === "string" && /bearer\s+|access[_-]?token|sk-[a-z0-9]/i.test(value);
+  return Object.entries(value).some(
+    ([key, nested]) => /token|secret|bearer|api[_-]?key/i.test(key) || containsSecret(nested),
+  );
+}
+
+function flattenConfigEntries(config: Record<string, unknown>): Array<{ id: string; url?: string }> {
+  if (isRecord(config.mcpServers)) {
+    return Object.entries(config.mcpServers).map(([id, value]) => {
+      const record = isRecord(value) ? value : {};
+      const args = Array.isArray(record.args) ? record.args : [];
+      const url = typeof record.url === "string" ? record.url : args.find((item): item is string => typeof item === "string" && item.startsWith("https://"));
+      return { id, url };
+    });
+  }
+  if (Array.isArray(config.remoteServers)) {
+    return config.remoteServers
+      .filter(isRecord)
+      .map((server) => ({ id: String(server.name ?? server.id ?? ""), url: typeof server.url === "string" ? server.url : undefined }));
+  }
+  if (isRecord(config["github.copilot.chat.mcp.servers"])) {
+    return Object.entries(config["github.copilot.chat.mcp.servers"]).map(([id, value]) => ({
+      id,
+      url: isRecord(value) && typeof value.url === "string" ? value.url : undefined,
+    }));
+  }
+  if (Array.isArray(config.servers)) {
+    return config.servers
+      .filter(isRecord)
+      .map((server) => ({ id: String(server.id ?? server.name ?? ""), url: typeof server.url === "string" ? server.url : undefined }));
+  }
+  return [];
+}
+
+function mcpShape(config: Record<string, unknown>): AiClientConfigValidation["mcpShape"] {
+  if (isRecord(config.mcpServers)) return "mcpServers";
+  if (Array.isArray(config.remoteServers)) return "remoteServers";
+  if (isRecord(config["github.copilot.chat.mcp.servers"])) return "github_copilot";
+  if (Array.isArray(config.servers)) return "generic_servers";
+  return "unknown";
+}
+
+function hasOauthSignal(config: Record<string, unknown>, target: AiClientConfigTarget) {
+  if (target.id === "generic_mcp") {
+    return config.authentication === "oauth_2_1_pkce" && isRecord(config.metadata);
+  }
+  return target.setupSteps.some((step) => /oauth/i.test(step)) || JSON.stringify(config).includes("mcp.swiggy.com");
+}
+
+function targetShapeIssues(targetId: AiClientTarget, config: Record<string, unknown>, shape: AiClientConfigValidation["mcpShape"]) {
+  if (targetId === "claude_desktop") {
+    const servers = isRecord(config.mcpServers) ? Object.values(config.mcpServers) : [];
+    return servers.every(
+      (server) =>
+        isRecord(server) &&
+        server.command === "npx" &&
+        Array.isArray(server.args) &&
+        server.args[0] === "mcp-remote",
+    )
+      ? []
+      : ["invalid_claude_mcp_remote_shape"];
+  }
+  if (targetId === "chatgpt" && shape !== "remoteServers") return ["invalid_chatgpt_remote_servers_shape"];
+  if (targetId === "vs_code" && shape !== "github_copilot") return ["invalid_vs_code_mcp_servers_shape"];
+  if ((targetId === "cursor" || targetId === "windsurf") && shape !== "mcpServers") return [`invalid_${targetId}_mcp_servers_shape`];
+  if (targetId === "generic_mcp") {
+    return shape === "generic_servers" && config.transport === "streamable_http" && config.authentication === "oauth_2_1_pkce"
+      ? []
+      : ["invalid_generic_mcp_shape"];
+  }
+  return [];
 }
 
 function clientTargets(servers: AiClientServerConfig[]): AiClientConfigTarget[] {
@@ -302,6 +395,75 @@ export function buildAiClientConnectKit(): AiClientConnectKit {
       "Live OAuth completion requires a user-owned Swiggy account and client-side browser flow.",
       "Enterprise delegated-auth deployments need approved redirect URIs and Swiggy partnership onboarding.",
       "Actual live tool calls can place real orders or bookings, so production testing requires operator-controlled accounts.",
+    ],
+  };
+}
+
+export function validateAiClientConfig(input: {
+  targetId: AiClientTarget;
+  config?: Record<string, unknown>;
+}): AiClientConfigValidation {
+  const kit = buildAiClientConnectKit();
+  const target = kit.clientTargets.find((item) => item.id === input.targetId) ?? kit.clientTargets[0];
+  const config = input.config ?? target.config;
+  const entries = flattenConfigEntries(config);
+  const requiredServers = kit.servers.map((server) => {
+    const entry = entries.find((item) => item.id === server.id || item.id === server.server);
+    return {
+      id: server.id,
+      server: server.server,
+      expectedUrl: server.url,
+      present: Boolean(entry),
+      urlMatches: entry?.url === server.url,
+    };
+  });
+  const secretLeakDetected = containsSecret(config);
+  const oauthReady = hasOauthSignal(config, target);
+  const shape = mcpShape(config);
+  const issues = [
+    ...requiredServers.flatMap((server) => [
+      server.present ? "" : `missing_${server.id}`,
+      server.present && !server.urlMatches ? `wrong_url_${server.id}` : "",
+    ]),
+    ...targetShapeIssues(target.id, config, shape),
+    shape === "unknown" ? "unknown_mcp_config_shape" : "",
+    oauthReady ? "" : "oauth_signal_missing",
+    secretLeakDetected ? "secret_or_token_present" : "",
+  ].filter(Boolean);
+  const score = Math.max(0, 100 - issues.length * 14);
+
+  return {
+    generatedAt: new Date().toISOString(),
+    requestId: `client_cfg_${Date.now().toString(36)}`,
+    targetId: target.id,
+    inputSource: input.config ? "submitted" : "generated",
+    score,
+    requiredServers,
+    oauthReady,
+    mcpShape: shape,
+    secretLeakDetected,
+    issues,
+    nextActions: [
+      issues.some((issue) => issue.startsWith("missing_")) ? "Add all three Swiggy MCP servers: swiggy-food, swiggy-instamart, and swiggy-dineout." : "",
+      issues.some((issue) => issue.startsWith("wrong_url_")) ? "Fix server URLs, including Instamart at https://mcp.swiggy.com/im." : "",
+      shape === "unknown" ? "Use the client-specific MCP shape generated by the AI Client Connect Kit." : "",
+      oauthReady ? "Restart the client and complete Swiggy OAuth when prompted." : "Add OAuth 2.1 PKCE or remote-MCP OAuth setup before live use.",
+      secretLeakDetected ? "Remove raw tokens or authorization headers from client config and use the client's OAuth flow instead." : "",
+      "Run the verification prompt after reload and keep commercial action confirmations visible.",
+    ].filter(Boolean),
+    sanitizedConfig: redactSecrets(config) as Record<string, unknown>,
+    telemetry: [
+      { field: "target_id", value: target.id, redaction: "safe enum" },
+      { field: "input_source", value: input.config ? "submitted" : "generated", redaction: "safe enum" },
+      { field: "shape", value: shape, redaction: "safe enum" },
+      { field: "secret_leak_detected", value: String(secretLeakDetected), redaction: "boolean only" },
+      { field: "raw_token_retained", value: "false", redaction: "hard-coded privacy invariant" },
+    ],
+    assertions: [
+      "Every validated config must include Food, Instamart, and Dineout MCP servers.",
+      "Instamart must use https://mcp.swiggy.com/im, not /instamart.",
+      "Client configs must rely on OAuth or remote MCP auth flows instead of pasted bearer tokens.",
+      "Generated configs keep commercial Swiggy tools available only behind client-visible confirmation behavior.",
     ],
   };
 }

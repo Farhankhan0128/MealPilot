@@ -222,6 +222,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/swiggy-cta-execution-center`
 - `GET /api/swiggy-innovation-radar`
 - `GET /api/ai-client-connect-kit`
+- `POST /api/ai-client-connect-kit/validate-config`
 - `GET /api/coding-agent-governance`
 - `GET /api/brand-compliance-kit`
 - `GET /api/swiggy-journey-compiler`
@@ -452,7 +453,7 @@ The test suite checks that:
 - CTA Execution Center converts official Builders CTAs, header links, docs nav links, footer resources, mailto links, Google Forms, and legal links into click-ready browser actions, keyboard paths, proof bundles, and manual completion gates.
 - Swiggy Innovation Radar maps Swiggy developer ideas, enterprise signals, access ground rules, support model, and MCP references into premium product lanes, route optimizations, build phases, differentiators, and partner gates.
 - Traffic Readiness maps expected sessions, daily tool calls, peak QPS, Retry-After behavior, seven-day major-event notice, capacity upgrade email, and the 1% -> 10% -> 50% -> 100% rollout.
-- AI Client Connect Kit generates client configs, coding-agent rule files, SDK auth-mode guidance, troubleshooting, privacy notes, and delegated-auth gates.
+- AI Client Connect Kit generates and validates client configs, coding-agent rule files, SDK auth-mode guidance, endpoint correctness, secret redaction, troubleshooting, privacy notes, and delegated-auth gates.
 - Coding Agent Governance verifies `AGENTS.md` against official Swiggy docs retrieval rules, current tool-count smoke tests, commercial confirmation gates, and sensitive-data redaction boundaries.
 - Brand Compliance Kit maps Powered by Swiggy attribution, co-branding rules, asset gates, palette usage, no-endorsement copy, and final screenshot review.
 - Data Governance Center maps Swiggy Data Fiduciary and MealPilot Data Processor roles, India/Singapore residency, tool-call PII flows, local DSR endpoints, Swiggy-originated DSR routing, 90-day audit retention, token redaction, security contacts, and signed-manifest watch items.

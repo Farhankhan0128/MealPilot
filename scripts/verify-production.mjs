@@ -2170,6 +2170,52 @@ assert(
   aiClientConnect.connectKit.enterpriseDelegatedAuth.tokenLifecycle.some((item) => item.item === "Access token"),
   "AI client connect kit delegated auth lifecycle is missing",
 );
+for (const targetId of ["claude_desktop", "chatgpt", "cursor", "vs_code", "windsurf", "generic_mcp"]) {
+  const validation = await request("/api/ai-client-connect-kit/validate-config", {
+    method: "POST",
+    body: JSON.stringify({ targetId }),
+  });
+  assert(validation.validation.score === 100, `AI client generated config validation failed for ${targetId}`);
+  assert(validation.validation.issues.length === 0, `AI client generated config has issues for ${targetId}`);
+  assert(
+    validation.validation.requiredServers.every((server) => server.present && server.urlMatches),
+    `AI client generated config server mapping is wrong for ${targetId}`,
+  );
+  assert(!validation.validation.secretLeakDetected, `AI client generated config leaked a secret for ${targetId}`);
+}
+const genericClientValidation = await request("/api/ai-client-connect-kit/validate-config", {
+  method: "POST",
+  body: JSON.stringify({ targetId: "generic_mcp" }),
+});
+assert(
+  genericClientValidation.validation.sanitizedConfig.metadata.authorizationServer ===
+    "https://mcp.swiggy.com/.well-known/oauth-authorization-server",
+  "AI client generic OAuth metadata was incorrectly redacted",
+);
+const submittedClientValidation = await request("/api/ai-client-connect-kit/validate-config", {
+  method: "POST",
+  body: JSON.stringify({
+    targetId: "cursor",
+    config: {
+      mcpServers: {
+        "swiggy-food": { url: "https://mcp.swiggy.com/food" },
+        "swiggy-instamart": { url: "https://mcp.swiggy.com/instamart" },
+      },
+      accessToken: "Bearer live_secret",
+    },
+  }),
+});
+assert(
+  submittedClientValidation.validation.issues.includes("wrong_url_swiggy-instamart") &&
+    submittedClientValidation.validation.issues.includes("missing_swiggy-dineout") &&
+    submittedClientValidation.validation.issues.includes("secret_or_token_present"),
+  "AI client submitted config validation did not catch endpoint or secret issues",
+);
+assert(
+  JSON.stringify(submittedClientValidation.validation).includes("[redacted]") &&
+    !JSON.stringify(submittedClientValidation.validation).includes("live_secret"),
+  "AI client submitted config validation did not redact secrets",
+);
 
 const codingAgentGovernance = await request("/api/coding-agent-governance");
 assert(codingAgentGovernance.codingAgentGovernance.score >= 95, "coding agent governance score is below target");
@@ -5010,6 +5056,8 @@ console.log(
       authLifecycleRefreshTokenV1: authLifecycle.authLifecycleCenter.tokenLifetimes.refreshTokenAvailableInV1,
       aiClientConnectScore: aiClientConnect.connectKit.score,
       aiClientTargets: aiClientConnect.connectKit.clientTargets.length,
+      aiClientValidationScore: genericClientValidation.validation.score,
+      aiClientSubmittedIssues: submittedClientValidation.validation.issues.length,
       codingAgentGovernanceScore: codingAgentGovernance.codingAgentGovernance.score,
       codingAgentSignals: codingAgentGovernance.codingAgentGovernance.ruleFile.totalSignals,
       brandComplianceScore: brandCompliance.brandCompliance.score,

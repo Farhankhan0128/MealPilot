@@ -2362,6 +2362,33 @@ export interface AiClientConfigTarget {
   privacyNote: string;
 }
 
+export interface AiClientConfigValidation {
+  generatedAt: string;
+  requestId: string;
+  targetId: AiClientTarget;
+  inputSource: "generated" | "submitted";
+  score: number;
+  requiredServers: Array<{
+    id: string;
+    server: SwiggyServer;
+    expectedUrl: string;
+    present: boolean;
+    urlMatches: boolean;
+  }>;
+  oauthReady: boolean;
+  mcpShape: "mcpServers" | "remoteServers" | "github_copilot" | "generic_servers" | "unknown";
+  secretLeakDetected: boolean;
+  issues: string[];
+  nextActions: string[];
+  sanitizedConfig: Record<string, unknown>;
+  telemetry: Array<{
+    field: string;
+    value: string;
+    redaction: string;
+  }>;
+  assertions: string[];
+}
+
 export interface CodingAgentRule {
   id: string;
   target: "claude_code" | "cursor_rules" | "windsurf_rules" | "agents_md" | "raw";

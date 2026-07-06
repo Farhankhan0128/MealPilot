@@ -4321,6 +4321,10 @@ function LaunchCenterPanel({
               <strong>{aiClientConnectKit?.sdkAdapters.length ?? 0}</strong>
               <span>SDKs</span>
             </div>
+            <div>
+              <strong>{aiClientConnectKit ? "POST" : "-"}</strong>
+              <span>Validate</span>
+            </div>
           </div>
           <ul className="compact-status-list">
             {(aiClientConnectKit?.clientTargets ?? []).slice(0, 5).map((target) => (

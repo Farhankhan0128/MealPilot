@@ -5,6 +5,8 @@ import type {
   AccessSubmissionHandoffState,
   AuditLedgerCenter,
   AiClientConnectKit,
+  AiClientConfigValidation,
+  AiClientTarget,
   BrandComplianceKit,
   BuilderReadinessItem,
   BuilderPacketExport,
@@ -566,6 +568,13 @@ export function fetchSwiggyInnovationRadar() {
 
 export function fetchAiClientConnectKit() {
   return requestJson<{ connectKit: AiClientConnectKit }>("/api/ai-client-connect-kit");
+}
+
+export function validateAiClientConfig(input: { targetId: AiClientTarget; config?: Record<string, unknown> }) {
+  return requestJson<{ validation: AiClientConfigValidation }>("/api/ai-client-connect-kit/validate-config", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
 }
 
 export function fetchCodingAgentGovernance() {

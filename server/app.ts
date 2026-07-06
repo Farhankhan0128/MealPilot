@@ -22,7 +22,7 @@ import {
   buildPlanReminders,
   buildRestockSuggestions,
 } from "./services/advancedWorkflows.js";
-import { buildAiClientConnectKit } from "./services/aiClientConnect.js";
+import { buildAiClientConnectKit, validateAiClientConfig } from "./services/aiClientConnect.js";
 import { buildAccessSubmissionStudio } from "./services/accessSubmissionStudio.js";
 import { buildSwiggyAuthLifecycleCenter } from "./services/authLifecycleCenter.js";
 import { buildAuditLedgerCenter } from "./services/auditLedger.js";
@@ -356,6 +356,11 @@ const errorClassificationSchema = z.object({
   routeClass: z
     .enum(["read", "cart_mutation", "coupon", "commercial_action", "tracking", "support"])
     .optional(),
+});
+
+const aiClientConfigValidationSchema = z.object({
+  targetId: z.enum(["claude_desktop", "chatgpt", "cursor", "vs_code", "windsurf", "generic_mcp"]),
+  config: z.record(z.string(), z.unknown()).optional(),
 });
 
 const resourcePromptExecutionSchema = z
@@ -1137,6 +1142,11 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/ai-client-connect-kit", (_req, res) => {
     res.json({ connectKit: buildAiClientConnectKit() });
+  });
+
+  app.post("/api/ai-client-connect-kit/validate-config", (req, res) => {
+    const body = aiClientConfigValidationSchema.parse(req.body);
+    res.json({ validation: validateAiClientConfig(body) });
   });
 
   app.get("/api/coding-agent-governance", (_req, res) => {
