@@ -226,6 +226,7 @@ It runs:
 - `npm test -- --run`
 - `npm run build`
 - production smoke verification against `npm start`
+- CI reviewer evidence capture: `npm run verify:production`, `npm run verify:visual`, `npm run export:builder-packet`, and uploaded `artifacts/visual-qa` plus `artifacts/builder-packet`
 
 Docker:
 
@@ -329,6 +330,7 @@ The test suite checks that:
 - Local MCP JSON-RPC supports `resources/list`, `resources/read`, `prompts/list`, and `prompts/get` for review-time evidence before live Swiggy credentials.
 - Submission Console consolidates developer/enterprise access targets, official access requirements, prepared form fields, required attachments, packet order, demo-video gate, runbook steps, blockers, and builders@swiggy.in drafts.
 - Builder Packet Export writes the copy-ready and machine-readable Swiggy access packet under ignored local artifacts, preserving operator-owned form submission and Swiggy credential gates.
+- GitHub Actions installs Chromium for Playwright, runs production smoke, captures visual evidence, exports the Swiggy builder packet, and uploads ignored reviewer artifacts for every push and pull request.
 - Swiggy OAuth Status reports authorize/token/logout endpoints, pending PKCE verifier count, callback status, token source, token expiry, storage rules, and no-token-logging posture.
 - Credential onboarding reports DCR preview, redirect URI status, metadata endpoints, PKCE readiness, scopes, and access-form fields.
 - Runtime telemetry records live API and MCP request events with request IDs, hashed user context, session correlation, status classes, latency, and redaction evidence.

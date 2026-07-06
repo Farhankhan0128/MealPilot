@@ -128,7 +128,7 @@ Planned MCP servers:
 - [`docs/safety-and-compliance.md`](docs/safety-and-compliance.md): order confirmation, PII, OAuth, traffic, and abuse-prevention plan.
 - [`docs/roadmap.md`](docs/roadmap.md): MVP, staging, and production path.
 - [`docs/swiggy-builders-research-and-product-plan.md`](docs/swiggy-builders-research-and-product-plan.md): full Swiggy Builders website, CTA, API, route-optimization, and product strategy map.
-- [`.github/workflows/ci.yml`](.github/workflows/ci.yml): lint, test, build, and production smoke workflow.
+- [`.github/workflows/ci.yml`](.github/workflows/ci.yml): lint, test, build, production smoke, Playwright visual capture, builder-packet export, and reviewer artifact upload workflow.
 - [`Dockerfile`](Dockerfile): production container with `/api/ready` healthcheck.
 - [`render.yaml`](render.yaml): deploy blueprint with Swiggy credential placeholders.
 - [`scripts/verify-production.mjs`](scripts/verify-production.mjs): automated reviewer smoke test.
@@ -420,7 +420,7 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 
 Runnable full-stack localhost app, optional durable persistence, 35-tool Swiggy MCP coverage map, Swiggy Website Atlas with production-access and launch-blog coverage, Builder Intake Command Center, FAQ & Policy Center, Growth Partnership Center, Channel & Multimodal Studio, Nutrition & Budget Intelligence, Household Preference Graph, Guest Collaboration & Calendar Center, Luxury Experience Workspace, Reviewer Artifact Vault, Visual QA Center, 69-page Swiggy Docs Coverage audit, Swiggy Upstream Watch, Swiggy Source Intelligence, Swiggy Innovation Radar, AI Client Connect Kit, Brand Compliance Kit, Data Governance Center, Enterprise Delegated Auth Center, Swiggy Journey Compiler, Swiggy Access Dossier, Premium Use Case Studio, Premium Concierge Itinerary, Staging Cutover Rehearsal, Staging Certification Matrix, Staging Transcript Export, executable 35-tool MCP Tool Lab, Tool Contract Matrix, Scenario Runner, State Orchestrator, Widget Runtime Center, Commercial Action Guard, MCP Capability Registry, Resource & Prompt Studio, staging/production MCP gateway, Swiggy OAuth Status, Credential Cockpit with OAuth/DCR evidence, runtime telemetry ledger, Audit Ledger Center, Submission Console, builder access proposal, technical packet, safety plan, launch readiness dashboard, demo studio, production evidence center, Traffic Readiness Plan, SLO Incident Command Center, Production Launch Bundle, executable resilience drills, Support Bridge, Error Intelligence, multi-scenario evaluation lab, submission package, support workflow, and tests are ready. Next step: record the 2-3 minute demo and submit the Swiggy Builders Club access form with the GitHub repo and packet export.
 
-CI/CD and deploy assets are included: GitHub Actions runs lint, tests, build, and production smoke verification; Docker serves the built frontend and API from one container; Render can deploy from `render.yaml` after Swiggy credentials are issued.
+CI/CD and deploy assets are included: GitHub Actions runs lint, tests, build, production smoke verification, Playwright screenshot capture, and builder-packet export, then uploads reviewer evidence artifacts; Docker serves the built frontend and API from one container; Render can deploy from `render.yaml` after Swiggy credentials are issued.
 
 ## Official References
 

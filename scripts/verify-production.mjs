@@ -1,6 +1,9 @@
 /* global console, fetch, process, URLSearchParams */
 
+import fs from "node:fs";
+
 const baseUrl = process.env.MEALPILOT_URL ?? "http://localhost:8787";
+const ciWorkflow = fs.readFileSync(".github/workflows/ci.yml", "utf8");
 
 async function request(path, init) {
   const response = await fetch(`${baseUrl}${path}`, {
@@ -34,6 +37,11 @@ assert(ready.ok, "readiness probe is not ok");
 
 const openApi = await request("/api/openapi.json");
 assert(openApi.openapi === "3.1.0", "OpenAPI contract is missing");
+assert(ciWorkflow.includes("npx playwright install --with-deps chromium"), "CI Playwright browser install is missing");
+assert(ciWorkflow.includes("npm run verify:production"), "CI production smoke is missing");
+assert(ciWorkflow.includes("npm run verify:visual"), "CI visual smoke is missing");
+assert(ciWorkflow.includes("npm run export:builder-packet"), "CI builder packet export is missing");
+assert(ciWorkflow.includes("actions/upload-artifact@v4"), "CI reviewer artifact upload is missing");
 assert(
   openApi.paths["/api/data-governance-center"].get.summary.includes("Data Governance"),
   "OpenAPI data governance contract is missing",
@@ -2599,6 +2607,7 @@ console.log(
       launchBundleScore: launchBundle.launchBundle.score,
       launchBundleArtifacts: launchBundle.launchBundle.artifacts.length,
       storage: storage.storage.kind,
+      ciReviewerEvidence: true,
     },
     null,
     2,
