@@ -120,6 +120,7 @@ import { buildSwiggyHandshakeDoctor } from "./services/swiggyHandshakeDoctor.js"
 import { buildSupportBridgeReport, executeSupportBridgeReport } from "./services/supportBridge.js";
 import { buildSwiggyScenarioRunner } from "./services/scenarioRunner.js";
 import { buildSwiggyToolContractMatrix } from "./services/toolContractMatrix.js";
+import { buildSwiggyToolParityAuditor } from "./services/toolParityAuditor.js";
 import { buildMcpToolLabReport } from "./services/toolLab.js";
 import { buildTrafficReadinessPlan } from "./services/trafficReadiness.js";
 import { buildSloIncidentCommandCenter } from "./services/sloIncidentCommand.js";
@@ -1081,6 +1082,13 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
     "/api/swiggy-llms-manifest-verifier",
     asyncRoute(async (_req, res) => {
       res.json({ llmsManifest: await buildSwiggyLlmsManifestVerifier() });
+    }),
+  );
+
+  app.get(
+    "/api/swiggy-tool-parity-auditor",
+    asyncRoute(async (_req, res) => {
+      res.json({ toolParityAuditor: await buildSwiggyToolParityAuditor() });
     }),
   );
 

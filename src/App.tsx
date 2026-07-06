@@ -117,6 +117,7 @@ import {
   fetchSwiggyDocsCoverage,
   fetchSwiggyDocsTwinExplorer,
   fetchSwiggyLlmsManifestVerifier,
+  fetchSwiggyToolParityAuditor,
   fetchSwiggyDeepSiteMap,
   fetchSwiggyCancellationCareCenter,
   fetchSwiggyConfirmationCommandCenter,
@@ -263,6 +264,7 @@ import type {
   SwiggyLiveSignalCalibrationReport,
   SwiggyStateOrchestratorReport,
   SwiggyToolContractMatrix,
+  SwiggyToolParityAuditor,
   SwiggyWebsiteAtlas,
   SwiggyUpstreamWatchReport,
   SwiggyWidgetRuntimeReport,
@@ -444,6 +446,7 @@ function App() {
   const [swiggyDocsCoverage, setSwiggyDocsCoverage] = useState<SwiggyDocsCoverageReport | null>(null);
   const [docsTwinExplorer, setDocsTwinExplorer] = useState<SwiggyDocsTwinExplorer | null>(null);
   const [llmsManifest, setLlmsManifest] = useState<SwiggyLlmsManifestVerifier | null>(null);
+  const [toolParityAuditor, setToolParityAuditor] = useState<SwiggyToolParityAuditor | null>(null);
   const [swiggyUpstreamWatch, setSwiggyUpstreamWatch] = useState<SwiggyUpstreamWatchReport | null>(null);
   const [swiggySourceIntelligence, setSwiggySourceIntelligence] =
     useState<SwiggySourceIntelligenceReport | null>(null);
@@ -636,6 +639,7 @@ function App() {
       docsCoverageResponse,
       docsTwinExplorerResponse,
       llmsManifestResponse,
+      toolParityAuditorResponse,
       upstreamWatchResponse,
       sourceIntelligenceResponse,
       developerQuickstartResponse,
@@ -730,6 +734,7 @@ function App() {
       fetchSwiggyDocsCoverage(),
       fetchSwiggyDocsTwinExplorer(),
       fetchSwiggyLlmsManifestVerifier(),
+      fetchSwiggyToolParityAuditor(),
       fetchSwiggyUpstreamWatch(),
       fetchSourceIntelligenceOptional(),
       fetchDeveloperQuickstartWorkbench(),
@@ -825,6 +830,7 @@ function App() {
     setSwiggyDocsCoverage(docsCoverageResponse.docsCoverage);
     setDocsTwinExplorer(docsTwinExplorerResponse.docsTwinExplorer);
     setLlmsManifest(llmsManifestResponse.llmsManifest);
+    setToolParityAuditor(toolParityAuditorResponse.toolParityAuditor);
     setSwiggyUpstreamWatch(upstreamWatchResponse.upstreamWatch);
     setSwiggySourceIntelligence(sourceIntelligenceResponse.sourceIntelligence);
     setDeveloperQuickstart(developerQuickstartResponse.quickstartWorkbench);
@@ -923,6 +929,7 @@ function App() {
       docsCoverageResponse,
       docsTwinExplorerResponse,
       llmsManifestResponse,
+      toolParityAuditorResponse,
       upstreamWatchResponse,
       sourceIntelligenceResponse,
       developerQuickstartResponse,
@@ -1014,6 +1021,7 @@ function App() {
       fetchSwiggyDocsCoverage(),
       fetchSwiggyDocsTwinExplorer(),
       fetchSwiggyLlmsManifestVerifier(),
+      fetchSwiggyToolParityAuditor(),
       fetchSwiggyUpstreamWatch(),
       fetchSourceIntelligenceOptional(),
       fetchDeveloperQuickstartWorkbench(),
@@ -1105,6 +1113,7 @@ function App() {
     setSwiggyDocsCoverage(docsCoverageResponse.docsCoverage);
     setDocsTwinExplorer(docsTwinExplorerResponse.docsTwinExplorer);
     setLlmsManifest(llmsManifestResponse.llmsManifest);
+    setToolParityAuditor(toolParityAuditorResponse.toolParityAuditor);
     setSwiggyUpstreamWatch(upstreamWatchResponse.upstreamWatch);
     setSwiggySourceIntelligence(sourceIntelligenceResponse.sourceIntelligence);
     setDeveloperQuickstart(developerQuickstartResponse.quickstartWorkbench);
@@ -1737,6 +1746,7 @@ function App() {
                 capabilityRegistry={mcpCapabilityRegistry}
                 resourcePromptStudio={mcpResourcePromptStudio}
                 contractMatrix={toolContractMatrix}
+                toolParityAuditor={toolParityAuditor}
                 scenarioRunner={scenarioRunner}
                 stateOrchestrator={stateOrchestrator}
                 widgetRuntime={widgetRuntime}
@@ -2318,6 +2328,7 @@ function LaunchCenterPanel({
   capabilityRegistry,
   resourcePromptStudio,
   contractMatrix,
+  toolParityAuditor,
   scenarioRunner,
   stateOrchestrator,
   widgetRuntime,
@@ -2383,6 +2394,7 @@ function LaunchCenterPanel({
   capabilityRegistry: McpCapabilityRegistry | null;
   resourcePromptStudio: McpResourcePromptStudio | null;
   contractMatrix: SwiggyToolContractMatrix | null;
+  toolParityAuditor: SwiggyToolParityAuditor | null;
   scenarioRunner: SwiggyScenarioRunnerReport | null;
   stateOrchestrator: SwiggyStateOrchestratorReport | null;
   widgetRuntime: SwiggyWidgetRuntimeReport | null;
@@ -2626,6 +2638,56 @@ function LaunchCenterPanel({
               </li>
             ))}
           </ul>
+        </article>
+
+        <article className="tool-parity-card">
+          <div className="mini-heading">
+            <ClipboardCheck aria-hidden="true" />
+            <strong>Tool Parity Auditor</strong>
+          </div>
+          <span>
+            {toolParityAuditor
+              ? `${toolParityAuditor.score}/100, ${toolParityAuditor.totals.matchedTools}/${toolParityAuditor.totals.liveReferenceTools} live refs`
+              : "Reconciling live Swiggy references with local contracts"}
+          </span>
+          <div className="tool-parity-grid">
+            <div>
+              <strong>{toolParityAuditor?.totals.missingContracts ?? 0}</strong>
+              <span>Missing</span>
+            </div>
+            <div>
+              <strong>{toolParityAuditor?.totals.extraContracts ?? 0}</strong>
+              <span>Orphans</span>
+            </div>
+            <div>
+              <strong>{toolParityAuditor?.totals.commercialActions ?? 0}</strong>
+              <span>Commerce</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(toolParityAuditor?.serverSummaries ?? []).map((server) => (
+              <li
+                key={server.server}
+                data-status={server.status === "covered" ? "healthy" : server.status === "blocked" ? "blocked" : "watch"}
+              >
+                <span>{serverLabel(server.server)}</span>
+                <strong>
+                  {server.covered}/{server.expectedTools}
+                </strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-intelligence-actions" aria-label="Tool parity links">
+            <a href="/api/swiggy-tool-parity-auditor" target="_blank" rel="noreferrer">
+              Parity API
+            </a>
+            <a href="/api/mcp/tool-contract-matrix" target="_blank" rel="noreferrer">
+              Contracts
+            </a>
+            <a href="/api/swiggy-llms-manifest-verifier" target="_blank" rel="noreferrer">
+              Manifest
+            </a>
+          </div>
         </article>
 
         <article className="scenario-runner-card">

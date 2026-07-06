@@ -122,6 +122,7 @@ import type {
   SwiggySurfaceRehearsalTarget,
   SwiggyStateOrchestratorReport,
   SwiggyToolContractMatrix,
+  SwiggyToolParityAuditor,
   SwiggyUpstreamWatchReport,
   SwiggyWebsiteAtlas,
   SwiggyWidgetRuntimeReport,
@@ -538,6 +539,10 @@ export function fetchSwiggyDocsTwinExplorer() {
 
 export function fetchSwiggyLlmsManifestVerifier() {
   return requestJson<{ llmsManifest: SwiggyLlmsManifestVerifier }>("/api/swiggy-llms-manifest-verifier");
+}
+
+export function fetchSwiggyToolParityAuditor() {
+  return requestJson<{ toolParityAuditor: SwiggyToolParityAuditor }>("/api/swiggy-tool-parity-auditor");
 }
 
 export function fetchSwiggyUpstreamWatch() {

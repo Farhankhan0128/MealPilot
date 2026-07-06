@@ -653,6 +653,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-tool-parity-auditor": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Live Swiggy tool parity auditor",
+          responses: {
+            "200": {
+              description:
+                "Compares the live Swiggy llms.txt reference tools with MealPilot local contracts, fixtures, route classes, confirmation gates, retry policies, and Food 14, Instamart 13, Dineout 8 coverage",
+            },
+          },
+        },
+      },
       "/api/swiggy-upstream-watch": {
         get: {
           tags: ["Builder Access"],

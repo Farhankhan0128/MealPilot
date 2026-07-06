@@ -215,6 +215,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/swiggy-docs-coverage`
 - `GET /api/swiggy-docs-twin-explorer`
 - `GET /api/swiggy-llms-manifest-verifier`
+- `GET /api/swiggy-tool-parity-auditor`
 - `GET /api/swiggy-upstream-watch`
 - `GET /api/swiggy-source-intelligence`
 - `GET /api/swiggy-deep-site-map`
@@ -363,6 +364,8 @@ Production should use an HTTPS redirect URI with exact-match allowlisting.
 `/api/sandbox-credential-workbench` shows the reviewer-facing localhost-to-staging credential plan: local demo proof, DCR, PKCE, exact redirect allowlisting, staging credentials, seeded Food/Instamart/Dineout data, 48-hour soak, commands, and production-promotion gates.
 
 `/api/swiggy-llms-manifest-verifier` fetches only the official Swiggy `llms.txt` URL, parses markdown links, derives rendered twins, compares live page count against Docs Coverage, verifies Swiggy-only origins, and checks Food 14, Instamart 13, and Dineout 8 reference-tool counts. Tests inject fixture text so CI does not depend on live network for parser correctness.
+
+`/api/swiggy-tool-parity-auditor` reuses that official manifest feed to compare each live reference tool against the local Tool Contract Matrix. It reports matched/missing/orphan contracts, server-by-server 14/13/8 parity, commercial/support route classes, confirmation gates, retry posture, fixtures, and drift signals. Fixture tests inject manifest text; production smoke uses the live Swiggy source.
 
 `/api/enterprise-delegated-auth` shows the enterprise platform-operator flow: per-user PKCE, authorization-code exchange, per-user bearer token handling, 5-day token lifetime, 30-day Swiggy user session, redirect scheme strategy, logout, 401/419/403 recovery, capacity backoff, and the contract/staging/production gates Swiggy must approve.
 

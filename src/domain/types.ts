@@ -294,6 +294,66 @@ export interface SwiggyToolContractMatrix {
   externalGates: string[];
 }
 
+export type SwiggyToolParityStatus = "covered" | "watch" | "blocked";
+
+export interface SwiggyToolParityRow {
+  id: string;
+  server: SwiggyServer;
+  tool: string;
+  officialMarkdownUrl: string;
+  officialRenderedUrl: string;
+  localContractId: string | null;
+  endpoint: string;
+  behavior: SwiggyToolContractBehavior | "missing";
+  routeClass: McpToolProbe["routeClass"] | "missing";
+  parameterCount: number;
+  requiredParameterCount: number;
+  confirmationGate: string;
+  retryPolicy: string;
+  fixtureReady: boolean;
+  referenceMatched: boolean;
+  contractMatched: boolean;
+  status: SwiggyToolParityStatus;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyToolParityServerSummary {
+  server: SwiggyServer;
+  liveReferenceTools: number;
+  localContracts: number;
+  expectedTools: number;
+  covered: number;
+  commercialActions: number;
+  mutatingTools: number;
+  supportTools: number;
+  status: SwiggyToolParityStatus;
+}
+
+export interface SwiggyToolParityAuditor {
+  generatedAt: string;
+  score: number;
+  status: SwiggyToolParityStatus;
+  officialSources: string[];
+  totals: {
+    liveReferenceTools: number;
+    localContracts: number;
+    matchedTools: number;
+    missingContracts: number;
+    extraContracts: number;
+    commercialActions: number;
+    supportTools: number;
+    routeClasses: number;
+  };
+  serverSummaries: SwiggyToolParityServerSummary[];
+  rows: SwiggyToolParityRow[];
+  missingContracts: string[];
+  extraContracts: string[];
+  driftSignals: string[];
+  operatorRunbook: Array<{ sequence: number; command: string; proves: string }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type SwiggyScenarioStepStatus = "pass" | "confirmation_gate" | "support_probe" | "external_gate";
 
 export interface SwiggyScenarioStep {

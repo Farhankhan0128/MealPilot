@@ -48,7 +48,7 @@ function referenceTool(url: string) {
   return match[1];
 }
 
-function parseManifest(text: string) {
+export function parseSwiggyLlmsManifest(text: string) {
   let currentSection = "Intro";
   const links: SwiggyLlmsManifestLink[] = [];
   const lines = text.split(/\r?\n/);
@@ -117,7 +117,7 @@ function scoreFor(status: SwiggyLlmsManifestStatus) {
   return 45;
 }
 
-async function defaultFetch(url: string): Promise<ManifestFetchResult> {
+export async function fetchSwiggyLlmsManifest(url: string): Promise<ManifestFetchResult> {
   const startedAt = Date.now();
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 5000);
@@ -142,11 +142,11 @@ async function defaultFetch(url: string): Promise<ManifestFetchResult> {
 }
 
 export async function buildSwiggyLlmsManifestVerifier(
-  fetchManifest: ManifestFetchFn = defaultFetch,
+  fetchManifest: ManifestFetchFn = fetchSwiggyLlmsManifest,
 ): Promise<SwiggyLlmsManifestVerifier> {
   const coverage = buildSwiggyDocsCoverage();
   const manifest = await fetchManifest(llmsUrl);
-  const links = manifest.text ? parseManifest(manifest.text) : [];
+  const links = manifest.text ? parseSwiggyLlmsManifest(manifest.text) : [];
   const sections = sectionSummary(links);
   const status = statusFor(manifest, links, coverage.totalPages);
   const unsafeLinks = links.filter((link) => !link.markdownUrl.startsWith(allowedPrefix) || !link.renderedUrl.startsWith(allowedPrefix));

@@ -93,6 +93,7 @@ Planned MCP servers:
 - Swiggy Docs Coverage audit that maps all 69 `llms.txt`-linked pages across Start, Build, Operate, Reference, and Blog to MealPilot evidence and external gates.
 - Swiggy Docs Twin Explorer that pairs every official markdown twin with its rendered page URL, retrieval command, section group, proof route, and drift gate.
 - Swiggy llms Manifest Verifier at `/api/swiggy-llms-manifest-verifier` that fetches the live official manifest, parses 69 markdown links, verifies rendered twins, enforces Swiggy-only origins, and checks Food 14, Instamart 13, Dineout 8 reference-tool counts.
+- Swiggy Tool Parity Auditor at `/api/swiggy-tool-parity-auditor` that compares live official reference tools against MealPilot's local contracts, fixtures, route classes, confirmation gates, retry policies, and 35/35 coverage.
 - Swiggy Upstream Watch that tracks `llms.txt`, `llms-full.txt`, the changelog, v1.1/v1.2/v2 roadmap, signed manifests, and update actions for future Swiggy MCP changes.
 - Swiggy Source Intelligence that reconciles Builders website pages, CTAs, `llms` docs, markdown twins, reference tool counts, drift signals, and the next build queue against MealPilot evidence.
 - Swiggy Innovation Radar that turns Swiggy developer ideas, enterprise signals, access ground rules, support model, and all MCP servers into premium opportunity lanes, route optimizations, build phases, and partner gates.
@@ -265,6 +266,7 @@ GET  /api/visual-qa-center
 GET  /api/swiggy-docs-coverage
 GET  /api/swiggy-docs-twin-explorer
 GET  /api/swiggy-llms-manifest-verifier
+GET  /api/swiggy-tool-parity-auditor
 GET  /api/swiggy-upstream-watch
 GET  /api/swiggy-source-intelligence
 GET  /api/swiggy-deep-site-map
@@ -509,6 +511,8 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 `GET /api/premium-concierge-itinerary` is the premium product operating layer: official Food, Instamart, Dineout, and combined recipe routes become lunch, pantry, Dineout evening, dessert reminder, and recovery itinerary slots with 35-tool coverage, saved-call optimizations, cart refresh rules, separate confirmation gates, and live-credential external gates.
 
 `GET /api/mcp/tool-contract-matrix` is the contract-level Swiggy integration map: all 35 Food, Instamart, and Dineout tools get parameter metadata, source/privacy labels, response envelope guidance, confirmation gates, retry policy, planned/current error buckets, official reference links, and local fixture previews.
+
+`GET /api/swiggy-tool-parity-auditor` is the live-reference reconciliation layer: the official Swiggy `llms.txt` reference tools are matched against MealPilot contracts, fixtures, route classes, commercial/support safety labels, confirmation gates, retry posture, and server-by-server 14/13/8 parity before access submission.
 
 `GET /api/mcp/scenario-runner` executes the official Food, Instamart, Dineout, and combined recipes as local JSON-RPC `tools/call` traces, including guard/recovery probes, support paths, confirmation-gated commerce steps, and full 35-tool coverage.
 

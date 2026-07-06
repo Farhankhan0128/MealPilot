@@ -1394,6 +1394,7 @@ select:focus {
 
 .tool-lab-stat-grid,
 .contract-matrix-grid,
+.tool-parity-grid,
 .scenario-runner-grid,
 .state-orchestrator-grid,
 .resource-prompt-grid,
@@ -1440,6 +1441,7 @@ select:focus {
 
 .tool-lab-stat-grid div,
 .contract-matrix-grid div,
+.tool-parity-grid div,
 .scenario-runner-grid div,
 .state-orchestrator-grid div,
 .resource-prompt-grid div,
@@ -1487,6 +1489,7 @@ select:focus {
 
 .tool-lab-stat-grid strong,
 .contract-matrix-grid strong,
+.tool-parity-grid strong,
 .scenario-runner-grid strong,
 .state-orchestrator-grid strong,
 .resource-prompt-grid strong,
@@ -1533,6 +1536,7 @@ select:focus {
 
 .tool-lab-stat-grid span,
 .contract-matrix-grid span,
+.tool-parity-grid span,
 .scenario-runner-grid span,
 .state-orchestrator-grid span,
 .resource-prompt-grid span,
@@ -3024,6 +3028,7 @@ select:focus {
 .enterprise-auth-grid div,
 .tool-lab-stat-grid div,
 .contract-matrix-grid div,
+.tool-parity-grid div,
 .scenario-runner-grid div,
 .state-orchestrator-grid div,
 .resource-prompt-grid div,

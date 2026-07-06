@@ -5,6 +5,7 @@ import request from "supertest";
 import { describe, expect, it, vi } from "vitest";
 import { createMealPilotServer } from "./app.js";
 import { buildSwiggyLlmsManifestVerifier } from "./services/llmsManifestVerifier.js";
+import { buildSwiggyToolParityAuditor } from "./services/toolParityAuditor.js";
 import { buildSwiggyHandshakeDoctor } from "./services/swiggyHandshakeDoctor.js";
 import { createFileSessionStore } from "./store/sessionStore.js";
 
@@ -82,6 +83,8 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/swiggy-docs-twin-explorer"].get.summary).toContain("docs twin");
     expect(openApi.body.paths["/api/swiggy-llms-manifest-verifier"].get.summary).toContain("llms.txt manifest");
     expect(openApi.body.paths["/api/swiggy-llms-manifest-verifier"].get.responses["200"].description).toContain("Instamart 13");
+    expect(openApi.body.paths["/api/swiggy-tool-parity-auditor"].get.summary).toContain("tool parity");
+    expect(openApi.body.paths["/api/swiggy-tool-parity-auditor"].get.responses["200"].description).toContain("Food 14");
     expect(openApi.body.paths["/api/swiggy-upstream-watch"].get.summary).toContain("upstream docs");
     expect(openApi.body.paths["/api/swiggy-source-intelligence"].get.summary).toContain("source intelligence");
     expect(openApi.body.paths["/api/swiggy-deep-site-map"].get.summary).toContain("deep site map");
@@ -1348,7 +1351,7 @@ describe("MealPilot API", () => {
     expect(packet.totals.formFields).toBeGreaterThanOrEqual(10);
     expect(packet.totals.requiredAttachments).toBeGreaterThanOrEqual(10);
     expect(packet.totals.launchArtifacts).toBeGreaterThanOrEqual(50);
-    expect(packet.totals.visualTargets).toBe(35);
+    expect(packet.totals.visualTargets).toBe(36);
     expect(packet.files.map((file: { id: string }) => file.id)).toEqual(
       expect.arrayContaining(["packet_json", "packet_markdown", "visual_report", "production_summary"]),
     );
@@ -1360,7 +1363,7 @@ describe("MealPilot API", () => {
     ).toBe(true);
     expect(
       packet.commands.some(
-        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("35"),
+        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("36"),
       ),
     ).toBe(true);
     expect(packet.copyBlocks.formFields).toContain("Redirect URI(s)");
@@ -2303,8 +2306,8 @@ describe("MealPilot API", () => {
     const visualQa = response.body.visualQa;
 
     expect(visualQa.score).toBe(100);
-    expect(visualQa.totalTargets).toBe(35);
-    expect(visualQa.readyTargets).toBe(35);
+    expect(visualQa.totalTargets).toBe(36);
+    expect(visualQa.readyTargets).toBe(36);
     expect(visualQa.totalRules).toBe(7);
     expect(visualQa.readyRules).toBe(7);
     expect(visualQa.totalCommands).toBe(5);
@@ -2421,6 +2424,11 @@ describe("MealPilot API", () => {
     expect(
       visualQa.targetGroups.some((group: { targets: Array<{ id: string; selector: string }> }) =>
         group.targets.some((target) => target.id === "docs_twin_card" && target.selector === ".docs-twin-card"),
+      ),
+    ).toBe(true);
+    expect(
+      visualQa.targetGroups.some((group: { targets: Array<{ id: string; selector: string }> }) =>
+        group.targets.some((target) => target.id === "tool_parity_card" && target.selector === ".tool-parity-card"),
       ),
     ).toBe(true);
     expect(
@@ -3064,6 +3072,39 @@ describe("MealPilot API", () => {
     expect(verifier.serverToolCounts.map((server) => server.server)).toEqual(["food", "instamart", "dineout"]);
     expect(verifier.driftSignals.some((signal) => signal.includes("Live llms.txt has 7 links"))).toBe(true);
     expect(verifier.assertions.some((assertion) => assertion.includes("user-supplied URLs are never accepted"))).toBe(true);
+  });
+
+  it("audits live Swiggy reference tools against local tool contracts safely", async () => {
+    const manifestLines = [
+      "# Swiggy Builders Club",
+      "## Reference",
+      "- [place_food_order](https://mcp.swiggy.com/builders/docs/reference/food/place_food_order.md): Place food delivery order.",
+      "- [checkout](https://mcp.swiggy.com/builders/docs/reference/instamart/checkout.md): Place grocery order.",
+      "- [book_table](https://mcp.swiggy.com/builders/docs/reference/dineout/book_table.md): Book a free table.",
+    ].join("\n");
+    const auditor = await buildSwiggyToolParityAuditor(async () => ({
+      ok: true,
+      statusCode: 200,
+      durationMs: 8,
+      text: manifestLines,
+    }));
+
+    expect(auditor.status).toBe("watch");
+    expect(auditor.totals.liveReferenceTools).toBe(3);
+    expect(auditor.totals.localContracts).toBe(35);
+    expect(auditor.totals.matchedTools).toBe(3);
+    expect(auditor.totals.missingContracts).toBe(0);
+    expect(auditor.totals.extraContracts).toBe(32);
+    expect(auditor.serverSummaries.map((server) => server.server)).toEqual(["food", "instamart", "dineout"]);
+
+    const foodOrder = auditor.rows.find((row) => row.id === "food_place_food_order");
+    expect(foodOrder?.routeClass).toBe("commercial_action");
+    expect(foodOrder?.confirmationGate).toContain("get_food_cart");
+    expect(foodOrder?.retryPolicy).toContain("Never blind-retry");
+    expect(foodOrder?.fixtureReady).toBe(true);
+    expect(foodOrder?.evidenceLinks).toEqual(expect.arrayContaining(["/api/mcp/tool-contract-matrix", "/api/mcp/tool-lab"]));
+    expect(auditor.assertions.some((assertion) => assertion.includes("user-supplied URLs are never accepted"))).toBe(true);
+    expect(auditor.driftSignals.some((signal) => signal.includes("Live reference manifest exposes 3 tools"))).toBe(true);
   });
 
   it("returns coding-agent governance grounded in the root AGENTS.md file", async () => {

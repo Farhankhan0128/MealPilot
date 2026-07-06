@@ -156,6 +156,17 @@ const targetGroups = [
         "artifacts/visual-qa/docs-twin-card.png",
       ),
       target(
+        "tool_parity_card",
+        "Tool Parity Auditor card",
+        "/",
+        ".tool-parity-card",
+        "desktop",
+        1280,
+        900,
+        "Tool Parity Auditor shows live Swiggy reference tools matched against local contracts, fixtures, safety classes, and retry policies.",
+        "artifacts/visual-qa/tool-parity-card.png",
+      ),
+      target(
         "access_evidence_card",
         "Access Evidence Matrix card",
         "/",
