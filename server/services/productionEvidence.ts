@@ -1,9 +1,13 @@
 import type {
   ComplianceEvidence,
+  DataGovernanceCenter,
+  EnterpriseDelegatedAuthCenter,
   MealPlan,
   RateLimitPlan,
   ReviewerProof,
+  SloIncidentCommandCenter,
   SwiggyServer,
+  TrafficReadinessPlan,
   SwiggyWidget,
   UserProfile,
   VersionMonitor,
@@ -230,19 +234,31 @@ export function buildReviewerProof(options: {
   plans: MealPlan[];
   widgets: SwiggyWidget[];
   rateLimit: RateLimitPlan;
+  trafficReadiness: TrafficReadinessPlan;
+  sloIncident: SloIncidentCommandCenter;
   compliance: ComplianceEvidence;
+  dataGovernance: DataGovernanceCenter;
+  enterpriseAuth: EnterpriseDelegatedAuthCenter;
   version: VersionMonitor;
 }): ReviewerProof {
   const latest = options.plans.at(-1);
   const implementedControls = options.compliance.controls.filter((control) => control.status === "implemented").length;
+  const readyDataControls = options.dataGovernance.controls.filter((control) => control.status === "ready").length;
   const readyRateBudgets = options.rateLimit.budgets.filter((budget) => budget.status === "under_limit").length;
+  const readyTrafficLanes = options.trafficReadiness.lanes.filter((lane) => lane.status === "ready").length;
+  const readySloChecks = options.sloIncident.liveReadiness.filter((item) => item.status === "ready").length;
   const readyVersionAlerts = options.version.alerts.filter((alert) => alert.status === "ready").length;
+  const readyEnterpriseFlow = options.enterpriseAuth.flow.filter((step) => step.status === "ready").length;
   const score =
     40 +
     (latest ? 15 : 0) +
     Math.min(options.widgets.length, 5) * 3 +
     implementedControls * 4 +
     readyRateBudgets * 3 +
+    Math.min(readyTrafficLanes, 5) * 2 +
+    Math.min(readySloChecks, 4) * 2 +
+    Math.min(readyDataControls, 4) * 2 +
+    Math.min(readyEnterpriseFlow, 5) * 2 +
     readyVersionAlerts * 2;
 
   return {
@@ -252,6 +268,10 @@ export function buildReviewerProof(options: {
       `${options.widgets.length} widget contracts are ready with semantic fallbacks.`,
       `${implementedControls}/${options.compliance.controls.length} compliance controls implemented.`,
       `${readyRateBudgets}/${options.rateLimit.budgets.length} rate-limit budgets are under planned ceilings.`,
+      `${readyTrafficLanes}/${options.trafficReadiness.lanes.length} traffic lanes are launch-ready at ${options.trafficReadiness.peakQps.toFixed(2)} peak QPS.`,
+      `${readySloChecks}/${options.sloIncident.liveReadiness.length} SLO command checks are ready with ${options.sloIncident.uptimeTargets.length} uptime targets.`,
+      `${readyDataControls}/${options.dataGovernance.controls.length} data-governance controls are ready across DPDP, DSR, logs, and token handling.`,
+      `${readyEnterpriseFlow}/${options.enterpriseAuth.flow.length} delegated-auth OBO steps are ready, with enterprise partnership gates explicit.`,
     ],
     blockers: [
       "Production client_id is still pending Builder Access.",
@@ -259,12 +279,56 @@ export function buildReviewerProof(options: {
     ],
     artifacts: [
       { label: "Builder packet", path: "/api/builder-package.md" },
+      { label: "Production Launch Bundle", path: "/api/production-launch-bundle" },
+      { label: "Staging Transcript Export", path: latest ? `/api/sessions/${latest.id}/staging-transcript` : "/api/sessions/:sessionId/staging-transcript" },
       { label: "Widget contracts", path: latest ? `/api/sessions/${latest.id}/widgets` : "/api/widgets/latest" },
+      { label: "Widget Runtime Center", path: "/api/mcp/widget-runtime" },
+      { label: "Staging Cutover Rehearsal", path: "/api/mcp/staging-cutover" },
+      { label: "Website Atlas", path: "/api/swiggy-website-atlas" },
+      { label: "Builder Intake Command Center", path: "/api/swiggy-builder-intake" },
+      { label: "FAQ & Policy Center", path: "/api/swiggy-faq-policy" },
+      { label: "Growth Partnership Center", path: "/api/swiggy-growth-partnership" },
+      { label: "Channel & Multimodal Studio", path: "/api/channel-multimodal-studio" },
+      { label: "Nutrition & Budget Intelligence", path: "/api/nutrition-budget-intelligence" },
+      { label: "Household Preference Graph", path: "/api/household-preference-graph" },
+      { label: "Guest Collaboration & Calendar Center", path: "/api/guest-collaboration-calendar" },
+      { label: "Luxury Experience Workspace", path: "/api/luxury-experience-workspace" },
+      { label: "Reviewer Artifact Vault", path: "/api/reviewer-artifact-vault" },
+      { label: "Visual QA Center", path: "/api/visual-qa-center" },
+      { label: "Swiggy Docs Coverage", path: "/api/swiggy-docs-coverage" },
+      { label: "Swiggy Upstream Watch", path: "/api/swiggy-upstream-watch" },
+      { label: "AI Client Connect Kit", path: "/api/ai-client-connect-kit" },
+      { label: "Brand Compliance Kit", path: "/api/brand-compliance-kit" },
+      { label: "Swiggy Journey Compiler", path: "/api/swiggy-journey-compiler" },
+      { label: "Swiggy Access Dossier", path: "/api/swiggy-access-dossier" },
+      { label: "Premium Use Case Studio", path: "/api/premium-use-case-studio" },
+      { label: "Premium Concierge Itinerary", path: "/api/premium-concierge-itinerary" },
+      { label: "Staging Certification Matrix", path: "/api/staging-certification-matrix" },
+      { label: "MCP Tool Lab", path: "/api/mcp/tool-lab" },
+      { label: "Tool Contract Matrix", path: "/api/mcp/tool-contract-matrix" },
+      { label: "Scenario Runner", path: "/api/mcp/scenario-runner" },
+      { label: "State Orchestrator", path: "/api/mcp/state-orchestrator" },
+      { label: "Commercial Action Guard", path: "/api/mcp/commercial-action-guard" },
+      { label: "MCP Capability Registry", path: "/api/mcp/capability-registry" },
+      { label: "Resource & Prompt Studio", path: "/api/mcp/resource-prompt-studio" },
       { label: "MCP Gateway", path: "/api/mcp-gateway" },
+      { label: "Swiggy OAuth Status", path: "/api/auth/swiggy/status" },
       { label: "Rate-limit plan", path: "/api/rate-limit-plan" },
+      { label: "Traffic Readiness Plan", path: "/api/traffic-readiness-plan" },
+      { label: "MCP Backpressure Governor", path: "/api/mcp/backpressure-governor" },
+      { label: "SLO Incident Command Center", path: "/api/slo-incident-command" },
+      { label: "Data Governance Center", path: "/api/data-governance-center" },
+      { label: "Enterprise Delegated Auth Center", path: "/api/enterprise-delegated-auth" },
       { label: "Compliance evidence", path: "/api/compliance-evidence" },
       { label: "Version monitor", path: "/api/version-monitor" },
+      { label: "Support Bridge", path: "/api/support/bridge" },
+      { label: "Error Intelligence", path: "/api/error-intelligence" },
       { label: "Resilience drills", path: "/api/resilience" },
+      { label: "Trace monitor", path: "/api/observability/traces" },
+      { label: "Runtime telemetry", path: "/api/telemetry/runtime" },
+      { label: "Audit Ledger Center", path: "/api/audit-ledger" },
+      { label: "Submission Console", path: "/api/submission-console" },
+      { label: "Route optimizer", path: "/api/swiggy-route-optimizer" },
       { label: "Evaluation Lab", path: "/api/evaluation-lab" },
     ],
   };

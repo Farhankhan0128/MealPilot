@@ -23,6 +23,7 @@
 
 * {
   box-sizing: border-box;
+  min-width: 0;
 }
 
 body {
@@ -343,6 +344,99 @@ h2 {
   padding: 0 12px;
   color: var(--green-dark);
   background: #e6f4eb;
+  font-weight: 900;
+}
+
+.auth-status-panel {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: var(--shadow);
+}
+
+.auth-status-head,
+.auth-status-links {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.auth-status-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-radius: 8px;
+  padding: 10px;
+  background: var(--surface-strong);
+}
+
+.auth-status-summary[data-status="healthy"] {
+  border-left: 4px solid var(--green);
+}
+
+.auth-status-summary[data-status="watch"] {
+  border-left: 4px solid var(--gold);
+}
+
+.auth-status-summary[data-status="blocked"] {
+  border-left: 4px solid var(--coral);
+}
+
+.auth-status-summary span,
+.auth-status-links span {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.auth-status-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.auth-status-grid div {
+  display: grid;
+  gap: 3px;
+  min-height: 62px;
+  border-radius: 8px;
+  padding: 9px;
+  background: #fff;
+}
+
+.auth-status-grid strong {
+  color: var(--green-dark);
+  text-transform: capitalize;
+  overflow-wrap: anywhere;
+}
+
+.auth-status-grid span {
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 900;
+}
+
+.auth-status-links {
+  align-items: stretch;
+}
+
+.auth-status-links a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  flex: 0 0 auto;
+  border-radius: 8px;
+  padding: 0 12px;
+  color: #fff;
+  background: var(--green);
   font-weight: 900;
 }
 
@@ -763,6 +857,7 @@ select:focus {
 }
 
 .advanced-panel,
+.concierge-panel,
 .launch-panel,
 .demo-studio-panel,
 .production-evidence-panel {
@@ -837,7 +932,213 @@ select:focus {
   width: max-content;
 }
 
+.concierge-summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.concierge-summary div {
+  display: grid;
+  gap: 4px;
+}
+
+.concierge-summary > strong {
+  min-width: 72px;
+  text-align: right;
+  color: var(--green-dark);
+  font-size: 1.4rem;
+}
+
+.concierge-summary span,
+.concierge-slot-list span,
+.concierge-slot-list p,
+.concierge-slot-list small {
+  color: var(--muted);
+}
+
+.concierge-stat-grid {
+  display: grid;
+  grid-template-columns: 0.8fr 0.8fr 1.4fr;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.concierge-stat-grid div {
+  display: grid;
+  gap: 4px;
+  min-height: 66px;
+  border-radius: 8px;
+  padding: 10px;
+  background: var(--surface-strong);
+}
+
+.concierge-stat-grid strong {
+  color: var(--green-dark);
+  font-size: 1.12rem;
+  overflow-wrap: anywhere;
+}
+
+.concierge-stat-grid span {
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 900;
+}
+
+.concierge-slot-list {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.concierge-slot-list article {
+  display: grid;
+  gap: 8px;
+  min-height: 158px;
+  border-radius: 8px;
+  padding: 12px;
+  background: var(--surface-strong);
+}
+
+.concierge-slot-list div {
+  display: grid;
+  gap: 4px;
+}
+
+.concierge-slot-list p {
+  margin: 0;
+  line-height: 1.45;
+}
+
+.concierge-slot-list small {
+  width: max-content;
+  max-width: 100%;
+  border-radius: 999px;
+  padding: 5px 8px;
+  background: #eef7f1;
+  font-weight: 900;
+}
+
 .surface-card {
+  grid-column: span 2;
+}
+
+.builders-map-card {
+  grid-column: span 2;
+}
+
+.credential-card {
+  grid-column: span 2;
+}
+
+.enterprise-auth-card {
+  grid-column: span 2;
+}
+
+.scenario-runner-card {
+  grid-column: span 2;
+}
+
+.state-orchestrator-card {
+  grid-column: span 2;
+}
+
+.widget-runtime-card {
+  grid-column: span 2;
+}
+
+.commercial-guard-card {
+  grid-column: span 2;
+}
+
+.staging-cutover-card {
+  grid-column: span 2;
+}
+
+.tool-lab-card {
+  grid-column: span 2;
+}
+
+.contract-matrix-card {
+  grid-column: span 2;
+}
+
+.builder-intake-card {
+  grid-column: span 2;
+}
+
+.faq-policy-card {
+  grid-column: span 2;
+}
+
+.growth-partnership-card {
+  grid-column: span 2;
+}
+
+.channel-multimodal-card {
+  grid-column: span 2;
+}
+
+.nutrition-budget-card {
+  grid-column: span 2;
+}
+
+.preference-graph-card {
+  grid-column: span 2;
+}
+
+.guest-collaboration-card {
+  grid-column: span 2;
+}
+
+.luxury-experience-card {
+  grid-column: span 2;
+}
+
+.reviewer-artifact-card {
+  grid-column: span 2;
+}
+
+.visual-qa-card {
+  grid-column: span 2;
+}
+
+.access-dossier-card {
+  grid-column: span 2;
+}
+
+.use-case-studio-card {
+  grid-column: span 2;
+}
+
+.staging-certification-card {
+  grid-column: span 2;
+}
+
+.brand-compliance-card {
+  grid-column: span 2;
+}
+
+.capability-registry-card {
+  grid-column: span 2;
+}
+
+.resource-prompt-card {
+  grid-column: span 2;
+}
+
+.website-atlas-card {
+  grid-column: span 2;
+}
+
+.upstream-watch-card {
+  grid-column: span 2;
+}
+
+.support-bridge-card {
   grid-column: span 2;
 }
 
@@ -880,6 +1181,223 @@ select:focus {
   gap: 8px;
 }
 
+.map-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.map-stat-grid div {
+  display: grid;
+  gap: 3px;
+  min-height: 74px;
+  border-radius: 8px;
+  padding: 10px;
+  background: #fff;
+}
+
+.map-stat-grid strong {
+  color: var(--green-dark);
+  font-size: 1.45rem;
+}
+
+.map-stat-grid span {
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.credential-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.enterprise-auth-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.credential-meta-grid div {
+  display: grid;
+  gap: 3px;
+  min-height: 64px;
+  border-radius: 8px;
+  padding: 9px;
+  background: #fff;
+}
+
+.enterprise-auth-grid div {
+  display: grid;
+  gap: 3px;
+  min-height: 64px;
+  border-radius: 8px;
+  padding: 9px;
+  background: #fff;
+}
+
+.credential-meta-grid strong {
+  color: var(--green-dark);
+  font-size: 0.88rem;
+  text-transform: capitalize;
+  overflow-wrap: anywhere;
+}
+
+.enterprise-auth-grid strong {
+  color: var(--green-dark);
+  font-size: 1rem;
+  overflow-wrap: anywhere;
+}
+
+.credential-meta-grid span {
+  font-size: 0.75rem;
+  font-weight: 900;
+}
+
+.enterprise-auth-grid span {
+  font-size: 0.75rem;
+  font-weight: 900;
+}
+
+.tool-lab-stat-grid,
+.contract-matrix-grid,
+.scenario-runner-grid,
+.state-orchestrator-grid,
+.resource-prompt-grid,
+.widget-runtime-grid,
+.commercial-guard-grid,
+.staging-cutover-grid,
+.builder-intake-grid,
+.faq-policy-grid,
+.growth-partnership-grid,
+.channel-multimodal-grid,
+.nutrition-budget-grid,
+.preference-graph-grid,
+.guest-collaboration-grid,
+.luxury-experience-grid,
+.reviewer-artifact-grid,
+.visual-qa-grid,
+.access-dossier-grid,
+.use-case-studio-grid,
+.staging-certification-grid,
+.upstream-watch-grid,
+.brand-compliance-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.tool-lab-stat-grid div,
+.contract-matrix-grid div,
+.scenario-runner-grid div,
+.state-orchestrator-grid div,
+.resource-prompt-grid div,
+.widget-runtime-grid div,
+.commercial-guard-grid div,
+.staging-cutover-grid div,
+.builder-intake-grid div,
+.faq-policy-grid div,
+.growth-partnership-grid div,
+.channel-multimodal-grid div,
+.nutrition-budget-grid div,
+.preference-graph-grid div,
+.guest-collaboration-grid div,
+.luxury-experience-grid div,
+.reviewer-artifact-grid div,
+.visual-qa-grid div,
+.access-dossier-grid div,
+.use-case-studio-grid div,
+.staging-certification-grid div,
+.upstream-watch-grid div,
+.brand-compliance-grid div {
+  display: grid;
+  gap: 3px;
+  min-height: 64px;
+  border-radius: 8px;
+  padding: 9px;
+  background: #fff;
+}
+
+.tool-lab-stat-grid strong,
+.contract-matrix-grid strong,
+.scenario-runner-grid strong,
+.state-orchestrator-grid strong,
+.resource-prompt-grid strong,
+.widget-runtime-grid strong,
+.commercial-guard-grid strong,
+.staging-cutover-grid strong,
+.builder-intake-grid strong,
+.faq-policy-grid strong,
+.growth-partnership-grid strong,
+.channel-multimodal-grid strong,
+.nutrition-budget-grid strong,
+.preference-graph-grid strong,
+.guest-collaboration-grid strong,
+.luxury-experience-grid strong,
+.reviewer-artifact-grid strong,
+.visual-qa-grid strong,
+.access-dossier-grid strong,
+.use-case-studio-grid strong,
+.staging-certification-grid strong,
+.upstream-watch-grid strong,
+.brand-compliance-grid strong {
+  color: var(--green-dark);
+  font-size: 1.18rem;
+  overflow-wrap: anywhere;
+}
+
+.tool-lab-stat-grid span,
+.contract-matrix-grid span,
+.scenario-runner-grid span,
+.state-orchestrator-grid span,
+.resource-prompt-grid span,
+.widget-runtime-grid span,
+.commercial-guard-grid span,
+.staging-cutover-grid span,
+.builder-intake-grid span,
+.faq-policy-grid span,
+.growth-partnership-grid span,
+.channel-multimodal-grid span,
+.nutrition-budget-grid span,
+.preference-graph-grid span,
+.guest-collaboration-grid span,
+.luxury-experience-grid span,
+.reviewer-artifact-grid span,
+.visual-qa-grid span,
+.access-dossier-grid span,
+.use-case-studio-grid span,
+.staging-certification-grid span,
+.upstream-watch-grid span,
+.brand-compliance-grid span {
+  font-size: 0.75rem;
+  font-weight: 900;
+}
+
+.website-atlas-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.website-atlas-grid div {
+  display: grid;
+  gap: 3px;
+  min-height: 64px;
+  border-radius: 8px;
+  padding: 9px;
+  background: #fff;
+}
+
+.website-atlas-grid strong {
+  color: var(--green-dark);
+  font-size: 1.18rem;
+}
+
+.website-atlas-grid span {
+  font-size: 0.75rem;
+  font-weight: 900;
+}
+
 .coverage-stack div,
 .compact-status-list li {
   display: flex;
@@ -917,6 +1435,58 @@ select:focus {
   border-left: 4px solid var(--gold);
 }
 
+.compact-status-list li[data-status="blocked"] {
+  border-left: 4px solid var(--coral);
+}
+
+.builders-map-list,
+.opportunity-list {
+  display: grid;
+  gap: 8px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.builders-map-list li,
+.opportunity-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-radius: 8px;
+  padding: 9px;
+  background: #fff;
+}
+
+.builders-map-list strong,
+.opportunity-list b {
+  flex: 0 0 auto;
+  color: var(--green-dark);
+  font-size: 0.78rem;
+  text-transform: capitalize;
+}
+
+.builders-map-list li[data-status="implemented"] {
+  border-left: 4px solid var(--green);
+}
+
+.builders-map-list li[data-status="documented"],
+.builders-map-list li[data-status="requires_credentials"] {
+  border-left: 4px solid var(--gold);
+}
+
+.opportunity-list div {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.opportunity-list strong,
+.opportunity-list span {
+  overflow-wrap: anywhere;
+}
+
 .offer-list,
 .replay-list,
 .widget-list {
@@ -928,6 +1498,7 @@ select:focus {
 .replay-list li,
 .widget-list li,
 .submission-grid div,
+.submission-console-grid div,
 .proof-grid div {
   border-radius: 8px;
   padding: 10px;
@@ -938,22 +1509,86 @@ select:focus {
 .replay-list strong,
 .widget-list strong,
 .submission-grid strong,
+.submission-console-grid strong,
+.docs-coverage-grid strong,
+.client-connect-grid strong,
+.journey-compiler-grid strong,
+.staging-transcript-grid strong,
+.traffic-readiness-grid strong,
+.backpressure-grid strong,
+.data-governance-grid strong,
+.audit-ledger-grid strong,
+.slo-grid strong,
 .proof-grid strong {
   display: block;
   color: var(--ink);
 }
 
 .submission-card,
+.submission-console-card,
+.staging-transcript-card,
 .widget-card,
-.proof-card {
+.traffic-readiness-card,
+.backpressure-card,
+.data-governance-card,
+.audit-ledger-card,
+.slo-incident-card,
+.proof-card,
+.launch-bundle-card,
+.docs-coverage-card,
+.client-connect-card,
+.journey-compiler-card,
+.error-intelligence-card {
   grid-column: span 2;
 }
 
 .submission-grid,
+.submission-console-grid,
+.staging-transcript-grid,
+.traffic-readiness-grid,
+.backpressure-grid,
+.data-governance-grid,
+.audit-ledger-grid,
+.slo-grid,
+.docs-coverage-grid,
+.client-connect-grid,
+.journey-compiler-grid,
 .proof-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
+}
+
+.docs-coverage-grid,
+.client-connect-grid,
+.journey-compiler-grid,
+.staging-transcript-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 10px;
+}
+
+.docs-coverage-grid div,
+.client-connect-grid div,
+.journey-compiler-grid div,
+.staging-transcript-grid div,
+.traffic-readiness-grid div,
+.backpressure-grid div,
+.data-governance-grid div,
+.audit-ledger-grid div,
+.submission-console-grid div,
+.slo-grid div {
+  border-radius: 8px;
+  padding: 10px;
+  background: #fff;
+}
+
+.traffic-readiness-grid,
+.backpressure-grid,
+.data-governance-grid,
+.audit-ledger-grid,
+.submission-console-grid,
+.slo-grid {
+  margin: 10px 0;
 }
 
 .submission-grid div[data-status="manual_input"] {
@@ -1070,6 +1705,7 @@ select:focus {
   .lower-grid,
   .variant-strip,
   .workflow-grid,
+  .concierge-slot-list,
   .launch-grid,
   .demo-studio-grid,
   .production-evidence-grid {
@@ -1077,10 +1713,54 @@ select:focus {
   }
 
   .surface-card,
+  .builders-map-card,
+  .credential-card,
+  .enterprise-auth-card,
+  .scenario-runner-card,
+  .state-orchestrator-card,
+  .widget-runtime-card,
+  .commercial-guard-card,
+  .staging-cutover-card,
+  .tool-lab-card,
+  .contract-matrix-card,
+  .builder-intake-card,
+  .faq-policy-card,
+  .growth-partnership-card,
+  .channel-multimodal-card,
+  .nutrition-budget-card,
+  .preference-graph-card,
+  .guest-collaboration-card,
+  .luxury-experience-card,
+  .reviewer-artifact-card,
+  .visual-qa-card,
+  .capability-registry-card,
+  .resource-prompt-card,
+  .website-atlas-card,
+  .upstream-watch-card,
+  .brand-compliance-card,
+  .support-bridge-card,
+  .access-dossier-card,
+  .use-case-studio-card,
+  .staging-certification-card,
   .submission-card,
+  .submission-console-card,
+  .staging-transcript-card,
   .widget-card,
-  .proof-card {
+  .traffic-readiness-card,
+  .data-governance-card,
+  .audit-ledger-card,
+  .slo-incident-card,
+  .proof-card,
+  .launch-bundle-card,
+  .docs-coverage-card,
+  .client-connect-card,
+  .journey-compiler-card,
+  .error-intelligence-card {
     grid-column: auto;
+  }
+
+  .concierge-stat-grid {
+    grid-template-columns: 1fr;
   }
 
   .recommendation {
@@ -1096,6 +1776,8 @@ select:focus {
 
   .workspace-header,
   .action-bar,
+  .auth-status-head,
+  .auth-status-links,
   .insight-strip,
   .recommendation-head,
   .recommendation-foot,
@@ -1106,7 +1788,28 @@ select:focus {
 
   .input-grid,
   .metrics-card,
+  .auth-status-grid,
   .submission-grid,
+  .submission-console-grid,
+  .traffic-readiness-grid,
+  .backpressure-grid,
+  .data-governance-grid,
+  .audit-ledger-grid,
+  .enterprise-auth-grid,
+  .resource-prompt-grid,
+  .widget-runtime-grid,
+  .commercial-guard-grid,
+  .staging-cutover-grid,
+  .faq-policy-grid,
+  .growth-partnership-grid,
+  .channel-multimodal-grid,
+  .nutrition-budget-grid,
+  .preference-graph-grid,
+  .guest-collaboration-grid,
+  .luxury-experience-grid,
+  .reviewer-artifact-grid,
+  .visual-qa-grid,
+  .slo-grid,
   .proof-grid {
     grid-template-columns: 1fr;
   }
@@ -1119,6 +1822,1088 @@ select:focus {
   }
 
   .audit-timeline li {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Premium Carbon-inspired portal layer */
+:root {
+  --mp-bg: #f4f4f4;
+  --mp-layer: #ffffff;
+  --mp-layer-alt: #f7f8fa;
+  --mp-layer-strong: #eef1f6;
+  --mp-ink: #161616;
+  --mp-ink-soft: #393939;
+  --mp-muted: #6f6f6f;
+  --mp-border: #d7dce5;
+  --mp-border-strong: #a8b1c2;
+  --mp-blue: #0f62fe;
+  --mp-blue-hover: #0043ce;
+  --mp-green: #24a148;
+  --mp-orange: #ff832b;
+  --mp-yellow: #f1c21b;
+  --mp-red: #da1e28;
+  --mp-purple: #8a3ffc;
+  --mp-shadow-sm: 0 1px 2px rgba(22, 22, 22, 0.08);
+  --mp-shadow-md: 0 12px 36px rgba(22, 22, 22, 0.1);
+  --mp-focus: 0 0 0 3px rgba(15, 98, 254, 0.24);
+  color: var(--mp-ink);
+  background: var(--mp-bg);
+  --ink: var(--mp-ink);
+  --muted: var(--mp-muted);
+  --faint: var(--mp-layer-strong);
+  --line: var(--mp-border);
+  --surface: var(--mp-layer);
+  --surface-strong: var(--mp-layer-alt);
+  --green: var(--mp-blue);
+  --green-dark: var(--mp-blue-hover);
+  --coral: var(--mp-orange);
+  --gold: var(--mp-yellow);
+  --blue: var(--mp-blue);
+  --violet: var(--mp-purple);
+  --shadow: var(--mp-shadow-sm);
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 88px;
+}
+
+body {
+  color: var(--mp-ink);
+  background: var(--mp-bg);
+  overflow-x: hidden;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: none;
+  box-shadow: var(--mp-focus);
+}
+
+.portal-shell {
+  min-height: 100vh;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0, rgba(244, 244, 244, 0) 224px),
+    var(--mp-bg);
+}
+
+.app-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: grid;
+  grid-template-columns: minmax(220px, 320px) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 24px;
+  min-height: 72px;
+  padding: 0 32px;
+  border-bottom: 1px solid var(--mp-border);
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(18px);
+}
+
+.mealpilot-logo,
+.topbar-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  color: var(--mp-ink);
+}
+
+.mealpilot-logo img {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  box-shadow: var(--mp-shadow-sm);
+}
+
+.mealpilot-logo span {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.mealpilot-logo strong {
+  font-size: 1.08rem;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.mealpilot-logo small {
+  color: var(--mp-muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.mealpilot-logo.compact img {
+  width: 32px;
+  height: 32px;
+}
+
+.topbar-nav,
+.app-footer nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.topbar-nav {
+  justify-content: center;
+}
+
+.topbar-nav a,
+.mobile-navigation a,
+.app-footer a {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  padding: 0 12px;
+  color: var(--mp-ink-soft);
+  font-size: 0.88rem;
+  font-weight: 800;
+}
+
+.topbar-nav a:hover,
+.mobile-navigation a:hover,
+.app-footer a:hover {
+  color: var(--mp-blue);
+  background: #edf5ff;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.system-status {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--mp-border);
+  border-radius: 8px;
+  padding: 0 12px;
+  color: var(--mp-muted);
+  background: var(--mp-layer-alt);
+  font-size: 0.82rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.system-status span {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: var(--mp-red);
+}
+
+.system-status[data-online="true"] span {
+  background: var(--mp-green);
+}
+
+.login-button,
+.mobile-menu-button {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 0 14px;
+  font-weight: 900;
+}
+
+.login-button {
+  color: #fff;
+  background: var(--mp-blue);
+}
+
+.login-button:hover {
+  background: var(--mp-blue-hover);
+}
+
+.login-button svg,
+.mobile-menu-button svg {
+  width: 18px;
+  height: 18px;
+}
+
+.mobile-menu-button {
+  display: none;
+  color: var(--mp-ink);
+  border-color: var(--mp-border);
+  background: var(--mp-layer);
+}
+
+.mobile-navigation {
+  display: none;
+}
+
+.app-shell {
+  width: min(1680px, calc(100% - 48px));
+  grid-template-columns: 304px minmax(0, 1fr);
+  gap: 24px;
+  padding: 24px 0 40px;
+}
+
+.sidebar {
+  top: 96px;
+  height: calc(100vh - 120px);
+  gap: 12px;
+  border-color: var(--mp-border);
+  border-radius: 8px;
+  background: var(--mp-layer);
+  box-shadow: var(--mp-shadow-sm);
+  backdrop-filter: none;
+}
+
+.brand-block {
+  padding-bottom: 18px;
+}
+
+.brand-mark {
+  background: var(--mp-ink);
+}
+
+.side-panel,
+.composer-card,
+.metrics-card,
+.recommendation,
+.analysis-panel,
+.insight-strip,
+.auth-status-panel,
+.action-bar,
+.variant-strip article {
+  border-color: var(--mp-border);
+  border-radius: 8px;
+  background: var(--mp-layer);
+  box-shadow: var(--mp-shadow-sm);
+}
+
+.side-panel,
+.composer-card,
+.metrics-card,
+.analysis-panel {
+  padding: 16px;
+}
+
+.workspace-header {
+  min-height: 184px;
+  align-items: end;
+  margin-bottom: 16px;
+  border: 1px solid var(--mp-border);
+  border-radius: 8px;
+  padding: 24px;
+  background:
+    linear-gradient(135deg, rgba(15, 98, 254, 0.1), rgba(255, 131, 43, 0.08)),
+    var(--mp-layer);
+  box-shadow: var(--mp-shadow-sm);
+}
+
+.workspace-header h1 {
+  max-width: 760px;
+  color: var(--mp-ink);
+  font-size: clamp(2.25rem, 5vw, 5.5rem);
+  line-height: 0.92;
+  overflow-wrap: anywhere;
+}
+
+.workspace-header .eyebrow {
+  color: var(--mp-blue);
+}
+
+.action-bar {
+  position: sticky;
+  top: 88px;
+  z-index: 20;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(14px);
+}
+
+.icon-button,
+.ghost-button,
+.scenario-row button,
+.workflow-grid button,
+.privacy-actions button,
+.launch-grid button,
+.support-link,
+.item-actions button,
+.substitution-box button {
+  min-height: 40px;
+  border-radius: 8px;
+  transition:
+    background 120ms ease,
+    border-color 120ms ease,
+    color 120ms ease,
+  transform 120ms ease;
+}
+
+.icon-button span,
+.ghost-button span,
+.scenario-row button {
+  overflow-wrap: anywhere;
+}
+
+.icon-button:hover,
+.ghost-button:hover,
+.scenario-row button:hover,
+.workflow-grid button:hover,
+.privacy-actions button:hover,
+.launch-grid button:hover,
+.support-link:hover,
+.item-actions button:hover,
+.substitution-box button:hover {
+  transform: translateY(-1px);
+}
+
+.icon-button.primary,
+.segmented-control button.active {
+  color: #fff;
+  background: var(--mp-blue);
+}
+
+.icon-button.primary:hover,
+.segmented-control button.active:hover {
+  background: var(--mp-blue-hover);
+}
+
+.icon-button.dark {
+  color: #fff;
+  background: var(--mp-ink);
+}
+
+.icon-button.dark:hover {
+  background: #393939;
+}
+
+.ghost-button,
+.scenario-row button,
+.workflow-grid button,
+.privacy-actions button,
+.launch-grid button,
+.support-link,
+.item-actions button,
+.substitution-box button {
+  color: var(--mp-blue);
+  border-color: #c6daff;
+  background: #edf5ff;
+}
+
+.ghost-button:hover,
+.scenario-row button:hover,
+.workflow-grid button:hover,
+.privacy-actions button:hover,
+.launch-grid button:hover,
+.support-link:hover,
+.item-actions button:hover,
+.substitution-box button:hover {
+  border-color: var(--mp-blue);
+  background: #d0e2ff;
+}
+
+.github-link {
+  border: 1px solid var(--mp-ink);
+  background: var(--mp-ink);
+}
+
+.auth-url,
+.auth-status-links a {
+  color: #fff;
+  background: var(--mp-blue);
+}
+
+.action-notice {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: -4px 0 16px;
+  border: 1px solid #a7f0ba;
+  border-radius: 8px;
+  padding: 12px 14px;
+  color: #0e6027;
+  background: #defbe6;
+  box-shadow: var(--mp-shadow-sm);
+  font-weight: 850;
+}
+
+.action-notice svg {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+}
+
+.action-notice span {
+  min-width: 0;
+}
+
+.action-notice a {
+  margin-left: auto;
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 8px;
+  padding: 0 10px;
+  color: #fff;
+  background: #0e6027;
+  font-size: 0.82rem;
+}
+
+.planner-grid {
+  grid-template-columns: minmax(0, 1.5fr) minmax(312px, 0.85fr);
+  scroll-margin-top: 108px;
+}
+
+.composer-card {
+  display: grid;
+  gap: 14px;
+}
+
+.scenario-row {
+  margin-bottom: 0;
+}
+
+textarea,
+input,
+select {
+  border-color: var(--mp-border);
+  border-radius: 8px;
+  background: var(--mp-layer-alt);
+}
+
+textarea:focus,
+input:focus,
+select:focus {
+  border-color: var(--mp-blue);
+  box-shadow: var(--mp-focus);
+}
+
+.metric {
+  min-height: 104px;
+  border: 1px solid var(--mp-border);
+  background: var(--mp-layer-alt);
+}
+
+.metric > span {
+  color: var(--mp-blue);
+  background: #edf5ff;
+}
+
+.metric strong {
+  color: var(--mp-ink);
+}
+
+.insight-strip {
+  margin-top: 16px;
+  scroll-margin-top: 108px;
+}
+
+.insight-strip strong {
+  color: #0e6027;
+  background: #defbe6;
+}
+
+.variant-strip article,
+.recommendation,
+.analysis-panel {
+  overflow: hidden;
+}
+
+.recommendations {
+  scroll-margin-top: 108px;
+}
+
+.recommendation {
+  min-height: 560px;
+  border-top-width: 4px;
+}
+
+.recommendation[data-server="food"] {
+  border-top-color: var(--mp-orange);
+}
+
+.recommendation[data-server="instamart"] {
+  border-top-color: var(--mp-green);
+}
+
+.recommendation[data-server="dineout"] {
+  border-top-color: var(--mp-blue);
+}
+
+.server-pill {
+  color: var(--mp-ink);
+  background: var(--mp-layer-strong);
+}
+
+.status {
+  color: #684e00;
+  background: #fcf4d6;
+}
+
+.status.confirmed {
+  color: #0e6027;
+  background: #defbe6;
+}
+
+.lower-grid,
+.launch-panel,
+.demo-studio-panel,
+.production-evidence-panel {
+  scroll-margin-top: 108px;
+}
+
+.workflow-grid,
+.launch-grid,
+.demo-studio-grid,
+.production-evidence-grid {
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+}
+
+.workflow-grid article,
+.launch-grid article,
+.demo-studio-grid article,
+.production-evidence-grid article {
+  grid-column: span 3;
+  min-height: 176px;
+  border: 1px solid var(--mp-border);
+  background: var(--mp-layer-alt);
+}
+
+.surface-card,
+.builders-map-card,
+.credential-card,
+.enterprise-auth-card,
+.scenario-runner-card,
+.state-orchestrator-card,
+.widget-runtime-card,
+.commercial-guard-card,
+.staging-cutover-card,
+.tool-lab-card,
+.contract-matrix-card,
+.builder-intake-card,
+.faq-policy-card,
+.growth-partnership-card,
+.channel-multimodal-card,
+.nutrition-budget-card,
+.preference-graph-card,
+.guest-collaboration-card,
+.luxury-experience-card,
+.reviewer-artifact-card,
+.visual-qa-card,
+.access-dossier-card,
+.use-case-studio-card,
+.staging-certification-card,
+.brand-compliance-card,
+.capability-registry-card,
+.resource-prompt-card,
+.website-atlas-card,
+.upstream-watch-card,
+.support-bridge-card,
+.submission-card,
+.submission-console-card,
+.staging-transcript-card,
+.widget-card,
+.traffic-readiness-card,
+.backpressure-card,
+.data-governance-card,
+.audit-ledger-card,
+.slo-incident-card,
+.proof-card,
+.launch-bundle-card,
+.docs-coverage-card,
+.client-connect-card,
+.journey-compiler-card,
+.error-intelligence-card {
+  grid-column: span 6;
+}
+
+.workflow-grid article:first-child,
+.proof-card,
+.launch-bundle-card {
+  grid-column: span 6;
+}
+
+.mini-heading svg,
+.section-heading svg {
+  color: var(--mp-blue);
+}
+
+.compact-status-list li,
+.coverage-stack div,
+.builders-map-list li,
+.opportunity-list li,
+.offer-list li,
+.replay-list li,
+.widget-list li,
+.submission-grid div,
+.submission-console-grid div,
+.proof-grid div,
+.map-stat-grid div,
+.credential-meta-grid div,
+.enterprise-auth-grid div,
+.tool-lab-stat-grid div,
+.contract-matrix-grid div,
+.scenario-runner-grid div,
+.state-orchestrator-grid div,
+.resource-prompt-grid div,
+.widget-runtime-grid div,
+.commercial-guard-grid div,
+.staging-cutover-grid div,
+.builder-intake-grid div,
+.faq-policy-grid div,
+.growth-partnership-grid div,
+.channel-multimodal-grid div,
+.nutrition-budget-grid div,
+.preference-graph-grid div,
+.guest-collaboration-grid div,
+.luxury-experience-grid div,
+.reviewer-artifact-grid div,
+.visual-qa-grid div,
+.access-dossier-grid div,
+.use-case-studio-grid div,
+.staging-certification-grid div,
+.upstream-watch-grid div,
+.brand-compliance-grid div,
+.website-atlas-grid div,
+.docs-coverage-grid div,
+.client-connect-grid div,
+.journey-compiler-grid div,
+.staging-transcript-grid div,
+.traffic-readiness-grid div,
+.backpressure-grid div,
+.data-governance-grid div,
+.audit-ledger-grid div,
+.slo-grid div {
+  border: 1px solid var(--mp-border);
+  background: var(--mp-layer);
+}
+
+.compact-status-list li[data-status="ready"],
+.compact-status-list li[data-status="healthy"],
+.builders-map-list li[data-status="implemented"],
+.submission-grid div[data-status="ready"] {
+  border-left-color: var(--mp-green);
+}
+
+.compact-status-list li[data-status="blocked"] {
+  border-left-color: var(--mp-red);
+}
+
+.compact-status-list li[data-status="needs_credentials"],
+.compact-status-list li[data-status="manual_review"],
+.compact-status-list li[data-status="warn"],
+.compact-status-list li[data-status="watch"],
+.builders-map-list li[data-status="documented"],
+.builders-map-list li[data-status="requires_credentials"],
+.submission-grid div[data-status="manual_input"] {
+  border-left-color: var(--mp-yellow);
+}
+
+.modal-backdrop {
+  background: rgba(22, 22, 22, 0.58);
+  backdrop-filter: blur(6px);
+}
+
+.confirm-modal {
+  border: 1px solid var(--mp-border);
+  border-radius: 8px;
+}
+
+.modal-icon {
+  background: var(--mp-blue);
+}
+
+.app-footer {
+  width: min(1680px, calc(100% - 48px));
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 24px;
+  margin: 0 auto;
+  padding: 24px 0 40px;
+  border-top: 1px solid var(--mp-border);
+}
+
+.app-footer nav {
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.app-footer p {
+  margin: 0;
+  color: var(--mp-muted);
+  font-size: 0.86rem;
+  font-weight: 700;
+  text-align: right;
+}
+
+@media (max-width: 1280px) {
+  .app-topbar {
+    grid-template-columns: auto 1fr auto;
+    padding: 0 20px;
+  }
+
+  .topbar-nav {
+    display: none;
+  }
+
+  .mobile-menu-button {
+    display: inline-flex;
+  }
+
+  .mobile-navigation.open {
+    position: sticky;
+    top: 72px;
+    z-index: 29;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--mp-border);
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(14px);
+  }
+
+  .app-shell {
+    grid-template-columns: 1fr;
+    width: min(100% - 32px, 1120px);
+  }
+
+  .workspace {
+    order: 1;
+  }
+
+  .sidebar {
+    position: static;
+    height: auto;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    order: 2;
+  }
+
+  .brand-block,
+  .github-link {
+    grid-column: 1 / -1;
+  }
+
+  .workflow-grid article,
+  .launch-grid article,
+  .demo-studio-grid article,
+  .production-evidence-grid article,
+  .surface-card,
+  .builders-map-card,
+  .credential-card,
+  .enterprise-auth-card,
+  .scenario-runner-card,
+  .state-orchestrator-card,
+  .widget-runtime-card,
+  .commercial-guard-card,
+  .staging-cutover-card,
+  .tool-lab-card,
+  .contract-matrix-card,
+  .builder-intake-card,
+  .faq-policy-card,
+  .growth-partnership-card,
+  .channel-multimodal-card,
+  .nutrition-budget-card,
+  .preference-graph-card,
+  .guest-collaboration-card,
+  .luxury-experience-card,
+  .reviewer-artifact-card,
+  .visual-qa-card,
+  .access-dossier-card,
+  .use-case-studio-card,
+  .staging-certification-card,
+  .brand-compliance-card,
+  .capability-registry-card,
+  .resource-prompt-card,
+  .website-atlas-card,
+  .upstream-watch-card,
+  .support-bridge-card,
+  .submission-card,
+  .submission-console-card,
+  .staging-transcript-card,
+  .widget-card,
+  .traffic-readiness-card,
+  .backpressure-card,
+  .data-governance-card,
+  .audit-ledger-card,
+  .slo-incident-card,
+  .proof-card,
+  .launch-bundle-card,
+  .docs-coverage-card,
+  .client-connect-card,
+  .journey-compiler-card,
+  .error-intelligence-card {
+    grid-column: span 6;
+  }
+}
+
+@media (max-width: 900px) {
+  .app-topbar {
+    display: flex;
+    justify-content: space-between;
+    min-height: 64px;
+    gap: 12px;
+    padding: 0 112px 0 12px;
+    max-width: 100vw;
+    overflow: hidden;
+  }
+
+  .topbar-brand {
+    max-width: calc(100vw - 136px);
+    overflow: hidden;
+  }
+
+  .topbar-actions {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 40;
+    min-width: auto;
+  }
+
+  .topbar-nav {
+    display: none;
+  }
+
+  .mealpilot-logo img {
+    width: 36px;
+    height: 36px;
+  }
+
+  .mealpilot-logo small,
+  .system-status,
+  .login-button span,
+  .mobile-menu-button span {
+    display: none;
+  }
+
+  .login-button,
+  .mobile-menu-button {
+    width: 40px;
+    padding: 0;
+  }
+
+  .mobile-navigation.open {
+    top: 64px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding: 10px 12px;
+  }
+
+  .app-shell,
+  .app-footer {
+    width: min(100% - 20px, 1120px);
+  }
+
+  .app-shell {
+    padding-top: 12px;
+  }
+
+  .sidebar {
+    padding: 12px;
+  }
+
+  .sidebar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .profile-panel {
+    grid-column: 1 / -1;
+  }
+
+  .workspace-header {
+    min-height: 156px;
+    align-items: stretch;
+    padding: 16px;
+  }
+
+  .workspace-header h1 {
+    font-size: clamp(2rem, 11vw, 3rem);
+    line-height: 1.02;
+  }
+
+  .action-bar {
+    position: static;
+  }
+
+  .planner-grid,
+  .recommendations,
+  .lower-grid,
+  .variant-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .input-grid,
+  .metrics-card,
+  .auth-status-grid,
+  .workflow-grid,
+  .launch-grid,
+  .demo-studio-grid,
+  .production-evidence-grid,
+  .concierge-slot-list,
+  .concierge-stat-grid,
+  .submission-grid,
+  .submission-console-grid,
+  .traffic-readiness-grid,
+  .backpressure-grid,
+  .data-governance-grid,
+  .audit-ledger-grid,
+  .enterprise-auth-grid,
+  .resource-prompt-grid,
+  .widget-runtime-grid,
+  .commercial-guard-grid,
+  .staging-cutover-grid,
+  .faq-policy-grid,
+  .growth-partnership-grid,
+  .channel-multimodal-grid,
+  .nutrition-budget-grid,
+  .preference-graph-grid,
+  .guest-collaboration-grid,
+  .luxury-experience-grid,
+  .reviewer-artifact-grid,
+  .visual-qa-grid,
+  .slo-grid,
+  .proof-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .workflow-grid article,
+  .launch-grid article,
+  .demo-studio-grid article,
+  .production-evidence-grid article,
+  .surface-card,
+  .builders-map-card,
+  .credential-card,
+  .enterprise-auth-card,
+  .scenario-runner-card,
+  .state-orchestrator-card,
+  .widget-runtime-card,
+  .commercial-guard-card,
+  .staging-cutover-card,
+  .tool-lab-card,
+  .contract-matrix-card,
+  .builder-intake-card,
+  .faq-policy-card,
+  .growth-partnership-card,
+  .channel-multimodal-card,
+  .nutrition-budget-card,
+  .preference-graph-card,
+  .guest-collaboration-card,
+  .luxury-experience-card,
+  .reviewer-artifact-card,
+  .visual-qa-card,
+  .access-dossier-card,
+  .use-case-studio-card,
+  .staging-certification-card,
+  .brand-compliance-card,
+  .capability-registry-card,
+  .resource-prompt-card,
+  .website-atlas-card,
+  .upstream-watch-card,
+  .support-bridge-card,
+  .submission-card,
+  .submission-console-card,
+  .staging-transcript-card,
+  .widget-card,
+  .traffic-readiness-card,
+  .backpressure-card,
+  .data-governance-card,
+  .audit-ledger-card,
+  .slo-incident-card,
+  .proof-card,
+  .launch-bundle-card,
+  .docs-coverage-card,
+  .client-connect-card,
+  .journey-compiler-card,
+  .error-intelligence-card {
+    grid-column: auto;
+  }
+
+  .recommendation {
+    min-height: auto;
+  }
+
+  .app-footer {
+    grid-template-columns: 1fr;
+    justify-items: start;
+    gap: 12px;
+  }
+
+  .app-footer nav {
+    justify-content: flex-start;
+  }
+
+  .app-footer p {
+    text-align: left;
+  }
+
+  .action-notice {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .action-notice a {
+    justify-content: center;
+    margin-left: 0;
+    width: 100%;
+  }
+}
+
+@media (max-width: 700px) {
+  .app-topbar {
+    width: 100%;
+    padding-right: 112px;
+  }
+
+  .system-status {
+    display: none;
+  }
+
+  .app-shell,
+  .app-footer {
+    width: 100%;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .portal-shell,
+  .app-shell,
+  .workspace,
+  .workspace-header,
+  .action-bar,
+  .auth-status-panel,
+  .composer-card,
+  .metrics-card,
+  .recommendation,
+  .analysis-panel,
+  .sidebar,
+  .side-panel {
+    max-width: 100%;
+  }
+
+  .sidebar {
     grid-template-columns: 1fr;
   }
 }

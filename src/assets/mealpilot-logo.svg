@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title desc">
+  <title id="title">MealPilot logo</title>
+  <desc id="desc">A precision navigation mark combining a route, plate, and Swiggy-inspired commerce signal.</desc>
+  <rect width="64" height="64" rx="14" fill="#161616"/>
+  <path d="M18 42c7-11 17-17 30-20" fill="none" stroke="#0f62fe" stroke-width="4" stroke-linecap="round"/>
+  <path d="M18 42c4 4 10 6 17 5 6-1 11-4 14-9" fill="none" stroke="#24a148" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="22" cy="26" r="7" fill="#ff832b"/>
+  <path d="M22 19v14M15 26h14" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M44 14l6 6-9 3 3-9z" fill="#f1c21b"/>
+  <circle cx="44" cy="42" r="4" fill="#ffffff"/>
+</svg>

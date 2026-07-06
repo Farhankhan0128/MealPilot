@@ -1,34 +1,80 @@
 import type {
   AgentSurface,
   AgentSurfaceResponse,
+  AuditLedgerCenter,
+  AiClientConnectKit,
+  BrandComplianceKit,
   BuilderReadinessItem,
   CartPreflightReport,
+  CommercialActionGuardReport,
   ComplianceEvidence,
+  CredentialOnboardingReport,
+  DataGovernanceCenter,
   DemoStudioStep,
+  EnterpriseDelegatedAuthCenter,
+  ErrorIntelligenceReport,
   EvaluationLab,
   GoLiveCheck,
+  GuestCollaborationCenter,
   GroupMember,
   GroupPlan,
+  HouseholdPreferenceGraph,
   IncidentReport,
+  LaunchBundle,
+  LuxuryExperienceWorkspace,
   MealPlan,
+  McpBackpressureGovernorReport,
+  McpCapabilityRegistry,
   McpGatewayStatus,
+  McpResourcePromptStudio,
+  McpToolLabReport,
   McpServerCoverage,
   McpReplayStep,
+  NutritionBudgetIntelligence,
+  ObservabilityTraceReport,
   ObservabilityMetric,
   OpsStatus,
   PantryItem,
+  PremiumConciergeItineraryReport,
+  PremiumUseCaseStudio,
   RateLimitPlan,
   Reminder,
+  ReviewerArtifactVault,
   ResilienceDrill,
   ResilienceRunbook,
   ReviewerProof,
+  SwiggyRouteOptimizationReport,
   RestockSuggestion,
+  RuntimeTelemetryReport,
+  SloIncidentCommandCenter,
+  SubmissionConsole,
   SubmissionPackage,
+  StagingCertificationMatrix,
+  StagingTranscriptExport,
+  TrafficReadinessPlan,
+  SupportBridgeReport,
+  SwiggyAuthStatusReport,
+  SwiggyAccessDossier,
+  SwiggyBuilderIntakeCommandCenter,
+  SwiggyChannelMultimodalStudio,
   SwiggyWidget,
+  SwiggyBuildersMap,
+  SwiggyDocsCoverageReport,
+  SwiggyFaqPolicyCenter,
+  SwiggyGrowthPartnershipCenter,
+  SwiggyJourneyCompilerReport,
+  SwiggyScenarioRunnerReport,
+  SwiggyStagingCutoverRehearsal,
+  SwiggyStateOrchestratorReport,
+  SwiggyToolContractMatrix,
+  SwiggyUpstreamWatchReport,
+  SwiggyWebsiteAtlas,
+  SwiggyWidgetRuntimeReport,
   TrackingEvent,
   UserPlanningRequest,
   UserProfile,
   VersionMonitor,
+  VisualQaCenter,
 } from "../domain/types";
 
 export interface HealthResponse {
@@ -165,6 +211,138 @@ export function fetchMcpGateway() {
   return requestJson<{ gateway: McpGatewayStatus }>("/api/mcp-gateway");
 }
 
+export function fetchMcpToolLab() {
+  return requestJson<{ toolLab: McpToolLabReport }>("/api/mcp/tool-lab");
+}
+
+export function fetchMcpCapabilityRegistry() {
+  return requestJson<{ registry: McpCapabilityRegistry }>("/api/mcp/capability-registry");
+}
+
+export function fetchMcpResourcePromptStudio() {
+  return requestJson<{ resourcePromptStudio: McpResourcePromptStudio }>("/api/mcp/resource-prompt-studio");
+}
+
+export function fetchSwiggyToolContractMatrix() {
+  return requestJson<{ matrix: SwiggyToolContractMatrix }>("/api/mcp/tool-contract-matrix");
+}
+
+export function fetchSwiggyScenarioRunner() {
+  return requestJson<{ scenarioRunner: SwiggyScenarioRunnerReport }>("/api/mcp/scenario-runner");
+}
+
+export function fetchSwiggyStateOrchestrator() {
+  return requestJson<{ stateOrchestrator: SwiggyStateOrchestratorReport }>("/api/mcp/state-orchestrator");
+}
+
+export function fetchSwiggyWidgetRuntime() {
+  return requestJson<{ widgetRuntime: SwiggyWidgetRuntimeReport }>("/api/mcp/widget-runtime");
+}
+
+export function fetchCommercialActionGuard() {
+  return requestJson<{ commercialActionGuard: CommercialActionGuardReport }>("/api/mcp/commercial-action-guard");
+}
+
+export function fetchSwiggyStagingCutover() {
+  return requestJson<{ stagingCutover: SwiggyStagingCutoverRehearsal }>("/api/mcp/staging-cutover");
+}
+
+export function fetchSwiggyBuildersMap() {
+  return requestJson<{ map: SwiggyBuildersMap }>("/api/swiggy-builders-map");
+}
+
+export function fetchSwiggyWebsiteAtlas() {
+  return requestJson<{ atlas: SwiggyWebsiteAtlas }>("/api/swiggy-website-atlas");
+}
+
+export function fetchSwiggyBuilderIntake() {
+  return requestJson<{ intake: SwiggyBuilderIntakeCommandCenter }>("/api/swiggy-builder-intake");
+}
+
+export function fetchSwiggyFaqPolicyCenter() {
+  return requestJson<{ faqPolicy: SwiggyFaqPolicyCenter }>("/api/swiggy-faq-policy");
+}
+
+export function fetchSwiggyGrowthPartnershipCenter() {
+  return requestJson<{ growthPartnership: SwiggyGrowthPartnershipCenter }>("/api/swiggy-growth-partnership");
+}
+
+export function fetchChannelMultimodalStudio() {
+  return requestJson<{ channelMultimodalStudio: SwiggyChannelMultimodalStudio }>("/api/channel-multimodal-studio");
+}
+
+export function fetchNutritionBudgetIntelligence() {
+  return requestJson<{ nutritionBudget: NutritionBudgetIntelligence }>("/api/nutrition-budget-intelligence");
+}
+
+export function fetchHouseholdPreferenceGraph() {
+  return requestJson<{ householdPreference: HouseholdPreferenceGraph }>("/api/household-preference-graph");
+}
+
+export function fetchGuestCollaborationCenter() {
+  return requestJson<{ guestCollaboration: GuestCollaborationCenter }>("/api/guest-collaboration-calendar");
+}
+
+export function fetchLuxuryExperienceWorkspace() {
+  return requestJson<{ luxuryExperience: LuxuryExperienceWorkspace }>("/api/luxury-experience-workspace");
+}
+
+export function fetchReviewerArtifactVault() {
+  return requestJson<{ reviewerArtifactVault: ReviewerArtifactVault }>("/api/reviewer-artifact-vault");
+}
+
+export function fetchVisualQaCenter() {
+  return requestJson<{ visualQa: VisualQaCenter }>("/api/visual-qa-center");
+}
+
+export function fetchSwiggyDocsCoverage() {
+  return requestJson<{ docsCoverage: SwiggyDocsCoverageReport }>("/api/swiggy-docs-coverage");
+}
+
+export function fetchSwiggyUpstreamWatch() {
+  return requestJson<{ upstreamWatch: SwiggyUpstreamWatchReport }>("/api/swiggy-upstream-watch");
+}
+
+export function fetchAiClientConnectKit() {
+  return requestJson<{ connectKit: AiClientConnectKit }>("/api/ai-client-connect-kit");
+}
+
+export function fetchBrandComplianceKit() {
+  return requestJson<{ brandCompliance: BrandComplianceKit }>("/api/brand-compliance-kit");
+}
+
+export function fetchSwiggyJourneyCompiler() {
+  return requestJson<{ journeyCompiler: SwiggyJourneyCompilerReport }>("/api/swiggy-journey-compiler");
+}
+
+export function fetchSwiggyAccessDossier() {
+  return requestJson<{ dossier: SwiggyAccessDossier }>("/api/swiggy-access-dossier");
+}
+
+export function fetchPremiumUseCaseStudio() {
+  return requestJson<{ studio: PremiumUseCaseStudio }>("/api/premium-use-case-studio");
+}
+
+export function fetchPremiumConciergeItinerary() {
+  return requestJson<{ concierge: PremiumConciergeItineraryReport }>("/api/premium-concierge-itinerary");
+}
+
+export function fetchStagingCertificationMatrix() {
+  return requestJson<{ matrix: StagingCertificationMatrix }>("/api/staging-certification-matrix");
+}
+
+export function fetchCredentialOnboarding() {
+  return requestJson<{ onboarding: CredentialOnboardingReport }>("/api/credential-onboarding");
+}
+
+export function fetchSwiggyAuthStatus() {
+  return requestJson<{ authStatus: SwiggyAuthStatusReport }>("/api/auth/swiggy/status");
+}
+
+export function fetchEnterpriseDelegatedAuthCenter() {
+  return requestJson<{ enterpriseAuth: EnterpriseDelegatedAuthCenter }>("/api/enterprise-delegated-auth");
+}
+
 export function fetchAgentSurface(sessionId: string, surface: AgentSurface) {
   const params = new URLSearchParams({ surface });
   return requestJson<{ response: AgentSurfaceResponse }>(`/api/sessions/${sessionId}/surface?${params.toString()}`);
@@ -176,6 +354,10 @@ export function fetchCartPreflight(sessionId: string) {
 
 export function fetchMcpReplay(sessionId: string) {
   return requestJson<{ replay: McpReplayStep[] }>(`/api/sessions/${sessionId}/replay`);
+}
+
+export function fetchStagingTranscript(sessionId: string) {
+  return requestJson<{ transcript: StagingTranscriptExport }>(`/api/sessions/${sessionId}/staging-transcript`);
 }
 
 export function fetchWidgets(sessionId: string) {
@@ -229,6 +411,19 @@ export function createSupportReport(sessionId?: string) {
   });
 }
 
+export function fetchSupportBridge(sessionId?: string) {
+  const params = sessionId ? `?${new URLSearchParams({ sessionId }).toString()}` : "";
+  return requestJson<{ supportBridge: SupportBridgeReport }>(`/api/support/bridge${params}`);
+}
+
+export function fetchSloIncidentCommand() {
+  return requestJson<{ sloIncident: SloIncidentCommandCenter }>("/api/slo-incident-command");
+}
+
+export function fetchErrorIntelligence() {
+  return requestJson<{ errorIntelligence: ErrorIntelligenceReport }>("/api/error-intelligence");
+}
+
 export function fetchDemoStudio() {
   return requestJson<{ steps: DemoStudioStep[] }>("/api/demo-studio");
 }
@@ -241,8 +436,20 @@ export function fetchSubmissionPackage() {
   return requestJson<{ package: SubmissionPackage }>("/api/submission-package");
 }
 
+export function fetchSubmissionConsole() {
+  return requestJson<{ submissionConsole: SubmissionConsole }>("/api/submission-console");
+}
+
 export function fetchRateLimitPlan() {
   return requestJson<{ rateLimit: RateLimitPlan }>("/api/rate-limit-plan");
+}
+
+export function fetchTrafficReadinessPlan() {
+  return requestJson<{ trafficReadiness: TrafficReadinessPlan }>("/api/traffic-readiness-plan");
+}
+
+export function fetchMcpBackpressureGovernor() {
+  return requestJson<{ backpressureGovernor: McpBackpressureGovernorReport }>("/api/mcp/backpressure-governor");
 }
 
 export function fetchVersionMonitor() {
@@ -253,12 +460,36 @@ export function fetchComplianceEvidence() {
   return requestJson<{ compliance: ComplianceEvidence }>("/api/compliance-evidence");
 }
 
+export function fetchDataGovernanceCenter() {
+  return requestJson<{ dataGovernance: DataGovernanceCenter }>("/api/data-governance-center");
+}
+
 export function fetchReviewerProof() {
   return requestJson<{ proof: ReviewerProof }>("/api/reviewer-proof");
 }
 
+export function fetchProductionLaunchBundle() {
+  return requestJson<{ launchBundle: LaunchBundle }>("/api/production-launch-bundle");
+}
+
 export function fetchResilience() {
   return requestJson<{ drills: ResilienceDrill[]; runbook: ResilienceRunbook }>("/api/resilience");
+}
+
+export function fetchObservabilityTraces() {
+  return requestJson<{ observability: ObservabilityTraceReport }>("/api/observability/traces");
+}
+
+export function fetchRuntimeTelemetry() {
+  return requestJson<{ telemetry: RuntimeTelemetryReport }>("/api/telemetry/runtime");
+}
+
+export function fetchAuditLedger() {
+  return requestJson<{ auditLedger: AuditLedgerCenter }>("/api/audit-ledger");
+}
+
+export function fetchSwiggyRouteOptimizer() {
+  return requestJson<{ routeOptimizer: SwiggyRouteOptimizationReport }>("/api/swiggy-route-optimizer");
 }
 
 export function exportPrivacyData() {
@@ -278,14 +509,27 @@ export function deletePrivacyData() {
 }
 
 export function startSwiggyAuth() {
-  return requestJson<{ authorizationUrl: string; mode: string; state: string }>("/api/auth/swiggy/start", {
+  return requestJson<{
+    authorizationUrl: string;
+    mode: string;
+    state: string;
+    verifierStoredServerSide: boolean;
+    authStatus: SwiggyAuthStatusReport;
+  }>("/api/auth/swiggy/start", {
     method: "POST",
   });
 }
 
 export function completeSwiggyAuth(code: string, state: string) {
   const params = new URLSearchParams({ code, state });
-  return requestJson<{ ok: boolean; mode: string; tokenExchange: string; state: string }>(
-    `/api/auth/swiggy/callback?${params.toString()}`,
-  );
+  return requestJson<{
+    ok: boolean;
+    mode: string;
+    tokenExchange: "mocked" | "exchanged";
+    state: string;
+    tokenType?: string;
+    expiresAt?: string;
+    scope?: string;
+    authStatus: SwiggyAuthStatusReport;
+  }>(`/api/auth/swiggy/callback?${params.toString()}`);
 }

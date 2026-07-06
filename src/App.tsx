@@ -1,7 +1,10 @@
 import {
   Activity,
+  AlertTriangle,
   Bot,
+  BookOpen,
   CalendarCheck,
+  Camera,
   Check,
   ChevronRight,
   ClipboardCheck,
@@ -9,17 +12,23 @@ import {
   FileWarning,
   Gauge,
   GitBranch,
+  Grid3X3,
   Loader2,
+  LifeBuoy,
   LockKeyhole,
   MapPin,
+  Menu,
   MessageSquare,
   Play,
   Radio,
   RefreshCw,
+  Rocket,
   ShieldCheck,
   ShoppingBasket,
   Sparkles,
   Utensils,
+  Users,
+  X,
 } from "lucide-react";
 import type { ReactNode } from "react";
 import { useEffect, useMemo, useState } from "react";
@@ -33,70 +42,163 @@ import {
   deletePrivacyData,
   exportPrivacyData,
   fetchAgentSurface,
+  fetchAuditLedger,
   fetchBuilderPackage,
   fetchBuilderPackageMarkdown,
+  fetchBrandComplianceKit,
+  fetchChannelMultimodalStudio,
   fetchCartPreflight,
+  fetchCommercialActionGuard,
   fetchComplianceEvidence,
+  fetchDataGovernanceCenter,
+  fetchCredentialOnboarding,
   fetchDemoStudio,
+  fetchErrorIntelligence,
+  fetchEnterpriseDelegatedAuthCenter,
   fetchEvaluationLab,
   fetchGoLive,
   fetchGroupPlan,
+  fetchGuestCollaborationCenter,
   fetchHealth,
+  fetchHouseholdPreferenceGraph,
+  fetchLuxuryExperienceWorkspace,
   fetchMcpGateway,
+  fetchMcpBackpressureGovernor,
   fetchMcpCatalog,
+  fetchMcpCapabilityRegistry,
+  fetchMcpResourcePromptStudio,
+  fetchMcpToolLab,
+  fetchSwiggyToolContractMatrix,
   fetchMcpReplay,
+  fetchNutritionBudgetIntelligence,
+  fetchObservabilityTraces,
   fetchOpsStatus,
   fetchPantry,
   fetchProfile,
+  fetchPremiumConciergeItinerary,
+  fetchPremiumUseCaseStudio,
+  fetchProductionLaunchBundle,
   fetchRateLimitPlan,
   fetchReviewerProof,
+  fetchReviewerArtifactVault,
   fetchResilience,
+  fetchRuntimeTelemetry,
+  fetchSloIncidentCommand,
+  fetchStagingCertificationMatrix,
+  fetchStagingTranscript,
+  fetchSubmissionConsole,
   fetchSubmissionPackage,
+  fetchSupportBridge,
+  fetchSwiggyAuthStatus,
+  fetchSwiggyBuildersMap,
+  fetchSwiggyBuilderIntake,
+  fetchSwiggyFaqPolicyCenter,
+  fetchSwiggyGrowthPartnershipCenter,
+  fetchSwiggyAccessDossier,
+  fetchSwiggyDocsCoverage,
+  fetchSwiggyJourneyCompiler,
+  fetchSwiggyScenarioRunner,
+  fetchSwiggyStagingCutover,
+  fetchSwiggyStateOrchestrator,
+  fetchSwiggyWidgetRuntime,
+  fetchSwiggyUpstreamWatch,
+  fetchSwiggyWebsiteAtlas,
+  fetchSwiggyRouteOptimizer,
+  fetchTrafficReadinessPlan,
   fetchTracking,
   fetchVersionMonitor,
+  fetchVisualQaCenter,
   fetchWidgets,
   removeRecommendationItem,
   schedulePlan,
   startSwiggyAuth,
   substituteRecommendationItem,
   updateProfile,
+  fetchAiClientConnectKit,
   type BuilderPackageResponse,
   type GoLiveResponse,
   type HealthResponse,
   type McpCatalogResponse,
 } from "./api/mealpilotApi";
+import mealPilotLogo from "./assets/mealpilot-logo.svg";
 import { defaultUserProfile, normalizeListInput } from "./domain/profile";
 import { buildConfirmationMessage } from "./domain/safety";
 import type {
   AgentSurface,
   AgentSurfaceResponse,
+  AuditLedgerCenter,
+  AiClientConnectKit,
+  BrandComplianceKit,
   CartPreflightReport,
+  CommercialActionGuardReport,
   ComplianceEvidence,
+  CredentialOnboardingReport,
+  DataGovernanceCenter,
   DemoStudioStep,
+  EnterpriseDelegatedAuthCenter,
+  ErrorIntelligenceReport,
   EvaluationLab,
   GoLiveCheck,
+  GuestCollaborationCenter,
   GroupPlan,
+  HouseholdPreferenceGraph,
   IncidentReport,
+  LaunchBundle,
+  LuxuryExperienceWorkspace,
   MealPlan,
+  McpBackpressureGovernorReport,
+  McpCapabilityRegistry,
   McpGatewayStatus,
+  McpResourcePromptStudio,
+  McpToolLabReport,
   McpReplayStep,
+  NutritionBudgetIntelligence,
   ObservabilityMetric,
+  ObservabilityTraceReport,
   OpsStatus,
   PantryItem,
+  PremiumConciergeItineraryReport,
+  PremiumUseCaseStudio,
   RateLimitPlan,
   Recommendation,
   Reminder,
   ResilienceDrill,
   ResilienceRunbook,
   ReviewerProof,
+  ReviewerArtifactVault,
   RestockSuggestion,
+  RuntimeTelemetryReport,
+  SloIncidentCommandCenter,
+  SubmissionConsole,
   SubmissionPackage,
+  StagingCertificationMatrix,
+  StagingTranscriptExport,
+  SupportBridgeReport,
+  SwiggyAuthStatusReport,
+  SwiggyAccessDossier,
+  SwiggyBuilderIntakeCommandCenter,
+  SwiggyChannelMultimodalStudio,
   SwiggyWidget,
+  SwiggyBuildersMap,
+  SwiggyDocsCoverageReport,
+  SwiggyFaqPolicyCenter,
+  SwiggyGrowthPartnershipCenter,
+  SwiggyJourneyCompilerReport,
+  SwiggyScenarioRunnerReport,
+  SwiggyStagingCutoverRehearsal,
+  SwiggyStateOrchestratorReport,
+  SwiggyToolContractMatrix,
+  SwiggyWebsiteAtlas,
+  SwiggyUpstreamWatchReport,
+  SwiggyWidgetRuntimeReport,
+  SwiggyRouteOptimizationReport,
   SwiggyServer,
+  TrafficReadinessPlan,
   ToolCallEvent,
   UserPlanningRequest,
   UserProfile,
   VersionMonitor,
+  VisualQaCenter,
 } from "./domain/types";
 
 const initialRequest: UserPlanningRequest = {
@@ -139,6 +241,15 @@ const scenarios: Array<{
   },
 ];
 
+const navigationSections = [
+  { href: "#planner", label: "Planner" },
+  { href: "#recommendations", label: "Recommendations" },
+  { href: "#launch-center", label: "Launch" },
+  { href: "#production-evidence", label: "Evidence" },
+  { href: "#demo-studio", label: "Demo" },
+  { href: "#ops", label: "Ops" },
+];
+
 function formatMoney(value: number) {
   return `Rs ${value.toLocaleString("en-IN")}`;
 }
@@ -161,6 +272,18 @@ function statusCopy(status: Recommendation["status"]) {
   return "Prepared";
 }
 
+function MealPilotLogo({ compact = false }: { compact?: boolean }) {
+  return (
+    <span className={compact ? "mealpilot-logo compact" : "mealpilot-logo"}>
+      <img src={mealPilotLogo} alt="" aria-hidden="true" />
+      <span>
+        <strong>MealPilot</strong>
+        {!compact ? <small>Swiggy MCP operating system</small> : null}
+      </span>
+    </span>
+  );
+}
+
 function App() {
   const [request, setRequest] = useState<UserPlanningRequest>(initialRequest);
   const [plan, setPlan] = useState<MealPlan | null>(null);
@@ -177,30 +300,80 @@ function App() {
   const [opsStatus, setOpsStatus] = useState<OpsStatus[]>([]);
   const [mcpGateway, setMcpGateway] = useState<McpGatewayStatus | null>(null);
   const [mcpCatalog, setMcpCatalog] = useState<McpCatalogResponse | null>(null);
+  const [mcpCapabilityRegistry, setMcpCapabilityRegistry] = useState<McpCapabilityRegistry | null>(null);
+  const [mcpResourcePromptStudio, setMcpResourcePromptStudio] = useState<McpResourcePromptStudio | null>(null);
+  const [toolContractMatrix, setToolContractMatrix] = useState<SwiggyToolContractMatrix | null>(null);
+  const [scenarioRunner, setScenarioRunner] = useState<SwiggyScenarioRunnerReport | null>(null);
+  const [stateOrchestrator, setStateOrchestrator] = useState<SwiggyStateOrchestratorReport | null>(null);
+  const [widgetRuntime, setWidgetRuntime] = useState<SwiggyWidgetRuntimeReport | null>(null);
+  const [commercialActionGuard, setCommercialActionGuard] = useState<CommercialActionGuardReport | null>(null);
+  const [stagingCutover, setStagingCutover] = useState<SwiggyStagingCutoverRehearsal | null>(null);
+  const [mcpToolLab, setMcpToolLab] = useState<McpToolLabReport | null>(null);
+  const [swiggyBuildersMap, setSwiggyBuildersMap] = useState<SwiggyBuildersMap | null>(null);
+  const [swiggyWebsiteAtlas, setSwiggyWebsiteAtlas] = useState<SwiggyWebsiteAtlas | null>(null);
+  const [swiggyBuilderIntake, setSwiggyBuilderIntake] = useState<SwiggyBuilderIntakeCommandCenter | null>(null);
+  const [swiggyFaqPolicy, setSwiggyFaqPolicy] = useState<SwiggyFaqPolicyCenter | null>(null);
+  const [swiggyGrowthPartnership, setSwiggyGrowthPartnership] = useState<SwiggyGrowthPartnershipCenter | null>(null);
+  const [channelMultimodalStudio, setChannelMultimodalStudio] =
+    useState<SwiggyChannelMultimodalStudio | null>(null);
+  const [nutritionBudget, setNutritionBudget] = useState<NutritionBudgetIntelligence | null>(null);
+  const [householdPreference, setHouseholdPreference] = useState<HouseholdPreferenceGraph | null>(null);
+  const [guestCollaboration, setGuestCollaboration] = useState<GuestCollaborationCenter | null>(null);
+  const [luxuryExperience, setLuxuryExperience] = useState<LuxuryExperienceWorkspace | null>(null);
+  const [reviewerArtifactVault, setReviewerArtifactVault] = useState<ReviewerArtifactVault | null>(null);
+  const [visualQa, setVisualQa] = useState<VisualQaCenter | null>(null);
+  const [swiggyDocsCoverage, setSwiggyDocsCoverage] = useState<SwiggyDocsCoverageReport | null>(null);
+  const [swiggyUpstreamWatch, setSwiggyUpstreamWatch] = useState<SwiggyUpstreamWatchReport | null>(null);
+  const [aiClientConnectKit, setAiClientConnectKit] = useState<AiClientConnectKit | null>(null);
+  const [brandCompliance, setBrandCompliance] = useState<BrandComplianceKit | null>(null);
+  const [swiggyJourneyCompiler, setSwiggyJourneyCompiler] = useState<SwiggyJourneyCompilerReport | null>(null);
+  const [swiggyAccessDossier, setSwiggyAccessDossier] = useState<SwiggyAccessDossier | null>(null);
+  const [premiumUseCaseStudio, setPremiumUseCaseStudio] = useState<PremiumUseCaseStudio | null>(null);
+  const [premiumConciergeItinerary, setPremiumConciergeItinerary] =
+    useState<PremiumConciergeItineraryReport | null>(null);
+  const [stagingCertification, setStagingCertification] = useState<StagingCertificationMatrix | null>(null);
+  const [credentialOnboarding, setCredentialOnboarding] = useState<CredentialOnboardingReport | null>(null);
+  const [enterpriseDelegatedAuth, setEnterpriseDelegatedAuth] = useState<EnterpriseDelegatedAuthCenter | null>(null);
   const [surfaceMode, setSurfaceMode] = useState<AgentSurface>("chat");
   const [agentSurface, setAgentSurface] = useState<AgentSurfaceResponse | null>(null);
   const [goLiveChecks, setGoLiveChecks] = useState<GoLiveCheck[]>([]);
   const [observabilityMetrics, setObservabilityMetrics] = useState<ObservabilityMetric[]>([]);
   const [rollout, setRollout] = useState<GoLiveResponse["rollout"] | null>(null);
   const [incidentReport, setIncidentReport] = useState<IncidentReport | null>(null);
+  const [supportBridge, setSupportBridge] = useState<SupportBridgeReport | null>(null);
   const [preflight, setPreflight] = useState<CartPreflightReport | null>(null);
   const [mcpReplay, setMcpReplay] = useState<McpReplayStep[]>([]);
+  const [stagingTranscript, setStagingTranscript] = useState<StagingTranscriptExport | null>(null);
   const [demoSteps, setDemoSteps] = useState<DemoStudioStep[]>([]);
   const [evaluationLab, setEvaluationLab] = useState<EvaluationLab | null>(null);
   const [submissionPackage, setSubmissionPackage] = useState<SubmissionPackage | null>(null);
+  const [submissionConsole, setSubmissionConsole] = useState<SubmissionConsole | null>(null);
   const [widgets, setWidgets] = useState<SwiggyWidget[]>([]);
   const [widgetBridge, setWidgetBridge] = useState<{ origin: string; sandbox: string; verifyOrigin: boolean } | null>(
     null,
   );
   const [rateLimit, setRateLimit] = useState<RateLimitPlan | null>(null);
+  const [trafficReadiness, setTrafficReadiness] = useState<TrafficReadinessPlan | null>(null);
+  const [backpressureGovernor, setBackpressureGovernor] = useState<McpBackpressureGovernorReport | null>(null);
   const [versionMonitor, setVersionMonitor] = useState<VersionMonitor | null>(null);
   const [complianceEvidence, setComplianceEvidence] = useState<ComplianceEvidence | null>(null);
+  const [dataGovernance, setDataGovernance] = useState<DataGovernanceCenter | null>(null);
   const [reviewerProof, setReviewerProof] = useState<ReviewerProof | null>(null);
+  const [launchBundle, setLaunchBundle] = useState<LaunchBundle | null>(null);
+  const [errorIntelligence, setErrorIntelligence] = useState<ErrorIntelligenceReport | null>(null);
   const [resilienceDrills, setResilienceDrills] = useState<ResilienceDrill[]>([]);
   const [resilienceRunbook, setResilienceRunbook] = useState<ResilienceRunbook | null>(null);
+  const [observabilityTraceReport, setObservabilityTraceReport] = useState<ObservabilityTraceReport | null>(null);
+  const [runtimeTelemetry, setRuntimeTelemetry] = useState<RuntimeTelemetryReport | null>(null);
+  const [auditLedger, setAuditLedger] = useState<AuditLedgerCenter | null>(null);
+  const [sloIncident, setSloIncident] = useState<SloIncidentCommandCenter | null>(null);
+  const [routeOptimizer, setRouteOptimizer] = useState<SwiggyRouteOptimizationReport | null>(null);
   const [exportText, setExportText] = useState<string | null>(null);
   const [authUrl, setAuthUrl] = useState<string | null>(null);
+  const [swiggyAuthStatus, setSwiggyAuthStatus] = useState<SwiggyAuthStatusReport | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [actionNotice, setActionNotice] = useState<string | null>(null);
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const confirmedCount = plan?.recommendations.filter((item) => item.status === "confirmed").length ?? 0;
 
   const readiness = useMemo(
@@ -218,9 +391,11 @@ function App() {
   async function buildPlan(nextRequest = request) {
     setIsPlanning(true);
     setError(null);
+    setActionNotice(null);
     try {
       const response = await buildServerPlan(nextRequest);
       setPlan(response.plan);
+      setActionNotice("Plan refreshed with Food, Instamart, and Dineout recommendations.");
       void fetchAgentSurface(response.plan.id, surfaceMode)
         .then((surfaceResponse) => setAgentSurface(surfaceResponse.response))
         .catch(() => setAgentSurface(null));
@@ -235,9 +410,11 @@ function App() {
 
   async function saveProfile(nextProfile = profile) {
     setError(null);
+    setActionNotice(null);
     try {
       const response = await updateProfile(nextProfile);
       setProfile(response.profile);
+      setActionNotice("Household profile saved and planner defaults updated.");
       setRequest((current) => ({
         ...current,
         city: response.profile.defaultCity,
@@ -259,30 +436,118 @@ function App() {
       opsResponse,
       gatewayResponse,
       catalogResponse,
+      capabilityRegistryResponse,
+      resourcePromptStudioResponse,
+      contractMatrixResponse,
+      scenarioRunnerResponse,
+      stateOrchestratorResponse,
+      widgetRuntimeResponse,
+      commercialActionGuardResponse,
+      stagingCutoverResponse,
+      toolLabResponse,
+      buildersMapResponse,
+      websiteAtlasResponse,
+      builderIntakeResponse,
+      faqPolicyResponse,
+      growthPartnershipResponse,
+      channelMultimodalResponse,
+      nutritionBudgetResponse,
+      householdPreferenceResponse,
+      guestCollaborationResponse,
+      luxuryExperienceResponse,
+      reviewerArtifactVaultResponse,
+      visualQaResponse,
+      docsCoverageResponse,
+      upstreamWatchResponse,
+      aiClientConnectResponse,
+      brandComplianceResponse,
+      journeyCompilerResponse,
+      accessDossierResponse,
+      useCaseStudioResponse,
+      conciergeResponse,
+      stagingCertificationResponse,
+      credentialOnboardingResponse,
+      enterpriseDelegatedAuthResponse,
+      supportBridgeResponse,
       goLiveResponse,
       demoStudioResponse,
       evaluationResponse,
       submissionResponse,
+      submissionConsoleResponse,
       rateLimitResponse,
+      trafficReadinessResponse,
+      backpressureGovernorResponse,
       versionResponse,
       complianceResponse,
+      dataGovernanceResponse,
       proofResponse,
+      launchBundleResponse,
+      errorIntelligenceResponse,
       resilienceResponse,
+      observabilityResponse,
+      runtimeTelemetryResponse,
+      auditLedgerResponse,
+      sloIncidentResponse,
+      routeOptimizerResponse,
     ] = await Promise.all([
       fetchPantry(),
       fetchGroupPlan(),
       fetchOpsStatus(),
       fetchMcpGateway(),
       fetchMcpCatalog(),
+      fetchMcpCapabilityRegistry(),
+      fetchMcpResourcePromptStudio(),
+      fetchSwiggyToolContractMatrix(),
+      fetchSwiggyScenarioRunner(),
+      fetchSwiggyStateOrchestrator(),
+      fetchSwiggyWidgetRuntime(),
+      fetchCommercialActionGuard(),
+      fetchSwiggyStagingCutover(),
+      fetchMcpToolLab(),
+      fetchSwiggyBuildersMap(),
+      fetchSwiggyWebsiteAtlas(),
+      fetchSwiggyBuilderIntake(),
+      fetchSwiggyFaqPolicyCenter(),
+      fetchSwiggyGrowthPartnershipCenter(),
+      fetchChannelMultimodalStudio(),
+      fetchNutritionBudgetIntelligence(),
+      fetchHouseholdPreferenceGraph(),
+      fetchGuestCollaborationCenter(),
+      fetchLuxuryExperienceWorkspace(),
+      fetchReviewerArtifactVault(),
+      fetchVisualQaCenter(),
+      fetchSwiggyDocsCoverage(),
+      fetchSwiggyUpstreamWatch(),
+      fetchAiClientConnectKit(),
+      fetchBrandComplianceKit(),
+      fetchSwiggyJourneyCompiler(),
+      fetchSwiggyAccessDossier(),
+      fetchPremiumUseCaseStudio(),
+      fetchPremiumConciergeItinerary(),
+      fetchStagingCertificationMatrix(),
+      fetchCredentialOnboarding(),
+      fetchEnterpriseDelegatedAuthCenter(),
+      fetchSupportBridge(),
       fetchGoLive(),
       fetchDemoStudio(),
       fetchEvaluationLab(),
       fetchSubmissionPackage(),
+      fetchSubmissionConsole(),
       fetchRateLimitPlan(),
+      fetchTrafficReadinessPlan(),
+      fetchMcpBackpressureGovernor(),
       fetchVersionMonitor(),
       fetchComplianceEvidence(),
+      fetchDataGovernanceCenter(),
       fetchReviewerProof(),
+      fetchProductionLaunchBundle(),
+      fetchErrorIntelligence(),
       fetchResilience(),
+      fetchObservabilityTraces(),
+      fetchRuntimeTelemetry(),
+      fetchAuditLedger(),
+      fetchSloIncidentCommand(),
+      fetchSwiggyRouteOptimizer(),
     ]);
     setPantry(pantryResponse.pantry);
     setRestock(pantryResponse.suggestions);
@@ -290,70 +555,248 @@ function App() {
     setOpsStatus(opsResponse.status);
     setMcpGateway(gatewayResponse.gateway);
     setMcpCatalog(catalogResponse);
+    setMcpCapabilityRegistry(capabilityRegistryResponse.registry);
+    setMcpResourcePromptStudio(resourcePromptStudioResponse.resourcePromptStudio);
+    setToolContractMatrix(contractMatrixResponse.matrix);
+    setScenarioRunner(scenarioRunnerResponse.scenarioRunner);
+    setStateOrchestrator(stateOrchestratorResponse.stateOrchestrator);
+    setWidgetRuntime(widgetRuntimeResponse.widgetRuntime);
+    setCommercialActionGuard(commercialActionGuardResponse.commercialActionGuard);
+    setStagingCutover(stagingCutoverResponse.stagingCutover);
+    setMcpToolLab(toolLabResponse.toolLab);
+    setSwiggyBuildersMap(buildersMapResponse.map);
+    setSwiggyWebsiteAtlas(websiteAtlasResponse.atlas);
+    setSwiggyBuilderIntake(builderIntakeResponse.intake);
+    setSwiggyFaqPolicy(faqPolicyResponse.faqPolicy);
+    setSwiggyGrowthPartnership(growthPartnershipResponse.growthPartnership);
+    setChannelMultimodalStudio(channelMultimodalResponse.channelMultimodalStudio);
+    setNutritionBudget(nutritionBudgetResponse.nutritionBudget);
+    setHouseholdPreference(householdPreferenceResponse.householdPreference);
+    setGuestCollaboration(guestCollaborationResponse.guestCollaboration);
+    setLuxuryExperience(luxuryExperienceResponse.luxuryExperience);
+    setReviewerArtifactVault(reviewerArtifactVaultResponse.reviewerArtifactVault);
+    setVisualQa(visualQaResponse.visualQa);
+    setSwiggyDocsCoverage(docsCoverageResponse.docsCoverage);
+    setSwiggyUpstreamWatch(upstreamWatchResponse.upstreamWatch);
+    setAiClientConnectKit(aiClientConnectResponse.connectKit);
+    setBrandCompliance(brandComplianceResponse.brandCompliance);
+    setSwiggyJourneyCompiler(journeyCompilerResponse.journeyCompiler);
+    setSwiggyAccessDossier(accessDossierResponse.dossier);
+    setPremiumUseCaseStudio(useCaseStudioResponse.studio);
+    setPremiumConciergeItinerary(conciergeResponse.concierge);
+    setStagingCertification(stagingCertificationResponse.matrix);
+    setCredentialOnboarding(credentialOnboardingResponse.onboarding);
+    setEnterpriseDelegatedAuth(enterpriseDelegatedAuthResponse.enterpriseAuth);
+    setSupportBridge(supportBridgeResponse.supportBridge);
     setGoLiveChecks(goLiveResponse.checks);
     setObservabilityMetrics(goLiveResponse.metrics);
     setRollout(goLiveResponse.rollout);
     setDemoSteps(demoStudioResponse.steps);
     setEvaluationLab(evaluationResponse.evaluation);
     setSubmissionPackage(submissionResponse.package);
+    setSubmissionConsole(submissionConsoleResponse.submissionConsole);
     setRateLimit(rateLimitResponse.rateLimit);
+    setTrafficReadiness(trafficReadinessResponse.trafficReadiness);
+    setBackpressureGovernor(backpressureGovernorResponse.backpressureGovernor);
     setVersionMonitor(versionResponse.version);
     setComplianceEvidence(complianceResponse.compliance);
+    setDataGovernance(dataGovernanceResponse.dataGovernance);
     setReviewerProof(proofResponse.proof);
+    setLaunchBundle(launchBundleResponse.launchBundle);
+    setErrorIntelligence(errorIntelligenceResponse.errorIntelligence);
     setResilienceDrills(resilienceResponse.drills);
     setResilienceRunbook(resilienceResponse.runbook);
+    setObservabilityTraceReport(observabilityResponse.observability);
+    setRuntimeTelemetry(runtimeTelemetryResponse.telemetry);
+    setAuditLedger(auditLedgerResponse.auditLedger);
+    setSloIncident(sloIncidentResponse.sloIncident);
+    setRouteOptimizer(routeOptimizerResponse.routeOptimizer);
   }
 
   async function refreshLaunchCenter() {
     const [
       catalogResponse,
       gatewayResponse,
+      capabilityRegistryResponse,
+      resourcePromptStudioResponse,
+      contractMatrixResponse,
+      scenarioRunnerResponse,
+      stateOrchestratorResponse,
+      widgetRuntimeResponse,
+      commercialActionGuardResponse,
+      stagingCutoverResponse,
+      toolLabResponse,
+      buildersMapResponse,
+      websiteAtlasResponse,
+      builderIntakeResponse,
+      faqPolicyResponse,
+      growthPartnershipResponse,
+      channelMultimodalResponse,
+      nutritionBudgetResponse,
+      householdPreferenceResponse,
+      guestCollaborationResponse,
+      luxuryExperienceResponse,
+      reviewerArtifactVaultResponse,
+      visualQaResponse,
+      docsCoverageResponse,
+      upstreamWatchResponse,
+      aiClientConnectResponse,
+      brandComplianceResponse,
+      journeyCompilerResponse,
+      accessDossierResponse,
+      useCaseStudioResponse,
+      conciergeResponse,
+      stagingCertificationResponse,
+      credentialOnboardingResponse,
+      enterpriseDelegatedAuthResponse,
+      supportBridgeResponse,
       goLiveResponse,
       demoStudioResponse,
       evaluationResponse,
       submissionResponse,
+      submissionConsoleResponse,
       rateLimitResponse,
+      trafficReadinessResponse,
+      backpressureGovernorResponse,
       versionResponse,
       complianceResponse,
+      dataGovernanceResponse,
       proofResponse,
+      launchBundleResponse,
+      errorIntelligenceResponse,
       resilienceResponse,
+      observabilityResponse,
+      runtimeTelemetryResponse,
+      auditLedgerResponse,
+      sloIncidentResponse,
+      routeOptimizerResponse,
     ] = await Promise.all([
       fetchMcpCatalog(),
       fetchMcpGateway(),
+      fetchMcpCapabilityRegistry(),
+      fetchMcpResourcePromptStudio(),
+      fetchSwiggyToolContractMatrix(),
+      fetchSwiggyScenarioRunner(),
+      fetchSwiggyStateOrchestrator(),
+      fetchSwiggyWidgetRuntime(),
+      fetchCommercialActionGuard(),
+      fetchSwiggyStagingCutover(),
+      fetchMcpToolLab(),
+      fetchSwiggyBuildersMap(),
+      fetchSwiggyWebsiteAtlas(),
+      fetchSwiggyBuilderIntake(),
+      fetchSwiggyFaqPolicyCenter(),
+      fetchSwiggyGrowthPartnershipCenter(),
+      fetchChannelMultimodalStudio(),
+      fetchNutritionBudgetIntelligence(),
+      fetchHouseholdPreferenceGraph(),
+      fetchGuestCollaborationCenter(),
+      fetchLuxuryExperienceWorkspace(),
+      fetchReviewerArtifactVault(),
+      fetchVisualQaCenter(),
+      fetchSwiggyDocsCoverage(),
+      fetchSwiggyUpstreamWatch(),
+      fetchAiClientConnectKit(),
+      fetchBrandComplianceKit(),
+      fetchSwiggyJourneyCompiler(),
+      fetchSwiggyAccessDossier(),
+      fetchPremiumUseCaseStudio(),
+      fetchPremiumConciergeItinerary(),
+      fetchStagingCertificationMatrix(),
+      fetchCredentialOnboarding(),
+      fetchEnterpriseDelegatedAuthCenter(),
+      fetchSupportBridge(),
       fetchGoLive(),
       fetchDemoStudio(),
       fetchEvaluationLab(),
       fetchSubmissionPackage(),
+      fetchSubmissionConsole(),
       fetchRateLimitPlan(),
+      fetchTrafficReadinessPlan(),
+      fetchMcpBackpressureGovernor(),
       fetchVersionMonitor(),
       fetchComplianceEvidence(),
+      fetchDataGovernanceCenter(),
       fetchReviewerProof(),
+      fetchProductionLaunchBundle(),
+      fetchErrorIntelligence(),
       fetchResilience(),
+      fetchObservabilityTraces(),
+      fetchRuntimeTelemetry(),
+      fetchAuditLedger(),
+      fetchSloIncidentCommand(),
+      fetchSwiggyRouteOptimizer(),
     ]);
     setMcpCatalog(catalogResponse);
     setMcpGateway(gatewayResponse.gateway);
+    setMcpCapabilityRegistry(capabilityRegistryResponse.registry);
+    setMcpResourcePromptStudio(resourcePromptStudioResponse.resourcePromptStudio);
+    setToolContractMatrix(contractMatrixResponse.matrix);
+    setScenarioRunner(scenarioRunnerResponse.scenarioRunner);
+    setStateOrchestrator(stateOrchestratorResponse.stateOrchestrator);
+    setWidgetRuntime(widgetRuntimeResponse.widgetRuntime);
+    setCommercialActionGuard(commercialActionGuardResponse.commercialActionGuard);
+    setStagingCutover(stagingCutoverResponse.stagingCutover);
+    setMcpToolLab(toolLabResponse.toolLab);
+    setSwiggyBuildersMap(buildersMapResponse.map);
+    setSwiggyWebsiteAtlas(websiteAtlasResponse.atlas);
+    setSwiggyBuilderIntake(builderIntakeResponse.intake);
+    setSwiggyFaqPolicy(faqPolicyResponse.faqPolicy);
+    setSwiggyGrowthPartnership(growthPartnershipResponse.growthPartnership);
+    setChannelMultimodalStudio(channelMultimodalResponse.channelMultimodalStudio);
+    setNutritionBudget(nutritionBudgetResponse.nutritionBudget);
+    setHouseholdPreference(householdPreferenceResponse.householdPreference);
+    setGuestCollaboration(guestCollaborationResponse.guestCollaboration);
+    setLuxuryExperience(luxuryExperienceResponse.luxuryExperience);
+    setReviewerArtifactVault(reviewerArtifactVaultResponse.reviewerArtifactVault);
+    setVisualQa(visualQaResponse.visualQa);
+    setSwiggyDocsCoverage(docsCoverageResponse.docsCoverage);
+    setSwiggyUpstreamWatch(upstreamWatchResponse.upstreamWatch);
+    setAiClientConnectKit(aiClientConnectResponse.connectKit);
+    setBrandCompliance(brandComplianceResponse.brandCompliance);
+    setSwiggyJourneyCompiler(journeyCompilerResponse.journeyCompiler);
+    setSwiggyAccessDossier(accessDossierResponse.dossier);
+    setPremiumUseCaseStudio(useCaseStudioResponse.studio);
+    setPremiumConciergeItinerary(conciergeResponse.concierge);
+    setStagingCertification(stagingCertificationResponse.matrix);
+    setCredentialOnboarding(credentialOnboardingResponse.onboarding);
+    setEnterpriseDelegatedAuth(enterpriseDelegatedAuthResponse.enterpriseAuth);
+    setSupportBridge(supportBridgeResponse.supportBridge);
     setGoLiveChecks(goLiveResponse.checks);
     setObservabilityMetrics(goLiveResponse.metrics);
     setRollout(goLiveResponse.rollout);
     setDemoSteps(demoStudioResponse.steps);
     setEvaluationLab(evaluationResponse.evaluation);
     setSubmissionPackage(submissionResponse.package);
+    setSubmissionConsole(submissionConsoleResponse.submissionConsole);
     setRateLimit(rateLimitResponse.rateLimit);
+    setTrafficReadiness(trafficReadinessResponse.trafficReadiness);
+    setBackpressureGovernor(backpressureGovernorResponse.backpressureGovernor);
     setVersionMonitor(versionResponse.version);
     setComplianceEvidence(complianceResponse.compliance);
+    setDataGovernance(dataGovernanceResponse.dataGovernance);
     setReviewerProof(proofResponse.proof);
+    setLaunchBundle(launchBundleResponse.launchBundle);
+    setErrorIntelligence(errorIntelligenceResponse.errorIntelligence);
     setResilienceDrills(resilienceResponse.drills);
     setResilienceRunbook(resilienceResponse.runbook);
+    setObservabilityTraceReport(observabilityResponse.observability);
+    setRuntimeTelemetry(runtimeTelemetryResponse.telemetry);
+    setAuditLedger(auditLedgerResponse.auditLedger);
+    setSloIncident(sloIncidentResponse.sloIncident);
+    setRouteOptimizer(routeOptimizerResponse.routeOptimizer);
   }
 
   async function loadPlanDiagnostics(sessionId: string) {
-    const [preflightResponse, replayResponse, widgetsResponse] = await Promise.all([
+    const [preflightResponse, replayResponse, transcriptResponse, widgetsResponse] = await Promise.all([
       fetchCartPreflight(sessionId),
       fetchMcpReplay(sessionId),
+      fetchStagingTranscript(sessionId),
       fetchWidgets(sessionId),
     ]);
     setPreflight(preflightResponse.preflight);
     setMcpReplay(replayResponse.replay);
+    setStagingTranscript(transcriptResponse.transcript);
     setWidgets(widgetsResponse.widgets);
     setWidgetBridge(widgetsResponse.bridge);
   }
@@ -362,10 +805,13 @@ function App() {
     if (!plan) return;
     setIsConfirming(true);
     setError(null);
+    setActionNotice(null);
     try {
       const response = await confirmAllRecommendations(plan.id);
       setPlan(response.plan);
-      await Promise.all([refreshLaunchCenter(), loadPlanDiagnostics(response.plan.id)]);
+      setActionNotice("All prepared recommendations were confirmed through the guarded API path.");
+      void refreshLaunchCenter().catch(() => undefined);
+      void loadPlanDiagnostics(response.plan.id).catch(() => undefined);
     } catch (confirmError) {
       setError(confirmError instanceof Error ? confirmError.message : "Unable to confirm all actions.");
     } finally {
@@ -376,10 +822,13 @@ function App() {
   async function refreshTracking() {
     if (!plan) return;
     setError(null);
+    setActionNotice(null);
     try {
       const response = await fetchTracking(plan.id);
       setPlan(response.plan);
-      await Promise.all([refreshLaunchCenter(), loadPlanDiagnostics(response.plan.id)]);
+      setActionNotice("Tracking refreshed with the latest simulated Swiggy events.");
+      void refreshLaunchCenter().catch(() => undefined);
+      void loadPlanDiagnostics(response.plan.id).catch(() => undefined);
     } catch (trackingError) {
       setError(trackingError instanceof Error ? trackingError.message : "Unable to refresh tracking.");
     }
@@ -387,71 +836,144 @@ function App() {
 
   async function beginOAuth() {
     setError(null);
+    setActionNotice(null);
+    const popup = window.open("about:blank", "_blank");
     try {
       const response = await startSwiggyAuth();
       setAuthUrl(response.authorizationUrl);
+      setSwiggyAuthStatus(response.authStatus);
+      if (popup) {
+        popup.opener = null;
+        popup.location.href = response.authorizationUrl;
+        setActionNotice("Swiggy authorization opened in a new tab.");
+      } else {
+        setActionNotice("OAuth URL is ready. Use the authorization link below to continue.");
+      }
     } catch (authError) {
+      popup?.close();
       setError(authError instanceof Error ? authError.message : "Unable to start Swiggy OAuth.");
     }
   }
 
+  async function refreshSwiggyAuthStatus() {
+    const response = await fetchSwiggyAuthStatus();
+    setSwiggyAuthStatus(response.authStatus);
+  }
+
   async function scheduleCurrentPlan() {
     if (!plan) return;
-    const response = await schedulePlan(plan.id);
-    setReminders(response.reminders);
-    const [opsResponse] = await Promise.all([fetchOpsStatus(), refreshLaunchCenter()]);
-    setOpsStatus(opsResponse.status);
+    setError(null);
+    setActionNotice(null);
+    try {
+      const response = await schedulePlan(plan.id);
+      setReminders(response.reminders);
+      setActionNotice(`${response.reminders.length} reminders scheduled for this plan.`);
+      const opsResponse = await fetchOpsStatus().catch(() => null);
+      if (opsResponse) setOpsStatus(opsResponse.status);
+      void refreshLaunchCenter().catch(() => undefined);
+    } catch (scheduleError) {
+      setError(scheduleError instanceof Error ? scheduleError.message : "Unable to schedule reminders.");
+    }
   }
 
   async function addDemoGroupMember() {
-    const response = await addGroupMember({
-      id: `member_${Date.now()}`,
-      name: "Asha",
-      diet: "vegetarian",
-      allergies: ["none"],
-      budget: 550,
-    });
-    setGroupPlan(response.groupPlan);
+    setError(null);
+    setActionNotice(null);
+    try {
+      const response = await addGroupMember({
+        id: `member_${Date.now()}`,
+        name: "Asha",
+        diet: "vegetarian",
+        allergies: ["none"],
+        budget: 550,
+      });
+      setGroupPlan(response.groupPlan);
+      setActionNotice("Demo household member added to group planning.");
+    } catch (groupError) {
+      setError(groupError instanceof Error ? groupError.message : "Unable to add demo member.");
+    }
   }
 
   async function exportBuilderMarkdown() {
-    setExportText(await fetchBuilderPackageMarkdown());
+    setError(null);
+    setActionNotice(null);
+    try {
+      setExportText(await fetchBuilderPackageMarkdown());
+      setActionNotice("Builder packet exported. Jump to Operating System to review the preview.");
+    } catch (exportError) {
+      setError(exportError instanceof Error ? exportError.message : "Unable to export builder packet.");
+    }
   }
 
   async function exportPrivacy() {
-    const response = await exportPrivacyData();
-    setExportText(JSON.stringify(response, null, 2));
+    setError(null);
+    setActionNotice(null);
+    try {
+      const response = await exportPrivacyData();
+      setExportText(JSON.stringify(response, null, 2));
+      setActionNotice("Privacy export generated in the Operating System preview.");
+    } catch (privacyError) {
+      setError(privacyError instanceof Error ? privacyError.message : "Unable to export privacy data.");
+    }
   }
 
   async function createIncidentReport() {
-    const response = await createSupportReport(plan?.id);
-    setIncidentReport(response.report);
+    setError(null);
+    setActionNotice(null);
+    try {
+      const response = await createSupportReport(plan?.id);
+      setIncidentReport(response.report);
+      setActionNotice("Support report generated with a ready email handoff.");
+    } catch (reportError) {
+      setError(reportError instanceof Error ? reportError.message : "Unable to create support report.");
+    }
   }
 
   async function clearPrivacyData() {
-    await deletePrivacyData();
-    setPlan(null);
-    setReminders([]);
-    setPreflight(null);
-    setMcpReplay([]);
-    setWidgets([]);
-    setWidgetBridge(null);
-    setExportText("Local profile, plans, pantry, group plan, and reminders were deleted.");
-    await loadAdvancedWorkflows();
+    setError(null);
+    setActionNotice(null);
+    try {
+      await deletePrivacyData();
+      setPlan(null);
+      setReminders([]);
+      setPreflight(null);
+      setMcpReplay([]);
+      setWidgets([]);
+      setWidgetBridge(null);
+      setExportText("Local profile, plans, pantry, group plan, and reminders were deleted.");
+      setActionNotice("Local data deleted. The app has been reset to reviewer-safe defaults.");
+      await loadAdvancedWorkflows();
+    } catch (deleteError) {
+      setError(deleteError instanceof Error ? deleteError.message : "Unable to delete local data.");
+    }
   }
 
   async function substituteItem(recommendationId: string, alternativeId: string) {
     if (!plan) return;
-    const response = await substituteRecommendationItem(plan.id, recommendationId, alternativeId);
-    setPlan(response.plan);
-    await loadPlanDiagnostics(response.plan.id);
+    setError(null);
+    setActionNotice(null);
+    try {
+      const response = await substituteRecommendationItem(plan.id, recommendationId, alternativeId);
+      setPlan(response.plan);
+      setActionNotice("Smart substitution applied to the recommendation.");
+      void loadPlanDiagnostics(response.plan.id).catch(() => undefined);
+    } catch (substituteError) {
+      setError(substituteError instanceof Error ? substituteError.message : "Unable to apply substitution.");
+    }
   }
 
   async function removeItem(recommendationId: string, itemId: string) {
     if (!plan) return;
-    const response = await removeRecommendationItem(plan.id, recommendationId, itemId);
-    setPlan(response.plan);
-    await loadPlanDiagnostics(response.plan.id);
+    setError(null);
+    setActionNotice(null);
+    try {
+      const response = await removeRecommendationItem(plan.id, recommendationId, itemId);
+      setPlan(response.plan);
+      setActionNotice("Item removed and the plan total recalculated.");
+      void loadPlanDiagnostics(response.plan.id).catch(() => undefined);
+    } catch (removeError) {
+      setError(removeError instanceof Error ? removeError.message : "Unable to remove item.");
+    }
   }
 
   function updateRequest<K extends keyof UserPlanningRequest>(key: K, value: UserPlanningRequest[K]) {
@@ -471,7 +993,9 @@ function App() {
       const response = await confirmServerRecommendation(plan.id, selectedRecommendation.id);
       setPlan(response.plan);
       setSelectedRecommendation(null);
-      await Promise.all([refreshLaunchCenter(), loadPlanDiagnostics(response.plan.id)]);
+      setActionNotice(`${serverLabel(selectedRecommendation.server)} action confirmed through the guarded API.`);
+      void refreshLaunchCenter().catch(() => undefined);
+      void loadPlanDiagnostics(response.plan.id).catch(() => undefined);
     } catch (confirmError) {
       setError(confirmError instanceof Error ? confirmError.message : "Unable to confirm action.");
     } finally {
@@ -490,6 +1014,7 @@ function App() {
     void fetchBuilderPackage()
       .then(setBuilderPackage)
       .catch(() => setBuilderPackage(null));
+    void refreshSwiggyAuthStatus().catch(() => setSwiggyAuthStatus(null));
     void loadAdvancedWorkflows().catch(() => undefined);
 
     const params = new URLSearchParams(window.location.search);
@@ -497,10 +1022,18 @@ function App() {
     const state = params.get("state");
     if (window.location.pathname === "/auth/swiggy/callback" && code && state) {
       void completeSwiggyAuth(code, state)
-        .then((response) => setAuthUrl(`OAuth callback ${response.tokenExchange}`))
-        .catch((authError: unknown) =>
-          setError(authError instanceof Error ? authError.message : "Unable to complete OAuth callback."),
-        );
+        .then((response) => {
+          setAuthUrl(null);
+          setSwiggyAuthStatus(response.authStatus);
+          void refreshLaunchCenter().catch(() => undefined);
+        })
+        .catch((authError: unknown) => {
+          setError(authError instanceof Error ? authError.message : "Unable to complete OAuth callback.");
+          void refreshSwiggyAuthStatus().catch(() => undefined);
+        })
+        .finally(() => {
+          window.history.replaceState({}, "", "/");
+        });
     }
   }, []);
 
@@ -516,17 +1049,66 @@ function App() {
     void loadPlanDiagnostics(plan.id).catch(() => undefined);
   }, [plan?.id]);
 
+  useEffect(() => {
+    if (!selectedRecommendation) return;
+    function closeOnEscape(event: KeyboardEvent) {
+      if (event.key === "Escape") setSelectedRecommendation(null);
+    }
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [selectedRecommendation]);
+
   return (
-    <main className="app-shell">
+    <div className="portal-shell">
+      <header className="app-topbar">
+        <a className="topbar-brand" href="#planner" onClick={() => setIsMobileNavOpen(false)}>
+          <MealPilotLogo />
+        </a>
+        <nav className="topbar-nav" aria-label="Primary navigation">
+          {navigationSections.map((section) => (
+            <a key={section.href} href={section.href}>
+              {section.label}
+            </a>
+          ))}
+        </nav>
+        <div className="topbar-actions">
+          <span className="system-status" data-online={health?.ok ? "true" : "false"}>
+            <span aria-hidden="true" />
+            {health?.ok ? "API live" : "Connecting"}
+          </span>
+          <button className="login-button" type="button" onClick={() => void beginOAuth()}>
+            <LockKeyhole aria-hidden="true" />
+            <span>{authUrl ? "Open Swiggy OAuth" : "Login with Swiggy"}</span>
+          </button>
+          <button
+            className="mobile-menu-button"
+            type="button"
+            onClick={() => setIsMobileNavOpen((open) => !open)}
+            aria-expanded={isMobileNavOpen}
+            aria-controls="mobile-navigation"
+          >
+            {isMobileNavOpen ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
+            <span>Menu</span>
+          </button>
+        </div>
+      </header>
+
+      <nav
+        id="mobile-navigation"
+        className={isMobileNavOpen ? "mobile-navigation open" : "mobile-navigation"}
+        aria-label="Mobile navigation"
+      >
+        {navigationSections.map((section) => (
+          <a key={section.href} href={section.href} onClick={() => setIsMobileNavOpen(false)}>
+            {section.label}
+          </a>
+        ))}
+      </nav>
+
+      <main className="app-shell">
       <aside className="sidebar" aria-label="MealPilot workspace">
         <div className="brand-block">
-          <div className="brand-mark">
-            <Sparkles aria-hidden="true" />
-          </div>
-          <div>
-            <p>MealPilot</p>
-            <span>Swiggy MCP command center</span>
-          </div>
+          <MealPilotLogo />
         </div>
 
         <section className="side-panel">
@@ -613,7 +1195,7 @@ function App() {
           </button>
           <button className="ghost-button" type="button" onClick={() => void beginOAuth()}>
             <LockKeyhole aria-hidden="true" />
-            Start Swiggy OAuth
+            {authUrl ? "Open Swiggy OAuth" : "Start Swiggy OAuth"}
           </button>
           <button className="ghost-button" type="button" onClick={() => void scheduleCurrentPlan()} disabled={!plan}>
             <CalendarCheck aria-hidden="true" />
@@ -630,7 +1212,21 @@ function App() {
           ) : null}
         </section>
 
-        <section className="planner-grid">
+        {actionNotice ? (
+          <section className="action-notice" role="status" aria-live="polite">
+            <Check aria-hidden="true" />
+            <span>{actionNotice}</span>
+            {exportText ? <a href="#ops">Open preview</a> : null}
+          </section>
+        ) : null}
+
+        <SwiggyAuthPanel
+          authStatus={swiggyAuthStatus}
+          authUrl={authUrl}
+          onRefresh={() => void refreshSwiggyAuthStatus()}
+        />
+
+        <section className="planner-grid" id="planner">
           <div className="composer-card">
             <div className="scenario-row" aria-label="Demo scenarios">
               {scenarios.map((scenario) => (
@@ -730,7 +1326,7 @@ function App() {
               ))}
             </section>
 
-            <section className="recommendations" aria-label="Swiggy recommendations">
+            <section className="recommendations" id="recommendations" aria-label="Swiggy recommendations">
               {plan.recommendations.map((recommendation) => (
                 <RecommendationCard
                   key={recommendation.id}
@@ -742,7 +1338,7 @@ function App() {
               ))}
             </section>
 
-            <section className="lower-grid">
+            <section className="lower-grid" id="ops">
               <InsightsPanel insights={plan.insights} />
               <AuditPanel events={plan.auditTrail} />
               <TrackingPanel plan={plan} />
@@ -758,33 +1354,78 @@ function App() {
                 onExportPrivacy={() => void exportPrivacy()}
                 onClearPrivacy={() => void clearPrivacyData()}
               />
+              <PremiumConciergePanel concierge={premiumConciergeItinerary} />
               <LaunchCenterPanel
                 catalog={mcpCatalog}
                 gateway={mcpGateway}
+                capabilityRegistry={mcpCapabilityRegistry}
+                resourcePromptStudio={mcpResourcePromptStudio}
+                contractMatrix={toolContractMatrix}
+                scenarioRunner={scenarioRunner}
+                stateOrchestrator={stateOrchestrator}
+                widgetRuntime={widgetRuntime}
+                commercialActionGuard={commercialActionGuard}
+                stagingCutover={stagingCutover}
+                toolLab={mcpToolLab}
+                buildersMap={swiggyBuildersMap}
+                websiteAtlas={swiggyWebsiteAtlas}
+                builderIntake={swiggyBuilderIntake}
+                faqPolicy={swiggyFaqPolicy}
+                growthPartnership={swiggyGrowthPartnership}
+                channelMultimodalStudio={channelMultimodalStudio}
+                nutritionBudget={nutritionBudget}
+                householdPreference={householdPreference}
+                guestCollaboration={guestCollaboration}
+                luxuryExperience={luxuryExperience}
+                reviewerArtifactVault={reviewerArtifactVault}
+                visualQa={visualQa}
+                docsCoverage={swiggyDocsCoverage}
+                upstreamWatch={swiggyUpstreamWatch}
+                aiClientConnectKit={aiClientConnectKit}
+                brandCompliance={brandCompliance}
+                journeyCompiler={swiggyJourneyCompiler}
+                accessDossier={swiggyAccessDossier}
+                useCaseStudio={premiumUseCaseStudio}
+                stagingCertification={stagingCertification}
+                credentialOnboarding={credentialOnboarding}
+                enterpriseDelegatedAuth={enterpriseDelegatedAuth}
                 surfaceMode={surfaceMode}
                 agentSurface={agentSurface}
                 goLiveChecks={goLiveChecks}
                 observabilityMetrics={observabilityMetrics}
                 rollout={rollout}
                 incidentReport={incidentReport}
+                supportBridge={supportBridge}
                 onSurfaceModeChange={setSurfaceMode}
                 onCreateReport={() => void createIncidentReport()}
               />
               <DemoStudioPanel
                 preflight={preflight}
                 replay={mcpReplay}
+                stagingTranscript={stagingTranscript}
                 steps={demoSteps}
                 submissionPackage={submissionPackage}
+                submissionConsole={submissionConsole}
               />
               <ProductionEvidencePanel
                 widgets={widgets}
                 widgetBridge={widgetBridge}
                 rateLimit={rateLimit}
+                trafficReadiness={trafficReadiness}
+                backpressureGovernor={backpressureGovernor}
                 versionMonitor={versionMonitor}
                 complianceEvidence={complianceEvidence}
+                dataGovernance={dataGovernance}
                 reviewerProof={reviewerProof}
+                launchBundle={launchBundle}
+                errorIntelligence={errorIntelligence}
                 resilienceDrills={resilienceDrills}
                 resilienceRunbook={resilienceRunbook}
+                observabilityTraceReport={observabilityTraceReport}
+                runtimeTelemetry={runtimeTelemetry}
+                auditLedger={auditLedger}
+                sloIncident={sloIncident}
+                routeOptimizer={routeOptimizer}
                 evaluationLab={evaluationLab}
               />
             </section>
@@ -798,11 +1439,23 @@ function App() {
       </section>
 
       {selectedRecommendation ? (
-        <div className="modal-backdrop" role="presentation">
-          <section className="confirm-modal" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+        <div
+          className="modal-backdrop"
+          role="presentation"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) setSelectedRecommendation(null);
+          }}
+        >
+          <section
+            className="confirm-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="confirm-title"
+            aria-describedby="confirm-description"
+          >
             <div className="modal-icon">{serverIcon(selectedRecommendation.server)}</div>
             <h2 id="confirm-title">Confirm {serverLabel(selectedRecommendation.server)}</h2>
-            <p>{buildConfirmationMessage(selectedRecommendation)}</p>
+            <p id="confirm-description">{buildConfirmationMessage(selectedRecommendation)}</p>
             <div className="modal-actions">
               <button type="button" className="ghost-button" onClick={() => setSelectedRecommendation(null)}>
                 Cancel
@@ -815,7 +1468,21 @@ function App() {
           </section>
         </div>
       ) : null}
-    </main>
+      </main>
+
+      <footer className="app-footer">
+        <MealPilotLogo compact />
+        <nav aria-label="Footer navigation">
+          <a href="#planner">Planner</a>
+          <a href="#launch-center">Launch Center</a>
+          <a href="#production-evidence">Evidence</a>
+          <a href="https://github.com/Farhankhan0128/MealPilot" target="_blank" rel="noreferrer">
+            GitHub
+          </a>
+        </nav>
+        <p>Designed on an open Carbon-inspired product grid for Swiggy MCP review readiness.</p>
+      </footer>
+    </div>
   );
 }
 
@@ -828,6 +1495,78 @@ function Metric({ icon, label, value }: { icon: ReactNode; label: string; value:
         <strong>{value}</strong>
       </div>
     </div>
+  );
+}
+
+function authEventStatus(status?: SwiggyAuthStatusReport["latestEvent"]["status"]) {
+  if (status === "callback_exchanged" || status === "callback_mocked") return "healthy";
+  if (status === "callback_failed") return "blocked";
+  return "watch";
+}
+
+function SwiggyAuthPanel({
+  authStatus,
+  authUrl,
+  onRefresh,
+}: {
+  authStatus: SwiggyAuthStatusReport | null;
+  authUrl: string | null;
+  onRefresh: () => void;
+}) {
+  const latest = authStatus?.latestEvent;
+  const redirectStatus = authStatus?.redirectUri.startsWith("https://") ? "ready" : "watch";
+
+  return (
+    <section className="auth-status-panel" aria-label="Swiggy OAuth status">
+      <div className="auth-status-head">
+        <div className="mini-heading">
+          <LockKeyhole aria-hidden="true" />
+          <strong>Swiggy OAuth</strong>
+        </div>
+        <button className="ghost-button" type="button" onClick={onRefresh}>
+          <RefreshCw aria-hidden="true" />
+          Refresh
+        </button>
+      </div>
+      <div className="auth-status-summary" data-status={authEventStatus(latest?.status)}>
+        <strong>{latest?.label ?? "Loading OAuth status"}</strong>
+        <span>{latest?.status.replaceAll("_", " ") ?? "pending"}</span>
+      </div>
+      <div className="auth-status-grid">
+        <div>
+          <strong>{authStatus?.gatewayAuth.tokenSource ?? "none"}</strong>
+          <span>Token source</span>
+        </div>
+        <div>
+          <strong>{authStatus?.pendingVerifierCount ?? 0}</strong>
+          <span>PKCE pending</span>
+        </div>
+        <div>
+          <strong>{redirectStatus}</strong>
+          <span>Redirect URI</span>
+        </div>
+        <div>
+          <strong>{latest?.expiresAt ? new Date(latest.expiresAt).toLocaleDateString("en-IN") : "none"}</strong>
+          <span>Token expiry</span>
+        </div>
+      </div>
+      <div className="auth-status-links">
+        <span>{authStatus?.endpoints.authorize ?? "OAuth endpoint pending"}</span>
+        {authUrl ? (
+          <a href={authUrl} target="_blank" rel="noreferrer">
+            Open authorize
+          </a>
+        ) : null}
+      </div>
+      <ul className="compact-status-list">
+        {(authStatus?.callbackChecklist ?? []).slice(0, 4).map((item) => (
+          <li key={item.id} data-status={item.status}>
+            <span>{item.label}</span>
+            <strong>{item.status}</strong>
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }
 
@@ -875,9 +1614,10 @@ function RecommendationCard({
                 <button
                   type="button"
                   onClick={() => {
-                    if (item.id) onRemove(item.id);
+                  if (item.id) onRemove(item.id);
                   }}
                   disabled={recommendation.status !== "prepared"}
+                  aria-disabled={recommendation.status !== "prepared"}
                 >
                   Remove
                 </button>
@@ -896,6 +1636,7 @@ function RecommendationCard({
               type="button"
               onClick={() => onSubstitute(alternative.id)}
               disabled={recommendation.status !== "prepared"}
+              aria-disabled={recommendation.status !== "prepared"}
             >
               {alternative.name} - {formatMoney(alternative.price)}
             </button>
@@ -918,10 +1659,11 @@ function RecommendationCard({
           className="icon-button dark"
           type="button"
           onClick={onConfirm}
-          disabled={recommendation.status === "confirmed"}
+          disabled={recommendation.status !== "prepared"}
+          aria-disabled={recommendation.status !== "prepared"}
         >
           <ShieldCheck aria-hidden="true" />
-          <span>{recommendation.status === "confirmed" ? "Confirmed" : "Confirm"}</span>
+          <span>{recommendation.status === "prepared" ? "Confirm" : statusCopy(recommendation.status)}</span>
         </button>
       </div>
     </article>
@@ -1096,31 +1838,170 @@ function AdvancedWorkflowPanel({
   );
 }
 
+function PremiumConciergePanel({ concierge }: { concierge: PremiumConciergeItineraryReport | null }) {
+  const firstSlot = concierge?.itinerary[0];
+
+  return (
+    <section className="analysis-panel concierge-panel">
+      <div className="section-heading">
+        <CalendarCheck aria-hidden="true" />
+        <h2>Premium Concierge</h2>
+      </div>
+
+      <div className="concierge-summary">
+        <div>
+          <strong>{concierge?.title ?? "Loading concierge itinerary"}</strong>
+          <span>{concierge?.promise ?? "Coordinating Swiggy Food, Instamart, and Dineout into one premium plan."}</span>
+        </div>
+        <strong>{concierge ? `${concierge.score}/100` : "..."}</strong>
+      </div>
+
+      <div className="concierge-stat-grid">
+        <div>
+          <strong>{concierge?.itinerary.length ?? 0}</strong>
+          <span>Slots</span>
+        </div>
+        <div>
+          <strong>{concierge?.totalSavedCalls ?? 0}</strong>
+          <span>Calls saved</span>
+        </div>
+        <div>
+          <strong>{concierge?.toolCoverage.map((item) => item.coverage).join(" / ") ?? "..."}</strong>
+          <span>Tool coverage</span>
+        </div>
+      </div>
+
+      <div className="concierge-slot-list">
+        {(concierge?.itinerary ?? []).slice(0, 4).map((slot) => (
+          <article key={slot.id}>
+            <div>
+              <strong>{slot.title}</strong>
+              <span>{slot.day} / {slot.timeBand}</span>
+            </div>
+            <small>{slot.primaryRecipe}</small>
+            <p>{slot.confirmation}</p>
+          </article>
+        ))}
+      </div>
+
+      {firstSlot ? (
+        <ul className="compact-status-list">
+          {firstSlot.route.slice(0, 4).map((routeStep) => (
+            <li key={`${firstSlot.id}_${routeStep.sequence}`} data-status={routeStep.status === "ready" ? "healthy" : "watch"}>
+              <span>{routeStep.label}</span>
+              <strong>{serverLabel(routeStep.server)}</strong>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+    </section>
+  );
+}
+
 function LaunchCenterPanel({
   catalog,
   gateway,
+  capabilityRegistry,
+  resourcePromptStudio,
+  contractMatrix,
+  scenarioRunner,
+  stateOrchestrator,
+  widgetRuntime,
+  commercialActionGuard,
+  stagingCutover,
+  toolLab,
+  buildersMap,
+  websiteAtlas,
+  builderIntake,
+  faqPolicy,
+  growthPartnership,
+  channelMultimodalStudio,
+  nutritionBudget,
+  householdPreference,
+  guestCollaboration,
+  luxuryExperience,
+  reviewerArtifactVault,
+  visualQa,
+  docsCoverage,
+  upstreamWatch,
+  aiClientConnectKit,
+  brandCompliance,
+  journeyCompiler,
+  accessDossier,
+  useCaseStudio,
+  stagingCertification,
+  credentialOnboarding,
+  enterpriseDelegatedAuth,
   surfaceMode,
   agentSurface,
   goLiveChecks,
   observabilityMetrics,
   rollout,
   incidentReport,
+  supportBridge,
   onSurfaceModeChange,
   onCreateReport,
 }: {
   catalog: McpCatalogResponse | null;
   gateway: McpGatewayStatus | null;
+  capabilityRegistry: McpCapabilityRegistry | null;
+  resourcePromptStudio: McpResourcePromptStudio | null;
+  contractMatrix: SwiggyToolContractMatrix | null;
+  scenarioRunner: SwiggyScenarioRunnerReport | null;
+  stateOrchestrator: SwiggyStateOrchestratorReport | null;
+  widgetRuntime: SwiggyWidgetRuntimeReport | null;
+  commercialActionGuard: CommercialActionGuardReport | null;
+  stagingCutover: SwiggyStagingCutoverRehearsal | null;
+  toolLab: McpToolLabReport | null;
+  buildersMap: SwiggyBuildersMap | null;
+  websiteAtlas: SwiggyWebsiteAtlas | null;
+  builderIntake: SwiggyBuilderIntakeCommandCenter | null;
+  faqPolicy: SwiggyFaqPolicyCenter | null;
+  growthPartnership: SwiggyGrowthPartnershipCenter | null;
+  channelMultimodalStudio: SwiggyChannelMultimodalStudio | null;
+  nutritionBudget: NutritionBudgetIntelligence | null;
+  householdPreference: HouseholdPreferenceGraph | null;
+  guestCollaboration: GuestCollaborationCenter | null;
+  luxuryExperience: LuxuryExperienceWorkspace | null;
+  reviewerArtifactVault: ReviewerArtifactVault | null;
+  visualQa: VisualQaCenter | null;
+  docsCoverage: SwiggyDocsCoverageReport | null;
+  upstreamWatch: SwiggyUpstreamWatchReport | null;
+  aiClientConnectKit: AiClientConnectKit | null;
+  brandCompliance: BrandComplianceKit | null;
+  journeyCompiler: SwiggyJourneyCompilerReport | null;
+  accessDossier: SwiggyAccessDossier | null;
+  useCaseStudio: PremiumUseCaseStudio | null;
+  stagingCertification: StagingCertificationMatrix | null;
+  credentialOnboarding: CredentialOnboardingReport | null;
+  enterpriseDelegatedAuth: EnterpriseDelegatedAuthCenter | null;
   surfaceMode: AgentSurface;
   agentSurface: AgentSurfaceResponse | null;
   goLiveChecks: GoLiveCheck[];
   observabilityMetrics: ObservabilityMetric[];
   rollout: GoLiveResponse["rollout"] | null;
   incidentReport: IncidentReport | null;
+  supportBridge: SupportBridgeReport | null;
   onSurfaceModeChange: (surface: AgentSurface) => void;
   onCreateReport: () => void;
 }) {
+  const credentialReadyChecks =
+    credentialOnboarding?.checks.filter((check) => check.status === "ready").length ?? 0;
+  const credentialTotalChecks = credentialOnboarding?.checks.length ?? 0;
+  const enterpriseReadySteps =
+    enterpriseDelegatedAuth?.flow.filter((step) => step.status === "ready").length ?? 0;
+  const enterpriseTokenLifetime =
+    enterpriseDelegatedAuth?.tokenLifecycle.find((item) => item.item === "Access token")?.lifetime ?? "5 days";
+  const accessReadyFields = accessDossier?.applicationFields.filter((field) => field.status === "ready").length ?? 0;
+  const accessManualFields =
+    accessDossier?.applicationFields.filter((field) => field.status === "manual_input").length ?? 0;
+  const certificationCredentialWaves =
+    stagingCertification?.waves.filter((waveItem) => waveItem.status === "requires_staging_credentials").length ?? 0;
+  const certificationGateWaves =
+    stagingCertification?.waves.filter((waveItem) => waveItem.status === "production_gate").length ?? 0;
+
   return (
-    <section className="analysis-panel launch-panel">
+    <section className="analysis-panel launch-panel" id="launch-center">
       <div className="section-heading">
         <Radio aria-hidden="true" />
         <h2>Launch Center</h2>
@@ -1177,6 +2058,1120 @@ function LaunchCenterPanel({
               </div>
             ))}
           </div>
+        </article>
+
+        <article className="capability-registry-card">
+          <div className="mini-heading">
+            <Grid3X3 aria-hidden="true" />
+            <strong>Capability Registry</strong>
+          </div>
+          <span>
+            {capabilityRegistry
+              ? `${capabilityRegistry.score}/100, ${capabilityRegistry.capabilityGroups.length} capability groups`
+              : "Mapping tools, resources, prompts, and metadata"}
+          </span>
+          <ul className="compact-status-list">
+            {(capabilityRegistry?.capabilityGroups ?? []).slice(0, 5).map((group) => (
+              <li
+                key={group.id}
+                data-status={group.status === "external_gate" ? "watch" : "healthy"}
+              >
+                <span>{group.label}</span>
+                <strong>{group.scope}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="resource-prompt-card">
+          <div className="mini-heading">
+            <MessageSquare aria-hidden="true" />
+            <strong>Resource & Prompt Studio</strong>
+          </div>
+          <span>
+            {resourcePromptStudio
+              ? `${resourcePromptStudio.score}/100, ${resourcePromptStudio.readyResources}/${resourcePromptStudio.totalResources} resources`
+              : "Exercising resources and prompts"}
+          </span>
+          <div className="resource-prompt-grid">
+            <div>
+              <strong>
+                {resourcePromptStudio?.readyPrompts ?? 0}/{resourcePromptStudio?.totalPrompts ?? 0}
+              </strong>
+              <span>Prompts</span>
+            </div>
+            <div>
+              <strong>{resourcePromptStudio?.serverSummaries.length ?? 0}</strong>
+              <span>Servers</span>
+            </div>
+            <div>
+              <strong>{resourcePromptStudio?.smokeRequests.length ?? 0}</strong>
+              <span>Smoke calls</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(resourcePromptStudio?.serverSummaries ?? []).map((server) => (
+              <li key={server.server} data-status={server.status === "ready" ? "healthy" : "watch"}>
+                <span>{serverLabel(server.server)}</span>
+                <strong>
+                  {server.resources} res / {server.prompts} prompts
+                </strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="contract-matrix-card">
+          <div className="mini-heading">
+            <FileWarning aria-hidden="true" />
+            <strong>Tool Contracts</strong>
+          </div>
+          <span>
+            {contractMatrix
+              ? `${contractMatrix.score}/100, ${contractMatrix.totalTools} tools, ${contractMatrix.totalParameters} params`
+              : "Compiling tool parameters and envelopes"}
+          </span>
+          <div className="contract-matrix-grid">
+            <div>
+              <strong>{contractMatrix?.contracts.filter((contract) => contract.behavior === "commercial").length ?? 0}</strong>
+              <span>Commercial</span>
+            </div>
+            <div>
+              <strong>{contractMatrix?.commonErrorEnvelope.plannedCoreCodes.length ?? 0}</strong>
+              <span>Planned codes</span>
+            </div>
+            <div>
+              <strong>{contractMatrix?.contracts.filter((contract) => contract.requiredParameterCount > 0).length ?? 0}</strong>
+              <span>Param tools</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(contractMatrix?.servers ?? []).map((server) => (
+              <li key={server.server} data-status={server.totalTools > 0 ? "healthy" : "watch"}>
+                <span>{serverLabel(server.server)}</span>
+                <strong>{server.totalTools} tools</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="scenario-runner-card">
+          <div className="mini-heading">
+            <Play aria-hidden="true" />
+            <strong>Scenario Runner</strong>
+          </div>
+          <span>
+            {scenarioRunner
+              ? `${scenarioRunner.score}/100, ${scenarioRunner.totalScenarios} official recipes`
+              : "Executing recipe traces"}
+          </span>
+          <div className="scenario-runner-grid">
+            <div>
+              <strong>{scenarioRunner?.totalSteps ?? 0}</strong>
+              <span>Steps</span>
+            </div>
+            <div>
+              <strong>
+                {scenarioRunner ? `${scenarioRunner.uniqueToolsCovered}/${scenarioRunner.totalOfficialTools}` : "0/35"}
+              </strong>
+              <span>Tools</span>
+            </div>
+            <div>
+              <strong>{scenarioRunner?.gatedSteps ?? 0}</strong>
+              <span>Gates</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(scenarioRunner?.scenarios ?? []).map((scenario) => (
+              <li key={scenario.id} data-status={scenario.gatedSteps > 0 ? "watch" : "healthy"}>
+                <span>{scenario.title}</span>
+                <strong>
+                  {scenario.passedSteps}/{scenario.totalSteps}
+                </strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="state-orchestrator-card">
+          <div className="mini-heading">
+            <RefreshCw aria-hidden="true" />
+            <strong>State Orchestrator</strong>
+          </div>
+          <span>
+            {stateOrchestrator
+              ? `${stateOrchestrator.score}/100, ${stateOrchestrator.totalTurnBoundaries} turn guards`
+              : "Mapping multi-turn state guards"}
+          </span>
+          <div className="state-orchestrator-grid">
+            <div>
+              <strong>{stateOrchestrator?.refreshBeforeMutationCount ?? 0}</strong>
+              <span>Refreshes</span>
+            </div>
+            <div>
+              <strong>{stateOrchestrator?.confirmationGateCount ?? 0}</strong>
+              <span>Confirm gates</span>
+            </div>
+            <div>
+              <strong>{stateOrchestrator?.surfaceContracts.length ?? 0}</strong>
+              <span>Surfaces</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(stateOrchestrator?.serverModels ?? []).map((model) => (
+              <li key={model.server} data-status="healthy">
+                <span>{serverLabel(model.server)}</span>
+                <strong>{model.authoritativeReads.length} reads</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="widget-runtime-card">
+          <div className="mini-heading">
+            <ShoppingBasket aria-hidden="true" />
+            <strong>Widget Runtime</strong>
+          </div>
+          <span>
+            {widgetRuntime
+              ? `${widgetRuntime.score}/100, ${widgetRuntime.readyActivationChecks}/${widgetRuntime.totalActivationChecks} checks, ${widgetRuntime.fallbackReady}/${widgetRuntime.totalSurfaces} fallbacks`
+              : "Mapping iframe and fallback runtime"}
+          </span>
+          <div className="widget-runtime-grid">
+            <div>
+              <strong>{widgetRuntime?.eventsHandled ?? 0}</strong>
+              <span>Events</span>
+            </div>
+            <div>
+              <strong>{widgetRuntime?.externalActivationGates ?? 0}</strong>
+              <span>Gates</span>
+            </div>
+            <div>
+              <strong>{widgetRuntime?.renderContracts.length ?? 0}</strong>
+              <span>Contracts</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(widgetRuntime?.surfaces ?? []).slice(0, 5).map((surface) => (
+              <li key={surface.id} data-status={surface.status === "external_gate" ? "watch" : "healthy"}>
+                <span>{surface.type.replaceAll("-", " ")}</span>
+                <strong>{serverLabel(surface.server)}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="commercial-guard-card">
+          <div className="mini-heading">
+            <LockKeyhole aria-hidden="true" />
+            <strong>Commercial Guard</strong>
+          </div>
+          <span>
+            {commercialActionGuard
+              ? `${commercialActionGuard.score}/100, ${commercialActionGuard.readyLanes}/${commercialActionGuard.totalLanes} lanes`
+              : "Locking commercial actions"}
+          </span>
+          <div className="commercial-guard-grid">
+            <div>
+              <strong>{commercialActionGuard?.readyGuardrails ?? 0}</strong>
+              <span>Guards</span>
+            </div>
+            <div>
+              <strong>{commercialActionGuard?.retryDrills.length ?? 0}</strong>
+              <span>Drills</span>
+            </div>
+            <div>
+              <strong>{commercialActionGuard?.telemetryContract.length ?? 0}</strong>
+              <span>Fields</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(commercialActionGuard?.lanes ?? []).map((lane) => (
+              <li key={lane.id} data-status={lane.status === "external_gate" ? "watch" : "healthy"}>
+                <span>{lane.actionTool}</span>
+                <strong>{lane.server === "combined" ? "Combined" : serverLabel(lane.server)}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="staging-cutover-card">
+          <div className="mini-heading">
+            <Activity aria-hidden="true" />
+            <strong>Staging Cutover</strong>
+          </div>
+          <span>
+            {stagingCutover
+              ? `${stagingCutover.score}/100, ${stagingCutover.routableServers}/${stagingCutover.totalServers} routes`
+              : "Rehearsing live MCP cutover"}
+          </span>
+          <div className="staging-cutover-grid">
+            <div>
+              <strong>{stagingCutover?.dryRunCalls ?? 0}</strong>
+              <span>Dry runs</span>
+            </div>
+            <div>
+              <strong>{stagingCutover?.blockedServers ?? 0}</strong>
+              <span>Blocked</span>
+            </div>
+            <div>
+              <strong>{stagingCutover?.promotionChecks.filter((check) => check.status === "external_gate").length ?? 0}</strong>
+              <span>Gates</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(stagingCutover?.probes ?? []).map((probe) => (
+              <li
+                key={probe.id}
+                data-status={probe.status === "ready" ? "healthy" : probe.status === "blocked" ? "blocked" : "watch"}
+              >
+                <span>{serverLabel(probe.server)}</span>
+                <strong>{probe.firstTool}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="tool-lab-card">
+          <div className="mini-heading">
+            <Bot aria-hidden="true" />
+            <strong>Tool Lab</strong>
+          </div>
+          <span>
+            {toolLab
+              ? `${toolLab.score}/100, ${toolLab.callableTools}/${toolLab.totalTools} tools callable`
+              : "Probing all Swiggy tools"}
+          </span>
+          <div className="tool-lab-stat-grid">
+            <div>
+              <strong>{toolLab?.guardedTools ?? 0}</strong>
+              <span>Guarded</span>
+            </div>
+            <div>
+              <strong>{toolLab?.commercialTools ?? 0}</strong>
+              <span>Commercial</span>
+            </div>
+            <div>
+              <strong>{toolLab?.innovationUseCases.length ?? 0}</strong>
+              <span>New lanes</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(toolLab?.servers ?? []).map((server) => (
+              <li key={server.server} data-status={server.callableTools === server.totalTools ? "healthy" : "watch"}>
+                <span>{serverLabel(server.server)}</span>
+                <strong>{server.callableTools}/{server.totalTools}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="journey-compiler-card">
+          <div className="mini-heading">
+            <GitBranch aria-hidden="true" />
+            <strong>Journey Compiler</strong>
+          </div>
+          <span>
+            {journeyCompiler
+              ? `${journeyCompiler.score}/100, ${journeyCompiler.totalJourneys} recipe routes`
+              : "Compiling Swiggy recipe routes"}
+          </span>
+          <div className="journey-compiler-grid">
+            <div>
+              <strong>{journeyCompiler?.totalToolsIndexed ?? 0}</strong>
+              <span>Tools</span>
+            </div>
+            <div>
+              <strong>{journeyCompiler?.journeys.filter((journey) => journey.source === "official_recipe").length ?? 0}</strong>
+              <span>Official</span>
+            </div>
+            <div>
+              <strong>{journeyCompiler?.journeys.reduce((sum, journey) => sum + journey.savedCalls, 0) ?? 0}</strong>
+              <span>Saved calls</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(journeyCompiler?.journeys ?? []).slice(0, 5).map((journey) => (
+              <li key={journey.id} data-status={journey.riskLevel === "high" ? "watch" : "healthy"}>
+                <span>{journey.title}</span>
+                <strong>{journey.optimizedCalls}/{journey.baselineCalls}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="access-dossier-card">
+          <div className="mini-heading">
+            <ClipboardCheck aria-hidden="true" />
+            <strong>Access Dossier</strong>
+          </div>
+          <span>
+            {accessDossier
+              ? `${accessDossier.score}/100, ${accessDossier.applicationFields.length} apply fields`
+              : "Preparing Swiggy access packet"}
+          </span>
+          <div className="access-dossier-grid">
+            <div>
+              <strong>{accessReadyFields}</strong>
+              <span>Ready</span>
+            </div>
+            <div>
+              <strong>{accessManualFields}</strong>
+              <span>Inputs</span>
+            </div>
+            <div>
+              <strong>{accessDossier?.groundRules.length ?? 0}</strong>
+              <span>Rules</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(accessDossier?.reviewChecks ?? []).slice(0, 5).map((check) => (
+              <li key={check.id} data-status={check.status === "ready" ? "healthy" : "watch"}>
+                <span>{check.label}</span>
+                <strong>{check.status.replaceAll("_", " ")}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="use-case-studio-card">
+          <div className="mini-heading">
+            <Sparkles aria-hidden="true" />
+            <strong>Use Case Studio</strong>
+          </div>
+          <span>
+            {useCaseStudio
+              ? `${useCaseStudio.score}/100, ${useCaseStudio.totalUseCases} premium playbooks`
+              : "Mapping premium MealPilot use cases"}
+          </span>
+          <div className="use-case-studio-grid">
+            <div>
+              <strong>{useCaseStudio?.crossServerUseCases ?? 0}</strong>
+              <span>Cross-server</span>
+            </div>
+            <div>
+              <strong>{useCaseStudio?.totalToolsUsed ?? 0}/{useCaseStudio?.totalOfficialTools ?? 0}</strong>
+              <span>Tools</span>
+            </div>
+            <div>
+              <strong>{useCaseStudio?.useCases.filter((item) => item.stage === "demo_ready").length ?? 0}</strong>
+              <span>Demo-ready</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(useCaseStudio?.useCases ?? []).slice(0, 5).map((item) => (
+              <li key={item.id} data-status={item.stage === "enterprise_extension" ? "watch" : "healthy"}>
+                <span>{item.title}</span>
+                <strong>{item.optimizedCalls}/{item.baselineCalls}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="staging-certification-card">
+          <div className="mini-heading">
+            <ShieldCheck aria-hidden="true" />
+            <strong>Staging Certification</strong>
+          </div>
+          <span>
+            {stagingCertification
+              ? `${stagingCertification.score}/100, ${stagingCertification.assignedTools}/${stagingCertification.totalTools} tools assigned`
+              : "Preparing credentialed staging matrix"}
+          </span>
+          <div className="staging-certification-grid">
+            <div>
+              <strong>{stagingCertification?.soakHoursRequired ?? 0}h</strong>
+              <span>Soak</span>
+            </div>
+            <div>
+              <strong>{certificationCredentialWaves}</strong>
+              <span>Credential waves</span>
+            </div>
+            <div>
+              <strong>{certificationGateWaves}</strong>
+              <span>Prod gates</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(stagingCertification?.waves ?? []).slice(0, 5).map((waveItem) => (
+              <li
+                key={waveItem.id}
+                data-status={waveItem.status === "mock_ready" ? "healthy" : "watch"}
+              >
+                <span>{waveItem.title}</span>
+                <strong>{waveItem.tools.length} tools</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="builders-map-card">
+          <div className="mini-heading">
+            <ClipboardCheck aria-hidden="true" />
+            <strong>Builders Map</strong>
+          </div>
+          <span>
+            {buildersMap
+              ? `${buildersMap.pages.length} pages/modules, ${buildersMap.ctas.length} CTAs, ${buildersMap.totalOfficialTools} tools`
+              : "Loading official Swiggy map"}
+          </span>
+          <div className="map-stat-grid">
+            <div>
+              <strong>{buildersMap?.pages.filter((page) => page.implementationStatus === "implemented").length ?? 0}</strong>
+              <span>Implemented</span>
+            </div>
+            <div>
+              <strong>{buildersMap?.pages.filter((page) => page.implementationStatus === "documented").length ?? 0}</strong>
+              <span>Documented</span>
+            </div>
+            <div>
+              <strong>{buildersMap?.credentialGates.length ?? 0}</strong>
+              <span>Gates</span>
+            </div>
+          </div>
+          <ul className="builders-map-list">
+            {(buildersMap?.pages ?? []).slice(0, 5).map((page) => (
+              <li key={page.id} data-status={page.implementationStatus}>
+                <span>{page.title}</span>
+                <strong>{page.implementationStatus.replace("_", " ")}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="website-atlas-card">
+          <div className="mini-heading">
+            <MapPin aria-hidden="true" />
+            <strong>Website Atlas</strong>
+          </div>
+          <span>
+            {websiteAtlas
+              ? `${websiteAtlas.score}/100, ${websiteAtlas.pagesCovered} pages, ${websiteAtlas.modulesCovered} modules`
+              : "Loading website, header, footer, and CTA coverage"}
+          </span>
+          <div className="website-atlas-grid">
+            <div>
+              <strong>{websiteAtlas?.globalHeader.length ?? 0}</strong>
+              <span>Header</span>
+            </div>
+            <div>
+              <strong>{websiteAtlas?.footerGroups.reduce((sum, group) => sum + group.links.length, 0) ?? 0}</strong>
+              <span>Footer</span>
+            </div>
+            <div>
+              <strong>{websiteAtlas?.ctasCovered ?? 0}</strong>
+              <span>CTAs</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(websiteAtlas?.pages ?? []).slice(0, 6).map((page) => (
+              <li key={page.id} data-status={page.modules.every((module) => module.status === "implemented") ? "healthy" : "watch"}>
+                <span>{page.title}</span>
+                <strong>{page.modules.length}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="builder-intake-card">
+          <div className="mini-heading">
+            <Rocket aria-hidden="true" />
+            <strong>Builder Intake</strong>
+          </div>
+          <span>
+            {builderIntake
+              ? `${builderIntake.score}/100, ${builderIntake.preparedCtas}/${builderIntake.totalCtas} CTA paths prepared`
+              : "Preparing signup and demo actions"}
+          </span>
+          <div className="builder-intake-grid">
+            <div>
+              <strong>
+                {builderIntake?.readyCtas ?? 0}/{builderIntake?.totalCtas ?? 0}
+              </strong>
+              <span>CTAs ready</span>
+            </div>
+            <div>
+              <strong>{builderIntake?.readyFields ?? 0}</strong>
+              <span>Fields ready</span>
+            </div>
+            <div>
+              <strong>{builderIntake?.operatorCtaGates ?? 0}</strong>
+              <span>Submit gates</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(builderIntake?.checklist ?? []).slice(0, 5).map((item) => (
+              <li key={item.id} data-status={item.status === "ready" ? "healthy" : "watch"}>
+                <span>{item.label}</span>
+                <strong>{item.owner}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="faq-policy-card">
+          <div className="mini-heading">
+            <BookOpen aria-hidden="true" />
+            <strong>FAQ & Policy</strong>
+          </div>
+          <span>
+            {faqPolicy
+              ? `${faqPolicy.score}/100, ${faqPolicy.readyQuestions}/${faqPolicy.totalQuestions} FAQ themes`
+              : "Mapping FAQ and policy coverage"}
+          </span>
+          <div className="faq-policy-grid">
+            <div>
+              <strong>{faqPolicy?.readyRules ?? 0}/{faqPolicy?.totalRules ?? 0}</strong>
+              <span>Rules</span>
+            </div>
+            <div>
+              <strong>{faqPolicy?.headerFooterCoverage.headerLinks.length ?? 0}</strong>
+              <span>Header</span>
+            </div>
+            <div>
+              <strong>{faqPolicy?.headerFooterCoverage.footerResources.length ?? 0}</strong>
+              <span>Footer</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(faqPolicy?.faqItems ?? []).slice(0, 5).map((item) => (
+              <li key={item.id} data-status={item.status === "ready" ? "healthy" : "watch"}>
+                <span>{item.question}</span>
+                <strong>{item.audience}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="growth-partnership-card">
+          <div className="mini-heading">
+            <Rocket aria-hidden="true" />
+            <strong>Growth Partnership</strong>
+          </div>
+          <span>
+            {growthPartnership
+              ? `${growthPartnership.score}/100, ${growthPartnership.readyExperiments}/${growthPartnership.totalExperiments} experiments`
+              : "Preparing co-marketing proof"}
+          </span>
+          <div className="growth-partnership-grid">
+            <div>
+              <strong>{growthPartnership?.readySignals ?? 0}/{growthPartnership?.totalSignals ?? 0}</strong>
+              <span>Signals</span>
+            </div>
+            <div>
+              <strong>{growthPartnership?.assets.length ?? 0}</strong>
+              <span>Assets</span>
+            </div>
+            <div>
+              <strong>{growthPartnership?.partnershipAsks.length ?? 0}</strong>
+              <span>Asks</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(growthPartnership?.experiments ?? []).slice(0, 5).map((item) => (
+              <li key={item.id} data-status={item.status === "ready" ? "healthy" : "watch"}>
+                <span>{item.label}</span>
+                <strong>{item.launchStage.replaceAll("_", " ")}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="channel-multimodal-card">
+          <div className="mini-heading">
+            <Camera aria-hidden="true" />
+            <strong>Channel & Multimodal Studio</strong>
+          </div>
+          <span>
+            {channelMultimodalStudio
+              ? `${channelMultimodalStudio.score}/100, ${channelMultimodalStudio.readyLanes}/${channelMultimodalStudio.totalLanes} lanes`
+              : "Mapping voice, team, camera, and enterprise channels"}
+          </span>
+          <div className="channel-multimodal-grid">
+            <div>
+              <strong>
+                {channelMultimodalStudio?.readyChannels ?? 0}/{channelMultimodalStudio?.totalChannels ?? 0}
+              </strong>
+              <span>Channels</span>
+            </div>
+            <div>
+              <strong>
+                {channelMultimodalStudio?.readyExecutionPackets ?? 0}/{channelMultimodalStudio?.totalExecutionPackets ?? 0}
+              </strong>
+              <span>Packets</span>
+            </div>
+            <div>
+              <strong>
+                {channelMultimodalStudio?.readyPipelines ?? 0}/{channelMultimodalStudio?.totalPipelines ?? 0}
+              </strong>
+              <span>Pipelines</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(channelMultimodalStudio?.lanes ?? []).slice(0, 5).map((laneItem) => (
+              <li key={laneItem.id} data-status={laneItem.status === "ready" ? "healthy" : "watch"}>
+                <span>{laneItem.title}</span>
+                <strong>{laneItem.channels.length} channels</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="nutrition-budget-card">
+          <div className="mini-heading">
+            <Gauge aria-hidden="true" />
+            <strong>Nutrition & Budget Intelligence</strong>
+          </div>
+          <span>
+            {nutritionBudget
+              ? `${nutritionBudget.score}/100, ${nutritionBudget.readyRoutes}/${nutritionBudget.totalRoutes} routes`
+              : "Optimizing protein, budget, coupons, and pantry gaps"}
+          </span>
+          <div className="nutrition-budget-grid">
+            <div>
+              <strong>{nutritionBudget?.totalToolsCovered ?? 0}</strong>
+              <span>Tools</span>
+            </div>
+            <div>
+              <strong>{nutritionBudget?.totalPlaybooks ?? 0}</strong>
+              <span>Playbooks</span>
+            </div>
+            <div>
+              <strong>{nutritionBudget?.externalGates.length ?? 0}</strong>
+              <span>Gates</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(nutritionBudget?.routes ?? []).slice(0, 5).map((routeItem) => (
+              <li key={routeItem.id} data-status={routeItem.status === "ready" ? "healthy" : "watch"}>
+                <span>{routeItem.title}</span>
+                <strong>{routeItem.swiggyServers.map(serverLabel).join("/")}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="preference-graph-card">
+          <div className="mini-heading">
+            <Users aria-hidden="true" />
+            <strong>Household Preference Graph</strong>
+          </div>
+          <span>
+            {householdPreference
+              ? `${householdPreference.score}/100, ${householdPreference.readySignals}/${householdPreference.totalSignals} signals`
+              : "Building consented taste, pantry, order, and occasion memory"}
+          </span>
+          <div className="preference-graph-grid">
+            <div>
+              <strong>{householdPreference?.totalMembers ?? 0}</strong>
+              <span>Modes</span>
+            </div>
+            <div>
+              <strong>
+                {householdPreference?.readyForecasts ?? 0}/{householdPreference?.totalForecasts ?? 0}
+              </strong>
+              <span>Forecasts</span>
+            </div>
+            <div>
+              <strong>{householdPreference?.uniqueToolsCovered ?? 0}</strong>
+              <span>Tools</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(householdPreference?.signals ?? []).slice(0, 5).map((signalItem) => (
+              <li key={signalItem.id} data-status={signalItem.status === "ready" ? "healthy" : "watch"}>
+                <span>{signalItem.label}</span>
+                <strong>{signalItem.source.replaceAll("_", " ")}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="guest-collaboration-card">
+          <div className="mini-heading">
+            <CalendarCheck aria-hidden="true" />
+            <strong>Guest Collaboration & Calendar</strong>
+          </div>
+          <span>
+            {guestCollaboration
+              ? `${guestCollaboration.score}/100, ${guestCollaboration.readyTemplates}/${guestCollaboration.totalTemplates} templates`
+              : "Coordinating guests, votes, Dineout slots, reminders, and calendar handoffs"}
+          </span>
+          <div className="guest-collaboration-grid">
+            <div>
+              <strong>
+                {guestCollaboration?.readyVoteRounds ?? 0}/{guestCollaboration?.totalVoteRounds ?? 0}
+              </strong>
+              <span>Votes</span>
+            </div>
+            <div>
+              <strong>
+                {guestCollaboration?.readyCalendarArtifacts ?? 0}/{guestCollaboration?.totalCalendarArtifacts ?? 0}
+              </strong>
+              <span>Handoffs</span>
+            </div>
+            <div>
+              <strong>{guestCollaboration?.uniqueToolsCovered ?? 0}</strong>
+              <span>Tools</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(guestCollaboration?.templates ?? []).slice(0, 5).map((templateItem) => (
+              <li key={templateItem.id} data-status={templateItem.status === "ready" ? "healthy" : "watch"}>
+                <span>{templateItem.title}</span>
+                <strong>{templateItem.swiggyServers.map(serverLabel).join("/")}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="luxury-experience-card">
+          <div className="mini-heading">
+            <Sparkles aria-hidden="true" />
+            <strong>Luxury Experience Workspace</strong>
+          </div>
+          <span>
+            {luxuryExperience
+              ? `${luxuryExperience.score}/100, ${luxuryExperience.readyWorkspaces}/${luxuryExperience.totalWorkspaces} workspaces`
+              : "Composing premium reservation, Food cart, Instamart basket, and recovery review surfaces"}
+          </span>
+          <div className="luxury-experience-grid">
+            <div>
+              <strong>
+                {luxuryExperience?.readyModes ?? 0}/{luxuryExperience?.totalModes ?? 0}
+              </strong>
+              <span>Modes</span>
+            </div>
+            <div>
+              <strong>
+                {luxuryExperience?.readyArtifacts ?? 0}/{luxuryExperience?.totalArtifacts ?? 0}
+              </strong>
+              <span>Artifacts</span>
+            </div>
+            <div>
+              <strong>{luxuryExperience?.uniqueToolsCovered ?? 0}</strong>
+              <span>Tools</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(luxuryExperience?.workspaces ?? []).slice(0, 5).map((workspaceItem) => (
+              <li key={workspaceItem.id} data-status={workspaceItem.status === "ready" ? "healthy" : "watch"}>
+                <span>{workspaceItem.title}</span>
+                <strong>{workspaceItem.swiggyServers.map(serverLabel).join("/")}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="reviewer-artifact-card">
+          <div className="mini-heading">
+            <ClipboardCheck aria-hidden="true" />
+            <strong>Reviewer Artifact Vault</strong>
+          </div>
+          <span>
+            {reviewerArtifactVault
+              ? `${reviewerArtifactVault.score}/100, ${reviewerArtifactVault.readyArtifacts}/${reviewerArtifactVault.totalArtifacts} artifacts`
+              : "Packaging proof links, screenshots, logs, OpenAPI, commands, and Swiggy handoff copy"}
+          </span>
+          <div className="reviewer-artifact-grid">
+            <div>
+              <strong>
+                {reviewerArtifactVault?.readyScreenshotTargets ?? 0}/{reviewerArtifactVault?.totalScreenshotTargets ?? 0}
+              </strong>
+              <span>Screenshots</span>
+            </div>
+            <div>
+              <strong>
+                {reviewerArtifactVault?.readyCommands ?? 0}/{reviewerArtifactVault?.totalCommands ?? 0}
+              </strong>
+              <span>Commands</span>
+            </div>
+            <div>
+              <strong>{reviewerArtifactVault?.totalRedactionRules ?? 0}</strong>
+              <span>Redactions</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(reviewerArtifactVault?.artifactSections ?? []).slice(0, 4).map((section) => (
+              <li key={section.id} data-status={section.artifacts.every((artifactItem) => artifactItem.status === "ready") ? "healthy" : "watch"}>
+                <span>{section.label}</span>
+                <strong>{section.artifacts.length} items</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="visual-qa-card">
+          <div className="mini-heading">
+            <Camera aria-hidden="true" />
+            <strong>Visual QA Center</strong>
+          </div>
+          <span>
+            {visualQa
+              ? `${visualQa.score}/100, ${visualQa.readyTargets}/${visualQa.totalTargets} targets`
+              : "Checking reviewer screenshots, viewport rules, widget fallbacks, and mobile layout gates"}
+          </span>
+          <div className="visual-qa-grid">
+            <div>
+              <strong>
+                {visualQa?.readyRules ?? 0}/{visualQa?.totalRules ?? 0}
+              </strong>
+              <span>Rules</span>
+            </div>
+            <div>
+              <strong>
+                {visualQa?.readyCommands ?? 0}/{visualQa?.totalCommands ?? 0}
+              </strong>
+              <span>Commands</span>
+            </div>
+            <div>
+              <strong>{visualQa?.targetGroups.length ?? 0}</strong>
+              <span>Groups</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(visualQa?.targetGroups ?? []).slice(0, 4).map((group) => (
+              <li key={group.id} data-status={group.targets.every((targetItem) => targetItem.status === "ready") ? "healthy" : "watch"}>
+                <span>{group.label}</span>
+                <strong>{group.targets.length} targets</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="docs-coverage-card">
+          <div className="mini-heading">
+            <BookOpen aria-hidden="true" />
+            <strong>Docs Coverage</strong>
+          </div>
+          <span>
+            {docsCoverage
+              ? `${docsCoverage.score}/100, ${docsCoverage.totalPages} llms.txt pages`
+              : "Auditing every Swiggy docs page"}
+          </span>
+          <div className="docs-coverage-grid">
+            <div>
+              <strong>{docsCoverage?.sourceInventory.headerLinks ?? 0}</strong>
+              <span>Header</span>
+            </div>
+            <div>
+              <strong>{docsCoverage?.sourceInventory.footerLinks ?? 0}</strong>
+              <span>Footer</span>
+            </div>
+            <div>
+              <strong>{docsCoverage?.sourceInventory.ctas ?? 0}</strong>
+              <span>CTAs</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(docsCoverage?.sections ?? []).map((section) => (
+              <li key={section.section} data-status={section.requiresCredentials > 0 ? "watch" : "healthy"}>
+                <span>{section.section}</span>
+                <strong>{section.implemented}/{section.total}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="upstream-watch-card">
+          <div className="mini-heading">
+            <RefreshCw aria-hidden="true" />
+            <strong>Upstream Watch</strong>
+          </div>
+          <span>
+            {upstreamWatch
+              ? `${upstreamWatch.score}/100, ${upstreamWatch.roadmapItems.length} roadmap watches`
+              : "Tracking Swiggy docs and changelog"}
+          </span>
+          <div className="upstream-watch-grid">
+            <div>
+              <strong>{upstreamWatch?.releaseTimeline.length ?? 0}</strong>
+              <span>Releases</span>
+            </div>
+            <div>
+              <strong>{upstreamWatch?.actionQueue.length ?? 0}</strong>
+              <span>Actions</span>
+            </div>
+            <div>
+              <strong>{upstreamWatch?.signedManifestWatch.status ?? "pending"}</strong>
+              <span>Manifest</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(upstreamWatch?.roadmapItems ?? []).slice(0, 5).map((item) => (
+              <li
+                key={item.id}
+                data-status={item.status === "external_gate" ? "watch" : item.status}
+              >
+                <span>{item.item}</span>
+                <strong>{item.version}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="client-connect-card">
+          <div className="mini-heading">
+            <GitBranch aria-hidden="true" />
+            <strong>AI Client Connect</strong>
+          </div>
+          <span>
+            {aiClientConnectKit
+              ? `${aiClientConnectKit.score}/100, ${aiClientConnectKit.clientTargets.length} clients`
+              : "Building client configs"}
+          </span>
+          <div className="client-connect-grid">
+            <div>
+              <strong>{aiClientConnectKit?.servers.reduce((sum, server) => sum + server.tools, 0) ?? 0}</strong>
+              <span>Tools</span>
+            </div>
+            <div>
+              <strong>{aiClientConnectKit?.codingAgentRules.length ?? 0}</strong>
+              <span>Rules</span>
+            </div>
+            <div>
+              <strong>{aiClientConnectKit?.sdkAdapters.length ?? 0}</strong>
+              <span>SDKs</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(aiClientConnectKit?.clientTargets ?? []).slice(0, 5).map((target) => (
+              <li key={target.id} data-status={target.status === "external_client" ? "watch" : "healthy"}>
+                <span>{target.label}</span>
+                <strong>{target.status.replaceAll("_", " ")}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="brand-compliance-card">
+          <div className="mini-heading">
+            <ShieldCheck aria-hidden="true" />
+            <strong>Brand Compliance</strong>
+          </div>
+          <span>
+            {brandCompliance
+              ? `${brandCompliance.score}/100, ${brandCompliance.surfaces.length} surfaces`
+              : "Checking Swiggy attribution"}
+          </span>
+          <div className="brand-compliance-grid">
+            <div>
+              <strong>{brandCompliance?.rules.filter((rule) => rule.status === "ready").length ?? 0}</strong>
+              <span>Rules ready</span>
+            </div>
+            <div>
+              <strong>{brandCompliance?.assetGates.length ?? 0}</strong>
+              <span>Asset gates</span>
+            </div>
+            <div>
+              <strong>{brandCompliance?.paletteAudit.status ?? "pending"}</strong>
+              <span>Palette</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(brandCompliance?.rules ?? []).slice(0, 4).map((rule) => (
+              <li key={rule.id} data-status={rule.status === "ready" ? "healthy" : "watch"}>
+                <span>{rule.label}</span>
+                <strong>{rule.status.replaceAll("_", " ")}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="builders-map-card">
+          <div className="mini-heading">
+            <Sparkles aria-hidden="true" />
+            <strong>Innovation Queue</strong>
+          </div>
+          <span>
+            {buildersMap
+              ? `${buildersMap.opportunities.length} Swiggy-native opportunities ranked`
+              : "Loading opportunity map"}
+          </span>
+          <ul className="opportunity-list">
+            {(buildersMap?.opportunities ?? []).slice(0, 4).map((opportunity) => (
+              <li key={opportunity.id}>
+                <div>
+                  <strong>{opportunity.title}</strong>
+                  <span>{opportunity.swiggyCapability}</span>
+                </div>
+                <b>{opportunity.impactScore}</b>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="credential-card">
+          <div className="mini-heading">
+            <LockKeyhole aria-hidden="true" />
+            <strong>Credential Cockpit</strong>
+          </div>
+          <span>
+            {credentialOnboarding
+              ? `${credentialOnboarding.score}/100, ${credentialReadyChecks}/${credentialTotalChecks} checks ready`
+              : "Loading OAuth and DCR posture"}
+          </span>
+          <div className="credential-meta-grid">
+            <div>
+              <strong>{credentialOnboarding?.dynamicClientRegistration.mode.replaceAll("_", " ") ?? "loading"}</strong>
+              <span>DCR mode</span>
+            </div>
+            <div>
+              <strong>{credentialOnboarding?.redirectUriAudit.status ?? "pending"}</strong>
+              <span>Redirect URI</span>
+            </div>
+            <div>
+              <strong>{credentialOnboarding?.scopes.length ?? 0}/3</strong>
+              <span>MCP scopes</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(credentialOnboarding?.checks ?? []).slice(0, 4).map((check) => (
+              <li key={check.id} data-status={check.status}>
+                <span>{check.label}</span>
+                <strong>{check.status}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="enterprise-auth-card">
+          <div className="mini-heading">
+            <Users aria-hidden="true" />
+            <strong>Delegated Auth Center</strong>
+          </div>
+          <span>
+            {enterpriseDelegatedAuth
+              ? `${enterpriseDelegatedAuth.score}/100, ${enterpriseDelegatedAuth.flow.length} OBO steps`
+              : "Loading enterprise on-behalf-of flow"}
+          </span>
+          <div className="enterprise-auth-grid">
+            <div>
+              <strong>
+                {enterpriseReadySteps}/{enterpriseDelegatedAuth?.flow.length ?? 0}
+              </strong>
+              <span>Flow ready</span>
+            </div>
+            <div>
+              <strong>{enterpriseDelegatedAuth?.platformUseCases.length ?? 0}</strong>
+              <span>Use cases</span>
+            </div>
+            <div>
+              <strong>{enterpriseTokenLifetime}</strong>
+              <span>Token life</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(enterpriseDelegatedAuth?.architectureReview ?? []).slice(0, 4).map((item) => (
+              <li
+                key={item.topic}
+                data-status={item.status === "external_gate" ? "watch" : item.status}
+              >
+                <span>{item.topic}</span>
+                <strong>{item.status.replaceAll("_", " ")}</strong>
+              </li>
+            ))}
+          </ul>
         </article>
 
         <article>
@@ -1242,6 +3237,26 @@ function LaunchCenterPanel({
           </ol>
         </article>
 
+        <article className="support-bridge-card">
+          <div className="mini-heading">
+            <LifeBuoy aria-hidden="true" />
+            <strong>Support Bridge</strong>
+          </div>
+          <span>
+            {supportBridge
+              ? `${supportBridge.score}/100, ${supportBridge.reportErrorTools.length} report_error tools`
+              : "Preparing runtime support bridge"}
+          </span>
+          <ul className="compact-status-list">
+            {(supportBridge?.reportErrorTools ?? []).map((report) => (
+              <li key={report.id} data-status={report.status === "ready" ? "healthy" : "watch"}>
+                <span>{serverLabel(report.server)}</span>
+                <strong>{report.failedTool}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
         <article>
           <div className="mini-heading">
             <FileWarning aria-hidden="true" />
@@ -1265,19 +3280,23 @@ function LaunchCenterPanel({
 function DemoStudioPanel({
   preflight,
   replay,
+  stagingTranscript,
   steps,
   submissionPackage,
+  submissionConsole,
 }: {
   preflight: CartPreflightReport | null;
   replay: McpReplayStep[];
+  stagingTranscript: StagingTranscriptExport | null;
   steps: DemoStudioStep[];
   submissionPackage: SubmissionPackage | null;
+  submissionConsole: SubmissionConsole | null;
 }) {
   const readyFields = submissionPackage?.fields.filter((field) => field.status === "ready").length ?? 0;
   const totalFields = submissionPackage?.fields.length ?? 0;
 
   return (
-    <section className="analysis-panel demo-studio-panel">
+    <section className="analysis-panel demo-studio-panel" id="demo-studio">
       <div className="section-heading">
         <ClipboardCheck aria-hidden="true" />
         <h2>Demo Studio</h2>
@@ -1333,6 +3352,40 @@ function DemoStudioPanel({
           </ol>
         </article>
 
+        <article className="staging-transcript-card">
+          <div className="mini-heading">
+            <FileWarning aria-hidden="true" />
+            <strong>Staging Transcript</strong>
+          </div>
+          <span>
+            {stagingTranscript
+              ? `${stagingTranscript.score}/100, ${stagingTranscript.totalEntries} redacted entries`
+              : "Run a plan to export staging evidence"}
+          </span>
+          <div className="staging-transcript-grid">
+            <div>
+              <strong>{stagingTranscript?.coveredServers.length ?? 0}/3</strong>
+              <span>Servers</span>
+            </div>
+            <div>
+              <strong>{stagingTranscript?.certificationWaves.length ?? 0}</strong>
+              <span>Waves</span>
+            </div>
+            <div>
+              <strong>{stagingTranscript?.files.length ?? 0}</strong>
+              <span>Files</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(stagingTranscript?.readiness ?? []).slice(0, 4).map((item) => (
+              <li key={item.id} data-status={item.status === "ready" ? "healthy" : "watch"}>
+                <span>{item.label}</span>
+                <strong>{item.status.replaceAll("_", " ")}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
         <article>
           <div className="mini-heading">
             <Play aria-hidden="true" />
@@ -1365,6 +3418,53 @@ function DemoStudioPanel({
             ))}
           </div>
         </article>
+
+        <article className="submission-console-card">
+          <div className="mini-heading">
+            <Rocket aria-hidden="true" />
+            <strong>Submission Console</strong>
+          </div>
+          <span>
+            {submissionConsole
+              ? `${submissionConsole.score}/100, ${submissionConsole.recommendedTrack} track`
+              : "Preparing access handoff"}
+          </span>
+          <div className="submission-console-grid">
+            <div>
+              <strong>
+                {submissionConsole
+                  ? `${submissionConsole.readyRequirements}/${submissionConsole.totalRequirements}`
+                  : "0/0"}
+              </strong>
+              <span>Requirements</span>
+            </div>
+            <div>
+              <strong>
+                {submissionConsole
+                  ? `${submissionConsole.readyAttachments}/${submissionConsole.totalAttachments}`
+                  : "0/0"}
+              </strong>
+              <span>Attachments</span>
+            </div>
+            <div>
+              <strong>{submissionConsole?.packetOrder.length ?? 0}</strong>
+              <span>Packet order</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(submissionConsole?.runbook ?? []).slice(0, 5).map((step) => (
+              <li
+                key={step.id}
+                data-status={
+                  step.status === "ready" ? "healthy" : step.status === "blocked" ? "blocked" : "watch"
+                }
+              >
+                <span>{step.label}</span>
+                <strong>{step.owner}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
       </div>
     </section>
   );
@@ -1374,27 +3474,47 @@ function ProductionEvidencePanel({
   widgets,
   widgetBridge,
   rateLimit,
+  trafficReadiness,
+  backpressureGovernor,
   versionMonitor,
   complianceEvidence,
+  dataGovernance,
   reviewerProof,
+  launchBundle,
+  errorIntelligence,
   resilienceDrills,
   resilienceRunbook,
+  observabilityTraceReport,
+  runtimeTelemetry,
+  auditLedger,
+  sloIncident,
+  routeOptimizer,
   evaluationLab,
 }: {
   widgets: SwiggyWidget[];
   widgetBridge: { origin: string; sandbox: string; verifyOrigin: boolean } | null;
   rateLimit: RateLimitPlan | null;
+  trafficReadiness: TrafficReadinessPlan | null;
+  backpressureGovernor: McpBackpressureGovernorReport | null;
   versionMonitor: VersionMonitor | null;
   complianceEvidence: ComplianceEvidence | null;
+  dataGovernance: DataGovernanceCenter | null;
   reviewerProof: ReviewerProof | null;
+  launchBundle: LaunchBundle | null;
+  errorIntelligence: ErrorIntelligenceReport | null;
   resilienceDrills: ResilienceDrill[];
   resilienceRunbook: ResilienceRunbook | null;
+  observabilityTraceReport: ObservabilityTraceReport | null;
+  runtimeTelemetry: RuntimeTelemetryReport | null;
+  auditLedger: AuditLedgerCenter | null;
+  sloIncident: SloIncidentCommandCenter | null;
+  routeOptimizer: SwiggyRouteOptimizationReport | null;
   evaluationLab: EvaluationLab | null;
 }) {
   const passedDrills = resilienceDrills.filter((drill) => drill.status === "pass").length;
 
   return (
-    <section className="analysis-panel production-evidence-panel">
+    <section className="analysis-panel production-evidence-panel" id="production-evidence">
       <div className="section-heading">
         <ShieldCheck aria-hidden="true" />
         <h2>Production Evidence</h2>
@@ -1435,6 +3555,92 @@ function ProductionEvidencePanel({
           </ul>
         </article>
 
+        <article className="traffic-readiness-card">
+          <div className="mini-heading">
+            <Activity aria-hidden="true" />
+            <strong>Traffic Readiness</strong>
+          </div>
+          <span>
+            {trafficReadiness
+              ? `${trafficReadiness.score}/100, ${trafficReadiness.projectedDailyToolCalls.toLocaleString("en-IN")} calls/day`
+              : "Loading capacity profile"}
+          </span>
+          <div className="traffic-readiness-grid">
+            <div>
+              <strong>Peak QPS</strong>
+              <span>{trafficReadiness ? trafficReadiness.peakQps.toFixed(2) : "..."}</span>
+            </div>
+            <div>
+              <strong>Rollout</strong>
+              <span>{trafficReadiness ? `${trafficReadiness.rollout.length} stages` : "..."}</span>
+            </div>
+            <div>
+              <strong>Notice</strong>
+              <span>
+                {trafficReadiness
+                  ? `${trafficReadiness.notifications.find((item) => item.id === "major_traffic_event")?.leadTimeDays ?? 7} days`
+                  : "..."}
+              </span>
+            </div>
+            <div>
+              <strong>Retry Budget</strong>
+              <span>{trafficReadiness ? `${trafficReadiness.retryAfterContract.maxWallClockMs / 1000}s` : "..."}</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(trafficReadiness?.lanes ?? []).slice(0, 5).map((lane) => (
+              <li
+                key={lane.id}
+                data-status={lane.status === "ready" ? "healthy" : lane.status === "external_gate" ? "blocked" : "watch"}
+              >
+                <span>{lane.lane.replace("_", " ")}</span>
+                <strong>{lane.status.replace("_", " ")}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="backpressure-card">
+          <div className="mini-heading">
+            <Gauge aria-hidden="true" />
+            <strong>Backpressure Governor</strong>
+          </div>
+          <span>
+            {backpressureGovernor
+              ? `${backpressureGovernor.score}/100, ${backpressureGovernor.readyBuckets}/${backpressureGovernor.totalBuckets} buckets`
+              : "Loading backpressure policy"}
+          </span>
+          <div className="backpressure-grid">
+            <div>
+              <strong>{backpressureGovernor?.simulations.length ?? 0}</strong>
+              <span>Simulations</span>
+            </div>
+            <div>
+              <strong>{backpressureGovernor?.trackingMinIntervalSeconds ?? 10}s</strong>
+              <span>Tracking floor</span>
+            </div>
+            <div>
+              <strong>{backpressureGovernor ? backpressureGovernor.maxRetries : 0}</strong>
+              <span>Max retries</span>
+            </div>
+            <div>
+              <strong>{backpressureGovernor ? `${backpressureGovernor.maxUserWaitMs / 1000}s` : "..."}</strong>
+              <span>User budget</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(backpressureGovernor?.buckets ?? []).slice(0, 5).map((bucket) => (
+              <li
+                key={bucket.id}
+                data-status={bucket.status === "ready" ? "healthy" : bucket.status === "external_gate" ? "blocked" : "watch"}
+              >
+                <span>{bucket.toolClass.replaceAll("_", " ")}</span>
+                <strong>{bucket.server === "all" ? "All" : serverLabel(bucket.server)}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
         <article>
           <div className="mini-heading">
             <RefreshCw aria-hidden="true" />
@@ -1467,6 +3673,49 @@ function ProductionEvidencePanel({
           </ul>
         </article>
 
+        <article className="data-governance-card">
+          <div className="mini-heading">
+            <Database aria-hidden="true" />
+            <strong>Data Governance</strong>
+          </div>
+          <span>
+            {dataGovernance
+              ? `${dataGovernance.score}/100, ${dataGovernance.dataFlows.length} data flows`
+              : "Loading DPDP posture"}
+          </span>
+          <div className="data-governance-grid">
+            <div>
+              <strong>
+                {dataGovernance ? dataGovernance.controls.filter((control) => control.status === "ready").length : "..."}
+              </strong>
+              <span>Ready controls</span>
+            </div>
+            <div>
+              <strong>{dataGovernance?.dsrRunbook.length ?? "..."}</strong>
+              <span>DSR steps</span>
+            </div>
+            <div>
+              <strong>{dataGovernance?.retention.swiggyAuditLogDays ?? "..."}d</strong>
+              <span>Swiggy audit logs</span>
+            </div>
+            <div>
+              <strong>{dataGovernance?.signedManifestReadiness.targetVersion ?? "v..."}</strong>
+              <span>Manifest watch</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(dataGovernance?.controls ?? []).slice(0, 5).map((control) => (
+              <li
+                key={control.id}
+                data-status={control.status === "ready" ? "healthy" : control.status === "external_gate" ? "blocked" : "watch"}
+              >
+                <span>{control.label}</span>
+                <strong>{control.status.replace("_", " ")}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
         <article className="proof-card">
           <div className="mini-heading">
             <ClipboardCheck aria-hidden="true" />
@@ -1481,6 +3730,49 @@ function ProductionEvidencePanel({
               </div>
             ))}
           </div>
+        </article>
+
+        <article className="launch-bundle-card">
+          <div className="mini-heading">
+            <Rocket aria-hidden="true" />
+            <strong>Launch Bundle</strong>
+          </div>
+          <span>
+            {launchBundle
+              ? `${launchBundle.score}/100 ${launchBundle.readinessLabel.replaceAll("_", " ")}`
+              : "Preparing launch handoff"}
+          </span>
+          <ul className="compact-status-list">
+            {(launchBundle?.goLiveGates ?? []).slice(0, 5).map((gate) => (
+              <li
+                key={gate.label}
+                data-status={gate.status === "ready" ? "healthy" : gate.status === "manual_input" ? "watch" : "blocked"}
+              >
+                <span>{gate.label}</span>
+                <strong>{gate.status.replace("_", " ")}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="error-intelligence-card">
+          <div className="mini-heading">
+            <AlertTriangle aria-hidden="true" />
+            <strong>Error Intelligence</strong>
+          </div>
+          <span>
+            {errorIntelligence
+              ? `${errorIntelligence.score}/100, ${errorIntelligence.buckets.length} failure buckets`
+              : "Loading error catalogue"}
+          </span>
+          <ul className="compact-status-list">
+            {(errorIntelligence?.buckets ?? []).slice(0, 5).map((bucket) => (
+              <li key={bucket.id} data-status={bucket.reportError ? "watch" : "healthy"}>
+                <span>{bucket.label}</span>
+                <strong>{bucket.retryClass.replaceAll("_", " ")}</strong>
+              </li>
+            ))}
+          </ul>
         </article>
 
         <article className="resilience-card">
@@ -1498,6 +3790,146 @@ function ProductionEvidencePanel({
               <li key={drill.id} data-status={drill.status === "pass" ? "healthy" : "watch"}>
                 <span>{drill.label}</span>
                 <strong>{drill.status}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="trace-card">
+          <div className="mini-heading">
+            <Activity aria-hidden="true" />
+            <strong>Trace Monitor</strong>
+          </div>
+          <span>
+            {observabilityTraceReport
+              ? `${observabilityTraceReport.score}/100 trace score, ${observabilityTraceReport.traces.length} trace(s)`
+              : "Loading trace evidence"}
+          </span>
+          <ul className="compact-status-list">
+            {(observabilityTraceReport?.metrics ?? []).slice(0, 4).map((metric) => (
+              <li key={metric.id} data-status={metric.status}>
+                <span>{metric.label}</span>
+                <strong>{metric.value}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="runtime-telemetry-card">
+          <div className="mini-heading">
+            <Radio aria-hidden="true" />
+            <strong>Runtime Telemetry</strong>
+          </div>
+          <span>
+            {runtimeTelemetry
+              ? `${runtimeTelemetry.score}/100 live log score, ${runtimeTelemetry.events.length} event(s)`
+              : "Loading live request ledger"}
+          </span>
+          <ul className="compact-status-list">
+            {(runtimeTelemetry?.metrics ?? []).slice(0, 4).map((metric) => (
+              <li key={metric.id} data-status={metric.status}>
+                <span>{metric.label}</span>
+                <strong>{metric.value}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="audit-ledger-card">
+          <div className="mini-heading">
+            <ClipboardCheck aria-hidden="true" />
+            <strong>Audit Ledger</strong>
+          </div>
+          <span>
+            {auditLedger
+              ? `${auditLedger.score}/100, ${auditLedger.totalEvents} event(s)`
+              : "Loading audit ledger"}
+          </span>
+          <div className="audit-ledger-grid">
+            <div>
+              <strong>{auditLedger?.coveredSessions ?? 0}</strong>
+              <span>Sessions</span>
+            </div>
+            <div>
+              <strong>{auditLedger?.commercialActions ?? 0}</strong>
+              <span>Commercial</span>
+            </div>
+            <div>
+              <strong>{auditLedger?.retention.swiggyAuditLogDays ?? 90}d</strong>
+              <span>Swiggy logs</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(auditLedger?.controls ?? []).slice(0, 5).map((control) => (
+              <li
+                key={control.id}
+                data-status={
+                  control.status === "ready" ? "healthy" : control.status === "blocked" ? "blocked" : "watch"
+                }
+              >
+                <span>{control.label}</span>
+                <strong>{control.status.replaceAll("_", " ")}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="slo-incident-card">
+          <div className="mini-heading">
+            <LifeBuoy aria-hidden="true" />
+            <strong>SLO Command</strong>
+          </div>
+          <span>
+            {sloIncident
+              ? `${sloIncident.score}/100, ${sloIncident.uptimeTargets.length} uptime targets`
+              : "Loading SLO command center"}
+          </span>
+          <div className="slo-grid">
+            <div>
+              <strong>{sloIncident?.statusPage.swiggyStatus.replaceAll("_", " ") ?? "pending"}</strong>
+              <span>Status page</span>
+            </div>
+            <div>
+              <strong>
+                {sloIncident
+                  ? `${sloIncident.latencyTargets.find((target) => target.id === "commercial_actions")?.observedP95Ms ?? 0}ms`
+                  : "..."}
+              </strong>
+              <span>Commercial p95</span>
+            </div>
+            <div>
+              <strong>{sloIncident?.maintenance.noticeHours ?? 0}h</strong>
+              <span>Maintenance notice</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(sloIncident?.incidentComms ?? []).slice(0, 4).map((incident) => (
+              <li
+                key={incident.severity}
+                data-status={incident.status === "ready" ? "healthy" : incident.status === "external_gate" ? "blocked" : "watch"}
+              >
+                <span>{incident.trigger}</span>
+                <strong>{incident.severity}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="route-card">
+          <div className="mini-heading">
+            <GitBranch aria-hidden="true" />
+            <strong>Route Optimizer</strong>
+          </div>
+          <span>
+            {routeOptimizer
+              ? `${routeOptimizer.score}/100 route score, ${routeOptimizer.totalSavedCalls} calls saved`
+              : "Loading route optimizer"}
+          </span>
+          <ul className="compact-status-list">
+            {(routeOptimizer?.journeys ?? []).slice(0, 3).map((journey) => (
+              <li key={journey.id} data-status="healthy">
+                <span>{journey.title}</span>
+                <strong>{journey.optimizedCalls}/{journey.baselineCalls}</strong>
               </li>
             ))}
           </ul>

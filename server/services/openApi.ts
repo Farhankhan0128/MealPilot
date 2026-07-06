@@ -88,6 +88,19 @@ export function buildOpenApiDocument(config: ServerConfig) {
           responses: { "200": { description: "JSON-RPC tools/call replay steps" } },
         },
       },
+      "/api/sessions/{sessionId}/staging-transcript": {
+        get: {
+          tags: ["Commerce"],
+          summary: "Swiggy staging transcript export",
+          parameters: [{ name: "sessionId", in: "path", required: true, schema: { type: "string" } }],
+          responses: {
+            "200": {
+              description:
+                "Session-scoped JSONL and Markdown transcript with certification waves, redacted request/response previews, retry policy, support envelope, and evidence links",
+            },
+          },
+        },
+      },
       "/api/sessions/{sessionId}/widgets": {
         get: {
           tags: ["Commerce"],
@@ -103,11 +116,399 @@ export function buildOpenApiDocument(config: ServerConfig) {
           responses: { "200": { description: "Food, Instamart, and Dineout coverage" } },
         },
       },
+      "/api/mcp/tool-lab": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Executable Swiggy MCP Tool Lab for all 35 official tools",
+          responses: { "200": { description: "JSON-RPC probes, safety classes, retry policies, and innovation use cases" } },
+        },
+      },
+      "/api/mcp/capability-registry": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy MCP capability registry for tools, resources, prompts, metadata, widgets, and auth",
+          responses: {
+            "200": {
+              description:
+                "Unified registry covering mcp:tools, mcp:resources, mcp:prompts, OAuth metadata, widget contracts, and external gates",
+            },
+          },
+        },
+      },
+      "/api/mcp/resource-prompt-studio": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy MCP Resource and Prompt Studio for resources/list, resources/read, prompts/list, and prompts/get",
+          responses: {
+            "200": {
+              description:
+                "Server-by-server MCP resource and prompt inventory with sample read/get payloads, smoke requests, MealPilot uses, and live Swiggy staging gates",
+            },
+          },
+        },
+      },
+      "/api/mcp/tool-contract-matrix": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy MCP tool contract matrix for all Food, Instamart, and Dineout tools",
+          responses: {
+            "200": {
+              description:
+                "Machine-readable parameter, response envelope, retry, confirmation, error bucket, and fixture contracts for all 35 official Swiggy MCP tools",
+            },
+          },
+        },
+      },
+      "/api/mcp/scenario-runner": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Executable Swiggy official recipe scenario runner",
+          responses: {
+            "200": {
+              description:
+                "Mock JSON-RPC execution traces for Food, Instamart, Dineout, combined recipes, guard/recovery probes, confirmations, external gates, and all 35 tools",
+            },
+          },
+        },
+      },
+      "/api/mcp/state-orchestrator": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy multi-turn cart state and voice/chat response orchestrator",
+          responses: {
+            "200": {
+              description:
+                "Authoritative cart refresh rules, server-boundary state models, switch guards, stale-cart recovery, voice/chat contracts, and confirmation gates",
+            },
+          },
+        },
+      },
+      "/api/mcp/widget-runtime": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy widget iframe, postMessage, and semantic fallback runtime",
+          responses: {
+            "200": {
+              description:
+                "Widget surface matrix for Food, Instamart, and Dineout with iframe sandboxing, origin checks, postMessage handlers, activation checks, render contracts, voice rules, opt-in gates, and semantic fallbacks",
+            },
+          },
+        },
+      },
+      "/api/mcp/commercial-action-guard": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy commercial action confirmation and non-blind retry guard",
+          responses: {
+            "200": {
+              description:
+                "Food place_food_order, Instamart checkout, Dineout book_table, and combined journey guardrails with fresh reads, explicit confirmations, check-then-retry drills, telemetry, support packets, and external gates",
+            },
+          },
+        },
+      },
+      "/api/mcp/backpressure-governor": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy MCP adaptive backpressure and future rate-limit governor",
+          responses: {
+            "200": {
+              description:
+                "Token buckets, queue discipline, Retry-After handling, tracking cadence, voice burst shaping, background-job gates, telemetry fields, and capacity email for Swiggy MCP rate-limit readiness",
+            },
+          },
+        },
+      },
+      "/api/mcp/staging-cutover": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy staging cutover rehearsal for real MCP transport",
+          responses: {
+            "200": {
+              description:
+                "Credential, OAuth, Streamable HTTP, first-call probe, retry, support, 48-hour staging soak, and production promotion rehearsal for Food, Instamart, and Dineout",
+            },
+          },
+        },
+      },
+      "/api/swiggy-builders-map": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Official Swiggy Builders website, CTA, and capability map",
+          responses: { "200": { description: "Pages, CTAs, tool coverage, innovation opportunities, and credential gates" } },
+        },
+      },
+      "/api/swiggy-website-atlas": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Builders website header, footer, page module, and CTA atlas",
+          responses: { "200": { description: "Global navigation, docs navigation, footer groups, page modules, CTAs, and coverage assertions" } },
+        },
+      },
+      "/api/swiggy-builder-intake": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Builder Intake Command Center for every signup, apply, demo, contact, and docs CTA",
+          responses: {
+            "200": {
+              description:
+                "Actionable CTA map, access submission fields, demo storyboard, outbound drafts, checklist, manual inputs, and external Swiggy gates",
+            },
+          },
+        },
+      },
+      "/api/swiggy-faq-policy": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy FAQ and policy coverage center",
+          responses: {
+            "200": {
+              description:
+                "Homepage, developer, enterprise, access-guideline, footer-resource, allowed, restricted, prohibited, operating-principle, and legal coverage mapped to MealPilot evidence",
+            },
+          },
+        },
+      },
+      "/api/swiggy-growth-partnership": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Growth Partnership Center for co-marketing and strategic launch proof",
+          responses: {
+            "200": {
+              description:
+                "Growth-partnership signals, GTM experiments, proof assets, metrics, partnership asks, and external co-marketing gates",
+            },
+          },
+        },
+      },
+      "/api/channel-multimodal-studio": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Channel and Multimodal Studio for Swiggy developer build lanes",
+          responses: {
+            "200": {
+              description:
+                "Voice, web chat, Slack/Teams, mobile camera, enterprise, and screenshot-to-order lane contracts with Swiggy MCP toolchains, safety controls, and external gates",
+            },
+          },
+        },
+      },
+      "/api/nutrition-budget-intelligence": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Nutrition and Budget Intelligence for Swiggy Food, Instamart, and Dineout routes",
+          responses: {
+            "200": {
+              description:
+                "Protein-per-rupee, coupon-safe, pantry-gap, group-budget, Dineout balance, and camera-label optimization routes with Swiggy MCP toolchains, nutrition safety controls, and external data gates",
+            },
+          },
+        },
+      },
+      "/api/household-preference-graph": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Household Preference Graph for consented Swiggy order, go-to item, and Dineout personalization",
+          responses: {
+            "200": {
+              description:
+                "Consent-aware personalization graph covering Food active orders, Instamart order history and go-to items, Dineout saved locations and booking status, household weights, forecasts, automations, retention rules, and external data gates",
+            },
+          },
+        },
+      },
+      "/api/guest-collaboration-calendar": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Guest Collaboration and Calendar Center for Swiggy group occasions",
+          responses: {
+            "200": {
+              description:
+                "Guest voting, occasion templates, Dineout-first collaboration, Food reminder handoffs, Instamart prep, calendar artifacts, voice briefs, Slack/Teams gates, and Swiggy confirmation controls",
+            },
+          },
+        },
+      },
+      "/api/luxury-experience-workspace": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Luxury Experience Workspace for Swiggy reservation and cart review surfaces",
+          responses: {
+            "200": {
+              description:
+                "Premium reservation, Food cart, Instamart basket, combined evening, and recovery workspaces with concierge modes, all-tool Swiggy coverage, widget fallbacks, voice contracts, telemetry, and confirmation controls",
+            },
+          },
+        },
+      },
+      "/api/reviewer-artifact-vault": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Reviewer Artifact Vault for Swiggy access submission proof",
+          responses: {
+            "200": {
+              description:
+                "One-stop reviewer artifact manifest covering proof links, OpenAPI, smoke commands, screenshot targets, demo-video checklist, logs, traces, redaction rules, support context, and Swiggy handoff email",
+            },
+          },
+        },
+      },
+      "/api/visual-qa-center": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Visual QA Center for MealPilot reviewer screenshot and layout evidence",
+          responses: {
+            "200": {
+              description:
+                "Viewport targets, selector manifests, screenshot artifact paths, text-fit and no-overlap rules, widget fallback checks, mobile layout checks, redaction rules, and manual/automation gates for Swiggy review",
+            },
+          },
+        },
+      },
+      "/api/swiggy-docs-coverage": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Page-by-page Swiggy llms.txt documentation coverage audit",
+          responses: {
+            "200": {
+              description:
+                "All llms.txt-linked docs pages grouped by section with rendered links, markdown links, MealPilot evidence, and remaining gates",
+            },
+          },
+        },
+      },
+      "/api/swiggy-upstream-watch": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy upstream docs, changelog, and roadmap watch center",
+          responses: {
+            "200": {
+              description:
+                "Tracks llms.txt, llms-full.txt, v1.0 shipped capabilities, v1.1/v1.2/v2 roadmap items, signed manifest watch, action queue, and MealPilot evidence links for future Swiggy MCP changes",
+            },
+          },
+        },
+      },
+      "/api/ai-client-connect-kit": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy AI client and coding-agent connection kit",
+          responses: {
+            "200": {
+              description:
+                "Copy-ready client configs, coding-agent rules, SDK auth modes, delegated-auth blueprint, troubleshooting, and safety gates",
+            },
+          },
+        },
+      },
+      "/api/brand-compliance-kit": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy brand and co-branding compliance kit",
+          responses: {
+            "200": {
+              description:
+                "Attribution copy, co-branding rules, surface placements, brand asset gates, palette audit, launch checklist, and external approval gates",
+            },
+          },
+        },
+      },
+      "/api/swiggy-journey-compiler": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy official recipe journey compiler and tool route map",
+          responses: {
+            "200": {
+              description:
+                "Compiled Food, Instamart, Dineout, combined, and premium MealPilot journeys with every tool indexed to route roles, safety gates, cache policy, retry policy, and UI surface",
+            },
+          },
+        },
+      },
+      "/api/swiggy-access-dossier": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy production access application dossier",
+          responses: {
+            "200": {
+              description:
+                "Apply-ready Swiggy access packet covering application fields, review checks, ground rules, legal readiness, track selection, proof links, manual inputs, and external gates",
+            },
+          },
+        },
+      },
+      "/api/premium-use-case-studio": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "MealPilot premium Swiggy use-case studio",
+          responses: {
+            "200": {
+              description:
+                "Premium MealPilot use-case portfolio with Swiggy servers, all-tool coverage, optimized call plans, surfaces, safety gates, data boundaries, metrics, differentiators, roadmap, and external gates",
+            },
+          },
+        },
+      },
+      "/api/premium-concierge-itinerary": {
+        get: {
+          tags: ["Commerce"],
+          summary: "Premium concierge itinerary for Swiggy Food, Instamart, and Dineout",
+          responses: {
+            "200": {
+              description:
+                "Day-and-weekend itinerary slots with official recipe routes, all-server tool coverage, route optimizations, reminders, confirmations, and external Swiggy gates",
+            },
+          },
+        },
+      },
+      "/api/staging-certification-matrix": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy staging certification matrix",
+          responses: {
+            "200": {
+              description:
+                "Credential-aware staging certification waves covering OAuth/DCR, all 35 Swiggy tools, 48-hour soak, telemetry, rollback, and production promotion gates",
+            },
+          },
+        },
+      },
       "/api/mcp-gateway": {
         get: {
           tags: ["Builder Access"],
           summary: "Swiggy MCP gateway cutover status",
           responses: { "200": { description: "Transport mode, auth posture, endpoint routing, and cutover plan" } },
+        },
+      },
+      "/api/credential-onboarding": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy OAuth and Dynamic Client Registration onboarding cockpit",
+          responses: { "200": { description: "DCR preview, redirect URI audit, scopes, access fields, and external gates" } },
+        },
+      },
+      "/api/auth/swiggy/status": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy OAuth callback and token posture status",
+          responses: {
+            "200": {
+              description:
+                "Redacted OAuth lifecycle report with endpoints, redirect URI, pending PKCE verifier count, latest callback outcome, gateway token source, checklist, storage policy, and next actions",
+            },
+          },
+        },
+      },
+      "/api/enterprise-delegated-auth": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Enterprise Delegated Auth Center",
+          responses: {
+            "200": {
+              description:
+                "Enterprise on-behalf-of OAuth 2.1 PKCE flow, per-user token lifecycle, redirect strategy, platform use cases, troubleshooting, architecture review evidence, and external partner gates",
+            },
+          },
         },
       },
       "/api/go-live": {
@@ -138,6 +539,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           responses: { "200": { description: "Application fields, links, and residual risks" } },
         },
       },
+      "/api/submission-console": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy production access submission console",
+          responses: {
+            "200": {
+              description:
+                "Track-aware official form targets, prepared fields, proof attachments, runbook steps, handoff drafts, blockers, and external gates",
+            },
+          },
+        },
+      },
       "/api/reviewer-proof": {
         get: {
           tags: ["Builder Access"],
@@ -145,11 +558,116 @@ export function buildOpenApiDocument(config: ServerConfig) {
           responses: { "200": { description: "Score, highlights, blockers, and artifact links" } },
         },
       },
+      "/api/production-launch-bundle": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Production Launch Bundle for Swiggy Builder Access handoff",
+          responses: {
+            "200": {
+              description:
+                "Launch score, artifacts, access application fields, commands, external gates, and handoff email draft",
+            },
+          },
+        },
+      },
+      "/api/traffic-readiness-plan": {
+        get: {
+          tags: ["Operations"],
+          summary: "Traffic readiness and capacity plan for Swiggy launch",
+          responses: {
+            "200": {
+              description:
+                "Expected volume, QPS, traffic lanes, Retry-After contract, staged rollout, major-event notifications, capacity email, and external Swiggy gates",
+            },
+          },
+        },
+      },
+      "/api/support/bridge": {
+        get: {
+          tags: ["Operations"],
+          summary: "Swiggy report_error Support Bridge across Food, Instamart, and Dineout",
+          responses: {
+            "200": {
+              description:
+                "Official report_error request shapes, support contacts, SLA matrix, redaction rules, and escalation checklist",
+            },
+          },
+        },
+      },
+      "/api/slo-incident-command": {
+        get: {
+          tags: ["Operations"],
+          summary: "SLO Incident Command Center for Swiggy MCP operations",
+          responses: {
+            "200": {
+              description:
+                "Uptime targets, latency classes, status-page fallback, S0/S1 incident comms, maintenance windows, measurement rules, remediation path, and live readiness checks",
+            },
+          },
+        },
+      },
+      "/api/data-governance-center": {
+        get: {
+          tags: ["Operations"],
+          summary: "Data Governance Center for Swiggy DPDP, DSR, residency, and token controls",
+          responses: {
+            "200": {
+              description:
+                "DPDP data-role boundary, India/Singapore residency, tool-call PII inventory, DSR runbook, retention, security contacts, and signed-manifest readiness",
+            },
+          },
+        },
+      },
+      "/api/error-intelligence": {
+        get: {
+          tags: ["Operations"],
+          summary: "Swiggy error envelope, retry bucket, and planned code intelligence",
+          responses: {
+            "200": {
+              description:
+                "Current success:false envelope, message/HTTP classifiers, retry rules, planned symbolic codes, domain errors, and support actions",
+            },
+          },
+        },
+      },
       "/api/resilience": {
         get: {
           tags: ["Builder Access"],
           summary: "Executable resilience drills and Swiggy support runbook",
           responses: { "200": { description: "Retry, rate-limit, auth, idempotency, and deprecation drills" } },
+        },
+      },
+      "/api/observability/traces": {
+        get: {
+          tags: ["Operations"],
+          summary: "Trace spans, log contract, and redaction evidence",
+          responses: { "200": { description: "Session traces, span metrics, and structured logging contract" } },
+        },
+      },
+      "/api/telemetry/runtime": {
+        get: {
+          tags: ["Operations"],
+          summary: "Runtime request telemetry ledger with redaction and support correlation",
+          responses: { "200": { description: "Recent request events, metrics, redaction contract, and support-ready identifiers" } },
+        },
+      },
+      "/api/audit-ledger": {
+        get: {
+          tags: ["Operations"],
+          summary: "Swiggy audit ledger center for redacted session, support, retention, and DSR evidence",
+          responses: {
+            "200": {
+              description:
+                "Audit events, redaction controls, retention posture, DSR routing, support packet, and external gates",
+            },
+          },
+        },
+      },
+      "/api/swiggy-route-optimizer": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy MCP route optimization and call-saving plan",
+          responses: { "200": { description: "Optimized journeys, cache rules, retry policies, and staging assertions" } },
         },
       },
       "/api/privacy/export": {

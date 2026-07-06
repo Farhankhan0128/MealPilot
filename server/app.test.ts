@@ -40,7 +40,53 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/storage/status"].get.summary).toContain("Storage");
     expect(openApi.body.paths["/api/resilience"].get.summary).toContain("resilience");
     expect(openApi.body.paths["/api/evaluation-lab"].get.summary).toContain("evaluation");
+    expect(openApi.body.paths["/api/submission-console"].get.summary).toContain("submission console");
     expect(openApi.body.paths["/api/mcp-gateway"].get.summary).toContain("gateway");
+    expect(openApi.body.paths["/api/swiggy-builders-map"].get.summary).toContain("Swiggy Builders");
+    expect(openApi.body.paths["/api/swiggy-website-atlas"].get.summary).toContain("website header");
+    expect(openApi.body.paths["/api/swiggy-builder-intake"].get.summary).toContain("Builder Intake");
+    expect(openApi.body.paths["/api/swiggy-faq-policy"].get.summary).toContain("FAQ");
+    expect(openApi.body.paths["/api/swiggy-growth-partnership"].get.summary).toContain("Growth Partnership");
+    expect(openApi.body.paths["/api/channel-multimodal-studio"].get.summary).toContain("Channel and Multimodal");
+    expect(openApi.body.paths["/api/nutrition-budget-intelligence"].get.summary).toContain("Nutrition and Budget");
+    expect(openApi.body.paths["/api/household-preference-graph"].get.summary).toContain("Household Preference Graph");
+    expect(openApi.body.paths["/api/guest-collaboration-calendar"].get.summary).toContain("Guest Collaboration");
+    expect(openApi.body.paths["/api/luxury-experience-workspace"].get.summary).toContain("Luxury Experience Workspace");
+    expect(openApi.body.paths["/api/reviewer-artifact-vault"].get.summary).toContain("Reviewer Artifact Vault");
+    expect(openApi.body.paths["/api/visual-qa-center"].get.summary).toContain("Visual QA Center");
+    expect(openApi.body.paths["/api/swiggy-docs-coverage"].get.summary).toContain("llms.txt");
+    expect(openApi.body.paths["/api/swiggy-upstream-watch"].get.summary).toContain("upstream docs");
+    expect(openApi.body.paths["/api/ai-client-connect-kit"].get.summary).toContain("AI client");
+    expect(openApi.body.paths["/api/brand-compliance-kit"].get.summary).toContain("brand");
+    expect(openApi.body.paths["/api/swiggy-journey-compiler"].get.summary).toContain("journey compiler");
+    expect(openApi.body.paths["/api/swiggy-access-dossier"].get.summary).toContain("access application dossier");
+    expect(openApi.body.paths["/api/premium-use-case-studio"].get.summary).toContain("premium Swiggy use-case studio");
+    expect(openApi.body.paths["/api/premium-concierge-itinerary"].get.summary).toContain("Premium concierge itinerary");
+    expect(openApi.body.paths["/api/staging-certification-matrix"].get.summary).toContain("staging certification");
+    expect(openApi.body.paths["/api/sessions/{sessionId}/staging-transcript"].get.summary).toContain("staging transcript");
+    expect(openApi.body.paths["/api/mcp/tool-lab"].get.summary).toContain("Tool Lab");
+    expect(openApi.body.paths["/api/mcp/tool-contract-matrix"].get.summary).toContain("tool contract matrix");
+    expect(openApi.body.paths["/api/mcp/scenario-runner"].get.summary).toContain("scenario runner");
+    expect(openApi.body.paths["/api/mcp/state-orchestrator"].get.summary).toContain("multi-turn cart state");
+    expect(openApi.body.paths["/api/mcp/widget-runtime"].get.summary).toContain("widget iframe");
+    expect(openApi.body.paths["/api/mcp/commercial-action-guard"].get.summary).toContain("commercial action");
+    expect(openApi.body.paths["/api/mcp/backpressure-governor"].get.summary).toContain("backpressure");
+    expect(openApi.body.paths["/api/mcp/staging-cutover"].get.summary).toContain("staging cutover");
+    expect(openApi.body.paths["/api/mcp/capability-registry"].get.summary).toContain("capability registry");
+    expect(openApi.body.paths["/api/mcp/resource-prompt-studio"].get.summary).toContain("Resource and Prompt Studio");
+    expect(openApi.body.paths["/api/credential-onboarding"].get.summary).toContain("Dynamic Client Registration");
+    expect(openApi.body.paths["/api/auth/swiggy/status"].get.summary).toContain("OAuth callback");
+    expect(openApi.body.paths["/api/enterprise-delegated-auth"].get.summary).toContain("Enterprise Delegated Auth");
+    expect(openApi.body.paths["/api/observability/traces"].get.summary).toContain("Trace spans");
+    expect(openApi.body.paths["/api/telemetry/runtime"].get.summary).toContain("Runtime request telemetry");
+    expect(openApi.body.paths["/api/audit-ledger"].get.summary).toContain("audit ledger");
+    expect(openApi.body.paths["/api/swiggy-route-optimizer"].get.summary).toContain("route optimization");
+    expect(openApi.body.paths["/api/traffic-readiness-plan"].get.summary).toContain("Traffic readiness");
+    expect(openApi.body.paths["/api/slo-incident-command"].get.summary).toContain("SLO Incident");
+    expect(openApi.body.paths["/api/data-governance-center"].get.summary).toContain("Data Governance");
+    expect(openApi.body.paths["/api/production-launch-bundle"].get.summary).toContain("Production Launch Bundle");
+    expect(openApi.body.paths["/api/support/bridge"].get.summary).toContain("Support Bridge");
+    expect(openApi.body.paths["/api/error-intelligence"].get.summary).toContain("error envelope");
   });
 
   it("creates a server-side plan session", async () => {
@@ -109,6 +155,62 @@ describe("MealPilot API", () => {
     expect(response.body.result.data[0].label).toBe("Home");
   });
 
+  it("serves local MCP resources and prompts through the same JSON-RPC route", async () => {
+    const { app } = createMealPilotServer();
+
+    const resources = await request(app)
+      .post("/api/mcp/food")
+      .send({
+        jsonrpc: "2.0",
+        id: "resources",
+        method: "resources/list",
+      })
+      .expect(200);
+
+    expect(resources.body.result.resources.map((resource: { uri: string }) => resource.uri)).toEqual(
+      expect.arrayContaining(["swiggy://food/widgets", "swiggy://food/static-metadata"]),
+    );
+
+    const resource = await request(app)
+      .post("/api/mcp/food")
+      .send({
+        jsonrpc: "2.0",
+        id: "resource-read",
+        method: "resources/read",
+        params: { uri: "swiggy://food/widgets" },
+      })
+      .expect(200);
+
+    expect(resource.body.result.contents[0].mimeType).toBe("application/json");
+    expect(resource.body.result.contents[0].text).toContain("widget_registry");
+
+    const prompts = await request(app)
+      .post("/api/mcp/dineout")
+      .send({
+        jsonrpc: "2.0",
+        id: "prompts",
+        method: "prompts/list",
+      })
+      .expect(200);
+
+    expect(prompts.body.result.prompts.some((prompt: { name: string }) => prompt.name === "dineout_evening_planner")).toBe(
+      true,
+    );
+
+    const prompt = await request(app)
+      .post("/api/mcp/dineout")
+      .send({
+        jsonrpc: "2.0",
+        id: "prompt-get",
+        method: "prompts/get",
+        params: { name: "dineout_evening_planner", arguments: { guests: 4, date: "2026-07-11" } },
+      })
+      .expect(200);
+
+    expect(prompt.body.result.messages[0].content.text).toContain("Dineout specialist");
+    expect(prompt.body.result.messages[1].content.text).toContain("guests");
+  });
+
   it("reports MCP gateway cutover status and fails closed without staging token", async () => {
     const { app } = createMealPilotServer({
       config: {
@@ -138,6 +240,106 @@ describe("MealPilot API", () => {
       .expect(401);
 
     expect(blocked.body.error.message).toContain("OAuth token");
+  });
+
+  it("returns a Swiggy staging cutover rehearsal for real MCP transport", async () => {
+    const { app } = createMealPilotServer();
+    await request(app).post("/api/plan").send(planningRequest).expect(201);
+    const response = await request(app).get("/api/mcp/staging-cutover").expect(200);
+    const cutover = response.body.stagingCutover;
+
+    expect(cutover.score).toBeGreaterThanOrEqual(85);
+    expect(cutover.totalServers).toBe(3);
+    expect(cutover.routableServers).toBe(3);
+    expect(cutover.blockedServers).toBe(0);
+    expect(cutover.dryRunCalls).toBe(3);
+    expect(cutover.activeTransport).toBe("local_mock");
+    expect(cutover.credentialState.scope).toContain("mcp:tools");
+    expect(cutover.probes.map((probe: { server: string; firstTool: string }) => [probe.server, probe.firstTool])).toEqual([
+      ["food", "get_addresses"],
+      ["instamart", "get_addresses"],
+      ["dineout", "get_saved_locations"],
+    ]);
+    expect(
+      cutover.probes.every(
+        (probe: { dryRunRequest: { method: string }; failureBranches: Array<{ status: string }> }) =>
+          probe.dryRunRequest.method === "tools/call" &&
+          probe.failureBranches.some((branch) => branch.status === "401") &&
+          probe.failureBranches.some((branch) => branch.status === "network"),
+      ),
+    ).toBe(true);
+    expect(cutover.oauthChecks.some((check: { id: string; status: string }) => check.id === "pkce" && check.status === "ready")).toBe(true);
+    expect(cutover.transportChecks.some((check: { id: string }) => check.id === "fail_closed")).toBe(true);
+    expect(
+      cutover.promotionChecks.some(
+        (check: { id: string; status: string }) => check.id === "green_48h" && check.status === "external_gate",
+      ),
+    ).toBe(true);
+    expect(cutover.supportPacket.to).toBe("builders@swiggy.in");
+    expect(cutover.commands.some((command: { id: string; command: string }) => command.id === "staging_env" && command.command.includes("SWIGGY_ENV=staging"))).toBe(true);
+    expect(cutover.assertions.some((assertion: string) => assertion.includes("fails closed"))).toBe(true);
+  });
+
+  it("returns credential onboarding and Dynamic Client Registration evidence", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/credential-onboarding").expect(200);
+
+    expect(response.body.onboarding.score).toBeGreaterThanOrEqual(90);
+    expect(response.body.onboarding.dynamicClientRegistration.endpoint).toContain("/auth/register");
+    expect(response.body.onboarding.dynamicClientRegistration.payload.scope).toContain("mcp:tools");
+    expect(response.body.onboarding.redirectUriAudit.localhostAllowed).toBe(true);
+    expect(response.body.onboarding.metadataEndpoints.some((endpoint: { id: string }) => endpoint.id === "authorization_server")).toBe(true);
+    expect(response.body.onboarding.checks.some((check: { id: string }) => check.id === "pkce")).toBe(true);
+    expect(
+      response.body.onboarding.accessApplicationFields.some((field: { id: string }) => field.id === "redirect_uris"),
+    ).toBe(true);
+  });
+
+  it("models Swiggy enterprise delegated auth and on-behalf-of gates", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/enterprise-delegated-auth").expect(200);
+    const center = response.body.enterpriseAuth;
+
+    expect(center.score).toBeGreaterThanOrEqual(90);
+    expect(center.principle.swiggyRole).toBe("Data Fiduciary");
+    expect(center.principle.platformRole).toBe("Data Processor");
+    expect(center.flow.map((step: { id: string }) => step.id)).toEqual(
+      expect.arrayContaining([
+        "platform_preregistration",
+        "per_user_pkce",
+        "authorize_redirect",
+        "token_exchange",
+        "per_user_storage",
+        "mcp_call_on_behalf",
+        "expiry_reauth",
+        "logout_disconnect",
+      ]),
+    );
+    expect(center.redirectUriStrategy.exactMatchRequired).toBe(true);
+    expect(center.redirectUriStrategy.allowedExamples).toEqual(
+      expect.arrayContaining(["googleassistant://oauth2redirect", "alexa://oauth/callback", "jio-hello://oauth/callback"]),
+    );
+    expect(center.tokenLifecycle).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ item: "Authorization code", lifetime: "120 seconds" }),
+        expect.objectContaining({ item: "Access token", lifetime: "5 days" }),
+        expect.objectContaining({ item: "User session", lifetime: "30 days idle sliding" }),
+      ]),
+    );
+    expect(center.storageRules.map((rule: { id: string }) => rule.id)).toEqual(
+      expect.arrayContaining(["per_user_boundary", "no_password_or_otp", "plaintext_lifetime", "logout_revoke"]),
+    );
+    expect(center.scopes.map((scope: { scope: string }) => scope.scope)).toEqual(
+      expect.arrayContaining(["mcp:tools", "mcp:resources", "mcp:prompts"]),
+    );
+    expect(center.troubleshooting.map((item: { symptom: string }) => item.symptom)).toEqual(
+      expect.arrayContaining(["401 Unauthorized", "419 Session expired", "403 Forbidden", "Upstream shedding", "Bad redirect"]),
+    );
+    expect(center.platformUseCases.some((useCase: { surface: string }) => useCase.surface === "enterprise_saas")).toBe(true);
+    expect(center.architectureReview.map((item: { topic: string }) => item.topic)).toEqual(
+      expect.arrayContaining(["Delegated OAuth", "Rate limits and capacity", "Observability handoff", "Data handling"]),
+    );
+    expect(center.externalGates.some((gate: string) => gate.includes("platform-operator"))).toBe(true);
   });
 
   it("updates profile, substitutes items, confirms all, and returns tracking", async () => {
@@ -223,13 +425,26 @@ describe("MealPilot API", () => {
 
   it("exports a markdown builder package and completes mock OAuth callback", async () => {
     const { app } = createMealPilotServer();
+    const initialStatus = await request(app).get("/api/auth/swiggy/status").expect(200);
+    expect(initialStatus.body.authStatus.latestEvent.status).toBe("not_started");
+    expect(initialStatus.body.authStatus.endpoints.authorize).toContain("/auth/authorize");
+
     const start = await request(app).post("/api/auth/swiggy/start").expect(200);
+    expect(start.body.authStatus.latestEvent.status).toBe("authorization_url_created");
+    expect(start.body.authStatus.pendingVerifierCount).toBe(1);
+    expect(start.body.authStatus.callbackChecklist.some((item: { id: string }) => item.id === "pkce_s256")).toBe(true);
 
     const callback = await request(app)
       .get("/api/auth/swiggy/callback")
       .query({ code: "mock_code", state: start.body.state })
       .expect(200);
     expect(callback.body.tokenExchange).toBe("mocked");
+    expect(callback.body.authStatus.latestEvent.status).toBe("callback_mocked");
+    expect(callback.body.authStatus.pendingVerifierCount).toBe(0);
+
+    const afterStatus = await request(app).get("/api/auth/swiggy/status").expect(200);
+    expect(afterStatus.body.authStatus.latestEvent.status).toBe("callback_mocked");
+    expect(afterStatus.body.authStatus.storagePolicy.some((item: string) => item.includes("Never log access tokens"))).toBe(true);
 
     const markdown = await request(app).get("/api/builder-package.md").expect(200);
     expect(markdown.text).toContain("MealPilot India - Swiggy Builder Access Packet");
@@ -252,6 +467,1433 @@ describe("MealPilot API", () => {
     const report = await request(app).post("/api/support/report").send({ sessionId }).expect(201);
     expect(report.body.report.mailto).toContain("builders@swiggy.in");
     expect(report.body.report.sessionIds).toEqual([sessionId]);
+
+    const bridge = await request(app).get("/api/support/bridge").query({ sessionId }).expect(200);
+    expect(bridge.body.supportBridge.score).toBe(100);
+    expect(bridge.body.supportBridge.reportErrorTools).toHaveLength(3);
+    expect(
+      bridge.body.supportBridge.reportErrorTools.every(
+        (item: { request: { method: string; params: { name: string } } }) =>
+          item.request.method === "tools/call" && item.request.params.name === "report_error",
+      ),
+    ).toBe(true);
+    expect(
+      bridge.body.supportBridge.reportErrorTools.some(
+        (item: { server: string; request: { params: { arguments: { domain: string; toolContext: Record<string, unknown> } } } }) =>
+          item.server === "instamart" &&
+          item.request.params.arguments.domain === "im" &&
+          item.request.params.arguments.toolContext.mealPilotSessionId === sessionId,
+      ),
+    ).toBe(true);
+    expect(bridge.body.supportBridge.slaMatrix.some((sla: { severity: string; ack: string }) => sla.severity === "S0" && sla.ack)).toBe(
+      true,
+    );
+    expect(bridge.body.supportBridge.incidentEmail.to).toBe("builders@swiggy.in");
+  });
+
+  it("maps the researched Swiggy Builders website, CTAs, and opportunities", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/swiggy-builders-map").expect(200);
+
+    expect(response.body.map.officialSource).toBe("https://mcp.swiggy.com/builders/");
+    expect(response.body.map.totalOfficialTools).toBe(35);
+    expect(response.body.map.pages.length).toBeGreaterThanOrEqual(15);
+    expect(response.body.map.ctas.some((cta: { label: string }) => cta.label === "Start Building")).toBe(true);
+    expect(response.body.map.opportunities[0].impactScore).toBeGreaterThanOrEqual(90);
+    expect(response.body.map.credentialGates.some((gate: string) => gate.includes("Staging credentials"))).toBe(true);
+  });
+
+  it("returns the Swiggy Builders website atlas with header, footer, module, and CTA coverage", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/swiggy-website-atlas").expect(200);
+
+    expect(response.body.atlas.score).toBeGreaterThanOrEqual(90);
+    expect(response.body.atlas.globalHeader.map((link: { label: string }) => link.label)).toEqual(
+      expect.arrayContaining(["Builders Club", "Developers", "Enterprises", "Docs", "Blog", "FAQ", "Start Building"]),
+    );
+    expect(response.body.atlas.docsHeader.map((link: { label: string }) => link.label)).toEqual(
+      expect.arrayContaining(["Home", "Start", "Build", "Reference", "Operate"]),
+    );
+    expect(response.body.atlas.footerGroups.some((group: { title: string }) => group.title === "Legal")).toBe(true);
+    expect(response.body.atlas.pages.some((page: { id: string }) => page.id === "developers")).toBe(true);
+    expect(response.body.atlas.pages.some((page: { id: string }) => page.id === "access")).toBe(true);
+    expect(response.body.atlas.pages.some((page: { id: string }) => page.id === "blog_launch")).toBe(true);
+    expect(response.body.atlas.ctas.some((cta: { label: string }) => cta.label === "Send Us a Demo")).toBe(true);
+    expect(response.body.atlas.ctas.map((cta: { label: string }) => cta.label)).toEqual(
+      expect.arrayContaining(["Apply as Developer", "Apply as Enterprise", "Read the docs", "Apply now"]),
+    );
+    expect(response.body.atlas.modulesCovered).toBeGreaterThanOrEqual(38);
+  });
+
+  it("turns every Swiggy signup and application CTA into an intake action center", async () => {
+    const { app } = createMealPilotServer();
+    await request(app).post("/api/plan").send(planningRequest).expect(201);
+    const response = await request(app).get("/api/swiggy-builder-intake").expect(200);
+    const intake = response.body.intake;
+
+    expect(intake.score).toBeGreaterThanOrEqual(75);
+    expect(intake.recommendedTrack).toBe("developer");
+    expect(intake.totalCtas).toBe(11);
+    expect(intake.readyCtas).toBe(11);
+    expect(intake.preparedCtas).toBe(11);
+    expect(intake.operatorCtaGates).toBeGreaterThanOrEqual(4);
+    expect(intake.swiggyCtaGates).toBeGreaterThanOrEqual(2);
+    expect(intake.totalFields).toBeGreaterThanOrEqual(10);
+    expect(intake.readyFields).toBeGreaterThanOrEqual(5);
+    expect(intake.actions.map((action: { id: string }) => action.id)).toEqual(
+      expect.arrayContaining([
+        "start_building",
+        "see_whats_possible",
+        "apply_prod_access",
+        "apply_developer",
+        "apply_enterprise",
+        "enterprise_apply",
+        "contact_us",
+        "send_demo",
+        "llms",
+        "read_docs",
+        "apply_now",
+      ]),
+    );
+    expect(
+      intake.actions.some(
+        (action: { id: string; actionType: string; status: string; preparedLocally: boolean; completionGate: string; evidenceLinks: string[] }) =>
+          action.id === "apply_developer" &&
+          action.actionType === "form" &&
+          action.status === "ready" &&
+          action.preparedLocally &&
+          action.completionGate === "operator_submit" &&
+          action.evidenceLinks.includes("/api/swiggy-access-dossier"),
+      ),
+    ).toBe(true);
+    expect(
+      intake.submissionFields.map((field: { id: string }) => field.id),
+    ).toEqual(expect.arrayContaining(["redirect_uris", "static_ip_ranges", "security_contact", "terms_acknowledgement"]));
+    expect(intake.demoStoryboard).toHaveLength(5);
+    expect(intake.demoStoryboard.some((step: { proofLink: string }) => step.proofLink === "/api/mcp/scenario-runner")).toBe(true);
+    expect(intake.outboundDrafts.some((draft: { triggerCta: string; body: string }) => draft.triggerCta === "send_demo" && draft.body.includes("/api/swiggy-builder-intake"))).toBe(true);
+    expect(
+      intake.checklist.some(
+        (item: { id: string; status: string; owner: string }) =>
+          item.id === "live_credentials" && item.status === "external_gate" && item.owner === "Swiggy",
+      ),
+    ).toBe(true);
+    expect(intake.assertions.some((assertion: string) => assertion.includes("Every Website Atlas CTA"))).toBe(true);
+    expect(intake.assertions.some((assertion: string) => assertion.includes("locally prepared"))).toBe(true);
+  });
+
+  it("returns a track-aware Swiggy production access submission console", async () => {
+    const { app } = createMealPilotServer();
+    const created = await request(app).post("/api/plan").send(planningRequest).expect(201);
+    const response = await request(app).get("/api/submission-console").expect(200);
+    const submissionConsole = response.body.submissionConsole;
+
+    expect(submissionConsole.score).toBeGreaterThanOrEqual(75);
+    expect(submissionConsole.recommendedTrack).toBe("developer");
+    expect(submissionConsole.formTargets.map((target: { id: string }) => target.id)).toEqual(
+      expect.arrayContaining(["developer", "enterprise"]),
+    );
+    expect(
+      submissionConsole.formTargets.some(
+        (target: { id: string; status: string }) => target.id === "enterprise" && target.status === "external_gate",
+      ),
+    ).toBe(true);
+    expect(submissionConsole.totalRequirements).toBe(12);
+    expect(submissionConsole.readyRequirements).toBeGreaterThanOrEqual(6);
+    expect(submissionConsole.operatorRequirements).toBeGreaterThanOrEqual(4);
+    expect(submissionConsole.requirements.map((requirement: { id: string }) => requirement.id)).toEqual(
+      expect.arrayContaining(["who_you_are", "redirect_uris", "static_ip_ranges", "security_contact", "terms_acknowledgement", "expected_traffic"]),
+    );
+    expect(
+      submissionConsole.requirements.some(
+        (requirement: { id: string; completionGate: string; nextAction: string }) =>
+          requirement.id === "terms_acknowledgement" &&
+          requirement.completionGate === "operator_input" &&
+          requirement.nextAction.includes("tick"),
+      ),
+    ).toBe(true);
+    expect(submissionConsole.totalFields).toBeGreaterThanOrEqual(10);
+    expect(submissionConsole.readyFields).toBeGreaterThanOrEqual(5);
+    expect(submissionConsole.fields.map((field: { id: string }) => field.id)).toEqual(
+      expect.arrayContaining(["redirect_uris", "static_ip_ranges", "security_contact", "terms_acknowledgement"]),
+    );
+    expect(submissionConsole.totalAttachments).toBeGreaterThanOrEqual(10);
+    expect(submissionConsole.attachments.map((attachment: { id: string }) => attachment.id)).toEqual(
+      expect.arrayContaining(["builder_packet", "launch_bundle", "access_dossier", "demo_video", "audit_ledger"]),
+    );
+    expect(
+      submissionConsole.attachments.some(
+        (attachment: { id: string; status: string }) => attachment.id === "staging_transcript" && attachment.status === "ready",
+      ),
+    ).toBe(true);
+    expect(submissionConsole.attachments.some((attachment: { path: string }) => attachment.path === `/api/sessions/${created.body.plan.id}/staging-transcript`)).toBe(true);
+    expect(submissionConsole.packetOrder.length).toBeGreaterThanOrEqual(10);
+    expect(submissionConsole.packetOrder.map((item: { id: string }) => item.id)).toEqual(
+      expect.arrayContaining(["field_values", "submit_developer_form", "send_handoff_email", "await_staging_credentials"]),
+    );
+    expect(
+      submissionConsole.packetOrder.some(
+        (item: { id: string; path: string; status: string }) =>
+          item.id === "submit_developer_form" &&
+          item.path === "https://mcp.swiggy.com/builders/access/" &&
+          item.status === "operator_input",
+      ),
+    ).toBe(true);
+    expect(
+      submissionConsole.runbook.some(
+        (step: { id: string; owner: string; status: string }) =>
+          step.id === "await_staging_credentials" && step.owner === "Swiggy" && step.status === "external_gate",
+      ),
+    ).toBe(true);
+    expect(submissionConsole.outboundDrafts.some((draft: { to: string }) => draft.to === "builders@swiggy.in")).toBe(true);
+    expect(submissionConsole.externalGates.some((gate: string) => gate.includes("Google Form"))).toBe(true);
+    expect(submissionConsole.assertions.some((assertion: string) => assertion.includes("pre-submit dossier"))).toBe(true);
+  });
+
+  it("returns Swiggy FAQ and policy coverage mapped to MealPilot evidence", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/swiggy-faq-policy").expect(200);
+    const center = response.body.faqPolicy;
+
+    expect(center.score).toBeGreaterThanOrEqual(90);
+    expect(center.totalQuestions).toBeGreaterThanOrEqual(16);
+    expect(center.readyQuestions).toBeGreaterThanOrEqual(15);
+    expect(center.totalRules).toBeGreaterThanOrEqual(9);
+    expect(center.readyRules).toBeGreaterThanOrEqual(8);
+    expect(center.headerFooterCoverage.headerLinks).toEqual(
+      expect.arrayContaining(["Developers", "Enterprises", "Docs", "Blog", "FAQ", "Start Building"]),
+    );
+    expect(center.headerFooterCoverage.footerResources).toEqual(
+      expect.arrayContaining([
+        "Guidelines",
+        "FAQ",
+        "Apply",
+        "llms.txt",
+        "Privacy Policy",
+        "Terms and Conditions",
+        "builders@swiggy.in",
+      ]),
+    );
+    expect(center.faqItems.map((item: { id: string }) => item.id)).toEqual(
+      expect.arrayContaining(["developer_auth", "developer_sandbox", "enterprise_white_label", "home_break_something"]),
+    );
+    expect(center.policyRules.map((rule: { category: string }) => rule.category)).toEqual(
+      expect.arrayContaining(["allowed", "restricted", "prohibited", "operating_principle", "legal"]),
+    );
+    expect(
+      center.policyRules.some(
+        (rule: { id: string; evidenceLinks: string[] }) =>
+          rule.id === "restricted_rate_limits" && rule.evidenceLinks.includes("/api/traffic-readiness-plan"),
+      ),
+    ).toBe(true);
+    expect(center.supportContact.email).toBe("builders@swiggy.in");
+    expect(center.externalGates.some((gate: string) => gate.includes("Enterprise contracts"))).toBe(true);
+  });
+
+  it("returns Swiggy growth partnership experiments and partner asks", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/swiggy-growth-partnership").expect(200);
+    const center = response.body.growthPartnership;
+
+    expect(center.score).toBeGreaterThanOrEqual(90);
+    expect(center.totalSignals).toBeGreaterThanOrEqual(14);
+    expect(center.readySignals).toBeGreaterThanOrEqual(12);
+    expect(center.totalExperiments).toBeGreaterThanOrEqual(8);
+    expect(center.readyExperiments).toBe(center.totalExperiments);
+    expect(center.signals.map((signal: { id: string }) => signal.id)).toEqual(
+      expect.arrayContaining(["growth_partnership", "get_noticed", "enterprise_growth_analytics", "developer_hiring_signal"]),
+    );
+    expect(center.experiments.map((experiment: { id: string }) => experiment.id)).toEqual(
+      expect.arrayContaining([
+        "luxury_weekend_concierge",
+        "voice_fridge_to_dinner",
+        "office_lunch_boardroom",
+        "embedded_enterprise_concierge",
+        "city_trendboard",
+      ]),
+    );
+    expect(
+      center.experiments.some(
+        (experiment: { id: string; mcpServers: string[]; requiredTools: string[] }) =>
+          experiment.id === "luxury_weekend_concierge" &&
+          ["food", "instamart", "dineout"].every((server) => experiment.mcpServers.includes(server)) &&
+          experiment.requiredTools.includes("dineout.book_table"),
+      ),
+    ).toBe(true);
+    expect(center.assets.map((asset: { id: string }) => asset.id)).toEqual(
+      expect.arrayContaining(["demo_storyboard", "co_branding_screenshots", "growth_metrics_pack", "launch_handoff_email"]),
+    );
+    expect(center.partnershipAsks.map((ask: { id: string; status: string }) => `${ask.id}:${ask.status}`)).toEqual(
+      expect.arrayContaining(["co_marketing_review:external_gate", "priority_slack_channel:external_gate", "analytics_dashboard_access:external_gate"]),
+    );
+    expect(center.metrics.map((metric: { id: string }) => metric.id)).toEqual(
+      expect.arrayContaining(["activation", "cross_server", "conversion_safety", "support"]),
+    );
+    expect(center.externalGates.some((gate: string) => gate.includes("co-marketing"))).toBe(true);
+  });
+
+  it("returns channel and multimodal studio coverage for developer build lanes", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/channel-multimodal-studio").expect(200);
+    const studio = response.body.channelMultimodalStudio;
+
+    expect(studio.score).toBeGreaterThanOrEqual(89);
+    expect(studio.totalLanes).toBe(6);
+    expect(studio.readyLanes).toBeGreaterThanOrEqual(4);
+    expect(studio.totalChannels).toBe(5);
+    expect(studio.totalPipelines).toBe(4);
+    expect(studio.totalExecutionPackets).toBe(6);
+    expect(studio.readyExecutionPackets).toBe(6);
+    expect(studio.lanes.map((lane: { id: string }) => lane.id)).toEqual(
+      expect.arrayContaining([
+        "voice_agent",
+        "auto_restock",
+        "group_ordering_slack_teams",
+        "dietary_planner",
+        "reservation_agent",
+        "screenshot_to_order",
+      ]),
+    );
+    expect(
+      studio.lanes.some(
+        (lane: { id: string; channels: string[]; toolchain: string[]; safetyControls: string[] }) =>
+          lane.id === "screenshot_to_order" &&
+          lane.channels.includes("mobile_camera") &&
+          lane.toolchain.includes("food.search_menu") &&
+          lane.safetyControls.some((control) => control.includes("raw image")),
+      ),
+    ).toBe(true);
+    expect(
+      studio.channels.some(
+        (channel: { channel: string; status: string; swiggyTools: string[] }) =>
+          channel.channel === "slack_teams" &&
+          channel.status === "manual_input" &&
+          channel.swiggyTools.includes("food.place_food_order"),
+      ),
+    ).toBe(true);
+    expect(
+      studio.pipelines.some(
+        (pipeline: { id: string; steps: Array<{ tool?: string }>; dataBoundaries: string[] }) =>
+          pipeline.id === "screenshot_to_order_pipeline" &&
+          pipeline.steps.some((step) => step.tool === "search_menu") &&
+          pipeline.dataBoundaries.some((boundary) => boundary.includes("raw image")),
+      ),
+    ).toBe(true);
+    expect(
+      studio.executionPackets.some(
+        (packet: { id: string; laneId: string; surface: string; routePlan: string[]; responseRules: string[]; confirmationGate: string; telemetryContract: string }) =>
+          packet.id === "voice_agent_packet" &&
+          packet.laneId === "voice_agent" &&
+          packet.surface === "voice" &&
+          packet.routePlan.some((step) => step.includes("3")) &&
+          packet.responseRules.some((rule) => rule.includes("Never speak")) &&
+          packet.confirmationGate.includes("ETA") &&
+          packet.telemetryContract.includes("surface=voice"),
+      ),
+    ).toBe(true);
+    expect(
+      studio.executionPackets.some(
+        (packet: { id: string; surface: string; routePlan: string[]; telemetryContract: string }) =>
+          packet.id === "screenshot_to_order_packet" &&
+          packet.surface === "mobile_camera" &&
+          packet.routePlan.some((step) => step.includes("approved vision/OCR")) &&
+          packet.telemetryContract.includes("image_retained=false"),
+      ),
+    ).toBe(true);
+    expect(studio.assertions.some((assertion: string) => assertion.includes("local execution packet"))).toBe(true);
+    expect(studio.externalGates.some((gate: string) => gate.includes("Slack/Teams"))).toBe(true);
+    expect(studio.externalGates.some((gate: string) => gate.includes("vision/OCR"))).toBe(true);
+  });
+
+  it("returns nutrition and budget intelligence for protein, pantry, coupon, and Dineout routes", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/nutrition-budget-intelligence").expect(200);
+    const intelligence = response.body.nutritionBudget;
+
+    expect(intelligence.score).toBeGreaterThanOrEqual(91);
+    expect(intelligence.totalTargets).toBe(4);
+    expect(intelligence.totalRoutes).toBe(6);
+    expect(intelligence.readyRoutes).toBeGreaterThanOrEqual(5);
+    expect(intelligence.totalRecommendations).toBe(4);
+    expect(intelligence.totalPlaybooks).toBe(3);
+    expect(intelligence.totalToolsCovered).toBeGreaterThanOrEqual(25);
+    expect(intelligence.targets.map((target: { id: string }) => target.id)).toEqual(
+      expect.arrayContaining(["protein_per_rupee", "budget_guardrail", "household_constraints", "fresh_cart_truth"]),
+    );
+    expect(intelligence.routes.map((route: { id: string }) => route.id)).toEqual(
+      expect.arrayContaining([
+        "food_protein_lunch",
+        "instamart_protein_gap",
+        "group_budget_allocator",
+        "dineout_evening_balance",
+        "coupon_safe_macro_cart",
+        "manual_label_macro_camera",
+      ]),
+    );
+    expect(
+      intelligence.routes.some(
+        (route: { id: string; swiggyServers: string[]; toolchain: string[]; confirmationGate: string }) =>
+          route.id === "food_protein_lunch" &&
+          route.swiggyServers.includes("food") &&
+          route.toolchain.includes("food.fetch_food_coupons") &&
+          route.toolchain.includes("food.place_food_order") &&
+          route.confirmationGate.includes("place_food_order"),
+      ),
+    ).toBe(true);
+    expect(
+      intelligence.routes.some(
+        (route: { id: string; toolchain: string[]; budgetRule: string }) =>
+          route.id === "instamart_protein_gap" &&
+          route.toolchain.includes("instamart.your_go_to_items") &&
+          route.toolchain.includes("instamart.checkout") &&
+          route.budgetRule.includes("Rs 99"),
+      ),
+    ).toBe(true);
+    expect(
+      intelligence.routes.some(
+        (route: { id: string; swiggyServers: string[]; toolchain: string[]; dataBoundary: string }) =>
+          route.id === "dineout_evening_balance" &&
+          ["dineout", "food", "instamart"].every((server) => route.swiggyServers.includes(server)) &&
+          route.toolchain.includes("dineout.book_table") &&
+          route.dataBoundary.includes("lat/lng"),
+      ),
+    ).toBe(true);
+    expect(
+      intelligence.recommendations.some(
+        (item: { id: string; proteinPerRupee: number; swiggyTools: string[] }) =>
+          item.id === "weekly_protein_restock" &&
+          item.proteinPerRupee > 0.2 &&
+          item.swiggyTools.includes("instamart.search_products"),
+      ),
+    ).toBe(true);
+    expect(
+      intelligence.playbooks.some(
+        (playbook: { id: string; steps: Array<{ tool?: string; guardrail: string }> }) =>
+          playbook.id === "budget_rescue" &&
+          playbook.steps.some((step) => step.tool === "apply_food_coupon") &&
+          playbook.steps.some((step) => step.guardrail.includes("COD")),
+      ),
+    ).toBe(true);
+    expect(intelligence.safetyControls.some((control: string) => control.includes("does not make medical claims"))).toBe(true);
+    expect(intelligence.externalGates.some((gate: string) => gate.includes("nutrition fields"))).toBe(true);
+    expect(intelligence.externalGates.some((gate: string) => gate.includes("vision/OCR"))).toBe(true);
+  });
+
+  it("returns a consent-aware household preference graph for Swiggy history and go-to signals", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/household-preference-graph").expect(200);
+    const graph = response.body.householdPreference;
+
+    expect(graph.score).toBeGreaterThanOrEqual(92);
+    expect(graph.totalSignals).toBe(5);
+    expect(graph.readySignals).toBeGreaterThanOrEqual(4);
+    expect(graph.totalMembers).toBe(4);
+    expect(graph.totalForecasts).toBe(4);
+    expect(graph.readyForecasts).toBeGreaterThanOrEqual(3);
+    expect(graph.totalAutomations).toBe(4);
+    expect(graph.readyAutomations).toBeGreaterThanOrEqual(3);
+    expect(graph.uniqueToolsCovered).toBeGreaterThanOrEqual(22);
+    expect(graph.signals.map((signal: { id: string }) => signal.id)).toEqual(
+      expect.arrayContaining([
+        "food_active_order_taste",
+        "instamart_go_to_reorder",
+        "dineout_location_occasion",
+        "local_household_profile",
+        "support_and_failure_memory",
+      ]),
+    );
+    expect(
+      graph.signals.some(
+        (signal: { id: string; status: string; swiggyTools: string[]; retentionRule: string }) =>
+          signal.id === "instamart_go_to_reorder" &&
+          signal.status === "ready" &&
+          signal.swiggyTools.includes("instamart.your_go_to_items") &&
+          signal.swiggyTools.includes("instamart.get_orders") &&
+          signal.retentionRule.includes("raw order lines"),
+      ),
+    ).toBe(true);
+    expect(
+      graph.signals.some(
+        (signal: { id: string; swiggyTools: string[]; preferenceUse: string }) =>
+          signal.id === "dineout_location_occasion" &&
+          signal.swiggyTools.includes("dineout.get_saved_locations") &&
+          signal.swiggyTools.includes("dineout.get_booking_status") &&
+          signal.preferenceUse.includes("preferred dining areas"),
+      ),
+    ).toBe(true);
+    expect(
+      graph.forecasts.some(
+        (forecast: { id: string; swiggyTools: string[]; dataBoundary: string }) =>
+          forecast.id === "protein_staple_depletion" &&
+          forecast.swiggyTools.includes("instamart.your_go_to_items") &&
+          forecast.swiggyTools.includes("instamart.update_cart") &&
+          forecast.dataBoundary.includes("raw order history"),
+      ),
+    ).toBe(true);
+    expect(
+      graph.automations.some(
+        (automation: { id: string; swiggyTools: string[]; guardrail: string }) =>
+          automation.id === "active_order_tracking_memory" &&
+          automation.swiggyTools.includes("food.get_food_orders") &&
+          automation.swiggyTools.includes("instamart.track_order") &&
+          automation.guardrail.includes("Cancellation"),
+      ),
+    ).toBe(true);
+    expect(graph.privacyControls.some((control: string) => control.includes("model training"))).toBe(true);
+    expect(graph.externalGates.some((gate: string) => gate.includes("staging and production credentials"))).toBe(true);
+    expect(graph.assertions.some((assertion: string) => assertion.includes("Cancellation requests"))).toBe(true);
+  });
+
+  it("returns guest collaboration and calendar handoff plans for Swiggy occasions", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/guest-collaboration-calendar").expect(200);
+    const center = response.body.guestCollaboration;
+
+    expect(center.score).toBeGreaterThanOrEqual(91);
+    expect(center.totalParticipants).toBe(4);
+    expect(center.totalVoteRounds).toBe(4);
+    expect(center.readyVoteRounds).toBeGreaterThanOrEqual(3);
+    expect(center.totalTemplates).toBe(5);
+    expect(center.readyTemplates).toBeGreaterThanOrEqual(4);
+    expect(center.totalCalendarArtifacts).toBe(5);
+    expect(center.readyCalendarArtifacts).toBeGreaterThanOrEqual(4);
+    expect(center.uniqueToolsCovered).toBeGreaterThanOrEqual(20);
+    expect(center.templates.map((item: { id: string }) => item.id)).toEqual(
+      expect.arrayContaining(["date_night", "guests_at_home", "office_lunch", "weekday_reset", "recovery_meal"]),
+    );
+    expect(
+      center.templates.some(
+        (item: { id: string; route: Array<{ tool?: string; guardrail: string }>; reminderRule: string }) =>
+          item.id === "date_night" &&
+          item.route.some((step) => step.tool === "book_table") &&
+          item.route.some((step) => step.tool === "search_restaurants") &&
+          item.reminderRule.includes("no scheduled delivery"),
+      ),
+    ).toBe(true);
+    expect(
+      center.voteRounds.some(
+        (round: { id: string; channel: string; swiggyTools: string[]; decisionRule: string }) =>
+          round.id === "slot_vote" &&
+          round.channel === "calendar_ics" &&
+          round.swiggyTools.includes("dineout.get_available_slots") &&
+          round.decisionRule.includes("free reservation"),
+      ),
+    ).toBe(true);
+    expect(
+      center.calendarArtifacts.some(
+        (artifact: { id: string; contentType: string; guardrail: string }) =>
+          artifact.id === "dessert_reminder" &&
+          artifact.contentType === "ics" &&
+          artifact.guardrail.includes("scheduled delivery"),
+      ),
+    ).toBe(true);
+    expect(center.safetyControls.some((control: string) => control.includes("separate user-visible confirmation"))).toBe(true);
+    expect(center.safetyControls.some((control: string) => control.includes("Food delivery is immediate-only"))).toBe(true);
+    expect(center.externalGates.some((gate: string) => gate.includes("Slack/Teams"))).toBe(true);
+    expect(center.externalGates.some((gate: string) => gate.includes("staging and production credentials"))).toBe(true);
+  });
+
+  it("returns luxury reservation and cart review workspaces across all Swiggy servers", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/luxury-experience-workspace").expect(200);
+    const workspace = response.body.luxuryExperience;
+
+    expect(workspace.score).toBeGreaterThanOrEqual(93);
+    expect(workspace.totalModes).toBe(5);
+    expect(workspace.readyModes).toBe(5);
+    expect(workspace.totalWorkspaces).toBe(5);
+    expect(workspace.readyWorkspaces).toBe(5);
+    expect(workspace.totalArtifacts).toBe(5);
+    expect(workspace.readyArtifacts).toBeGreaterThanOrEqual(4);
+    expect(workspace.uniqueToolsCovered).toBeGreaterThanOrEqual(35);
+    expect(workspace.modes.map((item: { id: string }) => item.id)).toEqual(
+      expect.arrayContaining(["lean", "premium", "family", "social", "training"]),
+    );
+    expect(
+      workspace.workspaces.some(
+        (item: { id: string; steps: Array<{ tool?: string }>; commercialGate: string; authoritativeReads: string[] }) =>
+          item.id === "reservation_atelier" &&
+          item.steps.some((step) => step.tool === "book_table") &&
+          item.authoritativeReads.includes("dineout.get_booking_status") &&
+          item.commercialGate.includes("party size"),
+      ),
+    ).toBe(true);
+    expect(
+      workspace.workspaces.some(
+        (item: { id: string; steps: Array<{ tool?: string }>; commercialGate: string; widgetFallback: string }) =>
+          item.id === "food_cart_salon" &&
+          item.steps.some((step) => step.tool === "place_food_order") &&
+          item.steps.some((step) => step.tool === "get_food_cart") &&
+          item.commercialGate.includes("Rs 1000") &&
+          item.widgetFallback.includes("cart-widget"),
+      ),
+    ).toBe(true);
+    expect(
+      workspace.workspaces.some(
+        (item: { id: string; steps: Array<{ tool?: string }>; commercialGate: string; voiceContract: string }) =>
+          item.id === "instamart_basket_atelier" &&
+          item.steps.some((step) => step.tool === "checkout") &&
+          item.steps.some((step) => step.tool === "your_go_to_items") &&
+          item.commercialGate.includes("Rs 99") &&
+          item.voiceContract.includes("your_go_to_items"),
+      ),
+    ).toBe(true);
+    expect(
+      workspace.artifacts.some(
+        (artifact: { id: string; status: string; guardrail: string }) =>
+          artifact.id === "widget_gallery_fallback" &&
+          artifact.status === "external_gate" &&
+          artifact.guardrail.includes("hosted iframe"),
+      ),
+    ).toBe(true);
+    expect(workspace.safetyControls.some((control: string) => control.includes("blind-retries"))).toBe(true);
+    expect(workspace.safetyControls.some((control: string) => control.includes("raw Swiggy ids"))).toBe(true);
+    expect(workspace.externalGates.some((gate: string) => gate.includes("staging and production credentials"))).toBe(true);
+    expect(workspace.externalGates.some((gate: string) => gate.includes("hosted iframe"))).toBe(true);
+  });
+
+  it("returns a reviewer artifact vault for Swiggy access submission", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/reviewer-artifact-vault").expect(200);
+    const vault = response.body.reviewerArtifactVault;
+
+    expect(vault.score).toBeGreaterThanOrEqual(90);
+    expect(vault.totalArtifacts).toBeGreaterThanOrEqual(30);
+    expect(vault.readyArtifacts).toBeGreaterThanOrEqual(30);
+    expect(vault.totalScreenshotTargets).toBe(7);
+    expect(vault.readyScreenshotTargets).toBeGreaterThanOrEqual(5);
+    expect(vault.totalCommands).toBe(7);
+    expect(vault.readyCommands).toBeGreaterThanOrEqual(6);
+    expect(vault.totalRedactionRules).toBeGreaterThanOrEqual(6);
+    expect(vault.artifactSections.map((section: { id: string }) => section.id)).toEqual(
+      expect.arrayContaining(["submission_packet", "product_depth", "mcp_contracts", "operations_and_logs"]),
+    );
+    expect(
+      vault.artifactSections.some((section: { artifacts: Array<{ id: string; path: string }> }) =>
+        section.artifacts.some((artifact) => artifact.id === "openapi_contract" && artifact.path === "/api/openapi.json"),
+      ),
+    ).toBe(true);
+    expect(
+      vault.artifactSections.some((section: { artifacts: Array<{ id: string; path: string }> }) =>
+        section.artifacts.some((artifact) => artifact.id === "luxury_experience" && artifact.path === "/api/luxury-experience-workspace"),
+      ),
+    ).toBe(true);
+    expect(
+      vault.screenshotTargets.some(
+        (target: { id: string; selector: string; status: string }) =>
+          target.id === "luxury_workspace_card" &&
+          target.selector === ".luxury-experience-card" &&
+          target.status === "ready",
+      ),
+    ).toBe(true);
+    expect(
+      vault.commands.some(
+        (command: { id: string; command: string; expectedSignal: string }) =>
+          command.id === "verify_production" &&
+          command.command.includes("npm run verify:production") &&
+          command.expectedSignal.includes("35/35"),
+      ),
+    ).toBe(true);
+    expect(vault.redactionRules.some((rule: string) => rule.includes("bearer tokens"))).toBe(true);
+    expect(vault.handoffChecklist.some((item: { id: string; status: string }) => item.id === "record_video" && item.status === "manual_input")).toBe(true);
+    expect(vault.reviewerEmail.to).toBe("builders@swiggy.in");
+    expect(vault.reviewerEmail.body).toContain("/api/reviewer-artifact-vault");
+    expect(vault.externalGates.some((gate: string) => gate.includes("staging credentials"))).toBe(true);
+  });
+
+  it("returns visual QA evidence for reviewer screenshots and responsive layout", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/visual-qa-center").expect(200);
+    const visualQa = response.body.visualQa;
+
+    expect(visualQa.score).toBeGreaterThanOrEqual(88);
+    expect(visualQa.totalTargets).toBe(11);
+    expect(visualQa.readyTargets).toBeGreaterThanOrEqual(10);
+    expect(visualQa.totalRules).toBe(7);
+    expect(visualQa.readyRules).toBeGreaterThanOrEqual(6);
+    expect(visualQa.totalCommands).toBe(5);
+    expect(visualQa.readyCommands).toBeGreaterThanOrEqual(2);
+    expect(visualQa.targetGroups.map((group: { id: string }) => group.id)).toEqual(
+      expect.arrayContaining(["desktop_review", "premium_surfaces", "mobile_review", "swiggy_widget_fallbacks"]),
+    );
+    expect(
+      visualQa.targetGroups.some((group: { targets: Array<{ id: string; selector: string; viewport: string }> }) =>
+        group.targets.some(
+          (target) =>
+            target.id === "visual_qa_card" &&
+            target.selector === ".visual-qa-card" &&
+            target.viewport === "desktop",
+        ),
+      ),
+    ).toBe(true);
+    expect(
+      visualQa.targetGroups.some((group: { targets: Array<{ id: string; width: number; viewport: string }> }) =>
+        group.targets.some((target) => target.id === "mobile_launch_center" && target.width === 390 && target.viewport === "mobile"),
+      ),
+    ).toBe(true);
+    expect(
+      visualQa.rules.some(
+        (rule: { id: string; check: string }) =>
+          rule.id === "no_overlap" &&
+          rule.check.includes("1440") &&
+          rule.check.includes("390"),
+      ),
+    ).toBe(true);
+    expect(
+      visualQa.rules.some(
+        (rule: { id: string; check: string }) =>
+          rule.id === "swiggy_widget_security" &&
+          rule.check.includes("iframe-sandboxed") &&
+          rule.check.includes("origin-verified"),
+      ),
+    ).toBe(true);
+    expect(
+      visualQa.commands.some(
+        (command: { id: string; command: string; expectedSignal: string }) =>
+          command.id === "visual_target_manifest" &&
+          command.command.includes("/api/visual-qa-center") &&
+          command.expectedSignal.includes(".visual-qa-card"),
+      ),
+    ).toBe(true);
+    expect(visualQa.externalGates.some((gate: string) => gate.includes("PNG screenshots"))).toBe(true);
+    expect(visualQa.assertions.some((assertion: string) => assertion.includes("Desktop, tablet, and mobile"))).toBe(true);
+  });
+
+  it("returns page-by-page Swiggy llms.txt docs coverage", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/swiggy-docs-coverage").expect(200);
+    const report = response.body.docsCoverage;
+
+    expect(report.score).toBeGreaterThanOrEqual(95);
+    expect(report.totalPages).toBe(69);
+    expect(report.sourceInventory).toEqual({ llmsLinkedPages: 69, headerLinks: 7, footerLinks: 8, ctas: 7 });
+    expect(report.sections.map((section: { section: string; total: number }) => [section.section, section.total])).toEqual(
+      expect.arrayContaining([
+        ["start", 10],
+        ["build", 10],
+        ["operate", 8],
+        ["reference", 40],
+        ["blog", 1],
+      ]),
+    );
+    expect(report.pages.some((page: { id: string }) => page.id === "consumer_ai_client")).toBe(true);
+    expect(
+      report.pages.some(
+        (page: { id: string; status: string; evidenceLinks: string[] }) =>
+          page.id === "delegated_auth" &&
+          page.status === "implemented" &&
+          page.evidenceLinks.includes("/api/enterprise-delegated-auth"),
+      ),
+    ).toBe(true);
+    expect(report.pages.some((page: { id: string }) => page.id === "reference_food_place_food_order")).toBe(true);
+    expect(report.assertions.some((assertion: string) => assertion.includes("llms.txt-linked"))).toBe(true);
+  });
+
+  it("returns Swiggy upstream docs, changelog, and roadmap watch evidence", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/swiggy-upstream-watch").expect(200);
+    const report = response.body.upstreamWatch;
+
+    expect(report.score).toBeGreaterThanOrEqual(90);
+    expect(report.docsContract.llmsIndex).toBe("https://mcp.swiggy.com/builders/llms.txt");
+    expect(report.docsContract.llmsFull).toBe("https://mcp.swiggy.com/builders/llms-full.txt");
+    expect(report.docsContract.markdownPattern.toLowerCase()).toContain("append .md");
+    expect(report.docsContract.smokeTest).toContain("Food exposes 14 tools");
+    expect(report.releaseTimeline.some((release: { id: string; shipped: string[] }) => release.id === "v1_0_launch" && release.shipped.some((item: string) => item.includes("Food MCP server")))).toBe(true);
+    expect(
+      report.releaseTimeline.some((release: { knownLimitations: string[] }) =>
+        release.knownLimitations.some((item: string) => item.includes("No refresh-token issuance")),
+      ),
+    ).toBe(true);
+    expect(report.roadmapItems.map((item: { id: string }) => item.id)).toEqual(
+      expect.arrayContaining([
+        "refresh_tokens",
+        "status_page",
+        "rate_limit_headers",
+        "symbolic_error_codes",
+        "deprecation_meta",
+        "hosted_food_widgets",
+        "dcr",
+        "instamart_dineout_widgets",
+        "url_major_versioning",
+        "food_online_payment",
+      ]),
+    );
+    expect(report.signedManifestWatch.targetVersion).toContain("v");
+    expect(report.actionQueue.some((action: { id: string }) => action.id === "weekly_llms_refresh")).toBe(true);
+    expect(report.externalGates.some((gate: string) => gate.includes("Signed manifest"))).toBe(true);
+  });
+
+  it("returns AI client and coding-agent connection kit", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/ai-client-connect-kit").expect(200);
+    const kit = response.body.connectKit;
+
+    expect(kit.score).toBeGreaterThanOrEqual(95);
+    expect(kit.servers.map((server: { server: string; tools: number }) => [server.server, server.tools])).toEqual([
+      ["food", 14],
+      ["instamart", 13],
+      ["dineout", 8],
+    ]);
+    expect(kit.clientTargets.map((target: { id: string }) => target.id)).toEqual(
+      expect.arrayContaining(["claude_desktop", "chatgpt", "cursor", "vs_code", "windsurf", "generic_mcp"]),
+    );
+    expect(
+      kit.clientTargets.some(
+        (target: { id: string; config: { mcpServers?: Record<string, { args?: string[] }> } }) =>
+          target.id === "claude_desktop" &&
+          target.config.mcpServers?.["swiggy-instamart"]?.args?.includes("https://mcp.swiggy.com/im"),
+      ),
+    ).toBe(true);
+    expect(kit.codingAgentRules.length).toBeGreaterThanOrEqual(5);
+    expect(kit.sdkAdapters.some((adapter: { authMode: string }) => adapter.authMode === "native_auth_provider")).toBe(true);
+    expect(kit.sdkAdapters.some((adapter: { authMode: string }) => adapter.authMode === "bearer_header")).toBe(true);
+    expect(kit.enterpriseDelegatedAuth.tokenLifecycle.some((item: { item: string; lifetime: string }) => item.item === "Access token" && item.lifetime.includes("5 days"))).toBe(true);
+    expect(kit.safetyAssertions.some((assertion: string) => assertion.includes("35 Swiggy tools"))).toBe(true);
+  });
+
+  it("returns Swiggy brand and co-branding compliance evidence", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/brand-compliance-kit").expect(200);
+    const kit = response.body.brandCompliance;
+
+    expect(kit.score).toBeGreaterThanOrEqual(85);
+    expect(kit.attributionCopy).toContain("Powered by Swiggy MCP");
+    expect(kit.rules.map((rule: { id: string }) => rule.id)).toEqual(
+      expect.arrayContaining([
+        "powered_by_swiggy",
+        "no_false_endorsement",
+        "brand_assets_after_onboarding",
+        "orange_usage",
+        "white_label_restriction",
+        "no_misrepresentation",
+      ]),
+    );
+    expect(kit.surfaces.map((surface: { id: string }) => surface.id)).toEqual(
+      expect.arrayContaining(["recommendation_card", "widget_fallback", "voice_surface", "support_transcript", "docs_packet"]),
+    );
+    expect(
+      kit.assetGates.some(
+        (gate: { id: string; status: string }) => gate.id === "logo_pack" && gate.status === "external_gate",
+      ),
+    ).toBe(true);
+    expect(kit.paletteAudit.swiggyOrange).toBe("#FF5200");
+    expect(kit.paletteAudit.orangeUsage).toBe("reserved_for_swiggy_marks_only");
+    expect(kit.externalGates.some((gate: string) => gate.includes("brand asset"))).toBe(true);
+    expect(kit.assertions.some((assertion: string) => assertion.includes("does not claim official Swiggy endorsement"))).toBe(true);
+  });
+
+  it("compiles official Swiggy journeys and indexes every tool", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/swiggy-journey-compiler").expect(200);
+    const report = response.body.journeyCompiler;
+
+    expect(report.score).toBeGreaterThanOrEqual(95);
+    expect(report.totalJourneys).toBe(5);
+    expect(report.totalToolsIndexed).toBe(35);
+    expect(report.journeys.map((journey: { id: string }) => journey.id)).toEqual(
+      expect.arrayContaining(["food_order", "instamart_order", "dineout_booking", "combined_evening", "household_reset"]),
+    );
+    expect(report.toolIndex.every((item: { journeyIds: string[] }) => item.journeyIds.length > 0)).toBe(true);
+    expect(
+      report.journeys.some(
+        (journey: { id: string; servers: string[] }) =>
+          journey.id === "household_reset" &&
+          ["food", "instamart", "dineout"].every((server) => journey.servers.includes(server)),
+      ),
+    ).toBe(true);
+    expect(
+      report.journeys.some((journey: { id: string; steps: Array<{ tool: string; confirmationRequired: boolean }> }) =>
+        journey.id === "food_order" &&
+        journey.steps.some((step: { tool: string; confirmationRequired: boolean }) => step.tool === "place_food_order" && step.confirmationRequired),
+      ),
+    ).toBe(true);
+    expect(
+      report.toolIndex.some(
+        (item: { server: string; tool: string; safetyClass: string; role: string }) =>
+          item.server === "instamart" && item.tool === "checkout" && item.safetyClass === "commercial_action" && item.role === "core",
+      ),
+    ).toBe(true);
+    expect(report.assertions.some((assertion: string) => assertion.includes("35 official Swiggy tools"))).toBe(true);
+  });
+
+  it("builds a Swiggy production access dossier from application rules", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/swiggy-access-dossier").expect(200);
+    const dossier = response.body.dossier;
+
+    expect(dossier.score).toBeGreaterThanOrEqual(90);
+    expect(dossier.recommendedTrack).toBe("developer");
+    expect(dossier.applicationFields.map((field: { id: string }) => field.id)).toEqual(
+      expect.arrayContaining([
+        "who_you_are",
+        "what_you_are_building",
+        "how_it_works",
+        "redirect_uris",
+        "static_ip_ranges",
+        "security_contact",
+        "data_privacy",
+        "environment_setup",
+        "terms_acknowledgement",
+        "expected_traffic",
+      ]),
+    );
+    expect(
+      dossier.reviewChecks.map((check: { id: string }) => check.id),
+    ).toEqual(expect.arrayContaining(["security_check", "compliance_review", "use_case_fit", "gradual_rollout"]));
+    expect(
+      dossier.groundRules.map((rule: { officialStance: string }) => rule.officialStance),
+    ).toEqual(expect.arrayContaining(["allowed", "restricted", "prohibited", "operating_principle"]));
+    expect(dossier.tracks.some((track: { id: string; status: string }) => track.id === "developer" && track.status === "manual_input")).toBe(true);
+    expect(
+      dossier.legalReadiness.some(
+        (item: { id: string; status: string }) => item.id === "data_protection_terms" && item.status === "ready",
+      ),
+    ).toBe(true);
+    expect(dossier.externalGates.some((gate: string) => gate.includes("Google Form"))).toBe(true);
+    expect(dossier.proofLinks.some((link: { path: string }) => link.path === "/api/production-launch-bundle")).toBe(true);
+  });
+
+  it("builds premium MealPilot use cases across every Swiggy tool", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/premium-use-case-studio").expect(200);
+    const studio = response.body.studio;
+
+    expect(studio.score).toBeGreaterThanOrEqual(95);
+    expect(studio.totalUseCases).toBeGreaterThanOrEqual(10);
+    expect(studio.crossServerUseCases).toBeGreaterThanOrEqual(8);
+    expect(studio.totalToolsUsed).toBe(35);
+    expect(studio.totalOfficialTools).toBe(35);
+    expect(studio.useCases.map((item: { id: string }) => item.id)).toEqual(
+      expect.arrayContaining([
+        "household_week_reset",
+        "voice_fridge_to_dinner",
+        "date_night_orchestrator",
+        "office_lunch_boardroom",
+        "care_circle_meals",
+        "pantry_autopilot_plus",
+        "rainy_day_rescue",
+        "guest_hosting_os",
+        "traveler_hotel_mode",
+        "celebration_split_plan",
+      ]),
+    );
+    expect(
+      studio.toolCoverage.every((server: { totalTools: number; usedTools: number }) => server.totalTools === server.usedTools),
+    ).toBe(true);
+    expect(
+      studio.useCases.some(
+        (item: { id: string; route: Array<{ tools: string[] }> }) =>
+          item.id === "care_circle_meals" &&
+          item.route.some((step: { tools: string[] }) => step.tools.includes("food.report_error")),
+      ),
+    ).toBe(true);
+    expect(
+      studio.useCases.some(
+        (item: { id: string; route: Array<{ tools: string[] }> }) =>
+          item.id === "traveler_hotel_mode" &&
+          item.route.some((step: { tools: string[] }) => step.tools.includes("instamart.delete_address")),
+      ),
+    ).toBe(true);
+    expect(studio.assertions.some((assertion: string) => assertion.includes("35/35 official Swiggy tools"))).toBe(true);
+  });
+
+  it("builds a premium concierge itinerary from Swiggy official recipes", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/premium-concierge-itinerary").expect(200);
+    const concierge = response.body.concierge;
+
+    expect(concierge.score).toBeGreaterThanOrEqual(95);
+    expect(concierge.officialSources).toEqual(
+      expect.arrayContaining([
+        "https://mcp.swiggy.com/builders/docs/build/recipes/order-food/",
+        "https://mcp.swiggy.com/builders/docs/build/recipes/order-groceries/",
+        "https://mcp.swiggy.com/builders/docs/build/recipes/book-a-table/",
+        "https://mcp.swiggy.com/builders/docs/build/recipes/combined/",
+      ]),
+    );
+    expect(concierge.itinerary.map((slot: { id: string }) => slot.id)).toEqual(
+      expect.arrayContaining(["weekday_lunch", "evening_grocery_reset", "saturday_evening", "sunday_recovery"]),
+    );
+    expect(concierge.toolCoverage.map((item: { coverage: string }) => item.coverage)).toEqual(["14/14", "13/13", "8/8"]);
+    expect(concierge.totalSavedCalls).toBeGreaterThanOrEqual(10);
+    expect(
+      concierge.itinerary.some(
+        (slot: { primaryRecipe: string; servers: string[] }) =>
+          slot.primaryRecipe === "combined" && slot.servers.includes("dineout") && slot.servers.includes("food"),
+      ),
+    ).toBe(true);
+    expect(
+      concierge.safetyControls.some((control: string) => control.includes("confirmations remain separate")),
+    ).toBe(true);
+    expect(concierge.externalGates.some((gate: string) => gate.includes("scheduled delivery"))).toBe(true);
+  });
+
+  it("builds a Swiggy staging certification matrix for every tool and gate", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/staging-certification-matrix").expect(200);
+    const matrix = response.body.matrix;
+    const waveIds = matrix.waves.map((wave: { id: string }) => wave.id);
+    const certifiedTools = matrix.waves.flatMap((wave: { tools: Array<{ id: string }> }) => wave.tools);
+    const uniqueToolIds = new Set(certifiedTools.map((tool: { id: string }) => tool.id));
+
+    expect(matrix.score).toBeGreaterThanOrEqual(90);
+    expect(matrix.currentMode).toBe("mock");
+    expect(matrix.liveStagingVerified).toBe(false);
+    expect(matrix.stagingBaseUrl).toBe("https://mcp-staging.swiggy.com");
+    expect(matrix.soakHoursRequired).toBe(48);
+    expect(matrix.totalTools).toBe(35);
+    expect(matrix.assignedTools).toBe(35);
+    expect(certifiedTools).toHaveLength(35);
+    expect(uniqueToolIds.size).toBe(35);
+    expect(waveIds).toEqual(
+      expect.arrayContaining([
+        "preflight",
+        "oauth_dcr",
+        "read_tools",
+        "cart_mutations",
+        "commercial_actions",
+        "support_reporting",
+        "soak_48h",
+        "production_promotion",
+      ]),
+    );
+    expect(
+      matrix.waves.some(
+        (wave: { id: string; tools: Array<{ tool: string; routeClass: string; expectedEvidence: string }> }) =>
+          wave.id === "commercial_actions" &&
+          wave.tools.some(
+            (tool: { tool: string; routeClass: string; expectedEvidence: string }) =>
+              tool.tool === "checkout" &&
+              tool.routeClass === "commercial_action" &&
+              tool.expectedEvidence.includes("no blind retry"),
+          ),
+      ),
+    ).toBe(true);
+    expect(
+      matrix.waves.some(
+        (wave: { id: string; tools: Array<{ tool: string }> }) =>
+          wave.id === "support_reporting" && wave.tools.filter((tool: { tool: string }) => tool.tool === "report_error").length === 3,
+      ),
+    ).toBe(true);
+    expect(matrix.perServer.map((server: { server: string; assignedTools: number }) => [server.server, server.assignedTools])).toEqual([
+      ["food", 14],
+      ["instamart", 13],
+      ["dineout", 8],
+    ]);
+    expect(
+      matrix.credentialChecklist.some(
+        (item: { id: string; status: string }) => item.id === "production_credentials" && item.status === "production_gate",
+      ),
+    ).toBe(true);
+    expect(matrix.telemetryRequirements.some((item: string) => item.includes("session_id"))).toBe(true);
+    expect(matrix.commands.some((command: { id: string }) => command.id === "staging_smoke")).toBe(true);
+    expect(matrix.assertions.some((assertion: string) => assertion.includes("35 official Swiggy MCP tools"))).toBe(true);
+    expect(matrix.externalGates.some((gate: string) => gate.includes("staging credentials"))).toBe(true);
+  });
+
+  it("returns a Swiggy MCP tool contract matrix for every official tool", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/mcp/tool-contract-matrix").expect(200);
+    const matrix = response.body.matrix;
+
+    expect(matrix.score).toBe(100);
+    expect(matrix.totalTools).toBe(35);
+    expect(matrix.totalParameters).toBeGreaterThan(50);
+    expect(matrix.servers.map((server: { totalTools: number }) => server.totalTools)).toEqual([14, 13, 8]);
+    expect(matrix.contracts).toHaveLength(35);
+    expect(
+      matrix.contracts.every((contract: { officialReference: string }) =>
+        contract.officialReference.startsWith("https://mcp.swiggy.com/builders/docs/reference/"),
+      ),
+    ).toBe(true);
+
+    const foodOrder = matrix.contracts.find((contract: { tool: string }) => contract.tool === "place_food_order");
+    expect(foodOrder.parameters.map((param: { name: string }) => param.name)).toEqual(
+      expect.arrayContaining(["addressId", "paymentMethod"]),
+    );
+    expect(foodOrder.confirmationGate).toContain("get_food_cart");
+    expect(foodOrder.confirmationGate).toContain("Rs 1000");
+    expect(foodOrder.retryPolicy).toContain("Never blind-retry");
+
+    const checkout = matrix.contracts.find((contract: { tool: string }) => contract.tool === "checkout");
+    expect(checkout.preconditions.some((item: string) => item.includes("Multi-store"))).toBe(true);
+    expect(checkout.confirmationGate).toContain("get_cart");
+
+    const bookTable = matrix.contracts.find((contract: { tool: string }) => contract.tool === "book_table");
+    expect(bookTable.parameters.map((param: { name: string }) => param.name)).toEqual(
+      expect.arrayContaining(["restaurantId", "slotId", "itemId", "reservationTime", "guestCount", "latitude", "longitude"]),
+    );
+    expect(bookTable.preconditions.some((item: string) => item.includes("free reservations"))).toBe(true);
+
+    expect(matrix.commonErrorEnvelope.current).toEqual(expect.arrayContaining(["success false", "error.message required"]));
+    expect(matrix.commonErrorEnvelope.plannedCoreCodes).toEqual(expect.arrayContaining(["RATE_LIMITED", "VALIDATION_ERROR"]));
+    expect(matrix.commonErrorEnvelope.plannedDomainCodes.dineout).toEqual(expect.arrayContaining(["SLOT_UNAVAILABLE"]));
+    expect(matrix.assertions.some((assertion: string) => assertion.includes("All 35 official Swiggy MCP tools"))).toBe(true);
+  });
+
+  it("probes every official Swiggy MCP tool in the Tool Lab", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/mcp/tool-lab").expect(200);
+
+    expect(response.body.toolLab.totalTools).toBe(35);
+    expect(response.body.toolLab.callableTools).toBe(35);
+    expect(response.body.toolLab.score).toBe(100);
+    expect(response.body.toolLab.servers.map((server: { server: string; callableTools: number }) => [
+      server.server,
+      server.callableTools,
+    ])).toEqual([
+      ["food", 14],
+      ["instamart", 13],
+      ["dineout", 8],
+    ]);
+    expect(response.body.toolLab.probes.every((probe: { request: { method: string } }) => probe.request.method === "tools/call")).toBe(true);
+    expect(
+      response.body.toolLab.probes.some(
+        (probe: { tool: string; routeClass: string; safetyGate: string }) =>
+          probe.tool === "checkout" &&
+          probe.routeClass === "commercial_action" &&
+          probe.safetyGate.includes("explicit user confirmation"),
+      ),
+    ).toBe(true);
+    expect(response.body.toolLab.innovationUseCases.length).toBeGreaterThanOrEqual(4);
+  });
+
+  it("runs official Swiggy recipe scenarios across every MCP tool", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/mcp/scenario-runner").expect(200);
+    const runner = response.body.scenarioRunner;
+
+    expect(runner.score).toBe(100);
+    expect(runner.totalScenarios).toBe(4);
+    expect(runner.totalOfficialTools).toBe(35);
+    expect(runner.uniqueToolsCovered).toBe(35);
+    expect(runner.toolCoverage.map((item: { coverage: string }) => item.coverage)).toEqual(["14/14", "13/13", "8/8"]);
+    expect(runner.scenarios.map((scenario: { id: string }) => scenario.id)).toEqual(
+      expect.arrayContaining([
+        "food_order_recipe",
+        "instamart_order_recipe",
+        "dineout_booking_recipe",
+        "combined_evening_recipe",
+      ]),
+    );
+    expect(
+      runner.scenarios.every((scenario: { steps: Array<{ request: { method: string } }> }) =>
+        scenario.steps.every((step) => step.request.method === "tools/call"),
+      ),
+    ).toBe(true);
+    expect(
+      runner.scenarios.some(
+        (scenario: { id: string; routeAssertions: string[] }) =>
+          scenario.id === "combined_evening_recipe" &&
+          scenario.routeAssertions.some((assertion) => assertion.includes("reminder")),
+      ),
+    ).toBe(true);
+    expect(
+      runner.scenarios.some((scenario: { steps: Array<{ tool: string; confirmationRequired: boolean }> }) =>
+        scenario.steps.some((step) => step.tool === "place_food_order" && step.confirmationRequired),
+      ),
+    ).toBe(true);
+    expect(runner.assertions.some((assertion: string) => assertion.includes("all 35 Swiggy MCP tools"))).toBe(true);
+  });
+
+  it("orchestrates Swiggy multi-turn cart state and voice/chat contracts", async () => {
+    const { app } = createMealPilotServer();
+    await request(app).post("/api/plan").send(planningRequest).expect(201);
+    const response = await request(app).get("/api/mcp/state-orchestrator").expect(200);
+    const report = response.body.stateOrchestrator;
+
+    expect(report.score).toBeGreaterThanOrEqual(90);
+    expect(report.totalScenarios).toBeGreaterThanOrEqual(6);
+    expect(report.totalTurnBoundaries).toBeGreaterThanOrEqual(15);
+    expect(report.refreshBeforeMutationCount).toBe(report.totalTurnBoundaries);
+    expect(report.confirmationGateCount).toBeGreaterThanOrEqual(7);
+    expect(report.serverModels.map((model: { server: string }) => model.server)).toEqual(["food", "instamart", "dineout"]);
+    expect(
+      report.serverModels.some(
+        (model: { server: string; switchGuard: string; authoritativeReads: string[] }) =>
+          model.server === "food" &&
+          model.switchGuard.includes("restaurant") &&
+          model.authoritativeReads.includes("get_food_cart"),
+      ),
+    ).toBe(true);
+    expect(
+      report.scenarios.map((scenario: { id: string }) => scenario.id),
+    ).toEqual(expect.arrayContaining(["food_restaurant_switch", "instamart_address_switch", "dineout_slot_refresh", "combined_server_boundaries", "abandoned_cart_recovery"]));
+    expect(report.scenarios.every((scenario: { unsafeMemoryRejected: boolean }) => scenario.unsafeMemoryRejected)).toBe(true);
+    expect(
+      report.scenarios.some((scenario: { id: string; turnBoundaries: Array<{ requiredRefreshTool: string; nextTool: string }> }) =>
+        scenario.id === "combined_server_boundaries" &&
+        scenario.turnBoundaries.some((turn) => turn.requiredRefreshTool === "get_food_cart" && turn.nextTool === "place_food_order"),
+      ),
+    ).toBe(true);
+    const voice = report.surfaceContracts.find((contract: { surface: string }) => contract.surface === "voice");
+    const chat = report.surfaceContracts.find((contract: { surface: string }) => contract.surface === "chat");
+    expect(voice.maxPresentedItems).toBe(3);
+    expect(voice.forbiddenContent).toEqual(expect.arrayContaining(["raw addressId", "restaurantId", "spinId"]));
+    expect(chat.maxPresentedItems).toBe(8);
+    expect(chat.widgetPolicy).toContain("semantic widget contracts");
+    expect(report.assertions.some((assertion: string) => assertion.includes("authoritative Swiggy read"))).toBe(true);
+  });
+
+  it("returns Swiggy widget runtime contracts with secure fallbacks", async () => {
+    const { app } = createMealPilotServer();
+    await request(app).post("/api/plan").send(planningRequest).expect(201);
+    const response = await request(app).get("/api/mcp/widget-runtime").expect(200);
+    const runtime = response.body.widgetRuntime;
+
+    expect(runtime.score).toBeGreaterThanOrEqual(90);
+    expect(runtime.totalSurfaces).toBeGreaterThanOrEqual(7);
+    expect(runtime.fallbackReady).toBe(runtime.totalSurfaces);
+    expect(runtime.hostedReady).toBe(0);
+    expect(runtime.eventsHandled).toBeGreaterThanOrEqual(14);
+    expect(runtime.totalActivationChecks).toBeGreaterThanOrEqual(16);
+    expect(runtime.readyActivationChecks).toBeGreaterThanOrEqual(12);
+    expect(runtime.externalActivationGates).toBeGreaterThanOrEqual(4);
+    expect(runtime.optInHeader.status).toBe("external_gate");
+    expect(runtime.surfaces.map((surface: { type: string }) => surface.type)).toEqual(
+      expect.arrayContaining(["restaurant-card", "menu-item", "cart-widget", "product-card", "slot-picker"]),
+    );
+    expect(
+      runtime.surfaces.some(
+        (surface: { server: string; type: string; returnedByTools: string[] }) =>
+          surface.server === "dineout" &&
+          surface.type === "restaurant-card" &&
+          surface.returnedByTools.includes("get_available_slots"),
+      ),
+    ).toBe(true);
+    expect(
+      runtime.surfaces.some(
+        (surface: { server: string; returnedByTools: string[] }) =>
+          surface.server === "food" && surface.returnedByTools.includes("search_restaurants"),
+      ),
+    ).toBe(true);
+    expect(
+      runtime.surfaces.some(
+        (surface: { server: string; iframe: { allowTopNavigation: boolean; origin: string } }) =>
+          surface.server === "instamart" &&
+          surface.iframe.allowTopNavigation === false &&
+          surface.iframe.origin === "https://mcp.swiggy.com",
+      ),
+    ).toBe(true);
+    expect(
+      runtime.bridgeRules.some((rule: { id: string; status: string }) => rule.id === "origin_verification" && rule.status === "ready"),
+    ).toBe(true);
+    expect(
+      runtime.bridgeRules.some((rule: { id: string; rule: string }) => rule.id === "no_top_navigation" && rule.rule.includes("allow-top-navigation")),
+    ).toBe(true);
+    expect(
+      runtime.activationChecklist.some(
+        (check: { id: string; status: string }) => check.id === "hosted_iframe_urls" && check.status === "external_gate",
+      ),
+    ).toBe(true);
+    expect(
+      runtime.activationChecklist.some(
+        (check: { id: string; status: string }) => check.id === "voice_exclusion" && check.status === "ready",
+      ),
+    ).toBe(true);
+    expect(runtime.renderContracts.length).toBe(runtime.totalSurfaces);
+    expect(
+      runtime.renderContracts.some(
+        (contract: { type: string; postMessageEvents: string[]; accessibility: string }) =>
+          contract.type === "menu-item" &&
+          contract.postMessageEvents.includes("menu-item.add-to-cart") &&
+          contract.accessibility.includes("iframe title"),
+      ),
+    ).toBe(true);
+    expect(runtime.sessionWidgets.length).toBeGreaterThanOrEqual(5);
+    expect(runtime.sessionWidgets.every((widget: { status: string }) => widget.status === "semantic_fallback")).toBe(true);
+  });
+
+  it("returns commercial action guards for confirmations and non-blind retries", async () => {
+    const { app } = createMealPilotServer();
+    const created = await request(app).post("/api/plan").send(planningRequest).expect(201);
+    const response = await request(app).get("/api/mcp/commercial-action-guard").expect(200);
+    const guard = response.body.commercialActionGuard;
+
+    expect(guard.score).toBeGreaterThanOrEqual(95);
+    expect(guard.totalLanes).toBe(4);
+    expect(guard.readyLanes).toBe(4);
+    expect(guard.totalGuardrails).toBeGreaterThanOrEqual(8);
+    expect(guard.readyGuardrails).toBeGreaterThanOrEqual(7);
+    expect(guard.latestPlanProof.sessionId).toBe(created.body.plan.id);
+    expect(guard.lanes.map((lane: { actionTool: string }) => lane.actionTool)).toEqual(
+      expect.arrayContaining(["place_food_order", "checkout", "book_table", "place_food_order + book_table"]),
+    );
+    expect(
+      guard.lanes.every(
+        (lane: { confirmationRequired: boolean; nonIdempotent: boolean; retryPolicy: string }) =>
+          lane.confirmationRequired === true &&
+          lane.nonIdempotent === true &&
+          lane.retryPolicy.toLowerCase().includes("retry"),
+      ),
+    ).toBe(true);
+    expect(
+      guard.lanes.some(
+        (lane: { id: string; freshReadTool: string; verificationTool: string }) =>
+          lane.id === "food_order" &&
+          lane.freshReadTool === "get_food_cart" &&
+          lane.verificationTool === "get_food_orders",
+      ),
+    ).toBe(true);
+    expect(
+      guard.lanes.some(
+        (lane: { id: string; preflightChecks: string[] }) =>
+          lane.id === "instamart_checkout" && lane.preflightChecks.some((check) => check.includes("Rs 99")),
+      ),
+    ).toBe(true);
+    expect(
+      guard.lanes.some(
+        (lane: { id: string; confirmationCopy: { chat: string } }) =>
+          lane.id === "dineout_booking" && lane.confirmationCopy.chat.includes("party size"),
+      ),
+    ).toBe(true);
+    expect(
+      guard.retryDrills.some(
+        (drill: { laneId: string; verificationTool: string }) =>
+          drill.laneId === "combined_evening" && drill.verificationTool.includes("get_booking_status"),
+      ),
+    ).toBe(true);
+    expect(
+      guard.guardrails.some(
+        (item: { id: string; status: string }) => item.id === "no_blind_retry" && item.status === "ready",
+      ),
+    ).toBe(true);
+    expect(
+      guard.telemetryContract.some(
+        (field: { field: string; required: boolean; redaction: string }) =>
+          field.field === "confirmation_id" && field.required === true && field.redaction.includes("opaque"),
+      ),
+    ).toBe(true);
+    expect(guard.externalGates.some((gate: string) => gate.includes("staging credentials"))).toBe(true);
+  });
+
+  it("returns an MCP backpressure governor for rate-limit and Retry-After readiness", async () => {
+    const { app } = createMealPilotServer();
+    await request(app).post("/api/plan").send(planningRequest).expect(201);
+
+    const response = await request(app).get("/api/mcp/backpressure-governor").expect(200);
+    const governor = response.body.backpressureGovernor;
+
+    expect(governor.score).toBeGreaterThanOrEqual(90);
+    expect(governor.mode).toBe("v1_upstream_shedder");
+    expect(governor.totalBuckets).toBeGreaterThanOrEqual(8);
+    expect(governor.readyBuckets).toBeGreaterThanOrEqual(7);
+    expect(governor.trackingMinIntervalSeconds).toBe(10);
+    expect(governor.maxRetries).toBe(5);
+    expect(governor.maxUserWaitMs).toBeLessThanOrEqual(30000);
+    expect(governor.plannedHeaders).toEqual(
+      expect.arrayContaining(["X-RateLimit-Limit", "X-RateLimit-Remaining", "X-RateLimit-Reset", "Retry-After"]),
+    );
+    expect(
+      governor.buckets.some(
+        (bucket: { id: string; plannedLimitPerMinute: number }) =>
+          bucket.id === "write_tool_bucket" && bucket.plannedLimitPerMinute === 30,
+      ),
+    ).toBe(true);
+    expect(
+      governor.buckets.some(
+        (bucket: { id: string; queueDiscipline: string }) =>
+          bucket.id === "tracking_bucket" && bucket.queueDiscipline.includes("10 second"),
+      ),
+    ).toBe(true);
+    expect(
+      governor.rules.some((rule: { id: string; status: string }) => rule.id === "v1_upstream_shedder" && rule.status === "ready"),
+    ).toBe(true);
+    expect(
+      governor.simulations.some(
+        (simulation: { id: string; delayMs: number }) =>
+          simulation.id === "planned_429_retry_after" && simulation.delayMs === 23000,
+      ),
+    ).toBe(true);
+    expect(
+      governor.simulations.some(
+        (simulation: { id: string; status: string }) =>
+          simulation.id === "background_batch_block" && simulation.status === "external_gate",
+      ),
+    ).toBe(true);
+    expect(
+      governor.telemetry.some(
+        (field: { field: string; status: string }) => field.field === "x_ratelimit_remaining" && field.status === "ready",
+      ),
+    ).toBe(true);
+    expect(governor.capacityEmail.to).toBe("builders@swiggy.in");
+    expect(governor.externalGates.some((gate: string) => gate.includes("MCP-layer 429"))).toBe(true);
+  });
+
+  it("returns an MCP capability registry for tools, resources, prompts, and metadata", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/mcp/capability-registry").expect(200);
+    const registry = response.body.registry;
+
+    expect(registry.score).toBeGreaterThanOrEqual(90);
+    expect(registry.scopes).toEqual(expect.arrayContaining(["mcp:tools", "mcp:resources", "mcp:prompts"]));
+    expect(registry.serverEndpoints.map((endpoint: { server: string; tools: number }) => [endpoint.server, endpoint.tools])).toEqual([
+      ["food", 14],
+      ["instamart", 13],
+      ["dineout", 8],
+    ]);
+    expect(registry.capabilityGroups.map((group: { kind: string }) => group.kind)).toEqual(
+      expect.arrayContaining(["tools", "resources", "prompts", "metadata", "widgets", "auth"]),
+    );
+    expect(registry.resources.some((resource: { id: string }) => resource.id === "widget_registry")).toBe(true);
+    expect(registry.prompts.some((prompt: { id: string }) => prompt.id === "combined_meal_agent")).toBe(true);
+    expect(registry.metadata.some((metadata: { id: string }) => metadata.id === "protected_resource")).toBe(true);
+    expect(registry.externalGates.some((gate: string) => gate.includes("prompts/list"))).toBe(true);
+  });
+
+  it("returns MCP Resource and Prompt Studio coverage for all Swiggy servers", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/mcp/resource-prompt-studio").expect(200);
+    const studio = response.body.resourcePromptStudio;
+
+    expect(studio.score).toBe(100);
+    expect(studio.totalResources).toBe(6);
+    expect(studio.readyResources).toBe(studio.totalResources);
+    expect(studio.totalPrompts).toBe(6);
+    expect(studio.readyPrompts).toBe(studio.totalPrompts);
+    expect(studio.serverSummaries.map((summary: { server: string }) => summary.server)).toEqual([
+      "food",
+      "instamart",
+      "dineout",
+    ]);
+    expect(
+      studio.serverSummaries.every(
+        (summary: { resources: number; prompts: number; status: string }) =>
+          summary.resources === 2 && summary.prompts === 2 && summary.status === "ready",
+      ),
+    ).toBe(true);
+    expect(studio.resources.map((resource: { uri: string }) => resource.uri)).toEqual(
+      expect.arrayContaining([
+        "swiggy://food/widgets",
+        "swiggy://instamart/static-metadata",
+        "swiggy://dineout/widgets",
+      ]),
+    );
+    expect(
+      studio.resources.some(
+        (resource: { uri: string; sampleRead: { scope: string; registryKind: string } }) =>
+          resource.uri === "swiggy://food/widgets" &&
+          resource.sampleRead.scope === "mcp:resources" &&
+          resource.sampleRead.registryKind === "widget_registry",
+      ),
+    ).toBe(true);
+    expect(studio.prompts.map((prompt: { server: string }) => prompt.server)).toEqual(
+      expect.arrayContaining(["food", "instamart", "dineout"]),
+    );
+    expect(
+      studio.prompts.some(
+        (prompt: { name: string; sampleMessages: Array<{ text: string }> }) =>
+          prompt.name === "dineout_evening_planner" &&
+          prompt.sampleMessages[0].text.includes("Dineout") &&
+          prompt.sampleMessages[1].text.includes("guests"),
+      ),
+    ).toBe(true);
+    expect(studio.smokeRequests.map((smoke: { method: string }) => smoke.method)).toEqual(
+      expect.arrayContaining(["resources/list", "resources/read", "prompts/list", "prompts/get"]),
+    );
+    expect(studio.smokeRequests).toHaveLength(12);
+    expect(studio.externalGates.some((gate: string) => gate.includes("Live resources/list"))).toBe(true);
   });
 
   it("returns cart preflight, replay, demo studio, and submission package evidence", async () => {
@@ -266,6 +1908,29 @@ describe("MealPilot API", () => {
     const replay = await request(app).get(`/api/sessions/${sessionId}/replay`).expect(200);
     expect(replay.body.replay.length).toBeGreaterThanOrEqual(10);
     expect(replay.body.replay[0].request.method).toBe("tools/call");
+
+    const transcriptResponse = await request(app).get(`/api/sessions/${sessionId}/staging-transcript`).expect(200);
+    const transcript = transcriptResponse.body.transcript;
+    expect(transcript.score).toBeGreaterThanOrEqual(90);
+    expect(transcript.sessionId).toBe(sessionId);
+    expect(transcript.totalEntries).toBeGreaterThanOrEqual(replay.body.replay.length);
+    expect(transcript.coveredServers).toEqual(expect.arrayContaining(["food", "instamart", "dineout"]));
+    expect(transcript.certificationWaves).toEqual(expect.arrayContaining(["read_tools", "cart_mutations", "commercial_actions"]));
+    expect(transcript.jsonl).toContain("\"event\":\"mcp_tool_call\"");
+    expect(transcript.markdown).toContain("MealPilot Staging Transcript");
+    expect(transcript.redaction.piiFree).toBe(true);
+    expect(transcript.redaction.redactedFields).toContain("access_token");
+    expect(transcript.supportEnvelope.to).toBe("builders@swiggy.in");
+    expect(
+      transcript.entries.some(
+        (entry: { tool: string; routeClass: string; retryPolicy: string }) =>
+          entry.tool === "place_food_order" &&
+          entry.routeClass === "commercial_action" &&
+          entry.retryPolicy.includes("check order or booking status"),
+      ),
+    ).toBe(true);
+    expect(transcript.readiness.some((item: { id: string; status: string }) => item.id === "staging_credentials" && item.status === "external_gate")).toBe(true);
+    expect(transcript.files.some((item: { id: string }) => item.id === "support_brief")).toBe(true);
 
     const demoStudio = await request(app).get("/api/demo-studio").expect(200);
     expect(demoStudio.body.steps.some((step: { id: string }) => step.id === "coverage")).toBe(true);
@@ -294,9 +1959,193 @@ describe("MealPilot API", () => {
     const compliance = await request(app).get("/api/compliance-evidence").expect(200);
     expect(compliance.body.compliance.controls.some((control: { id: string }) => control.id === "deletion")).toBe(true);
 
+    const governance = await request(app).get("/api/data-governance-center").expect(200);
+    const dataGovernance = governance.body.dataGovernance;
+    expect(dataGovernance.score).toBeGreaterThanOrEqual(90);
+    expect(dataGovernance.dataRole.swiggyRole).toBe("Data Fiduciary");
+    expect(dataGovernance.dataRole.mealPilotRole).toBe("Data Processor");
+    expect(dataGovernance.residency.boundary).toContain("India/Singapore");
+    expect(dataGovernance.dataFlows.map((flow: { id: string }) => flow.id)).toEqual(
+      expect.arrayContaining(["oauth_token", "support_payload", "telemetry_trace_context"]),
+    );
+    expect(dataGovernance.controls.map((control: { id: string }) => control.id)).toEqual(
+      expect.arrayContaining([
+        "purpose_limitation",
+        "no_training_without_consent",
+        "dsr_routing",
+        "token_redaction",
+        "signed_manifest_watch",
+      ]),
+    );
+    expect(dataGovernance.retention.swiggyAuditLogDays).toBe(90);
+    expect(dataGovernance.retention.compactionEndpoint).toBe("/api/storage/compact");
+    expect(dataGovernance.securityContacts.some((contact: { contact: string }) => contact.contact === "security@swiggy.in")).toBe(
+      true,
+    );
+    expect(dataGovernance.signedManifestReadiness.targetVersion).toBe("v1.2");
+    expect(dataGovernance.externalGates.some((gate: string) => gate.includes("DPA"))).toBe(true);
+    expect(dataGovernance.externalGates.some((gate: string) => gate.includes("Signed manifest"))).toBe(true);
+
     const proof = await request(app).get("/api/reviewer-proof").expect(200);
     expect(proof.body.proof.score).toBeGreaterThanOrEqual(80);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Widget contracts")).toBe(true);
+    expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Widget Runtime Center")).toBe(true);
+    expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Staging Cutover Rehearsal")).toBe(true);
+    expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Staging Transcript Export")).toBe(true);
+    expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Builder Intake Command Center")).toBe(true);
+    expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Traffic Readiness Plan")).toBe(true);
+    expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "MCP Backpressure Governor")).toBe(true);
+    expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "SLO Incident Command Center")).toBe(true);
+    expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Data Governance Center")).toBe(true);
+    expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Swiggy Upstream Watch")).toBe(true);
+    expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Premium Concierge Itinerary")).toBe(true);
+    expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Tool Contract Matrix")).toBe(true);
+    expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Scenario Runner")).toBe(true);
+    expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "State Orchestrator")).toBe(true);
+    expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Swiggy OAuth Status")).toBe(true);
+    expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Resource & Prompt Studio")).toBe(true);
+    expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Enterprise Delegated Auth Center")).toBe(true);
+    expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Audit Ledger Center")).toBe(true);
+    expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Submission Console")).toBe(true);
+    expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "FAQ & Policy Center")).toBe(true);
+    expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Growth Partnership Center")).toBe(true);
+    expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Channel & Multimodal Studio")).toBe(true);
+    expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Nutrition & Budget Intelligence")).toBe(true);
+    expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Household Preference Graph")).toBe(true);
+    expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Luxury Experience Workspace")).toBe(true);
+    expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Reviewer Artifact Vault")).toBe(true);
+    expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Visual QA Center")).toBe(true);
+  });
+
+  it("returns a traffic readiness and capacity plan for Swiggy launch", async () => {
+    const { app } = createMealPilotServer();
+    await request(app).post("/api/plan").send(planningRequest).expect(201);
+
+    const response = await request(app).get("/api/traffic-readiness-plan").expect(200);
+    const plan = response.body.trafficReadiness;
+
+    expect(plan.score).toBeGreaterThanOrEqual(90);
+    expect(plan.projectedDailyToolCalls).toBeGreaterThan(0);
+    expect(plan.peakQps).toBeLessThan(1);
+    expect(plan.lanes.map((lane: { lane: string }) => lane.lane)).toEqual(
+      expect.arrayContaining(["commercial", "tracking", "support", "auth"]),
+    );
+    expect(plan.retryAfterContract.ready).toBe(true);
+    expect(plan.retryAfterContract.maxWallClockMs).toBeLessThanOrEqual(30000);
+    expect(plan.notifications.some((item: { id: string; leadTimeDays: number }) => item.id === "major_traffic_event" && item.leadTimeDays === 7)).toBe(true);
+    expect(plan.rollout.map((stage: { trafficPercent: number }) => stage.trafficPercent)).toEqual([1, 10, 50, 100]);
+    expect(plan.capacityUpgradeEmail.to).toBe("builders@swiggy.in");
+    expect(plan.externalGates.some((gate: string) => gate.toLowerCase().includes("staging"))).toBe(true);
+  });
+
+  it("returns SLO and incident command evidence for Swiggy operations", async () => {
+    const { app } = createMealPilotServer();
+    const created = await request(app).post("/api/plan").send(planningRequest).expect(201);
+    await request(app).post("/api/confirm").send({ sessionId: created.body.plan.id, recommendationId: "rec_food" }).expect(200);
+
+    const response = await request(app).get("/api/slo-incident-command").expect(200);
+    const slo = response.body.sloIncident;
+
+    expect(slo.score).toBeGreaterThanOrEqual(90);
+    expect(slo.uptimeTargets.map((target: { id: string }) => target.id)).toEqual(
+      expect.arrayContaining(["production_mcp", "oauth", "staging"]),
+    );
+    expect(slo.uptimeTargets.some((target: { target: string }) => target.target.includes("99.9%"))).toBe(true);
+    expect(slo.latencyTargets.map((target: { id: string }) => target.id)).toEqual(
+      expect.arrayContaining(["read_tools", "write_tools", "commercial_actions"]),
+    );
+    expect(slo.incidentComms.map((item: { severity: string }) => item.severity)).toEqual(["S0", "S1", "S2", "S3"]);
+    expect(slo.maintenance.noticeHours).toBe(72);
+    expect(slo.maintenance.blackoutWindowsIst).toEqual(expect.arrayContaining(["12:00-14:00", "19:00-22:00"]));
+    expect(slo.statusPage.url).toContain("status.swiggy.com/mcp");
+    expect(slo.remediation.contact).toBe("builders@swiggy.in");
+    expect(slo.externalGates.some((gate: string) => gate.includes("status page"))).toBe(true);
+  });
+
+  it("returns a production launch bundle for Swiggy Builder Access handoff", async () => {
+    const { app } = createMealPilotServer();
+    const created = await request(app).post("/api/plan").send(planningRequest).expect(201);
+
+    const response = await request(app).get("/api/production-launch-bundle").expect(200);
+    const bundle = response.body.launchBundle;
+
+    expect(bundle.score).toBeGreaterThanOrEqual(70);
+    expect(bundle.readinessLabel).toBe("local_review_ready");
+    expect(bundle.requestedServers).toEqual(["food", "instamart", "dineout"]);
+    expect(bundle.artifacts.map((artifact: { label: string }) => artifact.label)).toEqual(
+      expect.arrayContaining([
+        "MCP Tool Lab",
+        "Runtime Telemetry",
+        "Audit Ledger Center",
+        "Submission Console",
+        "FAQ & Policy Center",
+        "Growth Partnership Center",
+        "Channel & Multimodal Studio",
+        "Nutrition & Budget Intelligence",
+        "Household Preference Graph",
+        "Luxury Experience Workspace",
+        "Reviewer Artifact Vault",
+        "Visual QA Center",
+        "Swiggy Website Atlas",
+        "Builder Intake Command Center",
+        "Swiggy Docs Coverage",
+        "Swiggy Upstream Watch",
+        "AI Client Connect Kit",
+        "Brand Compliance Kit",
+        "Data Governance Center",
+        "Swiggy OAuth Status",
+        "Enterprise Delegated Auth Center",
+        "Traffic Readiness Plan",
+        "MCP Backpressure Governor",
+        "SLO Incident Command Center",
+        "Swiggy Journey Compiler",
+        "Swiggy Access Dossier",
+        "Premium Use Case Studio",
+        "Premium Concierge Itinerary",
+        "Tool Contract Matrix",
+        "Scenario Runner",
+        "State Orchestrator",
+        "Resource & Prompt Studio",
+        "Widget Runtime Center",
+        "Staging Cutover Rehearsal",
+        "Staging Transcript Export",
+      ]),
+    );
+    expect(bundle.artifacts.some((artifact: { path: string }) => artifact.path === `/api/sessions/${created.body.plan.id}`)).toBe(true);
+    expect(bundle.accessApplication.some((field: { label: string }) => field.label === "Redirect URIs")).toBe(true);
+    expect(
+      bundle.goLiveGates.some(
+        (gate: { label: string; status: string }) => gate.label.includes("48 hours") && gate.status === "external_gate",
+      ),
+    ).toBe(true);
+    expect(bundle.goLiveGates.some((gate: { label: string }) => gate.label.includes("Data governance"))).toBe(true);
+    expect(bundle.goLiveGates.some((gate: { label: string; status: string }) => gate.label.includes("delegated-auth") && gate.status === "external_gate")).toBe(true);
+    expect(bundle.handoffEmail.body).toContain("/api/enterprise-delegated-auth");
+    expect(bundle.handoffEmail.body).toContain("/api/auth/swiggy/status");
+    expect(bundle.handoffEmail.body).toContain("/api/swiggy-builder-intake");
+    expect(bundle.handoffEmail.body).toContain("/api/swiggy-faq-policy");
+    expect(bundle.handoffEmail.body).toContain("/api/swiggy-growth-partnership");
+    expect(bundle.handoffEmail.body).toContain("/api/channel-multimodal-studio");
+    expect(bundle.handoffEmail.body).toContain("/api/nutrition-budget-intelligence");
+    expect(bundle.handoffEmail.body).toContain("/api/household-preference-graph");
+    expect(bundle.handoffEmail.body).toContain("/api/luxury-experience-workspace");
+    expect(bundle.handoffEmail.body).toContain("/api/reviewer-artifact-vault");
+    expect(bundle.handoffEmail.body).toContain("/api/visual-qa-center");
+    expect(bundle.handoffEmail.body).toContain("/api/submission-console");
+    expect(bundle.handoffEmail.body).toContain("/api/swiggy-upstream-watch");
+    expect(bundle.handoffEmail.body).toContain("/api/premium-concierge-itinerary");
+    expect(bundle.handoffEmail.body).toContain("/api/mcp/tool-contract-matrix");
+    expect(bundle.handoffEmail.body).toContain("/api/mcp/scenario-runner");
+    expect(bundle.handoffEmail.body).toContain("/api/mcp/state-orchestrator");
+    expect(bundle.handoffEmail.body).toContain("/api/mcp/resource-prompt-studio");
+    expect(bundle.handoffEmail.body).toContain("/api/mcp/widget-runtime");
+    expect(bundle.handoffEmail.body).toContain("/api/mcp/backpressure-governor");
+    expect(bundle.handoffEmail.body).toContain("/api/mcp/staging-cutover");
+    expect(bundle.handoffEmail.body).toContain("/api/audit-ledger");
+    expect(bundle.commands.some((command: { command: string }) => command.command.includes("npm run verify:production"))).toBe(
+      true,
+    );
+    expect(bundle.handoffEmail.to).toBe("builders@swiggy.in");
   });
 
   it("returns executable resilience drills and support runbook evidence", async () => {
@@ -310,6 +2159,101 @@ describe("MealPilot API", () => {
     expect(resilience.body.drills.some((drill: { id: string }) => drill.id === "non_idempotent_check_then_retry")).toBe(true);
     expect(resilience.body.runbook.nonBlindRetryTools).toContain("place_food_order");
     expect(resilience.body.runbook.supportPayload.latestSessionId).toBe(created.body.plan.id);
+  });
+
+  it("returns Swiggy error envelope, retry, and planned code intelligence", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/error-intelligence").expect(200);
+    const report = response.body.errorIntelligence;
+
+    expect(report.score).toBe(100);
+    expect(report.envelope.success).toBe(false);
+    expect(report.envelope.error.message).toContain("human-readable");
+    expect(report.buckets.map((bucket: { id: string }) => bucket.id)).toEqual(
+      expect.arrayContaining(["auth_failure", "bad_input", "upstream_timeout", "domain_failure", "internal_error"]),
+    );
+    expect(
+      report.plannedCoreCodes.some((code: { code: string; status: string }) => code.code === "RATE_LIMITED" && code.status === "planned"),
+    ).toBe(true);
+    expect(
+      report.domainCodes.some((code: { server: string; code: string; terminal: boolean }) => code.server === "food" && code.code === "RESTAURANT_CLOSED" && code.terminal),
+    ).toBe(true);
+    expect(report.retryPolicy.maxRetries).toBe(5);
+    expect(report.retryPolicy.nonBlindRetryTools).toEqual(["place_food_order", "checkout", "book_table"]);
+    expect(report.assertions.some((assertion: string) => assertion.includes("never blind-retry"))).toBe(true);
+  });
+
+  it("returns trace spans, log contract, and route optimization evidence", async () => {
+    const { app } = createMealPilotServer();
+    const created = await request(app).post("/api/plan").send(planningRequest).expect(201);
+
+    const observability = await request(app).get("/api/observability/traces").expect(200);
+    expect(observability.body.observability.score).toBeGreaterThanOrEqual(90);
+    expect(observability.body.observability.traces[0].sessionId).toBe(created.body.plan.id);
+    expect(observability.body.observability.traces[0].spans.some((span: { kind: string }) => span.kind === "mcp_tool")).toBe(true);
+    expect(observability.body.observability.logContract.redactedFields).toContain("access_token");
+
+    const optimizer = await request(app).get("/api/swiggy-route-optimizer").expect(200);
+    expect(optimizer.body.routeOptimizer.score).toBeGreaterThanOrEqual(90);
+    expect(optimizer.body.routeOptimizer.totalSavedCalls).toBeGreaterThan(0);
+    expect(
+      optimizer.body.routeOptimizer.journeys.some((journey: { id: string }) => journey.id === "three_server_meal_plan"),
+    ).toBe(true);
+    expect(optimizer.body.routeOptimizer.guardrails.some((guardrail: string) => guardrail.includes("commercial tools"))).toBe(true);
+  });
+
+  it("records runtime telemetry with redacted API and MCP request evidence", async () => {
+    const { app } = createMealPilotServer();
+    await request(app).get("/api/health").expect(200);
+    const created = await request(app).post("/api/plan").send(planningRequest).expect(201);
+    await request(app)
+      .post("/api/mcp/food")
+      .send({
+        jsonrpc: "2.0",
+        id: "telemetry",
+        method: "tools/call",
+        params: { name: "get_addresses", arguments: {} },
+      })
+      .expect(200);
+    await request(app).get(`/api/sessions/${created.body.plan.id}`).expect(200);
+
+    const telemetry = await request(app).get("/api/telemetry/runtime").expect(200);
+
+    expect(telemetry.body.telemetry.score).toBeGreaterThanOrEqual(80);
+    expect(telemetry.body.telemetry.events.some((event: { event: string }) => event.event === "mcp_tool_call")).toBe(true);
+    expect(telemetry.body.telemetry.events.every((event: { redacted: boolean }) => event.redacted)).toBe(true);
+    expect(telemetry.body.telemetry.supportReady.sessionIds).toContain(created.body.plan.id);
+    expect(telemetry.body.telemetry.logShape.requiredFields).toContain("userIdHash");
+    expect(telemetry.body.telemetry.redactionContract.redactedFields).toContain("access_token");
+  });
+
+  it("returns a Swiggy audit ledger center for redacted support evidence", async () => {
+    const { app } = createMealPilotServer();
+    const created = await request(app).post("/api/plan").send(planningRequest).expect(201);
+    await request(app).post("/api/confirm").send({ sessionId: created.body.plan.id, recommendationId: "rec_food" }).expect(200);
+
+    const response = await request(app).get("/api/audit-ledger").expect(200);
+    const ledger = response.body.auditLedger;
+
+    expect(ledger.score).toBeGreaterThanOrEqual(90);
+    expect(ledger.totalEvents).toBeGreaterThanOrEqual(10);
+    expect(ledger.coveredSessions).toBe(1);
+    expect(ledger.coveredServers).toEqual(expect.arrayContaining(["food", "instamart", "dineout"]));
+    expect(ledger.commercialActions).toBeGreaterThanOrEqual(1);
+    expect(ledger.supportReadyEvents).toBe(ledger.totalEvents);
+    expect(ledger.retention.swiggyAuditLogDays).toBe(90);
+    expect(ledger.retention.localCompactionEndpoint).toBe("/api/storage/compact");
+    expect(ledger.redaction.piiFree).toBe(true);
+    expect(ledger.redaction.redactedFields).toEqual(
+      expect.arrayContaining(["access_token", "payment_credentials", "raw_address"]),
+    );
+    expect(ledger.events.every((event: { redaction: string }) => event.redaction === "redacted")).toBe(true);
+    expect(
+      ledger.controls.some((control: { id: string; status: string }) => control.id === "support_correlation" && control.status === "ready"),
+    ).toBe(true);
+    expect(ledger.dsrRouting.some((item: { owner: string; status: string }) => item.owner === "Swiggy" && item.status === "external_gate")).toBe(true);
+    expect(ledger.supportPackage.to).toBe("builders@swiggy.in");
+    expect(ledger.assertions.some((assertion: string) => assertion.includes("session ids"))).toBe(true);
   });
 
   it("runs multi-scenario evaluation lab checks", async () => {

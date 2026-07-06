@@ -1,0 +1,441 @@
+import type {
+  SwiggyWebsiteAtlas,
+  SwiggyWebsiteCta,
+  SwiggyWebsiteModule,
+  SwiggyWebsiteNavLink,
+  SwiggyWebsitePageAtlas,
+} from "../../src/domain/types.js";
+
+const source = "https://mcp.swiggy.com/builders/";
+
+const globalHeader: SwiggyWebsiteNavLink[] = [
+  {
+    id: "home",
+    label: "Builders Club",
+    url: source,
+    location: "global_header",
+    mealPilotCoverage: "README, Launch Center, and builder packet position MealPilot as a real Swiggy Builders product.",
+  },
+  {
+    id: "developers",
+    label: "Developers",
+    url: `${source}developers/`,
+    location: "global_header",
+    mealPilotCoverage: "MealPilot follows the developer path with localhost mock mode, Tool Lab, docs, and demo script.",
+  },
+  {
+    id: "enterprises",
+    label: "Enterprises",
+    url: `${source}enterprises/`,
+    location: "global_header",
+    mealPilotCoverage: "Architecture and credential docs reserve enterprise delegated-auth and support escalation paths.",
+  },
+  {
+    id: "docs",
+    label: "Docs",
+    url: `${source}docs/`,
+    location: "global_header",
+    mealPilotCoverage: "The app mirrors Start, Build, Reference, and Operate docs as tested endpoints and UI evidence.",
+  },
+  {
+    id: "blog",
+    label: "Blog",
+    url: `${source}blog/2026-04-17-builders-club-launch/`,
+    location: "global_header",
+    mealPilotCoverage: "Product strategy aligns to the Builders Club launch narrative and India-first agent commerce.",
+  },
+  {
+    id: "faq",
+    label: "FAQ",
+    url: `${source}faq/`,
+    location: "global_header",
+    mealPilotCoverage: "Builder packet, access application, and Website Atlas answer program-fit and demo questions.",
+  },
+  {
+    id: "start_building",
+    label: "Start Building",
+    url: `${source}docs/start/developer/`,
+    location: "global_header",
+    mealPilotCoverage: "Local run, mock MCP, Tool Lab, and production smoke allow immediate building without credentials.",
+  },
+];
+
+const docsHeader: SwiggyWebsiteNavLink[] = [
+  {
+    id: "docs_home",
+    label: "Home",
+    url: `${source}docs/`,
+    location: "docs_subnav",
+    mealPilotCoverage: "Launch Center summarizes the full developer, enterprise, consumer, reference, and operate structure.",
+  },
+  {
+    id: "docs_start",
+    label: "Start",
+    url: `${source}docs/start/`,
+    location: "docs_subnav",
+    mealPilotCoverage: "Credential Cockpit, OAuth callback, and builder packet cover the start path.",
+  },
+  {
+    id: "docs_build",
+    label: "Build",
+    url: `${source}docs/build/`,
+    location: "docs_subnav",
+    mealPilotCoverage: "Planner, Demo Studio, widgets, voice/chat contracts, and resilience drills cover build recipes and patterns.",
+  },
+  {
+    id: "docs_reference",
+    label: "Reference",
+    url: `${source}docs/reference/`,
+    location: "docs_subnav",
+    mealPilotCoverage: "MCP catalog and Tool Lab cover all 35 official Food, Instamart, and Dineout tools.",
+  },
+  {
+    id: "docs_operate",
+    label: "Operate",
+    url: `${source}docs/operate/`,
+    location: "docs_subnav",
+    mealPilotCoverage: "Production Evidence covers rate limits, compliance, versioning, support, traces, and go-live gates.",
+  },
+];
+
+const ctas: SwiggyWebsiteCta[] = [
+  {
+    id: "start_building",
+    label: "Start Building",
+    url: `${source}docs/start/developer/`,
+    appearsOn: ["Home", "Developers", "Docs"],
+    intent: "Begin building locally before production approval.",
+    mealPilotResponse: "npm scripts, local MCP mock, Tool Lab, and smoke verifier let reviewers build immediately.",
+    status: "implemented",
+  },
+  {
+    id: "see_whats_possible",
+    label: "See What's Possible",
+    url: `${source}developers/#what-could-you-build`,
+    appearsOn: ["Home", "Developers"],
+    intent: "Explore practical Swiggy agent patterns.",
+    mealPilotResponse: "Innovation Queue and Tool Lab use cases translate each pattern into concrete MealPilot surfaces.",
+    status: "implemented",
+  },
+  {
+    id: "apply_prod_access",
+    label: "Apply for Prod Access",
+    url: `${source}access/`,
+    appearsOn: ["Developers", "Home", "Footer"],
+    intent: "Request staging and production review.",
+    mealPilotResponse: "Submission Package, Credential Cockpit, and builder-access docs mirror the required application fields.",
+    status: "documented",
+  },
+  {
+    id: "apply_developer",
+    label: "Apply as Developer",
+    url: "https://forms.gle/",
+    appearsOn: ["Access"],
+    intent: "Submit the individual developer or small-team production access form.",
+    mealPilotResponse: "Access Dossier and Production Launch Bundle keep developer-track fields, proof links, and manual inputs ready.",
+    status: "documented",
+  },
+  {
+    id: "apply_enterprise",
+    label: "Apply as Enterprise",
+    url: "https://forms.gle/",
+    appearsOn: ["Access", "Enterprises"],
+    intent: "Submit the enterprise production access form for custom onboarding and commercial terms.",
+    mealPilotResponse: "Access Dossier preserves enterprise terms, delegated auth, support, security attestation, and co-branding gates.",
+    status: "documented",
+  },
+  {
+    id: "enterprise_apply",
+    label: "Apply for Access",
+    url: "https://forms.gle/",
+    appearsOn: ["Enterprises"],
+    intent: "Start enterprise partnership review.",
+    mealPilotResponse: "Architecture documents delegated-auth and enterprise support as a future expansion path.",
+    status: "documented",
+  },
+  {
+    id: "contact_us",
+    label: "Contact Us",
+    url: "mailto:builders@swiggy.in",
+    appearsOn: ["Enterprises", "Footer", "Support docs"],
+    intent: "Reach Swiggy support or partnership owners.",
+    mealPilotResponse: "Support Report and Resilience Lab generate redacted builders@swiggy.in-ready payloads.",
+    status: "implemented",
+  },
+  {
+    id: "send_demo",
+    label: "Send Us a Demo",
+    url: "mailto:builders@swiggy.in",
+    appearsOn: ["Home", "Developers"],
+    intent: "Share a working demo and GitHub link.",
+    mealPilotResponse: "Demo Studio, Tool Lab, Website Atlas, and production smoke output form the recording script.",
+    status: "implemented",
+  },
+  {
+    id: "llms",
+    label: "llms.txt",
+    url: `${source}llms.txt`,
+    appearsOn: ["Home", "Footer"],
+    intent: "Give coding agents a source-of-truth docs index.",
+    mealPilotResponse: "Website Atlas and Builders research docs are maintained against the official llms index.",
+    status: "implemented",
+  },
+  {
+    id: "read_docs",
+    label: "Read the docs",
+    url: `${source}docs/`,
+    appearsOn: ["Enterprises", "Blog"],
+    intent: "Move from marketing or blog content into implementation details.",
+    mealPilotResponse: "Docs Coverage, Journey Compiler, Tool Lab, and Launch Center expose every implementation path as app evidence.",
+    status: "implemented",
+  },
+  {
+    id: "apply_now",
+    label: "Apply now",
+    url: `${source}access/`,
+    appearsOn: ["Blog"],
+    intent: "Convert the Builders Club launch narrative into production access review.",
+    mealPilotResponse: "Production Launch Bundle turns the blog's build-video-apply-review-access-ship journey into a reviewer handoff.",
+    status: "documented",
+  },
+];
+
+function moduleItem(
+  pageId: string,
+  id: string,
+  title: string,
+  moduleType: SwiggyWebsiteModule["moduleType"],
+  officialSignal: string,
+  mealPilotCoverage: string,
+  status: SwiggyWebsiteModule["status"] = "implemented",
+): SwiggyWebsiteModule {
+  return { id: `${pageId}_${id}`, pageId, title, moduleType, officialSignal, mealPilotCoverage, status };
+}
+
+const pages: SwiggyWebsitePageAtlas[] = [
+  {
+    id: "home",
+    title: "Build on Swiggy",
+    url: source,
+    pageType: "marketing",
+    primaryAudience: "all",
+    ctaIds: ["start_building", "see_whats_possible", "send_demo", "apply_prod_access", "llms"],
+    mealPilotOutcome: "MealPilot mirrors the homepage journey: local build, proof artifacts, access application, and support.",
+    modules: [
+      moduleItem("home", "hero", "Hero and proof stats", "hero", "Build on Food, Instamart, and Dineout; no access needed until prod.", "README and Launch Center show local-first build proof."),
+      moduleItem("home", "what_is", "What is Builders Club", "proof", "Build real products, AI-native platform, experiment freely, get noticed.", "Product strategy and Innovation Queue map these benefits to MealPilot."),
+      moduleItem("home", "how_it_works", "How It Works", "steps", "Start Building, Apply for Prod Access, Quick Review, Go Live, Show Us What You Built.", "Demo Studio and Credential Cockpit map every step."),
+      moduleItem("home", "what_you_get", "What You Get", "proof", "Live APIs, rate limits, support, co-branding, growth partnership.", "Production Evidence covers rate, support, compliance, and reviewer proof."),
+      moduleItem("home", "faq", "Frequently Asked Questions", "faq", "Program fit, demo, rate limits, support, application process.", "Builder packet and docs answer these review questions."),
+      moduleItem("home", "final_cta", "What Will You Cook", "cta", "Start Building, Send Us a Demo, Request access, builders@swiggy.in.", "Website Atlas and support report turn each CTA into a MealPilot action."),
+    ],
+  },
+  {
+    id: "developers",
+    title: "For Developers",
+    url: `${source}developers/`,
+    pageType: "marketing",
+    primaryAudience: "developers",
+    ctaIds: ["start_building", "apply_prod_access", "send_demo"],
+    mealPilotOutcome: "MealPilot implements the developer proof path with local build, Tool Lab, and application-ready artifacts.",
+    modules: [
+      moduleItem("developers", "hero", "Developer hero", "hero", "Real APIs, real users, chance to get hired.", "Demo script frames MealPilot as a real user product."),
+      moduleItem("developers", "why", "Why Developers Love This", "proof", "Build real things, AI-native platform, hack and experiment, get hired.", "Innovation Queue and research plan identify premium builder ideas."),
+      moduleItem("developers", "build_ideas", "What Could You Build", "toolkit", "Voice Agent, Auto-Restock, Group Ordering, Dietary Planner, Reservation Agent, Multi-Modal Agent.", "MealPilot already covers voice, pantry, group planning, dietary planning, reservation, and future multimodal lanes."),
+      moduleItem("developers", "toolkit", "Your Toolkit", "toolkit", "Food, Instamart, and Dineout cards with sample tools.", "MCP Catalog and Tool Lab cover all referenced servers and tools."),
+      moduleItem("developers", "faq", "Developer FAQ", "faq", "Approval, solo dev, servers, auth, chaining, demo, sandbox.", "Credential Cockpit, docs, and smoke verifier answer each review question."),
+    ],
+  },
+  {
+    id: "access",
+    title: "Ready to Go to Production",
+    url: `${source}access/`,
+    pageType: "operate",
+    primaryAudience: "reviewers",
+    ctaIds: ["apply_developer", "apply_enterprise", "contact_us"],
+    mealPilotOutcome: "MealPilot converts the access page into proof artifacts, application fields, review gates, safety controls, and launch phases.",
+    modules: [
+      moduleItem("access", "hero", "Ready to Go to Production", "hero", "You've built locally; now get live with requirements and ground rules.", "Production Launch Bundle and Demo Studio package the proof handoff."),
+      moduleItem("access", "application_fields", "Application requirements", "proof", "Who you are, use case, architecture, redirect URIs, IP ranges, security contact, data declaration, environment, terms, audit, certifications, traffic.", "Access Dossier mirrors the field list and labels unresolved operator inputs."),
+      moduleItem("access", "review_checks", "Swiggy review checks", "steps", "Security check, compliance review, use-case fit, gradual rollout, ongoing partnership.", "Go-live gates, Data Governance Center, Traffic Readiness, and SLO Command map each review check."),
+      moduleItem("access", "ground_rules", "Ground rules", "legal", "Allowed, restricted, and prohibited conduct for Swiggy MCP integrations.", "Safety docs, Brand Compliance Kit, and Access Dossier encode allowed/restricted/prohibited rules."),
+      moduleItem("access", "things_to_know", "Operational expectations", "proof", "Stay in scope, respect brand, protect user data, and expect platform monitoring.", "Route Optimizer, Data Governance Center, Brand Compliance Kit, and Runtime Telemetry expose these controls."),
+      moduleItem("access", "legal_framework", "Legal framework", "legal", "MCP agreement, data protection terms, liability provisions, revocation rights, and enterprise negotiation.", "Access Dossier keeps terms acknowledgement, DPA, liability, misuse, and termination as review artifacts."),
+      moduleItem("access", "ready_to_apply", "Ready to Apply", "cta", "Developer and enterprise application tracks, with email fallback.", "Builder Access application docs list developer/enterprise links, demo video, contact email, and final redirect inputs."),
+    ],
+  },
+  {
+    id: "enterprises",
+    title: "For Enterprises",
+    url: `${source}enterprises/`,
+    pageType: "marketing",
+    primaryAudience: "enterprises",
+    ctaIds: ["enterprise_apply", "contact_us"],
+    mealPilotOutcome: "MealPilot captures enterprise requirements as future delegated-auth, SLA, co-branding, and support tracks.",
+    modules: [
+      moduleItem("enterprises", "hero", "Enterprise hero", "hero", "Integrate Food, Instamart, and Dineout MCP into your product.", "Architecture keeps frontend/backend separation ready for platform embedding."),
+      moduleItem("enterprises", "why", "Why Enterprises Choose This", "proof", "Commerce backend, customer serving, dedicated partnership, scale.", "Docs map production runbooks, support, compliance controls, and data governance."),
+      moduleItem("enterprises", "includes", "Enterprise Access Includes", "proof", "Production access, rate limits, co-branding, support, custom integration, growth partnership.", "Production Evidence tracks each readiness domain."),
+      moduleItem("enterprises", "faq", "Enterprise FAQ", "faq", "Onboarding, integration, compliance, rate limits, white-label, partnership.", "Roadmap and docs preserve enterprise answers until commercial terms exist.", "documented"),
+    ],
+  },
+  {
+    id: "blog_launch",
+    title: "Builders Club Launch Blog",
+    url: `${source}blog/2026-04-17-builders-club-launch/`,
+    pageType: "blog",
+    primaryAudience: "all",
+    ctaIds: ["read_docs", "apply_now", "contact_us"],
+    mealPilotOutcome: "MealPilot maps the launch story into a concrete builder journey, ecosystem stack, proof video, and production-access packet.",
+    modules: [
+      moduleItem("blog_launch", "hero", "Launch announcement", "hero", "Builders Club introduces a community and partnership layer for Swiggy MCP builders.", "Research docs and README position MealPilot as a serious Swiggy-native product."),
+      moduleItem("blog_launch", "builder_journey", "Builder journey", "steps", "Build locally, record video, apply, review, get access, ship.", "Demo script, Production Launch Bundle, and Staging Certification Matrix implement the journey."),
+      moduleItem("blog_launch", "benefits", "Builder benefits", "proof", "Live API access, support, co-branding, growth partnership, and ecosystem participation.", "Brand Compliance, Support Bridge, Traffic Readiness, and Access Dossier cover benefit readiness."),
+      moduleItem("blog_launch", "ecosystem_stack", "Ecosystem stack", "proof", "MCP integrations, Real World Skills, and Builders Platform narrative.", "Premium Use Case Studio and AI Client Connect Kit map MealPilot into the future skills ecosystem."),
+      moduleItem("blog_launch", "start_building", "Start building links", "cta", "Read docs, request access, and email builders@swiggy.in.", "Website Atlas, Docs Coverage, and Launch Bundle keep all conversion paths visible."),
+    ],
+  },
+  {
+    id: "docs_home",
+    title: "Docs Home",
+    url: `${source}docs/`,
+    pageType: "docs",
+    primaryAudience: "all",
+    ctaIds: ["start_building"],
+    mealPilotOutcome: "MealPilot splits docs coverage into Start, Build, Reference, and Operate artifacts.",
+    modules: [
+      moduleItem("docs_home", "tracks", "Developer, Enterprise, Consumer tracks", "docs_grid", "Choose a path for agent builders, platforms, or AI clients.", "Builder packet documents developer now and enterprise later."),
+      moduleItem("docs_home", "what_build", "What you can build", "docs_grid", "Food 14, Instamart 13, Dineout 8.", "MCP Catalog and Tool Lab prove all 35 tools."),
+      moduleItem("docs_home", "explore", "Explore docs", "docs_grid", "Start, Build, Reference, Operate.", "Launch Center, Demo Studio, Production Evidence, and docs folder map each branch."),
+      moduleItem("docs_home", "standard", "Built on MCP standard", "proof", "Streamable HTTP and OAuth 2.1 PKCE.", "MCP Gateway and Credential Cockpit implement this shape."),
+    ],
+  },
+  {
+    id: "reference",
+    title: "Reference",
+    url: `${source}docs/reference/`,
+    pageType: "reference",
+    primaryAudience: "developers",
+    ctaIds: ["start_building"],
+    mealPilotOutcome: "Tool Lab turns all reference tools into executable local probes.",
+    modules: [
+      moduleItem("reference", "food", "Food reference", "toolkit", "14 tools on POST mcp.swiggy.com/food.", "Food probes cover discovery, cart, order, tracking, support."),
+      moduleItem("reference", "instamart", "Instamart reference", "toolkit", "13 tools on POST mcp.swiggy.com/im.", "Instamart probes cover address, products, cart, checkout, tracking, support."),
+      moduleItem("reference", "dineout", "Dineout reference", "toolkit", "8 tools on POST mcp.swiggy.com/dineout.", "Dineout probes cover locations, restaurants, slots, cart, booking, support."),
+      moduleItem("reference", "errors", "Error codes", "proof", "Common error envelope and catalogue.", "Resilience Lab and support reports cover retry and escalation."),
+    ],
+  },
+  {
+    id: "footer",
+    title: "Global Footer",
+    url: source,
+    pageType: "external",
+    primaryAudience: "all",
+    ctaIds: ["contact_us", "apply_prod_access", "llms"],
+    mealPilotOutcome: "Footer resources are reflected in docs, support links, and legal/privacy posture.",
+    modules: [
+      moduleItem("footer", "program", "Program links", "footer", "For Developers, For Enterprises, How It Works, Benefits.", "Website Atlas maps these to product and docs coverage."),
+      moduleItem("footer", "resources", "Resource links", "footer", "Guidelines, FAQ, Apply, llms.txt.", "Builder packet, Website Atlas, and research plan preserve these resources."),
+      moduleItem("footer", "legal", "Legal links", "legal", "Privacy Policy and Terms and Conditions.", "Safety and compliance docs keep legal-facing posture visible.", "documented"),
+    ],
+  },
+];
+
+const footerGroups: SwiggyWebsiteAtlas["footerGroups"] = [
+  {
+    id: "program",
+    title: "Program",
+    links: globalHeader
+      .filter((link) => ["developers", "enterprises"].includes(link.id))
+      .map((link): SwiggyWebsiteNavLink => ({ ...link, location: "footer_program" })),
+  },
+  {
+    id: "resources",
+    title: "Resources",
+    links: [
+      {
+        id: "guidelines",
+        label: "Guidelines",
+        url: `${source}guidelines/`,
+        location: "footer_resources",
+        mealPilotCoverage: "Safety and compliance docs implement responsible builder guidelines.",
+      },
+      {
+        id: "faq",
+        label: "FAQ",
+        url: `${source}faq/`,
+        location: "footer_resources",
+        mealPilotCoverage: "Builder packet and Website Atlas answer FAQ themes.",
+      },
+      {
+        id: "apply",
+        label: "Apply",
+        url: `${source}access/`,
+        location: "footer_resources",
+        mealPilotCoverage: "Submission package and Credential Cockpit prepare the access form.",
+      },
+      {
+        id: "llms",
+        label: "llms.txt",
+        url: `${source}llms.txt`,
+        location: "footer_resources",
+        mealPilotCoverage: "Docs inventory and Tool Lab are refreshed against llms.txt.",
+      },
+    ],
+  },
+  {
+    id: "legal",
+    title: "Legal",
+    links: [
+      {
+        id: "privacy",
+        label: "Privacy Policy",
+        url: "https://www.swiggy.com/privacy-policy",
+        location: "footer_legal",
+        mealPilotCoverage: "Privacy export/delete, compliance evidence, and Data Governance Center align to privacy posture.",
+      },
+      {
+        id: "terms",
+        label: "Terms and Conditions",
+        url: "https://www.swiggy.com/terms-and-conditions",
+        location: "footer_legal",
+        mealPilotCoverage: "Safety docs prohibit scraping, hidden orders, and improper data reuse.",
+      },
+    ],
+  },
+];
+
+export function buildSwiggyWebsiteAtlas(): SwiggyWebsiteAtlas {
+  const modulesCovered = pages.reduce((sum, page) => sum + page.modules.length, 0);
+  const implementedModules = pages.reduce(
+    (sum, page) => sum + page.modules.filter((module) => module.status === "implemented").length,
+    0,
+  );
+  const score = Math.round(((implementedModules + ctas.length) / (modulesCovered + ctas.length)) * 100);
+
+  return {
+    generatedAt: new Date().toISOString(),
+    officialSource: source,
+    score,
+    pagesCovered: pages.length,
+    modulesCovered,
+    ctasCovered: ctas.length,
+    globalHeader,
+    docsHeader,
+    footerGroups,
+    ctas,
+    pages,
+    coverageAssertions: [
+      "Global header links are mapped to MealPilot product, docs, and support artifacts.",
+      "Docs subnavigation is mapped to Start, Build, Reference, and Operate surfaces.",
+      "Homepage, Developers, Enterprises, Docs, Reference, and Footer modules are represented with explicit MealPilot coverage.",
+      "All major CTAs have a MealPilot response, including Start Building, Apply, Contact, Send Demo, and llms.txt.",
+      "Footer program, resource, and legal links are recorded with safety, privacy, or application evidence.",
+    ],
+    remainingExternalGates: [
+      "External Google Form submission must be completed by the operator after demo recording.",
+      "Enterprise partnership and co-branding terms require Swiggy review.",
+      "Legal policy interpretation must be confirmed before production launch.",
+    ],
+  };
+}

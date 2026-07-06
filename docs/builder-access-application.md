@@ -57,19 +57,62 @@ Scale-up after staging:
 ## Technical Readiness
 
 - OAuth 2.1 PKCE flow with HTTPS redirect URI in production.
+- Credential Cockpit that previews Dynamic Client Registration at `/auth/register`, audits localhost vs HTTPS redirect URIs, tracks `mcp:tools mcp:resources mcp:prompts`, and labels external gates.
 - Separate MCP clients for Food, Instamart, and Dineout.
 - MCP Gateway that keeps mock demos local, fails closed without staging auth, and routes to Swiggy streamable HTTP once OAuth provides a bearer token.
 - Local 35-tool MCP coverage map aligned to Food, Instamart, and Dineout reference docs.
+- Local MCP JSON-RPC mock supports `tools/call`, `resources/list`, `resources/read`, `prompts/list`, and `prompts/get` so all requested scopes have executable review evidence.
+- Swiggy Website Atlas that maps the Builders global header, docs subnav, footer groups, production access page, launch blog, page modules, CTAs, and legal/resource links to MealPilot artifacts.
+- Builder Intake Command Center that turns all 11 signup, apply, demo, contact, docs, and footer CTA paths into next actions, form values, demo storyboard steps, copy-ready drafts, and explicit gates for operator submission or Swiggy approval.
+- MCP Tool Lab that probes all 35 official tools with JSON-RPC samples, response previews, route classes, safety gates, retry policies, and innovation use cases.
+- Tool Contract Matrix for all 35 official tools with parameter contracts, response envelopes, confirmation gates, retry policies, error buckets, and local fixture previews.
+- State Orchestrator for multi-turn cart truth, Food restaurant switches, Instamart address switches, Dineout slot refreshes, abandoned-cart recovery, and voice/chat response contracts.
+- MCP Capability Registry that covers `mcp:tools`, `mcp:resources`, `mcp:prompts`, OAuth metadata, widget registry, static metadata, local prompt contracts, and external Swiggy gates.
+- Carbon-inspired premium portal design language with a custom MealPilot logo, sticky header, mobile navigation, footer, visible CTA feedback, mobile/tablet/desktop grids, and a documented CTA contract in `docs/design-language.md`.
+- Brand Compliance Kit for Powered by Swiggy attribution, no false endorsement, co-branding asset gates, #FF5200 usage, and surface placement review.
+- Data Governance Center for DPDP role mapping, India/Singapore residency, Swiggy tool-call PII inventory, DSR routing, 90-day audit-log retention, token redaction, security contacts, and signed-manifest watch.
+- Swiggy Journey Compiler that converts official Food, Instamart, Dineout, combined, and premium MealPilot flows into optimized call plans with all 35 tools indexed.
+- Swiggy Access Dossier that maps production-access form fields, review checks, ground rules, legal readiness, developer/enterprise tracks, proof links, and remaining manual inputs.
+- Premium Use Case Studio with ten differentiated Swiggy-native product playbooks and all 35 official tools assigned to premium route plans.
+- Premium Concierge Itinerary that turns official Swiggy recipe routes into lunch, pantry reset, Dineout evening, dessert reminder, and recovery slots with full 35-tool coverage and separate confirmation gates.
+- Staging Cutover Rehearsal with real MCP first-call probes, OAuth bearer-token gates, fail-closed routing, retry branches, support packet fields, and 48-hour green promotion checks.
+- Staging Certification Matrix with all 35 tools assigned to credentialed smoke waves, OAuth/DCR checks, 48-hour soak, telemetry requirements, rollback, and production promotion gates.
 - Chat and voice surface response contracts to avoid long spoken lists or exposed internal IDs.
 - Cart preflight checks for budget, location label, payment scope, item readiness, confirmation status, and substitutions.
 - MCP replay transcripts that expose the JSON-RPC `tools/call` shape for local review and staging migration.
+- Staging Transcript Export that packages one session as JSONL, Markdown replay, redaction manifest, support envelope, and certification-wave evidence.
 - Evaluation Lab that runs multi-scenario checks for persona breadth, city coverage, voice-safe output, budget fit, confirmation locks, preflight safety, and PII minimization.
 - Submission package generator for access-form fields, application links, and manual-input gaps.
+- Submission Console for developer/enterprise form targets, official access requirements, prepared field values, proof attachments, packet order, demo-video gate, runbook steps, blockers, and handoff drafts.
+- FAQ & Policy Center for homepage, developer, enterprise, access-guideline, footer-resource, allowed/restricted/prohibited, operating-principle, legal, and support-contact evidence.
+- Growth Partnership Center for get-noticed, hiring, co-branding, direct-support, co-marketing, analytics, strategic guidance, launch experiments, metrics, proof assets, and external partner asks.
+- Channel & Multimodal Studio for voice, auto-restock, group ordering, dietary planner, reservation, and screenshot-to-order build lanes from the developer page, including local route-plan packets, response rules, confirmation gates, and telemetry contracts.
+- Nutrition & Budget Intelligence for protein-per-rupee planning, COD-safe Food coupons, Instamart pantry gaps, group budgets, Dineout balance, and nutrition-estimate safety controls.
+- Household Preference Graph for consented Food active orders, Instamart go-to items/order history, Dineout saved-location memory, household weights, pantry forecasts, and privacy-safe personalization.
+- Guest Collaboration & Calendar Center for guest votes, date night, guests-at-home, office lunch, weekday reset, recovery meal, calendar reminders, share links, voice briefs, and Slack/Teams handoff gates.
+- Luxury Experience Workspace for premium reservation, Food cart, Instamart basket, combined evening, and recovery review surfaces with all 35 Swiggy tools, widget fallbacks, voice contracts, telemetry, and confirmation gates.
+- Reviewer Artifact Vault for proof links, OpenAPI, smoke commands, screenshot targets, demo-video checklist, logs, traces, redaction rules, support context, and Swiggy handoff copy.
+- Visual QA Center for desktop/tablet/mobile screenshot targets, selector manifests, artifact paths, no-overlap and text-fit rules, widget fallback checks, mobile layout checks, redaction visibility, and automation gates.
+- Resource & Prompt Studio for Food, Instamart, and Dineout `mcp:resources` and `mcp:prompts` smoke evidence.
+- Production Launch Bundle that combines artifact links, verification commands, access application fields, go-live gates, manual inputs, and the draft `builders@swiggy.in` handoff email.
 - Widget contract generator for Food, Instamart, and Dineout surfaces with iframe sizing, sandbox policy, origin verification, and semantic fallbacks.
+- Widget Runtime Center for iframe sandboxing, origin-verified postMessage handlers, activation checks, render contracts, voice-safe fallbacks, opt-in headers, and hosted-widget external gates.
+- Commercial Action Guard for Food `place_food_order`, Instamart `checkout`, Dineout `book_table`, and combined journey confirmation locks, non-blind retry drills, redacted telemetry, and support packet context.
 - Rate-limit plan for per-user, write-tool, client-day, and tracking-poll budgets.
+- MCP Backpressure Governor for current Swiggy v1.0 upstream-shedder handling, future MCP-layer 429/`Retry-After`/`X-RateLimit-*` readiness, token buckets, voice burst shaping, tracking cadence, and background-job gates.
 - Version/deprecation monitor for v1 route pinning, 180-day deprecation windows, and `_meta.swiggy.deprecation` alerts.
-- DPDP-oriented compliance evidence for consent, minimization, deletion, audit logging, and no model-training use of Swiggy-originated data.
+- DPDP-oriented compliance evidence for consent, minimization, deletion, audit logging, no model-training use of Swiggy-originated data, local DSR endpoints, and Swiggy-originated DSR routing.
 - Executable Resilience Lab for 5xx retry, 429 Retry-After, 401 reauth, non-idempotent check-then-retry, and deprecation metadata drills.
+- Trace Monitor for MCP spans, request IDs, support log fields, and redaction evidence.
+- Runtime Telemetry ledger for live API/MCP request logs, status classes, hashed user context, session IDs, request IDs, and redaction checks.
+- Audit Ledger Center for redacted Swiggy session/tool events, support correlation, retention posture, DSR routing, and packet fields.
+- Swiggy Route Optimizer for cache policies, call savings, retry classes, confirmation gates, and staging assertions.
+- Support Bridge for official `report_error` calls across Food, Instamart, and Dineout, including toolContext identifiers, SLA routing, redaction rules, and escalation checklist.
+- SLO Incident Command Center for 99.9% uptime targets, read/write/commercial latency bands, status-page fallback, S0-S3 incident comms, 72-hour maintenance notice, and remediation evidence.
+- Error Intelligence catalogue for the current Swiggy failure envelope, message/HTTP buckets, planned symbolic codes, domain failures, retry limits, observability hooks, and user-safe recovery copy.
+- Swiggy Docs Coverage audit for all 69 `llms.txt` pages, including consumer AI-client and enterprise delegated-auth expansion gates.
+- Swiggy Upstream Watch for `llms.txt`, `llms-full.txt`, changelog v1.0 limitations, v1.1/v1.2/v2 roadmap, signed manifests, and update action queues.
+- AI Client Connect Kit for Claude Desktop, ChatGPT, Cursor, VS Code, Windsurf, generic MCP clients, coding-agent rules, SDK auth modes, and enterprise delegated-auth lifecycle gates.
 - OpenAPI 3.1 contract, readiness probe, request IDs, and security headers.
 - GitHub Actions CI, Dockerfile, Render blueprint, and production smoke verification script.
 - Optional file-backed persistence with versioned snapshots, restore, compaction, retention, and storage diagnostics.
@@ -77,7 +120,7 @@ Scale-up after staging:
 - Safe retry policy: no blind retries for non-idempotent order or booking actions.
 - 401 handling: re-run OAuth once and refresh all MCP clients.
 - 429 handling: backoff, degrade gracefully, and respect Swiggy rate limits.
-- OpenTelemetry traces with Swiggy session IDs treated as support identifiers only.
+- `/api/observability/traces` produces span-level trace evidence now; OpenTelemetry export can be added without changing span names once the deployment platform supports it.
 - Support report generator for `builders@swiggy.in` with session IDs and timestamps.
 
 ## Security And Privacy Summary
@@ -98,14 +141,29 @@ The application will include a 2-3 minute Loom or unlisted YouTube demo showing:
 3. User asks for a weekly meal plan under budget.
 4. Agent composes Food, Instamart, and Dineout recommendations.
 5. Cart and booking actions pause for explicit confirmation.
-6. Launch Center shows 35-tool coverage, MCP Gateway cutover, chat/voice behavior, go-live gates, and observability metrics.
-7. Demo Studio shows cart preflight, MCP replay, and submission readiness.
-8. Production Evidence shows widgets, rate limits, versioning, compliance, resilience drills, Evaluation Lab, and reviewer proof score.
-9. Show `/api/ready`, `/api/openapi.json`, and `npm run verify:production`.
+6. Launch Center shows 35-tool coverage, Journey Compiler, Access Dossier, Builder Intake, FAQ & Policy Center, Growth Partnership Center, Channel & Multimodal Studio, Nutrition & Budget Intelligence, Household Preference Graph, Guest Collaboration & Calendar Center, Luxury Experience Workspace, Reviewer Artifact Vault, Visual QA Center, Premium Use Case Studio, Premium Concierge Itinerary, Staging Cutover Rehearsal, Staging Certification Matrix, Brand Compliance Kit, Capability Registry, Resource & Prompt Studio, Tool Contract Matrix, Scenario Runner, State Orchestrator, Widget Runtime Center, Commercial Action Guard, Website Atlas, Docs Coverage, Upstream Watch, AI Client Connect Kit, Tool Lab, MCP Gateway cutover, OAuth Status, Credential Cockpit, Delegated Auth Center, chat/voice behavior, go-live gates, and observability metrics.
+7. Demo Studio shows cart preflight, MCP replay, Staging Transcript Export, Submission Console, and submission readiness.
+8. Production Evidence shows widgets, rate limits, Traffic Readiness, MCP Backpressure Governor, SLO Command, Data Governance, versioning, compliance, Production Launch Bundle, trace monitor, runtime telemetry, audit ledger, route optimizer, resilience drills, Evaluation Lab, and reviewer proof score.
+9. Show `/api/ready`, `/api/openapi.json`, `/api/swiggy-website-atlas`, `/api/swiggy-builder-intake`, `/api/swiggy-faq-policy`, `/api/swiggy-growth-partnership`, `/api/channel-multimodal-studio`, `/api/nutrition-budget-intelligence`, `/api/household-preference-graph`, `/api/guest-collaboration-calendar`, `/api/luxury-experience-workspace`, `/api/reviewer-artifact-vault`, `/api/visual-qa-center`, `/api/submission-console`, `/api/swiggy-upstream-watch`, `/api/mcp/tool-lab`, `/api/mcp/tool-contract-matrix`, `/api/mcp/scenario-runner`, `/api/mcp/state-orchestrator`, `/api/mcp/commercial-action-guard`, `/api/mcp/backpressure-governor`, `/api/mcp/resource-prompt-studio`, `/api/mcp/widget-runtime`, `/api/mcp/staging-cutover`, `/api/swiggy-journey-compiler`, `/api/swiggy-access-dossier`, `/api/premium-use-case-studio`, `/api/premium-concierge-itinerary`, `/api/staging-certification-matrix`, `/api/auth/swiggy/status`, `/api/credential-onboarding`, `/api/enterprise-delegated-auth`, `/api/audit-ledger`, and `npm run verify:production`.
 10. Show storage diagnostics and snapshot export in `/api/storage/status` and `/api/storage/export`.
-11. Show `/api/resilience` with the order-placement recovery runbook.
-12. Show `/api/evaluation-lab` with persona QA across chat and voice surfaces.
-13. Logs show trace IDs, no raw PII, and safe error handling.
+11. Show `/api/observability/traces` with trace IDs, no raw PII, and safe log fields.
+12. Show `/api/telemetry/runtime` with live request IDs, session IDs, redaction fields, and MCP event coverage.
+13. Show `/api/audit-ledger` with redacted audit events, support correlation, retention, DSR routing, and Swiggy support packet fields.
+14. Show `/api/submission-console` with developer/enterprise targets, attachments, runbook steps, blockers, and drafts.
+15. Show `/api/swiggy-route-optimizer` with call-saving routes and confirmation gates.
+16. Show `/api/mcp/capability-registry` with tools, resources, prompts, metadata, widgets, and external gates.
+17. Show `/api/mcp/resource-prompt-studio` with all six resource reads, all six prompt samples, and twelve JSON-RPC smoke requests.
+18. Show `/api/support/bridge` with Food, Instamart, and Dineout `report_error` payloads.
+19. Show `/api/swiggy-docs-coverage` with 69 docs pages mapped to evidence and external gates.
+20. Show `/api/ai-client-connect-kit` with six client configs, coding-agent rules, SDK auth modes, and delegated-auth gates.
+21. Show `/api/slo-incident-command` with uptime targets, latency classes, status fallback, maintenance windows, and S0-S3 comms.
+22. Show `/api/data-governance-center` with DPDP roles, data flows, DSR routing, retention, security contacts, and signed-manifest watch.
+23. Show `/api/enterprise-delegated-auth` with per-user PKCE, token lifecycle, logout, redirect schemes, troubleshooting, architecture review, and platform-operator gates.
+24. Show `/api/error-intelligence` with Swiggy error buckets, planned codes, and domain failures.
+25. Show `/api/resilience` with the order-placement recovery runbook.
+26. Show `/api/evaluation-lab` with persona QA across chat and voice surfaces.
+27. Show `/api/traffic-readiness-plan` with expected volume, lane budgets, Retry-After handling, seven-day notice, capacity email, and staged rollout.
+28. Show `/api/production-launch-bundle` with proof artifacts, verification commands, external Swiggy gates, and the review email draft.
 
 ## Primary Technical Contact
 
@@ -117,3 +175,38 @@ Email: add primary engineering email before submission.
 
 - GitHub: https://github.com/Farhankhan0128/MealPilot
 - Demo video: add Loom, Drive, or unlisted YouTube link before submission.
+- Builder Intake Command Center: `/api/swiggy-builder-intake`
+- FAQ & Policy Center: `/api/swiggy-faq-policy`
+- Growth Partnership Center: `/api/swiggy-growth-partnership`
+- Channel & Multimodal Studio: `/api/channel-multimodal-studio`
+- Nutrition & Budget Intelligence: `/api/nutrition-budget-intelligence`
+- Household Preference Graph: `/api/household-preference-graph`
+- Guest Collaboration & Calendar Center: `/api/guest-collaboration-calendar`
+- Luxury Experience Workspace: `/api/luxury-experience-workspace`
+- Reviewer Artifact Vault: `/api/reviewer-artifact-vault`
+- Visual QA Center: `/api/visual-qa-center`
+- Submission Console: `/api/submission-console`
+- MCP Capability Registry: `/api/mcp/capability-registry`
+- Resource & Prompt Studio: `/api/mcp/resource-prompt-studio`
+- Swiggy Docs Coverage: `/api/swiggy-docs-coverage`
+- Swiggy Upstream Watch: `/api/swiggy-upstream-watch`
+- AI Client Connect Kit: `/api/ai-client-connect-kit`
+- Tool Contract Matrix: `/api/mcp/tool-contract-matrix`
+- Scenario Runner: `/api/mcp/scenario-runner`
+- State Orchestrator: `/api/mcp/state-orchestrator`
+- Commercial Action Guard: `/api/mcp/commercial-action-guard`
+- Brand Compliance Kit: `/api/brand-compliance-kit`
+- Data Governance Center: `/api/data-governance-center`
+- Enterprise Delegated Auth Center: `/api/enterprise-delegated-auth`
+- Swiggy OAuth Status: `/api/auth/swiggy/status`
+- Swiggy Journey Compiler: `/api/swiggy-journey-compiler`
+- Swiggy Access Dossier: `/api/swiggy-access-dossier`
+- Premium Use Case Studio: `/api/premium-use-case-studio`
+- Premium Concierge Itinerary: `/api/premium-concierge-itinerary`
+- Staging Certification Matrix: `/api/staging-certification-matrix`
+- Staging Transcript Export: `/api/sessions/:sessionId/staging-transcript`
+- Traffic Readiness Plan: `/api/traffic-readiness-plan`
+- SLO Incident Command Center: `/api/slo-incident-command`
+- Support Bridge: `/api/support/bridge`
+- Error Intelligence: `/api/error-intelligence`
+- Production Launch Bundle: `/api/production-launch-bundle`

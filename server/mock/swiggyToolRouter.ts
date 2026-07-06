@@ -1,14 +1,247 @@
 import type { SwiggyServer, UserPlanningRequest } from "../../src/domain/types.js";
 import { createMockSwiggyClient } from "../../src/integrations/swiggy/mockClient.js";
 
-export interface JsonRpcRequest {
-  jsonrpc: "2.0";
-  id: string | number;
-  method: "tools/call";
-  params: {
-    name: string;
-    arguments?: Record<string, unknown>;
+export type JsonRpcRequest =
+  | {
+      jsonrpc: "2.0";
+      id: string | number;
+      method: "tools/call";
+      params: {
+        name: string;
+        arguments?: Record<string, unknown>;
+      };
+    }
+  | {
+      jsonrpc: "2.0";
+      id: string | number;
+      method: "resources/list";
+      params?: Record<string, never>;
+    }
+  | {
+      jsonrpc: "2.0";
+      id: string | number;
+      method: "resources/read";
+      params: {
+        uri: string;
+      };
+    }
+  | {
+      jsonrpc: "2.0";
+      id: string | number;
+      method: "prompts/list";
+      params?: Record<string, never>;
+    }
+  | {
+      jsonrpc: "2.0";
+      id: string | number;
+      method: "prompts/get";
+      params: {
+        name: string;
+        arguments?: Record<string, string | number | boolean>;
+      };
+    };
+
+interface MockResource {
+  uri: string;
+  name: string;
+  description: string;
+  mimeType: "application/json" | "text/markdown";
+}
+
+interface MockPrompt {
+  name: string;
+  title: string;
+  description: string;
+  arguments: Array<{ name: string; description: string; required: boolean }>;
+}
+
+const serverLabels: Record<SwiggyServer, string> = {
+  food: "Food",
+  instamart: "Instamart",
+  dineout: "Dineout",
+};
+
+const resourcesByServer: Record<SwiggyServer, MockResource[]> = {
+  food: [
+    {
+      uri: "swiggy://food/widgets",
+      name: "Food widget registry",
+      description: "Restaurant card, cart widget, offer, and tracking widget metadata for Food journeys.",
+      mimeType: "application/json",
+    },
+    {
+      uri: "swiggy://food/static-metadata",
+      name: "Food static metadata",
+      description: "Food server endpoint, route classes, confirmation rules, retry posture, and support identifiers.",
+      mimeType: "application/json",
+    },
+  ],
+  instamart: [
+    {
+      uri: "swiggy://instamart/widgets",
+      name: "Instamart widget registry",
+      description: "Product card, cart widget, go-to item, and delivery tracking widget metadata.",
+      mimeType: "application/json",
+    },
+    {
+      uri: "swiggy://instamart/static-metadata",
+      name: "Instamart static metadata",
+      description: "Instamart endpoint, address-scoped cache rules, checkout safety, and support identifiers.",
+      mimeType: "application/json",
+    },
+  ],
+  dineout: [
+    {
+      uri: "swiggy://dineout/widgets",
+      name: "Dineout widget registry",
+      description: "Restaurant details, slot picker, free-booking cart, and booking status widget metadata.",
+      mimeType: "application/json",
+    },
+    {
+      uri: "swiggy://dineout/static-metadata",
+      name: "Dineout static metadata",
+      description: "Dineout endpoint, slot/cart safety, free booking confirmation, and support identifiers.",
+      mimeType: "application/json",
+    },
+  ],
+};
+
+const promptsByServer: Record<SwiggyServer, MockPrompt[]> = {
+  food: [
+    {
+      name: "food_lunch_concierge",
+      title: "Food lunch concierge",
+      description: "Plan a budget-aware lunch order using Food discovery, menu, cart, coupons, and confirmation gates.",
+      arguments: [
+        { name: "city", description: "User city or serviceable area.", required: true },
+        { name: "diet", description: "Dietary preference and exclusions.", required: true },
+      ],
+    },
+    {
+      name: "food_recovery_status_check",
+      title: "Food non-blind retry recovery",
+      description: "Recover from a place_food_order timeout by checking orders before retrying.",
+      arguments: [{ name: "sessionId", description: "MealPilot session id for support correlation.", required: true }],
+    },
+  ],
+  instamart: [
+    {
+      name: "instamart_pantry_restock",
+      title: "Instamart pantry restock",
+      description: "Use go-to items and search_products to replenish missing pantry ingredients.",
+      arguments: [
+        { name: "addressId", description: "Serviceability address id.", required: true },
+        { name: "budget", description: "Maximum grocery basket budget.", required: true },
+      ],
+    },
+    {
+      name: "instamart_checkout_safety",
+      title: "Instamart checkout safety",
+      description: "Refresh cart truth and confirm payment/address before checkout.",
+      arguments: [{ name: "cartId", description: "Prepared Instamart cart id.", required: true }],
+    },
+  ],
+  dineout: [
+    {
+      name: "dineout_evening_planner",
+      title: "Dineout evening planner",
+      description: "Find a restaurant, inspect details, choose slots, create cart, and book after explicit confirmation.",
+      arguments: [
+        { name: "guests", description: "Party size.", required: true },
+        { name: "date", description: "Requested reservation date.", required: true },
+      ],
+    },
+    {
+      name: "dineout_booking_recovery",
+      title: "Dineout booking recovery",
+      description: "Recover from a book_table timeout by checking booking status before retrying.",
+      arguments: [{ name: "bookingId", description: "Known or suspected booking id.", required: false }],
+    },
+  ],
+};
+
+function resourcePayload(server: SwiggyServer, resource: MockResource) {
+  const label = serverLabels[server];
+  const isWidget = resource.uri.endsWith("/widgets");
+  return {
+    server,
+    label,
+    source: resource.uri,
+    scope: "mcp:resources",
+    generatedBy: "MealPilot local MCP mock",
+    registryKind: isWidget ? "widget_registry" : "static_metadata",
+    endpoint: server === "instamart" ? "POST mcp.swiggy.com/im" : `POST mcp.swiggy.com/${server}`,
+    capabilities: isWidget
+      ? ["semantic fallback", "iframe sandbox policy", "origin verification", "postMessage events"]
+      : ["route class metadata", "retry guidance", "confirmation gates", "support identifiers"],
   };
+}
+
+function listResources(server: SwiggyServer) {
+  return { resources: resourcesByServer[server] };
+}
+
+function readResource(server: SwiggyServer, uri: string) {
+  const resource = resourcesByServer[server].find((item) => item.uri === uri);
+  if (!resource) {
+    return {
+      error: {
+        code: -32004,
+        message: `Resource ${uri} is not available for ${server}.`,
+      },
+    };
+  }
+
+  return {
+    contents: [
+      {
+        uri: resource.uri,
+        mimeType: resource.mimeType,
+        text: JSON.stringify(resourcePayload(server, resource), null, 2),
+      },
+    ],
+  };
+}
+
+function listPrompts(server: SwiggyServer) {
+  return { prompts: promptsByServer[server] };
+}
+
+function promptMessages(server: SwiggyServer, prompt: MockPrompt, args: Record<string, string | number | boolean> = {}) {
+  const label = serverLabels[server];
+  return {
+    description: prompt.description,
+    messages: [
+      {
+        role: "system",
+        content: {
+          type: "text",
+          text: `You are MealPilot's ${label} specialist. Use Swiggy MCP ${server} tools only for this server and keep commercial actions confirmation-gated.`,
+        },
+      },
+      {
+        role: "user",
+        content: {
+          type: "text",
+          text: `Apply ${prompt.title} with arguments ${JSON.stringify(args)}. Include totals, status identifiers, and any support-safe context.`,
+        },
+      },
+    ],
+  };
+}
+
+function getPrompt(server: SwiggyServer, name: string, args: Record<string, string | number | boolean> = {}) {
+  const prompt = promptsByServer[server].find((item) => item.name === name);
+  if (!prompt) {
+    return {
+      error: {
+        code: -32005,
+        message: `Prompt ${name} is not available for ${server}.`,
+      },
+    };
+  }
+
+  return promptMessages(server, prompt, args);
 }
 
 const client = createMockSwiggyClient();
@@ -194,17 +427,62 @@ export async function callMockSwiggyTool(server: SwiggyServer, tool: string, arg
 }
 
 export async function handleMockJsonRpc(server: SwiggyServer, request: JsonRpcRequest) {
-  if (request.jsonrpc !== "2.0" || request.method !== "tools/call") {
+  if (request.jsonrpc !== "2.0") {
     return {
       jsonrpc: "2.0",
       id: request.id,
-      error: { code: -32600, message: "Only MCP tools/call is supported in the local mock." },
+      error: { code: -32600, message: "Only JSON-RPC 2.0 requests are supported in the local mock." },
     };
   }
 
+  const method = (request as { method?: string }).method;
+
+  if (method === "resources/list") {
+    return {
+      jsonrpc: "2.0",
+      id: request.id,
+      result: listResources(server),
+    };
+  }
+
+  if (method === "resources/read") {
+    const resourceRequest = request as Extract<JsonRpcRequest, { method: "resources/read" }>;
+    return {
+      jsonrpc: "2.0",
+      id: request.id,
+      result: readResource(server, resourceRequest.params.uri),
+    };
+  }
+
+  if (method === "prompts/list") {
+    return {
+      jsonrpc: "2.0",
+      id: request.id,
+      result: listPrompts(server),
+    };
+  }
+
+  if (method === "prompts/get") {
+    const promptRequest = request as Extract<JsonRpcRequest, { method: "prompts/get" }>;
+    return {
+      jsonrpc: "2.0",
+      id: request.id,
+      result: getPrompt(server, promptRequest.params.name, promptRequest.params.arguments),
+    };
+  }
+
+  if (method !== "tools/call") {
+    return {
+      jsonrpc: "2.0",
+      id: request.id,
+      error: { code: -32601, message: `MCP method ${method ?? "unknown"} is not supported in the local mock.` },
+    };
+  }
+
+  const toolRequest = request as Extract<JsonRpcRequest, { method: "tools/call" }>;
   return {
     jsonrpc: "2.0",
     id: request.id,
-    result: await callMockSwiggyTool(server, request.params.name, request.params.arguments),
+    result: await callMockSwiggyTool(server, toolRequest.params.name, toolRequest.params.arguments),
   };
 }

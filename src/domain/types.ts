@@ -171,6 +171,1610 @@ export interface McpServerCoverage {
   tools: McpToolCoverage[];
 }
 
+export interface McpToolProbe {
+  id: string;
+  server: SwiggyServer;
+  endpoint: string;
+  tool: string;
+  stage: string;
+  status: "pass" | "guarded" | "blocked";
+  routeClass: "read" | "cart_mutation" | "coupon" | "commercial_action" | "tracking" | "support";
+  safetyGate: string;
+  retryPolicy: string;
+  productUseCase: string;
+  request: {
+    jsonrpc: "2.0";
+    id: string;
+    method: "tools/call";
+    params: {
+      name: string;
+      arguments: Record<string, unknown>;
+    };
+  };
+  responsePreview: Record<string, unknown>;
+}
+
+export interface McpToolLabServerSummary {
+  server: SwiggyServer;
+  totalTools: number;
+  callableTools: number;
+  guardedTools: number;
+  commercialTools: number;
+}
+
+export interface McpToolLabReport {
+  generatedAt: string;
+  score: number;
+  totalTools: number;
+  callableTools: number;
+  guardedTools: number;
+  commercialTools: number;
+  servers: McpToolLabServerSummary[];
+  probes: McpToolProbe[];
+  routeAssertions: string[];
+  innovationUseCases: Array<{
+    id: string;
+    title: string;
+    servers: SwiggyServer[];
+    toolchain: string[];
+    productSurface: string;
+    nextBuild: string;
+  }>;
+}
+
+export type SwiggyToolContractBehavior = "read" | "mutating" | "commercial" | "support";
+export type SwiggyToolContractParameterSource =
+  | "user_input"
+  | "saved_swiggy_state"
+  | "previous_tool"
+  | "system_default"
+  | "operator_context";
+
+export interface SwiggyToolContractParameter {
+  name: string;
+  type: "string" | "number" | "boolean" | "array" | "object";
+  required: boolean;
+  source: SwiggyToolContractParameterSource;
+  description: string;
+  privacy: "none" | "location" | "account" | "order" | "support";
+}
+
+export interface SwiggyToolContract {
+  id: string;
+  server: SwiggyServer;
+  endpoint: string;
+  tool: string;
+  stage: string;
+  officialReference: string;
+  behavior: SwiggyToolContractBehavior;
+  routeClass: McpToolProbe["routeClass"];
+  parameters: SwiggyToolContractParameter[];
+  requiredParameterCount: number;
+  responseEnvelope: {
+    successShape: string;
+    failureShape: string;
+    messageContract: string;
+  };
+  preconditions: string[];
+  confirmationGate: string;
+  retryPolicy: string;
+  errorBuckets: string[];
+  fixture: {
+    requestId: string;
+    sampleArguments: Record<string, unknown>;
+    responsePreview: Record<string, unknown>;
+  };
+  evidenceLinks: string[];
+}
+
+export interface SwiggyToolContractServerSummary {
+  server: SwiggyServer;
+  endpoint: string;
+  totalTools: number;
+  mutatingTools: number;
+  commercialTools: number;
+  requiredParameters: number;
+}
+
+export interface SwiggyToolContractMatrix {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  totalTools: number;
+  totalParameters: number;
+  servers: SwiggyToolContractServerSummary[];
+  contracts: SwiggyToolContract[];
+  commonErrorEnvelope: {
+    current: string[];
+    transportSignals: string[];
+    plannedCoreCodes: string[];
+    plannedDomainCodes: Record<SwiggyServer, string[]>;
+  };
+  assertions: string[];
+  externalGates: string[];
+}
+
+export type SwiggyScenarioStepStatus = "pass" | "confirmation_gate" | "support_probe" | "external_gate";
+
+export interface SwiggyScenarioStep {
+  sequence: number;
+  server: SwiggyServer;
+  tool: string;
+  label: string;
+  status: SwiggyScenarioStepStatus;
+  confirmationRequired: boolean;
+  retryClass: "safe_retry" | "same_arguments_only" | "non_blind_status_check" | "support_once";
+  request: {
+    jsonrpc: "2.0";
+    id: string;
+    method: "tools/call";
+    params: {
+      name: string;
+      arguments: Record<string, unknown>;
+    };
+  };
+  responsePreview: Record<string, unknown>;
+  assertion: string;
+  durationMs: number;
+}
+
+export interface SwiggyScenarioRun {
+  id: string;
+  title: string;
+  officialSource: string;
+  mode: "mock" | "staging" | "production";
+  servers: SwiggyServer[];
+  objective: string;
+  steps: SwiggyScenarioStep[];
+  totalSteps: number;
+  passedSteps: number;
+  gatedSteps: number;
+  toolsCovered: string[];
+  routeAssertions: string[];
+}
+
+export interface SwiggyScenarioRunnerReport {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  totalScenarios: number;
+  totalSteps: number;
+  passedSteps: number;
+  gatedSteps: number;
+  totalOfficialTools: number;
+  uniqueToolsCovered: number;
+  scenarios: SwiggyScenarioRun[];
+  toolCoverage: Array<{ server: SwiggyServer; officialTools: number; coveredTools: number; coverage: string }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
+export type SwiggyStateGuardStatus = "ready" | "needs_confirmation" | "external_gate";
+
+export interface SwiggyServerStateModel {
+  server: SwiggyServer;
+  authoritativeReads: string[];
+  mutations: string[];
+  commercialAction: string;
+  switchGuard: string;
+  staleStateRecovery: string;
+  userVisiblePromise: string;
+}
+
+export interface SwiggyTurnBoundaryGuard {
+  sequence: number;
+  server: SwiggyServer;
+  turn: string;
+  userIntent: string;
+  requiredRefreshTool: string;
+  nextTool: string;
+  guardrail: string;
+  status: SwiggyStateGuardStatus;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyStateScenario {
+  id: string;
+  title: string;
+  officialPattern: string;
+  servers: SwiggyServer[];
+  userStory: string;
+  turnBoundaries: SwiggyTurnBoundaryGuard[];
+  unsafeMemoryRejected: boolean;
+  confirmationCopy: {
+    chat: string;
+    voice: string;
+  };
+  recoveryPolicy: string;
+}
+
+export interface SwiggySurfaceContract {
+  surface: "chat" | "voice";
+  maxPresentedItems: number;
+  responseShape: string;
+  forbiddenContent: string[];
+  preferredTools: string[];
+  confirmationRule: string;
+  widgetPolicy: string;
+}
+
+export interface SwiggyStateOrchestratorReport {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  totalScenarios: number;
+  totalTurnBoundaries: number;
+  refreshBeforeMutationCount: number;
+  confirmationGateCount: number;
+  serverModels: SwiggyServerStateModel[];
+  scenarios: SwiggyStateScenario[];
+  surfaceContracts: SwiggySurfaceContract[];
+  assertions: string[];
+  externalGates: string[];
+}
+
+export type McpCapabilityKind = "tools" | "resources" | "prompts" | "metadata" | "widgets" | "auth";
+export type McpCapabilityStatus = "implemented" | "mocked" | "external_gate";
+
+export interface McpCapabilityGroup {
+  id: string;
+  label: string;
+  kind: McpCapabilityKind;
+  scope: "mcp:tools" | "mcp:resources" | "mcp:prompts" | "oauth" | "public";
+  status: McpCapabilityStatus;
+  officialSignal: string;
+  mealPilotSurface: string;
+  evidenceLinks: string[];
+}
+
+export interface McpResourceRegistryItem {
+  id: string;
+  resourceType: "widget_registry" | "static_metadata" | "oauth_metadata" | "llm_index";
+  scope: "mcp:resources" | "public" | "oauth";
+  status: McpCapabilityStatus;
+  officialSignal: string;
+  mealPilotImplementation: string;
+  evidenceLink: string;
+}
+
+export interface McpPromptRegistryItem {
+  id: string;
+  promptType: "agent_template" | "safety_template" | "surface_template" | "support_template";
+  scope: "mcp:prompts" | "local";
+  status: McpCapabilityStatus;
+  officialSignal: string;
+  mealPilotImplementation: string;
+  evidenceLink: string;
+}
+
+export interface McpCapabilityRegistry {
+  generatedAt: string;
+  score: number;
+  scopes: string[];
+  transport: "local_mock" | "swiggy_streamable_http";
+  serverEndpoints: Array<{ server: SwiggyServer; endpoint: string; tools: number }>;
+  capabilityGroups: McpCapabilityGroup[];
+  resources: McpResourceRegistryItem[];
+  prompts: McpPromptRegistryItem[];
+  metadata: Array<{ id: string; url: string; status: "documented" | "wired" | "external"; purpose: string }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
+export type McpResourcePromptStatus = "ready" | "external_gate";
+
+export interface McpResourcePromptServerSummary {
+  server: SwiggyServer;
+  endpoint: string;
+  resources: number;
+  prompts: number;
+  status: McpResourcePromptStatus;
+}
+
+export interface McpResourceStudioItem {
+  id: string;
+  server: SwiggyServer;
+  uri: string;
+  name: string;
+  resourceType: "widget_registry" | "static_metadata";
+  mimeType: "application/json";
+  sampleRead: Record<string, unknown>;
+  returnedByTools: string[];
+  mealPilotUse: string;
+  status: McpResourcePromptStatus;
+  evidenceLinks: string[];
+}
+
+export interface McpPromptStudioArgument {
+  name: string;
+  required: boolean;
+  example: string;
+}
+
+export interface McpPromptStudioMessage {
+  role: "system" | "user";
+  text: string;
+}
+
+export interface McpPromptStudioItem {
+  id: string;
+  server: SwiggyServer;
+  name: string;
+  title: string;
+  promptType: "planner" | "recovery" | "safety" | "support";
+  arguments: McpPromptStudioArgument[];
+  sampleMessages: McpPromptStudioMessage[];
+  mealPilotUse: string;
+  status: McpResourcePromptStatus;
+  evidenceLinks: string[];
+}
+
+export interface McpResourcePromptSmokeRequest {
+  id: string;
+  server: SwiggyServer;
+  method: "resources/list" | "resources/read" | "prompts/list" | "prompts/get";
+  params: Record<string, unknown>;
+  evidenceLinks: string[];
+}
+
+export interface McpResourcePromptStudio {
+  generatedAt: string;
+  score: number;
+  totalResources: number;
+  totalPrompts: number;
+  readyResources: number;
+  readyPrompts: number;
+  serverSummaries: McpResourcePromptServerSummary[];
+  resources: McpResourceStudioItem[];
+  prompts: McpPromptStudioItem[];
+  smokeRequests: McpResourcePromptSmokeRequest[];
+  assertions: string[];
+  externalGates: string[];
+}
+
+export interface SwiggyBuilderPageCoverage {
+  id: string;
+  section: "home" | "start" | "build" | "reference" | "operate" | "blog" | "footer";
+  title: string;
+  url: string;
+  purpose: string;
+  mealPilotCoverage: string;
+  implementationStatus: "implemented" | "documented" | "requires_credentials";
+}
+
+export interface SwiggyBuilderCtaCoverage {
+  id: string;
+  label: string;
+  location: string;
+  userIntent: string;
+  mealPilotResponse: string;
+  implementationStatus: "implemented" | "documented" | "requires_credentials";
+}
+
+export interface SwiggyInnovationOpportunity {
+  id: string;
+  title: string;
+  swiggyCapability: string;
+  userValue: string;
+  productSurface: string;
+  nextBuild: string;
+  impactScore: number;
+}
+
+export interface SwiggyBuildersMap {
+  generatedAt: string;
+  officialSource: string;
+  totalOfficialTools: number;
+  servers: McpServerCoverage[];
+  pages: SwiggyBuilderPageCoverage[];
+  ctas: SwiggyBuilderCtaCoverage[];
+  opportunities: SwiggyInnovationOpportunity[];
+  integrationPrinciples: string[];
+  credentialGates: string[];
+}
+
+export interface SwiggyWebsiteNavLink {
+  id: string;
+  label: string;
+  url: string;
+  location: "global_header" | "docs_subnav" | "footer_program" | "footer_resources" | "footer_legal";
+  mealPilotCoverage: string;
+}
+
+export interface SwiggyWebsiteCta {
+  id: string;
+  label: string;
+  url: string;
+  appearsOn: string[];
+  intent: string;
+  mealPilotResponse: string;
+  status: "implemented" | "documented" | "requires_credentials";
+}
+
+export interface SwiggyWebsiteModule {
+  id: string;
+  pageId: string;
+  title: string;
+  moduleType: "hero" | "proof" | "steps" | "toolkit" | "faq" | "cta" | "docs_grid" | "footer" | "legal";
+  officialSignal: string;
+  mealPilotCoverage: string;
+  status: "implemented" | "documented" | "requires_credentials";
+}
+
+export interface SwiggyWebsitePageAtlas {
+  id: string;
+  title: string;
+  url: string;
+  pageType: "marketing" | "docs" | "reference" | "operate" | "blog" | "external";
+  primaryAudience: "developers" | "enterprises" | "consumers" | "reviewers" | "all";
+  modules: SwiggyWebsiteModule[];
+  ctaIds: string[];
+  mealPilotOutcome: string;
+}
+
+export interface SwiggyWebsiteAtlas {
+  generatedAt: string;
+  officialSource: string;
+  score: number;
+  pagesCovered: number;
+  modulesCovered: number;
+  ctasCovered: number;
+  globalHeader: SwiggyWebsiteNavLink[];
+  docsHeader: SwiggyWebsiteNavLink[];
+  footerGroups: Array<{ id: string; title: string; links: SwiggyWebsiteNavLink[] }>;
+  ctas: SwiggyWebsiteCta[];
+  pages: SwiggyWebsitePageAtlas[];
+  coverageAssertions: string[];
+  remainingExternalGates: string[];
+}
+
+export type SwiggyBuilderIntakeStatus = "ready" | "operator_input" | "external_gate";
+export type SwiggyBuilderCtaTrack = "product" | "developer" | "enterprise" | "docs" | "support" | "demo";
+export type SwiggyBuilderCtaCompletionGate = "none" | "operator_submit" | "swiggy_approval" | "external_site";
+
+export interface SwiggyBuilderCtaAction {
+  id: string;
+  label: string;
+  sourcePages: string[];
+  location: "global_header" | "docs_subnav" | "footer" | "page_body" | "external";
+  officialUrl: string;
+  officialIntent: string;
+  actionType: "navigate" | "form" | "email" | "docs" | "demo";
+  track: SwiggyBuilderCtaTrack;
+  status: SwiggyBuilderIntakeStatus;
+  preparedLocally: boolean;
+  completionGate: SwiggyBuilderCtaCompletionGate;
+  mealPilotAction: string;
+  proofBundle: string;
+  evidenceLinks: string[];
+  nextAction: string;
+}
+
+export interface SwiggyBuilderSubmissionField {
+  id: string;
+  label: string;
+  required: boolean;
+  status: SwiggyBuilderIntakeStatus;
+  officialSource: string;
+  suggestedValue: string;
+  evidenceLinks: string[];
+  blockingReason: string | null;
+}
+
+export interface SwiggyBuilderDemoStoryboardStep {
+  sequence: number;
+  title: string;
+  officialSignal: string;
+  mealPilotAction: string;
+  proofLink: string;
+  durationSeconds: number;
+}
+
+export interface SwiggyBuilderOutboundDraft {
+  id: string;
+  triggerCta: string;
+  to: string;
+  subject: string;
+  body: string;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyBuilderSubmissionChecklistItem {
+  id: string;
+  label: string;
+  owner: "MealPilot" | "Operator" | "Swiggy";
+  status: SwiggyBuilderIntakeStatus;
+  nextAction: string;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyBuilderIntakeCommandCenter {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  recommendedTrack: "developer" | "enterprise";
+  totalCtas: number;
+  readyCtas: number;
+  preparedCtas: number;
+  operatorCtaGates: number;
+  swiggyCtaGates: number;
+  totalFields: number;
+  readyFields: number;
+  actions: SwiggyBuilderCtaAction[];
+  submissionFields: SwiggyBuilderSubmissionField[];
+  demoStoryboard: SwiggyBuilderDemoStoryboardStep[];
+  outboundDrafts: SwiggyBuilderOutboundDraft[];
+  checklist: SwiggyBuilderSubmissionChecklistItem[];
+  assertions: string[];
+  externalGates: string[];
+}
+
+export type SwiggyDocsSection = "start" | "build" | "operate" | "reference" | "blog";
+export type SwiggyDocsCoverageStatus = "implemented" | "documented" | "requires_credentials";
+
+export interface SwiggyDocsCoverageItem {
+  id: string;
+  section: SwiggyDocsSection;
+  title: string;
+  url: string;
+  markdownUrl: string;
+  officialSummary: string;
+  mealPilotSurface: string;
+  evidenceLinks: string[];
+  status: SwiggyDocsCoverageStatus;
+}
+
+export interface SwiggyDocsSectionSummary {
+  section: SwiggyDocsSection;
+  total: number;
+  implemented: number;
+  documented: number;
+  requiresCredentials: number;
+}
+
+export interface SwiggyDocsCoverageReport {
+  generatedAt: string;
+  officialSource: string;
+  llmsIndex: string;
+  score: number;
+  totalPages: number;
+  sourceInventory: {
+    llmsLinkedPages: number;
+    headerLinks: number;
+    footerLinks: number;
+    ctas: number;
+  };
+  sections: SwiggyDocsSectionSummary[];
+  pages: SwiggyDocsCoverageItem[];
+  assertions: string[];
+  remainingExternalGates: string[];
+}
+
+export type SwiggyFaqPolicyStatus = "ready" | "documented" | "external_gate";
+
+export interface SwiggyFaqPolicyItem {
+  id: string;
+  source: "home_faq" | "developer_faq" | "enterprise_faq" | "access_guidelines" | "footer_resource";
+  audience: "all" | "developers" | "enterprises" | "reviewers";
+  question: string;
+  officialSignal: string;
+  mealPilotAnswer: string;
+  status: SwiggyFaqPolicyStatus;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyPolicyRule {
+  id: string;
+  category: "allowed" | "restricted" | "prohibited" | "operating_principle" | "legal";
+  officialRule: string;
+  mealPilotControl: string;
+  status: SwiggyFaqPolicyStatus;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyFaqPolicyCenter {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  totalQuestions: number;
+  readyQuestions: number;
+  totalRules: number;
+  readyRules: number;
+  faqItems: SwiggyFaqPolicyItem[];
+  policyRules: SwiggyPolicyRule[];
+  headerFooterCoverage: {
+    headerLinks: string[];
+    footerResources: string[];
+    evidence: string;
+  };
+  supportContact: {
+    email: string;
+    escalationEvidence: string[];
+  };
+  assertions: string[];
+  externalGates: string[];
+}
+
+export type SwiggyGrowthPartnershipStatus = "ready" | "manual_input" | "external_gate";
+
+export interface SwiggyGrowthPartnershipSignal {
+  id: string;
+  source: "builders_home" | "developers" | "enterprises" | "access";
+  officialSignal: string;
+  mealPilotResponse: string;
+  status: SwiggyGrowthPartnershipStatus;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyGrowthExperiment {
+  id: string;
+  label: string;
+  audience: "developers" | "enterprises" | "consumers" | "reviewers";
+  hypothesis: string;
+  mcpServers: SwiggyServer[];
+  requiredTools: string[];
+  launchStage: "local_demo" | "staging_pilot" | "production_pilot" | "co_marketing";
+  metric: string;
+  guardrail: string;
+  status: SwiggyGrowthPartnershipStatus;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyGrowthAsset {
+  id: string;
+  label: string;
+  purpose: string;
+  owner: "MealPilot" | "Operator" | "Swiggy" | "Joint";
+  status: SwiggyGrowthPartnershipStatus;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyGrowthPartnershipCenter {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  totalSignals: number;
+  readySignals: number;
+  totalExperiments: number;
+  readyExperiments: number;
+  signals: SwiggyGrowthPartnershipSignal[];
+  experiments: SwiggyGrowthExperiment[];
+  assets: SwiggyGrowthAsset[];
+  partnershipAsks: SwiggyGrowthAsset[];
+  metrics: Array<{ id: string; label: string; target: string; evidenceLinks: string[] }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
+export type SwiggyChannelMultimodalStatus = "ready" | "manual_input" | "external_gate";
+export type SwiggyChannelTarget =
+  | "web_chat"
+  | "voice"
+  | "slack_teams"
+  | "mobile_camera"
+  | "enterprise_platform";
+
+export interface SwiggyChannelMultimodalLane {
+  id: string;
+  title: string;
+  officialSignal: string;
+  targetUser: string;
+  channels: SwiggyChannelTarget[];
+  mcpServers: SwiggyServer[];
+  toolchain: string[];
+  inputModes: string[];
+  outputSurfaces: string[];
+  safetyControls: string[];
+  innovationAngle: string;
+  status: SwiggyChannelMultimodalStatus;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyChannelIntegration {
+  id: string;
+  label: string;
+  channel: SwiggyChannelTarget;
+  status: SwiggyChannelMultimodalStatus;
+  inputContract: string;
+  outputContract: string;
+  swiggyTools: string[];
+  nextBuild: string;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyMultimodalPipelineStep {
+  sequence: number;
+  label: string;
+  server?: SwiggyServer;
+  tool?: string;
+  guardrail: string;
+}
+
+export interface SwiggyMultimodalPipeline {
+  id: string;
+  label: string;
+  status: SwiggyChannelMultimodalStatus;
+  trigger: string;
+  steps: SwiggyMultimodalPipelineStep[];
+  dataBoundaries: string[];
+  externalGates: string[];
+  evidenceLinks: string[];
+}
+
+export interface SwiggyChannelExecutionPacket {
+  id: string;
+  laneId: string;
+  status: SwiggyChannelMultimodalStatus;
+  surface: SwiggyChannelTarget;
+  userTrigger: string;
+  routePlan: string[];
+  responseRules: string[];
+  confirmationGate: string;
+  telemetryContract: string;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyChannelMultimodalStudio {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  totalLanes: number;
+  readyLanes: number;
+  totalChannels: number;
+  readyChannels: number;
+  totalPipelines: number;
+  readyPipelines: number;
+  totalExecutionPackets: number;
+  readyExecutionPackets: number;
+  lanes: SwiggyChannelMultimodalLane[];
+  channels: SwiggyChannelIntegration[];
+  pipelines: SwiggyMultimodalPipeline[];
+  executionPackets: SwiggyChannelExecutionPacket[];
+  assertions: string[];
+  externalGates: string[];
+}
+
+export type NutritionBudgetStatus = "ready" | "needs_live_data" | "external_gate";
+
+export interface NutritionBudgetTarget {
+  id: string;
+  label: string;
+  dailyTarget: string;
+  mealPilotControl: string;
+  swiggySignals: string[];
+}
+
+export interface NutritionBudgetRoute {
+  id: string;
+  title: string;
+  status: NutritionBudgetStatus;
+  userIntent: string;
+  swiggyServers: SwiggyServer[];
+  toolchain: string[];
+  budgetRule: string;
+  nutritionHeuristic: string;
+  optimizationMetric: string;
+  confirmationGate: string;
+  dataBoundary: string;
+  evidenceLinks: string[];
+}
+
+export interface NutritionBudgetRecommendation {
+  id: string;
+  label: string;
+  routeId: string;
+  estimatedProteinGrams: number;
+  estimatedCost: number;
+  proteinPerRupee: number;
+  estimatedSavings: number;
+  swiggyTools: string[];
+  rationale: string;
+  safetyNote: string;
+}
+
+export interface NutritionBudgetPlaybook {
+  id: string;
+  title: string;
+  trigger: string;
+  steps: Array<{
+    sequence: number;
+    label: string;
+    server?: SwiggyServer;
+    tool?: string;
+    guardrail: string;
+  }>;
+  outputSurface: string;
+  status: NutritionBudgetStatus;
+}
+
+export interface NutritionBudgetIntelligence {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  totalTargets: number;
+  totalRoutes: number;
+  readyRoutes: number;
+  totalRecommendations: number;
+  totalPlaybooks: number;
+  totalToolsCovered: number;
+  targets: NutritionBudgetTarget[];
+  routes: NutritionBudgetRoute[];
+  recommendations: NutritionBudgetRecommendation[];
+  playbooks: NutritionBudgetPlaybook[];
+  metrics: Array<{ id: string; label: string; value: string; evidenceLinks: string[] }>;
+  safetyControls: string[];
+  assertions: string[];
+  externalGates: string[];
+}
+
+export type HouseholdPreferenceStatus = "ready" | "needs_live_history" | "external_gate";
+
+export interface HouseholdPreferenceSignal {
+  id: string;
+  label: string;
+  status: HouseholdPreferenceStatus;
+  source: "swiggy_food" | "swiggy_instamart" | "swiggy_dineout" | "mealpilot_local";
+  swiggyTools: string[];
+  preferenceUse: string;
+  retentionRule: string;
+  evidenceLinks: string[];
+}
+
+export interface HouseholdPreferenceMember {
+  id: string;
+  label: string;
+  weight: number;
+  dietPattern: string;
+  preferenceVector: string[];
+  hardExclusions: string[];
+  swiggySignals: string[];
+  personalizationRole: string;
+}
+
+export interface HouseholdPreferenceForecast {
+  id: string;
+  label: string;
+  status: HouseholdPreferenceStatus;
+  horizon: string;
+  prediction: string;
+  swiggyTools: string[];
+  confidence: number;
+  trigger: string;
+  confirmationGate: string;
+  dataBoundary: string;
+}
+
+export interface HouseholdPreferenceAutomation {
+  id: string;
+  label: string;
+  status: HouseholdPreferenceStatus;
+  trigger: string;
+  action: string;
+  swiggyTools: string[];
+  guardrail: string;
+  evidenceLinks: string[];
+}
+
+export interface HouseholdPreferenceGraph {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  totalSignals: number;
+  readySignals: number;
+  totalMembers: number;
+  totalForecasts: number;
+  readyForecasts: number;
+  totalAutomations: number;
+  readyAutomations: number;
+  uniqueToolsCovered: number;
+  signals: HouseholdPreferenceSignal[];
+  members: HouseholdPreferenceMember[];
+  forecasts: HouseholdPreferenceForecast[];
+  automations: HouseholdPreferenceAutomation[];
+  privacyControls: string[];
+  metrics: Array<{ id: string; label: string; value: string; evidenceLinks: string[] }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
+export type GuestCollaborationStatus = "ready" | "manual_input" | "external_gate";
+export type GuestCollaborationChannel = "web_share" | "slack_teams" | "calendar_ics" | "email_draft" | "voice_brief";
+
+export interface GuestParticipant {
+  id: string;
+  label: string;
+  role: "host" | "guest" | "payer" | "operator";
+  diet: string;
+  budgetShare: number;
+  constraints: string[];
+  voteWeight: number;
+}
+
+export interface GuestVoteRound {
+  id: string;
+  label: string;
+  channel: GuestCollaborationChannel;
+  status: GuestCollaborationStatus;
+  prompt: string;
+  options: string[];
+  swiggyTools: string[];
+  decisionRule: string;
+  privacyRule: string;
+}
+
+export interface OccasionTemplate {
+  id: string;
+  title: string;
+  status: GuestCollaborationStatus;
+  intent: string;
+  swiggyServers: SwiggyServer[];
+  route: Array<{
+    sequence: number;
+    label: string;
+    server?: SwiggyServer;
+    tool?: string;
+    guardrail: string;
+  }>;
+  output: string;
+  confirmationGate: string;
+  reminderRule: string;
+  evidenceLinks: string[];
+}
+
+export interface CalendarHandoffArtifact {
+  id: string;
+  label: string;
+  channel: GuestCollaborationChannel;
+  status: GuestCollaborationStatus;
+  contentType: "ics" | "mailto" | "share_link" | "voice_summary" | "runbook";
+  payloadPreview: string;
+  guardrail: string;
+  evidenceLinks: string[];
+}
+
+export interface GuestCollaborationCenter {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  totalParticipants: number;
+  totalVoteRounds: number;
+  readyVoteRounds: number;
+  totalTemplates: number;
+  readyTemplates: number;
+  totalCalendarArtifacts: number;
+  readyCalendarArtifacts: number;
+  uniqueToolsCovered: number;
+  participants: GuestParticipant[];
+  voteRounds: GuestVoteRound[];
+  templates: OccasionTemplate[];
+  calendarArtifacts: CalendarHandoffArtifact[];
+  metrics: Array<{ id: string; label: string; value: string; evidenceLinks: string[] }>;
+  safetyControls: string[];
+  assertions: string[];
+  externalGates: string[];
+}
+
+export type LuxuryExperienceStatus = "ready" | "manual_input" | "external_gate";
+export type LuxuryExperienceMode = "lean" | "premium" | "family" | "social" | "training";
+
+export interface LuxuryExperienceModePlan {
+  id: LuxuryExperienceMode;
+  label: string;
+  status: LuxuryExperienceStatus;
+  audience: string;
+  optimizationGoal: string;
+  budgetBand: string;
+  swiggyServers: SwiggyServer[];
+  toolchain: string[];
+  workspaceOutputs: string[];
+  guardrails: string[];
+}
+
+export interface LuxuryWorkspaceStep {
+  sequence: number;
+  label: string;
+  server?: SwiggyServer;
+  tool?: string;
+  risk: "read" | "cart_mutation" | "commercial" | "support" | "handoff";
+  guardrail: string;
+  surface: "web" | "voice" | "widget_fallback" | "ops";
+}
+
+export interface LuxuryReviewWorkspace {
+  id: string;
+  title: string;
+  status: LuxuryExperienceStatus;
+  kind: "reservation" | "food_cart" | "instamart_cart" | "combined_evening" | "recovery";
+  swiggyServers: SwiggyServer[];
+  steps: LuxuryWorkspaceStep[];
+  authoritativeReads: string[];
+  commercialGate: string;
+  widgetFallback: string;
+  voiceContract: string;
+  telemetry: string[];
+  evidenceLinks: string[];
+}
+
+export interface LuxurySurfaceArtifact {
+  id: string;
+  label: string;
+  status: LuxuryExperienceStatus;
+  channel: "web" | "voice" | "widget_fallback" | "ops";
+  content: string;
+  guardrail: string;
+  evidenceLinks: string[];
+}
+
+export interface LuxuryExperienceWorkspace {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  totalModes: number;
+  readyModes: number;
+  totalWorkspaces: number;
+  readyWorkspaces: number;
+  totalArtifacts: number;
+  readyArtifacts: number;
+  uniqueToolsCovered: number;
+  modes: LuxuryExperienceModePlan[];
+  workspaces: LuxuryReviewWorkspace[];
+  artifacts: LuxurySurfaceArtifact[];
+  metrics: Array<{ id: string; label: string; value: string; evidenceLinks: string[] }>;
+  safetyControls: string[];
+  assertions: string[];
+  externalGates: string[];
+}
+
+export type ReviewerArtifactStatus = "ready" | "manual_input" | "external_gate";
+
+export interface ReviewerArtifactItem {
+  id: string;
+  label: string;
+  category: "api" | "doc" | "ui" | "command" | "email" | "log" | "video";
+  status: ReviewerArtifactStatus;
+  path: string;
+  proves: string;
+  redaction: string;
+}
+
+export interface ReviewerScreenshotTarget {
+  id: string;
+  label: string;
+  status: ReviewerArtifactStatus;
+  route: string;
+  selector: string;
+  viewport: "desktop" | "mobile";
+  proves: string;
+  fallback: string;
+}
+
+export interface ReviewerArtifactCommand {
+  id: string;
+  command: string;
+  status: ReviewerArtifactStatus;
+  proves: string;
+  expectedSignal: string;
+}
+
+export interface ReviewerArtifactVault {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  totalArtifacts: number;
+  readyArtifacts: number;
+  totalScreenshotTargets: number;
+  readyScreenshotTargets: number;
+  totalCommands: number;
+  readyCommands: number;
+  totalRedactionRules: number;
+  artifactSections: Array<{ id: string; label: string; artifacts: ReviewerArtifactItem[] }>;
+  screenshotTargets: ReviewerScreenshotTarget[];
+  commands: ReviewerArtifactCommand[];
+  redactionRules: string[];
+  handoffChecklist: Array<{ id: string; label: string; status: ReviewerArtifactStatus; owner: string; evidenceLinks: string[] }>;
+  reviewerEmail: { to: string; subject: string; body: string };
+  assertions: string[];
+  externalGates: string[];
+}
+
+export type VisualQaStatus = "ready" | "manual_input" | "external_gate";
+export type VisualQaViewport = "desktop" | "tablet" | "mobile";
+
+export interface VisualQaTarget {
+  id: string;
+  label: string;
+  status: VisualQaStatus;
+  route: string;
+  selector: string;
+  viewport: VisualQaViewport;
+  width: number;
+  height: number;
+  proves: string;
+  artifactPath: string;
+}
+
+export interface VisualQaRule {
+  id: string;
+  label: string;
+  status: VisualQaStatus;
+  scope: string;
+  check: string;
+  remediation: string;
+}
+
+export interface VisualQaCommand {
+  id: string;
+  command: string;
+  status: VisualQaStatus;
+  proves: string;
+  expectedSignal: string;
+}
+
+export interface VisualQaCenter {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  totalTargets: number;
+  readyTargets: number;
+  totalRules: number;
+  readyRules: number;
+  totalCommands: number;
+  readyCommands: number;
+  targetGroups: Array<{ id: string; label: string; targets: VisualQaTarget[] }>;
+  rules: VisualQaRule[];
+  commands: VisualQaCommand[];
+  metrics: Array<{ id: string; label: string; value: string; evidenceLinks: string[] }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
+export type SwiggyUpstreamWatchStatus = "ready" | "watch" | "external_gate";
+
+export interface SwiggyDocsRetrievalContract {
+  llmsIndex: string;
+  llmsFull: string;
+  markdownPattern: string;
+  agentRules: string[];
+  smokeTest: string;
+  mealPilotControl: string;
+}
+
+export interface SwiggyUpstreamRelease {
+  id: string;
+  version: string;
+  status: SwiggyUpstreamWatchStatus;
+  officialSignal: string;
+  shipped: string[];
+  knownLimitations: string[];
+  mealPilotImpact: string;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyUpstreamRoadmapItem {
+  id: string;
+  version: "v1.1" | "v1.2" | "v2" | "future";
+  item: string;
+  status: SwiggyUpstreamWatchStatus;
+  officialSignal: string;
+  mealPilotReadiness: string;
+  owner: "MealPilot" | "Swiggy" | "Joint";
+  evidenceLinks: string[];
+}
+
+export interface SwiggyUpstreamAction {
+  id: string;
+  trigger: string;
+  action: string;
+  status: SwiggyUpstreamWatchStatus;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyUpstreamWatchReport {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  docsContract: SwiggyDocsRetrievalContract;
+  releaseTimeline: SwiggyUpstreamRelease[];
+  roadmapItems: SwiggyUpstreamRoadmapItem[];
+  signedManifestWatch: {
+    status: SwiggyUpstreamWatchStatus;
+    targetVersion: string;
+    officialSignal: string;
+    mealPilotControl: string;
+    evidenceLinks: string[];
+  };
+  actionQueue: SwiggyUpstreamAction[];
+  assertions: string[];
+  externalGates: string[];
+}
+
+export type AiClientTarget = "claude_desktop" | "chatgpt" | "cursor" | "vs_code" | "windsurf" | "generic_mcp";
+export type AiClientInstallStatus = "ready_to_copy" | "external_client" | "requires_oauth";
+export type AgentSdkAuthMode = "native_auth_provider" | "bearer_header" | "mixed";
+
+export interface AiClientServerConfig {
+  id: string;
+  label: string;
+  server: SwiggyServer;
+  url: string;
+  tools: number;
+}
+
+export interface AiClientConfigTarget {
+  id: AiClientTarget;
+  label: string;
+  status: AiClientInstallStatus;
+  officialSignal: string;
+  installPath: string;
+  setupSteps: string[];
+  config: Record<string, unknown>;
+  verificationPrompt: string;
+  privacyNote: string;
+}
+
+export interface CodingAgentRule {
+  id: string;
+  target: "claude_code" | "cursor_rules" | "windsurf_rules" | "agents_md" | "raw";
+  path: string;
+  status: "ready_to_copy";
+  rule: string;
+  smokeTest: string;
+}
+
+export interface AgentSdkAdapter {
+  id: string;
+  label: string;
+  authMode: AgentSdkAuthMode;
+  officialSignal: string;
+  mealPilotAdapter: string;
+  reconnectPolicy: string;
+}
+
+export interface EnterpriseDelegatedAuthBlueprint {
+  status: "external_gate";
+  flow: string[];
+  tokenLifecycle: Array<{ item: string; lifetime: string; action: string }>;
+  storageRules: string[];
+  redirectUriExamples: string[];
+}
+
+export interface AiClientConnectKit {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  servers: AiClientServerConfig[];
+  clientTargets: AiClientConfigTarget[];
+  codingAgentRules: CodingAgentRule[];
+  sdkAdapters: AgentSdkAdapter[];
+  enterpriseDelegatedAuth: EnterpriseDelegatedAuthBlueprint;
+  troubleshooting: Array<{ symptom: string; fix: string }>;
+  safetyAssertions: string[];
+  externalGates: string[];
+}
+
+export type JourneyStepRole = "core" | "optional" | "recovery" | "support";
+export type JourneyRiskLevel = "low" | "medium" | "high";
+
+export interface CompiledJourneyStep {
+  id: string;
+  sequence: number;
+  lane: string;
+  server: SwiggyServer;
+  endpoint: string;
+  tool: string;
+  role: JourneyStepRole;
+  purpose: string;
+  inputFrom: string[];
+  output: string;
+  cachePolicy: string;
+  retryPolicy: string;
+  errorBuckets: string[];
+  confirmationRequired: boolean;
+  uiSurface: string;
+}
+
+export interface CompiledSwiggyJourney {
+  id: string;
+  title: string;
+  source: "official_recipe" | "mealpilot_innovation";
+  officialRecipe?: string;
+  scenario: string;
+  servers: SwiggyServer[];
+  baselineCalls: number;
+  optimizedCalls: number;
+  savedCalls: number;
+  riskLevel: JourneyRiskLevel;
+  steps: CompiledJourneyStep[];
+  parallelizableGroups: string[][];
+  confirmationGates: string[];
+  dataDependencies: string[];
+  userExperience: string[];
+  externalGates: string[];
+}
+
+export interface JourneyToolIndexItem {
+  server: SwiggyServer;
+  endpoint: string;
+  tool: string;
+  stage: string;
+  role: JourneyStepRole;
+  journeyIds: string[];
+  safetyClass: "read" | "cart_mutation" | "coupon" | "commercial_action" | "tracking" | "support";
+}
+
+export interface SwiggyJourneyCompilerReport {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  totalJourneys: number;
+  totalToolsIndexed: number;
+  journeys: CompiledSwiggyJourney[];
+  toolIndex: JourneyToolIndexItem[];
+  globalOptimizations: string[];
+  assertions: string[];
+  externalGates: string[];
+}
+
+export type AccessDossierStatus = "ready" | "manual_input" | "external_gate" | "blocked";
+
+export interface AccessDossierField {
+  id: string;
+  label: string;
+  required: boolean;
+  status: AccessDossierStatus;
+  source: string;
+  value: string;
+  evidence: string;
+  proofLinks: string[];
+}
+
+export interface AccessDossierReviewCheck {
+  id: string;
+  label: string;
+  status: AccessDossierStatus;
+  officialCheck: string;
+  mealPilotEvidence: string;
+  proofLinks: string[];
+}
+
+export interface AccessDossierGroundRuleGroup {
+  id: string;
+  label: string;
+  status: AccessDossierStatus;
+  officialStance: "allowed" | "restricted" | "prohibited" | "operating_principle";
+  officialItems: string[];
+  mealPilotControls: string[];
+  proofLinks: string[];
+}
+
+export interface AccessDossierTrack {
+  id: "developer" | "enterprise";
+  label: string;
+  status: AccessDossierStatus;
+  fit: string;
+  applicationUrl: string;
+  requiredBeforeSubmit: string[];
+  mealPilotPositioning: string;
+}
+
+export interface AccessDossierLegalItem {
+  id: string;
+  label: string;
+  status: AccessDossierStatus;
+  evidence: string;
+  nextAction: string;
+}
+
+export interface SwiggyAccessDossier {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  recommendedTrack: "developer" | "enterprise";
+  applicationFields: AccessDossierField[];
+  reviewChecks: AccessDossierReviewCheck[];
+  groundRules: AccessDossierGroundRuleGroup[];
+  tracks: AccessDossierTrack[];
+  legalReadiness: AccessDossierLegalItem[];
+  submissionSequence: string[];
+  proofLinks: Array<{ label: string; path: string; purpose: string }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
+export type PremiumUseCaseTier = "signature" | "concierge" | "enterprise";
+export type PremiumUseCaseStage = "demo_ready" | "staging_after_credentials" | "enterprise_extension";
+export type PremiumUseCaseSurface = "chat" | "voice" | "widget" | "ops";
+
+export interface PremiumUseCaseRouteStep {
+  sequence: number;
+  label: string;
+  servers: SwiggyServer[];
+  tools: string[];
+  purpose: string;
+  optimization: string;
+  confirmationGate: string;
+  surface: PremiumUseCaseSurface;
+}
+
+export interface PremiumUseCaseBlueprint {
+  id: string;
+  title: string;
+  tier: PremiumUseCaseTier;
+  stage: PremiumUseCaseStage;
+  audience: string;
+  promise: string;
+  servers: SwiggyServer[];
+  primaryTools: string[];
+  baselineCalls: number;
+  optimizedCalls: number;
+  savedCalls: number;
+  route: PremiumUseCaseRouteStep[];
+  safetyGates: string[];
+  dataBoundaries: string[];
+  successMetrics: string[];
+  premiumDifferentiators: string[];
+}
+
+export interface PremiumUseCaseToolCoverage {
+  server: SwiggyServer;
+  totalTools: number;
+  usedTools: number;
+  useCaseIds: string[];
+}
+
+export interface PremiumUseCaseStudio {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  totalUseCases: number;
+  crossServerUseCases: number;
+  totalToolsUsed: number;
+  totalOfficialTools: number;
+  useCases: PremiumUseCaseBlueprint[];
+  toolCoverage: PremiumUseCaseToolCoverage[];
+  marketThesis: string[];
+  innovationPrinciples: string[];
+  roadmap: Array<{ phase: string; title: string; deliverable: string; status: PremiumUseCaseStage }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
+export type PremiumConciergeItineraryStatus = "ready" | "needs_confirmation" | "scheduled_reminder" | "external_gate";
+
+export interface PremiumConciergeItineraryStep {
+  sequence: number;
+  label: string;
+  server: SwiggyServer;
+  tools: string[];
+  purpose: string;
+  optimization: string;
+  userControl: string;
+  status: PremiumConciergeItineraryStatus;
+}
+
+export interface PremiumConciergeItinerarySlot {
+  id: string;
+  day: "today" | "tomorrow" | "saturday" | "sunday";
+  timeBand: string;
+  title: string;
+  intent: string;
+  servers: SwiggyServer[];
+  primaryRecipe: "food" | "instamart" | "dineout" | "combined";
+  route: PremiumConciergeItineraryStep[];
+  estimatedCalls: number;
+  savedCalls: number;
+  confirmation: string;
+  fallback: string;
+}
+
+export interface PremiumConciergeToolCoverage {
+  server: SwiggyServer;
+  officialTools: number;
+  itineraryTools: number;
+  coverage: string;
+}
+
+export interface PremiumConciergeItineraryReport {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  title: string;
+  promise: string;
+  itinerary: PremiumConciergeItinerarySlot[];
+  totalEstimatedCalls: number;
+  totalSavedCalls: number;
+  toolCoverage: PremiumConciergeToolCoverage[];
+  luxuryDifferentiators: string[];
+  routeOptimizations: string[];
+  safetyControls: string[];
+  externalGates: string[];
+}
+
+export type StagingCertificationStatus =
+  | "mock_ready"
+  | "requires_staging_credentials"
+  | "manual_input"
+  | "production_gate";
+
+export type StagingCertificationWaveId =
+  | "preflight"
+  | "oauth_dcr"
+  | "read_tools"
+  | "cart_mutations"
+  | "commercial_actions"
+  | "support_reporting"
+  | "soak_48h"
+  | "production_promotion";
+
+export interface StagingCertificationTool {
+  id: string;
+  server: SwiggyServer;
+  endpoint: string;
+  stagingEndpoint: string;
+  tool: string;
+  stage: string;
+  routeClass: "read" | "cart_mutation" | "coupon" | "commercial_action" | "tracking" | "support";
+  waveId: StagingCertificationWaveId;
+  status: StagingCertificationStatus;
+  localEvidence: string;
+  smokePrompt: string;
+  expectedEvidence: string;
+}
+
+export interface StagingCertificationWave {
+  id: StagingCertificationWaveId;
+  title: string;
+  status: StagingCertificationStatus;
+  owner: "MealPilot" | "Operator" | "Swiggy";
+  objective: string;
+  officialRequirement: string;
+  entryCriteria: string[];
+  exitCriteria: string[];
+  tools: StagingCertificationTool[];
+  evidenceLinks: string[];
+  commands: string[];
+}
+
+export interface StagingCertificationServer {
+  server: SwiggyServer;
+  stagingEndpoint: string;
+  productionEndpoint: string;
+  totalTools: number;
+  assignedTools: number;
+  requiredScopes: string[];
+  requiredEnv: string[];
+  status: StagingCertificationStatus;
+  smokeAssertions: string[];
+}
+
+export interface StagingCertificationChecklistItem {
+  id: string;
+  label: string;
+  status: StagingCertificationStatus;
+  evidence: string;
+}
+
+export interface StagingCertificationMatrix {
+  generatedAt: string;
+  score: number;
+  currentMode: "mock" | "staging" | "production";
+  liveStagingVerified: boolean;
+  stagingBaseUrl: string;
+  productionBaseUrl: string;
+  soakHoursRequired: number;
+  officialSources: string[];
+  totalTools: number;
+  assignedTools: number;
+  waves: StagingCertificationWave[];
+  perServer: StagingCertificationServer[];
+  credentialChecklist: StagingCertificationChecklistItem[];
+  telemetryRequirements: string[];
+  rollbackPolicy: string[];
+  commands: Array<{ id: string; command: string; proves: string }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export interface AgentSurfaceResponse {
   surface: AgentSurface;
   headline: string;
@@ -209,6 +1813,115 @@ export interface IncidentReport {
   mailto: string;
   sessionIds: string[];
   nextSteps: string[];
+}
+
+export interface SupportBridgeToolReport {
+  id: string;
+  server: SwiggyServer;
+  endpoint: string;
+  failedTool: string;
+  status: "ready" | "needs_session";
+  request: {
+    jsonrpc: "2.0";
+    id: string;
+    method: "tools/call";
+    params: {
+      name: "report_error";
+      arguments: {
+        tool: string;
+        domain: string;
+        errorMessage: string;
+        flowDescription: string;
+        toolContext: Record<string, string | number | boolean>;
+        userNotes: string;
+      };
+    };
+  };
+  responsePreview: {
+    success: true;
+    data: {
+      mailto: string;
+      summary: string;
+      supportCorrelation: string;
+    };
+    message: string;
+  };
+  evidence: string;
+}
+
+export interface SupportBridgeReport {
+  generatedAt: string;
+  score: number;
+  latestSessionId?: string;
+  reportErrorTools: SupportBridgeToolReport[];
+  contactChannels: Array<{ channel: string; useCase: string; status: "ready" | "external" }>;
+  slaMatrix: Array<{ severity: "S0" | "S1" | "S2" | "S3"; trigger: string; ack: string; updateCadence: string }>;
+  redactionRules: string[];
+  escalationChecklist: string[];
+  incidentEmail: {
+    to: string;
+    subject: string;
+    body: string;
+  };
+  externalGates: string[];
+}
+
+export type ErrorRetryClass = "reauth" | "fix_arguments" | "safe_backoff" | "domain_terminal" | "single_retry_then_report";
+
+export interface ErrorIntelligenceBucket {
+  id: string;
+  label: string;
+  detect: string;
+  userAction: string;
+  retryClass: ErrorRetryClass;
+  maxRetries: number;
+  reportError: boolean;
+  userCopy: string;
+}
+
+export interface PlannedErrorCode {
+  code: string;
+  meaning: string;
+  http: number;
+  bucket: string;
+  status: "planned";
+}
+
+export interface DomainErrorCode {
+  server: SwiggyServer;
+  code: string;
+  meaning: string;
+  terminal: boolean;
+  userAction: string;
+}
+
+export interface ErrorIntelligenceReport {
+  generatedAt: string;
+  score: number;
+  officialSource: string;
+  envelope: {
+    success: false;
+    error: {
+      message: string;
+      reportLink?: string;
+      reportHint?: string;
+    };
+    primarySignal: string;
+    secondarySignals: string[];
+  };
+  buckets: ErrorIntelligenceBucket[];
+  plannedCoreCodes: PlannedErrorCode[];
+  domainCodes: DomainErrorCode[];
+  retryPolicy: {
+    initialBackoffMs: number;
+    maxBackoffMs: number;
+    maxRetries: number;
+    jitter: boolean;
+    nonBlindRetryTools: CommerceAction[];
+  };
+  observabilityHooks: string[];
+  supportActions: string[];
+  assertions: string[];
 }
 
 export interface OfferOpportunity {
@@ -250,6 +1963,66 @@ export interface McpReplayStep {
   retryPolicy: string;
 }
 
+export interface StagingTranscriptEntry {
+  id: string;
+  sequence: number;
+  ts: string;
+  requestId: string;
+  sessionId: string;
+  userIdHash: string;
+  server: SwiggyServer;
+  endpoint: string;
+  tool: string;
+  routeClass: "read" | "cart_mutation" | "coupon" | "commercial_action" | "tracking" | "support";
+  certificationWave: StagingCertificationWaveId;
+  status: "ok" | "locked";
+  durationMs: number;
+  request: Record<string, unknown>;
+  response: Record<string, unknown>;
+  retryPolicy: string;
+  redacted: boolean;
+}
+
+export interface StagingTranscriptFile {
+  id: string;
+  label: string;
+  path: string;
+  mimeType: string;
+  status: "ready" | "external_gate";
+  purpose: string;
+}
+
+export interface StagingTranscriptExport {
+  generatedAt: string;
+  sessionId: string;
+  mode: "mock" | "staging" | "production";
+  score: number;
+  totalEntries: number;
+  coveredServers: SwiggyServer[];
+  certificationWaves: StagingCertificationWaveId[];
+  liveStagingReady: boolean;
+  entries: StagingTranscriptEntry[];
+  jsonl: string;
+  markdown: string;
+  files: StagingTranscriptFile[];
+  redaction: {
+    redactedFields: string[];
+    allowedFields: string[];
+    piiFree: boolean;
+    evidence: string;
+  };
+  supportEnvelope: {
+    to: string;
+    subject: string;
+    requiredFields: string[];
+    bodyPreview: string;
+  };
+  readiness: Array<{ id: string; label: string; status: "ready" | "watch" | "blocked" | "external_gate"; evidence: string }>;
+  proofLinks: Array<{ label: string; path: string }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export interface DemoStudioStep {
   id: string;
   label: string;
@@ -272,6 +2045,95 @@ export interface SubmissionPackage {
   residualRisks: string[];
 }
 
+export type SubmissionConsoleStatus = "ready" | "operator_input" | "external_gate" | "blocked";
+
+export interface SubmissionConsoleTrack {
+  id: "developer" | "enterprise";
+  label: string;
+  status: SubmissionConsoleStatus;
+  officialUrl: string;
+  fit: string;
+  requiredInputs: string[];
+  mealPilotPositioning: string;
+  evidenceLinks: string[];
+}
+
+export interface SubmissionConsoleField {
+  id: string;
+  label: string;
+  required: boolean;
+  status: SubmissionConsoleStatus;
+  suggestedValue: string;
+  evidenceLinks: string[];
+  officialSource: string;
+}
+
+export interface SubmissionConsoleAttachment {
+  id: string;
+  label: string;
+  status: SubmissionConsoleStatus;
+  path: string;
+  purpose: string;
+  mustAttach: boolean;
+}
+
+export interface SubmissionConsoleRunbookStep {
+  id: string;
+  sequence: number;
+  label: string;
+  owner: "MealPilot" | "Operator" | "Swiggy";
+  status: SubmissionConsoleStatus;
+  action: string;
+  evidenceLinks: string[];
+}
+
+export interface SubmissionConsoleRequirement {
+  id: string;
+  label: string;
+  required: boolean;
+  status: SubmissionConsoleStatus;
+  officialSource: string;
+  preparedValue: string;
+  completionGate: "none" | "operator_input" | "swiggy_approval";
+  nextAction: string;
+  evidenceLinks: string[];
+}
+
+export interface SubmissionConsolePacketItem {
+  sequence: number;
+  id: string;
+  label: string;
+  itemType: "field" | "attachment" | "runbook" | "email";
+  status: SubmissionConsoleStatus;
+  path: string;
+  operatorAction: string;
+  evidenceLinks: string[];
+}
+
+export interface SubmissionConsole {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  recommendedTrack: "developer" | "enterprise";
+  formTargets: SubmissionConsoleTrack[];
+  readyRequirements: number;
+  totalRequirements: number;
+  operatorRequirements: number;
+  requirements: SubmissionConsoleRequirement[];
+  readyFields: number;
+  totalFields: number;
+  fields: SubmissionConsoleField[];
+  readyAttachments: number;
+  totalAttachments: number;
+  attachments: SubmissionConsoleAttachment[];
+  packetOrder: SubmissionConsolePacketItem[];
+  runbook: SubmissionConsoleRunbookStep[];
+  outboundDrafts: SwiggyBuilderOutboundDraft[];
+  blockers: string[];
+  assertions: string[];
+  externalGates: string[];
+}
+
 export interface SwiggyWidget {
   id: string;
   type: "restaurant-card" | "menu-item" | "cart-widget" | "product-card" | "slot-picker";
@@ -283,6 +2145,178 @@ export interface SwiggyWidget {
   height: number;
   events: string[];
   status: "contract_ready" | "semantic_fallback";
+}
+
+export type SwiggyWidgetRuntimeStatus = "fallback_ready" | "iframe_planned" | "hosted_ready" | "external_gate";
+
+export interface SwiggyWidgetRuntimeSurface {
+  id: string;
+  server: SwiggyServer;
+  type: SwiggyWidget["type"];
+  returnedByTools: string[];
+  purpose: string;
+  iframe: {
+    width: string;
+    height: number;
+    title: string;
+    sandbox: string;
+    origin: string;
+    themeQuery: "light|dark";
+    allowTopNavigation: false;
+    parentRequiresHttps: boolean;
+  };
+  postMessageEvents: Array<{
+    type: string;
+    direction: "widget_to_parent";
+    payload: string;
+    handledBy: string;
+    securityCheck: string;
+  }>;
+  fallback: {
+    mode: "semantic_data_envelope";
+    renderer: string;
+    voiceSafe: boolean;
+    summary: string;
+  };
+  status: SwiggyWidgetRuntimeStatus;
+}
+
+export interface SwiggyWidgetBridgeRule {
+  id: string;
+  label: string;
+  status: "ready" | "external_gate";
+  rule: string;
+  evidence: string;
+}
+
+export interface SwiggyWidgetActivationCheck {
+  id: string;
+  label: string;
+  status: SwiggyWidgetBridgeRule["status"];
+  requirement: string;
+  mealPilotProof: string;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyWidgetRenderContract {
+  id: string;
+  server: SwiggyServer;
+  type: SwiggyWidget["type"];
+  status: SwiggyWidgetRuntimeStatus;
+  iframeSize: string;
+  returnedByTools: string[];
+  postMessageEvents: string[];
+  fallbackRenderer: string;
+  accessibility: string;
+  voiceBehavior: string;
+}
+
+export interface SwiggyWidgetRuntimeReport {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  totalSurfaces: number;
+  fallbackReady: number;
+  hostedReady: number;
+  eventsHandled: number;
+  totalActivationChecks: number;
+  readyActivationChecks: number;
+  externalActivationGates: number;
+  optInHeader: {
+    name: "X-Swiggy-Widgets";
+    plannedValue: "enabled";
+    status: "external_gate";
+    mealPilotBehavior: string;
+  };
+  surfaces: SwiggyWidgetRuntimeSurface[];
+  bridgeRules: SwiggyWidgetBridgeRule[];
+  activationChecklist: SwiggyWidgetActivationCheck[];
+  renderContracts: SwiggyWidgetRenderContract[];
+  sessionWidgets: SwiggyWidget[];
+  assertions: string[];
+  externalGates: string[];
+}
+
+export type CommercialActionGuardStatus = "ready" | "watch" | "external_gate";
+export type CommercialActionLaneId = "food_order" | "instamart_checkout" | "dineout_booking" | "combined_evening";
+export type CommercialActionRouteClass = "commercial_action" | "cart_mutation" | "tracking_read";
+
+export interface CommercialActionLane {
+  id: CommercialActionLaneId;
+  label: string;
+  server: SwiggyServer | "combined";
+  actionTool: "place_food_order" | "checkout" | "book_table" | "place_food_order + book_table";
+  freshReadTool: string;
+  verificationTool: string;
+  status: CommercialActionGuardStatus;
+  confirmationRequired: true;
+  nonIdempotent: boolean;
+  paymentPolicy: string;
+  routeClass: CommercialActionRouteClass;
+  confirmationCopy: {
+    chat: string;
+    voice: string;
+  };
+  preflightChecks: string[];
+  retryPolicy: string;
+  telemetryFields: string[];
+  supportPacketFields: string[];
+  evidenceLinks: string[];
+}
+
+export interface CommercialActionGuardrail {
+  id: string;
+  label: string;
+  status: CommercialActionGuardStatus;
+  requirement: string;
+  mealPilotControl: string;
+  evidenceLinks: string[];
+}
+
+export interface CommercialActionRetryDrill {
+  id: string;
+  laneId: CommercialActionLaneId;
+  label: string;
+  simulatedFailure: string;
+  firstResponse: string;
+  verificationTool: string;
+  retryDecision: string;
+  supportContext: string[];
+  status: CommercialActionGuardStatus;
+}
+
+export interface CommercialActionTelemetryContract {
+  id: string;
+  field: string;
+  required: boolean;
+  redaction: string;
+  example: string;
+}
+
+export interface CommercialActionGuardReport {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  totalLanes: number;
+  readyLanes: number;
+  totalGuardrails: number;
+  readyGuardrails: number;
+  retryDrills: CommercialActionRetryDrill[];
+  lanes: CommercialActionLane[];
+  guardrails: CommercialActionGuardrail[];
+  telemetryContract: CommercialActionTelemetryContract[];
+  confirmationMatrix: Array<{
+    laneId: CommercialActionLaneId;
+    chat: string;
+    voice: string;
+  }>;
+  latestPlanProof?: {
+    sessionId: string;
+    recommendations: number;
+    commercialRecommendations: number;
+  };
+  assertions: string[];
+  externalGates: string[];
 }
 
 export interface RateLimitBudget {
@@ -299,6 +2333,144 @@ export interface RateLimitPlan {
   projectedDailyToolCalls: number;
   budgets: RateLimitBudget[];
   upgradeEmail: string;
+}
+
+export type TrafficReadinessStatus = "ready" | "watch" | "manual_input" | "external_gate";
+
+export type TrafficLane = "discovery" | "cart" | "commercial" | "tracking" | "support" | "auth";
+
+export interface TrafficLaneBudget {
+  id: string;
+  server: SwiggyServer | "all";
+  lane: TrafficLane;
+  plannedLimit: string;
+  mealPilotEstimate: string;
+  peakQps: number;
+  dailyCalls: number;
+  retryAfterPolicy: string;
+  status: TrafficReadinessStatus;
+  evidenceLinks: string[];
+}
+
+export interface TrafficRolloutStage {
+  id: string;
+  label: string;
+  trafficPercent: number;
+  pilotUsers: number;
+  duration: string;
+  entryCriteria: string[];
+  rollbackTrigger: string[];
+  status: TrafficReadinessStatus;
+}
+
+export interface TrafficNotification {
+  id: string;
+  label: string;
+  leadTimeDays: number;
+  channel: string;
+  status: TrafficReadinessStatus;
+  evidence: string;
+}
+
+export interface TrafficReadinessPlan {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  projectedDailySessions: number;
+  estimatedToolCallsPerSession: number;
+  projectedDailyToolCalls: number;
+  peakQps: number;
+  lanes: TrafficLaneBudget[];
+  rollout: TrafficRolloutStage[];
+  notifications: TrafficNotification[];
+  retryAfterContract: {
+    ready: boolean;
+    maxWallClockMs: number;
+    evidence: string[];
+  };
+  capacityUpgradeEmail: {
+    to: string;
+    subject: string;
+    body: string;
+  };
+  guardrails: string[];
+  assertions: string[];
+  externalGates: string[];
+}
+
+export type BackpressureStatus = "ready" | "watch" | "external_gate";
+export type BackpressureToolClass = "read" | "write" | "commercial" | "tracking" | "auth" | "background";
+export type BackpressureSurface = "chat" | "voice" | "background" | "support";
+
+export interface McpBackpressureBucket {
+  id: string;
+  server: SwiggyServer | "all";
+  toolClass: BackpressureToolClass;
+  plannedLimitPerMinute: number | "not_enforced_v1";
+  burstWindowSeconds: number;
+  burstMultiplier: number;
+  queueDiscipline: string;
+  retryAfterBehavior: string;
+  shedAction: string;
+  status: BackpressureStatus;
+  evidenceLinks: string[];
+}
+
+export interface McpBackpressureRule {
+  id: string;
+  label: string;
+  status: BackpressureStatus;
+  swiggySignal: string;
+  mealPilotControl: string;
+  proof: string;
+  evidenceLinks: string[];
+}
+
+export interface McpBackpressureSimulation {
+  id: string;
+  label: string;
+  surface: BackpressureSurface;
+  scenario: string;
+  detectedSignal: string;
+  governorDecision: string;
+  delayMs: number;
+  allowedCalls: number;
+  deferredCalls: number;
+  droppedCalls: number;
+  toolSequence: string[];
+  status: BackpressureStatus;
+  evidenceLinks: string[];
+}
+
+export interface McpBackpressureTelemetryField {
+  field: string;
+  source: string;
+  redaction: string;
+  status: BackpressureStatus;
+}
+
+export interface McpBackpressureGovernorReport {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  mode: "v1_upstream_shedder" | "v1x_mcp_rate_limit_headers";
+  totalBuckets: number;
+  readyBuckets: number;
+  trackingMinIntervalSeconds: number;
+  maxRetries: number;
+  maxUserWaitMs: number;
+  plannedHeaders: string[];
+  buckets: McpBackpressureBucket[];
+  rules: McpBackpressureRule[];
+  simulations: McpBackpressureSimulation[];
+  telemetry: McpBackpressureTelemetryField[];
+  capacityEmail: {
+    to: string;
+    subject: string;
+    body: string;
+  };
+  assertions: string[];
+  externalGates: string[];
 }
 
 export interface VersionAlert {
@@ -329,11 +2501,165 @@ export interface ComplianceEvidence {
   controls: ComplianceControl[];
 }
 
+export type DataGovernanceStatus = "ready" | "watch" | "manual_input" | "external_gate";
+
+export interface DataGovernanceControl {
+  id: string;
+  label: string;
+  status: DataGovernanceStatus;
+  swiggyRequirement: string;
+  mealPilotControl: string;
+  evidenceLinks: string[];
+}
+
+export interface DataFlowInventoryItem {
+  id: string;
+  category: "identity" | "location" | "preference" | "commerce" | "support" | "telemetry" | "token";
+  source: "user" | "swiggy_mcp" | "mealpilot";
+  fields: string[];
+  storage: "not_persisted" | "session_only" | "local_profile" | "runtime_memory" | "redacted_log";
+  retention: string;
+  lawfulBasis: string;
+  controls: string[];
+  status: DataGovernanceStatus;
+}
+
+export interface DataSubjectRequestStep {
+  id: string;
+  requestType: "access" | "correction" | "erasure" | "swiggy_originated";
+  owner: "MealPilot" | "Swiggy" | "Joint";
+  status: DataGovernanceStatus;
+  action: string;
+  evidence: string;
+}
+
+export interface DataGovernanceCenter {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  dataRole: {
+    swiggyRole: "Data Fiduciary";
+    mealPilotRole: "Data Processor";
+    evidence: string;
+  };
+  residency: {
+    primaryCompute: string;
+    primaryDataStores: string;
+    failover: string;
+    boundary: string;
+    status: DataGovernanceStatus;
+  };
+  dataFlows: DataFlowInventoryItem[];
+  controls: DataGovernanceControl[];
+  dsrRunbook: DataSubjectRequestStep[];
+  retention: {
+    localPlanRetentionDays: number;
+    swiggyAuditLogDays: number;
+    compactionEndpoint: string;
+    evidence: string[];
+  };
+  securityContacts: Array<{ label: string; contact: string; useCase: string; status: DataGovernanceStatus }>;
+  signedManifestReadiness: {
+    status: DataGovernanceStatus;
+    targetVersion: string;
+    evidence: string[];
+  };
+  assertions: string[];
+  externalGates: string[];
+}
+
+export type BrandComplianceStatus = "ready" | "watch" | "manual_input" | "external_gate";
+
+export interface BrandComplianceRule {
+  id: string;
+  label: string;
+  status: BrandComplianceStatus;
+  officialSignal: string;
+  mealPilotControl: string;
+  evidenceLinks: string[];
+}
+
+export interface BrandSurfacePlacement {
+  id: string;
+  surface: "planner" | "recommendation_card" | "voice" | "widget" | "support" | "docs" | "launch";
+  placement: string;
+  requiredCopy: string;
+  status: BrandComplianceStatus;
+  evidence: string;
+}
+
+export interface BrandAssetGate {
+  id: string;
+  label: string;
+  status: BrandComplianceStatus;
+  source: string;
+  allowedUse: string;
+  blockedUse: string;
+  nextAction: string;
+}
+
+export interface BrandComplianceKit {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  attributionCopy: string[];
+  rules: BrandComplianceRule[];
+  surfaces: BrandSurfacePlacement[];
+  assetGates: BrandAssetGate[];
+  paletteAudit: {
+    primaryPalette: string;
+    swiggyOrange: "#FF5200";
+    orangeUsage: "reserved_for_swiggy_marks_only" | "used_as_primary_palette";
+    status: BrandComplianceStatus;
+    evidence: string;
+  };
+  launchChecklist: Array<{ id: string; label: string; status: BrandComplianceStatus; evidence: string }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export interface ReviewerProof {
   score: number;
   highlights: string[];
   blockers: string[];
   artifacts: Array<{ label: string; path: string }>;
+}
+
+export interface LaunchBundleArtifact {
+  id: string;
+  label: string;
+  path: string;
+  category: "api" | "doc" | "command" | "runtime" | "external";
+  status: "ready" | "manual_input" | "external_gate";
+  evidence: string;
+}
+
+export interface LaunchBundlePhase {
+  id: string;
+  label: string;
+  status: "ready" | "manual_input" | "external_gate";
+  owner: "MealPilot" | "Operator" | "Swiggy";
+  evidence: string;
+  artifacts: string[];
+}
+
+export interface LaunchBundle {
+  generatedAt: string;
+  score: number;
+  readinessLabel: "local_review_ready" | "staging_ready" | "production_ready";
+  integrationName: string;
+  requestedServers: SwiggyServer[];
+  reviewerNarrative: string;
+  artifacts: LaunchBundleArtifact[];
+  phases: LaunchBundlePhase[];
+  commands: Array<{ id: string; command: string; proves: string }>;
+  accessApplication: Array<{ label: string; value: string; status: "ready" | "manual_input" | "external_gate" }>;
+  goLiveGates: Array<{ label: string; status: "ready" | "manual_input" | "external_gate"; evidence: string }>;
+  handoffEmail: {
+    to: string;
+    subject: string;
+    body: string;
+  };
 }
 
 export type ResilienceStatus = "pass" | "watch" | "blocked";
@@ -371,6 +2697,410 @@ export interface ResilienceRunbook {
   escalationEmail: string;
   checklist: Array<{ id: string; label: string; status: ResilienceStatus; evidence: string }>;
   supportPayload: Record<string, string>;
+}
+
+export interface ObservabilityAttribute {
+  key: string;
+  value: string | number | boolean;
+}
+
+export interface TraceSpan {
+  id: string;
+  traceId: string;
+  parentSpanId?: string;
+  name: string;
+  kind: "api_request" | "mcp_tool" | "confirmation_gate" | "retry_guard" | "privacy_filter";
+  server?: SwiggyServer | "all";
+  tool?: string;
+  status: "ok" | "locked" | "watch" | "blocked";
+  startOffsetMs: number;
+  durationMs: number;
+  attributes: ObservabilityAttribute[];
+}
+
+export interface TraceEnvelope {
+  traceId: string;
+  requestId: string;
+  sessionId: string;
+  rootName: string;
+  status: "ok" | "watch" | "blocked";
+  durationMs: number;
+  spanCount: number;
+  spans: TraceSpan[];
+}
+
+export interface TraceMetric {
+  id: string;
+  label: string;
+  value: string;
+  status: "healthy" | "watch" | "blocked";
+  evidence: string;
+}
+
+export interface ObservabilityTraceReport {
+  generatedAt: string;
+  score: number;
+  traces: TraceEnvelope[];
+  metrics: TraceMetric[];
+  logContract: {
+    requiredFields: string[];
+    redactedFields: string[];
+    sample: Record<string, string | number | boolean>;
+  };
+}
+
+export type SloIncidentStatus = "ready" | "watch" | "external_gate" | "blocked";
+
+export interface SloTarget {
+  id: string;
+  label: string;
+  scope: string;
+  target: string;
+  monthlyDowntimeBudget: string;
+  measurement: string;
+  status: SloIncidentStatus;
+  evidenceLinks: string[];
+}
+
+export interface SloLatencyClass {
+  id: string;
+  label: string;
+  toolClass: "read" | "write" | "commercial";
+  p50TargetMs: number;
+  p95TargetMs: number;
+  p99TargetMs: number;
+  observedP95Ms: number;
+  status: SloIncidentStatus;
+  evidence: string;
+}
+
+export interface IncidentCommunicationPlan {
+  severity: "S0" | "S1" | "S2" | "S3";
+  trigger: string;
+  ack: string;
+  updateCadence: string;
+  owner: "MealPilot" | "Swiggy" | "Joint";
+  status: SloIncidentStatus;
+  runbook: string[];
+}
+
+export interface MaintenanceWindowPlan {
+  noticeHours: number;
+  blackoutWindowsIst: string[];
+  status: SloIncidentStatus;
+  evidence: string;
+}
+
+export interface SloIncidentCommandCenter {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  currentMode: "mock" | "staging" | "production";
+  latestSessionId?: string;
+  uptimeTargets: SloTarget[];
+  latencyTargets: SloLatencyClass[];
+  statusPage: {
+    url: string;
+    swiggyStatus: "planned_v1_1" | "live_external";
+    mealPilotFallback: string;
+    status: SloIncidentStatus;
+  };
+  incidentComms: IncidentCommunicationPlan[];
+  maintenance: MaintenanceWindowPlan;
+  measurementRules: string[];
+  remediation: {
+    contact: string;
+    status: SloIncidentStatus;
+    evidence: string[];
+  };
+  liveReadiness: Array<{ id: string; label: string; status: SloIncidentStatus; evidence: string }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
+export interface RuntimeTelemetryEvent {
+  ts: string;
+  level: "info" | "warn" | "error";
+  event: "mealpilot_request" | "mcp_tool_call";
+  requestId: string;
+  method: string;
+  route: string;
+  userIdHash: string;
+  sessionId?: string;
+  durationMs: number;
+  status: number;
+  statusClass: "2xx" | "3xx" | "4xx" | "5xx";
+  redacted: boolean;
+}
+
+export interface RuntimeTelemetryMetric {
+  id: string;
+  label: string;
+  value: string;
+  status: "healthy" | "watch" | "blocked";
+  evidence: string;
+}
+
+export interface RuntimeTelemetryReport {
+  generatedAt: string;
+  score: number;
+  events: RuntimeTelemetryEvent[];
+  metrics: RuntimeTelemetryMetric[];
+  logShape: {
+    requiredFields: string[];
+    sample: RuntimeTelemetryEvent | null;
+  };
+  redactionContract: {
+    redactedFields: string[];
+    allowedIdentifiers: string[];
+    evidence: string[];
+  };
+  supportReady: {
+    escalationEmail: string;
+    requestIds: string[];
+    sessionIds: string[];
+    timeRange: string;
+  };
+}
+
+export type AuditLedgerStatus = "ready" | "watch" | "blocked" | "external_gate";
+
+export interface AuditLedgerEvent {
+  id: string;
+  sessionId: string;
+  server: SwiggyServer;
+  tool: string;
+  status: ToolCallEvent["status"];
+  durationMs: number;
+  routeClass: "read" | "cart_mutation" | "coupon" | "commercial_action" | "tracking" | "support";
+  redaction: "redacted";
+  supportCorrelation: string;
+  evidence: string;
+}
+
+export interface AuditLedgerControl {
+  id: string;
+  label: string;
+  status: AuditLedgerStatus;
+  requirement: string;
+  evidence: string;
+}
+
+export interface AuditLedgerCenter {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  totalEvents: number;
+  coveredSessions: number;
+  coveredServers: SwiggyServer[];
+  commercialActions: number;
+  supportReadyEvents: number;
+  retention: {
+    mealPilotPlanRetentionDays: number;
+    swiggyAuditLogDays: number;
+    localCompactionEndpoint: string;
+    evidence: string;
+  };
+  redaction: {
+    redactedFields: string[];
+    allowedFields: string[];
+    piiFree: boolean;
+    evidence: string;
+  };
+  events: AuditLedgerEvent[];
+  controls: AuditLedgerControl[];
+  dsrRouting: Array<{ id: string; label: string; owner: "MealPilot" | "Swiggy"; status: AuditLedgerStatus; evidence: string }>;
+  supportPackage: {
+    to: string;
+    requiredFields: string[];
+    bodyPreview: string;
+  };
+  assertions: string[];
+  externalGates: string[];
+}
+
+export interface RouteOptimizationStep {
+  id: string;
+  sequence: number;
+  server: SwiggyServer;
+  tool: string;
+  toolClass: "read" | "cart_mutation" | "coupon" | "tracking" | "commercial_action" | "support";
+  whenToCall: string;
+  cachePolicy: string;
+  retryPolicy: string;
+  confirmationGate: string;
+  expectedLatencyMs: number;
+}
+
+export interface RouteOptimizationJourney {
+  id: string;
+  title: string;
+  userIntent: string;
+  optimizedFor: "latency" | "safety" | "conversion" | "voice";
+  swiggyServers: SwiggyServer[];
+  baselineCalls: number;
+  optimizedCalls: number;
+  savedCalls: number;
+  steps: RouteOptimizationStep[];
+  controls: string[];
+}
+
+export interface SwiggyRouteOptimizationReport {
+  generatedAt: string;
+  score: number;
+  totalSavedCalls: number;
+  journeys: RouteOptimizationJourney[];
+  cacheRules: string[];
+  guardrails: string[];
+  stagingAssertions: string[];
+}
+
+export type CredentialReadinessStatus = "ready" | "watch" | "blocked";
+
+export interface CredentialOnboardingCheck {
+  id: string;
+  label: string;
+  status: CredentialReadinessStatus;
+  owner: "MealPilot" | "Swiggy" | "Operator";
+  evidence: string;
+  nextAction: string;
+}
+
+export interface OAuthMetadataEndpoint {
+  id: string;
+  label: string;
+  url: string;
+  purpose: string;
+  status: "wired" | "documented" | "external";
+}
+
+export interface RedirectUriAudit {
+  redirectUri: string;
+  status: CredentialReadinessStatus;
+  productionSafe: boolean;
+  localhostAllowed: boolean;
+  exactMatchRequired: boolean;
+  evidence: string;
+}
+
+export interface DynamicClientRegistrationPlan {
+  endpoint: string;
+  mode: "dry_run" | "mock_registered" | "ready_for_live_registration";
+  supportedBySwiggy: boolean;
+  payload: {
+    client_name: string;
+    redirect_uris: string[];
+    scope: string;
+    grant_types: string[];
+    response_types: string[];
+    token_endpoint_auth_method: string;
+    application_type: string;
+  };
+  simulatedResponse: {
+    client_id: string;
+    client_id_issued_at: number;
+    redirect_uris: string[];
+    scope: string;
+  };
+  evidence: string[];
+}
+
+export interface CredentialAccessApplicationField {
+  id: string;
+  label: string;
+  value: string;
+  status: "ready" | "manual_input" | "external";
+  source: string;
+}
+
+export interface CredentialOnboardingReport {
+  generatedAt: string;
+  mode: "mock" | "staging" | "production";
+  baseUrl: string;
+  score: number;
+  requestedServers: SwiggyServer[];
+  scopes: string[];
+  redirectUriAudit: RedirectUriAudit;
+  dynamicClientRegistration: DynamicClientRegistrationPlan;
+  metadataEndpoints: OAuthMetadataEndpoint[];
+  checks: CredentialOnboardingCheck[];
+  accessApplicationFields: CredentialAccessApplicationField[];
+  launchSequence: string[];
+  externalGates: string[];
+}
+
+export type EnterpriseDelegatedAuthStatus = "ready" | "watch" | "external_gate";
+
+export interface EnterpriseDelegatedAuthStep {
+  id: string;
+  sequence: number;
+  label: string;
+  status: EnterpriseDelegatedAuthStatus;
+  owner: "MealPilot" | "Swiggy" | "Operator" | "End user";
+  swiggyRequirement: string;
+  mealPilotControl: string;
+  evidenceLinks: string[];
+}
+
+export interface EnterprisePlatformUseCase {
+  id: string;
+  label: string;
+  surface: "voice" | "chat" | "app" | "enterprise_saas" | "lifestyle";
+  servers: SwiggyServer[];
+  userBase: string;
+  peakQps: string;
+  consentModel: string;
+  status: EnterpriseDelegatedAuthStatus;
+  evidenceLinks: string[];
+}
+
+export interface EnterpriseTokenRule {
+  id: string;
+  label: string;
+  status: EnterpriseDelegatedAuthStatus;
+  requirement: string;
+  mealPilotControl: string;
+}
+
+export interface EnterpriseDelegatedAuthCenter {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  currentTrack: "developer_ready_enterprise_planned";
+  principle: {
+    swiggyRole: "Data Fiduciary";
+    platformRole: "Data Processor";
+    evidence: string;
+  };
+  flow: EnterpriseDelegatedAuthStep[];
+  platformUseCases: EnterprisePlatformUseCase[];
+  redirectUriStrategy: {
+    exactMatchRequired: boolean;
+    allowedExamples: string[];
+    currentRedirectUri: string;
+    currentStatus: EnterpriseDelegatedAuthStatus;
+    evidence: string[];
+  };
+  tokenLifecycle: Array<{
+    item: string;
+    lifetime: string;
+    rule: string;
+    mealPilotControl: string;
+    status: EnterpriseDelegatedAuthStatus;
+  }>;
+  storageRules: EnterpriseTokenRule[];
+  scopes: Array<{ scope: string; grants: string; status: EnterpriseDelegatedAuthStatus; evidence: string }>;
+  troubleshooting: Array<{ symptom: string; likelyCause: string; recovery: string; status: EnterpriseDelegatedAuthStatus }>;
+  onboardingSequence: EnterpriseDelegatedAuthStep[];
+  architectureReview: Array<{
+    topic: string;
+    swiggyQuestion: string;
+    mealPilotEvidence: string;
+    status: EnterpriseDelegatedAuthStatus;
+    evidenceLinks: string[];
+  }>;
+  externalGates: string[];
+  assertions: string[];
 }
 
 export type EvaluationStatus = "pass" | "watch" | "blocked";
@@ -433,6 +3163,113 @@ export interface McpGatewayStatus {
   cutoverPlan: string[];
   fallbackPlan: string[];
   canaryPlan: string[];
+}
+
+export type SwiggyStagingCutoverStatus = "ready" | "watch" | "blocked" | "external_gate";
+
+export interface SwiggyStagingCutoverProbe {
+  id: string;
+  server: SwiggyServer;
+  endpoint: string;
+  firstTool: string;
+  transport: "local_mock" | "swiggy_streamable_http";
+  status: SwiggyStagingCutoverStatus;
+  dryRunRequest: {
+    jsonrpc: "2.0";
+    id: string;
+    method: "tools/call";
+    params: {
+      name: string;
+      arguments: Record<string, unknown>;
+    };
+  };
+  expectedSuccessShape: string;
+  promotionEvidence: string[];
+  failureBranches: Array<{
+    status: "401" | "429" | "5xx" | "network" | "jsonrpc_error";
+    action: string;
+  }>;
+}
+
+export interface SwiggyStagingCutoverCheck {
+  id: string;
+  label: string;
+  status: SwiggyStagingCutoverStatus;
+  requirement: string;
+  evidence: string;
+  nextAction: string;
+}
+
+export interface SwiggyStagingCutoverRehearsal {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  mode: "mock" | "staging" | "production";
+  activeTransport: McpGatewayStatus["activeTransport"];
+  credentialState: {
+    clientIdConfigured: boolean;
+    tokenSource: McpGatewayStatus["auth"]["tokenSource"];
+    tokenExpiresAt?: string;
+    scope: string;
+    redirectUri: string;
+  };
+  totalServers: number;
+  routableServers: number;
+  blockedServers: number;
+  dryRunCalls: number;
+  probes: SwiggyStagingCutoverProbe[];
+  oauthChecks: SwiggyStagingCutoverCheck[];
+  transportChecks: SwiggyStagingCutoverCheck[];
+  promotionChecks: SwiggyStagingCutoverCheck[];
+  supportPacket: {
+    to: string;
+    subject: string;
+    requiredFields: string[];
+    bodyPreview: string;
+  };
+  commands: Array<{ id: string; command: string; proves: string }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
+export type SwiggyAuthEventStatus =
+  | "not_started"
+  | "authorization_url_created"
+  | "callback_mocked"
+  | "callback_exchanged"
+  | "callback_failed";
+
+export interface SwiggyAuthLatestEvent {
+  status: SwiggyAuthEventStatus;
+  label: string;
+  at?: string;
+  statePreview?: string;
+  tokenExchange?: "mocked" | "exchanged";
+  tokenSource: "runtime" | "environment" | "none";
+  expiresAt?: string;
+  scope?: string;
+  error?: string;
+}
+
+export interface SwiggyAuthStatusReport {
+  generatedAt: string;
+  mode: "mock" | "staging" | "production";
+  endpoints: {
+    authorize: string;
+    token: string;
+    logout: string;
+    authorizationServerMetadata: string;
+    protectedResourceMetadata: string;
+  };
+  redirectUri: string;
+  scope: string;
+  clientIdConfigured: boolean;
+  pendingVerifierCount: number;
+  latestEvent: SwiggyAuthLatestEvent;
+  gatewayAuth: McpGatewayStatus["auth"];
+  callbackChecklist: Array<{ id: string; label: string; status: "ready" | "watch" | "blocked"; evidence: string }>;
+  storagePolicy: string[];
+  nextActions: string[];
 }
 
 export interface MealPlan {

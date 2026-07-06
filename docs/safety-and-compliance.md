@@ -29,6 +29,7 @@ Confirmations must show:
 - Treat a 401 from one Swiggy MCP server as session expiry for all connected Swiggy servers.
 - Route staging and production tool calls through `/api/mcp-gateway`; without a bearer token, the gateway fails closed instead of silently using mock data.
 - Keep exchanged bearer tokens in process memory or managed secret storage, and only expose redacted token previews in diagnostics.
+- Use `/api/auth/swiggy/status` and the frontend OAuth Status panel to review authorize/token/logout endpoints, pending PKCE verifier count, callback outcome, token source, expiry, and no-token-logging posture without exposing bearer values.
 
 ## Retry Policy
 
@@ -55,6 +56,68 @@ The `/api/resilience` endpoint turns this policy into executable demo evidence:
 - Check-then-retry for `place_food_order`, `checkout`, and `book_table`.
 - Version/deprecation alerting through `_meta.swiggy.deprecation`.
 
+The `/api/error-intelligence` endpoint maps Swiggy's current `success:false` envelope into retry classes, planned symbolic codes, terminal domain failures, support actions, and the same non-blind retry policy for commercial actions.
+
+The `/api/ai-client-connect-kit` endpoint marks AI-client and coding-agent installs as real Swiggy MCP connections. Operators must treat Claude Desktop, ChatGPT, Cursor, VS Code, Windsurf, and generic MCP clients as capable of live commerce calls after OAuth, so confirmation gates and non-blind retry rules still apply outside the MealPilot web UI.
+
+The `/api/swiggy-journey-compiler` endpoint keeps official recipe constraints visible in every route: Food placement is COD-only with a commercial confirmation gate, Instamart checkout respects the minimum cart threshold and address serviceability, Dineout booking confirms party details before `book_table`, and future Food scheduling remains a reminder/place-later flow until Swiggy exposes scheduled delivery.
+
+The `/api/mcp/scenario-runner` endpoint validates those official recipes as local JSON-RPC traces before live credentials exist. It exercises Food, Instamart, Dineout, and combined flows, keeps `place_food_order`, `checkout`, and `book_table` confirmation-gated, uses status tools before retrying uncertain commerce calls, and leaves future Food scheduling as a reminder-time external gate.
+
+The `/api/mcp/state-orchestrator` endpoint turns Swiggy's multi-turn state and voice/chat patterns into explicit safety controls. It rejects agent-memory cart truth, refreshes `get_food_cart` or `get_cart` before mutations and commercial actions, warns before Food restaurant switches, clears Instamart cart state before address switches, refreshes Dineout slots before booking, and prevents raw ids from being spoken on voice surfaces.
+
+The `/api/swiggy-access-dossier` endpoint maps Swiggy's production-access application fields, review checks, ground rules, legal readiness, and developer/enterprise tracks to MealPilot proof artifacts. It also keeps official form submission, final contact details, static IP details, live credentials, and terms acknowledgement marked as manual or external gates.
+
+The `/api/swiggy-faq-policy` endpoint maps Swiggy public FAQ and policy signals into reviewable controls. It ties homepage, developer, enterprise, access-guideline, footer-resource, allowed/restricted/prohibited, operating-principle, legal, and support-contact themes to MealPilot proof routes while keeping enterprise contracts, co-branding, support channels, staging credentials, and production credentials as external gates.
+
+The `/api/swiggy-growth-partnership` endpoint keeps growth ambition inside the safety boundary. Co-marketing experiments, feature/showcase asks, hiring narrative, partner analytics, and strategic launch support are mapped to local evidence, metrics, and guardrails; Swiggy approval remains mandatory for public claims, Slack access, partner-manager assignment, analytics dashboards, higher rate limits, and any co-branded launch.
+
+The `/api/channel-multimodal-studio` endpoint keeps developer-page innovation lanes inside explicit channel and privacy boundaries. Voice, Slack/Teams, mobile camera, and enterprise surfaces inherit the same confirmation rules as the web app; local execution packets define route plans, response rules, confirmation gates, and telemetry contracts. Screenshot-to-order stores no raw image by default, converts images to user-confirmed labels before Swiggy tool calls, and keeps Slack/Teams installation, vision/OCR approval, and enterprise embedding as external gates.
+
+The `/api/nutrition-budget-intelligence` endpoint keeps premium macro planning inside non-medical, estimate-only boundaries. Protein-per-rupee routes use Food menu/search, COD-safe coupons, Instamart go-to items, product search, and Dineout slots as planning signals, but Swiggy cart reads remain the commercial source of truth before coupon application, checkout, order placement, or booking. Live merchant nutrition fields, real coupon eligibility, stock, serviceability, and camera/OCR labels remain external data gates.
+
+The `/api/household-preference-graph` endpoint keeps personalization inside consented, minimized data boundaries. It stores derived taste, pantry, cadence, area, and failure-class tags only when local preference storage is allowed; raw Swiggy order payloads, full addresses, tokens, payment data, phone, and email are excluded. Food and Instamart cancellation requests are handled with Swiggy customer-care copy rather than MCP tool calls, and Swiggy-originated DSRs remain routed through the Swiggy app while MealPilot deletes derived local data.
+
+The `/api/guest-collaboration-calendar` endpoint keeps group planning separate from commerce execution. Guest votes, share links, calendar artifacts, Slack/Teams digests, and voice briefs exclude raw Swiggy ids, payment data, full addresses, tokens, phone, and email; Dineout reservations, Food orders, and Instamart checkout still require separate user-visible confirmations, and future Food delivery is modeled only as a reminder-time confirmation because Swiggy Food v1 has no scheduled-delivery tool.
+
+The `/api/luxury-experience-workspace` endpoint keeps premium UI polish tied to the same commerce safety rules. Reservation, Food cart, Instamart basket, combined evening, and recovery workspaces must refresh authoritative Swiggy state before commercial calls; enforce Food COD and Rs 1000 cart cap, Instamart Rs 99 minimum and address-scoped serviceability, Dineout free-slot confirmation, non-blind retry, widget fallback gating, voice id suppression, and redacted telemetry.
+
+The `/api/reviewer-artifact-vault` endpoint keeps the Swiggy access packet shareable. Every proof link, screenshot target, command, log, trace, and handoff artifact carries a redaction rule; demo videos and screenshots must blur tokens, browser profiles, notifications, local secrets, full addresses, phone, email, payment data, and raw Swiggy payloads before submission.
+
+The `/api/visual-qa-center` endpoint keeps reviewer screenshot work inside the same safety boundary. It records selectors, viewport sizes, artifact paths, no-overlap rules, text-fit rules, widget fallback checks, mobile layout checks, redaction visibility, and commercial-confirmation visibility so screenshots and demo captures do not expose tokens, secrets, full addresses, phone, email, payment data, or raw Swiggy payloads.
+
+The `/api/brand-compliance-kit` endpoint maps Swiggy attribution and co-branding readiness. It keeps "Powered by Swiggy" copy visible for Swiggy-originated surfaces, avoids false endorsement claims, reserves `#FF5200` for approved Swiggy marks, and keeps logo packs, do/don't sheets, and custom co-branding rights as external onboarding gates.
+
+The `/api/premium-use-case-studio` endpoint turns product innovation into auditable route plans. Every premium playbook lists the Swiggy tools it needs, the call savings expected from route optimization, confirmation gates for commercial actions, data boundaries, and launch stages so luxury use cases do not bypass safety.
+
+The `/api/staging-certification-matrix` endpoint turns launch safety into staged evidence. It assigns all 35 official Swiggy tools to credentialed smoke waves, keeps `place_food_order`, `checkout`, and `book_table` behind non-blind retry evidence, and preserves staging credentials, 48-hour soak, and production approval as external gates.
+
+The `/api/sessions/:sessionId/staging-transcript` endpoint exports one session as Swiggy-ready JSONL and Markdown with request IDs, session IDs, hashed user identifiers, certification-wave mapping, redaction manifest, and support envelope. It is designed to be safe to attach to `builders@swiggy.in` because raw tokens, payment credentials, full addresses, phone, email, and full tool payloads are excluded.
+
+The `/api/traffic-readiness-plan` endpoint turns launch capacity into auditable evidence. It records expected daily sessions, projected tool calls, peak QPS, per-lane budgets for discovery/cart/commercial/tracking/support/auth traffic, Retry-After behavior, seven-day major-event notice, staged rollout, and the capacity-upgrade email draft.
+
+The `/api/mcp/backpressure-governor` endpoint keeps current and future rate-limit behavior separate. Current Swiggy v1.0 upstream shedding is treated as bounded `UPSTREAM_ERROR` retry behavior; future MCP-layer 429 responses, `Retry-After`, `X-RateLimit-Limit`, `X-RateLimit-Remaining`, and `X-RateLimit-Reset` are reserved as first-class telemetry and governor signals. Tracking calls stay at 10 seconds or slower, voice bursts are shaped before broad search, commercial writes remain single-flight, and background jobs stay disabled until Swiggy approves bespoke ceilings.
+
+The `/api/slo-incident-command` endpoint turns Swiggy SLA and uptime guidance into operational evidence. It maps 99.9% uptime targets, read/write/commercial latency bands, status-page fallback, S0-S3 incident comms, 72-hour maintenance notice, SLO measurement exclusions, and partnership-based remediation.
+
+The `/api/data-governance-center` endpoint turns Swiggy Data & Compliance guidance into auditable DPDP posture. It records Swiggy as Data Fiduciary, MealPilot as Data Processor, the India/Singapore residency boundary, tool-call PII inventory, local DSR export/delete actions, Swiggy-originated DSR routing through the Swiggy app, 90-day Swiggy audit-log retention, token redaction, security contacts, cross-border DPA gates, and signed-manifest watch items.
+
+The `/api/audit-ledger` endpoint keeps audit evidence support-safe. It derives redacted session/tool events from MealPilot plan trails, records server, tool, status, duration, route class, and support correlation keys, acknowledges Swiggy-side 90-day audit-log retention, routes Swiggy-originated DSRs back to Swiggy, and omits raw request/response bodies, bearer tokens, addresses, phone, email, and payment data.
+
+The `/api/swiggy-upstream-watch` endpoint keeps shipped Swiggy MCP behavior separate from roadmap behavior. It tracks `llms.txt`, `llms-full.txt`, changelog limitations, v1.1/v1.2/v2 roadmap items, signed manifests, and action queues so online payments, hosted widgets, symbolic codes, rate-limit headers, and manifest signing stay gated until Swiggy ships or approves them.
+
+The `/api/mcp/widget-runtime` endpoint keeps hosted widget behavior explicit and gated. MealPilot models Food, Instamart, and Dineout iframe surfaces, verifies postMessage origin as `https://mcp.swiggy.com`, omits `allow-top-navigation`, avoids parent-to-iframe DOM access, serves semantic data-envelope fallbacks, exposes activation checks and render contracts, and disables widget rendering on voice surfaces until Swiggy-hosted iframe URLs and opt-in headers are live.
+
+The `/api/mcp/commercial-action-guard` endpoint keeps Food order placement, Instamart checkout, Dineout booking, and combined commercial journeys behind explicit confirmation locks. It maps each non-idempotent action to a fresh authoritative read, a verification tool, a check-then-retry drill, redacted telemetry fields, and support packet context so ambiguous 5xx or network failures cannot create duplicate orders or bookings.
+
+The `/api/mcp/resource-prompt-studio` endpoint keeps `mcp:resources` and `mcp:prompts` evidence reviewable without implying live Swiggy ownership. Local `resources/list`, `resources/read`, `prompts/list`, and `prompts/get` samples can be used for verifier proof, but live server resources, prompt templates, hosted widget URLs, and metadata freshness remain gated on Swiggy staging credentials and production review.
+
+The `/api/mcp/staging-cutover` endpoint keeps real Swiggy traffic separate from local proof. It rehearses first read-only MCP probes for Food, Instamart, and Dineout, requires OAuth bearer state for non-mock routing, documents 401 re-auth, 429 Retry-After, 5xx/network retry branches, prepares support packet fields for builders@swiggy.in, and keeps seeded staging data, 48-hour green telemetry, and production credentials marked as external gates.
+
+The `/api/premium-concierge-itinerary` endpoint turns Swiggy's official Food, Instamart, Dineout, and combined recipes into a premium operating timeline without weakening safety. It keeps cart refreshes at turn boundaries, treats Food scheduling as a reminder until Swiggy ships a scheduling flow, and preserves separate confirmations for `place_food_order`, `checkout`, and `book_table`.
+
+The `/api/enterprise-delegated-auth` endpoint keeps the enterprise on-behalf-of boundary explicit. Swiggy remains the Data Fiduciary; MealPilot/platform storage is limited to scoped per-user session state. Each end user gets a fresh PKCE verifier/challenge, one Swiggy authorization code exchange, one per-user bearer token, and a logout/delete path. Tokens are never shared across users, passwords/OTPs/payment credentials never pass through MealPilot, 401/419/403 failures trigger re-auth or entitlement review, and platform-operator approval, capacity ceilings, final redirect allowlists, partner contracts, staging credentials, and production cutover remain external gates.
+
 The `/api/evaluation-lab` endpoint regression-tests the product against multiple user scenarios before review:
 
 - Chat and voice response shaping.
@@ -69,8 +132,12 @@ Initial pilot target:
 
 - Below 1 QPS peak.
 - Poll tracking no faster than every 10 seconds.
-- Backoff on 429.
-- Do not launch public campaigns without notifying Swiggy in advance.
+- Honor `Retry-After` on 429 once MCP-layer throttling ships.
+- Cap user-facing retries at 30 seconds.
+- Ramp production traffic 1% -> 10% -> 50% -> 100% over at least 24 hours.
+- Do not launch public campaigns without notifying Swiggy at least seven days in advance.
+- Avoid planned maintenance during 12:00-14:00 and 19:00-22:00 IST meal windows.
+- Escalate S0/S1 production failures with session ids, request ids, timestamps, and affected Swiggy servers.
 
 ## Data Minimization
 
@@ -80,6 +147,7 @@ MealPilot stores:
 - Budget bands.
 - Cuisine preferences.
 - High-level location labels such as home or office.
+- Redacted session IDs only for support correlation and local proof artifacts.
 
 MealPilot does not store by default:
 
@@ -87,6 +155,7 @@ MealPilot does not store by default:
 - Raw address strings beyond what is needed in active session state.
 - Payment credentials.
 - Swiggy session IDs as internal business identifiers.
+- Swiggy-originated data for analytics, advertising, or model training.
 
 ## Logging
 

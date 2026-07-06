@@ -13,6 +13,14 @@ flowchart LR
   API --> Mock["Local MCP JSON-RPC mock"]
   API --> Auth["OAuth 2.1 PKCE helper"]
   API --> Gateway["MCP Gateway"]
+  API --> Registry["MCP Capability Registry"]
+  API --> ToolLab["MCP Tool Lab"]
+  API --> Atlas["Website Atlas"]
+  API --> Credential["Credential Onboarding"]
+  API --> Launch["Production Launch Bundle"]
+  API --> DataGov["Data Governance Center"]
+  API --> Support["Support Bridge"]
+  API --> Errors["Error Intelligence"]
   Mock --> Food["Swiggy MCP shape: food"]
   Mock --> IM["Swiggy MCP shape: im"]
   Mock --> Dineout["Swiggy MCP shape: dineout"]
@@ -24,6 +32,7 @@ flowchart LR
 
 ### Web App
 
+- Carbon-inspired premium portal shell with a reusable MealPilot logo, sticky product header, mobile navigation, reviewer sidebar, footer, 12-column evidence grids, visible action notices, and section anchors for Planner, Recommendations, Launch Center, Production Evidence, Demo Studio, and Ops.
 - Planning workspace with prompt, budget, city, diet, and party controls.
 - Household profile editor with allergy, dislike, cuisine, and consent fields.
 - Budget, diet, location, and timing controls.
@@ -31,9 +40,9 @@ flowchart LR
 - Separate confirmation panels for Food, Instamart, and Dineout.
 - Simulated tracking after confirmation.
 - Pantry, group planning, reminders, privacy export/delete, and ops status panels.
-- Launch Center with MCP coverage, chat/voice response contracts, go-live checks, observability metrics, rollout plan, and support report generation.
-- Demo Studio with cart preflight checks, offer opportunities, MCP replay transcripts, demo progress, and submission readiness.
-- Production Evidence panel with Swiggy widget contracts, rate-limit budgets, version/deprecation monitoring, compliance controls, Resilience Lab drills, Evaluation Lab persona QA, and reviewer proof score.
+- Launch Center with MCP coverage, Journey Compiler, Access Dossier, Growth Partnership Center, Channel & Multimodal Studio, Nutrition & Budget Intelligence, Household Preference Graph, Guest Collaboration & Calendar Center, Luxury Experience Workspace, Reviewer Artifact Vault, Visual QA Center, Premium Use Case Studio, Staging Cutover Rehearsal, Staging Certification Matrix, Brand Compliance Kit, Capability Registry, Resource & Prompt Studio, Tool Contract Matrix, Widget Runtime Center, Commercial Action Guard, Website Atlas with access-page and launch-blog coverage, Tool Lab, Credential Cockpit, Support Bridge, chat/voice response contracts, go-live checks, observability metrics, rollout plan, and support report generation.
+- Demo Studio with cart preflight checks, offer opportunities, MCP replay transcripts, staging transcript export, demo progress, and submission readiness.
+- Production Evidence panel with Swiggy widget contracts, rate-limit budgets, version/deprecation monitoring, compliance controls, Data Governance Center, Production Launch Bundle, Error Intelligence, Resilience Lab drills, Evaluation Lab persona QA, and reviewer proof score.
 - No checkout, order, or booking call is hidden inside a generic "continue" button.
 
 ### Planner Domain Service
@@ -48,6 +57,8 @@ Implementation:
 - `src/domain/planner.ts`
 - `src/domain/safety.ts`
 - `src/domain/types.ts`
+- `src/assets/mealpilot-logo.svg`
+- `docs/design-language.md`
 
 ### Express API
 
@@ -57,20 +68,66 @@ Implementation:
 - Supports item substitution, item removal, confirm-all, profile updates, tracking, and builder package export.
 - Supports pantry restock suggestions, group constraints, schedule reminders, privacy export/delete, and operational status.
 - Exposes the 35-tool Swiggy MCP catalog with demo-ready or guarded status for each Food, Instamart, and Dineout tool.
+- Exposes `/api/mcp/tool-lab` to probe every official Swiggy MCP tool with JSON-RPC request samples, response previews, route classes, safety gates, retry policies, and innovation use cases.
+- Exposes `/api/mcp/tool-contract-matrix` as the all-tool contract layer for parameters, source/privacy labels, response envelopes, confirmation gates, retry policies, error buckets, and local fixtures.
+- Exposes `/api/mcp/scenario-runner` as the executable official recipe layer for Food, Instamart, Dineout, and combined flows, with guard/recovery branches and all 35 tools covered.
+- Exposes `/api/mcp/state-orchestrator` for Swiggy's multi-turn cart state, server-boundary, stale-cart recovery, and voice/chat surface rules.
+- Exposes `/api/mcp/capability-registry` for tools, resources, prompts, OAuth metadata, widget registry, static metadata, and external gates.
+- Exposes `/api/mcp/resource-prompt-studio` for concrete `resources/list`, `resources/read`, `prompts/list`, and `prompts/get` coverage across Food, Instamart, and Dineout.
+- Exposes `/api/swiggy-builders-map` as the current Swiggy Builders website, CTA, capability, product-opportunity, and credential-gate source of truth.
+- Exposes `/api/swiggy-website-atlas` as the header, docs subnav, footer, production-access page, launch blog, page-module, CTA, resource, and legal-link coverage artifact.
+- Exposes `/api/swiggy-builder-intake` as the action layer for every signup, apply, demo, contact, docs, and footer CTA, with submission fields, storyboard, drafts, owners, and gates.
+- Exposes `/api/swiggy-faq-policy` as the FAQ and policy coverage center for homepage, developer, enterprise, access-guideline, footer-resource, allowed/restricted/prohibited, operating-principle, legal, and support-contact signals.
+- Exposes `/api/swiggy-growth-partnership` as the launch-growth layer for get-noticed, hiring, co-branding, direct support, co-marketing, analytics, strategic guidance, experiments, metrics, proof assets, and partner asks.
+- Exposes `/api/channel-multimodal-studio` as the developer-lane layer for voice, auto-restock, group bot, dietary planner, reservation, and screenshot-to-order builds, including local execution packets with route plans, response rules, confirmation gates, and telemetry contracts.
+- Exposes `/api/nutrition-budget-intelligence` as the protein-per-rupee, coupon-safe cart, pantry-gap, group-budget, and Dineout balance layer for premium nutrition planning.
+- Exposes `/api/household-preference-graph` as the consented personalization layer for Food active orders, Instamart go-to items/order history, Dineout saved-location signals, household weights, forecasts, and retention rules.
+- Exposes `/api/guest-collaboration-calendar` as the group planning layer for guest votes, occasion templates, Dineout-first date nights, Food reminders, Instamart prep, calendar/share handoffs, and Slack/Teams gates.
+- Exposes `/api/luxury-experience-workspace` as the polished reservation, Food cart, Instamart basket, combined evening, and recovery review layer with concierge modes, all-tool coverage, widget fallbacks, voice contracts, telemetry, and confirmation gates.
+- Exposes `/api/reviewer-artifact-vault` as the access-submission manifest for proof links, OpenAPI, smoke commands, screenshot targets, demo-video checklist, logs, traces, redaction rules, support context, and Swiggy handoff copy.
+- Exposes `/api/visual-qa-center` as the reviewer screenshot and layout evidence center for viewport targets, selector manifests, artifact paths, no-overlap rules, text-fit rules, widget fallbacks, mobile layout checks, redaction visibility, and automation/manual gates.
+- Exposes `/api/swiggy-docs-coverage` as the 69-page `llms.txt` documentation coverage audit across Start, Build, Operate, Reference, and Blog.
+- Exposes `/api/swiggy-upstream-watch` as the Swiggy docs/changelog watch center for `llms.txt`, `llms-full.txt`, v1.0 shipped/limited capabilities, v1.1/v1.2/v2 roadmap items, signed manifests, and required MealPilot follow-up actions.
+- Exposes `/api/ai-client-connect-kit` as the AI-client and coding-agent connection kit for Claude Desktop, ChatGPT, Cursor, VS Code, Windsurf, MCP clients, SDK auth modes, and delegated-auth gates.
+- Exposes `/api/brand-compliance-kit` as the Swiggy attribution and co-branding readiness artifact for Powered by Swiggy copy, asset gates, palette audit, surface placement, and screenshot review.
+- Exposes `/api/data-governance-center` as the DPDP and data-handling artifact for Swiggy fiduciary/MealPilot processor roles, India/Singapore residency, tool-call PII inventory, DSR routing, retention, token redaction, security contacts, and signed-manifest readiness.
+- Exposes `/api/swiggy-journey-compiler` as the official recipe route compiler for Food, Instamart, Dineout, combined journeys, premium three-server flows, confirmation gates, recovery reads, and all 35 tools.
+- Exposes `/api/swiggy-access-dossier` as the production-access application dossier for Swiggy form fields, review checks, ground rules, legal readiness, track selection, proof links, manual inputs, and external gates.
+- Exposes `/api/premium-use-case-studio` as the premium product playbook matrix for differentiated MealPilot use cases, all-tool coverage, route optimization, surfaces, metrics, roadmap, and external gates.
+- Exposes `/api/premium-concierge-itinerary` as the premium product itinerary layer for official Swiggy Food, Instamart, Dineout, and combined recipes, with all-tool coverage, saved-call optimizations, reminders, and confirmation gates.
+- Exposes `/api/staging-certification-matrix` as the credential-aware staging plan that assigns all 35 Swiggy tools to smoke waves, OAuth/DCR checks, 48-hour soak, telemetry, rollback, and production-promotion gates.
+- Exposes `/api/traffic-readiness-plan` as the launch capacity artifact for expected volume, peak QPS, per-lane traffic budgets, Retry-After handling, seven-day traffic-event notice, and staged rollout.
+- Exposes `/api/mcp/backpressure-governor` as the adaptive runtime artifact for current Swiggy v1.0 upstream-shedder behavior, future `429`/`Retry-After`/`X-RateLimit-*` readiness, token buckets, voice burst shaping, tracking cadence, and background-job gates.
+- Exposes `/api/slo-incident-command` as the SLA and incident artifact for 99.9% uptime targets, latency bands, status-page fallback, incident comms, maintenance windows, measurement exclusions, and remediation evidence.
 - Exposes `/api/mcp-gateway` for mock, staging, and production routing status, token posture, cutover steps, fallback behavior, and canary rollout.
+- Exposes `/api/auth/swiggy/status` for Swiggy OAuth lifecycle status, authorize/token/logout endpoints, pending PKCE verifier count, callback outcome, token source, expiry, and storage policy without exposing bearer values.
+- Exposes `/api/credential-onboarding` for Swiggy OAuth metadata endpoints, Dynamic Client Registration preview, redirect URI audit, scope coverage, access-form fields, and external credential gates.
+- Exposes `/api/enterprise-delegated-auth` for Swiggy enterprise on-behalf-of OAuth, per-user PKCE, token lifecycle, redirect strategies, troubleshooting, architecture review, and partner gates.
 - Generates chat-safe and voice-safe response payloads from the same plan session.
 - Generates Swiggy-ready support reports with session IDs for escalation.
+- Generates `/api/support/bridge` with official `report_error` JSON-RPC payloads for Food, Instamart, and Dineout, plus SLA routing, redaction rules, and escalation checklist.
+- Generates `/api/slo-incident-command` with Swiggy SLO targets, severity runbooks, status-page gates, 72-hour maintenance notice, and live readiness checks.
+- Generates `/api/error-intelligence` with Swiggy's current `success:false` envelope, message/HTTP buckets, planned symbolic codes, domain failures, retry budgets, and support actions.
 - Generates preflight reports before commercial actions, including budget, address, payment scope, item, confirmation, and substitution checks.
 - Generates replayable JSON-RPC transcripts for the Swiggy MCP tool path.
+- Generates `/api/sessions/:sessionId/staging-transcript` with Swiggy-ready JSONL, Markdown replay, redaction manifest, support envelope, non-blind retry evidence, and certification-wave mapping.
 - Generates a submission package that mirrors Swiggy access fields and manual-input gaps.
+- Generates `/api/submission-console` with official developer/enterprise form targets, prepared fields, proof attachments, runbook steps, blockers, and handoff drafts.
+- Generates `/api/production-launch-bundle` as the consolidated Swiggy handoff with proof artifacts, traffic readiness, commands, access application fields, external gates, and a draft review email.
 - Generates Evaluation Lab results across personas, cities, budgets, chat/voice surfaces, confirmation locks, and privacy checks.
 - Generates Swiggy widget contracts with iframe sizing, postMessage events, sandbox policy, origin verification, and semantic fallbacks.
-- Generates rate-limit, versioning, and compliance evidence aligned with Swiggy's Operate documentation.
+- Generates Resource & Prompt Studio evidence with sample resource reads, prompt messages, smoke requests, and live staging gates.
+- Generates rate-limit, traffic readiness, SLO/incident, data governance, versioning, and compliance evidence aligned with Swiggy's Operate documentation.
+- Generates trace spans, support-ready log contracts, and redaction evidence through `/api/observability/traces`.
+- Records live runtime API/MCP request telemetry through `/api/telemetry/runtime`, including request IDs, hashed user context, optional session IDs, status classes, latency, redaction evidence, and support-ready correlation identifiers.
+- Generates `/api/audit-ledger` with redacted plan audit events, Swiggy support correlations, retention posture, DSR routing, and builders@swiggy.in packet fields.
+- Generates Swiggy MCP route optimization evidence through `/api/swiggy-route-optimizer`, including cache policies, retry classes, confirmation gates, and staging assertions.
 - Generates resilience drills for safe 5xx retries, 429 Retry-After handling, 401 reauth, non-idempotent check-then-retry, and deprecation alerts.
 - Serves OpenAPI 3.1 at `/api/openapi.json`, readiness checks at `/api/ready`, and request IDs on every API response.
 - Ships with Docker, Render blueprint, GitHub Actions CI, and an automated production smoke verifier.
 - Supports optional file-backed persistence through `MEALPILOT_DATA_FILE`, with versioned snapshots, restore, compaction, and storage diagnostics.
 - Exposes an MCP-shaped local JSON-RPC route for Swiggy tool demos.
+- The local MCP route supports `tools/call`, `resources/list`, `resources/read`, `prompts/list`, and `prompts/get` so `mcp:tools`, `mcp:resources`, and `mcp:prompts` can all be reviewed before credentials.
 - Starts the Swiggy OAuth flow with server-stored PKCE verifier and state.
 
 Implementation:
@@ -78,7 +135,41 @@ Implementation:
 - `server/app.ts`
 - `server/index.ts`
 - `server/services/confirmationService.ts`
+- `server/services/aiClientConnect.ts`
+- `server/services/credentialOnboarding.ts`
+- `server/services/dataGovernance.ts`
+- `server/services/capabilityRegistry.ts`
+- `server/services/channelMultimodalStudio.ts`
+- `server/services/nutritionBudgetIntelligence.ts`
+- `server/services/householdPreferenceGraph.ts`
+- `server/services/guestCollaborationCenter.ts`
+- `server/services/luxuryExperienceWorkspace.ts`
+- `server/services/reviewerArtifactVault.ts`
+- `server/services/visualQaCenter.ts`
+- `server/services/docsCoverage.ts`
+- `server/services/enterpriseDelegatedAuth.ts`
+- `server/services/errorIntelligence.ts`
+- `server/services/faqPolicyCenter.ts`
+- `server/services/growthPartnership.ts`
+- `server/services/auditLedger.ts`
+- `server/services/journeyCompiler.ts`
+- `server/services/launchBundle.ts`
+- `server/services/observability.ts`
+- `server/services/premiumUseCaseStudio.ts`
 - `server/services/pkce.ts`
+- `server/services/resourcePromptStudio.ts`
+- `server/services/runtimeTelemetry.ts`
+- `server/services/submissionConsole.ts`
+- `server/services/stagingCutover.ts`
+- `server/services/swiggyAuthStatus.ts`
+- `server/services/supportBridge.ts`
+- `server/services/swiggyAccessDossier.ts`
+- `server/services/premiumConciergeItinerary.ts`
+- `server/services/toolContractMatrix.ts`
+- `server/services/widgetRuntime.ts`
+- `server/services/toolLab.ts`
+- `server/services/upstreamWatch.ts`
+- `server/services/websiteAtlas.ts`
 - `server/store/sessionStore.ts`
 
 ### Local MCP Stub
@@ -104,6 +195,15 @@ The localhost demo uses deterministic seeded data with the same domain boundarie
 
 The Launch Center maps every documented Swiggy MCP tool: 14 Food tools, 13 Instamart tools, and 8 Dineout tools.
 
+The Tool Lab also runs all 35 tools through the local MCP-shaped router so the catalog is backed by executable JSON-RPC evidence before staging credentials arrive.
+
+The Journey Compiler maps the official Food order, grocery order, table booking, and combined evening recipes into optimized call plans, then adds a premium MealPilot household reset route across all three Swiggy servers.
+
+The same local MCP route serves resource and prompt evidence for the Swiggy scopes beyond tools:
+
+- `resources/list` and `resources/read` expose widget registry and static metadata resources per server.
+- `prompts/list` and `prompts/get` expose Food lunch, Instamart pantry, Dineout evening, recovery, safety, and support prompt contracts.
+
 Implementation:
 
 - `server/mock/swiggyToolRouter.ts`
@@ -116,9 +216,20 @@ Implementation:
 
 The API keeps localhost demos on the deterministic mock router, but staging and production modes can route `/api/mcp/:server` to Swiggy's streamable HTTP endpoints when a bearer token is present. Tokens are held in process memory after OAuth callback or injected through a secure runtime variable for staging smoke tests; the full token is never returned in API responses.
 
+`/api/auth/swiggy/status` is the reviewer-facing auth lifecycle surface. It reports Swiggy's authorize, token, logout, and metadata endpoints; configured redirect URI; requested scope; pending server-side PKCE verifier count; latest OAuth event; token source; token expiry; callback checklist; and storage policy. It also backs the frontend OAuth Status panel, where callback URLs are removed from the browser after processing.
+
+### Credential Onboarding
+
+`/api/credential-onboarding` keeps Swiggy OAuth readiness explicit. It previews the standard Dynamic Client Registration payload for `POST /auth/register`, audits whether the configured redirect URI is localhost-only or production-safe HTTPS, lists the OAuth metadata discovery endpoints, confirms `mcp:tools`, `mcp:resources`, and `mcp:prompts`, and keeps production blockers labeled as external gates until Swiggy access is issued.
+
+`/api/enterprise-delegated-auth` extends the credential model for platform operators. It records Swiggy as Data Fiduciary, MealPilot/platform as Data Processor, the on-behalf-of PKCE flow, 120-second auth codes, 5-day access tokens, 30-day Swiggy user sessions, per-user token storage, logout, 401/419/403 recovery, platform redirect schemes, and the architecture-review topics Swiggy checks before enterprise production.
+
 Implementation:
 
 - `server/services/mcpGateway.ts`
+- `server/services/swiggyAuthStatus.ts`
+- `server/services/credentialOnboarding.ts`
+- `server/services/enterpriseDelegatedAuth.ts`
 - `src/integrations/swiggy/client.ts`
 
 ### Swiggy MCP Clients
