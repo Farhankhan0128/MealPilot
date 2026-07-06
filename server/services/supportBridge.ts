@@ -1,4 +1,12 @@
-import type { MealPlan, SupportBridgeReport, SupportBridgeToolReport, SwiggyServer } from "../../src/domain/types.js";
+import crypto from "node:crypto";
+import type { ServerConfig } from "../config.js";
+import type {
+  MealPlan,
+  SupportBridgeExecution,
+  SupportBridgeReport,
+  SupportBridgeToolReport,
+  SwiggyServer,
+} from "../../src/domain/types.js";
 
 const servers: Array<{
   server: SwiggyServer;
@@ -51,6 +59,58 @@ const servers: Array<{
 
 function scoreFor(hasSession: boolean) {
   return hasSession ? 100 : 88;
+}
+
+function domainFor(server: SwiggyServer): SupportBridgeExecution["reportErrorArguments"]["domain"] {
+  if (server === "instamart") return "im";
+  return server;
+}
+
+function hashValue(value: unknown) {
+  return crypto.createHash("sha256").update(JSON.stringify(value ?? {})).digest("hex").slice(0, 16);
+}
+
+function sanitizeText(value: string, fallback: string) {
+  const withoutSecrets = value
+    .replace(/bearer\s+[a-z0-9._-]+/gi, "[redacted-token]")
+    .replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi, "[redacted-email]")
+    .replace(/\+?\d[\d\s-]{7,}\d/g, "[redacted-phone]")
+    .replace(/\b(?:token|password|secret|cookie|authorization)\b\s*[:=]\s*\S+/gi, "[redacted-secret]");
+  return withoutSecrets.trim().slice(0, 320) || fallback;
+}
+
+function sanitizeToolContext(toolContext: Record<string, unknown>, sessionId: string | undefined) {
+  const sanitized: Record<string, string | number | boolean> = {};
+  for (const [key, value] of Object.entries(toolContext)) {
+    const normalizedKey = key.trim().slice(0, 48);
+    if (!normalizedKey) continue;
+    if (typeof value === "boolean" || typeof value === "number") {
+      sanitized[normalizedKey] = value;
+    } else if (typeof value === "string") {
+      sanitized[normalizedKey] = `${normalizedKey}_${hashValue(value)}`;
+    }
+  }
+  sanitized.mealPilotSessionId = sessionId ? `session_${hashValue(sessionId)}` : "missing_session";
+  return sanitized;
+}
+
+function responseData(response: unknown): unknown {
+  if (response && typeof response === "object" && "result" in response) {
+    const result = (response as { result?: unknown }).result;
+    if (result && typeof result === "object" && "data" in result) return (result as { data?: unknown }).data;
+  }
+  return response;
+}
+
+function summarizeResponse(response: unknown): SupportBridgeExecution["responseSummary"] {
+  const data = responseData(response);
+  const record = data && typeof data === "object" ? (data as Record<string, unknown>) : {};
+  const statusValue = record.summary ?? record.status ?? record.mailto ?? "not_reported";
+  return {
+    available: Boolean(data),
+    statusLabel: typeof statusValue === "string" ? statusValue.slice(0, 120) : String(statusValue),
+    receiptHash: data ? hashValue(data) : "not_reported",
+  };
 }
 
 function bodyFor(sessionId: string | undefined, reports: SupportBridgeToolReport[]) {
@@ -182,6 +242,114 @@ export function buildSupportBridgeReport(options: { plans: MealPlan[]; sessionId
       "Live report_error server-side logging requires an authenticated Swiggy MCP session.",
       "Enterprise S0/S1 phone or Slack escalation depends on the partner agreement.",
       "Public status page and partner dashboards are Swiggy-operated external systems.",
+    ],
+  };
+}
+
+export async function executeSupportBridgeReport(input: {
+  config: ServerConfig;
+  server: SwiggyServer;
+  failedTool: string;
+  severity: "S0" | "S1" | "S2" | "S3";
+  errorMessage: string;
+  flowDescription: string;
+  userNotes: string;
+  toolContext: Record<string, unknown>;
+  sessionId?: string;
+  issueObserved: boolean;
+  userConsented: boolean;
+  liveCredentialReady: boolean;
+  executeTool: (server: SwiggyServer, tool: string, args: Record<string, unknown>) => Promise<unknown>;
+}): Promise<SupportBridgeExecution> {
+  const riskFlags: string[] = [];
+  const sessionIdProvided = Boolean(input.sessionId);
+  if (!sessionIdProvided) riskFlags.push("support_session_id_required");
+  if (!input.issueObserved) riskFlags.push("observed_user_visible_issue_required");
+  if (!input.userConsented) riskFlags.push("user_consent_required_before_report_error");
+  if (input.config.swiggyMode !== "mock" && !input.liveCredentialReady) riskFlags.push("live_swiggy_token_required_for_report_error");
+
+  let decision: SupportBridgeExecution["decision"] = "reported_with_receipt";
+  if (!sessionIdProvided) decision = "blocked_missing_session";
+  else if (!input.issueObserved) decision = "blocked_no_observed_issue";
+  else if (!input.userConsented) decision = "blocked_user_consent";
+  else if (input.config.swiggyMode !== "mock" && !input.liveCredentialReady) decision = "external_gate";
+
+  const safeContext = sanitizeToolContext(input.toolContext, input.sessionId);
+  const reportErrorArguments: SupportBridgeExecution["reportErrorArguments"] = {
+    tool: input.failedTool,
+    domain: domainFor(input.server),
+    errorMessage: sanitizeText(input.errorMessage, "MealPilot observed a Swiggy MCP tool failure."),
+    flowDescription: sanitizeText(input.flowDescription, "MealPilot support bridge captured a user-visible flow failure."),
+    toolContext: safeContext,
+    userNotes: sanitizeText(input.userNotes, "User asked MealPilot to report this issue to Swiggy support."),
+  };
+
+  let response: unknown;
+  const executedTools: Array<"report_error"> = [];
+  if (decision === "reported_with_receipt") {
+    response = await input.executeTool(input.server, "report_error", reportErrorArguments);
+    executedTools.push("report_error");
+  }
+
+  const emailSubject = `[${input.severity}] MealPilot ${input.server} ${input.failedTool} report_error`;
+
+  return {
+    generatedAt: new Date().toISOString(),
+    requestId: `support_${Date.now().toString(36)}`,
+    mode: input.config.swiggyMode,
+    input: {
+      server: input.server,
+      failedTool: input.failedTool,
+      severity: input.severity,
+      issueObserved: input.issueObserved,
+      userConsented: input.userConsented,
+      sessionIdProvided,
+    },
+    decision,
+    executedTools,
+    reportErrorArguments,
+    redaction: {
+      contextKeys: Object.keys(safeContext).sort(),
+      contextHash: hashValue(safeContext),
+      rawTokensRetained: false,
+      rawPaymentRetained: false,
+      rawAddressRetained: false,
+    },
+    responseSummary: summarizeResponse(response),
+    supportPacket: {
+      sessionIdHash: input.sessionId ? hashValue(input.sessionId) : "missing_session",
+      failedTool: input.failedTool,
+      server: input.server,
+      escalationTarget: "builders@swiggy.in",
+      emailSubject,
+    },
+    riskFlags,
+    userFacingCopy:
+      decision === "reported_with_receipt"
+        ? `I reported the ${input.server} ${input.failedTool} issue to Swiggy using report_error and kept only redacted context.`
+        : decision === "external_gate"
+          ? "Live report_error execution is gated until Swiggy credentials are available for this environment."
+          : decision === "blocked_user_consent"
+            ? "I need user consent before sending report_error to Swiggy."
+            : decision === "blocked_no_observed_issue"
+              ? "report_error is only sent for an observed user-visible issue, not silent debugging."
+              : "I need a MealPilot session id before preparing a Swiggy support report.",
+    telemetry: [
+      { field: "server", value: input.server, redaction: "safe enum" },
+      { field: "failed_tool", value: input.failedTool, redaction: "tool name only" },
+      { field: "domain", value: reportErrorArguments.domain, redaction: "safe enum" },
+      { field: "severity", value: input.severity, redaction: "safe enum" },
+      { field: "session_id_hash", value: input.sessionId ? hashValue(input.sessionId) : "missing_session", redaction: "sha256 prefix only" },
+      { field: "tool_context_hash", value: hashValue(safeContext), redaction: "sha256 prefix only" },
+      { field: "report_error_executed", value: String(executedTools.includes("report_error")), redaction: "boolean invariant" },
+      { field: "raw_sensitive_payload_retained", value: "false", redaction: "hard-coded privacy invariant" },
+    ],
+    assertions: [
+      "Support Bridge uses the official report_error tool only after a user-visible issue is observed.",
+      "User consent and a MealPilot session id are required before sending report_error.",
+      "toolContext values are hashed or reduced to safe scalar fields before execution.",
+      "Access tokens, cookies, raw payment details, phone numbers, emails, and full addresses are not retained.",
+      "builders@swiggy.in remains the escalation target for developer support packets.",
     ],
   };
 }

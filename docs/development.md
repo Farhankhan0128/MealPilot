@@ -249,6 +249,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/audit-ledger`
 - `GET /api/swiggy-route-optimizer`
 - `GET /api/support/bridge`
+- `POST /api/support/bridge/report`
 - `GET /api/slo-incident-command`
 - `GET /api/data-governance-center`
 - `GET /api/error-intelligence`
@@ -472,7 +473,7 @@ The test suite checks that:
 - Credential onboarding reports DCR preview, redirect URI status, metadata endpoints, PKCE readiness, scopes, and access-form fields.
 - Runtime telemetry records live API and MCP request events with request IDs, hashed user context, session correlation, status classes, latency, and redaction evidence.
 - Audit Ledger Center records redacted plan audit events, support correlation keys, retention posture, DSR routing, and builders@swiggy.in packet fields.
-- Support Bridge prepares official `report_error` payloads for Food, Instamart, and Dineout with toolContext identifiers, redaction rules, SLA routing, and builders@swiggy.in escalation.
+- Support Bridge prepares official `report_error` payloads for Food, Instamart, and Dineout, and `/api/support/bridge/report` executes consent-gated reports with observed-issue checks, hashed toolContext identifiers, redacted notes, receipt summaries, SLA routing, and builders@swiggy.in escalation.
 - SLO Incident Command maps 99.9% uptime targets, latency classes, status-page fallback, S0-S3 runbooks, 72-hour maintenance notice, measurement exclusions, and remediation evidence.
 - Error Intelligence maps Swiggy's current `success:false` failure envelope, message/HTTP buckets, planned symbolic codes, domain failures, retry policy, observability hooks, and support actions.
 - Swiggy Confirmation Command Center verifies final Food order, Instamart checkout, and Dineout booking proof with fresh cart or slot reads, explicit separate approvals, non-blind retry probes, Swiggy-response payment/free-booking truth, and live credential gates.

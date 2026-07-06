@@ -1166,6 +1166,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/support/bridge/report": {
+        post: {
+          tags: ["Operations"],
+          summary: "Execute a redacted Swiggy report_error support report",
+          responses: {
+            "200": {
+              description:
+                "Consent-gated report_error execution for Food, Instamart, or Dineout with observed-issue checks, hashed toolContext identifiers, no raw tokens/payment/address retention, support receipt summary, and live credential gates",
+            },
+          },
+        },
+      },
       "/api/slo-incident-command": {
         get: {
           tags: ["Operations"],

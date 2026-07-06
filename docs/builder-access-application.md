@@ -173,7 +173,7 @@ The application will include a 2-3 minute Loom or unlisted YouTube demo showing:
 15. Show `/api/swiggy-route-optimizer` with call-saving routes, optimizer profiles, parallel read batches, cache/retry policies, cross-server handoffs, redaction rules, confirmation gates, and staging assertions.
 16. Show `/api/mcp/capability-registry` with tools, resources, prompts, metadata, widgets, and external gates.
 17. Show `/api/mcp/resource-prompt-studio` with all six resource reads, all six prompt samples, and twelve JSON-RPC smoke requests.
-18. Show `/api/support/bridge` with Food, Instamart, and Dineout `report_error` payloads.
+18. Show `/api/support/bridge` and `/api/support/bridge/report` with Food, Instamart, and Dineout `report_error` payloads, consent gates, redacted toolContext, and receipt evidence.
 19. Show `/api/swiggy-docs-coverage` and `/api/swiggy-docs-twin-explorer` with 69 docs pages mapped to evidence, markdown twins, rendered URLs, retrieval lanes, and external gates.
 20. Show `/api/ai-client-connect-kit` with six client configs, coding-agent rules, SDK auth modes, and delegated-auth gates.
 21. Show `/api/slo-incident-command` with uptime targets, latency classes, status fallback, maintenance windows, and S0-S3 comms.
@@ -264,6 +264,6 @@ Email: add primary engineering email before submission.
 - Swiggy Cancellation & Care Center: `/api/swiggy-cancellation-care-center`
 - Swiggy Dineout Precision Center: `/api/swiggy-dineout-precision-center`
 - SLO Incident Command Center: `/api/slo-incident-command`
-- Support Bridge: `/api/support/bridge`
+- Support Bridge: `/api/support/bridge`, `/api/support/bridge/report`
 - Error Intelligence: `/api/error-intelligence`
 - Production Launch Bundle: `/api/production-launch-bundle`

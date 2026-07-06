@@ -115,7 +115,7 @@ import { buildSwiggyStateOrchestrator } from "./services/stateOrchestrator.js";
 import { buildSwiggyWidgetRuntime } from "./services/widgetRuntime.js";
 import { buildSwiggyBuildersMap } from "./services/swiggyBuildersMap.js";
 import { buildSwiggyAuthStatusReport, type AuthLifecycleEvent } from "./services/swiggyAuthStatus.js";
-import { buildSupportBridgeReport } from "./services/supportBridge.js";
+import { buildSupportBridgeReport, executeSupportBridgeReport } from "./services/supportBridge.js";
 import { buildSwiggyScenarioRunner } from "./services/scenarioRunner.js";
 import { buildSwiggyToolContractMatrix } from "./services/toolContractMatrix.js";
 import { buildMcpToolLabReport } from "./services/toolLab.js";
@@ -330,6 +330,19 @@ const confirmationExecutionSchema = z.object({
   paymentOrFreeTruthAcknowledged: z.boolean(),
   dineoutFreeBooking: z.boolean().default(false),
   simulateAmbiguousResult: z.boolean().default(false),
+});
+
+const supportReportSchema = z.object({
+  server: z.enum(["food", "instamart", "dineout"]),
+  failedTool: z.string().trim().min(2).max(80),
+  severity: z.enum(["S0", "S1", "S2", "S3"]),
+  errorMessage: z.string().trim().min(3).max(320),
+  flowDescription: z.string().trim().min(3).max(320),
+  userNotes: z.string().trim().min(3).max(320),
+  toolContext: z.record(z.string(), z.unknown()).default({}),
+  sessionId: z.string().trim().min(4).max(120).optional(),
+  issueObserved: z.boolean(),
+  userConsented: z.boolean(),
 });
 
 const mcpServerSchema = z.enum(["food", "instamart", "dineout"]);
@@ -1194,6 +1207,44 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
     const query = z.object({ sessionId: z.string().optional() }).parse(req.query);
     res.json({ supportBridge: buildSupportBridgeReport({ plans: store.getAllPlans(), sessionId: query.sessionId }) });
   });
+
+  app.post(
+    "/api/support/bridge/report",
+    asyncRoute(async (req, res) => {
+      const body = supportReportSchema.parse(req.body);
+      const executeTool = async (server: SwiggyServer, tool: string, toolArguments: Record<string, unknown>) => {
+        const request: JsonRpcRequest = {
+          jsonrpc: "2.0",
+          id: `support-${Date.now().toString(36)}`,
+          method: "tools/call",
+          params: {
+            name: tool,
+            arguments: toolArguments,
+          },
+        };
+
+        if (config.swiggyMode === "mock") {
+          return handleMockJsonRpc(server, request);
+        }
+
+        return callConfiguredSwiggyTool({
+          config,
+          server,
+          request,
+          accessToken: runtimeAccessToken,
+        });
+      };
+
+      res.json({
+        supportExecution: await executeSupportBridgeReport({
+          config,
+          ...body,
+          liveCredentialReady: Boolean(runtimeAccessToken),
+          executeTool,
+        }),
+      });
+    }),
+  );
 
   app.get("/api/slo-incident-command", (_req, res) => {
     res.json({

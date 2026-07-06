@@ -152,6 +152,8 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/data-governance-center"].get.summary).toContain("Data Governance");
     expect(openApi.body.paths["/api/production-launch-bundle"].get.summary).toContain("Production Launch Bundle");
     expect(openApi.body.paths["/api/support/bridge"].get.summary).toContain("Support Bridge");
+    expect(openApi.body.paths["/api/support/bridge/report"].post.summary).toContain("report_error");
+    expect(openApi.body.paths["/api/support/bridge/report"].post.responses["200"].description).toContain("hashed toolContext");
     expect(openApi.body.paths["/api/error-intelligence"].get.summary).toContain("error envelope");
   });
 
@@ -806,6 +808,71 @@ describe("MealPilot API", () => {
       true,
     );
     expect(bridge.body.supportBridge.incidentEmail.to).toBe("builders@swiggy.in");
+
+    const executedSupport = await request(app)
+      .post("/api/support/bridge/report")
+      .send({
+        server: "instamart",
+        failedTool: "checkout",
+        severity: "S2",
+        errorMessage: "Checkout returned a user-visible upstream error after confirmation.",
+        flowDescription: "searched products -> updated cart -> refreshed cart -> checkout failed",
+        userNotes: "Please report this without my phone +919999999999 or email user@example.com",
+        toolContext: { addressId: "addr_home_001", cartId: "im_cart_preview", paymentMethod: "COD" },
+        sessionId,
+        issueObserved: true,
+        userConsented: true,
+      })
+      .expect(200);
+    const supportExecution = executedSupport.body.supportExecution;
+    expect(supportExecution.decision).toBe("reported_with_receipt");
+    expect(supportExecution.executedTools).toEqual(["report_error"]);
+    expect(supportExecution.reportErrorArguments.domain).toBe("im");
+    expect(supportExecution.reportErrorArguments.toolContext.addressId).not.toBe("addr_home_001");
+    expect(supportExecution.reportErrorArguments.userNotes).not.toContain("user@example.com");
+    expect(supportExecution.reportErrorArguments.userNotes).not.toContain("+919999999999");
+    expect(supportExecution.redaction.rawTokensRetained).toBe(false);
+    expect(supportExecution.responseSummary.available).toBe(true);
+    expect(
+      supportExecution.telemetry.some(
+        (field: { field: string; value: string }) => field.field === "report_error_executed" && field.value === "true",
+      ),
+    ).toBe(true);
+
+    const noConsent = await request(app)
+      .post("/api/support/bridge/report")
+      .send({
+        server: "food",
+        failedTool: "place_food_order",
+        severity: "S2",
+        errorMessage: "Order placement failed.",
+        flowDescription: "cart read -> user confirmation -> placement error",
+        userNotes: "Do not send yet.",
+        toolContext: { restaurantId: "rest_green_bowl" },
+        sessionId,
+        issueObserved: true,
+        userConsented: false,
+      })
+      .expect(200);
+    expect(noConsent.body.supportExecution.decision).toBe("blocked_user_consent");
+    expect(noConsent.body.supportExecution.executedTools).toEqual([]);
+
+    const noSession = await request(app)
+      .post("/api/support/bridge/report")
+      .send({
+        server: "dineout",
+        failedTool: "book_table",
+        severity: "S2",
+        errorMessage: "Booking failed.",
+        flowDescription: "slot selected -> booking failed",
+        userNotes: "Report this.",
+        toolContext: { restaurantId: "la_piazza" },
+        issueObserved: true,
+        userConsented: true,
+      })
+      .expect(200);
+    expect(noSession.body.supportExecution.decision).toBe("blocked_missing_session");
+    expect(noSession.body.supportExecution.executedTools).toEqual([]);
   });
 
   it("maps the researched Swiggy Builders website, CTAs, and opportunities", async () => {

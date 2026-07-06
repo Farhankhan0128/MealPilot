@@ -4618,6 +4618,16 @@ function LaunchCenterPanel({
               ? `${supportBridge.score}/100, ${supportBridge.reportErrorTools.length} report_error tools`
               : "Preparing runtime support bridge"}
           </span>
+          <div className="support-bridge-grid">
+            <div>
+              <strong>{supportBridge?.reportErrorTools.length ?? 0}</strong>
+              <span>Servers</span>
+            </div>
+            <div>
+              <strong>{supportBridge ? "POST" : "-"}</strong>
+              <span>Report gate</span>
+            </div>
+          </div>
           <ul className="compact-status-list">
             {(supportBridge?.reportErrorTools ?? []).map((report) => (
               <li key={report.id} data-status={report.status === "ready" ? "healthy" : "watch"}>
@@ -4626,6 +4636,14 @@ function LaunchCenterPanel({
               </li>
             ))}
           </ul>
+          <div className="source-links">
+            <a href="/api/support/bridge" target="_blank" rel="noreferrer">
+              Bridge API
+            </a>
+            <a href="/api/openapi.json" target="_blank" rel="noreferrer">
+              Report schema
+            </a>
+          </div>
         </article>
 
         <article>

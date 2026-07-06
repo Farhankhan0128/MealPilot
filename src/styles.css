@@ -1850,6 +1850,7 @@ select:focus {
 .load-lab-grid,
 .offer-intelligence-grid,
 .order-lifecycle-grid,
+.support-bridge-grid,
 .confirmation-command-grid,
 .cancellation-care-grid,
 .data-governance-grid,
@@ -1924,6 +1925,13 @@ select:focus {
   margin-top: 10px;
 }
 
+.support-bridge-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+
 .confirmation-command-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1962,6 +1970,7 @@ select:focus {
 .location-trust-grid div,
 .cart-mutation-grid div,
 .discovery-freshness-grid div,
+.support-bridge-grid div,
 .confirmation-command-grid div,
 .cancellation-care-grid div,
 .dineout-precision-grid div,
@@ -1975,6 +1984,7 @@ select:focus {
 .location-trust-grid strong,
 .cart-mutation-grid strong,
 .discovery-freshness-grid strong,
+.support-bridge-grid strong,
 .confirmation-command-grid strong,
 .cancellation-care-grid strong,
 .dineout-precision-grid strong,
@@ -2291,6 +2301,7 @@ select:focus {
   .location-trust-grid,
   .cart-mutation-grid,
   .discovery-freshness-grid,
+  .support-bridge-grid,
   .confirmation-command-grid,
   .cancellation-care-grid,
   .data-governance-grid,

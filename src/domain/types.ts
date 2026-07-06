@@ -2883,6 +2883,64 @@ export interface SupportBridgeReport {
   externalGates: string[];
 }
 
+export type SupportBridgeExecutionDecision =
+  | "reported_with_receipt"
+  | "external_gate"
+  | "blocked_missing_session"
+  | "blocked_user_consent"
+  | "blocked_no_observed_issue";
+
+export interface SupportBridgeExecution {
+  generatedAt: string;
+  requestId: string;
+  mode: "mock" | "staging" | "production";
+  input: {
+    server: SwiggyServer;
+    failedTool: string;
+    severity: "S0" | "S1" | "S2" | "S3";
+    issueObserved: boolean;
+    userConsented: boolean;
+    sessionIdProvided: boolean;
+  };
+  decision: SupportBridgeExecutionDecision;
+  executedTools: Array<"report_error">;
+  reportErrorArguments: {
+    tool: string;
+    domain: "food" | "im" | "dineout";
+    errorMessage: string;
+    flowDescription: string;
+    toolContext: Record<string, string | number | boolean>;
+    userNotes: string;
+  };
+  redaction: {
+    contextKeys: string[];
+    contextHash: string;
+    rawTokensRetained: false;
+    rawPaymentRetained: false;
+    rawAddressRetained: false;
+  };
+  responseSummary: {
+    available: boolean;
+    statusLabel: string;
+    receiptHash: string;
+  };
+  supportPacket: {
+    sessionIdHash: string;
+    failedTool: string;
+    server: SwiggyServer;
+    escalationTarget: "builders@swiggy.in";
+    emailSubject: string;
+  };
+  riskFlags: string[];
+  userFacingCopy: string;
+  telemetry: Array<{
+    field: string;
+    value: string;
+    redaction: string;
+  }>;
+  assertions: string[];
+}
+
 export type ErrorRetryClass = "reauth" | "fix_arguments" | "safe_backoff" | "domain_terminal" | "single_retry_then_report";
 
 export interface ErrorIntelligenceBucket {

@@ -115,7 +115,7 @@ Planned MCP servers:
 - Runtime Telemetry ledger with live API/MCP request events, hashed user context, session correlation, redaction contract, status classes, and support-ready request IDs.
 - Audit Ledger Center with redacted tool-call audit events, support correlation keys, retention posture, DSR routing, and Swiggy support packet fields.
 - Swiggy Route Optimizer with call-saving journeys, optimization profiles, parallel read batches, cross-server handoffs, cache/retry rules, confirmation gates, and staging assertions.
-- Support Bridge with official `report_error` JSON-RPC payloads for Food, Instamart, and Dineout, SLA routing, redaction rules, and escalation checklist.
+- Support Bridge with official `report_error` JSON-RPC payloads for Food, Instamart, and Dineout, plus executable consent-gated reporting with hashed toolContext, SLA routing, redaction rules, and escalation checklist.
 - SLO Incident Command Center with Swiggy uptime targets, latency classes, status-page fallback, S0/S1 comms, maintenance windows, measurement exclusions, and remediation evidence.
 - Error Intelligence catalogue for Swiggy `success:false` envelopes, message/HTTP classification, planned symbolic codes, domain failures, retry budgets, and support actions.
 - Support report generator that creates a Swiggy-ready `builders@swiggy.in` escalation mail with session IDs.
@@ -314,6 +314,7 @@ GET  /api/telemetry/runtime
 GET  /api/audit-ledger
 GET  /api/swiggy-route-optimizer
 GET  /api/support/bridge
+POST /api/support/bridge/report
 GET  /api/slo-incident-command
 GET  /api/error-intelligence
 GET  /api/submission-console
@@ -527,6 +528,8 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 `GET /api/swiggy-cancellation-care-center` is the no-tool cancellation and support workbench: it shows official customer-care copy for Food and Instamart cancellation requests, Dineout booking-status recovery, `report_error` payload context across all three servers, incident email boundaries, planned error-code gates, and live support calibration gates.
 
 `GET /api/swiggy-dineout-precision-center` is the Dineout free-booking and bill-payment precision workbench: it separates `book_table` free reservations from `create_cart` bill-payment carts, requires free-deal proof before booking, blocks paid deals, preserves no-blind retry through `get_booking_status`, and leaves live payment validation as a Swiggy credential gate.
+
+`GET /api/support/bridge` plus `POST /api/support/bridge/report` is the executable Swiggy support bridge: it prepares and sends official Food, Instamart, or Dineout `report_error` calls only after an observed user-visible issue, a MealPilot session id, and user consent; it hashes toolContext identifiers, strips phone/email/secret patterns from notes, records report receipts, and leaves live Swiggy support execution credential-gated outside mock mode.
 
 `GET /api/slo-incident-command` turns Swiggy's SLA and uptime guidance into operational evidence: 99.9% uptime targets, latency bands for read/write/commercial tools, status-page fallback, S0-S3 communication plans, 72-hour maintenance notice, measurement exclusions, and remediation path.
 

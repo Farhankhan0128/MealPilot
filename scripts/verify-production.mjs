@@ -277,6 +277,12 @@ assert(
   "OpenAPI Swiggy Dineout Precision Center is missing",
 );
 assert(
+  openApi.paths["/api/support/bridge"]?.get?.summary?.includes("Support Bridge") &&
+    openApi.paths["/api/support/bridge/report"]?.post?.summary?.includes("report_error") &&
+    openApi.paths["/api/support/bridge/report"]?.post?.responses?.["200"]?.description?.includes("hashed toolContext"),
+  "OpenAPI Support Bridge report route is missing",
+);
+assert(
   openApi.paths["/api/mcp/resource-prompt-studio"].get.summary.includes("Resource and Prompt Studio"),
   "OpenAPI resource and prompt studio is missing",
 );
@@ -4184,6 +4190,56 @@ assert(
   "support bridge redaction rules are missing",
 );
 assert(supportBridge.supportBridge.incidentEmail.to === "builders@swiggy.in", "support bridge email target is missing");
+const supportExecution = await request("/api/support/bridge/report", {
+  method: "POST",
+  body: JSON.stringify({
+    server: "instamart",
+    failedTool: "checkout",
+    severity: "S2",
+    errorMessage: "Checkout returned a user-visible upstream error after confirmation.",
+    flowDescription: "searched products -> updated cart -> refreshed cart -> checkout failed",
+    userNotes: "Please report this without my phone +919999999999 or email user@example.com",
+    toolContext: { addressId: "addr_home_001", cartId: "im_cart_preview", paymentMethod: "COD" },
+    sessionId,
+    issueObserved: true,
+    userConsented: true,
+  }),
+});
+assert(supportExecution.supportExecution.decision === "reported_with_receipt", "support execution decision is wrong");
+assert(supportExecution.supportExecution.executedTools.join(",") === "report_error", "support execution tool list is wrong");
+assert(supportExecution.supportExecution.reportErrorArguments.domain === "im", "support execution domain mapping is wrong");
+assert(
+  supportExecution.supportExecution.reportErrorArguments.toolContext.addressId !== "addr_home_001" &&
+    !supportExecution.supportExecution.reportErrorArguments.userNotes.includes("user@example.com") &&
+    !supportExecution.supportExecution.reportErrorArguments.userNotes.includes("+919999999999"),
+  "support execution redaction failed",
+);
+assert(
+  supportExecution.supportExecution.telemetry.some(
+    (field) => field.field === "report_error_executed" && field.value === "true",
+  ),
+  "support execution telemetry is missing",
+);
+const blockedSupportExecution = await request("/api/support/bridge/report", {
+  method: "POST",
+  body: JSON.stringify({
+    server: "food",
+    failedTool: "place_food_order",
+    severity: "S2",
+    errorMessage: "Order placement failed.",
+    flowDescription: "cart read -> user confirmation -> placement error",
+    userNotes: "Do not send yet.",
+    toolContext: { restaurantId: "rest_green_bowl" },
+    sessionId,
+    issueObserved: true,
+    userConsented: false,
+  }),
+});
+assert(
+  blockedSupportExecution.supportExecution.decision === "blocked_user_consent" &&
+    blockedSupportExecution.supportExecution.executedTools.length === 0,
+  "support execution consent block is missing",
+);
 
 const errorIntelligence = await request("/api/error-intelligence");
 assert(errorIntelligence.errorIntelligence.score >= 95, "error intelligence score is below target");
@@ -4897,6 +4953,8 @@ console.log(
       routeOptimizerParallelTools: routeOptimizer.routeOptimizer.totals.parallelizableSteps,
       supportBridgeScore: supportBridge.supportBridge.score,
       supportBridgeReports: supportBridge.supportBridge.reportErrorTools.length,
+      supportExecutionDecision: supportExecution.supportExecution.decision,
+      supportExecutionTools: supportExecution.supportExecution.executedTools.length,
       errorIntelligenceScore: errorIntelligence.errorIntelligence.score,
       errorBuckets: errorIntelligence.errorIntelligence.buckets.length,
       evaluationScore: evaluation.evaluation.score,

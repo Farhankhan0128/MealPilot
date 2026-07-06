@@ -58,6 +58,7 @@ import type {
   StagingTranscriptExport,
   TrafficReadinessPlan,
   SupportBridgeReport,
+  SupportBridgeExecution,
   SwiggyAuthStatusReport,
   SwiggyAuthLifecycleCenterReport,
   EnterprisePlatformCenterReport,
@@ -649,6 +650,24 @@ export function createSupportReport(sessionId?: string) {
 export function fetchSupportBridge(sessionId?: string) {
   const params = sessionId ? `?${new URLSearchParams({ sessionId }).toString()}` : "";
   return requestJson<{ supportBridge: SupportBridgeReport }>(`/api/support/bridge${params}`);
+}
+
+export function executeSupportBridgeReport(input: {
+  server: "food" | "instamart" | "dineout";
+  failedTool: string;
+  severity: "S0" | "S1" | "S2" | "S3";
+  errorMessage: string;
+  flowDescription: string;
+  userNotes: string;
+  toolContext?: Record<string, unknown>;
+  sessionId?: string;
+  issueObserved: boolean;
+  userConsented: boolean;
+}) {
+  return requestJson<{ supportExecution: SupportBridgeExecution }>("/api/support/bridge/report", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
 }
 
 export function fetchSloIncidentCommand() {

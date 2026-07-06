@@ -143,7 +143,7 @@ Open the Launch Center and show:
 - Go-Live Gates for credentials, OAuth, confirmation, idempotency, observability, rollout, and privacy.
 - Observability metrics with traceable session IDs.
 - Audit Ledger Center with redacted session/tool audit events, support correlation, retention posture, and DSR routing.
-- Support Bridge with official `report_error` payloads for Food, Instamart, and Dineout.
+- Support Bridge with official `report_error` payloads for Food, Instamart, and Dineout, plus consent-gated executable support reporting.
 - SLO Incident Command Center with 99.9% uptime targets, latency classes, status-page fallback, 72-hour maintenance notice, and S0-S3 escalation runbooks.
 - Error Intelligence with Swiggy failure buckets, planned symbolic codes, and terminal domain failures.
 - Support report generation with a pre-filled `builders@swiggy.in` escalation.
@@ -191,7 +191,7 @@ Open Production Evidence and show:
 - Swiggy Enterprise Platform Center artifact for tenant boundaries, quota review, support SLAs, contract gates, co-branding approval, and enterprise audit exports.
 - Version monitor with v1 route pinning and deprecation alert readiness.
 - Compliance controls for consent, PII minimization, deletion, audit logging, and training-data exclusion.
-- Support Bridge redaction rules, SLA matrix, and escalation checklist.
+- Support Bridge redaction rules, executable report gate, SLA matrix, and escalation checklist.
 - Swiggy Docs Coverage artifact in reviewer proof and launch handoff.
 - Swiggy Docs Twin Explorer artifact for markdown twin retrieval, rendered-page pairing, and proof readback.
 - Swiggy Upstream Watch artifact for changelog, coding-agent docs, roadmap, signed-manifest, and release-drift control.
