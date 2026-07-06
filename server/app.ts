@@ -28,6 +28,7 @@ import { buildSwiggyAuthLifecycleCenter } from "./services/authLifecycleCenter.j
 import { buildAuditLedgerCenter } from "./services/auditLedger.js";
 import { buildBrandComplianceKit } from "./services/brandCompliance.js";
 import { buildSwiggyBuildersLaunchStoryCenter } from "./services/buildersLaunchStoryCenter.js";
+import { buildSwiggyBuildersSiteParityAuditor } from "./services/buildersSiteParityAuditor.js";
 import { buildBuilderPacketExport, buildBuilderPacketMarkdown } from "./services/builderPacketExport.js";
 import { buildMcpBackpressureGovernor } from "./services/backpressureGovernor.js";
 import { buildSwiggyBuilderIntakeCommandCenter } from "./services/builderIntake.js";
@@ -922,6 +923,13 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
   app.get("/api/swiggy-website-atlas", (_req, res) => {
     res.json({ atlas: buildSwiggyWebsiteAtlas() });
   });
+
+  app.get(
+    "/api/swiggy-builders-site-parity",
+    asyncRoute(async (_req, res) => {
+      res.json({ buildersSiteParity: await buildSwiggyBuildersSiteParityAuditor() });
+    }),
+  );
 
   app.get("/api/swiggy-builders-launch-story", (_req, res) => {
     res.json({ launchStory: buildSwiggyBuildersLaunchStoryCenter() });

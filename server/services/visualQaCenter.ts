@@ -156,6 +156,17 @@ const targetGroups = [
         "artifacts/visual-qa/docs-twin-card.png",
       ),
       target(
+        "builders_site_parity_card",
+        "Builders Site Parity card",
+        "/",
+        ".builders-site-parity-card",
+        "desktop",
+        1280,
+        900,
+        "Builders Site Parity shows live homepage anchors, metadata, modules, source links, footer resources, and drift signals.",
+        "artifacts/visual-qa/builders-site-parity-card.png",
+      ),
+      target(
         "tool_parity_card",
         "Tool Parity Auditor card",
         "/",

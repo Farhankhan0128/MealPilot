@@ -317,6 +317,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           responses: { "200": { description: "Global navigation, docs navigation, footer groups, page modules, CTAs, and coverage assertions" } },
         },
       },
+      "/api/swiggy-builders-site-parity": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Live Swiggy Builders homepage parity auditor",
+          responses: {
+            "200": {
+              description:
+                "Fetches the official Swiggy Builders homepage and reconciles live anchors, metadata, header links, CTAs, llms sources, footer resources, legal links, and module signals against MealPilot evidence",
+            },
+          },
+        },
+      },
       "/api/swiggy-builders-launch-story": {
         get: {
           tags: ["Builder Access"],

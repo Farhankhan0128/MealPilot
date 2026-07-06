@@ -780,6 +780,73 @@ export interface SwiggyWebsiteAtlas {
   remainingExternalGates: string[];
 }
 
+export type SwiggyBuildersSiteParityStatus = "covered" | "watch" | "blocked";
+
+export interface SwiggyBuildersSiteParityAnchor {
+  id: string;
+  label: string;
+  href: string;
+  absoluteUrl: string;
+  zone: "global_header" | "page_body" | "footer" | "metadata";
+  kind: "navigate" | "docs" | "email" | "legal" | "source";
+  status: SwiggyBuildersSiteParityStatus;
+  matchedExpectedIds: string[];
+}
+
+export interface SwiggyBuildersSiteParityExpectedItem {
+  id: string;
+  label: string;
+  expectedUrl: string;
+  area: "global_header" | "cta" | "footer_resource" | "footer_legal" | "source";
+  mealPilotCoverage: string;
+  matchedAnchorIds: string[];
+  status: SwiggyBuildersSiteParityStatus;
+}
+
+export interface SwiggyBuildersSiteParityModule {
+  id: string;
+  label: string;
+  expectedSignal: string;
+  status: SwiggyBuildersSiteParityStatus;
+}
+
+export interface SwiggyBuildersSiteParityAuditor {
+  generatedAt: string;
+  score: number;
+  status: SwiggyBuildersSiteParityStatus;
+  officialSources: string[];
+  sourceUrl: string;
+  fetch: {
+    ok: boolean;
+    statusCode?: number;
+    durationMs: number;
+    error?: string;
+  };
+  metadata: {
+    title: string;
+    description: string;
+    canonicalUrl: string;
+    alternateSources: string[];
+  };
+  totals: {
+    liveAnchors: number;
+    uniqueLiveUrls: number;
+    expectedItems: number;
+    matchedExpectedItems: number;
+    missingExpectedItems: number;
+    unsafeLinks: number;
+    moduleSignals: number;
+    matchedModuleSignals: number;
+  };
+  anchors: SwiggyBuildersSiteParityAnchor[];
+  expectedItems: SwiggyBuildersSiteParityExpectedItem[];
+  moduleSignals: SwiggyBuildersSiteParityModule[];
+  driftSignals: string[];
+  operatorRunbook: Array<{ sequence: number; command: string; proves: string }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type SwiggyDeepSiteMapStatus = "implemented" | "documented" | "watch" | "external_gate";
 
 export interface SwiggyDeepSitePage {

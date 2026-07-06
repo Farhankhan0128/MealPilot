@@ -191,6 +191,7 @@ MealPilot should become a luxury-grade food and meal intelligence product with t
 | Swiggy Docs Twin Explorer | `server/services/docsTwinExplorer.ts` |
 | Swiggy llms Manifest Verifier | `server/services/llmsManifestVerifier.ts` |
 | Swiggy Tool Parity Auditor | `server/services/toolParityAuditor.ts` |
+| Swiggy Builders Site Parity Auditor | `server/services/buildersSiteParityAuditor.ts` |
 | Swiggy Upstream Watch | `server/services/upstreamWatch.ts` |
 | Swiggy Source Intelligence | `server/services/sourceIntelligence.ts` |
 | Swiggy Deep Site Map | `server/services/deepSiteMap.ts` |

@@ -93,6 +93,11 @@ assert(
   "OpenAPI tool parity auditor contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-builders-site-parity"]?.get?.summary?.includes("homepage parity") &&
+    openApi.paths["/api/swiggy-builders-site-parity"]?.get?.responses?.["200"]?.description?.includes("live anchors"),
+  "OpenAPI Builders site parity contract is missing",
+);
+assert(
   openApi.paths["/api/swiggy-source-intelligence"]?.get?.summary?.includes("source intelligence"),
   "OpenAPI source intelligence contract is missing",
 );
@@ -455,6 +460,32 @@ assert(
     websiteAtlas.atlas.ctas.some((cta) => cta.label === label),
   ),
   "Swiggy website application/blog CTAs are incomplete",
+);
+
+const buildersSiteParity = await request("/api/swiggy-builders-site-parity");
+assert(buildersSiteParity.buildersSiteParity.score >= 95, "Builders site parity score is below target");
+assert(buildersSiteParity.buildersSiteParity.fetch.ok, "Builders site parity live fetch failed");
+assert(buildersSiteParity.buildersSiteParity.metadata.title.includes("Swiggy Builders Club"), "Builders site title drifted");
+assert(
+  buildersSiteParity.buildersSiteParity.metadata.alternateSources.includes("https://mcp.swiggy.com/builders/llms.txt") &&
+    buildersSiteParity.buildersSiteParity.metadata.alternateSources.includes("https://mcp.swiggy.com/builders/llms-full.txt"),
+  "Builders site parity llms alternate sources are missing",
+);
+assert(buildersSiteParity.buildersSiteParity.totals.liveAnchors >= 24, "Builders site live anchor count is incomplete");
+assert(buildersSiteParity.buildersSiteParity.totals.unsafeLinks === 0, "Builders site parity found unsafe links");
+assert(buildersSiteParity.buildersSiteParity.totals.missingExpectedItems === 0, "Builders site parity has missing expected links");
+assert(
+  buildersSiteParity.buildersSiteParity.totals.matchedModuleSignals === buildersSiteParity.buildersSiteParity.totals.moduleSignals,
+  "Builders site parity module signals are incomplete",
+);
+assert(
+  buildersSiteParity.buildersSiteParity.anchors.some((anchor) => anchor.label === "Send Us a Demo" && anchor.kind === "email") &&
+    buildersSiteParity.buildersSiteParity.expectedItems.some((item) => item.id === "cta_apply_prod_access" && item.status === "covered"),
+  "Builders site parity CTA/email coverage is incomplete",
+);
+assert(
+  buildersSiteParity.buildersSiteParity.assertions.some((assertion) => assertion.includes("user-supplied URLs are never accepted")),
+  "Builders site parity safety assertion is missing",
 );
 
 const launchStory = await request("/api/swiggy-builders-launch-story");
@@ -1544,8 +1575,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 36, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 36, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 37, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 37, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -1685,6 +1716,12 @@ assert(
     group.targets.some((target) => target.id === "docs_twin_card" && target.selector === ".docs-twin-card"),
   ),
   "visual QA docs twin target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some((target) => target.id === "builders_site_parity_card" && target.selector === ".builders-site-parity-card"),
+  ),
+  "visual QA Builders site parity target is missing",
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
@@ -4767,7 +4804,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 36, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 37, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -4781,7 +4818,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("36")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("37")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -5127,6 +5164,9 @@ console.log(
       websiteAtlasCtas: websiteAtlas.atlas.ctasCovered,
       websiteAtlasCrawlPages: websiteAtlas.atlas.liveCrawlPages,
       websiteAtlasCrawlSignals: websiteAtlas.atlas.liveCrawlSignals,
+      buildersSiteParityScore: buildersSiteParity.buildersSiteParity.score,
+      buildersSiteParityAnchors: buildersSiteParity.buildersSiteParity.totals.liveAnchors,
+      buildersSiteParityMatched: buildersSiteParity.buildersSiteParity.totals.matchedExpectedItems,
       buildersLaunchStoryScore: launchStory.launchStory.score,
       buildersLaunchStoryAssets: launchStory.launchStory.totals.showcaseAssets,
       buildersLaunchStoryCtas: launchStory.launchStory.totals.ctaPaths,

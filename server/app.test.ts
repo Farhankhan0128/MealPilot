@@ -4,6 +4,7 @@ import path from "node:path";
 import request from "supertest";
 import { describe, expect, it, vi } from "vitest";
 import { createMealPilotServer } from "./app.js";
+import { buildSwiggyBuildersSiteParityAuditor } from "./services/buildersSiteParityAuditor.js";
 import { buildSwiggyLlmsManifestVerifier } from "./services/llmsManifestVerifier.js";
 import { buildSwiggyToolParityAuditor } from "./services/toolParityAuditor.js";
 import { buildSwiggyHandshakeDoctor } from "./services/swiggyHandshakeDoctor.js";
@@ -51,6 +52,7 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/mcp/handshake-doctor"].get.responses["200"].description).toContain("Instamart /im");
     expect(openApi.body.paths["/api/swiggy-builders-map"].get.summary).toContain("Swiggy Builders");
     expect(openApi.body.paths["/api/swiggy-website-atlas"].get.summary).toContain("website header");
+    expect(openApi.body.paths["/api/swiggy-builders-site-parity"].get.summary).toContain("homepage parity");
     expect(openApi.body.paths["/api/swiggy-builders-launch-story"].get.summary).toContain("Launch Story");
     expect(openApi.body.paths["/api/swiggy-builders-launch-story"].get.responses["200"].description).toContain("35-tool");
     expect(openApi.body.paths["/api/swiggy-operating-contract-center"].get.summary).toContain("Operating Contract");
@@ -1010,6 +1012,42 @@ describe("MealPilot API", () => {
     ).toBe(true);
   });
 
+  it("audits the live Swiggy Builders homepage against Website Atlas expectations", async () => {
+    const fixture = [
+      "<html><head>",
+      "<title>Swiggy Builders Club | Cook on Swiggy’s MCP APIs</title>",
+      '<meta name="description" content="Build AI agents, apps, and integrations on Swiggy’s Food, Instamart, and Dineout APIs."/>',
+      '<link rel="canonical" href="https://mcp.swiggy.com/builders/"/>',
+      '<link rel="alternate" type="text/plain" title="llms.txt" href="/builders/llms.txt"/>',
+      '<link rel="alternate" type="text/plain" title="llms-full.txt" href="/builders/llms-full.txt"/>',
+      "</head><body>",
+      '<a href="/builders/">Builders Club</a><a href="/builders/developers/">Developers</a><a href="/builders/enterprises/">Enterprises</a><a href="/builders/docs/">Docs</a><a href="/builders/blog/">Blog</a><a href="#faq">FAQ</a><a href="/builders/docs/start/developer/">Start Building</a>',
+      '<a href="#about">See What’s Possible</a><a href="mailto:builders@swiggy.in">Send Us a Demo</a><a href="/builders/access/">Request access</a><a href="/builders/llms.txt">llms.txt</a><a href="/builders/llms-full.txt">llms-full.txt</a>',
+      '<a href="/builders/developers/">For Developers</a><a href="/builders/enterprises/">For Enterprises</a><a href="/builders/#how-it-works">How It Works</a><a href="/builders/#benefits">Benefits</a><a href="/builders/access/#guidelines">Guidelines</a><a href="/builders/#faq">FAQ</a><a href="/builders/access/">Apply</a><a href="https://www.swiggy.com/privacy-policy">Privacy Policy</a><a href="https://www.swiggy.com/terms-and-conditions">Terms and Conditions</a>',
+      "Build on Swiggy What is Builders Club How It Works What You Get Frequently Asked Questions What Will You Cook",
+      "</body></html>",
+    ].join("");
+    const auditor = await buildSwiggyBuildersSiteParityAuditor(async () => ({
+      ok: true,
+      statusCode: 200,
+      durationMs: 5,
+      text: fixture,
+    }));
+
+    expect(auditor.score).toBe(100);
+    expect(auditor.status).toBe("covered");
+    expect(auditor.fetch.statusCode).toBe(200);
+    expect(auditor.metadata.alternateSources).toEqual(
+      expect.arrayContaining(["https://mcp.swiggy.com/builders/llms.txt", "https://mcp.swiggy.com/builders/llms-full.txt"]),
+    );
+    expect(auditor.totals.unsafeLinks).toBe(0);
+    expect(auditor.totals.missingExpectedItems).toBe(0);
+    expect(auditor.totals.matchedModuleSignals).toBe(auditor.totals.moduleSignals);
+    expect(auditor.anchors.some((anchor) => anchor.label === "Send Us a Demo" && anchor.kind === "email")).toBe(true);
+    expect(auditor.expectedItems.some((item) => item.id === "cta_apply_prod_access" && item.status === "covered")).toBe(true);
+    expect(auditor.assertions.some((assertion) => assertion.includes("user-supplied URLs are never accepted"))).toBe(true);
+  });
+
   it("turns the Swiggy Builders launch blog into a reviewer story center", async () => {
     const { app } = createMealPilotServer();
     const response = await request(app).get("/api/swiggy-builders-launch-story").expect(200);
@@ -1351,7 +1389,7 @@ describe("MealPilot API", () => {
     expect(packet.totals.formFields).toBeGreaterThanOrEqual(10);
     expect(packet.totals.requiredAttachments).toBeGreaterThanOrEqual(10);
     expect(packet.totals.launchArtifacts).toBeGreaterThanOrEqual(50);
-    expect(packet.totals.visualTargets).toBe(36);
+    expect(packet.totals.visualTargets).toBe(37);
     expect(packet.files.map((file: { id: string }) => file.id)).toEqual(
       expect.arrayContaining(["packet_json", "packet_markdown", "visual_report", "production_summary"]),
     );
@@ -1363,7 +1401,7 @@ describe("MealPilot API", () => {
     ).toBe(true);
     expect(
       packet.commands.some(
-        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("36"),
+        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("37"),
       ),
     ).toBe(true);
     expect(packet.copyBlocks.formFields).toContain("Redirect URI(s)");
@@ -2306,8 +2344,8 @@ describe("MealPilot API", () => {
     const visualQa = response.body.visualQa;
 
     expect(visualQa.score).toBe(100);
-    expect(visualQa.totalTargets).toBe(36);
-    expect(visualQa.readyTargets).toBe(36);
+    expect(visualQa.totalTargets).toBe(37);
+    expect(visualQa.readyTargets).toBe(37);
     expect(visualQa.totalRules).toBe(7);
     expect(visualQa.readyRules).toBe(7);
     expect(visualQa.totalCommands).toBe(5);
@@ -2424,6 +2462,13 @@ describe("MealPilot API", () => {
     expect(
       visualQa.targetGroups.some((group: { targets: Array<{ id: string; selector: string }> }) =>
         group.targets.some((target) => target.id === "docs_twin_card" && target.selector === ".docs-twin-card"),
+      ),
+    ).toBe(true);
+    expect(
+      visualQa.targetGroups.some((group: { targets: Array<{ id: string; selector: string }> }) =>
+        group.targets.some(
+          (target) => target.id === "builders_site_parity_card" && target.selector === ".builders-site-parity-card",
+        ),
       ),
     ).toBe(true);
     expect(

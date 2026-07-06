@@ -191,6 +191,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/ops`
 - `GET /api/go-live`
 - `GET /api/swiggy-website-atlas`
+- `GET /api/swiggy-builders-site-parity`
 - `GET /api/swiggy-builders-launch-story`
 - `GET /api/swiggy-operating-contract-center`
 - `GET /api/swiggy-builder-intake`
@@ -400,6 +401,8 @@ Production should use an HTTPS redirect URI with exact-match allowlisting.
 `/api/reviewer-artifact-vault` shows the Swiggy access-submission manifest: proof links, Deep Site Map, OpenAPI, smoke commands, screenshot targets, demo-video checklist, logs, traces, redaction rules, support context, handoff checklist, and reviewer email copy.
 
 `/api/visual-qa-center` shows reviewer screenshot targets, desktop/tablet/mobile viewport sizes, selector manifests, Playwright screenshot artifact paths, no-overlap rules, text-fit rules, widget fallback checks, redaction visibility, commercial confirmation visibility, mobile layout checks, Source Intelligence, Deep Site Map, Innovation Radar, Access Evidence Matrix card proof, and automation gates. Run `npm run verify:visual` against the production server to generate PNGs plus `artifacts/visual-qa/report.json`.
+
+`/api/swiggy-builders-site-parity` fetches only the official Swiggy Builders homepage, extracts anchors, metadata, `llms` alternates, module signals, CTA/source/footer/legal links, and safe-origin signals, then matches them back to Website Atlas and CTA evidence. Fixture tests avoid live network dependency; production smoke uses the live page.
 
 `/api/swiggy-builders-launch-story` turns the April 2026 Builders Club launch blog into a reviewer-ready story center. It reconciles the launch-era 18+ API-tool narrative with the current 35-tool docs snapshot and packages story beats, the demo journey, showcase assets, ecosystem lanes, CTA paths, and co-marketing guardrails.
 

@@ -107,6 +107,7 @@ import {
   fetchSwiggyAuthLifecycleCenter,
   fetchSwiggyAuthStatus,
   fetchSwiggyBuildersMap,
+  fetchSwiggyBuildersSiteParity,
   fetchSwiggyBuilderIntake,
   fetchSwiggyBuildersLaunchStory,
   fetchSwiggyOperatingContractCenter,
@@ -228,6 +229,7 @@ import type {
   SwiggyAccessDossier,
   SwiggyAccessEvidenceMatrix,
   SwiggyBuildersLaunchStoryCenterReport,
+  SwiggyBuildersSiteParityAuditor,
   SwiggyBuilderIntakeCommandCenter,
   SwiggyCancellationCareCenterReport,
   SwiggyCartMutationReport,
@@ -422,6 +424,7 @@ function App() {
   const [mcpToolLab, setMcpToolLab] = useState<McpToolLabReport | null>(null);
   const [swiggyBuildersMap, setSwiggyBuildersMap] = useState<SwiggyBuildersMap | null>(null);
   const [swiggyWebsiteAtlas, setSwiggyWebsiteAtlas] = useState<SwiggyWebsiteAtlas | null>(null);
+  const [buildersSiteParity, setBuildersSiteParity] = useState<SwiggyBuildersSiteParityAuditor | null>(null);
   const [buildersLaunchStory, setBuildersLaunchStory] = useState<SwiggyBuildersLaunchStoryCenterReport | null>(null);
   const [operatingContract, setOperatingContract] = useState<SwiggyOperatingContractCenterReport | null>(null);
   const [swiggyDeepSiteMap, setSwiggyDeepSiteMap] = useState<SwiggyDeepSiteMap | null>(null);
@@ -616,6 +619,7 @@ function App() {
       toolLabResponse,
       buildersMapResponse,
       websiteAtlasResponse,
+      buildersSiteParityResponse,
       buildersLaunchStoryResponse,
       operatingContractResponse,
       deepSiteMapResponse,
@@ -711,6 +715,7 @@ function App() {
       fetchMcpToolLab(),
       fetchSwiggyBuildersMap(),
       fetchSwiggyWebsiteAtlas(),
+      fetchSwiggyBuildersSiteParity(),
       fetchSwiggyBuildersLaunchStory(),
       fetchSwiggyOperatingContractCenter(),
       fetchSwiggyDeepSiteMap(),
@@ -807,6 +812,7 @@ function App() {
     setMcpToolLab(toolLabResponse.toolLab);
     setSwiggyBuildersMap(buildersMapResponse.map);
     setSwiggyWebsiteAtlas(websiteAtlasResponse.atlas);
+    setBuildersSiteParity(buildersSiteParityResponse.buildersSiteParity);
     setBuildersLaunchStory(buildersLaunchStoryResponse.launchStory);
     setOperatingContract(operatingContractResponse.operatingContract);
     setSwiggyDeepSiteMap(deepSiteMapResponse.deepSiteMap);
@@ -906,6 +912,7 @@ function App() {
       toolLabResponse,
       buildersMapResponse,
       websiteAtlasResponse,
+      buildersSiteParityResponse,
       buildersLaunchStoryResponse,
       operatingContractResponse,
       deepSiteMapResponse,
@@ -998,6 +1005,7 @@ function App() {
       fetchMcpToolLab(),
       fetchSwiggyBuildersMap(),
       fetchSwiggyWebsiteAtlas(),
+      fetchSwiggyBuildersSiteParity(),
       fetchSwiggyBuildersLaunchStory(),
       fetchSwiggyOperatingContractCenter(),
       fetchSwiggyDeepSiteMap(),
@@ -1090,6 +1098,7 @@ function App() {
     setMcpToolLab(toolLabResponse.toolLab);
     setSwiggyBuildersMap(buildersMapResponse.map);
     setSwiggyWebsiteAtlas(websiteAtlasResponse.atlas);
+    setBuildersSiteParity(buildersSiteParityResponse.buildersSiteParity);
     setBuildersLaunchStory(buildersLaunchStoryResponse.launchStory);
     setOperatingContract(operatingContractResponse.operatingContract);
     setSwiggyDeepSiteMap(deepSiteMapResponse.deepSiteMap);
@@ -1757,6 +1766,7 @@ function App() {
                 toolLab={mcpToolLab}
                 buildersMap={swiggyBuildersMap}
                 websiteAtlas={swiggyWebsiteAtlas}
+                buildersSiteParity={buildersSiteParity}
                 buildersLaunchStory={buildersLaunchStory}
                 operatingContract={operatingContract}
                 deepSiteMap={swiggyDeepSiteMap}
@@ -2339,6 +2349,7 @@ function LaunchCenterPanel({
   toolLab,
   buildersMap,
   websiteAtlas,
+  buildersSiteParity,
   buildersLaunchStory,
   operatingContract,
   deepSiteMap,
@@ -2405,6 +2416,7 @@ function LaunchCenterPanel({
   toolLab: McpToolLabReport | null;
   buildersMap: SwiggyBuildersMap | null;
   websiteAtlas: SwiggyWebsiteAtlas | null;
+  buildersSiteParity: SwiggyBuildersSiteParityAuditor | null;
   buildersLaunchStory: SwiggyBuildersLaunchStoryCenterReport | null;
   operatingContract: SwiggyOperatingContractCenterReport | null;
   deepSiteMap: SwiggyDeepSiteMap | null;
@@ -3259,6 +3271,55 @@ function LaunchCenterPanel({
               </li>
             ))}
           </ul>
+        </article>
+
+        <article className="builders-site-parity-card">
+          <div className="mini-heading">
+            <MousePointerClick aria-hidden="true" />
+            <strong>Builders Site Parity</strong>
+          </div>
+          <span>
+            {buildersSiteParity
+              ? `${buildersSiteParity.score}/100, ${buildersSiteParity.totals.matchedExpectedItems}/${buildersSiteParity.totals.expectedItems} expected links`
+              : "Checking live Builders homepage anchors and modules"}
+          </span>
+          <div className="builders-site-parity-grid">
+            <div>
+              <strong>{buildersSiteParity?.totals.liveAnchors ?? 0}</strong>
+              <span>Anchors</span>
+            </div>
+            <div>
+              <strong>{buildersSiteParity?.totals.unsafeLinks ?? 0}</strong>
+              <span>Unsafe</span>
+            </div>
+            <div>
+              <strong>
+                {buildersSiteParity
+                  ? `${buildersSiteParity.totals.matchedModuleSignals}/${buildersSiteParity.totals.moduleSignals}`
+                  : "0/0"}
+              </strong>
+              <span>Modules</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(buildersSiteParity?.moduleSignals ?? []).map((module) => (
+              <li key={module.id} data-status={module.status === "covered" ? "healthy" : "watch"}>
+                <span>{module.label}</span>
+                <strong>{module.status}</strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-intelligence-actions" aria-label="Builders site parity links">
+            <a href="/api/swiggy-builders-site-parity" target="_blank" rel="noreferrer">
+              Parity API
+            </a>
+            <a href="https://mcp.swiggy.com/builders/" target="_blank" rel="noreferrer">
+              Builders
+            </a>
+            <a href="/api/swiggy-website-atlas" target="_blank" rel="noreferrer">
+              Atlas
+            </a>
+          </div>
         </article>
 
         <article className="builders-launch-story-card">

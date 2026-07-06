@@ -1581,6 +1581,7 @@ select:focus {
 }
 
 .website-atlas-grid,
+.builders-site-parity-grid,
 .deep-site-map-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1588,6 +1589,7 @@ select:focus {
 }
 
 .website-atlas-grid div,
+.builders-site-parity-grid div,
 .deep-site-map-grid div {
   display: grid;
   gap: 3px;
@@ -1598,12 +1600,14 @@ select:focus {
 }
 
 .website-atlas-grid strong,
+.builders-site-parity-grid strong,
 .deep-site-map-grid strong {
   color: var(--green-dark);
   font-size: 1.18rem;
 }
 
 .website-atlas-grid span,
+.builders-site-parity-grid span,
 .deep-site-map-grid span {
   font-size: 0.75rem;
   font-weight: 900;

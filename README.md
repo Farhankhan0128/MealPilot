@@ -76,6 +76,7 @@ Planned MCP servers:
 - MCP Capability Registry that maps and locally exercises `mcp:tools`, `mcp:resources`, `mcp:prompts`, OAuth metadata, widgets, prompt contracts, and external Swiggy gates.
 - Resource & Prompt Studio that exercises `resources/list`, `resources/read`, `prompts/list`, and `prompts/get` across Food, Instamart, and Dineout with samples, smoke calls, and live Swiggy gates.
 - Swiggy Website Atlas that maps the Builders header, docs subnav, footer groups, production access page, launch blog, rendered-page crawl evidence, page modules, CTAs, and legal/resource links to MealPilot evidence.
+- Swiggy Builders Site Parity Auditor at `/api/swiggy-builders-site-parity` that fetches the live official homepage, extracts anchors, metadata, `llms` alternates, CTA/source/footer/legal links, and module signals, then reconciles them against Website Atlas.
 - Swiggy Builders Launch Story Center that turns the launch blog into a reviewer-ready story: 18+ launch-era signal reconciled with the current 35-tool docs snapshot, demo journey, showcase assets, ecosystem lanes, CTA paths, and co-marketing gates.
 - Swiggy Deep Site Map that consolidates every Builders page, module, CTA, header link, docs subnav item, footer resource, source-refresh section, and MealPilot proof path into one reviewer audit.
 - Developer Quickstart Workbench that turns Swiggy's official self-serve developer path into readiness steps, SDK/framework adapters, first-call `get_addresses` JSON-RPC drills, OAuth gates, and recipe handoffs.
@@ -246,6 +247,7 @@ Useful demo endpoints:
 GET  /api/mcp/catalog
 GET  /api/swiggy-builders-map
 GET  /api/swiggy-website-atlas
+GET  /api/swiggy-builders-site-parity
 GET  /api/swiggy-builder-intake
 GET  /api/swiggy-faq-policy
 GET  /api/swiggy-growth-partnership
@@ -427,6 +429,8 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 `GET /api/swiggy-docs-twin-explorer` is the markdown-twin workbench: every `llms.txt` page is paired with its `.md` source, rendered URL, retrieval command, section group, MealPilot proof route, assertion, and drift gate.
 
 `GET /api/swiggy-source-intelligence` is the source reconciliation center: Builders website pages, homepage/developer/enterprise/docs CTAs, `llms.txt`, `llms-full.txt`, markdown twins, 35-tool reference counts, drift signals, and the build queue are compared against MealPilot evidence so reviewers can see what is implemented, what is watched, and what is gated by Swiggy credentials.
+
+`GET /api/swiggy-builders-site-parity` is the live homepage parity checker: it fetches only the official Swiggy Builders homepage, extracts anchors, metadata, `llms` alternates, module signals, CTA/source/footer/legal links, and safe-origin signals, then matches them back to Website Atlas and CTA evidence.
 
 `GET /api/swiggy-builders-launch-story` is the launch-blog story center: it reconciles the April 2026 Builders Club launch narrative with the current 35-tool docs snapshot, then packages story beats, reviewer demo journey, showcase assets, ecosystem lanes, CTA paths, and co-marketing guardrails.
 
