@@ -5,6 +5,7 @@ import type {
   AiClientConnectKit,
   BrandComplianceKit,
   BuilderReadinessItem,
+  BuilderPacketExport,
   CartPreflightReport,
   CommercialActionGuardReport,
   ComplianceEvidence,
@@ -448,6 +449,10 @@ export function fetchSubmissionPackage() {
 
 export function fetchSubmissionConsole() {
   return requestJson<{ submissionConsole: SubmissionConsole }>("/api/submission-console");
+}
+
+export function fetchBuilderPacketExport() {
+  return requestJson<{ packet: BuilderPacketExport }>("/api/builder-packet-export");
 }
 
 export function fetchRateLimitPlan() {

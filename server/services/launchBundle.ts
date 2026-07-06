@@ -375,6 +375,15 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
         "Consolidates official developer/enterprise form targets, prepared access fields, proof attachments, runbook steps, blockers, and handoff drafts.",
     },
     {
+      id: "builder_packet_export",
+      label: "Builder Packet Export",
+      path: "/api/builder-packet-export",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Generates copy-ready Markdown and machine-readable JSON packet artifacts with form fields, attachments, commands, handoff email, and explicit operator/Swiggy gates.",
+    },
+    {
       id: "trace_monitor",
       label: "Trace Monitor",
       path: "/api/observability/traces",
@@ -663,6 +672,8 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "",
     "Key proof links:",
     "- Builder packet: /api/builder-package.md",
+    "- Executable packet export: /api/builder-packet-export",
+    "- Packet Markdown export: /api/builder-packet-export.md",
     "- Website Atlas: /api/swiggy-website-atlas",
     "- Builder Intake Command Center: /api/swiggy-builder-intake",
     "- FAQ & Policy Center: /api/swiggy-faq-policy",

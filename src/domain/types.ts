@@ -2248,6 +2248,55 @@ export interface SubmissionConsole {
   externalGates: string[];
 }
 
+export interface BuilderPacketExportFile {
+  id: string;
+  label: string;
+  path: string;
+  format: "json" | "markdown";
+  source: string;
+  mustAttach: boolean;
+}
+
+export interface BuilderPacketExportReadiness {
+  id: string;
+  label: string;
+  status: "ready" | "operator_input" | "external_gate";
+  evidence: string;
+  action: string;
+}
+
+export interface BuilderPacketExport {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  recommendedTrack: "developer" | "enterprise";
+  outputDirectory: string;
+  executiveSummary: string;
+  totals: {
+    formFields: number;
+    readyFields: number;
+    requiredAttachments: number;
+    readyAttachments: number;
+    launchArtifacts: number;
+    visualTargets: number;
+    packetFiles: number;
+  };
+  files: BuilderPacketExportFile[];
+  readiness: BuilderPacketExportReadiness[];
+  commands: Array<{ id: string; command: string; proves: string }>;
+  copyBlocks: {
+    formFields: string;
+    attachments: string;
+    handoffEmail: {
+      to: string;
+      subject: string;
+      body: string;
+    };
+  };
+  assertions: string[];
+  externalGates: string[];
+}
+
 export interface SwiggyWidget {
   id: string;
   type: "restaurant-card" | "menu-item" | "cart-widget" | "product-card" | "slot-picker";

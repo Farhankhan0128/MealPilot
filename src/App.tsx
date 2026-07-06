@@ -45,6 +45,7 @@ import {
   fetchAuditLedger,
   fetchBuilderPackage,
   fetchBuilderPackageMarkdown,
+  fetchBuilderPacketExport,
   fetchBrandComplianceKit,
   fetchChannelMultimodalStudio,
   fetchCartPreflight,
@@ -130,6 +131,7 @@ import type {
   AgentSurfaceResponse,
   AuditLedgerCenter,
   AiClientConnectKit,
+  BuilderPacketExport,
   BrandComplianceKit,
   CartPreflightReport,
   CommercialActionGuardReport,
@@ -371,6 +373,7 @@ function App() {
   const [evaluationLab, setEvaluationLab] = useState<EvaluationLab | null>(null);
   const [submissionPackage, setSubmissionPackage] = useState<SubmissionPackage | null>(null);
   const [submissionConsole, setSubmissionConsole] = useState<SubmissionConsole | null>(null);
+  const [builderPacketExport, setBuilderPacketExport] = useState<BuilderPacketExport | null>(null);
   const [widgets, setWidgets] = useState<SwiggyWidget[]>([]);
   const [widgetBridge, setWidgetBridge] = useState<{ origin: string; sandbox: string; verifyOrigin: boolean } | null>(
     null,
@@ -499,6 +502,7 @@ function App() {
       evaluationResponse,
       submissionResponse,
       submissionConsoleResponse,
+      packetExportResponse,
       rateLimitResponse,
       trafficReadinessResponse,
       backpressureGovernorResponse,
@@ -560,6 +564,7 @@ function App() {
       fetchEvaluationLab(),
       fetchSubmissionPackage(),
       fetchSubmissionConsole(),
+      fetchBuilderPacketExport(),
       fetchRateLimitPlan(),
       fetchTrafficReadinessPlan(),
       fetchMcpBackpressureGovernor(),
@@ -624,6 +629,7 @@ function App() {
     setEvaluationLab(evaluationResponse.evaluation);
     setSubmissionPackage(submissionResponse.package);
     setSubmissionConsole(submissionConsoleResponse.submissionConsole);
+    setBuilderPacketExport(packetExportResponse.packet);
     setRateLimit(rateLimitResponse.rateLimit);
     setTrafficReadiness(trafficReadinessResponse.trafficReadiness);
     setBackpressureGovernor(backpressureGovernorResponse.backpressureGovernor);
@@ -686,6 +692,7 @@ function App() {
       evaluationResponse,
       submissionResponse,
       submissionConsoleResponse,
+      packetExportResponse,
       rateLimitResponse,
       trafficReadinessResponse,
       backpressureGovernorResponse,
@@ -744,6 +751,7 @@ function App() {
       fetchEvaluationLab(),
       fetchSubmissionPackage(),
       fetchSubmissionConsole(),
+      fetchBuilderPacketExport(),
       fetchRateLimitPlan(),
       fetchTrafficReadinessPlan(),
       fetchMcpBackpressureGovernor(),
@@ -804,6 +812,7 @@ function App() {
     setEvaluationLab(evaluationResponse.evaluation);
     setSubmissionPackage(submissionResponse.package);
     setSubmissionConsole(submissionConsoleResponse.submissionConsole);
+    setBuilderPacketExport(packetExportResponse.packet);
     setRateLimit(rateLimitResponse.rateLimit);
     setTrafficReadiness(trafficReadinessResponse.trafficReadiness);
     setBackpressureGovernor(backpressureGovernorResponse.backpressureGovernor);
@@ -1443,6 +1452,7 @@ function App() {
                 steps={demoSteps}
                 submissionPackage={submissionPackage}
                 submissionConsole={submissionConsole}
+                builderPacketExport={builderPacketExport}
               />
               <ProductionEvidencePanel
                 widgets={widgets}
@@ -3429,6 +3439,7 @@ function DemoStudioPanel({
   steps,
   submissionPackage,
   submissionConsole,
+  builderPacketExport,
 }: {
   preflight: CartPreflightReport | null;
   replay: McpReplayStep[];
@@ -3436,6 +3447,7 @@ function DemoStudioPanel({
   steps: DemoStudioStep[];
   submissionPackage: SubmissionPackage | null;
   submissionConsole: SubmissionConsole | null;
+  builderPacketExport: BuilderPacketExport | null;
 }) {
   const readyFields = submissionPackage?.fields.filter((field) => field.status === "ready").length ?? 0;
   const totalFields = submissionPackage?.fields.length ?? 0;
@@ -3606,6 +3618,51 @@ function DemoStudioPanel({
               >
                 <span>{step.label}</span>
                 <strong>{step.owner}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="builder-packet-card">
+          <div className="mini-heading">
+            <ClipboardCheck aria-hidden="true" />
+            <strong>Builder Packet Export</strong>
+          </div>
+          <span>
+            {builderPacketExport
+              ? `${builderPacketExport.score}/100, ${builderPacketExport.totals.packetFiles} files`
+              : "Preparing Swiggy access packet export"}
+          </span>
+          <div className="submission-console-grid">
+            <div>
+              <strong>
+                {builderPacketExport
+                  ? `${builderPacketExport.totals.readyFields}/${builderPacketExport.totals.formFields}`
+                  : "0/0"}
+              </strong>
+              <span>Fields</span>
+            </div>
+            <div>
+              <strong>
+                {builderPacketExport
+                  ? `${builderPacketExport.totals.readyAttachments}/${builderPacketExport.totals.requiredAttachments}`
+                  : "0/0"}
+              </strong>
+              <span>Attachments</span>
+            </div>
+            <div>
+              <strong>{builderPacketExport?.totals.visualTargets ?? 0}</strong>
+              <span>Visual targets</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(builderPacketExport?.readiness ?? []).slice(0, 5).map((item) => (
+              <li
+                key={item.id}
+                data-status={item.status === "ready" ? "healthy" : item.status === "external_gate" ? "blocked" : "watch"}
+              >
+                <span>{item.label}</span>
+                <strong>{item.status.replaceAll("_", " ")}</strong>
               </li>
             ))}
           </ul>

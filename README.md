@@ -194,6 +194,14 @@ MEALPILOT_URL=http://localhost:8787 npm run verify:visual
 
 The visual harness writes PNG screenshots and `report.json` to `artifacts/visual-qa/`. Those files are local reviewer evidence and are intentionally ignored by git.
 
+Export the Swiggy Builder Access packet from the running production server:
+
+```bash
+MEALPILOT_URL=http://localhost:8787 npm run export:builder-packet
+```
+
+The exporter writes copy-ready Markdown, machine-readable JSON, and a verification summary to `artifacts/builder-packet/`. These generated files are intentionally ignored by git.
+
 Docker run:
 
 ```bash
@@ -252,6 +260,8 @@ GET  /api/support/bridge
 GET  /api/slo-incident-command
 GET  /api/error-intelligence
 GET  /api/submission-console
+GET  /api/builder-packet-export
+GET  /api/builder-packet-export.md
 GET  /api/sessions/:sessionId/surface?surface=chat
 GET  /api/sessions/:sessionId/surface?surface=voice
 GET  /api/sessions/:sessionId/preflight
@@ -379,6 +389,8 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 `GET /api/reviewer-artifact-vault` is the Swiggy access-submission manifest: proof links, OpenAPI, smoke commands, screenshot targets, demo-video checklist, logs, traces, redaction rules, support context, and handoff email copy are bundled in one route.
 
 `GET /api/visual-qa-center` is the screenshot and layout evidence center: desktop, tablet, and mobile selectors, Playwright artifact paths, no-overlap rules, text-fit rules, widget fallback checks, redaction visibility, commercial confirmation visibility, Source Intelligence, Innovation Radar, and screenshot automation gates are made reviewable.
+
+`GET /api/builder-packet-export` and `GET /api/builder-packet-export.md` generate the executable Swiggy access packet: prepared form fields, required attachments, verification commands, local artifact paths, visual QA proof, handoff email copy, and explicit operator/Swiggy gates for form submission, demo video, credentials, redirect URI, and co-branding approval.
 
 `GET /api/premium-use-case-studio` is the product innovation map: ten premium MealPilot experiences, all 35 official Swiggy tools placed into use-case routes, cross-server call savings, chat/voice/widget/ops surfaces, safety gates, data boundaries, metrics, differentiators, roadmap, and external gates.
 

@@ -2271,6 +2271,43 @@ assert(
   "submission console official form gate is missing",
 );
 
+const builderPacket = await request("/api/builder-packet-export");
+assert(builderPacket.packet.score >= 85, "builder packet export score is below target");
+assert(builderPacket.packet.recommendedTrack === "developer", "builder packet export recommended track is wrong");
+assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "builder packet output directory is missing");
+assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
+assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
+assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 13, "builder packet visual target coverage is incomplete");
+assert(
+  ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
+    builderPacket.packet.files.some((file) => file.id === id),
+  ),
+  "builder packet export files are incomplete",
+);
+assert(
+  builderPacket.packet.commands.some(
+    (command) => command.id === "packet_export" && command.command.includes("npm run export:builder-packet"),
+  ),
+  "builder packet export command is missing",
+);
+assert(
+  builderPacket.packet.copyBlocks.formFields.includes("Redirect URI(s)") &&
+    builderPacket.packet.copyBlocks.attachments.includes("Production Launch Bundle") &&
+    builderPacket.packet.copyBlocks.handoffEmail.to === "builders@swiggy.in",
+  "builder packet copy blocks are incomplete",
+);
+assert(
+  builderPacket.packet.readiness.some((item) => item.id === "demo_video" && item.status === "operator_input") &&
+    builderPacket.packet.readiness.some((item) => item.id === "staging_credentials" && item.status === "external_gate"),
+  "builder packet readiness gates are incomplete",
+);
+assert(
+  builderPacket.packet.externalGates.some((gate) => gate.includes("Google Form")) &&
+    builderPacket.packet.assertions.some((assertion) => assertion.includes("outside git")),
+  "builder packet external gate or assertion is missing",
+);
+
 const launchBundle = await request("/api/production-launch-bundle");
 assert(launchBundle.launchBundle.score >= 70, "launch bundle score is below target");
 assert(launchBundle.launchBundle.requestedServers.length === 3, "launch bundle server coverage is incomplete");
@@ -2537,6 +2574,9 @@ console.log(
       submissionConsoleAttachments: submissionConsole.submissionConsole.totalAttachments,
       submissionRequirements: submissionConsole.submissionConsole.totalRequirements,
       submissionPacketItems: submissionConsole.submissionConsole.packetOrder.length,
+      builderPacketScore: builderPacket.packet.score,
+      builderPacketFiles: builderPacket.packet.totals.packetFiles,
+      builderPacketVisualTargets: builderPacket.packet.totals.visualTargets,
       faqPolicyScore: faqPolicy.faqPolicy.score,
       faqPolicyQuestions: faqPolicy.faqPolicy.totalQuestions,
       growthPartnershipScore: growthPartnership.growthPartnership.score,

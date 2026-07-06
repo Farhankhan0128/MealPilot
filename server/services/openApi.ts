@@ -575,6 +575,30 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/builder-packet-export": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Executable Swiggy Builder Access packet export",
+          responses: {
+            "200": {
+              description:
+                "Copy-ready and machine-readable packet manifest with form fields, required attachments, verification commands, generated file paths, handoff email, readiness gates, and Swiggy external gates",
+            },
+          },
+        },
+      },
+      "/api/builder-packet-export.md": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Markdown Swiggy Builder Access packet export",
+          responses: {
+            "200": {
+              description:
+                "Reviewer-ready Markdown packet for the official Swiggy access form and builders@swiggy.in handoff",
+            },
+          },
+        },
+      },
       "/api/reviewer-proof": {
         get: {
           tags: ["Builder Access"],

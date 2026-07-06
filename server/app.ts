@@ -25,6 +25,7 @@ import {
 import { buildAiClientConnectKit } from "./services/aiClientConnect.js";
 import { buildAuditLedgerCenter } from "./services/auditLedger.js";
 import { buildBrandComplianceKit } from "./services/brandCompliance.js";
+import { buildBuilderPacketExport, buildBuilderPacketMarkdown } from "./services/builderPacketExport.js";
 import { buildMcpBackpressureGovernor } from "./services/backpressureGovernor.js";
 import { buildSwiggyBuilderIntakeCommandCenter } from "./services/builderIntake.js";
 import { buildSwiggyChannelMultimodalStudio } from "./services/channelMultimodalStudio.js";
@@ -384,16 +385,6 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
     }),
   );
 
-  app.get("/api/sessions/:sessionId", (req, res) => {
-    const plan = store.getPlan(req.params.sessionId);
-    if (!plan) {
-      res.status(404).json({ error: { message: "Session not found." } });
-      return;
-    }
-
-    res.json({ plan });
-  });
-
   app.post(
     "/api/confirm",
     asyncRoute(async (req, res) => {
@@ -720,6 +711,16 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
     });
   });
 
+  app.get("/api/sessions/:sessionId", (req, res) => {
+    const plan = store.getPlan(req.params.sessionId);
+    if (!plan) {
+      res.status(404).json({ error: { message: "Session not found." } });
+      return;
+    }
+
+    res.json({ plan });
+  });
+
   app.get("/api/pantry", (_req, res) => {
     const pantry = store.getPantry();
     res.json({ pantry, suggestions: buildRestockSuggestions(pantry) });
@@ -857,6 +858,27 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
         latestPlan: store.getAllPlans().at(-1),
       }),
     });
+  });
+
+  app.get("/api/builder-packet-export", (_req, res) => {
+    res.json({
+      packet: buildBuilderPacketExport({
+        config,
+        profile: store.getProfile(),
+        coverage: buildMcpCoverage(),
+        latestPlan: store.getAllPlans().at(-1),
+      }),
+    });
+  });
+
+  app.get("/api/builder-packet-export.md", (_req, res) => {
+    const packet = buildBuilderPacketExport({
+      config,
+      profile: store.getProfile(),
+      coverage: buildMcpCoverage(),
+      latestPlan: store.getAllPlans().at(-1),
+    });
+    res.type("text/markdown").send(buildBuilderPacketMarkdown(packet));
   });
 
   app.get("/api/rate-limit-plan", (_req, res) => {

@@ -18,7 +18,8 @@
     "test:watch": "vitest",
     "lint": "eslint .",
     "verify:production": "node scripts/verify-production.mjs",
-    "verify:visual": "node scripts/verify-visual.mjs"
+    "verify:visual": "node scripts/verify-visual.mjs",
+    "export:builder-packet": "node scripts/export-builder-packet.mjs"
   },
   "repository": {
     "type": "git",

@@ -11,6 +11,7 @@ npm run build
 npm start
 npm run verify:production
 MEALPILOT_URL=http://localhost:8787 npm run verify:visual
+MEALPILOT_URL=http://localhost:8787 npm run export:builder-packet
 ```
 
 ## App Structure
@@ -157,6 +158,8 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/luxury-experience-workspace`
 - `GET /api/reviewer-artifact-vault`
 - `GET /api/visual-qa-center`
+- `GET /api/builder-packet-export`
+- `GET /api/builder-packet-export.md`
 - `GET /api/swiggy-docs-coverage`
 - `GET /api/swiggy-upstream-watch`
 - `GET /api/swiggy-source-intelligence`
@@ -282,6 +285,8 @@ Production should use an HTTPS redirect URI with exact-match allowlisting.
 
 `/api/visual-qa-center` shows reviewer screenshot targets, desktop/tablet/mobile viewport sizes, selector manifests, Playwright screenshot artifact paths, no-overlap rules, text-fit rules, widget fallback checks, redaction visibility, commercial confirmation visibility, mobile layout checks, Source Intelligence, Innovation Radar, and automation gates. Run `npm run verify:visual` against the production server to generate PNGs plus `artifacts/visual-qa/report.json`.
 
+`/api/builder-packet-export` and `/api/builder-packet-export.md` turn the Submission Console, Production Launch Bundle, and Visual QA Center into a reproducible Swiggy access packet. Run `npm run export:builder-packet` against the production server to write `artifacts/builder-packet/mealpilot-swiggy-access-packet.json`, `mealpilot-swiggy-access-packet.md`, and `verification-summary.json`.
+
 ## Safety Tests
 
 The test suite checks that:
@@ -323,6 +328,7 @@ The test suite checks that:
 - Resource & Prompt Studio exercises all local `resources/list`, `resources/read`, `prompts/list`, and `prompts/get` paths across Food, Instamart, and Dineout.
 - Local MCP JSON-RPC supports `resources/list`, `resources/read`, `prompts/list`, and `prompts/get` for review-time evidence before live Swiggy credentials.
 - Submission Console consolidates developer/enterprise access targets, official access requirements, prepared form fields, required attachments, packet order, demo-video gate, runbook steps, blockers, and builders@swiggy.in drafts.
+- Builder Packet Export writes the copy-ready and machine-readable Swiggy access packet under ignored local artifacts, preserving operator-owned form submission and Swiggy credential gates.
 - Swiggy OAuth Status reports authorize/token/logout endpoints, pending PKCE verifier count, callback status, token source, token expiry, storage rules, and no-token-logging posture.
 - Credential onboarding reports DCR preview, redirect URI status, metadata endpoints, PKCE readiness, scopes, and access-form fields.
 - Runtime telemetry records live API and MCP request events with request IDs, hashed user context, session correlation, status classes, latency, and redaction evidence.

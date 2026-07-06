@@ -41,6 +41,8 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/resilience"].get.summary).toContain("resilience");
     expect(openApi.body.paths["/api/evaluation-lab"].get.summary).toContain("evaluation");
     expect(openApi.body.paths["/api/submission-console"].get.summary).toContain("submission console");
+    expect(openApi.body.paths["/api/builder-packet-export"].get.summary).toContain("packet export");
+    expect(openApi.body.paths["/api/builder-packet-export.md"].get.summary).toContain("Markdown");
     expect(openApi.body.paths["/api/mcp-gateway"].get.summary).toContain("gateway");
     expect(openApi.body.paths["/api/swiggy-builders-map"].get.summary).toContain("Swiggy Builders");
     expect(openApi.body.paths["/api/swiggy-website-atlas"].get.summary).toContain("website header");
@@ -650,6 +652,49 @@ describe("MealPilot API", () => {
     expect(submissionConsole.outboundDrafts.some((draft: { to: string }) => draft.to === "builders@swiggy.in")).toBe(true);
     expect(submissionConsole.externalGates.some((gate: string) => gate.includes("Google Form"))).toBe(true);
     expect(submissionConsole.assertions.some((assertion: string) => assertion.includes("pre-submit dossier"))).toBe(true);
+  });
+
+  it("returns an executable Swiggy builder packet export with Markdown output", async () => {
+    const { app } = createMealPilotServer();
+    await request(app).post("/api/plan").send(planningRequest).expect(201);
+    const response = await request(app).get("/api/builder-packet-export").expect(200);
+    const packet = response.body.packet;
+
+    expect(packet.score).toBeGreaterThanOrEqual(85);
+    expect(packet.recommendedTrack).toBe("developer");
+    expect(packet.outputDirectory).toBe("artifacts/builder-packet");
+    expect(packet.officialSources).toEqual(
+      expect.arrayContaining([
+        "https://mcp.swiggy.com/builders/access/",
+        "https://mcp.swiggy.com/builders/docs/build/ship-to-production/",
+        "https://mcp.swiggy.com/builders/llms.txt",
+      ]),
+    );
+    expect(packet.totals.formFields).toBeGreaterThanOrEqual(10);
+    expect(packet.totals.requiredAttachments).toBeGreaterThanOrEqual(10);
+    expect(packet.totals.launchArtifacts).toBeGreaterThanOrEqual(50);
+    expect(packet.totals.visualTargets).toBe(13);
+    expect(packet.files.map((file: { id: string }) => file.id)).toEqual(
+      expect.arrayContaining(["packet_json", "packet_markdown", "visual_report", "production_summary"]),
+    );
+    expect(
+      packet.commands.some(
+        (command: { id: string; command: string }) =>
+          command.id === "packet_export" && command.command.includes("npm run export:builder-packet"),
+      ),
+    ).toBe(true);
+    expect(packet.copyBlocks.formFields).toContain("Redirect URI(s)");
+    expect(packet.copyBlocks.attachments).toContain("Production Launch Bundle");
+    expect(packet.copyBlocks.handoffEmail.to).toBe("builders@swiggy.in");
+    expect(packet.readiness.some((item: { id: string; status: string }) => item.id === "demo_video" && item.status === "operator_input")).toBe(true);
+    expect(packet.readiness.some((item: { id: string; status: string }) => item.id === "staging_credentials" && item.status === "external_gate")).toBe(true);
+    expect(packet.externalGates.some((gate: string) => gate.includes("Google Form"))).toBe(true);
+    expect(packet.assertions.some((assertion: string) => assertion.includes("outside git"))).toBe(true);
+
+    const markdown = await request(app).get("/api/builder-packet-export.md").expect(200);
+    expect(markdown.text).toContain("# MealPilot Swiggy Builders Access Packet");
+    expect(markdown.text).toContain("## Verification Commands");
+    expect(markdown.text).toContain("npm run export:builder-packet");
   });
 
   it("returns Swiggy FAQ and policy coverage mapped to MealPilot evidence", async () => {
