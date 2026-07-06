@@ -118,6 +118,7 @@ import {
   fetchSwiggyUpstreamWatch,
   fetchSwiggyWebsiteAtlas,
   fetchSwiggyLoadLab,
+  fetchSwiggyOfferIntelligence,
   fetchSwiggyRouteOptimizer,
   fetchTrafficReadinessPlan,
   fetchTracking,
@@ -212,6 +213,7 @@ import type {
   SwiggyInnovationRadarReport,
   SwiggyJourneyCompilerReport,
   SwiggyLoadLabReport,
+  SwiggyOfferIntelligenceReport,
   SwiggyScenarioRunnerReport,
   SwiggySourceIntelligenceReport,
   SwiggyStagingCutoverRehearsal,
@@ -439,6 +441,7 @@ function App() {
   const [auditLedger, setAuditLedger] = useState<AuditLedgerCenter | null>(null);
   const [sloIncident, setSloIncident] = useState<SloIncidentCommandCenter | null>(null);
   const [loadLab, setLoadLab] = useState<SwiggyLoadLabReport | null>(null);
+  const [offerIntelligence, setOfferIntelligence] = useState<SwiggyOfferIntelligenceReport | null>(null);
   const [routeOptimizer, setRouteOptimizer] = useState<SwiggyRouteOptimizationReport | null>(null);
   const [exportText, setExportText] = useState<string | null>(null);
   const [authUrl, setAuthUrl] = useState<string | null>(null);
@@ -587,6 +590,7 @@ function App() {
       auditLedgerResponse,
       sloIncidentResponse,
       loadLabResponse,
+      offerIntelligenceResponse,
       routeOptimizerResponse,
     ] = await Promise.all([
       fetchPantry(),
@@ -658,6 +662,7 @@ function App() {
       fetchAuditLedger(),
       fetchSloIncidentCommand(),
       fetchSwiggyLoadLab(),
+      fetchSwiggyOfferIntelligence(),
       fetchSwiggyRouteOptimizer(),
     ]);
     setPantry(pantryResponse.pantry);
@@ -734,6 +739,7 @@ function App() {
     setAuditLedger(auditLedgerResponse.auditLedger);
     setSloIncident(sloIncidentResponse.sloIncident);
     setLoadLab(loadLabResponse.loadLab);
+    setOfferIntelligence(offerIntelligenceResponse.offerIntelligence);
     setRouteOptimizer(routeOptimizerResponse.routeOptimizer);
   }
 
@@ -805,6 +811,7 @@ function App() {
       auditLedgerResponse,
       sloIncidentResponse,
       loadLabResponse,
+      offerIntelligenceResponse,
       routeOptimizerResponse,
     ] = await Promise.all([
       fetchMcpCatalog(),
@@ -873,6 +880,7 @@ function App() {
       fetchAuditLedger(),
       fetchSloIncidentCommand(),
       fetchSwiggyLoadLab(),
+      fetchSwiggyOfferIntelligence(),
       fetchSwiggyRouteOptimizer(),
     ]);
     setMcpCatalog(catalogResponse);
@@ -945,6 +953,7 @@ function App() {
     setAuditLedger(auditLedgerResponse.auditLedger);
     setSloIncident(sloIncidentResponse.sloIncident);
     setLoadLab(loadLabResponse.loadLab);
+    setOfferIntelligence(offerIntelligenceResponse.offerIntelligence);
     setRouteOptimizer(routeOptimizerResponse.routeOptimizer);
   }
 
@@ -1601,6 +1610,7 @@ function App() {
                 auditLedger={auditLedger}
                 sloIncident={sloIncident}
                 loadLab={loadLab}
+                offerIntelligence={offerIntelligence}
                 routeOptimizer={routeOptimizer}
                 evaluationLab={evaluationLab}
               />
@@ -4313,6 +4323,7 @@ function ProductionEvidencePanel({
   auditLedger,
   sloIncident,
   loadLab,
+  offerIntelligence,
   routeOptimizer,
   evaluationLab,
 }: {
@@ -4334,6 +4345,7 @@ function ProductionEvidencePanel({
   auditLedger: AuditLedgerCenter | null;
   sloIncident: SloIncidentCommandCenter | null;
   loadLab: SwiggyLoadLabReport | null;
+  offerIntelligence: SwiggyOfferIntelligenceReport | null;
   routeOptimizer: SwiggyRouteOptimizationReport | null;
   evaluationLab: EvaluationLab | null;
 }) {
@@ -4503,6 +4515,47 @@ function ProductionEvidencePanel({
               >
                 <span>{scenario.label}</span>
                 <strong>{scenario.status.replace("_", " ")}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="offer-intelligence-card">
+          <div className="mini-heading">
+            <ShoppingBasket aria-hidden="true" />
+            <strong>Offer Intelligence</strong>
+          </div>
+          <span>
+            {offerIntelligence
+              ? `${offerIntelligence.score}/100, Rs ${offerIntelligence.totals.estimatedSavings.toLocaleString("en-IN")} estimated savings`
+              : "Loading offer guardrails"}
+          </span>
+          <div className="offer-intelligence-grid">
+            <div>
+              <strong>{offerIntelligence?.totals.opportunities ?? 0}</strong>
+              <span>Opportunities</span>
+            </div>
+            <div>
+              <strong>{offerIntelligence?.totals.readyLanes ?? 0}</strong>
+              <span>Ready lanes</span>
+            </div>
+            <div>
+              <strong>{offerIntelligence?.totals.officialCouponTools ?? 0}</strong>
+              <span>Food coupon tools</span>
+            </div>
+            <div>
+              <strong>{offerIntelligence?.totals.externalGates ?? 0}</strong>
+              <span>Live gates</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(offerIntelligence?.opportunities ?? []).slice(0, 4).map((opportunity) => (
+              <li
+                key={opportunity.id}
+                data-status={opportunity.status === "ready" ? "healthy" : opportunity.status === "external_gate" ? "blocked" : "watch"}
+              >
+                <span>{opportunity.label}</span>
+                <strong>Rs {opportunity.estimatedSavings.toLocaleString("en-IN")}</strong>
               </li>
             ))}
           </ul>

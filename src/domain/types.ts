@@ -3203,6 +3203,70 @@ export interface SwiggyLoadLabReport {
   externalGates: string[];
 }
 
+export type SwiggyOfferStatus = "ready" | "watch" | "external_gate";
+
+export interface SwiggyOfferLane {
+  id: string;
+  server: SwiggyServer | "combined";
+  label: string;
+  officialTools: string[];
+  route: string;
+  guardrail: string;
+  status: SwiggyOfferStatus;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyOfferOpportunity {
+  id: string;
+  server: SwiggyServer | "combined";
+  label: string;
+  source: "official_tool" | "cart_preflight" | "derived_value";
+  estimatedSavings: number;
+  applyMode: "auto_blocked" | "confirm_then_apply" | "surface_only";
+  userCopy: string;
+  proof: string;
+  status: SwiggyOfferStatus;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyOfferGuardrail {
+  id: string;
+  label: string;
+  policy: string;
+  status: SwiggyOfferStatus;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyOfferDrill {
+  id: string;
+  label: string;
+  trigger: string;
+  expectedDecision: string;
+  status: SwiggyOfferStatus;
+}
+
+export interface SwiggyOfferIntelligenceReport {
+  generatedAt: string;
+  score: number;
+  mode: "mock" | "staging" | "production";
+  officialSources: string[];
+  totals: {
+    opportunities: number;
+    estimatedSavings: number;
+    readyLanes: number;
+    guardedApplications: number;
+    officialCouponTools: number;
+    externalGates: number;
+  };
+  lanes: SwiggyOfferLane[];
+  opportunities: SwiggyOfferOpportunity[];
+  guardrails: SwiggyOfferGuardrail[];
+  drills: SwiggyOfferDrill[];
+  operatorActions: Array<{ id: string; label: string; owner: "MealPilot" | "Operator" | "Swiggy"; status: SwiggyOfferStatus; evidence: string }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export interface VersionAlert {
   id: string;
   label: string;

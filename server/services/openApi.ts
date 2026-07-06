@@ -750,6 +750,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-offer-intelligence": {
+        get: {
+          tags: ["Commerce"],
+          summary: "Swiggy Offer Intelligence for coupon, deal, and value optimization",
+          responses: {
+            "200": {
+              description:
+                "Food coupon discovery/application guardrails, Dineout deal validation, Instamart value substitutions, offer drills, and live-offer external gates",
+            },
+          },
+        },
+      },
       "/api/support/bridge": {
         get: {
           tags: ["Operations"],

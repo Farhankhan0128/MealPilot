@@ -83,6 +83,7 @@ import { buildOpenApiDocument } from "./services/openApi.js";
 import { buildSandboxCredentialWorkbench } from "./services/sandboxCredentialWorkbench.js";
 import { buildNutritionBudgetIntelligence } from "./services/nutritionBudgetIntelligence.js";
 import { buildObservabilityTraceReport, buildSwiggyRouteOptimizationReport } from "./services/observability.js";
+import { buildSwiggyOfferIntelligence } from "./services/offerIntelligence.js";
 import { buildPremiumConciergeItinerary } from "./services/premiumConciergeItinerary.js";
 import { buildPremiumUseCaseStudio } from "./services/premiumUseCaseStudio.js";
 import { buildReviewerArtifactVault } from "./services/reviewerArtifactVault.js";
@@ -996,6 +997,10 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/swiggy-load-lab", (_req, res) => {
     res.json({ loadLab: buildSwiggyLoadLab({ plans: store.getAllPlans(), config }) });
+  });
+
+  app.get("/api/swiggy-offer-intelligence", (_req, res) => {
+    res.json({ offerIntelligence: buildSwiggyOfferIntelligence({ plans: store.getAllPlans(), config }) });
   });
 
   app.get("/api/version-monitor", (_req, res) => {

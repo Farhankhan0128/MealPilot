@@ -99,6 +99,8 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/traffic-readiness-plan"].get.summary).toContain("Traffic readiness");
     expect(openApi.body.paths["/api/swiggy-load-lab"].get.summary).toContain("Load Lab");
     expect(openApi.body.paths["/api/swiggy-load-lab"].get.responses["200"].description).toContain("cohort ramps");
+    expect(openApi.body.paths["/api/swiggy-offer-intelligence"].get.summary).toContain("Offer Intelligence");
+    expect(openApi.body.paths["/api/swiggy-offer-intelligence"].get.responses["200"].description).toContain("Food coupon");
     expect(openApi.body.paths["/api/slo-incident-command"].get.summary).toContain("SLO Incident");
     expect(openApi.body.paths["/api/data-governance-center"].get.summary).toContain("Data Governance");
     expect(openApi.body.paths["/api/production-launch-bundle"].get.summary).toContain("Production Launch Bundle");
@@ -2814,6 +2816,7 @@ describe("MealPilot API", () => {
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Traffic Readiness Plan")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "MCP Backpressure Governor")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Swiggy Load Lab")).toBe(true);
+    expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Swiggy Offer Intelligence")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "SLO Incident Command Center")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Data Governance Center")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Swiggy Upstream Watch")).toBe(true);
@@ -2926,6 +2929,49 @@ describe("MealPilot API", () => {
     expect(loadLab.externalGates.some((gate: string) => gate.includes("staging credentials"))).toBe(true);
   });
 
+  it("returns Swiggy Offer Intelligence for coupon, deal, and value optimization", async () => {
+    const { app } = createMealPilotServer();
+    await request(app).post("/api/plan").send(planningRequest).expect(201);
+
+    const response = await request(app).get("/api/swiggy-offer-intelligence").expect(200);
+    const intelligence = response.body.offerIntelligence;
+
+    expect(intelligence.score).toBeGreaterThanOrEqual(80);
+    expect(intelligence.mode).toBe("mock");
+    expect(intelligence.officialSources).toEqual(
+      expect.arrayContaining([
+        "https://mcp.swiggy.com/builders/",
+        "https://mcp.swiggy.com/builders/llms.txt",
+        "https://mcp.swiggy.com/builders/docs/reference/food/fetch_food_coupons/",
+        "https://mcp.swiggy.com/builders/docs/reference/food/apply_food_coupon/",
+      ]),
+    );
+    expect(intelligence.totals.opportunities).toBeGreaterThanOrEqual(3);
+    expect(intelligence.totals.estimatedSavings).toBeGreaterThan(0);
+    expect(intelligence.totals.officialCouponTools).toBe(2);
+    expect(intelligence.lanes.map((lane: { id: string }) => lane.id)).toEqual(
+      expect.arrayContaining(["food_coupon_discovery", "food_coupon_application", "dineout_offer_discovery", "instamart_value_substitution"]),
+    );
+    expect(
+      intelligence.opportunities.some(
+        (opportunity: { server: string; applyMode: string }) =>
+          opportunity.server === "food" && opportunity.applyMode === "confirm_then_apply",
+      ),
+    ).toBe(true);
+    expect(
+      intelligence.guardrails.some(
+        (guardrail: { id: string; status: string }) => guardrail.id === "coupon_not_order" && guardrail.status === "ready",
+      ),
+    ).toBe(true);
+    expect(intelligence.drills.map((drill: { id: string }) => drill.id)).toEqual(
+      expect.arrayContaining(["expired_food_coupon", "coupon_changes_cart_total", "dineout_deal_disappears"]),
+    );
+    expect(
+      intelligence.assertions.some((assertion: string) => assertion.includes("fetch_food_coupons before apply_food_coupon")),
+    ).toBe(true);
+    expect(intelligence.externalGates.some((gate: string) => gate.includes("Live Food coupon inventory"))).toBe(true);
+  });
+
   it("returns SLO and incident command evidence for Swiggy operations", async () => {
     const { app } = createMealPilotServer();
     const created = await request(app).post("/api/plan").send(planningRequest).expect(201);
@@ -2994,6 +3040,7 @@ describe("MealPilot API", () => {
         "Traffic Readiness Plan",
         "MCP Backpressure Governor",
         "Swiggy Load Lab",
+        "Swiggy Offer Intelligence",
         "SLO Incident Command Center",
         "Swiggy Journey Compiler",
         "Swiggy Access Dossier",
@@ -3043,6 +3090,7 @@ describe("MealPilot API", () => {
     expect(bundle.handoffEmail.body).toContain("/api/mcp/widget-runtime");
     expect(bundle.handoffEmail.body).toContain("/api/mcp/backpressure-governor");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-load-lab");
+    expect(bundle.handoffEmail.body).toContain("/api/swiggy-offer-intelligence");
     expect(bundle.handoffEmail.body).toContain("/api/mcp/staging-cutover");
     expect(bundle.handoffEmail.body).toContain("/api/audit-ledger");
     expect(bundle.commands.some((command: { command: string }) => command.command.includes("npm run verify:production"))).toBe(

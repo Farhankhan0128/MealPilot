@@ -151,6 +151,10 @@ assert(
   "OpenAPI Swiggy Load Lab is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-offer-intelligence"].get.summary.includes("Offer Intelligence"),
+  "OpenAPI Swiggy Offer Intelligence is missing",
+);
+assert(
   openApi.paths["/api/mcp/resource-prompt-studio"].get.summary.includes("Resource and Prompt Studio"),
   "OpenAPI resource and prompt studio is missing",
 );
@@ -2668,6 +2672,48 @@ assert(
   "Load Lab commercial serialization assertion is missing",
 );
 
+const offerIntelligence = await request("/api/swiggy-offer-intelligence");
+assert(offerIntelligence.offerIntelligence.score >= 80, "Offer Intelligence score is below target");
+assert(offerIntelligence.offerIntelligence.totals.opportunities >= 3, "Offer Intelligence opportunities are incomplete");
+assert(offerIntelligence.offerIntelligence.totals.estimatedSavings > 0, "Offer Intelligence savings rollup is missing");
+assert(offerIntelligence.offerIntelligence.totals.officialCouponTools === 2, "Offer Intelligence official Food coupon tools are missing");
+assert(
+  offerIntelligence.offerIntelligence.officialSources.includes("https://mcp.swiggy.com/builders/llms.txt") &&
+    offerIntelligence.offerIntelligence.officialSources.some((source) => source.includes("/reference/food/fetch_food_coupons/")) &&
+    offerIntelligence.offerIntelligence.officialSources.some((source) => source.includes("/reference/food/apply_food_coupon/")),
+  "Offer Intelligence official sources are incomplete",
+);
+assert(
+  ["food_coupon_discovery", "food_coupon_application", "dineout_offer_discovery", "instamart_value_substitution"].every((id) =>
+    offerIntelligence.offerIntelligence.lanes.some((lane) => lane.id === id),
+  ),
+  "Offer Intelligence lanes are incomplete",
+);
+assert(
+  offerIntelligence.offerIntelligence.opportunities.some(
+    (opportunity) => opportunity.server === "food" && opportunity.applyMode === "confirm_then_apply",
+  ),
+  "Offer Intelligence Food coupon apply gate is missing",
+);
+assert(
+  offerIntelligence.offerIntelligence.guardrails.some(
+    (guardrail) => guardrail.id === "coupon_not_order" && guardrail.status === "ready",
+  ),
+  "Offer Intelligence coupon/order guardrail is missing",
+);
+assert(
+  ["expired_food_coupon", "coupon_changes_cart_total", "dineout_deal_disappears"].every((id) =>
+    offerIntelligence.offerIntelligence.drills.some((drill) => drill.id === id),
+  ),
+  "Offer Intelligence drills are incomplete",
+);
+assert(
+  offerIntelligence.offerIntelligence.assertions.some((assertion) =>
+    assertion.includes("fetch_food_coupons before apply_food_coupon"),
+  ),
+  "Offer Intelligence coupon sequence assertion is missing",
+);
+
 const sloIncident = await request("/api/slo-incident-command");
 assert(sloIncident.sloIncident.score >= 90, "SLO incident command score is below target");
 assert(
@@ -3119,6 +3165,7 @@ assert(
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Traffic Readiness Plan") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "MCP Backpressure Governor") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Load Lab") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Offer Intelligence") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "SLO Incident Command Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Journey Compiler") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Access Dossier") &&
@@ -3278,6 +3325,10 @@ assert(
   "launch bundle Load Lab handoff link is missing",
 );
 assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-offer-intelligence"),
+  "launch bundle Offer Intelligence handoff link is missing",
+);
+assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/mcp/staging-cutover"),
   "launch bundle staging cutover handoff link is missing",
 );
@@ -3388,6 +3439,9 @@ console.log(
       loadLabScenarios: loadLab.loadLab.totals.scenarios,
       loadLabMaxPeakQps: loadLab.loadLab.totals.maxPeakQps,
       loadLabExternalGates: loadLab.loadLab.totals.externalGates,
+      offerIntelligenceScore: offerIntelligence.offerIntelligence.score,
+      offerIntelligenceOpportunities: offerIntelligence.offerIntelligence.totals.opportunities,
+      offerIntelligenceSavings: offerIntelligence.offerIntelligence.totals.estimatedSavings,
       sloIncidentScore: sloIncident.sloIncident.score,
       sloUptimeTargets: sloIncident.sloIncident.uptimeTargets.length,
       resilienceScore: resilience.runbook.score,

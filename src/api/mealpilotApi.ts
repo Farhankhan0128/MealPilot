@@ -75,6 +75,7 @@ import type {
   SwiggyInnovationRadarReport,
   SwiggyJourneyCompilerReport,
   SwiggyLoadLabReport,
+  SwiggyOfferIntelligenceReport,
   SwiggyScenarioRunnerReport,
   SwiggySourceIntelligenceReport,
   SwiggyStagingCutoverRehearsal,
@@ -520,6 +521,10 @@ export function fetchMcpBackpressureGovernor() {
 
 export function fetchSwiggyLoadLab() {
   return requestJson<{ loadLab: SwiggyLoadLabReport }>("/api/swiggy-load-lab");
+}
+
+export function fetchSwiggyOfferIntelligence() {
+  return requestJson<{ offerIntelligence: SwiggyOfferIntelligenceReport }>("/api/swiggy-offer-intelligence");
 }
 
 export function fetchVersionMonitor() {
