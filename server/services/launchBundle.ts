@@ -33,6 +33,15 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
         "Curates the Builders Club launch-blog narrative into a reviewer demo story, current 35-tool reconciliation, showcase assets, CTA paths, and co-marketing gates.",
     },
     {
+      id: "operating_contract_center",
+      label: "Swiggy Operating Contract Center",
+      path: "/api/swiggy-operating-contract-center",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Consolidates official SLA, rate-limit, support, versioning, changelog, and ship-to-production guidance into one reviewer operating contract with runbooks and external gates.",
+    },
+    {
       id: "deep_site_map",
       label: "Swiggy Deep Site Map",
       path: "/api/swiggy-deep-site-map",
@@ -890,6 +899,7 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- Traffic Readiness Plan: /api/traffic-readiness-plan",
     "- MCP Backpressure Governor: /api/mcp/backpressure-governor",
     "- Swiggy Load Lab: /api/swiggy-load-lab",
+    "- Swiggy Operating Contract Center: /api/swiggy-operating-contract-center",
     "- Swiggy Offer Intelligence: /api/swiggy-offer-intelligence",
     "- Swiggy Order Lifecycle: /api/swiggy-order-lifecycle",
     "- Swiggy Location Trust: /api/swiggy-location-trust",

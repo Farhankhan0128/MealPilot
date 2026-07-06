@@ -174,6 +174,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/go-live`
 - `GET /api/swiggy-website-atlas`
 - `GET /api/swiggy-builders-launch-story`
+- `GET /api/swiggy-operating-contract-center`
 - `GET /api/swiggy-builder-intake`
 - `GET /api/swiggy-faq-policy`
 - `GET /api/swiggy-growth-partnership`
@@ -341,6 +342,8 @@ Production should use an HTTPS redirect URI with exact-match allowlisting.
 
 `/api/swiggy-builders-launch-story` turns the April 2026 Builders Club launch blog into a reviewer-ready story center. It reconciles the launch-era 18+ API-tool narrative with the current 35-tool docs snapshot and packages story beats, the demo journey, showcase assets, ecosystem lanes, CTA paths, and co-marketing guardrails.
 
+`/api/swiggy-operating-contract-center` consolidates official operate and ship-to-production guidance into one reviewer contract: SLA and latency targets, current/future rate-limit behavior, traffic rollout, support escalation, version/deprecation watch, runbooks, readiness gates, and Swiggy external approvals.
+
 `/api/swiggy-cta-execution-center` shows the click-readiness workbench for every official Swiggy Builders CTA, global header link, docs subnav item, footer resource, mailto, Google Form, and legal link. Each target includes a browser action, keyboard path, proof links, completion gate, assertion coverage, and an operator-vs-Swiggy external gate.
 
 `/api/coding-agent-governance` reads the root `AGENTS.md` and scores the rules future coding agents must follow before editing Swiggy integrations: fetch official docs first, prefer page `.md` twins, never invent tools or parameters, preserve commercial confirmation gates, and keep sensitive data out of logs.
@@ -367,6 +370,7 @@ The test suite checks that:
 - Staging Cutover Rehearsal records first real MCP probes, OAuth and token gates, fail-closed behavior, support packet fields, retry branches, and 48-hour promotion checks.
 - Website Atlas covers global header, docs subnav, footer groups, production access page, launch blog, rendered-page crawl evidence, page modules, CTAs, resource links, and legal links.
 - Swiggy Builders Launch Story Center converts the launch blog into a reviewer-ready story, reconciles the launch-era 18+ signal with the current 35-tool docs snapshot, and packages demo journey, showcase assets, ecosystem lanes, CTA paths, and co-marketing guardrails.
+- Swiggy Operating Contract Center joins SLA, rate limits, support, versioning, changelog, and ship-to-production sources into pillars, runbooks, readiness gates, and external approval gates.
 - Builder Intake Command Center turns all 11 signup, apply, demo, contact, docs, and footer CTA paths into locally prepared action ownership, form values, demo storyboard steps, copy-ready drafts, and explicit external gates for final form/email submission and Swiggy approval.
 - FAQ & Policy Center maps homepage, developer, enterprise, access-guideline, footer-resource, allowed/restricted/prohibited, operating-principle, and legal signals to MealPilot evidence links.
 - Growth Partnership Center maps get-noticed, hiring, co-branding, direct support, co-marketing, analytics, strategic guidance, launch experiments, metrics, proof assets, and external partner asks.

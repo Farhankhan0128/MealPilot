@@ -105,6 +105,7 @@ import {
   fetchSwiggyBuildersMap,
   fetchSwiggyBuilderIntake,
   fetchSwiggyBuildersLaunchStory,
+  fetchSwiggyOperatingContractCenter,
   fetchSwiggyFaqPolicyCenter,
   fetchSwiggyGrowthPartnershipCenter,
   fetchSwiggyAccessDossier,
@@ -234,6 +235,7 @@ import type {
   SwiggyLoadLabReport,
   SwiggyLocationTrustReport,
   SwiggyOfferIntelligenceReport,
+  SwiggyOperatingContractCenterReport,
   SwiggyOrderLifecycleReport,
   SwiggyScenarioRunnerReport,
   SwiggySourceIntelligenceReport,
@@ -391,6 +393,7 @@ function App() {
   const [swiggyBuildersMap, setSwiggyBuildersMap] = useState<SwiggyBuildersMap | null>(null);
   const [swiggyWebsiteAtlas, setSwiggyWebsiteAtlas] = useState<SwiggyWebsiteAtlas | null>(null);
   const [buildersLaunchStory, setBuildersLaunchStory] = useState<SwiggyBuildersLaunchStoryCenterReport | null>(null);
+  const [operatingContract, setOperatingContract] = useState<SwiggyOperatingContractCenterReport | null>(null);
   const [swiggyDeepSiteMap, setSwiggyDeepSiteMap] = useState<SwiggyDeepSiteMap | null>(null);
   const [swiggyBuilderIntake, setSwiggyBuilderIntake] = useState<SwiggyBuilderIntakeCommandCenter | null>(null);
   const [swiggyFaqPolicy, setSwiggyFaqPolicy] = useState<SwiggyFaqPolicyCenter | null>(null);
@@ -572,6 +575,7 @@ function App() {
       buildersMapResponse,
       websiteAtlasResponse,
       buildersLaunchStoryResponse,
+      operatingContractResponse,
       deepSiteMapResponse,
       builderIntakeResponse,
       faqPolicyResponse,
@@ -654,6 +658,7 @@ function App() {
       fetchSwiggyBuildersMap(),
       fetchSwiggyWebsiteAtlas(),
       fetchSwiggyBuildersLaunchStory(),
+      fetchSwiggyOperatingContractCenter(),
       fetchSwiggyDeepSiteMap(),
       fetchSwiggyBuilderIntake(),
       fetchSwiggyFaqPolicyCenter(),
@@ -737,6 +742,7 @@ function App() {
     setSwiggyBuildersMap(buildersMapResponse.map);
     setSwiggyWebsiteAtlas(websiteAtlasResponse.atlas);
     setBuildersLaunchStory(buildersLaunchStoryResponse.launchStory);
+    setOperatingContract(operatingContractResponse.operatingContract);
     setSwiggyDeepSiteMap(deepSiteMapResponse.deepSiteMap);
     setSwiggyBuilderIntake(builderIntakeResponse.intake);
     setSwiggyFaqPolicy(faqPolicyResponse.faqPolicy);
@@ -823,6 +829,7 @@ function App() {
       buildersMapResponse,
       websiteAtlasResponse,
       buildersLaunchStoryResponse,
+      operatingContractResponse,
       deepSiteMapResponse,
       builderIntakeResponse,
       faqPolicyResponse,
@@ -902,6 +909,7 @@ function App() {
       fetchSwiggyBuildersMap(),
       fetchSwiggyWebsiteAtlas(),
       fetchSwiggyBuildersLaunchStory(),
+      fetchSwiggyOperatingContractCenter(),
       fetchSwiggyDeepSiteMap(),
       fetchSwiggyBuilderIntake(),
       fetchSwiggyFaqPolicyCenter(),
@@ -981,6 +989,7 @@ function App() {
     setSwiggyBuildersMap(buildersMapResponse.map);
     setSwiggyWebsiteAtlas(websiteAtlasResponse.atlas);
     setBuildersLaunchStory(buildersLaunchStoryResponse.launchStory);
+    setOperatingContract(operatingContractResponse.operatingContract);
     setSwiggyDeepSiteMap(deepSiteMapResponse.deepSiteMap);
     setSwiggyBuilderIntake(builderIntakeResponse.intake);
     setSwiggyFaqPolicy(faqPolicyResponse.faqPolicy);
@@ -1634,6 +1643,7 @@ function App() {
                 buildersMap={swiggyBuildersMap}
                 websiteAtlas={swiggyWebsiteAtlas}
                 buildersLaunchStory={buildersLaunchStory}
+                operatingContract={operatingContract}
                 deepSiteMap={swiggyDeepSiteMap}
                 builderIntake={swiggyBuilderIntake}
                 faqPolicy={swiggyFaqPolicy}
@@ -2203,6 +2213,7 @@ function LaunchCenterPanel({
   buildersMap,
   websiteAtlas,
   buildersLaunchStory,
+  operatingContract,
   deepSiteMap,
   builderIntake,
   faqPolicy,
@@ -2256,6 +2267,7 @@ function LaunchCenterPanel({
   buildersMap: SwiggyBuildersMap | null;
   websiteAtlas: SwiggyWebsiteAtlas | null;
   buildersLaunchStory: SwiggyBuildersLaunchStoryCenterReport | null;
+  operatingContract: SwiggyOperatingContractCenterReport | null;
   deepSiteMap: SwiggyDeepSiteMap | null;
   builderIntake: SwiggyBuilderIntakeCommandCenter | null;
   faqPolicy: SwiggyFaqPolicyCenter | null;
@@ -2973,6 +2985,44 @@ function LaunchCenterPanel({
               <li key={beat.id} data-status={beat.status === "ready" ? "healthy" : "watch"}>
                 <span>{beat.label}</span>
                 <strong>{beat.evidenceLinks.length} proofs</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="operating-contract-card">
+          <div className="mini-heading">
+            <Gauge aria-hidden="true" />
+            <strong>Operating Contract</strong>
+          </div>
+          <span>
+            {operatingContract
+              ? `${operatingContract.score}/100, ${operatingContract.contractSignal.targetUptime} uptime, ${operatingContract.contractSignal.operatingVersion}`
+              : "Loading Swiggy operate-docs contract"}
+          </span>
+          <div className="operating-contract-grid">
+            <div>
+              <strong>{operatingContract?.totals.pillars ?? 0}</strong>
+              <span>Pillars</span>
+            </div>
+            <div>
+              <strong>{operatingContract?.totals.runbooks ?? 0}</strong>
+              <span>Runbooks</span>
+            </div>
+            <div>
+              <strong>{operatingContract?.totals.readinessGates ?? 0}</strong>
+              <span>Gates</span>
+            </div>
+            <div>
+              <strong>{operatingContract?.totals.externalGates ?? 0}</strong>
+              <span>External</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(operatingContract?.pillars ?? []).slice(0, 4).map((pillar) => (
+              <li key={pillar.id} data-status={pillar.status === "ready" ? "healthy" : "watch"}>
+                <span>{pillar.label}</span>
+                <strong>{pillar.evidenceLinks.length} proofs</strong>
               </li>
             ))}
           </ul>

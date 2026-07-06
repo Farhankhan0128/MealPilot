@@ -85,6 +85,7 @@ import type {
   SwiggyLoadLabReport,
   SwiggyLocationTrustReport,
   SwiggyOfferIntelligenceReport,
+  SwiggyOperatingContractCenterReport,
   SwiggyOrderLifecycleReport,
   SwiggyScenarioRunnerReport,
   SwiggySourceIntelligenceReport,
@@ -281,6 +282,12 @@ export function fetchSwiggyWebsiteAtlas() {
 
 export function fetchSwiggyBuildersLaunchStory() {
   return requestJson<{ launchStory: SwiggyBuildersLaunchStoryCenterReport }>("/api/swiggy-builders-launch-story");
+}
+
+export function fetchSwiggyOperatingContractCenter() {
+  return requestJson<{ operatingContract: SwiggyOperatingContractCenterReport }>(
+    "/api/swiggy-operating-contract-center",
+  );
 }
 
 export function fetchSwiggyBuilderIntake() {

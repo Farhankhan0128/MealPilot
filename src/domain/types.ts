@@ -4087,6 +4087,65 @@ export interface SloIncidentCommandCenter {
   externalGates: string[];
 }
 
+export type SwiggyOperatingContractStatus = "ready" | "watch" | "external_gate";
+
+export interface SwiggyOperatingContractPillar {
+  id: string;
+  label: string;
+  status: SwiggyOperatingContractStatus;
+  officialSignal: string;
+  mealPilotControl: string;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyOperatingContractRunbook {
+  id: string;
+  label: string;
+  owner: "MealPilot" | "Swiggy" | "Joint";
+  status: SwiggyOperatingContractStatus;
+  trigger: string;
+  action: string;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyOperatingContractReadinessGate {
+  id: string;
+  label: string;
+  status: SwiggyOperatingContractStatus;
+  proof: string;
+  nextAction: string;
+}
+
+export interface SwiggyOperatingContractCenterReport {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  contractSignal: {
+    currentMode: "mock" | "staging" | "production";
+    operatingVersion: "v1.0";
+    targetUptime: "99.9%";
+    deprecationWindowDays: number;
+    summary: string;
+  };
+  totals: {
+    pillars: number;
+    runbooks: number;
+    readinessGates: number;
+    readyPillars: number;
+    externalGates: number;
+  };
+  pillars: SwiggyOperatingContractPillar[];
+  runbooks: SwiggyOperatingContractRunbook[];
+  readinessGates: SwiggyOperatingContractReadinessGate[];
+  launchEmail: {
+    to: string;
+    subject: string;
+    body: string;
+  };
+  assertions: string[];
+  externalGates: string[];
+}
+
 export interface RuntimeTelemetryEvent {
   ts: string;
   level: "info" | "warn" | "error";

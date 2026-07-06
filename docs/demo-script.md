@@ -111,6 +111,7 @@ Open the Launch Center and show:
 - FAQ & Policy Center showing homepage/developer/enterprise FAQ coverage, footer resources, access ground rules, legal signals, and external gates.
 - Growth Partnership Center showing launch experiments, co-marketing assets, metric targets, partner asks, and external Swiggy approvals.
 - Builders Launch Story Center showing the April 2026 launch narrative, current 35-tool docs reconciliation, reviewer demo journey, showcase assets, CTA paths, and co-marketing gates.
+- Operating Contract Center showing SLA, rate-limit/backpressure, traffic rollout, support escalation, version/deprecation, readiness gates, and Swiggy external approvals in one reviewer contract.
 - Docs Coverage showing all 69 Swiggy `llms.txt` pages mapped to MealPilot evidence and external gates.
 - Docs Twin Explorer showing markdown twins, rendered URLs, retrieval lanes, section groups, proof links, and drift gates.
 - Upstream Watch showing `llms.txt`, `llms-full.txt`, v1.0 limitations, v1.1/v1.2/v2 roadmap items, signed-manifest watch, and new-tool action queues.

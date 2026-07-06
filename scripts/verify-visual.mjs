@@ -102,8 +102,8 @@ async function main() {
   const manifest = await fetchJson(manifestUrl);
   const targets = manifest.visualQa.targetGroups.flatMap((group) => group.targets);
 
-  if (targets.length < 25) {
-    throw new Error(`Expected at least 25 visual targets, found ${targets.length}`);
+  if (targets.length < 26) {
+    throw new Error(`Expected at least 26 visual targets, found ${targets.length}`);
   }
 
   const browser = await chromium.launch({ headless: true });

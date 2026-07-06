@@ -906,6 +906,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-operating-contract-center": {
+        get: {
+          tags: ["Operations"],
+          summary: "Swiggy Operating Contract Center for SLA, rate-limit, support, versioning, and launch traffic",
+          responses: {
+            "200": {
+              description:
+                "Official operate-docs contract across 99.9% uptime, rate-limit/backpressure, traffic rollout, support escalation, version/deprecation, credentials, runbooks, and Swiggy external gates",
+            },
+          },
+        },
+      },
       "/api/data-governance-center": {
         get: {
           tags: ["Operations"],

@@ -149,8 +149,9 @@ const staticDocs: StaticDoc[] = [
     markdownPath: "docs/operate/changelog.md",
     officialSummary: "Release notes grouped by Swiggy MCP version.",
     mealPilotSurface:
-      "Swiggy Upstream Watch, Version Monitor, SLO Incident Command, and Data Governance Center watch v1.1 status-page, rate-limit, error-code, deprecation, widget, DCR, v1.2/v2, and signed-manifest roadmap items.",
+      "Swiggy Operating Contract Center, Swiggy Upstream Watch, Version Monitor, SLO Incident Command, and Data Governance Center watch v1.1 status-page, rate-limit, error-code, deprecation, widget, DCR, v1.2/v2, and signed-manifest roadmap items.",
     evidenceLinks: [
+      "/api/swiggy-operating-contract-center",
       "/api/swiggy-upstream-watch",
       "/api/version-monitor",
       "/api/slo-incident-command",
@@ -201,8 +202,14 @@ const staticDocs: StaticDoc[] = [
     markdownPath: "docs/operate/rate-limits.md",
     officialSummary: "429 behavior, planned quotas, Retry-After, and larger allocation requests.",
     mealPilotSurface:
-      "Rate Limit Plan, Traffic Readiness, Route Optimizer, and Staging Certification constrain calls, polling, Retry-After behavior, launch notice, and staging wave budgets.",
-    evidenceLinks: ["/api/rate-limit-plan", "/api/traffic-readiness-plan", "/api/swiggy-route-optimizer", "/api/staging-certification-matrix"],
+      "Swiggy Operating Contract Center, Rate Limit Plan, Traffic Readiness, Route Optimizer, and Staging Certification constrain calls, polling, Retry-After behavior, launch notice, and staging wave budgets.",
+    evidenceLinks: [
+      "/api/swiggy-operating-contract-center",
+      "/api/rate-limit-plan",
+      "/api/traffic-readiness-plan",
+      "/api/swiggy-route-optimizer",
+      "/api/staging-certification-matrix",
+    ],
     status: "implemented",
   },
   {
@@ -212,8 +219,9 @@ const staticDocs: StaticDoc[] = [
     markdownPath: "docs/operate/sla.md",
     officialSummary: "Service-level objectives for Swiggy MCP endpoints.",
     mealPilotSurface:
-      "SLO Incident Command, Support Bridge SLA matrix, Observability traces, Traffic Readiness, and Staging Certification turn uptime expectations into latency targets, status-page fallback, maintenance notice, soak, launch-window, capacity, and escalation evidence.",
+      "Swiggy Operating Contract Center, SLO Incident Command, Support Bridge SLA matrix, Observability traces, Traffic Readiness, and Staging Certification turn uptime expectations into latency targets, status-page fallback, maintenance notice, soak, launch-window, capacity, and escalation evidence.",
     evidenceLinks: [
+      "/api/swiggy-operating-contract-center",
       "/api/slo-incident-command",
       "/api/support/bridge",
       "/api/observability/traces",
@@ -229,8 +237,9 @@ const staticDocs: StaticDoc[] = [
     markdownPath: "docs/operate/support.md",
     officialSummary: "Support channels, incident severities, co-branding, and agent error reporting.",
     mealPilotSurface:
-      "Support Report, Support Bridge, SLO Incident Command, Data Governance Center, and Brand Compliance Kit generate builders@swiggy.in, report_error payloads, redaction rules, DSR routing, severity comms, and co-branding guardrails.",
+      "Swiggy Operating Contract Center, Support Report, Support Bridge, SLO Incident Command, Data Governance Center, and Brand Compliance Kit generate builders@swiggy.in, report_error payloads, redaction rules, DSR routing, severity comms, and co-branding guardrails.",
     evidenceLinks: [
+      "/api/swiggy-operating-contract-center",
       "/api/support/report",
       "/api/support/bridge",
       "/api/slo-incident-command",
@@ -245,8 +254,9 @@ const staticDocs: StaticDoc[] = [
     title: "Versioning",
     markdownPath: "docs/operate/versioning.md",
     officialSummary: "SemVer, deprecation window, breaking-change announcements, and experimental tools.",
-    mealPilotSurface: "Version Monitor, Launch Bundle, and Resilience Lab track version pinning and deprecation metadata.",
-    evidenceLinks: ["/api/version-monitor", "/api/resilience"],
+    mealPilotSurface:
+      "Swiggy Operating Contract Center, Version Monitor, Launch Bundle, and Resilience Lab track version pinning and deprecation metadata.",
+    evidenceLinks: ["/api/swiggy-operating-contract-center", "/api/version-monitor", "/api/resilience"],
     status: "implemented",
   },
   {

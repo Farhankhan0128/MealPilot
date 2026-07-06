@@ -61,6 +61,11 @@ assert(
   "OpenAPI Builders Launch Story contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-operating-contract-center"]?.get?.summary?.includes("Operating Contract") &&
+    openApi.paths["/api/swiggy-operating-contract-center"]?.get?.responses?.["200"]?.description?.includes("99.9%"),
+  "OpenAPI operating contract center is missing",
+);
+assert(
   openApi.paths["/api/auth/swiggy/status"].get.summary.includes("OAuth callback"),
   "OpenAPI OAuth status contract is missing",
 );
@@ -381,6 +386,47 @@ assert(
     launchStory.launchStory.launchGuardrails.some((guard) => guard.id === "tool_count_reconciliation") &&
     launchStory.launchStory.externalGates.some((gate) => gate.includes("Showcase placement")),
   "Builders Launch Story CTA paths or guardrails are incomplete",
+);
+
+const operatingContract = await request("/api/swiggy-operating-contract-center");
+assert(operatingContract.operatingContract.score >= 80, "operating contract score is below target");
+assert(
+  operatingContract.operatingContract.contractSignal.currentMode === "mock" &&
+    operatingContract.operatingContract.contractSignal.operatingVersion === "v1.0" &&
+    operatingContract.operatingContract.contractSignal.targetUptime === "99.9%" &&
+    operatingContract.operatingContract.contractSignal.deprecationWindowDays === 180,
+  "operating contract signal is incomplete",
+);
+assert(
+  operatingContract.operatingContract.totals.pillars === 6 &&
+    operatingContract.operatingContract.totals.runbooks === 4 &&
+    operatingContract.operatingContract.totals.readinessGates === 5,
+  "operating contract totals are incomplete",
+);
+assert(
+  [
+    "uptime_and_latency",
+    "rate_limit_and_backpressure",
+    "traffic_rollout",
+    "support_and_reporting",
+    "version_and_deprecation",
+    "credential_and_mode_boundary",
+  ].every((id) => operatingContract.operatingContract.pillars.some((pillar) => pillar.id === id)),
+  "operating contract pillars are incomplete",
+);
+assert(
+  ["s0_outage", "rate_limit_spike", "support_payload", "version_migration"].every((id) =>
+    operatingContract.operatingContract.runbooks.some((runbook) => runbook.id === id),
+  ),
+  "operating contract runbooks are incomplete",
+);
+assert(
+  ["local_contract_pack", "staging_credentials", "capacity_notice", "status_page_readiness", "production_approval"].every((id) =>
+    operatingContract.operatingContract.readinessGates.some((gate) => gate.id === id),
+  ) &&
+    operatingContract.operatingContract.launchEmail.to === "builders@swiggy.in" &&
+    operatingContract.operatingContract.externalGates.some((gate) => gate.includes("staging credentials")),
+  "operating contract readiness gates or launch email are incomplete",
 );
 
 const builderIntake = await request("/api/swiggy-builder-intake");
@@ -1043,8 +1089,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 25, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 25, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 26, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 26, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -1100,6 +1146,12 @@ assert(
     group.targets.some((target) => target.id === "builders_launch_story_card" && target.selector === ".builders-launch-story-card"),
   ),
   "visual QA Builders Launch Story target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some((target) => target.id === "operating_contract_card" && target.selector === ".operating-contract-card"),
+  ),
+  "visual QA operating contract target is missing",
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
@@ -1193,7 +1245,7 @@ assert(
     (command) =>
       command.id === "visual_capture_harness" &&
       command.command === "npm run verify:visual" &&
-      command.expectedSignal.includes("targetCount >= 25"),
+      command.expectedSignal.includes("targetCount >= 26"),
   ),
   "visual QA Playwright command is missing",
 );
@@ -2671,6 +2723,10 @@ assert(
   "reviewer proof SLO incident artifact is missing",
 );
 assert(
+  proof.proof.artifacts.some((artifact) => artifact.label === "Swiggy Operating Contract Center"),
+  "reviewer proof operating contract artifact is missing",
+);
+assert(
   proof.proof.artifacts.some((artifact) => artifact.label === "Data Governance Center"),
   "reviewer proof data governance artifact is missing",
 );
@@ -3591,7 +3647,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 25, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 26, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -3605,7 +3661,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("25")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("26")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -3650,6 +3706,7 @@ assert(
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Access Evidence Matrix") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Visual QA Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Builders Launch Story Center") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Operating Contract Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Docs Coverage") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Docs Twin Explorer") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Upstream Watch") &&
@@ -3720,6 +3777,10 @@ assert(
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-builders-launch-story"),
   "launch bundle Builders Launch Story handoff link is missing",
+);
+assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-operating-contract-center"),
+  "launch bundle operating contract handoff link is missing",
 );
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/enterprise-platform-center"),
@@ -3904,6 +3965,9 @@ console.log(
       buildersLaunchStoryScore: launchStory.launchStory.score,
       buildersLaunchStoryAssets: launchStory.launchStory.totals.showcaseAssets,
       buildersLaunchStoryCtas: launchStory.launchStory.totals.ctaPaths,
+      operatingContractScore: operatingContract.operatingContract.score,
+      operatingContractPillars: operatingContract.operatingContract.totals.pillars,
+      operatingContractRunbooks: operatingContract.operatingContract.totals.runbooks,
       builderIntakeScore: builderIntake.intake.score,
       builderIntakeCtas: `${builderIntake.intake.readyCtas}/${builderIntake.intake.totalCtas}`,
       docsCoverageScore: docsCoverage.docsCoverage.score,

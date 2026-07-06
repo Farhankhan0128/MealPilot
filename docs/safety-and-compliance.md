@@ -124,6 +124,8 @@ The `/api/mcp/backpressure-governor` endpoint keeps current and future rate-limi
 
 The `/api/slo-incident-command` endpoint turns Swiggy SLA and uptime guidance into operational evidence. It maps 99.9% uptime targets, read/write/commercial latency bands, status-page fallback, S0-S3 incident comms, 72-hour maintenance notice, SLO measurement exclusions, and partnership-based remediation.
 
+The `/api/swiggy-operating-contract-center` endpoint keeps the full operating contract in one reviewer surface. It joins SLA, rate limits, support, versioning, changelog, and ship-to-production guidance into pillars, runbooks, readiness gates, a `builders@swiggy.in` launch-review email, and explicit external gates for staging credentials, production approval, status-page polling, capacity upgrades, and enterprise support lanes.
+
 The `/api/data-governance-center` endpoint turns Swiggy Data & Compliance guidance into auditable DPDP posture. It records Swiggy as Data Fiduciary, MealPilot as Data Processor, the India/Singapore residency boundary, tool-call PII inventory, local DSR export/delete actions, Swiggy-originated DSR routing through the Swiggy app, 90-day Swiggy audit-log retention, token redaction, security contacts, cross-border DPA gates, and signed-manifest watch items.
 
 The `/api/audit-ledger` endpoint keeps audit evidence support-safe. It derives redacted session/tool events from MealPilot plan trails, records server, tool, status, duration, route class, and support correlation keys, acknowledges Swiggy-side 90-day audit-log retention, routes Swiggy-originated DSRs back to Swiggy, and omits raw request/response bodies, bearer tokens, addresses, phone, email, and payment data.

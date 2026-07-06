@@ -1138,7 +1138,18 @@ select:focus {
   grid-column: span 2;
 }
 
+.operating-contract-card {
+  grid-column: span 2;
+}
+
 .builders-launch-story-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.operating-contract-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
@@ -1151,7 +1162,18 @@ select:focus {
   background: #fff;
 }
 
+.operating-contract-grid div {
+  border-radius: 8px;
+  padding: 10px;
+  background: #fff;
+}
+
 .builders-launch-story-grid strong {
+  display: block;
+  color: var(--ink);
+}
+
+.operating-contract-grid strong {
   display: block;
   color: var(--ink);
 }
@@ -2114,6 +2136,7 @@ select:focus {
   .resource-prompt-card,
   .website-atlas-card,
   .builders-launch-story-card,
+  .operating-contract-card,
   .deep-site-map-card,
   .upstream-watch-card,
   .source-intelligence-card,

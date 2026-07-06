@@ -93,6 +93,7 @@ import { buildSandboxCredentialWorkbench } from "./services/sandboxCredentialWor
 import { buildNutritionBudgetIntelligence } from "./services/nutritionBudgetIntelligence.js";
 import { buildObservabilityTraceReport, buildSwiggyRouteOptimizationReport } from "./services/observability.js";
 import { buildSwiggyOfferIntelligence } from "./services/offerIntelligence.js";
+import { buildSwiggyOperatingContractCenter } from "./services/operatingContractCenter.js";
 import { buildSwiggyOrderLifecycle } from "./services/orderLifecycle.js";
 import { buildPremiumConciergeItinerary } from "./services/premiumConciergeItinerary.js";
 import { buildPremiumUseCaseStudio } from "./services/premiumUseCaseStudio.js";
@@ -1066,6 +1067,26 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/version-monitor", (_req, res) => {
     res.json({ version: buildVersionMonitor() });
+  });
+
+  app.get("/api/swiggy-operating-contract-center", (_req, res) => {
+    const plans = store.getAllPlans();
+    const rateLimit = buildRateLimitPlan(plans);
+    const trafficReadiness = buildTrafficReadinessPlan({ plans, config });
+    const sloIncident = buildSloIncidentCommandCenter({ plans, telemetry: telemetry.buildReport(), config });
+    const supportBridge = buildSupportBridgeReport({ plans });
+    const version = buildVersionMonitor();
+
+    res.json({
+      operatingContract: buildSwiggyOperatingContractCenter({
+        config,
+        rateLimit,
+        trafficReadiness,
+        sloIncident,
+        supportBridge,
+        version,
+      }),
+    });
   });
 
   app.get("/api/compliance-evidence", (_req, res) => {

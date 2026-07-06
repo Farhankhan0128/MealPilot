@@ -85,6 +85,7 @@ Implementation:
 - Exposes `/api/swiggy-builders-map` as the current Swiggy Builders website, CTA, capability, product-opportunity, and credential-gate source of truth.
 - Exposes `/api/swiggy-website-atlas` as the header, docs subnav, footer, production-access page, launch blog, page-module, CTA, resource, and legal-link coverage artifact.
 - Exposes `/api/swiggy-builders-launch-story` as the launch-blog story center that reconciles the April 2026 18+ tool narrative with the current 35-tool docs snapshot, reviewer demo journey, showcase assets, ecosystem lanes, CTA paths, and co-marketing gates.
+- Exposes `/api/swiggy-operating-contract-center` as the operate-docs contract center for SLA, rate limits, support, versioning, changelog, launch traffic, runbooks, launch-review email, and external Swiggy gates.
 - Exposes `/api/swiggy-builder-intake` as the action layer for every signup, apply, demo, contact, docs, and footer CTA, with submission fields, storyboard, drafts, owners, and gates.
 - Exposes `/api/swiggy-faq-policy` as the FAQ and policy coverage center for homepage, developer, enterprise, access-guideline, footer-resource, allowed/restricted/prohibited, operating-principle, legal, and support-contact signals.
 - Exposes `/api/swiggy-growth-partnership` as the launch-growth layer for get-noticed, hiring, co-branding, direct support, co-marketing, analytics, strategic guidance, experiments, metrics, proof assets, and partner asks.

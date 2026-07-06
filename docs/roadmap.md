@@ -24,6 +24,7 @@ Status: in progress.
 - Add session-scoped Staging Transcript Export for redacted JSONL, Markdown, support envelope, and certification-wave evidence. Complete.
 - Add Traffic Readiness Plan for expected volume, QPS, Retry-After, launch notice, capacity email, and staged rollout. Complete.
 - Add SLO Incident Command Center for uptime, latency, status-page fallback, maintenance windows, and incident comms. Complete.
+- Add Swiggy Operating Contract Center for SLA, rate limits, support, versioning, changelog, ship-to-production, runbooks, launch email, and external gates. Complete.
 - Add Data Governance Center for DPDP roles, residency, PII flows, DSR routing, retention, token redaction, and signed-manifest watch. Complete.
 - Deepen Website Atlas with production access page, launch blog, developer/enterprise apply CTAs, and public conversion paths. Complete.
 - Add Swiggy Builders Launch Story Center for launch-blog narrative, current 35-tool reconciliation, reviewer demo journey, showcase assets, and co-marketing gates. Complete.

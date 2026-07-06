@@ -189,6 +189,17 @@ const targetGroups = [
         "artifacts/visual-qa/builders-launch-story-card.png",
       ),
       target(
+        "operating_contract_card",
+        "Operating Contract card",
+        "/",
+        ".operating-contract-card",
+        "desktop",
+        1280,
+        900,
+        "Operating Contract shows SLA, rate-limit, traffic, support, versioning, and credential gates.",
+        "artifacts/visual-qa/operating-contract-card.png",
+      ),
+      target(
         "developer_quickstart_card",
         "Developer Quickstart card",
         "/",
@@ -427,7 +438,7 @@ const commands = [
     "visual_capture_harness",
     "npm run verify:visual",
     "Playwright captures every Visual QA target at desktop, tablet, and mobile sizes and writes report.json.",
-        "ok true with targetCount >= 25 and PNG files under artifacts/visual-qa.",
+        "ok true with targetCount >= 26 and PNG files under artifacts/visual-qa.",
   ),
   command(
     "desktop_capture",
