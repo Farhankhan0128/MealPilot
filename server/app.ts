@@ -78,6 +78,7 @@ import {
   exchangeSwiggyAuthorizationCode,
 } from "./services/mcpGateway.js";
 import { buildCredentialOnboardingReport } from "./services/credentialOnboarding.js";
+import { buildSwiggyCredentialHandoffCenter } from "./services/credentialHandoffCenter.js";
 import { buildSwiggyCredentialVaultCenter } from "./services/credentialVaultCenter.js";
 import { buildDataGovernanceCenter } from "./services/dataGovernance.js";
 import { buildSwiggyDeepSiteMap } from "./services/deepSiteMap.js";
@@ -694,6 +695,16 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
   app.get("/api/swiggy-credential-vault-center", (_req, res) => {
     res.json({
       credentialVault: buildSwiggyCredentialVaultCenter({
+        ...config,
+        swiggyAccessToken: runtimeAccessToken,
+        swiggyTokenExpiresAt: runtimeTokenExpiresAt,
+      }),
+    });
+  });
+
+  app.get("/api/swiggy-credential-handoff-center", (_req, res) => {
+    res.json({
+      credentialHandoff: buildSwiggyCredentialHandoffCenter({
         ...config,
         swiggyAccessToken: runtimeAccessToken,
         swiggyTokenExpiresAt: runtimeTokenExpiresAt,

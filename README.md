@@ -41,6 +41,7 @@ Planned MCP servers:
 - Swiggy Auth Lifecycle Center at `/api/swiggy-auth-lifecycle-center` that turns PKCE S256, 120-second single-use authorization codes, 5-day access tokens, no refresh-token assumption in v1.0, 401/419 re-auth recovery, exact redirect allowlisting, per-user delegated tokens, and no-token logging into reviewer evidence.
 - Credential Cockpit with Dynamic Client Registration preview, redirect URI audit, scope coverage, OAuth metadata endpoints, and external gate tracking.
 - Swiggy Credential Vault Center at `/api/swiggy-credential-vault-center` for runtime secret posture, no-token redaction rules, rotation runbooks, cutover checks, and support-safe credential packets.
+- Swiggy Credential Handoff Center at `/api/swiggy-credential-handoff-center` for localhost proof, DCR, OAuth PKCE, exact redirect URI, secret vault, staging credentials, seeded smoke, 48-hour soak, and production promotion in one owner-assigned room.
 - Sandbox Credential Workbench that joins localhost demo proof, Dynamic Client Registration, PKCE, exact redirect allowlisting, Swiggy staging credentials, seeded-data plans, 48-hour soak, and production-promotion gates.
 - Swiggy Staging Seed & Smoke Center at `/api/swiggy-staging-seed-smoke-center` that turns Food, Instamart, and Dineout seeded-data needs into read, mutation, commercial, support, telemetry, and promotion smoke waves.
 - Swiggy Live Signal Calibration Center at `/api/swiggy-live-signal-calibration` that reconciles local preference, discovery, offer, order, location, and support signals with future Food, Instamart, and Dineout staging reads while preserving privacy redaction, drift thresholds, and external credential gates.
@@ -484,6 +485,8 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 `GET /api/credential-onboarding` previews the Dynamic Client Registration payload for Swiggy's `POST /auth/register`, audits the redirect URI, and lists the exact access-form fields. It does not create external Swiggy state during local tests.
 
 `GET /api/swiggy-credential-vault-center` is the metadata-only credential vault: configured/unconfigured runtime secrets, full-token redaction rules, OAuth and client rotation runbooks, support-safe packet fields, and Swiggy-owned cutover gates without returning bearer tokens.
+
+`GET /api/swiggy-credential-handoff-center` is the credential handoff room: local demo proof, Dynamic Client Registration, exact redirect URI, OAuth PKCE, secret storage, staging credentials, seeded smoke, 35-tool certification, 48-hour soak, handoff email, and production promotion are sequenced with explicit MealPilot, operator, and Swiggy ownership.
 
 `GET /api/sandbox-credential-workbench` is the localhost-to-staging credential runbook: demo-video readiness, Dynamic Client Registration, PKCE, exact redirect allowlisting, Swiggy-issued staging credentials, seeded Food/Instamart/Dineout data, 48-hour soak, and production-promotion gates.
 

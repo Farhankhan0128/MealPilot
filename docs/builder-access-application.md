@@ -82,6 +82,7 @@ Scale-up after staging:
 - Premium Use Case Studio with ten differentiated Swiggy-native product playbooks and all 35 official tools assigned to premium route plans.
 - Premium Concierge Itinerary that turns official Swiggy recipe routes into lunch, pantry reset, Dineout evening, dessert reminder, and recovery slots with full 35-tool coverage and separate confirmation gates.
 - Staging Cutover Rehearsal with real MCP first-call probes, OAuth bearer-token gates, fail-closed routing, retry branches, support packet fields, and 48-hour green promotion checks.
+- Credential Handoff Center with owner-assigned localhost proof, DCR, OAuth PKCE, redirect URI, vault storage, staging credential, seeded smoke, soak, and production-promotion phases.
 - Staging Certification Matrix with all 35 tools assigned to credentialed smoke waves, OAuth/DCR checks, 48-hour soak, telemetry requirements, rollback, and production promotion gates.
 - Chat and voice surface response contracts to avoid long spoken lists or exposed internal IDs.
 - Cart preflight checks for budget, location label, payment scope, item readiness, confirmation status, and substitutions.

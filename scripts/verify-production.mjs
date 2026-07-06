@@ -379,6 +379,11 @@ assert(
   "OpenAPI Credential Vault Center contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-credential-handoff-center"].get.summary.includes("Credential Handoff") &&
+    openApi.paths["/api/swiggy-credential-handoff-center"].get.responses["200"].description.includes("48-hour soak"),
+  "OpenAPI Credential Handoff Center contract is missing",
+);
+assert(
   openApi.paths["/api/swiggy-staging-seed-smoke-center"].get.summary.includes("Seed and Smoke"),
   "OpenAPI Staging Seed and Smoke Center contract is missing",
 );
@@ -1813,6 +1818,17 @@ assert(
   "reviewer artifact vault partner support room artifact is missing",
 );
 assert(
+  reviewerArtifactVault.reviewerArtifactVault.artifactSections.some((section) =>
+    section.artifacts.some(
+      (artifact) =>
+        artifact.id === "credential_handoff_center" &&
+        artifact.label === "Swiggy Credential Handoff Center" &&
+        artifact.path === "/api/swiggy-credential-handoff-center",
+    ),
+  ),
+  "reviewer artifact vault credential handoff artifact is missing",
+);
+assert(
   reviewerArtifactVault.reviewerArtifactVault.screenshotTargets.some(
     (target) =>
       target.id === "luxury_workspace_card" &&
@@ -1885,8 +1901,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 48, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 48, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 49, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 49, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -1973,6 +1989,12 @@ assert(
     group.targets.some((target) => target.id === "credential_vault_card" && target.selector === ".credential-vault-card"),
   ),
   "visual QA credential vault target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some((target) => target.id === "credential_handoff_card" && target.selector === ".credential-handoff-card"),
+  ),
+  "visual QA credential handoff target is missing",
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
@@ -3399,6 +3421,57 @@ assert(
   credentialVault.credentialVault.assertions.some((assertion) => assertion.includes("Full bearer tokens")) &&
     credentialVault.credentialVault.externalGates.some((gate) => gate.includes("staging credentials")),
   "credential vault assertions or gates are missing",
+);
+
+const credentialHandoff = await request("/api/swiggy-credential-handoff-center");
+assert(credentialHandoff.credentialHandoff.score >= 80, "credential handoff score is below target");
+assert(
+  credentialHandoff.credentialHandoff.totals.phases === 8 &&
+    credentialHandoff.credentialHandoff.totals.controls === 5 &&
+    credentialHandoff.credentialHandoff.totals.packets === 5,
+  "credential handoff totals are incomplete",
+);
+for (const phaseId of [
+  "localhost_demo",
+  "dcr_payload",
+  "redirect_uri",
+  "oauth_pkce",
+  "secret_storage",
+  "staging_credentials",
+  "seeded_smoke",
+  "production_promotion",
+]) {
+  assert(
+    credentialHandoff.credentialHandoff.phases.some((phase) => phase.id === phaseId),
+    `credential handoff phase ${phaseId} is missing`,
+  );
+}
+for (const controlId of [
+  "no_full_token",
+  "fail_closed_gateway",
+  "read_first_staging",
+  "all_tool_certification",
+  "support_ready",
+]) {
+  assert(
+    credentialHandoff.credentialHandoff.controls.some((control) => control.id === controlId),
+    `credential handoff control ${controlId} is missing`,
+  );
+}
+assert(
+  credentialHandoff.credentialHandoff.credentialPackets.some(
+    (packet) => packet.id === "handoff_center" && packet.command.includes("/api/swiggy-credential-handoff-center"),
+  ) &&
+    credentialHandoff.credentialHandoff.credentialPackets.some((packet) => packet.id === "production_packet"),
+  "credential handoff packet commands are incomplete",
+);
+assert(
+  credentialHandoff.credentialHandoff.handoffEmail.to === "builders@swiggy.in" &&
+    credentialHandoff.credentialHandoff.assertions.some((assertion) =>
+      assertion.includes("Every credential step has an owner"),
+    ) &&
+    credentialHandoff.credentialHandoff.externalGates.some((gate) => gate.includes("staging credentials")),
+  "credential handoff email, assertions, or external gates are missing",
 );
 
 const sandboxWorkbench = await request("/api/sandbox-credential-workbench");
@@ -5347,7 +5420,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 48, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 49, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -5361,7 +5434,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("48")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("49")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -5505,6 +5578,10 @@ assert(
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-staging-credential-drill"),
   "launch bundle staging credential drill handoff link is missing",
+);
+assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-credential-handoff-center"),
+  "launch bundle credential handoff link is missing",
 );
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-live-signal-calibration"),
@@ -5801,6 +5878,9 @@ console.log(
       credentialVaultScore: credentialVault.credentialVault.score,
       credentialVaultSecrets: credentialVault.credentialVault.totals.secrets,
       credentialVaultRedactionRules: credentialVault.credentialVault.totals.redactionRules,
+      credentialHandoffScore: credentialHandoff.credentialHandoff.score,
+      credentialHandoffPhases: credentialHandoff.credentialHandoff.totals.phases,
+      credentialHandoffSwiggyGates: credentialHandoff.credentialHandoff.totals.swiggyGates,
       toolLabScore: toolLab.toolLab.score,
       toolLabCallable: `${toolLab.toolLab.callableTools}/${toolLab.toolLab.totalTools}`,
       toolContractScore: toolContracts.matrix.score,

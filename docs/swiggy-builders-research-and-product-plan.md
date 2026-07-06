@@ -290,6 +290,7 @@ Coverage targets:
 - Growth Partnership Center for get-noticed, hiring, co-branding, direct support, co-marketing, analytics dashboards, strategic guidance, launch experiments, metrics, assets, and partner asks
 - Showcase Submission Center for demo video readiness, pitch blocks, metric packs, visual proof, outreach email, operator inputs, and co-branding/feature approval gates
 - Submission Timeline Center for access-form, demo-handoff, DCR, staging, 48-hour soak, and production-promotion sequencing with proof links and explicit operator/Swiggy gates
+- Credential Handoff Center for localhost proof, DCR, OAuth PKCE, exact redirect URI, secret vault, staging credentials, seeded smoke, 48-hour soak, and production promotion in one owner-assigned reviewer room
 - Partner Success Desk for access handoff, support, SLO incidents, capacity review, backpressure, growth showcase, escalation emails, and enterprise Slack/partner-manager external gates
 - Interaction QA Center for clickable portal CTAs, route contracts, visible feedback expectations, automation proof, and explicit Swiggy/operator gates
 - Staging Seed & Smoke Center for seeded server fixtures, read-first staging probes, mutation refreshes, commercial stop rules, support smoke, telemetry evidence, and promotion blockers

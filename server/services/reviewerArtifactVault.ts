@@ -140,6 +140,7 @@ const artifactSections = [
       artifact("luxury_experience", "Luxury Experience Workspace", "api", "/api/luxury-experience-workspace", "Premium reservation, Food cart, Instamart basket, combined evening, and recovery workspaces across all 35 tools.", "Widget fallbacks and voice briefs suppress raw identifiers."),
       artifact("docs_twin_explorer", "Swiggy Docs Twin Explorer", "api", "/api/swiggy-docs-twin-explorer", "All official llms.txt markdown twins paired with rendered pages, retrieval lanes, proof routes, and drift gates.", "Public docs only; no credentials or live customer data."),
       artifact("access_evidence_matrix", "Swiggy Access Evidence Matrix", "api", "/api/swiggy-access-evidence-matrix", "Every official access field, proof attachment, runbook step, owner, and Swiggy gate reconciled into one reviewer ledger.", "Manual inputs and external gates are labelled rather than fabricated."),
+      artifact("credential_handoff_center", "Swiggy Credential Handoff Center", "api", "/api/swiggy-credential-handoff-center", "Localhost proof, DCR, OAuth PKCE, secret vault, staging credentials, seeded smoke, 48-hour soak, and production promotion gates in one handoff room.", "Full tokens, authorization codes, PKCE verifiers, and raw user payloads stay excluded."),
     ],
   },
   {
@@ -278,6 +279,7 @@ export function buildReviewerArtifactVault(): ReviewerArtifactVault {
     "- Demo script: docs/demo-script.md",
     "- Demo Evidence Director: /api/swiggy-demo-evidence-director",
     "- Swiggy Partner Support Room: /api/swiggy-partner-support-room",
+    "- Swiggy Credential Handoff Center: /api/swiggy-credential-handoff-center",
     "- Verification: npm run verify:production",
     "",
     "Manual attachments still needed: short demo video URL, final production HTTPS redirect URI, final static IP/egress details, and selected screenshots.",

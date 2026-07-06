@@ -1063,6 +1063,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-credential-handoff-center": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Credential Handoff Center from localhost proof to staging and production",
+          responses: {
+            "200": {
+              description:
+                "Unified credential handoff room covering local demo proof, DCR, OAuth PKCE, exact redirect URI, secret vault, staging credentials, seeded smoke, 48-hour soak, handoff email, and production promotion gates",
+            },
+          },
+        },
+      },
       "/api/sandbox-credential-workbench": {
         get: {
           tags: ["Builder Access"],

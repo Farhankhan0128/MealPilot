@@ -287,6 +287,8 @@ The API keeps localhost demos on the deterministic mock router, but staging and 
 
 `/api/sandbox-credential-workbench` turns that onboarding posture into an operator runbook. It joins local demo proof, Dynamic Client Registration, PKCE, redirect allowlisting, Swiggy-issued staging credentials, seeded Food/Instamart/Dineout data, 48-hour soak evidence, and production-promotion commands in one proof surface.
 
+`/api/swiggy-credential-handoff-center` composes the onboarding, vault, sandbox, staging drill, cutover, and certification reports into one credential handoff room. It keeps each phase owner-assigned, preserves Swiggy staging and production gates, and points reviewers to the exact API evidence for local proof, OAuth PKCE, seeded smoke, and promotion.
+
 `/api/swiggy-live-signal-calibration` connects personalization to future staging evidence. It keeps local preference, discovery, offer, lifecycle, location, and support signals marked as mock until Swiggy staging credentials and seeded users allow read-only calibration, then enforces redaction and drift thresholds before production personalization claims.
 
 `/api/enterprise-delegated-auth` extends the credential model for platform operators. It records Swiggy as Data Fiduciary, MealPilot/platform as Data Processor, the on-behalf-of PKCE flow, 120-second auth codes, 5-day access tokens, 30-day Swiggy user sessions, per-user token storage, logout, 401/419/403 recovery, platform redirect schemes, and the architecture-review topics Swiggy checks before enterprise production.

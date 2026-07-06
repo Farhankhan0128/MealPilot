@@ -6174,6 +6174,64 @@ export interface SwiggyCredentialVaultCenter {
   externalGates: string[];
 }
 
+export type SwiggyCredentialHandoffStatus = "ready" | "operator_input" | "swiggy_gate" | "blocked";
+export type SwiggyCredentialHandoffOwner = "MealPilot" | "Operator" | "Swiggy" | "Joint";
+
+export interface SwiggyCredentialHandoffPhase {
+  id: string;
+  sequence: number;
+  label: string;
+  owner: SwiggyCredentialHandoffOwner;
+  status: SwiggyCredentialHandoffStatus;
+  officialNeed: string;
+  mealPilotProof: string[];
+  action: string;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyCredentialHandoffControl {
+  id: string;
+  label: string;
+  status: SwiggyCredentialHandoffStatus;
+  proves: string;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyCredentialHandoffPacket {
+  id: string;
+  label: string;
+  command: string;
+  proves: string;
+}
+
+export interface SwiggyCredentialHandoffCenter {
+  generatedAt: string;
+  mode: "mock" | "staging" | "production";
+  score: number;
+  officialSources: string[];
+  currentMode: string;
+  totals: {
+    phases: number;
+    ready: number;
+    operatorInputs: number;
+    swiggyGates: number;
+    blocked: number;
+    controls: number;
+    packets: number;
+  };
+  phases: SwiggyCredentialHandoffPhase[];
+  controls: SwiggyCredentialHandoffControl[];
+  credentialPackets: SwiggyCredentialHandoffPacket[];
+  operatorRunbook: Array<{ sequence: number; label: string; command: string; proves: string }>;
+  handoffEmail: {
+    to: string;
+    subject: string;
+    bodyPreview: string;
+  };
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type SwiggyStagingCredentialDrillStatus = "ready" | "operator_input" | "swiggy_gate" | "blocked";
 
 export interface SwiggyStagingCredentialDrillLane {

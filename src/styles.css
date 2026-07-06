@@ -1345,6 +1345,7 @@ select:focus {
 
 .credential-meta-grid,
 .credential-vault-grid,
+.credential-handoff-grid,
 .sandbox-workbench-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1359,6 +1360,7 @@ select:focus {
 
 .credential-meta-grid div,
 .credential-vault-grid div,
+.credential-handoff-grid div,
 .sandbox-workbench-grid div {
   display: grid;
   gap: 3px;
@@ -1379,6 +1381,7 @@ select:focus {
 
 .credential-meta-grid strong,
 .credential-vault-grid strong,
+.credential-handoff-grid strong,
 .sandbox-workbench-grid strong {
   color: var(--green-dark);
   font-size: 0.88rem;
@@ -1394,6 +1397,7 @@ select:focus {
 
 .credential-meta-grid span,
 .credential-vault-grid span,
+.credential-handoff-grid span,
 .sandbox-workbench-grid span {
   font-size: 0.75rem;
   font-weight: 900;
@@ -2389,6 +2393,7 @@ select:focus {
   .audit-ledger-grid,
   .route-optimizer-grid,
   .credential-vault-grid,
+  .credential-handoff-grid,
   .enterprise-auth-grid,
   .resource-prompt-grid,
   .widget-runtime-grid,
@@ -3102,6 +3107,7 @@ select:focus {
 .map-stat-grid div,
 .credential-meta-grid div,
 .credential-vault-grid div,
+.credential-handoff-grid div,
 .sandbox-workbench-grid div,
 .enterprise-auth-grid div,
 .tool-lab-stat-grid div,

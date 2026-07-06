@@ -343,7 +343,7 @@ It runs:
 - `npm run build`
 - production smoke verification against `npm start`
 - CI reviewer evidence capture: `npm run verify:production`, `npm run verify:visual`, `npm run export:builder-packet`, and uploaded `artifacts/visual-qa` plus `artifacts/builder-packet`
-- Sandbox credential verification: `npm run verify:production` checks local OAuth readiness, DCR, seeded-data lanes, staging cutover commands, and 48-hour soak gates before the packet is sent.
+- Sandbox credential verification: `npm run verify:production` checks local OAuth readiness, DCR, credential handoff sequencing, seeded-data lanes, staging cutover commands, and 48-hour soak gates before the packet is sent.
 
 Docker:
 
@@ -392,6 +392,8 @@ Production should use an HTTPS redirect URI with exact-match allowlisting.
 `/api/swiggy-credential-vault-center` shows runtime credential metadata, configured/unconfigured secret posture, redaction rules, OAuth/client rotation runbooks, cutover checks, and a support-safe packet for `builders@swiggy.in`. It intentionally never returns full bearer tokens, authorization codes, refresh tokens, or PKCE verifiers.
 
 `/api/sandbox-credential-workbench` shows the reviewer-facing localhost-to-staging credential plan: local demo proof, DCR, PKCE, exact redirect allowlisting, staging credentials, seeded Food/Instamart/Dineout data, 48-hour soak, commands, and production-promotion gates.
+
+`/api/swiggy-credential-handoff-center` shows the owner-assigned credential handoff path: localhost proof, DCR, OAuth PKCE, exact redirect URI, vault storage, Swiggy staging credentials, seeded smoke, 35-tool certification, 48-hour soak, and production promotion.
 
 `/api/swiggy-llms-manifest-verifier` fetches only the official Swiggy `llms.txt` URL, parses markdown links, derives rendered twins, compares live page count against Docs Coverage, verifies Swiggy-only origins, and checks Food 14, Instamart 13, and Dineout 8 reference-tool counts. Tests inject fixture text so CI does not depend on live network for parser correctness.
 

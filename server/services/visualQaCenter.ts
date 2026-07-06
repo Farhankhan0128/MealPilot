@@ -266,6 +266,17 @@ const targetGroups = [
         "artifacts/visual-qa/credential-vault-card.png",
       ),
       target(
+        "credential_handoff_card",
+        "Credential Handoff card",
+        "/",
+        ".credential-handoff-card",
+        "desktop",
+        1280,
+        900,
+        "Credential Handoff shows localhost proof, DCR, OAuth PKCE, exact redirect URI, staging credentials, 48-hour soak, and Swiggy promotion gates.",
+        "artifacts/visual-qa/credential-handoff-card.png",
+      ),
+      target(
         "staging_seed_smoke_card",
         "Staging Seed and Smoke card",
         "/",

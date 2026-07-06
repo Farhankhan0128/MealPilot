@@ -61,6 +61,7 @@ import {
   fetchComplianceEvidence,
   fetchDataGovernanceCenter,
   fetchCredentialOnboarding,
+  fetchSwiggyCredentialHandoffCenter,
   fetchSwiggyCredentialVaultCenter,
   fetchDeveloperQuickstartWorkbench,
   fetchDemoStudio,
@@ -247,6 +248,7 @@ import type {
   SwiggyCartMutationReport,
   SwiggyChannelMultimodalStudio,
   SwiggyConfirmationCommandCenterReport,
+  SwiggyCredentialHandoffCenter,
   SwiggyCredentialVaultCenter,
   SwiggyCustomizationStudio,
   SwiggyCtaExecutionCenter,
@@ -499,6 +501,7 @@ function App() {
   const [stagingCertification, setStagingCertification] = useState<StagingCertificationMatrix | null>(null);
   const [credentialOnboarding, setCredentialOnboarding] = useState<CredentialOnboardingReport | null>(null);
   const [credentialVault, setCredentialVault] = useState<SwiggyCredentialVaultCenter | null>(null);
+  const [credentialHandoff, setCredentialHandoff] = useState<SwiggyCredentialHandoffCenter | null>(null);
   const [sandboxCredentialWorkbench, setSandboxCredentialWorkbench] =
     useState<SandboxCredentialWorkbench | null>(null);
   const [enterpriseDelegatedAuth, setEnterpriseDelegatedAuth] = useState<EnterpriseDelegatedAuthCenter | null>(null);
@@ -702,6 +705,7 @@ function App() {
       stagingCertificationResponse,
       credentialOnboardingResponse,
       credentialVaultResponse,
+      credentialHandoffResponse,
       sandboxCredentialResponse,
       authLifecycleResponse,
       enterpriseDelegatedAuthResponse,
@@ -809,6 +813,7 @@ function App() {
       fetchStagingCertificationMatrix(),
       fetchCredentialOnboarding(),
       fetchSwiggyCredentialVaultCenter(),
+      fetchSwiggyCredentialHandoffCenter(),
       fetchSandboxCredentialWorkbench(),
       fetchSwiggyAuthLifecycleCenter(),
       fetchEnterpriseDelegatedAuthCenter(),
@@ -917,6 +922,7 @@ function App() {
     setStagingCertification(stagingCertificationResponse.matrix);
     setCredentialOnboarding(credentialOnboardingResponse.onboarding);
     setCredentialVault(credentialVaultResponse.credentialVault);
+    setCredentialHandoff(credentialHandoffResponse.credentialHandoff);
     setSandboxCredentialWorkbench(sandboxCredentialResponse.sandboxWorkbench);
     setAuthLifecycleCenter(authLifecycleResponse.authLifecycleCenter);
     setEnterpriseDelegatedAuth(enterpriseDelegatedAuthResponse.enterpriseAuth);
@@ -1028,6 +1034,7 @@ function App() {
       stagingCertificationResponse,
       credentialOnboardingResponse,
       credentialVaultResponse,
+      credentialHandoffResponse,
       sandboxCredentialResponse,
       authLifecycleResponse,
       enterpriseDelegatedAuthResponse,
@@ -1132,6 +1139,7 @@ function App() {
       fetchStagingCertificationMatrix(),
       fetchCredentialOnboarding(),
       fetchSwiggyCredentialVaultCenter(),
+      fetchSwiggyCredentialHandoffCenter(),
       fetchSandboxCredentialWorkbench(),
       fetchSwiggyAuthLifecycleCenter(),
       fetchEnterpriseDelegatedAuthCenter(),
@@ -1236,6 +1244,7 @@ function App() {
     setStagingCertification(stagingCertificationResponse.matrix);
     setCredentialOnboarding(credentialOnboardingResponse.onboarding);
     setCredentialVault(credentialVaultResponse.credentialVault);
+    setCredentialHandoff(credentialHandoffResponse.credentialHandoff);
     setSandboxCredentialWorkbench(sandboxCredentialResponse.sandboxWorkbench);
     setAuthLifecycleCenter(authLifecycleResponse.authLifecycleCenter);
     setEnterpriseDelegatedAuth(enterpriseDelegatedAuthResponse.enterpriseAuth);
@@ -1913,6 +1922,7 @@ function App() {
                 stagingCertification={stagingCertification}
                 credentialOnboarding={credentialOnboarding}
                 credentialVault={credentialVault}
+                credentialHandoff={credentialHandoff}
                 sandboxCredentialWorkbench={sandboxCredentialWorkbench}
                 enterpriseDelegatedAuth={enterpriseDelegatedAuth}
                 surfaceMode={surfaceMode}
@@ -2507,6 +2517,7 @@ function LaunchCenterPanel({
   stagingCertification,
   credentialOnboarding,
   credentialVault,
+  credentialHandoff,
   sandboxCredentialWorkbench,
   enterpriseDelegatedAuth,
   surfaceMode,
@@ -2584,6 +2595,7 @@ function LaunchCenterPanel({
   stagingCertification: StagingCertificationMatrix | null;
   credentialOnboarding: CredentialOnboardingReport | null;
   credentialVault: SwiggyCredentialVaultCenter | null;
+  credentialHandoff: SwiggyCredentialHandoffCenter | null;
   sandboxCredentialWorkbench: SandboxCredentialWorkbench | null;
   enterpriseDelegatedAuth: EnterpriseDelegatedAuthCenter | null;
   surfaceMode: AgentSurface;
@@ -5295,6 +5307,60 @@ function LaunchCenterPanel({
             </a>
             <a href="/api/mcp-gateway" target="_blank" rel="noreferrer">
               Gateway
+            </a>
+          </div>
+        </article>
+
+        <article className="credential-handoff-card">
+          <div className="mini-heading">
+            <ShieldCheck aria-hidden="true" />
+            <strong>Credential Handoff</strong>
+          </div>
+          <span>
+            {credentialHandoff
+              ? `${credentialHandoff.score}/100, ${credentialHandoff.totals.ready}/${credentialHandoff.totals.phases} phases ready`
+              : "Sequencing localhost proof, OAuth, staging credentials, and promotion"}
+          </span>
+          <div className="credential-handoff-grid">
+            <div>
+              <strong>{credentialHandoff?.totals.operatorInputs ?? 0}</strong>
+              <span>Operator</span>
+            </div>
+            <div>
+              <strong>{credentialHandoff?.totals.swiggyGates ?? 0}</strong>
+              <span>Swiggy gates</span>
+            </div>
+            <div>
+              <strong>{credentialHandoff?.totals.controls ?? 0}</strong>
+              <span>Controls</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(credentialHandoff?.phases ?? []).slice(0, 5).map((phaseItem) => (
+              <li
+                key={phaseItem.id}
+                data-status={
+                  phaseItem.status === "ready"
+                    ? "healthy"
+                    : phaseItem.status === "blocked"
+                      ? "blocked"
+                      : "watch"
+                }
+              >
+                <span>{phaseItem.label}</span>
+                <strong>{phaseItem.owner}</strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-intelligence-actions" aria-label="Credential handoff links">
+            <a href="/api/swiggy-credential-handoff-center" target="_blank" rel="noreferrer">
+              Handoff API
+            </a>
+            <a href="/api/swiggy-staging-credential-drill" target="_blank" rel="noreferrer">
+              Staging drill
+            </a>
+            <a href="mailto:builders@swiggy.in" target="_blank" rel="noreferrer">
+              Email
             </a>
           </div>
         </article>
