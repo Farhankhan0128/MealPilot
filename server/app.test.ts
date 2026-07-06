@@ -97,6 +97,8 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/swiggy-route-optimizer"].get.responses["200"].description).toContain("optimizer profiles");
     expect(openApi.body.paths["/api/swiggy-route-optimizer"].get.responses["200"].description).toContain("cross-server handoffs");
     expect(openApi.body.paths["/api/traffic-readiness-plan"].get.summary).toContain("Traffic readiness");
+    expect(openApi.body.paths["/api/swiggy-load-lab"].get.summary).toContain("Load Lab");
+    expect(openApi.body.paths["/api/swiggy-load-lab"].get.responses["200"].description).toContain("cohort ramps");
     expect(openApi.body.paths["/api/slo-incident-command"].get.summary).toContain("SLO Incident");
     expect(openApi.body.paths["/api/data-governance-center"].get.summary).toContain("Data Governance");
     expect(openApi.body.paths["/api/production-launch-bundle"].get.summary).toContain("Production Launch Bundle");
@@ -2811,6 +2813,7 @@ describe("MealPilot API", () => {
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Builder Intake Command Center")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Traffic Readiness Plan")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "MCP Backpressure Governor")).toBe(true);
+    expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Swiggy Load Lab")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "SLO Incident Command Center")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Data Governance Center")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Swiggy Upstream Watch")).toBe(true);
@@ -2881,6 +2884,48 @@ describe("MealPilot API", () => {
     expect(plan.externalGates.some((gate: string) => gate.toLowerCase().includes("staging"))).toBe(true);
   });
 
+  it("returns a Swiggy Load Lab for synthetic launch-load simulation", async () => {
+    const { app } = createMealPilotServer();
+    await request(app).post("/api/plan").send(planningRequest).expect(201);
+
+    const response = await request(app).get("/api/swiggy-load-lab").expect(200);
+    const loadLab = response.body.loadLab;
+
+    expect(loadLab.score).toBeGreaterThanOrEqual(80);
+    expect(loadLab.mode).toBe("mock");
+    expect(loadLab.officialSources).toEqual(
+      expect.arrayContaining([
+        "https://mcp.swiggy.com/builders/",
+        "https://mcp.swiggy.com/builders/llms.txt",
+        "https://mcp.swiggy.com/builders/docs/operate/rate-limits/",
+      ]),
+    );
+    expect(loadLab.totals.scenarios).toBe(4);
+    expect(loadLab.totals.maxPeakQps).toBeGreaterThan(0);
+    expect(loadLab.totals.maxToolCallsPerHour).toBeGreaterThan(0);
+    expect(loadLab.totals.retryAfterReady).toBe(true);
+    expect(loadLab.scenarios.some((scenario: { id: string; status: string; projected429sPerHour: number }) =>
+      scenario.id === "campaign_launch_spike" &&
+      scenario.status === "external_gate" &&
+      scenario.projected429sPerHour > 0,
+    )).toBe(true);
+    expect(
+      loadLab.lanes.some((lane: { id: string; status: string }) => lane.id === "background_jobs_disabled" && lane.status === "external_gate"),
+    ).toBe(true);
+    expect(loadLab.cohortRamp.map((stage: { trafficPercent: number }) => stage.trafficPercent)).toEqual([1, 10, 50, 100]);
+    expect(loadLab.drills.map((drill: { id: string }) => drill.id)).toEqual(
+      expect.arrayContaining(["retry_after_23s", "commercial_single_flight", "tracking_loop_shed"]),
+    );
+    expect(
+      loadLab.operatorActions.some(
+        (action: { id: string; owner: string; status: string }) =>
+          action.id === "confirm_campaign_capacity" && action.owner === "Swiggy" && action.status === "external_gate",
+      ),
+    ).toBe(true);
+    expect(loadLab.assertions.some((assertion: string) => assertion.includes("Commercial actions stay serialized"))).toBe(true);
+    expect(loadLab.externalGates.some((gate: string) => gate.includes("staging credentials"))).toBe(true);
+  });
+
   it("returns SLO and incident command evidence for Swiggy operations", async () => {
     const { app } = createMealPilotServer();
     const created = await request(app).post("/api/plan").send(planningRequest).expect(201);
@@ -2948,6 +2993,7 @@ describe("MealPilot API", () => {
         "Enterprise Delegated Auth Center",
         "Traffic Readiness Plan",
         "MCP Backpressure Governor",
+        "Swiggy Load Lab",
         "SLO Incident Command Center",
         "Swiggy Journey Compiler",
         "Swiggy Access Dossier",
@@ -2996,6 +3042,7 @@ describe("MealPilot API", () => {
     expect(bundle.handoffEmail.body).toContain("/api/mcp/resource-prompt-studio");
     expect(bundle.handoffEmail.body).toContain("/api/mcp/widget-runtime");
     expect(bundle.handoffEmail.body).toContain("/api/mcp/backpressure-governor");
+    expect(bundle.handoffEmail.body).toContain("/api/swiggy-load-lab");
     expect(bundle.handoffEmail.body).toContain("/api/mcp/staging-cutover");
     expect(bundle.handoffEmail.body).toContain("/api/audit-ledger");
     expect(bundle.commands.some((command: { command: string }) => command.command.includes("npm run verify:production"))).toBe(

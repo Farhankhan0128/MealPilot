@@ -104,6 +104,8 @@ The verifier also validates Commercial Action Guard for Food order placement, In
 
 The verifier also validates `/api/swiggy-route-optimizer` for official source links, call-saving rollups, optimizer profiles, explicit parallel batches, commercial-action exclusion from parallel batches, cross-server handoff redaction, and source-linked route assertions.
 
+The verifier also validates `/api/swiggy-load-lab` for synthetic launch-load scenarios, Retry-After readiness, cohort ramp math, background-job gating, commercial serialization assertions, and external Swiggy capacity actions.
+
 The verifier also validates `/api/swiggy-source-intelligence` for Builders website inventory, CTA coverage, `llms` and markdown documentation counts, 35-tool reference alignment, drift signals, external gates, and build-queue readiness.
 
 The verifier also validates `/api/coding-agent-governance` for the root `AGENTS.md` file, official Swiggy coding-agent docs, `llms.txt`, `llms-full.txt`, markdown-twin retrieval, reference paths, Food 14 / Instamart 13 / Dineout 8 smoke evidence, commercial confirmation rules, and no-token/no-PII logging guardrails.
@@ -211,6 +213,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/production-launch-bundle`
 - `GET /api/rate-limit-plan`
 - `GET /api/traffic-readiness-plan`
+- `GET /api/swiggy-load-lab`
 - `GET /api/version-monitor`
 - `GET /api/compliance-evidence`
 - `GET /api/reviewer-proof`

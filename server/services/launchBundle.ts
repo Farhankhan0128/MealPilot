@@ -289,6 +289,15 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
         "Turns Swiggy planned rate-limit guidance into token buckets, queue discipline, Retry-After handling, voice burst shaping, tracking cadence, and background-job gates.",
     },
     {
+      id: "load_lab",
+      label: "Swiggy Load Lab",
+      path: "/api/swiggy-load-lab",
+      category: "runtime",
+      status: "ready",
+      evidence:
+        "Composes Traffic Readiness, Backpressure Governor, and Route Optimizer into synthetic launch-load scenarios, cohort ramps, Retry-After drills, and capacity gates.",
+    },
+    {
       id: "slo_incident_command",
       label: "SLO Incident Command Center",
       path: "/api/slo-incident-command",
@@ -574,6 +583,7 @@ function buildPhases(config: ServerConfig, latestPlan: MealPlan | undefined, art
         artifact("widget_runtime"),
         artifact("commercial_action_guard"),
         artifact("backpressure_governor"),
+        artifact("load_lab"),
         artifact("staging_cutover"),
         artifact("capability_registry"),
         artifact("resource_prompt_studio"),
@@ -599,6 +609,7 @@ function buildPhases(config: ServerConfig, latestPlan: MealPlan | undefined, art
         artifact("enterprise_delegated_auth"),
         artifact("traffic_readiness"),
         artifact("backpressure_governor"),
+        artifact("load_lab"),
         artifact("demo_video"),
       ],
     },
@@ -628,6 +639,7 @@ function buildPhases(config: ServerConfig, latestPlan: MealPlan | undefined, art
       artifacts: [
         artifact("traffic_readiness"),
         artifact("backpressure_governor"),
+        artifact("load_lab"),
         artifact("slo_incident_command"),
         artifact("data_governance"),
         artifact("enterprise_delegated_auth"),
@@ -771,6 +783,7 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- Enterprise Delegated Auth Center: /api/enterprise-delegated-auth",
     "- Traffic Readiness Plan: /api/traffic-readiness-plan",
     "- MCP Backpressure Governor: /api/mcp/backpressure-governor",
+    "- Swiggy Load Lab: /api/swiggy-load-lab",
     "- SLO Incident Command Center: /api/slo-incident-command",
     "- MCP Tool Lab: /api/mcp/tool-lab",
     "- MCP Capability Registry: /api/mcp/capability-registry",

@@ -323,6 +323,7 @@ export function buildReviewerProof(options: {
       { label: "Rate-limit plan", path: "/api/rate-limit-plan" },
       { label: "Traffic Readiness Plan", path: "/api/traffic-readiness-plan" },
       { label: "MCP Backpressure Governor", path: "/api/mcp/backpressure-governor" },
+      { label: "Swiggy Load Lab", path: "/api/swiggy-load-lab" },
       { label: "SLO Incident Command Center", path: "/api/slo-incident-command" },
       { label: "Data Governance Center", path: "/api/data-governance-center" },
       { label: "Enterprise Delegated Auth Center", path: "/api/enterprise-delegated-auth" },

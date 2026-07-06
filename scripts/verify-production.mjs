@@ -147,6 +147,10 @@ assert(
   "OpenAPI backpressure governor is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-load-lab"].get.summary.includes("Load Lab"),
+  "OpenAPI Swiggy Load Lab is missing",
+);
+assert(
   openApi.paths["/api/mcp/resource-prompt-studio"].get.summary.includes("Resource and Prompt Studio"),
   "OpenAPI resource and prompt studio is missing",
 );
@@ -2619,6 +2623,51 @@ assert(
   "backpressure future 429 gate is missing",
 );
 
+const loadLab = await request("/api/swiggy-load-lab");
+assert(loadLab.loadLab.score >= 80, "Load Lab score is below target");
+assert(loadLab.loadLab.totals.scenarios === 4, "Load Lab scenarios are incomplete");
+assert(loadLab.loadLab.totals.maxPeakQps > 0, "Load Lab peak QPS is missing");
+assert(loadLab.loadLab.totals.maxToolCallsPerHour > 0, "Load Lab tool-call rollup is missing");
+assert(loadLab.loadLab.totals.retryAfterReady, "Load Lab Retry-After readiness is missing");
+assert(
+  loadLab.loadLab.officialSources.includes("https://mcp.swiggy.com/builders/llms.txt") &&
+    loadLab.loadLab.officialSources.some((source) => source.includes("/docs/operate/rate-limits/")),
+  "Load Lab official sources are incomplete",
+);
+assert(
+  loadLab.loadLab.scenarios.some(
+    (scenario) =>
+      scenario.id === "campaign_launch_spike" &&
+      scenario.status === "external_gate" &&
+      scenario.projected429sPerHour > 0,
+  ),
+  "Load Lab campaign spike gate is missing",
+);
+assert(
+  loadLab.loadLab.lanes.some((lane) => lane.id === "background_jobs_disabled" && lane.status === "external_gate"),
+  "Load Lab background-job gate is missing",
+);
+assert(
+  loadLab.loadLab.cohortRamp.map((stage) => stage.trafficPercent).join(",") === "1,10,50,100",
+  "Load Lab cohort ramp is incomplete",
+);
+assert(
+  ["retry_after_23s", "commercial_single_flight", "tracking_loop_shed"].every((id) =>
+    loadLab.loadLab.drills.some((drill) => drill.id === id),
+  ),
+  "Load Lab load drills are incomplete",
+);
+assert(
+  loadLab.loadLab.operatorActions.some(
+    (action) => action.id === "confirm_campaign_capacity" && action.owner === "Swiggy" && action.status === "external_gate",
+  ),
+  "Load Lab campaign capacity action is missing",
+);
+assert(
+  loadLab.loadLab.assertions.some((assertion) => assertion.includes("Commercial actions stay serialized")),
+  "Load Lab commercial serialization assertion is missing",
+);
+
 const sloIncident = await request("/api/slo-incident-command");
 assert(sloIncident.sloIncident.score >= 90, "SLO incident command score is below target");
 assert(
@@ -3069,6 +3118,7 @@ assert(
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Enterprise Delegated Auth Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Traffic Readiness Plan") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "MCP Backpressure Governor") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Load Lab") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "SLO Incident Command Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Journey Compiler") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Access Dossier") &&
@@ -3224,6 +3274,10 @@ assert(
   "launch bundle backpressure governor handoff link is missing",
 );
 assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-load-lab"),
+  "launch bundle Load Lab handoff link is missing",
+);
+assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/mcp/staging-cutover"),
   "launch bundle staging cutover handoff link is missing",
 );
@@ -3330,6 +3384,10 @@ console.log(
       projectedDailyToolCalls: trafficReadiness.trafficReadiness.projectedDailyToolCalls,
       backpressureGovernorScore: backpressureGovernor.backpressureGovernor.score,
       backpressureBuckets: backpressureGovernor.backpressureGovernor.totalBuckets,
+      loadLabScore: loadLab.loadLab.score,
+      loadLabScenarios: loadLab.loadLab.totals.scenarios,
+      loadLabMaxPeakQps: loadLab.loadLab.totals.maxPeakQps,
+      loadLabExternalGates: loadLab.loadLab.totals.externalGates,
       sloIncidentScore: sloIncident.sloIncident.score,
       sloUptimeTargets: sloIncident.sloIncident.uptimeTargets.length,
       resilienceScore: resilience.runbook.score,

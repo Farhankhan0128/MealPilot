@@ -57,6 +57,7 @@ import { buildHouseholdPreferenceGraph } from "./services/householdPreferenceGra
 import { buildSwiggyInnovationRadar } from "./services/innovationRadar.js";
 import { buildSwiggyJourneyCompiler } from "./services/journeyCompiler.js";
 import { buildLaunchBundle } from "./services/launchBundle.js";
+import { buildSwiggyLoadLab } from "./services/loadLab.js";
 import { buildLuxuryExperienceWorkspace } from "./services/luxuryExperienceWorkspace.js";
 import {
   buildMcpGatewayStatus,
@@ -991,6 +992,10 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/traffic-readiness-plan", (_req, res) => {
     res.json({ trafficReadiness: buildTrafficReadinessPlan({ plans: store.getAllPlans(), config }) });
+  });
+
+  app.get("/api/swiggy-load-lab", (_req, res) => {
+    res.json({ loadLab: buildSwiggyLoadLab({ plans: store.getAllPlans(), config }) });
   });
 
   app.get("/api/version-monitor", (_req, res) => {

@@ -117,6 +117,7 @@ import {
   fetchSwiggyWidgetRuntime,
   fetchSwiggyUpstreamWatch,
   fetchSwiggyWebsiteAtlas,
+  fetchSwiggyLoadLab,
   fetchSwiggyRouteOptimizer,
   fetchTrafficReadinessPlan,
   fetchTracking,
@@ -210,6 +211,7 @@ import type {
   SwiggyGrowthPartnershipCenter,
   SwiggyInnovationRadarReport,
   SwiggyJourneyCompilerReport,
+  SwiggyLoadLabReport,
   SwiggyScenarioRunnerReport,
   SwiggySourceIntelligenceReport,
   SwiggyStagingCutoverRehearsal,
@@ -436,6 +438,7 @@ function App() {
   const [runtimeTelemetry, setRuntimeTelemetry] = useState<RuntimeTelemetryReport | null>(null);
   const [auditLedger, setAuditLedger] = useState<AuditLedgerCenter | null>(null);
   const [sloIncident, setSloIncident] = useState<SloIncidentCommandCenter | null>(null);
+  const [loadLab, setLoadLab] = useState<SwiggyLoadLabReport | null>(null);
   const [routeOptimizer, setRouteOptimizer] = useState<SwiggyRouteOptimizationReport | null>(null);
   const [exportText, setExportText] = useState<string | null>(null);
   const [authUrl, setAuthUrl] = useState<string | null>(null);
@@ -583,6 +586,7 @@ function App() {
       runtimeTelemetryResponse,
       auditLedgerResponse,
       sloIncidentResponse,
+      loadLabResponse,
       routeOptimizerResponse,
     ] = await Promise.all([
       fetchPantry(),
@@ -653,6 +657,7 @@ function App() {
       fetchRuntimeTelemetry(),
       fetchAuditLedger(),
       fetchSloIncidentCommand(),
+      fetchSwiggyLoadLab(),
       fetchSwiggyRouteOptimizer(),
     ]);
     setPantry(pantryResponse.pantry);
@@ -728,6 +733,7 @@ function App() {
     setRuntimeTelemetry(runtimeTelemetryResponse.telemetry);
     setAuditLedger(auditLedgerResponse.auditLedger);
     setSloIncident(sloIncidentResponse.sloIncident);
+    setLoadLab(loadLabResponse.loadLab);
     setRouteOptimizer(routeOptimizerResponse.routeOptimizer);
   }
 
@@ -798,6 +804,7 @@ function App() {
       runtimeTelemetryResponse,
       auditLedgerResponse,
       sloIncidentResponse,
+      loadLabResponse,
       routeOptimizerResponse,
     ] = await Promise.all([
       fetchMcpCatalog(),
@@ -865,6 +872,7 @@ function App() {
       fetchRuntimeTelemetry(),
       fetchAuditLedger(),
       fetchSloIncidentCommand(),
+      fetchSwiggyLoadLab(),
       fetchSwiggyRouteOptimizer(),
     ]);
     setMcpCatalog(catalogResponse);
@@ -936,6 +944,7 @@ function App() {
     setRuntimeTelemetry(runtimeTelemetryResponse.telemetry);
     setAuditLedger(auditLedgerResponse.auditLedger);
     setSloIncident(sloIncidentResponse.sloIncident);
+    setLoadLab(loadLabResponse.loadLab);
     setRouteOptimizer(routeOptimizerResponse.routeOptimizer);
   }
 
@@ -1591,6 +1600,7 @@ function App() {
                 runtimeTelemetry={runtimeTelemetry}
                 auditLedger={auditLedger}
                 sloIncident={sloIncident}
+                loadLab={loadLab}
                 routeOptimizer={routeOptimizer}
                 evaluationLab={evaluationLab}
               />
@@ -4302,6 +4312,7 @@ function ProductionEvidencePanel({
   runtimeTelemetry,
   auditLedger,
   sloIncident,
+  loadLab,
   routeOptimizer,
   evaluationLab,
 }: {
@@ -4322,6 +4333,7 @@ function ProductionEvidencePanel({
   runtimeTelemetry: RuntimeTelemetryReport | null;
   auditLedger: AuditLedgerCenter | null;
   sloIncident: SloIncidentCommandCenter | null;
+  loadLab: SwiggyLoadLabReport | null;
   routeOptimizer: SwiggyRouteOptimizationReport | null;
   evaluationLab: EvaluationLab | null;
 }) {
@@ -4450,6 +4462,47 @@ function ProductionEvidencePanel({
               >
                 <span>{bucket.toolClass.replaceAll("_", " ")}</span>
                 <strong>{bucket.server === "all" ? "All" : serverLabel(bucket.server)}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="load-lab-card">
+          <div className="mini-heading">
+            <Activity aria-hidden="true" />
+            <strong>Swiggy Load Lab</strong>
+          </div>
+          <span>
+            {loadLab
+              ? `${loadLab.score}/100, ${loadLab.totals.scenarios} scenarios, ${loadLab.totals.maxPeakQps.toFixed(2)} peak QPS`
+              : "Loading launch simulation"}
+          </span>
+          <div className="load-lab-grid">
+            <div>
+              <strong>{loadLab?.totals.maxToolCallsPerHour.toLocaleString("en-IN") ?? "..."}</strong>
+              <span>Calls/hour</span>
+            </div>
+            <div>
+              <strong>{loadLab?.cohortRamp.map((stage) => `${stage.trafficPercent}%`).join(" -> ") ?? "..."}</strong>
+              <span>Cohort ramp</span>
+            </div>
+            <div>
+              <strong>{loadLab?.drills.length ?? 0}</strong>
+              <span>Load drills</span>
+            </div>
+            <div>
+              <strong>{loadLab?.totals.externalGates ?? 0}</strong>
+              <span>Swiggy gates</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(loadLab?.scenarios ?? []).slice(0, 4).map((scenario) => (
+              <li
+                key={scenario.id}
+                data-status={scenario.status === "ready" ? "healthy" : scenario.status === "external_gate" ? "blocked" : "watch"}
+              >
+                <span>{scenario.label}</span>
+                <strong>{scenario.status.replace("_", " ")}</strong>
               </li>
             ))}
           </ul>

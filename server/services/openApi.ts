@@ -738,6 +738,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-load-lab": {
+        get: {
+          tags: ["Operations"],
+          summary: "Swiggy Load Lab capacity simulation and launch ramp workbench",
+          responses: {
+            "200": {
+              description:
+                "Synthetic launch-load scenarios, lane ceilings, cohort ramps, Retry-After drills, operator actions, and external Swiggy capacity gates",
+            },
+          },
+        },
+      },
       "/api/support/bridge": {
         get: {
           tags: ["Operations"],

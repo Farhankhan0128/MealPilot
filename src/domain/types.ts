@@ -3131,6 +3131,78 @@ export interface McpBackpressureGovernorReport {
   externalGates: string[];
 }
 
+export type SwiggyLoadLabStatus = "ready" | "watch" | "external_gate";
+
+export interface SwiggyLoadLabScenario {
+  id: string;
+  label: string;
+  description: string;
+  pilotUsers: number;
+  sessionsPerHour: number;
+  toolCallsPerHour: number;
+  peakQps: number;
+  writeQps: number;
+  retryAfterSeconds: number;
+  projected429sPerHour: number;
+  p95LatencyMs: number;
+  status: SwiggyLoadLabStatus;
+  bottleneck: string;
+  decision: string;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyLoadLabLane {
+  id: string;
+  server: SwiggyServer | "all";
+  lane: TrafficLane | "background";
+  expectedQps: number;
+  plannedCeiling: string;
+  governor: string;
+  status: SwiggyLoadLabStatus;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyLoadLabCohort {
+  id: string;
+  label: string;
+  trafficPercent: number;
+  users: number;
+  entryGate: string;
+  rollbackSignal: string;
+  status: SwiggyLoadLabStatus;
+}
+
+export interface SwiggyLoadLabDrill {
+  id: string;
+  label: string;
+  trigger: string;
+  expectedDecision: string;
+  proof: string;
+  status: SwiggyLoadLabStatus;
+}
+
+export interface SwiggyLoadLabReport {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  mode: "mock" | "staging" | "production";
+  totals: {
+    scenarios: number;
+    maxPeakQps: number;
+    maxToolCallsPerHour: number;
+    recommendedPilotUsers: number;
+    retryAfterReady: boolean;
+    externalGates: number;
+  };
+  scenarios: SwiggyLoadLabScenario[];
+  lanes: SwiggyLoadLabLane[];
+  cohortRamp: SwiggyLoadLabCohort[];
+  drills: SwiggyLoadLabDrill[];
+  operatorActions: Array<{ id: string; label: string; owner: "MealPilot" | "Operator" | "Swiggy"; status: SwiggyLoadLabStatus; evidence: string }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export interface VersionAlert {
   id: string;
   label: string;

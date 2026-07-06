@@ -151,7 +151,7 @@ The application will include a 2-3 minute Loom or unlisted YouTube demo showing:
 5. Cart and booking actions pause for explicit confirmation.
 6. Launch Center shows 35-tool coverage, Journey Compiler, Access Dossier, Access Evidence Matrix, Builder Intake, FAQ & Policy Center, Growth Partnership Center, Channel & Multimodal Studio, Nutrition & Budget Intelligence, Household Preference Graph, Guest Collaboration & Calendar Center, Luxury Experience Workspace, Reviewer Artifact Vault, Visual QA Center, Premium Use Case Studio, Premium Concierge Itinerary, Staging Cutover Rehearsal, Staging Certification Matrix, Brand Compliance Kit, Capability Registry, Resource & Prompt Studio, Tool Contract Matrix, Scenario Runner, State Orchestrator, Widget Runtime Center, Commercial Action Guard, Website Atlas, Docs Coverage, Docs Twin Explorer, Upstream Watch, Source Intelligence, Deep Site Map, Developer Quickstart, CTA Execution, Innovation Radar, AI Client Connect Kit, Tool Lab, MCP Gateway cutover, OAuth Status, Credential Cockpit, Sandbox Credential Workbench, Delegated Auth Center, chat/voice behavior, go-live gates, and observability metrics.
 7. Demo Studio shows cart preflight, MCP replay, Staging Transcript Export, Submission Console, Access Submission Studio, and submission readiness.
-8. Production Evidence shows widgets, rate limits, Traffic Readiness, MCP Backpressure Governor, SLO Command, Data Governance, versioning, compliance, Production Launch Bundle, trace monitor, runtime telemetry, audit ledger, route optimizer, resilience drills, Evaluation Lab, Source Intelligence artifact, Deep Site Map artifact, Developer Quickstart artifact, CTA Execution artifact, Innovation Radar artifact, and reviewer proof score.
+8. Production Evidence shows widgets, rate limits, Traffic Readiness, Swiggy Load Lab, MCP Backpressure Governor, SLO Command, Data Governance, versioning, compliance, Production Launch Bundle, trace monitor, runtime telemetry, audit ledger, route optimizer, resilience drills, Evaluation Lab, Source Intelligence artifact, Deep Site Map artifact, Developer Quickstart artifact, CTA Execution artifact, Innovation Radar artifact, and reviewer proof score.
 9. Show `/api/ready`, `/api/openapi.json`, `/api/swiggy-website-atlas`, `/api/swiggy-builder-intake`, `/api/swiggy-faq-policy`, `/api/swiggy-growth-partnership`, `/api/channel-multimodal-studio`, `/api/nutrition-budget-intelligence`, `/api/household-preference-graph`, `/api/guest-collaboration-calendar`, `/api/luxury-experience-workspace`, `/api/reviewer-artifact-vault`, `/api/visual-qa-center`, `/api/submission-console`, `/api/access-submission-studio`, `/api/swiggy-docs-twin-explorer`, `/api/swiggy-upstream-watch`, `/api/swiggy-source-intelligence`, `/api/swiggy-deep-site-map`, `/api/swiggy-developer-quickstart`, `/api/swiggy-cta-execution-center`, `/api/swiggy-innovation-radar`, `/api/mcp/tool-lab`, `/api/mcp/tool-contract-matrix`, `/api/mcp/scenario-runner`, `/api/mcp/state-orchestrator`, `/api/mcp/commercial-action-guard`, `/api/mcp/backpressure-governor`, `/api/mcp/resource-prompt-studio`, `/api/mcp/widget-runtime`, `/api/mcp/staging-cutover`, `/api/swiggy-journey-compiler`, `/api/swiggy-access-dossier`, `/api/swiggy-access-evidence-matrix`, `/api/premium-use-case-studio`, `/api/premium-concierge-itinerary`, `/api/staging-certification-matrix`, `/api/auth/swiggy/status`, `/api/credential-onboarding`, `/api/sandbox-credential-workbench`, `/api/enterprise-delegated-auth`, `/api/audit-ledger`, and `npm run verify:production`.
 10. Show storage diagnostics and snapshot export in `/api/storage/status` and `/api/storage/export`.
 11. Show `/api/observability/traces` with trace IDs, no raw PII, and safe log fields.
@@ -171,7 +171,8 @@ The application will include a 2-3 minute Loom or unlisted YouTube demo showing:
 25. Show `/api/resilience` with the order-placement recovery runbook.
 26. Show `/api/evaluation-lab` with persona QA across chat and voice surfaces.
 27. Show `/api/traffic-readiness-plan` with expected volume, lane budgets, Retry-After handling, seven-day notice, capacity email, and staged rollout.
-28. Show `/api/production-launch-bundle` with proof artifacts, verification commands, external Swiggy gates, and the review email draft.
+28. Show `/api/swiggy-load-lab` with synthetic pilot/campaign load scenarios, cohort ramps, Retry-After drills, commercial single-flight proof, and external capacity gates.
+29. Show `/api/production-launch-bundle` with proof artifacts, verification commands, external Swiggy gates, and the review email draft.
 
 ## Primary Technical Contact
 
@@ -225,6 +226,7 @@ Email: add primary engineering email before submission.
 - Sandbox Credential Workbench: `/api/sandbox-credential-workbench`
 - Staging Transcript Export: `/api/sessions/:sessionId/staging-transcript`
 - Traffic Readiness Plan: `/api/traffic-readiness-plan`
+- Swiggy Load Lab: `/api/swiggy-load-lab`
 - SLO Incident Command Center: `/api/slo-incident-command`
 - Support Bridge: `/api/support/bridge`
 - Error Intelligence: `/api/error-intelligence`

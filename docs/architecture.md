@@ -111,6 +111,7 @@ Implementation:
 - Exposes `/api/staging-certification-matrix` as the credential-aware staging plan that assigns all 35 Swiggy tools to smoke waves, OAuth/DCR checks, 48-hour soak, telemetry, rollback, and production-promotion gates.
 - Exposes `/api/traffic-readiness-plan` as the launch capacity artifact for expected volume, peak QPS, per-lane traffic budgets, Retry-After handling, seven-day traffic-event notice, and staged rollout.
 - Exposes `/api/mcp/backpressure-governor` as the adaptive runtime artifact for current Swiggy v1.0 upstream-shedder behavior, future `429`/`Retry-After`/`X-RateLimit-*` readiness, token buckets, voice burst shaping, tracking cadence, and background-job gates.
+- Exposes `/api/swiggy-load-lab` as the capacity simulation workbench for synthetic pilot/campaign scenarios, lane ceilings, Retry-After drills, cohort ramps, operator actions, and external Swiggy gates.
 - Exposes `/api/slo-incident-command` as the SLA and incident artifact for 99.9% uptime targets, latency bands, status-page fallback, incident comms, maintenance windows, measurement exclusions, and remediation evidence.
 - Exposes `/api/mcp-gateway` for mock, staging, and production routing status, token posture, cutover steps, fallback behavior, and canary rollout.
 - Exposes `/api/auth/swiggy/status` for Swiggy OAuth lifecycle status, authorize/token/logout endpoints, pending PKCE verifier count, callback outcome, token source, expiry, and storage policy without exposing bearer values.
@@ -129,7 +130,7 @@ Implementation:
 - Generates a submission package that mirrors Swiggy access fields and manual-input gaps.
 - Generates `/api/submission-console` with official developer/enterprise form targets, prepared fields, proof attachments, runbook steps, blockers, and handoff drafts.
 - Generates `/api/swiggy-access-evidence-matrix` from Access Dossier, Submission Console, Access Submission Studio, and Reviewer Artifact Vault so access-review evidence is auditable from one API route.
-- Generates `/api/production-launch-bundle` as the consolidated Swiggy handoff with proof artifacts, traffic readiness, commands, access application fields, external gates, and a draft review email.
+- Generates `/api/production-launch-bundle` as the consolidated Swiggy handoff with proof artifacts, traffic readiness, Load Lab capacity simulation, commands, access application fields, external gates, and a draft review email.
 - Generates Evaluation Lab results across personas, cities, budgets, chat/voice surfaces, confirmation locks, and privacy checks.
 - Generates Swiggy widget contracts with iframe sizing, postMessage events, sandbox policy, origin verification, and semantic fallbacks.
 - Generates Resource & Prompt Studio evidence with sample resource reads, prompt messages, smoke requests, and live staging gates.
