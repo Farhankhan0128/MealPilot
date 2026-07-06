@@ -52,6 +52,7 @@ import {
   fetchBuilderPacketExport,
   fetchBrandComplianceKit,
   fetchChannelMultimodalStudio,
+  fetchSwiggyCartMutationWorkbench,
   fetchCartPreflight,
   fetchCodingAgentGovernance,
   fetchCommercialActionGuard,
@@ -203,6 +204,7 @@ import type {
   SwiggyAccessDossier,
   SwiggyAccessEvidenceMatrix,
   SwiggyBuilderIntakeCommandCenter,
+  SwiggyCartMutationReport,
   SwiggyChannelMultimodalStudio,
   SwiggyCtaExecutionCenter,
   SwiggyDeepSiteMap,
@@ -448,6 +450,7 @@ function App() {
   const [offerIntelligence, setOfferIntelligence] = useState<SwiggyOfferIntelligenceReport | null>(null);
   const [orderLifecycle, setOrderLifecycle] = useState<SwiggyOrderLifecycleReport | null>(null);
   const [locationTrust, setLocationTrust] = useState<SwiggyLocationTrustReport | null>(null);
+  const [cartMutation, setCartMutation] = useState<SwiggyCartMutationReport | null>(null);
   const [routeOptimizer, setRouteOptimizer] = useState<SwiggyRouteOptimizationReport | null>(null);
   const [exportText, setExportText] = useState<string | null>(null);
   const [authUrl, setAuthUrl] = useState<string | null>(null);
@@ -599,6 +602,7 @@ function App() {
       offerIntelligenceResponse,
       orderLifecycleResponse,
       locationTrustResponse,
+      cartMutationResponse,
       routeOptimizerResponse,
     ] = await Promise.all([
       fetchPantry(),
@@ -673,6 +677,7 @@ function App() {
       fetchSwiggyOfferIntelligence(),
       fetchSwiggyOrderLifecycle(),
       fetchSwiggyLocationTrust(),
+      fetchSwiggyCartMutationWorkbench(),
       fetchSwiggyRouteOptimizer(),
     ]);
     setPantry(pantryResponse.pantry);
@@ -752,6 +757,7 @@ function App() {
     setOfferIntelligence(offerIntelligenceResponse.offerIntelligence);
     setOrderLifecycle(orderLifecycleResponse.orderLifecycle);
     setLocationTrust(locationTrustResponse.locationTrust);
+    setCartMutation(cartMutationResponse.cartMutation);
     setRouteOptimizer(routeOptimizerResponse.routeOptimizer);
   }
 
@@ -826,6 +832,7 @@ function App() {
       offerIntelligenceResponse,
       orderLifecycleResponse,
       locationTrustResponse,
+      cartMutationResponse,
       routeOptimizerResponse,
     ] = await Promise.all([
       fetchMcpCatalog(),
@@ -897,6 +904,7 @@ function App() {
       fetchSwiggyOfferIntelligence(),
       fetchSwiggyOrderLifecycle(),
       fetchSwiggyLocationTrust(),
+      fetchSwiggyCartMutationWorkbench(),
       fetchSwiggyRouteOptimizer(),
     ]);
     setMcpCatalog(catalogResponse);
@@ -972,6 +980,7 @@ function App() {
     setOfferIntelligence(offerIntelligenceResponse.offerIntelligence);
     setOrderLifecycle(orderLifecycleResponse.orderLifecycle);
     setLocationTrust(locationTrustResponse.locationTrust);
+    setCartMutation(cartMutationResponse.cartMutation);
     setRouteOptimizer(routeOptimizerResponse.routeOptimizer);
   }
 
@@ -1631,6 +1640,7 @@ function App() {
                 offerIntelligence={offerIntelligence}
                 orderLifecycle={orderLifecycle}
                 locationTrust={locationTrust}
+                cartMutation={cartMutation}
                 routeOptimizer={routeOptimizer}
                 evaluationLab={evaluationLab}
               />
@@ -4346,6 +4356,7 @@ function ProductionEvidencePanel({
   offerIntelligence,
   orderLifecycle,
   locationTrust,
+  cartMutation,
   routeOptimizer,
   evaluationLab,
 }: {
@@ -4370,6 +4381,7 @@ function ProductionEvidencePanel({
   offerIntelligence: SwiggyOfferIntelligenceReport | null;
   orderLifecycle: SwiggyOrderLifecycleReport | null;
   locationTrust: SwiggyLocationTrustReport | null;
+  cartMutation: SwiggyCartMutationReport | null;
   routeOptimizer: SwiggyRouteOptimizationReport | null;
   evaluationLab: EvaluationLab | null;
 }) {
@@ -4662,6 +4674,47 @@ function ProductionEvidencePanel({
               >
                 <span>{lane.label}</span>
                 <strong>{lane.status.replace("_", " ")}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="cart-mutation-card">
+          <div className="mini-heading">
+            <ShoppingBasket aria-hidden="true" />
+            <strong>Cart Mutations</strong>
+          </div>
+          <span>
+            {cartMutation
+              ? `${cartMutation.score}/100, ${cartMutation.totals.toolsCovered} cart tools, ${cartMutation.totals.readbackLanes} readbacks`
+              : "Loading cart mutation workbench"}
+          </span>
+          <div className="cart-mutation-grid">
+            <div>
+              <strong>{cartMutation?.totals.lanes ?? 0}</strong>
+              <span>Lanes</span>
+            </div>
+            <div>
+              <strong>{cartMutation?.totals.readyGuardrails ?? 0}</strong>
+              <span>Guardrails</span>
+            </div>
+            <div>
+              <strong>{cartMutation?.totals.scenarios ?? 0}</strong>
+              <span>Scenarios</span>
+            </div>
+            <div>
+              <strong>{cartMutation?.totals.externalGates ?? 0}</strong>
+              <span>Live gates</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(cartMutation?.lanes ?? []).slice(0, 4).map((lane) => (
+              <li
+                key={lane.id}
+                data-status={lane.status === "ready" ? "healthy" : lane.status === "external_gate" ? "blocked" : "watch"}
+              >
+                <span>{lane.label}</span>
+                <strong>{lane.officialTools.length} tools</strong>
               </li>
             ))}
           </ul>

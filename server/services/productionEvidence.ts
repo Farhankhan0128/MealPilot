@@ -327,6 +327,7 @@ export function buildReviewerProof(options: {
       { label: "Swiggy Offer Intelligence", path: "/api/swiggy-offer-intelligence" },
       { label: "Swiggy Order Lifecycle", path: "/api/swiggy-order-lifecycle" },
       { label: "Swiggy Location Trust", path: "/api/swiggy-location-trust" },
+      { label: "Swiggy Cart Mutation Workbench", path: "/api/swiggy-cart-mutation-workbench" },
       { label: "SLO Incident Command Center", path: "/api/slo-incident-command" },
       { label: "Data Governance Center", path: "/api/data-governance-center" },
       { label: "Enterprise Delegated Auth Center", path: "/api/enterprise-delegated-auth" },

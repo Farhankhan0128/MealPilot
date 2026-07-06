@@ -112,6 +112,8 @@ The verifier also validates `/api/swiggy-order-lifecycle` for Food, Instamart, a
 
 The verifier also validates `/api/swiggy-location-trust` for Food/Instamart saved-address tools, Instamart create/delete address flows, Dineout saved locations, address-choice pauses, address switch refresh guards, raw-address redaction, and staging credential gates.
 
+The verifier also validates `/api/swiggy-cart-mutation-workbench` for Food cart readback, Instamart full-cart replacement, Dineout create_cart gates, payment-method truth, add-on confirmation, commercial single-flight rules, and staging cart-write gates.
+
 The verifier also validates `/api/swiggy-source-intelligence` for Builders website inventory, CTA coverage, `llms` and markdown documentation counts, 35-tool reference alignment, drift signals, external gates, and build-queue readiness.
 
 The verifier also validates `/api/coding-agent-governance` for the root `AGENTS.md` file, official Swiggy coding-agent docs, `llms.txt`, `llms-full.txt`, markdown-twin retrieval, reference paths, Food 14 / Instamart 13 / Dineout 8 smoke evidence, commercial confirmation rules, and no-token/no-PII logging guardrails.
@@ -223,6 +225,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/swiggy-offer-intelligence`
 - `GET /api/swiggy-order-lifecycle`
 - `GET /api/swiggy-location-trust`
+- `GET /api/swiggy-cart-mutation-workbench`
 - `GET /api/version-monitor`
 - `GET /api/compliance-evidence`
 - `GET /api/reviewer-proof`

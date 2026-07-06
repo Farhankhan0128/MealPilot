@@ -3405,6 +3405,72 @@ export interface SwiggyLocationTrustReport {
   externalGates: string[];
 }
 
+export type SwiggyCartMutationStatus = "ready" | "watch" | "external_gate";
+
+export interface SwiggyCartMutationLane {
+  id: string;
+  server: SwiggyServer | "combined";
+  label: string;
+  officialTools: string[];
+  mutationRule: string;
+  readbackRule: string;
+  userGate: string;
+  status: SwiggyCartMutationStatus;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyCartMutationGuardrail {
+  id: string;
+  label: string;
+  policy: string;
+  status: SwiggyCartMutationStatus;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyCartMutationScenario {
+  id: string;
+  label: string;
+  trigger: string;
+  expectedDecision: string;
+  tools: string[];
+  status: SwiggyCartMutationStatus;
+}
+
+export interface SwiggyCartMutationTelemetry {
+  field: string;
+  source: string;
+  redaction: string;
+  status: SwiggyCartMutationStatus;
+}
+
+export interface SwiggyCartMutationReport {
+  generatedAt: string;
+  score: number;
+  mode: "mock" | "staging" | "production";
+  officialSources: string[];
+  totals: {
+    lanes: number;
+    toolsCovered: number;
+    readyGuardrails: number;
+    scenarios: number;
+    readbackLanes: number;
+    externalGates: number;
+  };
+  lanes: SwiggyCartMutationLane[];
+  guardrails: SwiggyCartMutationGuardrail[];
+  scenarios: SwiggyCartMutationScenario[];
+  telemetry: SwiggyCartMutationTelemetry[];
+  operatorActions: Array<{
+    id: string;
+    label: string;
+    owner: "MealPilot" | "Operator" | "Swiggy";
+    status: SwiggyCartMutationStatus;
+    evidence: string;
+  }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export interface VersionAlert {
   id: string;
   label: string;

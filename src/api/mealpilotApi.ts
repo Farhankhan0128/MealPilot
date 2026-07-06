@@ -62,6 +62,7 @@ import type {
   SwiggyAccessDossier,
   SwiggyAccessEvidenceMatrix,
   SwiggyBuilderIntakeCommandCenter,
+  SwiggyCartMutationReport,
   SwiggyChannelMultimodalStudio,
   SwiggyDeepSiteMap,
   DeveloperQuickstartWorkbench,
@@ -535,6 +536,10 @@ export function fetchSwiggyOrderLifecycle() {
 
 export function fetchSwiggyLocationTrust() {
   return requestJson<{ locationTrust: SwiggyLocationTrustReport }>("/api/swiggy-location-trust");
+}
+
+export function fetchSwiggyCartMutationWorkbench() {
+  return requestJson<{ cartMutation: SwiggyCartMutationReport }>("/api/swiggy-cart-mutation-workbench");
 }
 
 export function fetchVersionMonitor() {

@@ -164,6 +164,11 @@ assert(
   "OpenAPI Swiggy Location Trust is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-cart-mutation-workbench"].get.summary.includes("Cart Mutation") &&
+    openApi.paths["/api/swiggy-cart-mutation-workbench"].get.responses["200"].description.includes("readback"),
+  "OpenAPI Swiggy Cart Mutation Workbench is missing",
+);
+assert(
   openApi.paths["/api/mcp/resource-prompt-studio"].get.summary.includes("Resource and Prompt Studio"),
   "OpenAPI resource and prompt studio is missing",
 );
@@ -2812,6 +2817,45 @@ assert(
   "Location Trust staging credential gate is missing",
 );
 
+const cartMutation = await request("/api/swiggy-cart-mutation-workbench");
+assert(cartMutation.cartMutation.score >= 85, "Cart Mutation Workbench score is below target");
+assert(cartMutation.cartMutation.totals.toolsCovered >= 8, "Cart Mutation Workbench tools are incomplete");
+assert(cartMutation.cartMutation.totals.readbackLanes >= 4, "Cart Mutation Workbench readback lanes are incomplete");
+assert(
+  cartMutation.cartMutation.officialSources.includes("https://mcp.swiggy.com/builders/llms.txt") &&
+    cartMutation.cartMutation.officialSources.some((source) => source.includes("/reference/food/get_food_cart/")) &&
+    cartMutation.cartMutation.officialSources.some((source) => source.includes("/reference/food/update_food_cart/")) &&
+    cartMutation.cartMutation.officialSources.some((source) => source.includes("/reference/instamart/get_cart/")) &&
+    cartMutation.cartMutation.officialSources.some((source) => source.includes("/reference/instamart/update_cart/")) &&
+    cartMutation.cartMutation.officialSources.some((source) => source.includes("/reference/dineout/create_cart/")),
+  "Cart Mutation Workbench official sources are incomplete",
+);
+assert(
+  ["food_cart_readback", "instamart_replace_cart", "dineout_cart_gate", "cross_server_cart_preflight"].every((id) =>
+    cartMutation.cartMutation.lanes.some((lane) => lane.id === id),
+  ),
+  "Cart Mutation Workbench lanes are incomplete",
+);
+assert(
+  cartMutation.cartMutation.guardrails.some((guardrail) => guardrail.id === "post_mutation_readback" && guardrail.status === "ready") &&
+    cartMutation.cartMutation.guardrails.some((guardrail) => guardrail.id === "payment_method_truth" && guardrail.status === "ready"),
+  "Cart Mutation Workbench guardrails are missing",
+);
+assert(
+  ["food_customized_quantity", "instamart_address_switch", "cart_uncertain_write"].every((id) =>
+    cartMutation.cartMutation.scenarios.some((scenario) => scenario.id === id),
+  ),
+  "Cart Mutation Workbench scenarios are incomplete",
+);
+assert(
+  cartMutation.cartMutation.telemetry.some((field) => field.field === "cart_id_hash" && field.status === "ready"),
+  "Cart Mutation Workbench telemetry redaction is missing",
+);
+assert(
+  cartMutation.cartMutation.assertions.some((assertion) => assertion.includes("update_food_cart is followed by get_food_cart")),
+  "Cart Mutation Workbench readback assertion is missing",
+);
+
 const sloIncident = await request("/api/slo-incident-command");
 assert(sloIncident.sloIncident.score >= 90, "SLO incident command score is below target");
 assert(
@@ -3436,6 +3480,10 @@ assert(
   "launch bundle Location Trust handoff link is missing",
 );
 assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-cart-mutation-workbench"),
+  "launch bundle Cart Mutation Workbench handoff link is missing",
+);
+assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/mcp/staging-cutover"),
   "launch bundle staging cutover handoff link is missing",
 );
@@ -3555,6 +3603,9 @@ console.log(
       locationTrustScore: locationTrust.locationTrust.score,
       locationTrustTools: locationTrust.locationTrust.totals.toolsCovered,
       locationTrustScenarios: locationTrust.locationTrust.totals.scenarios,
+      cartMutationScore: cartMutation.cartMutation.score,
+      cartMutationTools: cartMutation.cartMutation.totals.toolsCovered,
+      cartMutationReadbacks: cartMutation.cartMutation.totals.readbackLanes,
       sloIncidentScore: sloIncident.sloIncident.score,
       sloUptimeTargets: sloIncident.sloIncident.uptimeTargets.length,
       resilienceScore: resilience.runbook.score,

@@ -273,6 +273,7 @@ GET  /api/swiggy-load-lab
 GET  /api/swiggy-offer-intelligence
 GET  /api/swiggy-order-lifecycle
 GET  /api/swiggy-location-trust
+GET  /api/swiggy-cart-mutation-workbench
 GET  /api/observability/traces
 GET  /api/telemetry/runtime
 GET  /api/audit-ledger
@@ -456,6 +457,8 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 `GET /api/swiggy-order-lifecycle` is the post-confirmation command center: it maps Food `get_food_orders`, `get_food_order_details`, `track_food_order`, Instamart `get_orders`, `get_order_details`, `track_order`, and Dineout `get_booking_status` into status timelines, non-blind retry probes, tracking cadence, redacted telemetry, and support packet rules.
 
 `GET /api/swiggy-location-trust` is the saved-address and location trust center: it covers shared Food/Instamart `get_addresses`, Instamart `create_address` and `delete_address`, Dineout `get_saved_locations`, address-choice pauses, address switch refresh guards, raw-address redaction, and staging credential gates.
+
+`GET /api/swiggy-cart-mutation-workbench` is the cart mutation control room: it covers Food `get_food_cart`, `update_food_cart`, and `flush_food_cart`, Instamart `get_cart`, `update_cart`, and `clear_cart`, Dineout `create_cart`, readback-after-write rules, payment-method truth, add-on confirmation, and live cart-write gates.
 
 `GET /api/slo-incident-command` turns Swiggy's SLA and uptime guidance into operational evidence: 99.9% uptime targets, latency bands for read/write/commercial tools, status-page fallback, S0-S3 communication plans, 72-hour maintenance notice, measurement exclusions, and remediation path.
 

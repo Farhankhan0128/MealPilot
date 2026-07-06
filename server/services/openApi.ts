@@ -786,6 +786,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-cart-mutation-workbench": {
+        get: {
+          tags: ["Commerce"],
+          summary: "Swiggy Cart Mutation Workbench for readback, payment truth, and checkout-safe carts",
+          responses: {
+            "200": {
+              description:
+                "Food cart readback, Instamart full-cart replacement, Dineout create_cart gates, payment-method truth, add-on confirmation, commercial single-flight rules, and staging cart-write gates",
+            },
+          },
+        },
+      },
       "/api/support/bridge": {
         get: {
           tags: ["Operations"],

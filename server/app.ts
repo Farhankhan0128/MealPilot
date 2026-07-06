@@ -29,6 +29,7 @@ import { buildBrandComplianceKit } from "./services/brandCompliance.js";
 import { buildBuilderPacketExport, buildBuilderPacketMarkdown } from "./services/builderPacketExport.js";
 import { buildMcpBackpressureGovernor } from "./services/backpressureGovernor.js";
 import { buildSwiggyBuilderIntakeCommandCenter } from "./services/builderIntake.js";
+import { buildSwiggyCartMutationWorkbench } from "./services/cartMutationWorkbench.js";
 import { buildSwiggyChannelMultimodalStudio } from "./services/channelMultimodalStudio.js";
 import { buildCodingAgentGovernance } from "./services/codingAgentGovernance.js";
 import { buildCommercialActionGuard } from "./services/commercialActionGuard.js";
@@ -1011,6 +1012,10 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/swiggy-location-trust", (_req, res) => {
     res.json({ locationTrust: buildSwiggyLocationTrust({ plans: store.getAllPlans(), config }) });
+  });
+
+  app.get("/api/swiggy-cart-mutation-workbench", (_req, res) => {
+    res.json({ cartMutation: buildSwiggyCartMutationWorkbench({ plans: store.getAllPlans(), config }) });
   });
 
   app.get("/api/version-monitor", (_req, res) => {

@@ -325,6 +325,15 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
         "Covers Food and Instamart saved-address tools, Dineout saved locations, user-choice pauses, address switch refresh guards, raw-address redaction, and staging credential gates.",
     },
     {
+      id: "cart_mutation_workbench",
+      label: "Swiggy Cart Mutation Workbench",
+      path: "/api/swiggy-cart-mutation-workbench",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Makes Food cart readbacks, Instamart full-cart replacement, Dineout create_cart gates, payment-method truth, add-on confirmation, and staging cart-write gates reviewer-visible.",
+    },
+    {
       id: "slo_incident_command",
       label: "SLO Incident Command Center",
       path: "/api/slo-incident-command",
@@ -820,6 +829,7 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- Swiggy Offer Intelligence: /api/swiggy-offer-intelligence",
     "- Swiggy Order Lifecycle: /api/swiggy-order-lifecycle",
     "- Swiggy Location Trust: /api/swiggy-location-trust",
+    "- Swiggy Cart Mutation Workbench: /api/swiggy-cart-mutation-workbench",
     "- SLO Incident Command Center: /api/slo-incident-command",
     "- MCP Tool Lab: /api/mcp/tool-lab",
     "- MCP Capability Registry: /api/mcp/capability-registry",
