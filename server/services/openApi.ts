@@ -231,6 +231,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-agent-experience-benchmark": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Agent Experience Benchmark for premium journey quality and innovation moats",
+          responses: {
+            "200": {
+              description:
+                "Best-in-class agent experience scorecard that benchmarks Swiggy Food, Instamart, Dineout, voice, widget, support, route optimization, safety, and reviewer proof journeys against UX acceptance criteria and innovation moats",
+            },
+          },
+        },
+      },
       "/api/mcp/commercial-action-guard": {
         get: {
           tags: ["Builder Access"],

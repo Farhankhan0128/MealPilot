@@ -99,6 +99,7 @@ import type {
   SwiggyCtaLiveAuditor,
   SwiggyWidget,
   SwiggyWidgetExperienceComposer,
+  SwiggyAgentExperienceBenchmark,
   SwiggyBuildersMap,
   SwiggyCustomizationStudio,
   SwiggyCustomizationValidation,
@@ -358,6 +359,10 @@ export function fetchSwiggyWidgetRuntime() {
 
 export function fetchSwiggyWidgetExperienceComposer() {
   return requestJson<{ widgetExperience: SwiggyWidgetExperienceComposer }>("/api/swiggy-widget-experience-composer");
+}
+
+export function fetchSwiggyAgentExperienceBenchmark() {
+  return requestJson<{ agentBenchmark: SwiggyAgentExperienceBenchmark }>("/api/swiggy-agent-experience-benchmark");
 }
 
 export function fetchCommercialActionGuard() {

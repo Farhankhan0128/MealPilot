@@ -4806,6 +4806,77 @@ export interface SwiggyWidgetExperienceComposer {
   externalGates: string[];
 }
 
+export type SwiggyAgentExperienceBenchmarkStatus = "best_in_class" | "ready" | "watch" | "external_gate";
+
+export type SwiggyAgentExperienceDimension =
+  | "speed"
+  | "trust"
+  | "personalization"
+  | "multimodal"
+  | "resilience"
+  | "commercial_safety";
+
+export interface SwiggyAgentBenchmarkJourney {
+  id: string;
+  label: string;
+  userMoment: string;
+  servers: Array<SwiggyServer | "combined">;
+  surfaces: PremiumUseCaseSurface[];
+  swiggyTools: string[];
+  benchmarkScore: number;
+  targetDelta: string;
+  status: SwiggyAgentExperienceBenchmarkStatus;
+  proofLinks: string[];
+  uxAcceptanceCriteria: string[];
+  innovationLevers: string[];
+  safetyGates: string[];
+  telemetrySignals: string[];
+}
+
+export interface SwiggyAgentBenchmarkDimension {
+  id: SwiggyAgentExperienceDimension;
+  label: string;
+  score: number;
+  status: SwiggyAgentExperienceBenchmarkStatus;
+  evidence: string;
+  proofLinks: string[];
+}
+
+export interface SwiggyAgentExperienceBenchmark {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  totals: {
+    journeys: number;
+    bestInClassJourneys: number;
+    readyJourneys: number;
+    externalGateJourneys: number;
+    toolsCovered: number;
+    proofLinks: number;
+    dimensions: number;
+    acceptanceCriteria: number;
+    innovationLevers: number;
+  };
+  journeys: SwiggyAgentBenchmarkJourney[];
+  dimensions: SwiggyAgentBenchmarkDimension[];
+  competitorMoats: Array<{
+    id: string;
+    label: string;
+    whyItWins: string;
+    proofLinks: string[];
+  }>;
+  innovationBacklog: Array<{
+    sequence: number;
+    label: string;
+    owner: "MealPilot" | "Operator" | "Swiggy";
+    status: SwiggyAgentExperienceBenchmarkStatus;
+    nextAction: string;
+    proofLinks: string[];
+  }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type CommercialActionGuardStatus = "ready" | "watch" | "external_gate";
 export type CommercialActionLaneId = "food_order" | "instamart_checkout" | "dineout_booking" | "combined_evening";
 export type CommercialActionRouteClass = "commercial_action" | "cart_mutation" | "tracking_read";

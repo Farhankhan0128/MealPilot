@@ -155,6 +155,7 @@ import {
   fetchSwiggyStagingCutover,
   fetchSwiggyStateOrchestrator,
   fetchSwiggyWidgetExperienceComposer,
+  fetchSwiggyAgentExperienceBenchmark,
   fetchSwiggyWidgetRuntime,
   fetchSwiggyUpstreamWatch,
   fetchSwiggyWebsiteAtlas,
@@ -316,6 +317,7 @@ import type {
   SwiggyWebsiteAtlas,
   SwiggyUpstreamWatchReport,
   SwiggyWidgetExperienceComposer,
+  SwiggyAgentExperienceBenchmark,
   SwiggyWidgetRuntimeReport,
   SwiggyVisualDishCaptureCenter,
   SwiggyVoiceCommerceCenter,
@@ -463,6 +465,7 @@ function App() {
   const [stateOrchestrator, setStateOrchestrator] = useState<SwiggyStateOrchestratorReport | null>(null);
   const [widgetRuntime, setWidgetRuntime] = useState<SwiggyWidgetRuntimeReport | null>(null);
   const [widgetExperience, setWidgetExperience] = useState<SwiggyWidgetExperienceComposer | null>(null);
+  const [agentBenchmark, setAgentBenchmark] = useState<SwiggyAgentExperienceBenchmark | null>(null);
   const [commercialActionGuard, setCommercialActionGuard] = useState<CommercialActionGuardReport | null>(null);
   const [stagingCutover, setStagingCutover] = useState<SwiggyStagingCutoverRehearsal | null>(null);
   const [stagingCredentialDrill, setStagingCredentialDrill] =
@@ -684,6 +687,7 @@ function App() {
       stateOrchestratorResponse,
       widgetRuntimeResponse,
       widgetExperienceResponse,
+      agentBenchmarkResponse,
       commercialActionGuardResponse,
       stagingCutoverResponse,
       stagingCredentialDrillResponse,
@@ -803,6 +807,7 @@ function App() {
       fetchSwiggyStateOrchestrator(),
       fetchSwiggyWidgetRuntime(),
       fetchSwiggyWidgetExperienceComposer(),
+      fetchSwiggyAgentExperienceBenchmark(),
       fetchCommercialActionGuard(),
       fetchSwiggyStagingCutover(),
       fetchSwiggyStagingCredentialDrill(),
@@ -923,6 +928,7 @@ function App() {
     setStateOrchestrator(stateOrchestratorResponse.stateOrchestrator);
     setWidgetRuntime(widgetRuntimeResponse.widgetRuntime);
     setWidgetExperience(widgetExperienceResponse.widgetExperience);
+    setAgentBenchmark(agentBenchmarkResponse.agentBenchmark);
     setCommercialActionGuard(commercialActionGuardResponse.commercialActionGuard);
     setStagingCutover(stagingCutoverResponse.stagingCutover);
     setStagingCredentialDrill(stagingCredentialDrillResponse.stagingCredentialDrill);
@@ -1046,6 +1052,7 @@ function App() {
       stateOrchestratorResponse,
       widgetRuntimeResponse,
       widgetExperienceResponse,
+      agentBenchmarkResponse,
       commercialActionGuardResponse,
       stagingCutoverResponse,
       stagingCredentialDrillResponse,
@@ -1162,6 +1169,7 @@ function App() {
       fetchSwiggyStateOrchestrator(),
       fetchSwiggyWidgetRuntime(),
       fetchSwiggyWidgetExperienceComposer(),
+      fetchSwiggyAgentExperienceBenchmark(),
       fetchCommercialActionGuard(),
       fetchSwiggyStagingCutover(),
       fetchSwiggyStagingCredentialDrill(),
@@ -1278,6 +1286,7 @@ function App() {
     setStateOrchestrator(stateOrchestratorResponse.stateOrchestrator);
     setWidgetRuntime(widgetRuntimeResponse.widgetRuntime);
     setWidgetExperience(widgetExperienceResponse.widgetExperience);
+    setAgentBenchmark(agentBenchmarkResponse.agentBenchmark);
     setCommercialActionGuard(commercialActionGuardResponse.commercialActionGuard);
     setStagingCutover(stagingCutoverResponse.stagingCutover);
     setStagingCredentialDrill(stagingCredentialDrillResponse.stagingCredentialDrill);
@@ -1969,6 +1978,7 @@ function App() {
                 stateOrchestrator={stateOrchestrator}
                 widgetRuntime={widgetRuntime}
                 widgetExperience={widgetExperience}
+                agentBenchmark={agentBenchmark}
                 commercialActionGuard={commercialActionGuard}
                 stagingCutover={stagingCutover}
                 stagingCredentialDrill={stagingCredentialDrill}
@@ -2575,6 +2585,7 @@ function LaunchCenterPanel({
   stateOrchestrator,
   widgetRuntime,
   widgetExperience,
+  agentBenchmark,
   commercialActionGuard,
   stagingCutover,
   stagingCredentialDrill,
@@ -2664,6 +2675,7 @@ function LaunchCenterPanel({
   stateOrchestrator: SwiggyStateOrchestratorReport | null;
   widgetRuntime: SwiggyWidgetRuntimeReport | null;
   widgetExperience: SwiggyWidgetExperienceComposer | null;
+  agentBenchmark: SwiggyAgentExperienceBenchmark | null;
   commercialActionGuard: CommercialActionGuardReport | null;
   stagingCutover: SwiggyStagingCutoverRehearsal | null;
   stagingCredentialDrill: SwiggyStagingCredentialDrillReport | null;
@@ -3117,6 +3129,40 @@ function LaunchCenterPanel({
               <li key={placement.id} data-status={placement.status === "external_gate" ? "watch" : "healthy"}>
                 <span>{placement.label}</span>
                 <strong>{placement.placement.replaceAll("_", " ")}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="agent-benchmark-card">
+          <div className="mini-heading">
+            <Gauge aria-hidden="true" />
+            <strong>Agent Benchmark</strong>
+          </div>
+          <span>
+            {agentBenchmark
+              ? `${agentBenchmark.score}/100, ${agentBenchmark.totals.journeys} journeys, ${agentBenchmark.totals.acceptanceCriteria} UX gates`
+              : "Benchmarking premium Swiggy journeys"}
+          </span>
+          <div className="agent-benchmark-grid">
+            <div>
+              <strong>{agentBenchmark?.totals.bestInClassJourneys ?? 0}</strong>
+              <span>Best</span>
+            </div>
+            <div>
+              <strong>{agentBenchmark?.totals.toolsCovered ?? 0}</strong>
+              <span>Tools</span>
+            </div>
+            <div>
+              <strong>{agentBenchmark?.totals.dimensions ?? 0}</strong>
+              <span>Scores</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(agentBenchmark?.journeys ?? []).slice(0, 5).map((journey) => (
+              <li key={journey.id} data-status={journey.status === "external_gate" ? "watch" : "healthy"}>
+                <span>{journey.label}</span>
+                <strong>{journey.benchmarkScore}/100</strong>
               </li>
             ))}
           </ul>

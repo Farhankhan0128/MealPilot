@@ -729,6 +729,17 @@ const targetGroups = [
         "artifacts/visual-qa/widget-experience-composer.png",
       ),
       target(
+        "agent_experience_benchmark",
+        "Swiggy Agent Experience Benchmark",
+        "/",
+        ".agent-benchmark-card",
+        "desktop",
+        1280,
+        900,
+        "Premium Swiggy journey benchmark score, best-in-class count, tool coverage, and UX gates are visible.",
+        "artifacts/visual-qa/agent-experience-benchmark.png",
+      ),
+      target(
         "food_cart_widget_fallback",
         "Food cart fallback",
         "/",

@@ -310,6 +310,10 @@ assert(
   "OpenAPI widget experience composer is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-agent-experience-benchmark"].get.summary.includes("Agent Experience Benchmark"),
+  "OpenAPI agent experience benchmark is missing",
+);
+assert(
   openApi.paths["/api/mcp/commercial-action-guard"].get.summary.includes("commercial action"),
   "OpenAPI commercial action guard is missing",
 );
@@ -2183,7 +2187,7 @@ const reviewerArtifactVault = await request("/api/reviewer-artifact-vault");
 assert(reviewerArtifactVault.reviewerArtifactVault.score >= 90, "reviewer artifact vault score is below target");
 assert(reviewerArtifactVault.reviewerArtifactVault.totalArtifacts >= 30, "reviewer artifact vault artifacts are incomplete");
 assert(reviewerArtifactVault.reviewerArtifactVault.readyArtifacts >= 30, "reviewer artifact vault ready artifacts are incomplete");
-assert(reviewerArtifactVault.reviewerArtifactVault.totalScreenshotTargets === 14, "reviewer artifact vault screenshot targets are incomplete");
+assert(reviewerArtifactVault.reviewerArtifactVault.totalScreenshotTargets === 15, "reviewer artifact vault screenshot targets are incomplete");
 assert(reviewerArtifactVault.reviewerArtifactVault.readyScreenshotTargets >= 5, "reviewer artifact vault ready screenshots are incomplete");
 assert(reviewerArtifactVault.reviewerArtifactVault.totalCommands === 7, "reviewer artifact vault commands are incomplete");
 assert(reviewerArtifactVault.reviewerArtifactVault.readyCommands >= 6, "reviewer artifact vault ready commands are incomplete");
@@ -2328,6 +2332,17 @@ assert(
   "reviewer artifact vault widget experience composer artifact is missing",
 );
 assert(
+  reviewerArtifactVault.reviewerArtifactVault.artifactSections.some((section) =>
+    section.artifacts.some(
+      (artifact) =>
+        artifact.id === "agent_experience_benchmark" &&
+        artifact.label === "Swiggy Agent Experience Benchmark" &&
+        artifact.path === "/api/swiggy-agent-experience-benchmark",
+    ),
+  ),
+  "reviewer artifact vault agent experience benchmark artifact is missing",
+);
+assert(
   reviewerArtifactVault.reviewerArtifactVault.screenshotTargets.some(
     (target) =>
       target.id === "luxury_workspace_card" &&
@@ -2362,6 +2377,15 @@ assert(
       target.status === "ready",
   ),
   "reviewer artifact vault widget experience screenshot target is missing",
+);
+assert(
+  reviewerArtifactVault.reviewerArtifactVault.screenshotTargets.some(
+    (target) =>
+      target.id === "agent_experience_benchmark" &&
+      target.selector === ".agent-benchmark-card" &&
+      target.status === "ready",
+  ),
+  "reviewer artifact vault agent benchmark screenshot target is missing",
 );
 assert(
   reviewerArtifactVault.reviewerArtifactVault.screenshotTargets.some(
@@ -2464,8 +2488,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 60, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 60, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 61, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 61, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -2765,6 +2789,12 @@ assert(
     group.targets.some((target) => target.id === "widget_experience_composer" && target.selector === ".widget-experience-card"),
   ),
   "visual QA widget experience composer target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some((target) => target.id === "agent_experience_benchmark" && target.selector === ".agent-benchmark-card"),
+  ),
+  "visual QA agent experience benchmark target is missing",
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
@@ -4631,6 +4661,46 @@ assert(
   "widget experience hosted iframe gate is missing",
 );
 
+const agentBenchmark = await request("/api/swiggy-agent-experience-benchmark");
+assert(agentBenchmark.agentBenchmark.score >= 90, "agent experience benchmark score is below target");
+assert(agentBenchmark.agentBenchmark.totals.journeys >= 8, "agent experience benchmark journeys are incomplete");
+assert(agentBenchmark.agentBenchmark.totals.bestInClassJourneys >= 4, "agent experience benchmark best-in-class coverage is incomplete");
+assert(agentBenchmark.agentBenchmark.totals.toolsCovered >= 25, "agent experience benchmark tool coverage is incomplete");
+assert(agentBenchmark.agentBenchmark.totals.dimensions === 6, "agent experience benchmark dimensions are incomplete");
+assert(agentBenchmark.agentBenchmark.totals.acceptanceCriteria >= 30, "agent experience benchmark UX criteria are incomplete");
+assert(
+  ["speed", "trust", "personalization", "multimodal", "resilience", "commercial_safety"].every((dimensionId) =>
+    agentBenchmark.agentBenchmark.dimensions.some((dimension) => dimension.id === dimensionId),
+  ),
+  "agent experience benchmark dimension set is incomplete",
+);
+assert(
+  agentBenchmark.agentBenchmark.journeys.some(
+    (journey) =>
+      journey.servers.includes("combined") &&
+      journey.surfaces.includes("widget") &&
+      journey.swiggyTools.some((tool) => tool.endsWith("search_restaurants")) &&
+      journey.uxAcceptanceCriteria.some((criteria) => criteria.includes("confirmation")),
+  ),
+  "agent experience benchmark combined widget journey is missing",
+);
+assert(
+  ["all_server_context", "confirmation_first_luxury", "widget_ready_multimodal"].every((moatId) =>
+    agentBenchmark.agentBenchmark.competitorMoats.some((moat) => moat.id === moatId),
+  ),
+  "agent experience benchmark moat coverage is incomplete",
+);
+assert(
+  agentBenchmark.agentBenchmark.innovationBacklog.some(
+    (item) => item.owner === "Swiggy" && item.status === "external_gate",
+  ),
+  "agent experience benchmark Swiggy-owned gate is missing",
+);
+assert(
+  agentBenchmark.agentBenchmark.externalGates.some((gate) => gate.includes("staging credentials")),
+  "agent experience benchmark staging credential gate is missing",
+);
+
 const commercialActionGuard = await request("/api/mcp/commercial-action-guard");
 assert(commercialActionGuard.commercialActionGuard.score >= 95, "commercial action guard score is below target");
 assert(commercialActionGuard.commercialActionGuard.totalLanes === 4, "commercial action guard lanes are incomplete");
@@ -4810,6 +4880,10 @@ assert(
 assert(
   proof.proof.artifacts.some((artifact) => artifact.label === "Swiggy Widget Experience Composer"),
   "reviewer proof widget experience composer artifact is missing",
+);
+assert(
+  proof.proof.artifacts.some((artifact) => artifact.label === "Swiggy Agent Experience Benchmark"),
+  "reviewer proof agent experience benchmark artifact is missing",
 );
 assert(
   proof.proof.artifacts.some((artifact) => artifact.label === "Commercial Action Guard"),
@@ -6139,7 +6213,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 60, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 61, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -6153,7 +6227,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("60")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("61")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -6250,6 +6324,7 @@ assert(
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Resource & Prompt Studio") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Widget Runtime Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Widget Experience Composer") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Agent Experience Benchmark") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Commercial Action Guard") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Staging Cutover Rehearsal") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Staging Credential Drill Center") &&
@@ -6497,6 +6572,10 @@ assert(
   "launch bundle widget experience composer handoff link is missing",
 );
 assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-agent-experience-benchmark"),
+  "launch bundle agent experience benchmark handoff link is missing",
+);
+assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/mcp/commercial-action-guard"),
   "launch bundle commercial action guard handoff link is missing",
 );
@@ -6686,6 +6765,8 @@ console.log(
       widgetRuntimeSurfaces: widgetRuntime.widgetRuntime.totalSurfaces,
       widgetExperienceScore: widgetExperience.widgetExperience.score,
       widgetExperiencePlacements: widgetExperience.widgetExperience.totals.placements,
+      agentBenchmarkScore: agentBenchmark.agentBenchmark.score,
+      agentBenchmarkJourneys: agentBenchmark.agentBenchmark.totals.journeys,
       commercialActionGuardScore: commercialActionGuard.commercialActionGuard.score,
       commercialActionLanes: commercialActionGuard.commercialActionGuard.totalLanes,
       capabilityRegistryScore: capabilityRegistry.registry.score,

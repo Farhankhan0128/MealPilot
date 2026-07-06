@@ -194,6 +194,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/sessions/:sessionId/widgets`
 - `GET /api/mcp/widget-runtime`
 - `GET /api/swiggy-widget-experience-composer`
+- `GET /api/swiggy-agent-experience-benchmark`
 - `GET /api/mcp/backpressure-governor`
 - `GET /api/mcp/staging-cutover`
 - `POST /api/confirm`
@@ -587,7 +588,7 @@ The test suite checks that:
 - Swiggy Auth Lifecycle Center verifies PKCE, token lifetimes, v1 refresh-token gating, re-auth recovery, secure storage, and no-token logging.
 - Profile, substitution, confirm-all, tracking, and Builder Access package routes work end to end.
 - Pantry, group planning, scheduling, ops, privacy, markdown export, and OAuth callback routes work end to end.
-- Readiness, OpenAPI, preflight, replay, widgets, Widget Runtime, Widget Experience Composer, Staging Cutover, submission, Submission Console, Access Evidence Matrix, Production Launch Bundle, rate-limit, version, compliance, data governance, audit ledger, and reviewer proof routes work end to end.
+- Readiness, OpenAPI, preflight, replay, widgets, Widget Runtime, Widget Experience Composer, Agent Experience Benchmark, Staging Cutover, submission, Submission Console, Access Evidence Matrix, Production Launch Bundle, rate-limit, version, compliance, data governance, audit ledger, and reviewer proof routes work end to end.
 - Resilience drills cover safe 5xx retries, 429 Retry-After handling, 401 reauth, non-idempotent check-then-retry, and deprecation monitoring.
 - Evaluation Lab checks multi-persona city coverage, voice-safe responses, budget fit, preflight gates, confirmation locks, and PII minimization.
 - File-backed storage persists plans across server instances and exposes export/compaction diagnostics.

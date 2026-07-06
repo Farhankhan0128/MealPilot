@@ -165,6 +165,7 @@ const artifactSections = [
       artifact("resource_prompt_studio", "Resource & Prompt Studio", "api", "/api/mcp/resource-prompt-studio", "resources/list, resources/read, prompts/list, and prompts/get smoke evidence.", "Local samples are separated from live Swiggy resources."),
       artifact("widget_runtime", "Widget Runtime Center", "api", "/api/mcp/widget-runtime", "Iframe sandboxing, origin verification, postMessage handlers, semantic fallbacks, and voice exclusions.", "Hosted iframe URLs are external-gated until Swiggy ships them."),
       artifact("widget_experience_composer", "Swiggy Widget Experience Composer", "api", "/api/swiggy-widget-experience-composer", "Premium widget placements, responsive gallery states, postMessage handlers, safety gates, and hosted-widget activation runbook.", "Hosted iframe URLs remain explicitly gated until Swiggy approves production access."),
+      artifact("agent_experience_benchmark", "Swiggy Agent Experience Benchmark", "api", "/api/swiggy-agent-experience-benchmark", "Best-in-class journey quality benchmark across speed, trust, personalization, multimodal continuity, resilience, action safety, and innovation moats.", "Live cohort benchmark claims remain gated until staging credentials and operator-run pilots."),
       artifact("commercial_action_guard", "Commercial Action Guard", "api", "/api/mcp/commercial-action-guard", "Food order, Instamart checkout, Dineout booking, and combined journey confirmations with check-then-retry drills.", "Live commercial actions stay external-gated until staging credentials and production approval."),
       artifact("openapi_contract", "OpenAPI contract", "api", "/api/openapi.json", "Reviewer-readable HTTP contract for MealPilot proof surfaces.", "No secrets or live tokens in schema examples."),
     ],
@@ -203,6 +204,7 @@ const screenshotTargets = [
   screenshot("mobile_launch_center", "Mobile Launch Center", "/", ".launch-panel", "mobile", "Shows reviewer-critical launch cards collapse without overlap on mobile.", "Use manual browser capture until Playwright screenshot CI is added.", "manual_input"),
   screenshot("hosted_widget_preview", "Hosted widget preview", "/", ".widget-runtime-card", "desktop", "Shows semantic fallbacks for Swiggy widget types and hosted iframe gates.", "Use /api/mcp/widget-runtime until hosted iframe URLs are live.", "external_gate"),
   screenshot("widget_experience_composer", "Swiggy Widget Experience Composer", "/", ".widget-experience-card", "desktop", "Shows premium Swiggy widget placements, gallery states, event handlers, and hosted-widget gates.", "Use /api/swiggy-widget-experience-composer JSON readback."),
+  screenshot("agent_experience_benchmark", "Swiggy Agent Experience Benchmark", "/", ".agent-benchmark-card", "desktop", "Shows benchmarked premium Swiggy journeys, tool coverage, UX gates, and best-in-class score.", "Use /api/swiggy-agent-experience-benchmark JSON readback."),
 ];
 
 const commands = [

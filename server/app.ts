@@ -22,6 +22,7 @@ import {
   buildPlanReminders,
   buildRestockSuggestions,
 } from "./services/advancedWorkflows.js";
+import { buildSwiggyAgentExperienceBenchmark } from "./services/agentExperienceBenchmark.js";
 import { buildAiClientConnectKit, validateAiClientConfig } from "./services/aiClientConnect.js";
 import { buildAccessSubmissionStudio } from "./services/accessSubmissionStudio.js";
 import { buildSwiggyAuthLifecycleCenter } from "./services/authLifecycleCenter.js";
@@ -984,6 +985,10 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/swiggy-widget-experience-composer", (_req, res) => {
     res.json({ widgetExperience: buildSwiggyWidgetExperienceComposer(store.getAllPlans().at(-1)) });
+  });
+
+  app.get("/api/swiggy-agent-experience-benchmark", (_req, res) => {
+    res.json({ agentBenchmark: buildSwiggyAgentExperienceBenchmark(store.getAllPlans().at(-1)) });
   });
 
   app.get("/api/mcp/commercial-action-guard", (_req, res) => {

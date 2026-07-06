@@ -152,6 +152,7 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/mcp/state-orchestrator/rehearse-surface"].post.responses["200"].description).toContain("raw-ID");
     expect(openApi.body.paths["/api/mcp/widget-runtime"].get.summary).toContain("widget iframe");
     expect(openApi.body.paths["/api/swiggy-widget-experience-composer"].get.summary).toContain("Widget Experience Composer");
+    expect(openApi.body.paths["/api/swiggy-agent-experience-benchmark"].get.summary).toContain("Agent Experience Benchmark");
     expect(openApi.body.paths["/api/mcp/commercial-action-guard"].get.summary).toContain("commercial action");
     expect(openApi.body.paths["/api/mcp/backpressure-governor"].get.summary).toContain("backpressure");
     expect(openApi.body.paths["/api/mcp/staging-cutover"].get.summary).toContain("staging cutover");
@@ -1570,7 +1571,7 @@ describe("MealPilot API", () => {
     expect(packet.totals.formFields).toBeGreaterThanOrEqual(10);
     expect(packet.totals.requiredAttachments).toBeGreaterThanOrEqual(10);
     expect(packet.totals.launchArtifacts).toBeGreaterThanOrEqual(50);
-    expect(packet.totals.visualTargets).toBe(60);
+    expect(packet.totals.visualTargets).toBe(61);
     expect(packet.files.map((file: { id: string }) => file.id)).toEqual(
       expect.arrayContaining(["packet_json", "packet_markdown", "visual_report", "production_summary"]),
     );
@@ -1582,7 +1583,7 @@ describe("MealPilot API", () => {
     ).toBe(true);
     expect(
       packet.commands.some(
-        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("60"),
+        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("61"),
       ),
     ).toBe(true);
     expect(packet.copyBlocks.formFields).toContain("Redirect URI(s)");
@@ -2684,7 +2685,7 @@ describe("MealPilot API", () => {
     expect(vault.score).toBeGreaterThanOrEqual(90);
     expect(vault.totalArtifacts).toBeGreaterThanOrEqual(30);
     expect(vault.readyArtifacts).toBeGreaterThanOrEqual(30);
-    expect(vault.totalScreenshotTargets).toBe(14);
+    expect(vault.totalScreenshotTargets).toBe(15);
     expect(vault.readyScreenshotTargets).toBeGreaterThanOrEqual(5);
     expect(vault.totalCommands).toBe(7);
     expect(vault.readyCommands).toBeGreaterThanOrEqual(6);
@@ -2823,6 +2824,16 @@ describe("MealPilot API", () => {
       ),
     ).toBe(true);
     expect(
+      vault.artifactSections.some((section: { artifacts: Array<{ id: string; label: string; path: string }> }) =>
+        section.artifacts.some(
+          (artifact) =>
+            artifact.id === "agent_experience_benchmark" &&
+            artifact.label === "Swiggy Agent Experience Benchmark" &&
+            artifact.path === "/api/swiggy-agent-experience-benchmark",
+        ),
+      ),
+    ).toBe(true);
+    expect(
       vault.screenshotTargets.some(
         (target: { id: string; selector: string; status: string }) =>
           target.id === "luxury_workspace_card" &&
@@ -2925,6 +2936,14 @@ describe("MealPilot API", () => {
       ),
     ).toBe(true);
     expect(
+      vault.screenshotTargets.some(
+        (target: { id: string; selector: string; status: string }) =>
+          target.id === "agent_experience_benchmark" &&
+          target.selector === ".agent-benchmark-card" &&
+          target.status === "ready",
+      ),
+    ).toBe(true);
+    expect(
       vault.artifactSections.some((section: { artifacts: Array<{ id: string; path: string }> }) =>
         section.artifacts.some(
           (artifact) => artifact.id === "source_evolution" && artifact.path === "/api/swiggy-builders-source-evolution",
@@ -2955,8 +2974,8 @@ describe("MealPilot API", () => {
     const visualQa = response.body.visualQa;
 
     expect(visualQa.score).toBe(100);
-    expect(visualQa.totalTargets).toBe(60);
-    expect(visualQa.readyTargets).toBe(60);
+    expect(visualQa.totalTargets).toBe(61);
+    expect(visualQa.readyTargets).toBe(61);
     expect(visualQa.totalRules).toBe(7);
     expect(visualQa.readyRules).toBe(7);
     expect(visualQa.totalCommands).toBe(5);
@@ -3070,6 +3089,16 @@ describe("MealPilot API", () => {
           (target) =>
             target.id === "widget_experience_composer" &&
             target.selector === ".widget-experience-card" &&
+            target.viewport === "desktop",
+        ),
+      ),
+    ).toBe(true);
+    expect(
+      visualQa.targetGroups.some((group: { targets: Array<{ id: string; selector: string; viewport: string }> }) =>
+        group.targets.some(
+          (target) =>
+            target.id === "agent_experience_benchmark" &&
+            target.selector === ".agent-benchmark-card" &&
             target.viewport === "desktop",
         ),
       ),
@@ -4802,6 +4831,37 @@ describe("MealPilot API", () => {
     expect(composer.externalGates.some((gate: string) => gate.includes("hosted iframe"))).toBe(true);
   });
 
+  it("returns a Swiggy Agent Experience Benchmark for premium journey quality", async () => {
+    const { app } = createMealPilotServer();
+    await request(app).post("/api/plan").send(planningRequest).expect(201);
+    const response = await request(app).get("/api/swiggy-agent-experience-benchmark").expect(200);
+    const benchmark = response.body.agentBenchmark;
+
+    expect(benchmark.score).toBeGreaterThanOrEqual(90);
+    expect(benchmark.totals.journeys).toBeGreaterThanOrEqual(8);
+    expect(benchmark.totals.bestInClassJourneys).toBeGreaterThanOrEqual(4);
+    expect(benchmark.totals.toolsCovered).toBeGreaterThanOrEqual(25);
+    expect(benchmark.totals.dimensions).toBe(6);
+    expect(benchmark.totals.acceptanceCriteria).toBeGreaterThanOrEqual(30);
+    expect(benchmark.dimensions.map((dimension: { id: string }) => dimension.id)).toEqual(
+      expect.arrayContaining(["speed", "trust", "personalization", "multimodal", "resilience", "commercial_safety"]),
+    );
+    expect(
+      benchmark.journeys.some(
+        (journey: { servers: string[]; surfaces: string[]; swiggyTools: string[]; uxAcceptanceCriteria: string[] }) =>
+          journey.servers.includes("combined") &&
+          journey.surfaces.includes("widget") &&
+          journey.swiggyTools.some((tool) => tool.endsWith("search_restaurants")) &&
+          journey.uxAcceptanceCriteria.some((criteria) => criteria.includes("confirmation")),
+      ),
+    ).toBe(true);
+    expect(benchmark.competitorMoats.map((moat: { id: string }) => moat.id)).toEqual(
+      expect.arrayContaining(["all_server_context", "confirmation_first_luxury", "widget_ready_multimodal"]),
+    );
+    expect(benchmark.innovationBacklog.some((item: { owner: string; status: string }) => item.owner === "Swiggy" && item.status === "external_gate")).toBe(true);
+    expect(benchmark.externalGates.some((gate: string) => gate.includes("staging credentials"))).toBe(true);
+  });
+
   it("returns commercial action guards for confirmations and non-blind retries", async () => {
     const { app } = createMealPilotServer();
     const created = await request(app).post("/api/plan").send(planningRequest).expect(201);
@@ -5115,6 +5175,7 @@ describe("MealPilot API", () => {
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Widget contracts")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Widget Runtime Center")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Swiggy Widget Experience Composer")).toBe(true);
+    expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Swiggy Agent Experience Benchmark")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Staging Cutover Rehearsal")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Swiggy Staging Credential Drill Center")).toBe(true);
     expect(proof.body.proof.artifacts.some((artifact: { label: string }) => artifact.label === "Staging Transcript Export")).toBe(true);
@@ -5962,6 +6023,7 @@ describe("MealPilot API", () => {
         "Resource & Prompt Studio",
         "Widget Runtime Center",
         "Swiggy Widget Experience Composer",
+        "Swiggy Agent Experience Benchmark",
         "Staging Cutover Rehearsal",
         "Swiggy Staging Credential Drill Center",
         "Swiggy Live Signal Calibration Center",
@@ -6021,6 +6083,7 @@ describe("MealPilot API", () => {
     expect(bundle.handoffEmail.body).toContain("/api/mcp/resource-prompt-studio");
     expect(bundle.handoffEmail.body).toContain("/api/mcp/widget-runtime");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-widget-experience-composer");
+    expect(bundle.handoffEmail.body).toContain("/api/swiggy-agent-experience-benchmark");
     expect(bundle.handoffEmail.body).toContain("/api/mcp/backpressure-governor");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-load-lab");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-quota-negotiation-center");

@@ -630,6 +630,15 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
         "Composes Swiggy widget runtime surfaces into premium desktop, tablet, mobile, voice, and reviewer placements with fallback galleries and activation runbooks.",
     },
     {
+      id: "agent_experience_benchmark",
+      label: "Swiggy Agent Experience Benchmark",
+      path: "/api/swiggy-agent-experience-benchmark",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Benchmarks premium Swiggy journeys against speed, trust, personalization, multimodal continuity, resilience, commercial safety, UX acceptance criteria, and innovation moats.",
+    },
+    {
       id: "commercial_action_guard",
       label: "Commercial Action Guard",
       path: "/api/mcp/commercial-action-guard",
@@ -1145,6 +1154,7 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- State Orchestrator: /api/mcp/state-orchestrator",
     "- Widget Runtime Center: /api/mcp/widget-runtime",
     "- Swiggy Widget Experience Composer: /api/swiggy-widget-experience-composer",
+    "- Swiggy Agent Experience Benchmark: /api/swiggy-agent-experience-benchmark",
     "- Commercial Action Guard: /api/mcp/commercial-action-guard",
     "- Staging Cutover Rehearsal: /api/mcp/staging-cutover",
     "- Swiggy Staging Credential Drill Center: /api/swiggy-staging-credential-drill",
