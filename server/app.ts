@@ -61,6 +61,7 @@ import { buildMcpCapabilityRegistry } from "./services/capabilityRegistry.js";
 import { buildEvaluationLab } from "./services/evaluationLab.js";
 import { buildErrorIntelligenceReport, classifyMcpError } from "./services/errorIntelligence.js";
 import { buildSwiggyFaqPolicyCenter } from "./services/faqPolicyCenter.js";
+import { buildSwiggyFaqResolutionCenter } from "./services/faqResolutionCenter.js";
 import { buildGuestCollaborationCenter } from "./services/guestCollaborationCenter.js";
 import { buildSwiggyGrowthPartnershipCenter } from "./services/growthPartnership.js";
 import { buildSwiggyDemoEvidenceDirector } from "./services/demoEvidenceDirector.js";
@@ -1017,6 +1018,18 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/swiggy-faq-policy", (_req, res) => {
     res.json({ faqPolicy: buildSwiggyFaqPolicyCenter() });
+  });
+
+  app.get("/api/swiggy-faq-resolution-center", (_req, res) => {
+    res.json({
+      faqResolution: buildSwiggyFaqResolutionCenter({
+        config,
+        profile: store.getProfile(),
+        coverage: buildMcpCoverage(),
+        latestPlan: store.getAllPlans().at(-1),
+        handoffState: store.getAccessSubmissionState(),
+      }),
+    });
   });
 
   app.get("/api/swiggy-growth-partnership", (_req, res) => {

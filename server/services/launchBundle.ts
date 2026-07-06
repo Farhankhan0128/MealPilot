@@ -87,6 +87,15 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
         "Maps homepage, developer, enterprise, access-ground-rule, footer-resource, allowed, restricted, prohibited, operating-principle, and legal FAQ/policy signals to MealPilot proof.",
     },
     {
+      id: "faq_resolution",
+      label: "Swiggy FAQ Resolution Center",
+      path: "/api/swiggy-faq-resolution-center",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Turns public Builders FAQ questions and policy rules into reviewer-ready answers, CTAs, proof routes, owners, and external gates.",
+    },
+    {
       id: "growth_partnership",
       label: "Growth Partnership Center",
       path: "/api/swiggy-growth-partnership",
@@ -795,6 +804,7 @@ function buildPhases(config: ServerConfig, latestPlan: MealPlan | undefined, art
         artifact("cta_execution"),
         artifact("builder_intake"),
         artifact("faq_policy"),
+        artifact("faq_resolution"),
         artifact("growth_partnership"),
         artifact("benefits_activation"),
         artifact("channel_multimodal_studio"),
@@ -1002,6 +1012,7 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- CTA Execution Center: /api/swiggy-cta-execution-center",
     "- Builder Intake Command Center: /api/swiggy-builder-intake",
     "- FAQ & Policy Center: /api/swiggy-faq-policy",
+    "- Swiggy FAQ Resolution Center: /api/swiggy-faq-resolution-center",
     "- Growth Partnership Center: /api/swiggy-growth-partnership",
     "- Swiggy Benefits Activation Center: /api/swiggy-benefits-activation-center",
     "- Channel & Multimodal Studio: /api/channel-multimodal-studio",

@@ -117,6 +117,7 @@ import {
   fetchSwiggyBenefitsActivationCenter,
   fetchSwiggyOperatingContractCenter,
   fetchSwiggyFaqPolicyCenter,
+  fetchSwiggyFaqResolutionCenter,
   fetchSwiggyGrowthPartnershipCenter,
   fetchSwiggyShowcaseSubmissionCenter,
   fetchSwiggyDemoEvidenceDirector,
@@ -263,6 +264,7 @@ import type {
   SwiggyDocsCoverageReport,
   SwiggyDocsTwinExplorer,
   SwiggyFaqPolicyCenter,
+  SwiggyFaqResolutionCenter,
   SwiggyGrowthPartnershipCenter,
   SwiggyShowcaseSubmissionCenter,
   SwiggyDemoEvidenceDirector,
@@ -458,6 +460,7 @@ function App() {
   const [swiggyDeepSiteMap, setSwiggyDeepSiteMap] = useState<SwiggyDeepSiteMap | null>(null);
   const [swiggyBuilderIntake, setSwiggyBuilderIntake] = useState<SwiggyBuilderIntakeCommandCenter | null>(null);
   const [swiggyFaqPolicy, setSwiggyFaqPolicy] = useState<SwiggyFaqPolicyCenter | null>(null);
+  const [faqResolution, setFaqResolution] = useState<SwiggyFaqResolutionCenter | null>(null);
   const [swiggyGrowthPartnership, setSwiggyGrowthPartnership] = useState<SwiggyGrowthPartnershipCenter | null>(null);
   const [benefitsActivation, setBenefitsActivation] = useState<SwiggyBenefitsActivationCenter | null>(null);
   const [showcaseSubmission, setShowcaseSubmission] = useState<SwiggyShowcaseSubmissionCenter | null>(null);
@@ -666,6 +669,7 @@ function App() {
       deepSiteMapResponse,
       builderIntakeResponse,
       faqPolicyResponse,
+      faqResolutionResponse,
       growthPartnershipResponse,
       benefitsActivationResponse,
       showcaseSubmissionResponse,
@@ -775,6 +779,7 @@ function App() {
       fetchSwiggyDeepSiteMap(),
       fetchSwiggyBuilderIntake(),
       fetchSwiggyFaqPolicyCenter(),
+      fetchSwiggyFaqResolutionCenter(),
       fetchSwiggyGrowthPartnershipCenter(),
       fetchSwiggyBenefitsActivationCenter(),
       fetchSwiggyShowcaseSubmissionCenter(),
@@ -885,6 +890,7 @@ function App() {
     setSwiggyDeepSiteMap(deepSiteMapResponse.deepSiteMap);
     setSwiggyBuilderIntake(builderIntakeResponse.intake);
     setSwiggyFaqPolicy(faqPolicyResponse.faqPolicy);
+    setFaqResolution(faqResolutionResponse.faqResolution);
     setSwiggyGrowthPartnership(growthPartnershipResponse.growthPartnership);
     setBenefitsActivation(benefitsActivationResponse.benefitsActivation);
     setShowcaseSubmission(showcaseSubmissionResponse.showcaseSubmission);
@@ -998,6 +1004,7 @@ function App() {
       deepSiteMapResponse,
       builderIntakeResponse,
       faqPolicyResponse,
+      faqResolutionResponse,
       growthPartnershipResponse,
       benefitsActivationResponse,
       showcaseSubmissionResponse,
@@ -1104,6 +1111,7 @@ function App() {
       fetchSwiggyDeepSiteMap(),
       fetchSwiggyBuilderIntake(),
       fetchSwiggyFaqPolicyCenter(),
+      fetchSwiggyFaqResolutionCenter(),
       fetchSwiggyGrowthPartnershipCenter(),
       fetchSwiggyBenefitsActivationCenter(),
       fetchSwiggyShowcaseSubmissionCenter(),
@@ -1210,6 +1218,7 @@ function App() {
     setSwiggyDeepSiteMap(deepSiteMapResponse.deepSiteMap);
     setSwiggyBuilderIntake(builderIntakeResponse.intake);
     setSwiggyFaqPolicy(faqPolicyResponse.faqPolicy);
+    setFaqResolution(faqResolutionResponse.faqResolution);
     setSwiggyGrowthPartnership(growthPartnershipResponse.growthPartnership);
     setBenefitsActivation(benefitsActivationResponse.benefitsActivation);
     setShowcaseSubmission(showcaseSubmissionResponse.showcaseSubmission);
@@ -1891,6 +1900,7 @@ function App() {
                 deepSiteMap={swiggyDeepSiteMap}
                 builderIntake={swiggyBuilderIntake}
                 faqPolicy={swiggyFaqPolicy}
+                faqResolution={faqResolution}
                 growthPartnership={swiggyGrowthPartnership}
                 benefitsActivation={benefitsActivation}
                 showcaseSubmission={showcaseSubmission}
@@ -2487,6 +2497,7 @@ function LaunchCenterPanel({
   deepSiteMap,
   builderIntake,
   faqPolicy,
+  faqResolution,
   growthPartnership,
   benefitsActivation,
   showcaseSubmission,
@@ -2566,6 +2577,7 @@ function LaunchCenterPanel({
   deepSiteMap: SwiggyDeepSiteMap | null;
   builderIntake: SwiggyBuilderIntakeCommandCenter | null;
   faqPolicy: SwiggyFaqPolicyCenter | null;
+  faqResolution: SwiggyFaqResolutionCenter | null;
   growthPartnership: SwiggyGrowthPartnershipCenter | null;
   benefitsActivation: SwiggyBenefitsActivationCenter | null;
   showcaseSubmission: SwiggyShowcaseSubmissionCenter | null;
@@ -3774,6 +3786,56 @@ function LaunchCenterPanel({
               </li>
             ))}
           </ul>
+        </article>
+
+        <article className="faq-resolution-card">
+          <div className="mini-heading">
+            <BookOpen aria-hidden="true" />
+            <strong>FAQ Resolution</strong>
+          </div>
+          <span>
+            {faqResolution
+              ? `${faqResolution.score}/100, ${faqResolution.totals.ready}/${faqResolution.totals.questions} answers ready`
+              : "Resolving FAQ answers, proof, CTAs, and gates"}
+          </span>
+          <div className="faq-resolution-grid">
+            <div>
+              <strong>{faqResolution?.totals.operatorInputs ?? 0}</strong>
+              <span>Operator</span>
+            </div>
+            <div>
+              <strong>{faqResolution?.totals.swiggyGates ?? 0}</strong>
+              <span>Swiggy gates</span>
+            </div>
+            <div>
+              <strong>{faqResolution?.totals.activationCtas ?? 0}</strong>
+              <span>CTAs</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(faqResolution?.questions ?? []).slice(0, 5).map((questionItem) => (
+              <li
+                key={questionItem.id}
+                data-status={
+                  questionItem.status === "ready" ? "healthy" : questionItem.status === "swiggy_gate" ? "blocked" : "watch"
+                }
+              >
+                <span>{questionItem.question}</span>
+                <strong>{questionItem.owner}</strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-intelligence-actions" aria-label="FAQ resolution links">
+            <a href="/api/swiggy-faq-resolution-center" target="_blank" rel="noreferrer">
+              Resolution API
+            </a>
+            <a href="/api/swiggy-faq-policy" target="_blank" rel="noreferrer">
+              FAQ policy
+            </a>
+            <a href="https://mcp.swiggy.com/builders/#faq" target="_blank" rel="noreferrer">
+              Official FAQ
+            </a>
+          </div>
         </article>
 
         <article className="growth-partnership-card">

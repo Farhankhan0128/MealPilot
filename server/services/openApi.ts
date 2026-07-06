@@ -377,6 +377,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-faq-resolution-center": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy FAQ Resolution Center for reviewer-ready answers, CTAs, and proof links",
+          responses: {
+            "200": {
+              description:
+                "Every public Builders FAQ question, policy rule, answer, owner, CTA, proof route, reviewer script, support contact, and external Swiggy/operator gate resolved for access review",
+            },
+          },
+        },
+      },
       "/api/swiggy-growth-partnership": {
         get: {
           tags: ["Builder Access"],

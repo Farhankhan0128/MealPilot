@@ -136,6 +136,13 @@ assert(
   "OpenAPI FAQ and policy contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-faq-resolution-center"].get.summary.includes("FAQ Resolution") &&
+    openApi.paths["/api/swiggy-faq-resolution-center"].get.responses["200"].description.includes(
+      "Every public Builders FAQ question",
+    ),
+  "OpenAPI FAQ resolution center contract is missing",
+);
+assert(
   openApi.paths["/api/swiggy-growth-partnership"].get.summary.includes("Growth Partnership"),
   "OpenAPI growth partnership contract is missing",
 );
@@ -753,6 +760,39 @@ assert(faqPolicy.faqPolicy.supportContact.email === "builders@swiggy.in", "FAQ a
 assert(
   faqPolicy.faqPolicy.externalGates.some((gate) => gate.includes("Enterprise contracts")),
   "FAQ and policy enterprise contract gate is missing",
+);
+
+const faqResolution = await request("/api/swiggy-faq-resolution-center");
+assert(faqResolution.faqResolution.score >= 85, "FAQ resolution score is below target");
+assert(faqResolution.faqResolution.totals.questions >= 16, "FAQ resolution question coverage is incomplete");
+assert(faqResolution.faqResolution.totals.ready >= 15, "FAQ resolution ready answer coverage is incomplete");
+assert(faqResolution.faqResolution.totals.policyRules >= 9, "FAQ resolution policy coverage is incomplete");
+assert(faqResolution.faqResolution.totals.activationCtas === 5, "FAQ resolution CTA coverage is incomplete");
+assert(faqResolution.faqResolution.totals.proofLinks >= 20, "FAQ resolution proof links are incomplete");
+assert(
+  ["home_what_is_builders", "developer_auth", "developer_sandbox", "enterprise_white_label"].every((id) =>
+    faqResolution.faqResolution.questions.some((item) => item.id === id),
+  ),
+  "FAQ resolution critical answers are missing",
+);
+assert(
+  ["answer_packet", "official_faq", "access_form", "proof_routes", "manual_gates"].every((id) =>
+    faqResolution.faqResolution.activationCtas.some((item) => item.id === id),
+  ),
+  "FAQ resolution activation CTAs are missing",
+);
+assert(
+  faqResolution.faqResolution.reviewerScript.map((step) => step.sequence).join(",") === "1,2,3,4,5",
+  "FAQ resolution reviewer script is incomplete",
+);
+assert(faqResolution.faqResolution.supportContact.email === "builders@swiggy.in", "FAQ resolution support contact is missing");
+assert(
+  faqResolution.faqResolution.assertions.some((assertion) => assertion.includes("Every public FAQ answer")),
+  "FAQ resolution answer assertion is missing",
+);
+assert(
+  faqResolution.faqResolution.externalGates.some((gate) => gate.includes("staging or production credentials")),
+  "FAQ resolution external gates are missing",
 );
 
 const growthPartnership = await request("/api/swiggy-growth-partnership");
@@ -1955,7 +1995,11 @@ assert(
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/reviewer-artifact-vault") &&
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-demo-evidence-director") &&
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-partner-support-room") &&
-    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-benefits-activation-center"),
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-benefits-activation-center") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-faq-resolution-center") &&
+    reviewerArtifactVault.reviewerArtifactVault.artifactSections.some((section) =>
+      section.artifacts.some((artifact) => artifact.id === "faq_resolution" && artifact.path === "/api/swiggy-faq-resolution-center"),
+    ),
   "reviewer artifact vault email draft is incomplete",
 );
 assert(
@@ -1965,8 +2009,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 50, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 50, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 51, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 51, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -1987,6 +2031,17 @@ assert(
     ),
   ),
   "visual QA card screenshot target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some(
+      (target) =>
+        target.id === "faq_resolution_card" &&
+        target.selector === ".faq-resolution-card" &&
+        target.viewport === "desktop",
+    ),
+  ),
+  "visual QA FAQ resolution target is missing",
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
@@ -4093,6 +4148,10 @@ assert(
   "reviewer proof FAQ and policy artifact is missing",
 );
 assert(
+  proof.proof.artifacts.some((artifact) => artifact.label === "Swiggy FAQ Resolution Center"),
+  "reviewer proof FAQ resolution artifact is missing",
+);
+assert(
   proof.proof.artifacts.some((artifact) => artifact.label === "Growth Partnership Center"),
   "reviewer proof growth partnership artifact is missing",
 );
@@ -5490,7 +5549,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 50, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 51, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -5504,7 +5563,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("50")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("51")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -5539,6 +5598,7 @@ assert(
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "CTA Execution Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Builder Intake Command Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "FAQ & Policy Center") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy FAQ Resolution Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Growth Partnership Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Channel & Multimodal Studio") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Visual Dish Capture Center") &&
@@ -5664,6 +5724,10 @@ assert(
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-faq-policy"),
   "launch bundle FAQ and policy handoff link is missing",
+);
+assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-faq-resolution-center"),
+  "launch bundle FAQ resolution handoff link is missing",
 );
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-growth-partnership"),
@@ -6077,6 +6141,9 @@ console.log(
       liveSignalCalibrationProbes: liveSignalCalibration.liveSignalCalibration.totals.probes,
       faqPolicyScore: faqPolicy.faqPolicy.score,
       faqPolicyQuestions: faqPolicy.faqPolicy.totalQuestions,
+      faqResolutionScore: faqResolution.faqResolution.score,
+      faqResolutionQuestions: faqResolution.faqResolution.totals.questions,
+      faqResolutionCtas: faqResolution.faqResolution.totals.activationCtas,
       growthPartnershipScore: growthPartnership.growthPartnership.score,
       growthExperiments: growthPartnership.growthPartnership.totalExperiments,
       benefitsActivationScore: benefitsActivation.benefitsActivation.score,

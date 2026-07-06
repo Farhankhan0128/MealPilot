@@ -265,6 +265,7 @@ GET  /api/swiggy-builders-page-mesh
 GET  /api/swiggy-cta-live-audit
 GET  /api/swiggy-builder-intake
 GET  /api/swiggy-faq-policy
+GET  /api/swiggy-faq-resolution-center
 GET  /api/swiggy-growth-partnership
 GET  /api/swiggy-showcase-submission-center
 GET  /api/swiggy-demo-evidence-director
@@ -510,6 +511,8 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 `GET /api/swiggy-builder-intake` is the signup and application command center: all 11 website CTA paths become locally prepared, owner-assigned actions with evidence links, required form fields, demo storyboard steps, copy-ready outbound drafts, and explicit operator/Swiggy gates for final submission and approval.
 
 `GET /api/swiggy-faq-policy` is the FAQ and policy coverage center: homepage, developer, enterprise, access-guideline, footer-resource, allowed/restricted/prohibited, operating-principle, and legal signals map to MealPilot evidence links while enterprise contracts, co-branding, support channels, staging credentials, and production credentials remain external gates.
+
+`GET /api/swiggy-faq-resolution-center` turns public Builders FAQ questions and policy rules into reviewer-ready answers with owners, proof links, activation CTAs, a five-step reviewer script, support contact, and explicit operator or Swiggy gates.
 
 `GET /api/swiggy-growth-partnership` is the growth partnership center: official get-noticed, hiring, co-branding, direct-support, enterprise analytics, and joint go-to-market signals become MealPilot launch experiments, proof assets, metric targets, and explicit partner asks while Swiggy feature placement, co-marketing approval, Slack, partner manager, dashboard access, and higher limits remain external gates.
 

@@ -1300,6 +1300,60 @@ export interface SwiggyDocsTwinExplorer {
 }
 
 export type SwiggyFaqPolicyStatus = "ready" | "documented" | "external_gate";
+export type SwiggyFaqResolutionStatus = "ready" | "operator_input" | "swiggy_gate";
+export type SwiggyFaqResolutionOwner = "MealPilot" | "Operator" | "Swiggy" | "Joint";
+
+export interface SwiggyFaqResolutionQuestion {
+  id: string;
+  question: string;
+  audience: "all" | "developers" | "enterprises" | "reviewers";
+  source: "home_faq" | "developer_faq" | "enterprise_faq" | "access_guidelines" | "footer_resource";
+  owner: SwiggyFaqResolutionOwner;
+  status: SwiggyFaqResolutionStatus;
+  officialSignal: string;
+  resolvedAnswer: string;
+  proofLinks: string[];
+  recommendedCta: string;
+  nextAction: string;
+}
+
+export interface SwiggyFaqResolutionCta {
+  id: string;
+  label: string;
+  status: SwiggyFaqResolutionStatus;
+  owner: SwiggyFaqResolutionOwner;
+  action: string;
+  proofLinks: string[];
+}
+
+export interface SwiggyFaqResolutionCenter {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  totals: {
+    questions: number;
+    ready: number;
+    operatorInputs: number;
+    swiggyGates: number;
+    policyRules: number;
+    activationCtas: number;
+    proofLinks: number;
+  };
+  questions: SwiggyFaqResolutionQuestion[];
+  policyResolutions: Array<{
+    id: string;
+    category: SwiggyPolicyRule["category"];
+    status: SwiggyFaqResolutionStatus;
+    owner: SwiggyFaqResolutionOwner;
+    answer: string;
+    proofLinks: string[];
+  }>;
+  activationCtas: SwiggyFaqResolutionCta[];
+  reviewerScript: Array<{ sequence: number; label: string; say: string; proofLinks: string[] }>;
+  supportContact: { email: string; evidenceLinks: string[] };
+  assertions: string[];
+  externalGates: string[];
+}
 
 export interface SwiggyFaqPolicyItem {
   id: string;

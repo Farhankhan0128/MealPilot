@@ -97,6 +97,7 @@ import type {
   SwiggyDocsCoverageReport,
   SwiggyDocsTwinExplorer,
   SwiggyFaqPolicyCenter,
+  SwiggyFaqResolutionCenter,
   SwiggyGrowthPartnershipCenter,
   SwiggyDemoEvidenceDirector,
   SwiggyInteractionQaCenter,
@@ -404,6 +405,10 @@ export function fetchSwiggyBuilderIntake() {
 
 export function fetchSwiggyFaqPolicyCenter() {
   return requestJson<{ faqPolicy: SwiggyFaqPolicyCenter }>("/api/swiggy-faq-policy");
+}
+
+export function fetchSwiggyFaqResolutionCenter() {
+  return requestJson<{ faqResolution: SwiggyFaqResolutionCenter }>("/api/swiggy-faq-resolution-center");
 }
 
 export function fetchSwiggyGrowthPartnershipCenter() {

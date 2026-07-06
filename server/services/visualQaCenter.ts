@@ -409,6 +409,17 @@ const targetGroups = [
         "artifacts/visual-qa/cta-live-audit-card.png",
       ),
       target(
+        "faq_resolution_card",
+        "FAQ Resolution card",
+        "/",
+        ".faq-resolution-card",
+        "desktop",
+        1280,
+        900,
+        "FAQ Resolution shows reviewer-ready answers, owners, proof routes, CTAs, and operator or Swiggy gates.",
+        "artifacts/visual-qa/faq-resolution-card.png",
+      ),
+      target(
         "partner_success_card",
         "Partner Success Desk card",
         "/",

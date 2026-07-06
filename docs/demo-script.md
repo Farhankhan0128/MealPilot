@@ -261,6 +261,7 @@ Briefly show production readiness:
 - `/api/swiggy-access-dossier`
 - `/api/swiggy-access-evidence-matrix`
 - `/api/swiggy-faq-policy`
+- `/api/swiggy-faq-resolution-center`
 - `/api/swiggy-growth-partnership`
 - `/api/channel-multimodal-studio`
 - `/api/nutrition-budget-intelligence`

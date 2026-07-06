@@ -289,6 +289,7 @@ export function buildReviewerProof(options: {
       { label: "Website Atlas", path: "/api/swiggy-website-atlas" },
       { label: "Builder Intake Command Center", path: "/api/swiggy-builder-intake" },
       { label: "FAQ & Policy Center", path: "/api/swiggy-faq-policy" },
+      { label: "Swiggy FAQ Resolution Center", path: "/api/swiggy-faq-resolution-center" },
       { label: "Growth Partnership Center", path: "/api/swiggy-growth-partnership" },
       { label: "Channel & Multimodal Studio", path: "/api/channel-multimodal-studio" },
       { label: "Swiggy Visual Dish Capture Center", path: "/api/swiggy-visual-dish-capture" },
