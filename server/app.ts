@@ -28,6 +28,7 @@ import { buildSwiggyAuthLifecycleCenter } from "./services/authLifecycleCenter.j
 import { buildAuditLedgerCenter } from "./services/auditLedger.js";
 import { buildBrandComplianceKit } from "./services/brandCompliance.js";
 import { buildSwiggyBuildersLaunchStoryCenter } from "./services/buildersLaunchStoryCenter.js";
+import { buildSwiggyBuildersPageMeshAuditor } from "./services/buildersPageMeshAuditor.js";
 import { buildSwiggyBuildersSiteParityAuditor } from "./services/buildersSiteParityAuditor.js";
 import { buildBuilderPacketExport, buildBuilderPacketMarkdown } from "./services/builderPacketExport.js";
 import { buildMcpBackpressureGovernor } from "./services/backpressureGovernor.js";
@@ -928,6 +929,13 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
     "/api/swiggy-builders-site-parity",
     asyncRoute(async (_req, res) => {
       res.json({ buildersSiteParity: await buildSwiggyBuildersSiteParityAuditor() });
+    }),
+  );
+
+  app.get(
+    "/api/swiggy-builders-page-mesh",
+    asyncRoute(async (_req, res) => {
+      res.json({ buildersPageMesh: await buildSwiggyBuildersPageMeshAuditor() });
     }),
   );
 

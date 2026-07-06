@@ -847,6 +847,50 @@ export interface SwiggyBuildersSiteParityAuditor {
   externalGates: string[];
 }
 
+export type SwiggyBuildersPageMeshStatus = "covered" | "watch" | "blocked";
+
+export interface SwiggyBuildersPageMeshRow {
+  id: string;
+  title: string;
+  url: string;
+  pageType: SwiggyWebsitePageAtlas["pageType"];
+  statusCode?: number;
+  durationMs: number;
+  liveTitle: string;
+  anchorCount: number;
+  uniqueLiveUrls: number;
+  unsafeLinks: number;
+  expectedModules: number;
+  matchedModuleSignals: number;
+  expectedCtas: number;
+  matchedCtas: number;
+  evidenceLinks: string[];
+  status: SwiggyBuildersPageMeshStatus;
+}
+
+export interface SwiggyBuildersPageMeshAuditor {
+  generatedAt: string;
+  score: number;
+  status: SwiggyBuildersPageMeshStatus;
+  officialSources: string[];
+  totals: {
+    pages: number;
+    fetchedPages: number;
+    liveAnchors: number;
+    uniqueLiveUrls: number;
+    unsafeLinks: number;
+    expectedModules: number;
+    matchedModuleSignals: number;
+    expectedCtas: number;
+    matchedCtas: number;
+  };
+  pages: SwiggyBuildersPageMeshRow[];
+  driftSignals: string[];
+  operatorRunbook: Array<{ sequence: number; command: string; proves: string }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type SwiggyDeepSiteMapStatus = "implemented" | "documented" | "watch" | "external_gate";
 
 export interface SwiggyDeepSitePage {

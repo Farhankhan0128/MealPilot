@@ -69,6 +69,7 @@ import type {
   SwiggyAuthLifecycleCenterReport,
   EnterprisePlatformCenterReport,
   SwiggyBuildersLaunchStoryCenterReport,
+  SwiggyBuildersPageMeshAuditor,
   SwiggyBuildersSiteParityAuditor,
   SwiggyAccessDossier,
   SwiggyAccessEvidenceMatrix,
@@ -363,6 +364,10 @@ export function fetchSwiggyWebsiteAtlas() {
 
 export function fetchSwiggyBuildersSiteParity() {
   return requestJson<{ buildersSiteParity: SwiggyBuildersSiteParityAuditor }>("/api/swiggy-builders-site-parity");
+}
+
+export function fetchSwiggyBuildersPageMesh() {
+  return requestJson<{ buildersPageMesh: SwiggyBuildersPageMeshAuditor }>("/api/swiggy-builders-page-mesh");
 }
 
 export function fetchSwiggyBuildersLaunchStory() {

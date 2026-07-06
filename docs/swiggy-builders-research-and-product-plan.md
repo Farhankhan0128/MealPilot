@@ -192,6 +192,7 @@ MealPilot should become a luxury-grade food and meal intelligence product with t
 | Swiggy llms Manifest Verifier | `server/services/llmsManifestVerifier.ts` |
 | Swiggy Tool Parity Auditor | `server/services/toolParityAuditor.ts` |
 | Swiggy Builders Site Parity Auditor | `server/services/buildersSiteParityAuditor.ts` |
+| Swiggy Builders Page Mesh Auditor | `server/services/buildersPageMeshAuditor.ts` |
 | Swiggy Upstream Watch | `server/services/upstreamWatch.ts` |
 | Swiggy Source Intelligence | `server/services/sourceIntelligence.ts` |
 | Swiggy Deep Site Map | `server/services/deepSiteMap.ts` |
@@ -274,6 +275,7 @@ Coverage targets:
 - API health, config, security headers, OpenAPI
 - Builder package and Swiggy Builders map
 - Website Atlas for header, footer, production access page, launch blog, page modules, CTAs, and legal/resource links
+- Swiggy Builders Page Mesh Auditor for live public page reachability, title/anchor extraction, module signal parity, CTA matching, and safe-origin drift checks across every non-external Website Atlas page
 - FAQ & Policy Center for homepage/developer/enterprise FAQ themes, access ground rules, footer resources, allowed/restricted/prohibited policy categories, legal signals, and support contact
 - Growth Partnership Center for get-noticed, hiring, co-branding, direct support, co-marketing, analytics dashboards, strategic guidance, launch experiments, metrics, assets, and partner asks
 - Swiggy Upstream Watch for `llms.txt`, `llms-full.txt`, changelog limitations, v1.1/v1.2/v2 roadmap items, signed manifests, and new-tool action queues
@@ -311,6 +313,7 @@ Coverage targets:
 - Luxury Experience Workspace for all 35 Swiggy tools across premium reservation, Food cart, Instamart basket, combined evening, and recovery workspaces with widget fallbacks, voice contracts, telemetry, and confirmation gates
 - Reviewer Artifact Vault for access-submission proof links, OpenAPI, smoke commands, screenshot targets, demo-video checklist, logs, traces, redaction rules, support context, and reviewer handoff copy
 - Visual QA Center for screenshot targets, selectors, viewport dimensions, artifact paths, no-overlap/text-fit rules, widget fallback checks, mobile layout checks, redaction visibility, and screenshot automation gates
+- Swiggy Builders Page Mesh Auditor for a live multi-page check of Builders homepage, developer, enterprise, access, blog, docs, and reference pages before reviewer submission
 - Swiggy Deep Site Map for a single reviewer audit of every Builders page, module signal, CTA, header/docs/footer link, source-reconciliation section, MealPilot proof path, assertion, and external gate
 - Swiggy llms Manifest Verifier for live `llms.txt` parsing, markdown/rendered twin derivation, Swiggy-only origin safety, Docs Coverage comparison, and Food 14, Instamart 13, Dineout 8 reference-tool drift checks
 - Swiggy OAuth Status coverage for authorize/token/logout endpoints, callback lifecycle, pending PKCE verifier count, token source, expiry, storage policy, and no-token-logging checklist

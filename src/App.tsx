@@ -107,6 +107,7 @@ import {
   fetchSwiggyAuthLifecycleCenter,
   fetchSwiggyAuthStatus,
   fetchSwiggyBuildersMap,
+  fetchSwiggyBuildersPageMesh,
   fetchSwiggyBuildersSiteParity,
   fetchSwiggyBuilderIntake,
   fetchSwiggyBuildersLaunchStory,
@@ -229,6 +230,7 @@ import type {
   SwiggyAccessDossier,
   SwiggyAccessEvidenceMatrix,
   SwiggyBuildersLaunchStoryCenterReport,
+  SwiggyBuildersPageMeshAuditor,
   SwiggyBuildersSiteParityAuditor,
   SwiggyBuilderIntakeCommandCenter,
   SwiggyCancellationCareCenterReport,
@@ -425,6 +427,7 @@ function App() {
   const [swiggyBuildersMap, setSwiggyBuildersMap] = useState<SwiggyBuildersMap | null>(null);
   const [swiggyWebsiteAtlas, setSwiggyWebsiteAtlas] = useState<SwiggyWebsiteAtlas | null>(null);
   const [buildersSiteParity, setBuildersSiteParity] = useState<SwiggyBuildersSiteParityAuditor | null>(null);
+  const [buildersPageMesh, setBuildersPageMesh] = useState<SwiggyBuildersPageMeshAuditor | null>(null);
   const [buildersLaunchStory, setBuildersLaunchStory] = useState<SwiggyBuildersLaunchStoryCenterReport | null>(null);
   const [operatingContract, setOperatingContract] = useState<SwiggyOperatingContractCenterReport | null>(null);
   const [swiggyDeepSiteMap, setSwiggyDeepSiteMap] = useState<SwiggyDeepSiteMap | null>(null);
@@ -620,6 +623,7 @@ function App() {
       buildersMapResponse,
       websiteAtlasResponse,
       buildersSiteParityResponse,
+      buildersPageMeshResponse,
       buildersLaunchStoryResponse,
       operatingContractResponse,
       deepSiteMapResponse,
@@ -716,6 +720,7 @@ function App() {
       fetchSwiggyBuildersMap(),
       fetchSwiggyWebsiteAtlas(),
       fetchSwiggyBuildersSiteParity(),
+      fetchSwiggyBuildersPageMesh(),
       fetchSwiggyBuildersLaunchStory(),
       fetchSwiggyOperatingContractCenter(),
       fetchSwiggyDeepSiteMap(),
@@ -813,6 +818,7 @@ function App() {
     setSwiggyBuildersMap(buildersMapResponse.map);
     setSwiggyWebsiteAtlas(websiteAtlasResponse.atlas);
     setBuildersSiteParity(buildersSiteParityResponse.buildersSiteParity);
+    setBuildersPageMesh(buildersPageMeshResponse.buildersPageMesh);
     setBuildersLaunchStory(buildersLaunchStoryResponse.launchStory);
     setOperatingContract(operatingContractResponse.operatingContract);
     setSwiggyDeepSiteMap(deepSiteMapResponse.deepSiteMap);
@@ -913,6 +919,7 @@ function App() {
       buildersMapResponse,
       websiteAtlasResponse,
       buildersSiteParityResponse,
+      buildersPageMeshResponse,
       buildersLaunchStoryResponse,
       operatingContractResponse,
       deepSiteMapResponse,
@@ -1006,6 +1013,7 @@ function App() {
       fetchSwiggyBuildersMap(),
       fetchSwiggyWebsiteAtlas(),
       fetchSwiggyBuildersSiteParity(),
+      fetchSwiggyBuildersPageMesh(),
       fetchSwiggyBuildersLaunchStory(),
       fetchSwiggyOperatingContractCenter(),
       fetchSwiggyDeepSiteMap(),
@@ -1099,6 +1107,7 @@ function App() {
     setSwiggyBuildersMap(buildersMapResponse.map);
     setSwiggyWebsiteAtlas(websiteAtlasResponse.atlas);
     setBuildersSiteParity(buildersSiteParityResponse.buildersSiteParity);
+    setBuildersPageMesh(buildersPageMeshResponse.buildersPageMesh);
     setBuildersLaunchStory(buildersLaunchStoryResponse.launchStory);
     setOperatingContract(operatingContractResponse.operatingContract);
     setSwiggyDeepSiteMap(deepSiteMapResponse.deepSiteMap);
@@ -1767,6 +1776,7 @@ function App() {
                 buildersMap={swiggyBuildersMap}
                 websiteAtlas={swiggyWebsiteAtlas}
                 buildersSiteParity={buildersSiteParity}
+                buildersPageMesh={buildersPageMesh}
                 buildersLaunchStory={buildersLaunchStory}
                 operatingContract={operatingContract}
                 deepSiteMap={swiggyDeepSiteMap}
@@ -2350,6 +2360,7 @@ function LaunchCenterPanel({
   buildersMap,
   websiteAtlas,
   buildersSiteParity,
+  buildersPageMesh,
   buildersLaunchStory,
   operatingContract,
   deepSiteMap,
@@ -2417,6 +2428,7 @@ function LaunchCenterPanel({
   buildersMap: SwiggyBuildersMap | null;
   websiteAtlas: SwiggyWebsiteAtlas | null;
   buildersSiteParity: SwiggyBuildersSiteParityAuditor | null;
+  buildersPageMesh: SwiggyBuildersPageMeshAuditor | null;
   buildersLaunchStory: SwiggyBuildersLaunchStoryCenterReport | null;
   operatingContract: SwiggyOperatingContractCenterReport | null;
   deepSiteMap: SwiggyDeepSiteMap | null;
@@ -3318,6 +3330,66 @@ function LaunchCenterPanel({
             </a>
             <a href="/api/swiggy-website-atlas" target="_blank" rel="noreferrer">
               Atlas
+            </a>
+          </div>
+        </article>
+
+        <article className="builders-page-mesh-card">
+          <div className="mini-heading">
+            <GitBranch aria-hidden="true" />
+            <strong>Builders Page Mesh</strong>
+          </div>
+          <span>
+            {buildersPageMesh
+              ? `${buildersPageMesh.score}/100, ${buildersPageMesh.totals.fetchedPages}/${buildersPageMesh.totals.pages} live pages`
+              : "Fetching every public Builders page from Website Atlas"}
+          </span>
+          <div className="builders-page-mesh-grid">
+            <div>
+              <strong>{buildersPageMesh?.totals.liveAnchors ?? 0}</strong>
+              <span>Anchors</span>
+            </div>
+            <div>
+              <strong>{buildersPageMesh?.totals.unsafeLinks ?? 0}</strong>
+              <span>Unsafe</span>
+            </div>
+            <div>
+              <strong>
+                {buildersPageMesh
+                  ? `${buildersPageMesh.totals.matchedModuleSignals}/${buildersPageMesh.totals.expectedModules}`
+                  : "0/0"}
+              </strong>
+              <span>Modules</span>
+            </div>
+            <div>
+              <strong>
+                {buildersPageMesh ? `${buildersPageMesh.totals.matchedCtas}/${buildersPageMesh.totals.expectedCtas}` : "0/0"}
+              </strong>
+              <span>CTAs</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(buildersPageMesh?.pages ?? []).map((page) => (
+              <li
+                key={page.id}
+                data-status={page.status === "covered" ? "healthy" : page.status === "blocked" ? "blocked" : "watch"}
+              >
+                <span>{page.title}</span>
+                <strong>
+                  {page.matchedModuleSignals}/{page.expectedModules}
+                </strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-intelligence-actions" aria-label="Builders page mesh links">
+            <a href="/api/swiggy-builders-page-mesh" target="_blank" rel="noreferrer">
+              Mesh API
+            </a>
+            <a href="/api/swiggy-deep-site-map" target="_blank" rel="noreferrer">
+              Site map
+            </a>
+            <a href="/api/swiggy-cta-execution-center" target="_blank" rel="noreferrer">
+              CTAs
             </a>
           </div>
         </article>

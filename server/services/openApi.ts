@@ -329,6 +329,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-builders-page-mesh": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Live Swiggy Builders public page mesh auditor",
+          responses: {
+            "200": {
+              description:
+                "Fetches the official public Builders pages from Website Atlas and reconciles live page titles, anchors, modules, CTAs, safe origins, and page-level drift signals",
+            },
+          },
+        },
+      },
       "/api/swiggy-builders-launch-story": {
         get: {
           tags: ["Builder Access"],

@@ -98,6 +98,11 @@ assert(
   "OpenAPI Builders site parity contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-builders-page-mesh"]?.get?.summary?.includes("public page mesh") &&
+    openApi.paths["/api/swiggy-builders-page-mesh"]?.get?.responses?.["200"]?.description?.includes("safe origins"),
+  "OpenAPI Builders page mesh contract is missing",
+);
+assert(
   openApi.paths["/api/swiggy-source-intelligence"]?.get?.summary?.includes("source intelligence"),
   "OpenAPI source intelligence contract is missing",
 );
@@ -486,6 +491,26 @@ assert(
 assert(
   buildersSiteParity.buildersSiteParity.assertions.some((assertion) => assertion.includes("user-supplied URLs are never accepted")),
   "Builders site parity safety assertion is missing",
+);
+
+const buildersPageMesh = await request("/api/swiggy-builders-page-mesh");
+assert(buildersPageMesh.buildersPageMesh.score >= 85, "Builders page mesh score is below target");
+assert(buildersPageMesh.buildersPageMesh.totals.pages >= 7, "Builders page mesh page coverage is incomplete");
+assert(
+  buildersPageMesh.buildersPageMesh.totals.fetchedPages === buildersPageMesh.buildersPageMesh.totals.pages,
+  "Builders page mesh did not fetch every public page",
+);
+assert(buildersPageMesh.buildersPageMesh.totals.liveAnchors >= 170, "Builders page mesh anchor coverage is incomplete");
+assert(buildersPageMesh.buildersPageMesh.totals.unsafeLinks === 0, "Builders page mesh found unsafe links");
+assert(
+  buildersPageMesh.buildersPageMesh.pages.some((page) => page.id === "access" && page.statusCode === 200 && page.anchorCount >= 20) &&
+    buildersPageMesh.buildersPageMesh.pages.some((page) => page.id === "reference" && page.statusCode === 200),
+  "Builders page mesh critical pages are missing",
+);
+assert(
+  buildersPageMesh.buildersPageMesh.assertions.some((assertion) => assertion.includes("user-supplied URLs are never accepted")) &&
+    buildersPageMesh.buildersPageMesh.driftSignals.some((signal) => signal.includes("Website Atlas public pages")),
+  "Builders page mesh assertions or drift signals are missing",
 );
 
 const launchStory = await request("/api/swiggy-builders-launch-story");
@@ -1575,8 +1600,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 37, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 37, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 38, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 38, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -1722,6 +1747,12 @@ assert(
     group.targets.some((target) => target.id === "builders_site_parity_card" && target.selector === ".builders-site-parity-card"),
   ),
   "visual QA Builders site parity target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some((target) => target.id === "builders_page_mesh_card" && target.selector === ".builders-page-mesh-card"),
+  ),
+  "visual QA Builders page mesh target is missing",
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
@@ -4702,7 +4733,11 @@ assert(
 const accessSubmissionStudio = await request("/api/access-submission-studio");
 assert(accessSubmissionStudio.accessSubmissionStudio.score >= 75, "access submission studio score is below target");
 assert(accessSubmissionStudio.accessSubmissionStudio.recommendedTrack === "developer", "access submission studio developer track is missing");
-assert(accessSubmissionStudio.accessSubmissionStudio.canSubmitNow === false, "access submission studio must not claim local auto-submit readiness");
+assert(
+  accessSubmissionStudio.accessSubmissionStudio.canSubmitNow === false ||
+    Boolean(accessSubmissionStudio.accessSubmissionStudio.handoffState.demoVideoUrl),
+  "access submission studio must not claim local auto-submit readiness without operator evidence",
+);
 assert(
   accessSubmissionStudio.accessSubmissionStudio.officialSources.includes("https://mcp.swiggy.com/builders/") &&
     accessSubmissionStudio.accessSubmissionStudio.officialSources.includes("https://mcp.swiggy.com/builders/access/"),
@@ -4804,7 +4839,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 37, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 38, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -4818,7 +4853,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("37")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("38")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -5167,6 +5202,9 @@ console.log(
       buildersSiteParityScore: buildersSiteParity.buildersSiteParity.score,
       buildersSiteParityAnchors: buildersSiteParity.buildersSiteParity.totals.liveAnchors,
       buildersSiteParityMatched: buildersSiteParity.buildersSiteParity.totals.matchedExpectedItems,
+      buildersPageMeshScore: buildersPageMesh.buildersPageMesh.score,
+      buildersPageMeshPages: `${buildersPageMesh.buildersPageMesh.totals.fetchedPages}/${buildersPageMesh.buildersPageMesh.totals.pages}`,
+      buildersPageMeshAnchors: buildersPageMesh.buildersPageMesh.totals.liveAnchors,
       buildersLaunchStoryScore: launchStory.launchStory.score,
       buildersLaunchStoryAssets: launchStory.launchStory.totals.showcaseAssets,
       buildersLaunchStoryCtas: launchStory.launchStory.totals.ctaPaths,

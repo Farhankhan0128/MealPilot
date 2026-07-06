@@ -4,6 +4,7 @@ import path from "node:path";
 import request from "supertest";
 import { describe, expect, it, vi } from "vitest";
 import { createMealPilotServer } from "./app.js";
+import { buildSwiggyBuildersPageMeshAuditor } from "./services/buildersPageMeshAuditor.js";
 import { buildSwiggyBuildersSiteParityAuditor } from "./services/buildersSiteParityAuditor.js";
 import { buildSwiggyLlmsManifestVerifier } from "./services/llmsManifestVerifier.js";
 import { buildSwiggyToolParityAuditor } from "./services/toolParityAuditor.js";
@@ -53,6 +54,7 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/swiggy-builders-map"].get.summary).toContain("Swiggy Builders");
     expect(openApi.body.paths["/api/swiggy-website-atlas"].get.summary).toContain("website header");
     expect(openApi.body.paths["/api/swiggy-builders-site-parity"].get.summary).toContain("homepage parity");
+    expect(openApi.body.paths["/api/swiggy-builders-page-mesh"].get.summary).toContain("public page mesh");
     expect(openApi.body.paths["/api/swiggy-builders-launch-story"].get.summary).toContain("Launch Story");
     expect(openApi.body.paths["/api/swiggy-builders-launch-story"].get.responses["200"].description).toContain("35-tool");
     expect(openApi.body.paths["/api/swiggy-operating-contract-center"].get.summary).toContain("Operating Contract");
@@ -1048,6 +1050,46 @@ describe("MealPilot API", () => {
     expect(auditor.assertions.some((assertion) => assertion.includes("user-supplied URLs are never accepted"))).toBe(true);
   });
 
+  it("audits the public Swiggy Builders page mesh against Website Atlas pages", async () => {
+    const responseFor = (url: string) => {
+      const pageLabel = url.includes("/developers/")
+        ? "For Developers"
+        : url.includes("/enterprises/")
+          ? "For Enterprises"
+          : url.includes("/access/")
+            ? "Ready to Go to Production"
+            : url.includes("/docs/reference/")
+              ? "Reference"
+              : url.includes("/docs/")
+                ? "Docs Home"
+                : url.includes("/blog/")
+                  ? "Builders Club Launch Blog"
+                  : "Build on Swiggy";
+      return [
+        `<title>${pageLabel} | Swiggy Builders Club</title>`,
+        '<a href="/builders/">Builders Club</a><a href="/builders/developers/">Developers</a><a href="/builders/enterprises/">Enterprises</a><a href="/builders/docs/">Docs</a><a href="/builders/blog/">Blog</a><a href="/builders/docs/start/developer/">Start Building</a>',
+        '<a href="/builders/access/">Request access</a><a href="https://forms.gle/developer">Apply as Developer</a><a href="https://forms.gle/enterprise">Apply as Enterprise</a><a href="https://forms.gle/enterprise">Apply for Access</a><a href="mailto:builders@swiggy.in">Contact Us</a><a href="mailto:builders@swiggy.in">Send Us a Demo</a><a href="/builders/docs/">Read the docs</a><a href="https://www.swiggy.com/privacy-policy">Privacy Policy</a>',
+        "Hero and proof stats What is Builders Club How It Works What You Get Frequently Asked Questions Developer hero Why Developers Love This What Could You Build Your Toolkit Developer FAQ Enterprise hero Why Enterprises Choose This Enterprise Access Includes Ready to Go to Production Application requirements Swiggy review checks Ground rules Operational expectations Legal framework Ready to Apply Launch announcement Builder journey Builder benefits Ecosystem stack Start building links Developer, Enterprise, Consumer tracks What you can build Explore docs Built on MCP standard Food reference Instamart reference Dineout reference Error codes",
+      ].join("");
+    };
+    const auditor = await buildSwiggyBuildersPageMeshAuditor(async (url) => ({
+      ok: true,
+      statusCode: 200,
+      durationMs: 6,
+      text: responseFor(url),
+    }));
+
+    expect(auditor.score).toBeGreaterThanOrEqual(95);
+    expect(auditor.totals.pages).toBe(7);
+    expect(auditor.totals.fetchedPages).toBe(7);
+    expect(auditor.totals.unsafeLinks).toBe(0);
+    expect(auditor.pages.map((page) => page.id)).toEqual(
+      expect.arrayContaining(["home", "developers", "enterprises", "access", "blog_launch", "docs_home", "reference"]),
+    );
+    expect(auditor.pages.every((page) => page.status === "covered")).toBe(true);
+    expect(auditor.assertions.some((assertion) => assertion.includes("user-supplied URLs are never accepted"))).toBe(true);
+  });
+
   it("turns the Swiggy Builders launch blog into a reviewer story center", async () => {
     const { app } = createMealPilotServer();
     const response = await request(app).get("/api/swiggy-builders-launch-story").expect(200);
@@ -1389,7 +1431,7 @@ describe("MealPilot API", () => {
     expect(packet.totals.formFields).toBeGreaterThanOrEqual(10);
     expect(packet.totals.requiredAttachments).toBeGreaterThanOrEqual(10);
     expect(packet.totals.launchArtifacts).toBeGreaterThanOrEqual(50);
-    expect(packet.totals.visualTargets).toBe(37);
+    expect(packet.totals.visualTargets).toBe(38);
     expect(packet.files.map((file: { id: string }) => file.id)).toEqual(
       expect.arrayContaining(["packet_json", "packet_markdown", "visual_report", "production_summary"]),
     );
@@ -1401,7 +1443,7 @@ describe("MealPilot API", () => {
     ).toBe(true);
     expect(
       packet.commands.some(
-        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("37"),
+        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("38"),
       ),
     ).toBe(true);
     expect(packet.copyBlocks.formFields).toContain("Redirect URI(s)");
@@ -2344,8 +2386,8 @@ describe("MealPilot API", () => {
     const visualQa = response.body.visualQa;
 
     expect(visualQa.score).toBe(100);
-    expect(visualQa.totalTargets).toBe(37);
-    expect(visualQa.readyTargets).toBe(37);
+    expect(visualQa.totalTargets).toBe(38);
+    expect(visualQa.readyTargets).toBe(38);
     expect(visualQa.totalRules).toBe(7);
     expect(visualQa.readyRules).toBe(7);
     expect(visualQa.totalCommands).toBe(5);
@@ -2469,6 +2511,11 @@ describe("MealPilot API", () => {
         group.targets.some(
           (target) => target.id === "builders_site_parity_card" && target.selector === ".builders-site-parity-card",
         ),
+      ),
+    ).toBe(true);
+    expect(
+      visualQa.targetGroups.some((group: { targets: Array<{ id: string; selector: string }> }) =>
+        group.targets.some((target) => target.id === "builders_page_mesh_card" && target.selector === ".builders-page-mesh-card"),
       ),
     ).toBe(true);
     expect(

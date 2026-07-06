@@ -167,6 +167,17 @@ const targetGroups = [
         "artifacts/visual-qa/builders-site-parity-card.png",
       ),
       target(
+        "builders_page_mesh_card",
+        "Builders Page Mesh card",
+        "/",
+        ".builders-page-mesh-card",
+        "desktop",
+        1280,
+        900,
+        "Builders Page Mesh shows live public-page fetches, anchors, module parity, CTA parity, and unsafe-link drift.",
+        "artifacts/visual-qa/builders-page-mesh-card.png",
+      ),
+      target(
         "tool_parity_card",
         "Tool Parity Auditor card",
         "/",
