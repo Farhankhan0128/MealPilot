@@ -1122,6 +1122,10 @@ select:focus {
   grid-column: span 2;
 }
 
+.coding-agent-card {
+  grid-column: span 2;
+}
+
 .access-dossier-card {
   grid-column: span 2;
 }
@@ -1307,6 +1311,7 @@ select:focus {
 .upstream-watch-grid,
 .source-intelligence-grid,
 .innovation-radar-grid,
+.coding-agent-grid,
 .brand-compliance-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1337,6 +1342,7 @@ select:focus {
 .upstream-watch-grid div,
 .source-intelligence-grid div,
 .innovation-radar-grid div,
+.coding-agent-grid div,
 .brand-compliance-grid div {
   display: grid;
   gap: 3px;
@@ -1370,6 +1376,7 @@ select:focus {
 .upstream-watch-grid strong,
 .source-intelligence-grid strong,
 .innovation-radar-grid strong,
+.coding-agent-grid strong,
 .brand-compliance-grid strong {
   color: var(--green-dark);
   font-size: 1.18rem;
@@ -1400,6 +1407,7 @@ select:focus {
 .upstream-watch-grid span,
 .source-intelligence-grid span,
 .innovation-radar-grid span,
+.coding-agent-grid span,
 .brand-compliance-grid span {
   font-size: 0.75rem;
   font-weight: 900;
@@ -1550,6 +1558,7 @@ select:focus {
 .docs-coverage-grid strong,
 .source-intelligence-grid strong,
 .innovation-radar-grid strong,
+.coding-agent-grid strong,
 .client-connect-grid strong,
 .journey-compiler-grid strong,
 .staging-transcript-grid strong,
@@ -1578,6 +1587,7 @@ select:focus {
 .docs-coverage-card,
 .source-intelligence-card,
 .innovation-radar-card,
+.coding-agent-card,
 .client-connect-card,
 .journey-compiler-card,
 .error-intelligence-card {
@@ -1595,6 +1605,7 @@ select:focus {
 .docs-coverage-grid,
 .source-intelligence-grid,
 .innovation-radar-grid,
+.coding-agent-grid,
 .client-connect-grid,
 .journey-compiler-grid,
 .proof-grid {
@@ -1606,6 +1617,7 @@ select:focus {
 .docs-coverage-grid,
 .source-intelligence-grid,
 .innovation-radar-grid,
+.coding-agent-grid,
 .client-connect-grid,
 .journey-compiler-grid,
 .staging-transcript-grid {
@@ -1616,6 +1628,7 @@ select:focus {
 .docs-coverage-grid div,
 .source-intelligence-grid div,
 .innovation-radar-grid div,
+.coding-agent-grid div,
 .client-connect-grid div,
 .journey-compiler-grid div,
 .staging-transcript-grid div,
@@ -1794,6 +1807,7 @@ select:focus {
   .luxury-experience-card,
   .reviewer-artifact-card,
   .visual-qa-card,
+  .coding-agent-card,
   .capability-registry-card,
   .resource-prompt-card,
   .website-atlas-card,
@@ -1818,6 +1832,7 @@ select:focus {
   .docs-coverage-card,
   .source-intelligence-card,
   .innovation-radar-card,
+  .coding-agent-card,
   .client-connect-card,
   .journey-compiler-card,
   .error-intelligence-card {
@@ -2478,6 +2493,7 @@ select:focus {
 .luxury-experience-card,
 .reviewer-artifact-card,
 .visual-qa-card,
+.coding-agent-card,
 .access-dossier-card,
 .use-case-studio-card,
 .staging-certification-card,
@@ -2504,6 +2520,7 @@ select:focus {
 .docs-coverage-card,
 .source-intelligence-card,
 .innovation-radar-card,
+.coding-agent-card,
 .client-connect-card,
 .journey-compiler-card,
 .error-intelligence-card {
@@ -2558,11 +2575,13 @@ select:focus {
 .upstream-watch-grid div,
 .source-intelligence-grid div,
 .innovation-radar-grid div,
+.coding-agent-grid div,
 .brand-compliance-grid div,
 .website-atlas-grid div,
 .docs-coverage-grid div,
 .source-intelligence-grid div,
 .innovation-radar-grid div,
+.coding-agent-grid div,
 .client-connect-grid div,
 .journey-compiler-grid div,
 .staging-transcript-grid div,
@@ -2890,6 +2909,7 @@ select:focus {
   .luxury-experience-grid,
   .reviewer-artifact-grid,
   .visual-qa-grid,
+  .coding-agent-grid,
   .slo-grid,
   .proof-grid {
     grid-template-columns: 1fr;
@@ -2920,6 +2940,7 @@ select:focus {
   .luxury-experience-card,
   .reviewer-artifact-card,
   .visual-qa-card,
+  .coding-agent-card,
   .access-dossier-card,
   .use-case-studio-card,
   .staging-certification-card,
@@ -2944,6 +2965,7 @@ select:focus {
   .docs-coverage-card,
   .source-intelligence-card,
   .innovation-radar-card,
+  .coding-agent-card,
   .client-connect-card,
   .journey-compiler-card,
   .error-intelligence-card {

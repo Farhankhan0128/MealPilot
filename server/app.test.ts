@@ -61,6 +61,7 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/swiggy-source-intelligence"].get.summary).toContain("source intelligence");
     expect(openApi.body.paths["/api/swiggy-innovation-radar"].get.summary).toContain("innovation radar");
     expect(openApi.body.paths["/api/ai-client-connect-kit"].get.summary).toContain("AI client");
+    expect(openApi.body.paths["/api/coding-agent-governance"].get.summary).toContain("coding-agent governance");
     expect(openApi.body.paths["/api/brand-compliance-kit"].get.summary).toContain("brand");
     expect(openApi.body.paths["/api/swiggy-journey-compiler"].get.summary).toContain("journey compiler");
     expect(openApi.body.paths["/api/swiggy-access-dossier"].get.summary).toContain("access application dossier");
@@ -673,7 +674,7 @@ describe("MealPilot API", () => {
     expect(packet.totals.formFields).toBeGreaterThanOrEqual(10);
     expect(packet.totals.requiredAttachments).toBeGreaterThanOrEqual(10);
     expect(packet.totals.launchArtifacts).toBeGreaterThanOrEqual(50);
-    expect(packet.totals.visualTargets).toBe(13);
+    expect(packet.totals.visualTargets).toBe(14);
     expect(packet.files.map((file: { id: string }) => file.id)).toEqual(
       expect.arrayContaining(["packet_json", "packet_markdown", "visual_report", "production_summary"]),
     );
@@ -1174,8 +1175,8 @@ describe("MealPilot API", () => {
     const visualQa = response.body.visualQa;
 
     expect(visualQa.score).toBe(100);
-    expect(visualQa.totalTargets).toBe(13);
-    expect(visualQa.readyTargets).toBe(13);
+    expect(visualQa.totalTargets).toBe(14);
+    expect(visualQa.readyTargets).toBe(14);
     expect(visualQa.totalRules).toBe(7);
     expect(visualQa.readyRules).toBe(7);
     expect(visualQa.totalCommands).toBe(5);
@@ -1214,6 +1215,11 @@ describe("MealPilot API", () => {
       ),
     ).toBe(true);
     expect(
+      visualQa.targetGroups.some((group: { targets: Array<{ id: string; selector: string }> }) =>
+        group.targets.some((target) => target.id === "coding_agent_card" && target.selector === ".coding-agent-card"),
+      ),
+    ).toBe(true);
+    expect(
       visualQa.rules.some(
         (rule: { id: string; check: string }) =>
           rule.id === "no_overlap" &&
@@ -1242,7 +1248,7 @@ describe("MealPilot API", () => {
         (command: { id: string; command: string; expectedSignal: string }) =>
           command.id === "visual_capture_harness" &&
           command.command === "npm run verify:visual" &&
-          command.expectedSignal.includes("targetCount >= 13"),
+          command.expectedSignal.includes("targetCount >= 14"),
       ),
     ).toBe(true);
     expect(visualQa.externalGates.some((gate: string) => gate.includes("Selected PNG screenshots"))).toBe(true);
@@ -1433,6 +1439,37 @@ describe("MealPilot API", () => {
     expect(kit.sdkAdapters.some((adapter: { authMode: string }) => adapter.authMode === "bearer_header")).toBe(true);
     expect(kit.enterpriseDelegatedAuth.tokenLifecycle.some((item: { item: string; lifetime: string }) => item.item === "Access token" && item.lifetime.includes("5 days"))).toBe(true);
     expect(kit.safetyAssertions.some((assertion: string) => assertion.includes("35 Swiggy tools"))).toBe(true);
+  });
+
+  it("returns coding-agent governance grounded in the root AGENTS.md file", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/coding-agent-governance").expect(200);
+    const governance = response.body.codingAgentGovernance;
+
+    expect(governance.score).toBeGreaterThanOrEqual(95);
+    expect(governance.ruleFile.path).toBe("AGENTS.md");
+    expect(governance.ruleFile.status).toBe("ready");
+    expect(governance.ruleFile.matchedSignals).toBe(governance.ruleFile.totalSignals);
+    expect(governance.officialSources.map((source: { url: string }) => source.url)).toEqual(
+      expect.arrayContaining([
+        "https://mcp.swiggy.com/builders/docs/start/coding-agents/",
+        "https://mcp.swiggy.com/builders/llms.txt",
+        "https://mcp.swiggy.com/builders/llms-full.txt",
+      ]),
+    );
+    expect(governance.requiredSignals.map((signal: { id: string }) => signal.id)).toEqual(
+      expect.arrayContaining(["llms_index", "markdown_twins", "never_invent_tools", "food_tool_count_smoke"]),
+    );
+    expect(
+      governance.smokeTests.some(
+        (test: { id: string; command: string; expected: string }) =>
+          test.id === "food_tool_count" &&
+          test.command.includes("llms.txt") &&
+          test.expected.includes("Food reference exposes 14 tools"),
+      ),
+    ).toBe(true);
+    expect(governance.guardrails.some((guardrail: string) => guardrail.includes("Never log bearer tokens"))).toBe(true);
+    expect(governance.commands.some((command: string) => command.includes("/api/coding-agent-governance"))).toBe(true);
   });
 
   it("returns Swiggy brand and co-branding compliance evidence", async () => {

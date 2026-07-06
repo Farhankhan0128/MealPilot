@@ -49,6 +49,7 @@ import {
   fetchBrandComplianceKit,
   fetchChannelMultimodalStudio,
   fetchCartPreflight,
+  fetchCodingAgentGovernance,
   fetchCommercialActionGuard,
   fetchComplianceEvidence,
   fetchDataGovernanceCenter,
@@ -136,6 +137,7 @@ import type {
   CartPreflightReport,
   CommercialActionGuardReport,
   ComplianceEvidence,
+  CodingAgentGovernance,
   CredentialOnboardingReport,
   DataGovernanceCenter,
   DemoStudioStep,
@@ -350,6 +352,7 @@ function App() {
     useState<SwiggySourceIntelligenceReport | null>(null);
   const [swiggyInnovationRadar, setSwiggyInnovationRadar] = useState<SwiggyInnovationRadarReport | null>(null);
   const [aiClientConnectKit, setAiClientConnectKit] = useState<AiClientConnectKit | null>(null);
+  const [codingAgentGovernance, setCodingAgentGovernance] = useState<CodingAgentGovernance | null>(null);
   const [brandCompliance, setBrandCompliance] = useState<BrandComplianceKit | null>(null);
   const [swiggyJourneyCompiler, setSwiggyJourneyCompiler] = useState<SwiggyJourneyCompilerReport | null>(null);
   const [swiggyAccessDossier, setSwiggyAccessDossier] = useState<SwiggyAccessDossier | null>(null);
@@ -488,6 +491,7 @@ function App() {
       sourceIntelligenceResponse,
       innovationRadarResponse,
       aiClientConnectResponse,
+      codingAgentGovernanceResponse,
       brandComplianceResponse,
       journeyCompilerResponse,
       accessDossierResponse,
@@ -550,6 +554,7 @@ function App() {
       fetchSourceIntelligenceOptional(),
       fetchInnovationRadarOptional(),
       fetchAiClientConnectKit(),
+      fetchCodingAgentGovernance(),
       fetchBrandComplianceKit(),
       fetchSwiggyJourneyCompiler(),
       fetchSwiggyAccessDossier(),
@@ -613,6 +618,7 @@ function App() {
     setSwiggySourceIntelligence(sourceIntelligenceResponse.sourceIntelligence);
     setSwiggyInnovationRadar(innovationRadarResponse.innovationRadar);
     setAiClientConnectKit(aiClientConnectResponse.connectKit);
+    setCodingAgentGovernance(codingAgentGovernanceResponse.codingAgentGovernance);
     setBrandCompliance(brandComplianceResponse.brandCompliance);
     setSwiggyJourneyCompiler(journeyCompilerResponse.journeyCompiler);
     setSwiggyAccessDossier(accessDossierResponse.dossier);
@@ -678,6 +684,7 @@ function App() {
       sourceIntelligenceResponse,
       innovationRadarResponse,
       aiClientConnectResponse,
+      codingAgentGovernanceResponse,
       brandComplianceResponse,
       journeyCompilerResponse,
       accessDossierResponse,
@@ -737,6 +744,7 @@ function App() {
       fetchSourceIntelligenceOptional(),
       fetchInnovationRadarOptional(),
       fetchAiClientConnectKit(),
+      fetchCodingAgentGovernance(),
       fetchBrandComplianceKit(),
       fetchSwiggyJourneyCompiler(),
       fetchSwiggyAccessDossier(),
@@ -796,6 +804,7 @@ function App() {
     setSwiggySourceIntelligence(sourceIntelligenceResponse.sourceIntelligence);
     setSwiggyInnovationRadar(innovationRadarResponse.innovationRadar);
     setAiClientConnectKit(aiClientConnectResponse.connectKit);
+    setCodingAgentGovernance(codingAgentGovernanceResponse.codingAgentGovernance);
     setBrandCompliance(brandComplianceResponse.brandCompliance);
     setSwiggyJourneyCompiler(journeyCompilerResponse.journeyCompiler);
     setSwiggyAccessDossier(accessDossierResponse.dossier);
@@ -1428,6 +1437,7 @@ function App() {
                 sourceIntelligence={swiggySourceIntelligence}
                 innovationRadar={swiggyInnovationRadar}
                 aiClientConnectKit={aiClientConnectKit}
+                codingAgentGovernance={codingAgentGovernance}
                 brandCompliance={brandCompliance}
                 journeyCompiler={swiggyJourneyCompiler}
                 accessDossier={swiggyAccessDossier}
@@ -1974,6 +1984,7 @@ function LaunchCenterPanel({
   sourceIntelligence,
   innovationRadar,
   aiClientConnectKit,
+  codingAgentGovernance,
   brandCompliance,
   journeyCompiler,
   accessDossier,
@@ -2019,6 +2030,7 @@ function LaunchCenterPanel({
   sourceIntelligence: SwiggySourceIntelligenceReport | null;
   innovationRadar: SwiggyInnovationRadarReport | null;
   aiClientConnectKit: AiClientConnectKit | null;
+  codingAgentGovernance: CodingAgentGovernance | null;
   brandCompliance: BrandComplianceKit | null;
   journeyCompiler: SwiggyJourneyCompilerReport | null;
   accessDossier: SwiggyAccessDossier | null;
@@ -3197,6 +3209,56 @@ function LaunchCenterPanel({
               </li>
             ))}
           </ul>
+        </article>
+
+        <article className="coding-agent-card">
+          <div className="mini-heading">
+            <Bot aria-hidden="true" />
+            <strong>Coding Agent Governance</strong>
+          </div>
+          <span>
+            {codingAgentGovernance
+              ? `${codingAgentGovernance.score}/100, ${codingAgentGovernance.ruleFile.status.replaceAll("_", " ")}`
+              : "Verifying AGENTS.md against Swiggy docs"}
+          </span>
+          <div className="coding-agent-grid">
+            <div>
+              <strong>
+                {codingAgentGovernance?.ruleFile.matchedSignals ?? 0}/{codingAgentGovernance?.ruleFile.totalSignals ?? 0}
+              </strong>
+              <span>Signals</span>
+            </div>
+            <div>
+              <strong>{codingAgentGovernance?.officialSources.length ?? 0}</strong>
+              <span>Sources</span>
+            </div>
+            <div>
+              <strong>{codingAgentGovernance?.smokeTests.filter((test) => test.status === "ready").length ?? 0}</strong>
+              <span>Smoke tests</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(codingAgentGovernance?.requiredSignals ?? []).slice(0, 5).map((signal) => (
+              <li
+                key={signal.id}
+                data-status={signal.status === "ready" ? "healthy" : signal.status === "missing" ? "blocked" : "watch"}
+              >
+                <span>{signal.label}</span>
+                <strong>{signal.status.replaceAll("_", " ")}</strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-intelligence-actions" aria-label="Coding agent governance links">
+            <a href="/api/coding-agent-governance" target="_blank" rel="noreferrer">
+              Open governance
+            </a>
+            <a href="https://mcp.swiggy.com/builders/llms.txt" target="_blank" rel="noreferrer">
+              llms index
+            </a>
+            <a href="https://mcp.swiggy.com/builders/docs/start/coding-agents/" target="_blank" rel="noreferrer">
+              Agent docs
+            </a>
+          </div>
         </article>
 
         <article className="brand-compliance-card">

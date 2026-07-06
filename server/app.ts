@@ -29,6 +29,7 @@ import { buildBuilderPacketExport, buildBuilderPacketMarkdown } from "./services
 import { buildMcpBackpressureGovernor } from "./services/backpressureGovernor.js";
 import { buildSwiggyBuilderIntakeCommandCenter } from "./services/builderIntake.js";
 import { buildSwiggyChannelMultimodalStudio } from "./services/channelMultimodalStudio.js";
+import { buildCodingAgentGovernance } from "./services/codingAgentGovernance.js";
 import { buildCommercialActionGuard } from "./services/commercialActionGuard.js";
 import { buildSwiggyAccessDossier } from "./services/swiggyAccessDossier.js";
 import {
@@ -620,6 +621,10 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/ai-client-connect-kit", (_req, res) => {
     res.json({ connectKit: buildAiClientConnectKit() });
+  });
+
+  app.get("/api/coding-agent-governance", (_req, res) => {
+    res.json({ codingAgentGovernance: buildCodingAgentGovernance() });
   });
 
   app.get("/api/brand-compliance-kit", (_req, res) => {

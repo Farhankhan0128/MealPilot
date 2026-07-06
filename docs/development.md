@@ -44,6 +44,7 @@ server/
     capabilityRegistry.ts
     auditLedger.ts
     confirmationService.ts
+    codingAgentGovernance.ts
     credentialOnboarding.ts
     demoStudio.ts
     errorIntelligence.ts
@@ -102,6 +103,8 @@ The verifier creates a plan, checks 35-tool coverage, verifies Website Atlas cov
 The verifier also validates Commercial Action Guard for Food order placement, Instamart checkout, Dineout booking, combined-flow confirmation locks, non-blind retry drills, telemetry, and support packet fields.
 
 The verifier also validates `/api/swiggy-source-intelligence` for Builders website inventory, CTA coverage, `llms` and markdown documentation counts, 35-tool reference alignment, drift signals, external gates, and build-queue readiness.
+
+The verifier also validates `/api/coding-agent-governance` for the root `AGENTS.md` file, official Swiggy coding-agent docs, `llms.txt`, `llms-full.txt`, markdown-twin retrieval, reference paths, Food 14 / Instamart 13 / Dineout 8 smoke evidence, commercial confirmation rules, and no-token/no-PII logging guardrails.
 
 The verifier also validates `/api/swiggy-innovation-radar` for official source inputs, premium opportunity lanes, all-server Dineout-first orchestration, route optimization evidence, staged build phases, and partner/staging gates.
 
@@ -165,6 +168,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/swiggy-source-intelligence`
 - `GET /api/swiggy-innovation-radar`
 - `GET /api/ai-client-connect-kit`
+- `GET /api/coding-agent-governance`
 - `GET /api/brand-compliance-kit`
 - `GET /api/swiggy-journey-compiler`
 - `GET /api/swiggy-access-dossier`
@@ -286,6 +290,8 @@ Production should use an HTTPS redirect URI with exact-match allowlisting.
 
 `/api/visual-qa-center` shows reviewer screenshot targets, desktop/tablet/mobile viewport sizes, selector manifests, Playwright screenshot artifact paths, no-overlap rules, text-fit rules, widget fallback checks, redaction visibility, commercial confirmation visibility, mobile layout checks, Source Intelligence, Innovation Radar, and automation gates. Run `npm run verify:visual` against the production server to generate PNGs plus `artifacts/visual-qa/report.json`.
 
+`/api/coding-agent-governance` reads the root `AGENTS.md` and scores the rules future coding agents must follow before editing Swiggy integrations: fetch official docs first, prefer page `.md` twins, never invent tools or parameters, preserve commercial confirmation gates, and keep sensitive data out of logs.
+
 `/api/builder-packet-export` and `/api/builder-packet-export.md` turn the Submission Console, Production Launch Bundle, and Visual QA Center into a reproducible Swiggy access packet. Run `npm run export:builder-packet` against the production server to write `artifacts/builder-packet/mealpilot-swiggy-access-packet.json`, `mealpilot-swiggy-access-packet.md`, and `verification-summary.json`.
 
 ## Safety Tests
@@ -316,6 +322,7 @@ The test suite checks that:
 - Swiggy Innovation Radar maps Swiggy developer ideas, enterprise signals, access ground rules, support model, and MCP references into premium product lanes, route optimizations, build phases, differentiators, and partner gates.
 - Traffic Readiness maps expected sessions, daily tool calls, peak QPS, Retry-After behavior, seven-day major-event notice, capacity upgrade email, and the 1% -> 10% -> 50% -> 100% rollout.
 - AI Client Connect Kit generates client configs, coding-agent rule files, SDK auth-mode guidance, troubleshooting, privacy notes, and delegated-auth gates.
+- Coding Agent Governance verifies `AGENTS.md` against official Swiggy docs retrieval rules, current tool-count smoke tests, commercial confirmation gates, and sensitive-data redaction boundaries.
 - Brand Compliance Kit maps Powered by Swiggy attribution, co-branding rules, asset gates, palette usage, no-endorsement copy, and final screenshot review.
 - Data Governance Center maps Swiggy Data Fiduciary and MealPilot Data Processor roles, India/Singapore residency, tool-call PII flows, local DSR endpoints, Swiggy-originated DSR routing, 90-day audit retention, token redaction, security contacts, and signed-manifest watch items.
 - Enterprise Delegated Auth Center maps Swiggy's multi-tenant on-behalf-of OAuth 2.1 flow, per-user token storage, platform redirect schemes, troubleshooting, architecture review, and external partner gates.

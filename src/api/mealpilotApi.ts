@@ -9,6 +9,7 @@ import type {
   CartPreflightReport,
   CommercialActionGuardReport,
   ComplianceEvidence,
+  CodingAgentGovernance,
   CredentialOnboardingReport,
   DataGovernanceCenter,
   DemoStudioStep,
@@ -316,6 +317,10 @@ export function fetchSwiggyInnovationRadar() {
 
 export function fetchAiClientConnectKit() {
   return requestJson<{ connectKit: AiClientConnectKit }>("/api/ai-client-connect-kit");
+}
+
+export function fetchCodingAgentGovernance() {
+  return requestJson<{ codingAgentGovernance: CodingAgentGovernance }>("/api/coding-agent-governance");
 }
 
 export function fetchBrandComplianceKit() {

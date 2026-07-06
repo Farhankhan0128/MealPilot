@@ -425,6 +425,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/coding-agent-governance": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy coding-agent governance for AGENTS.md and official docs retrieval",
+          responses: {
+            "200": {
+              description:
+                "Reads the root AGENTS.md file, scores required Swiggy llms.txt, llms-full.txt, Markdown twin, reference, auth, rate-limit, production, commercial-confirmation, and redaction signals, and returns smoke-test commands for future coding agents",
+            },
+          },
+        },
+      },
       "/api/brand-compliance-kit": {
         get: {
           tags: ["Builder Access"],

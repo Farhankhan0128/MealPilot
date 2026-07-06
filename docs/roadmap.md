@@ -51,6 +51,7 @@ Status: in progress.
 - Add Luxury Experience Workspace for polished reservation, Food cart, Instamart basket, combined evening, and recovery review surfaces with all-tool coverage, concierge modes, widget fallbacks, voice contracts, and telemetry. Complete.
 - Add Reviewer Artifact Vault for proof links, OpenAPI, smoke commands, screenshot targets, demo-video checklist, logs, traces, redaction rules, support context, and Swiggy handoff copy. Complete.
 - Add Visual QA Center for reviewer screenshot targets, selector manifests, no-overlap/text-fit rules, widget fallback checks, mobile layout checks, redaction visibility, and screenshot automation gates. Complete.
+- Add Coding Agent Governance with root `AGENTS.md`, official Swiggy docs retrieval rules, 35-tool smoke evidence, and production verifier checks. Complete.
 - Add Carbon-inspired premium portal design language, MealPilot logo, sticky header, mobile navigation, footer, visible CTA feedback, and expanded UI CTA tests. Complete.
 - Add MCP Backpressure Governor for Swiggy v1.0 upstream-shedder mode, future 429/header readiness, token buckets, tracking cadence, voice bursts, and background-job gates. Complete.
 - Validate real MCP transport against Swiggy staging credentials. Next.

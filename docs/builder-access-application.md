@@ -93,6 +93,7 @@ Scale-up after staging:
 - Luxury Experience Workspace for premium reservation, Food cart, Instamart basket, combined evening, and recovery review surfaces with all 35 Swiggy tools, widget fallbacks, voice contracts, telemetry, and confirmation gates.
 - Reviewer Artifact Vault for proof links, OpenAPI, smoke commands, screenshot targets, demo-video checklist, logs, traces, redaction rules, support context, and Swiggy handoff copy.
 - Visual QA Center for desktop/tablet/mobile screenshot targets, selector manifests, artifact paths, no-overlap and text-fit rules, widget fallback checks, mobile layout checks, redaction visibility, and automation gates.
+- Coding Agent Governance for root `AGENTS.md`, official Swiggy docs retrieval rules, Food 14 / Instamart 13 / Dineout 8 smoke evidence, and future-agent no-invention/no-sensitive-log guardrails.
 - Resource & Prompt Studio for Food, Instamart, and Dineout `mcp:resources` and `mcp:prompts` smoke evidence.
 - Production Launch Bundle that combines artifact links, verification commands, access application fields, go-live gates, manual inputs, and the draft `builders@swiggy.in` handoff email.
 - Widget contract generator for Food, Instamart, and Dineout surfaces with iframe sizing, sandbox policy, origin verification, and semantic fallbacks.

@@ -1566,6 +1566,53 @@ export interface AiClientConnectKit {
   externalGates: string[];
 }
 
+export type CodingAgentGovernanceStatus = "ready" | "needs_update" | "missing";
+
+export interface CodingAgentGovernanceSource {
+  id: string;
+  label: string;
+  url: string;
+  useCase: string;
+}
+
+export interface CodingAgentGovernanceRuleFile {
+  path: string;
+  absolutePath: string;
+  status: CodingAgentGovernanceStatus;
+  matchedSignals: number;
+  totalSignals: number;
+  missingSignals: string[];
+  sha256: string;
+}
+
+export interface CodingAgentGovernanceSignal {
+  id: string;
+  label: string;
+  status: CodingAgentGovernanceStatus;
+  evidence: string;
+}
+
+export interface CodingAgentGovernanceSmokeTest {
+  id: string;
+  label: string;
+  command: string;
+  expected: string;
+  status: CodingAgentGovernanceStatus;
+}
+
+export interface CodingAgentGovernance {
+  generatedAt: string;
+  score: number;
+  officialSources: CodingAgentGovernanceSource[];
+  ruleFile: CodingAgentGovernanceRuleFile;
+  requiredSignals: CodingAgentGovernanceSignal[];
+  smokeTests: CodingAgentGovernanceSmokeTest[];
+  guardrails: string[];
+  commands: string[];
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type JourneyStepRole = "core" | "optional" | "recovery" | "support";
 export type JourneyRiskLevel = "low" | "medium" | "high";
 

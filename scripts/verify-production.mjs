@@ -807,8 +807,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 13, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 13, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 14, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 14, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -854,6 +854,12 @@ assert(
   "visual QA source intelligence target is missing",
 );
 assert(
+  visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some((target) => target.id === "coding_agent_card" && target.selector === ".coding-agent-card"),
+  ),
+  "visual QA coding agent governance target is missing",
+);
+assert(
   visualQa.visualQa.rules.some(
     (rule) =>
       rule.id === "no_overlap" &&
@@ -885,7 +891,7 @@ assert(
     (command) =>
       command.id === "visual_capture_harness" &&
       command.command === "npm run verify:visual" &&
-      command.expectedSignal.includes("targetCount >= 13"),
+      command.expectedSignal.includes("targetCount >= 14"),
   ),
   "visual QA Playwright command is missing",
 );
@@ -1061,6 +1067,44 @@ assert(
 assert(
   aiClientConnect.connectKit.enterpriseDelegatedAuth.tokenLifecycle.some((item) => item.item === "Access token"),
   "AI client connect kit delegated auth lifecycle is missing",
+);
+
+const codingAgentGovernance = await request("/api/coding-agent-governance");
+assert(codingAgentGovernance.codingAgentGovernance.score >= 95, "coding agent governance score is below target");
+assert(
+  codingAgentGovernance.codingAgentGovernance.ruleFile.path === "AGENTS.md" &&
+    codingAgentGovernance.codingAgentGovernance.ruleFile.status === "ready" &&
+    codingAgentGovernance.codingAgentGovernance.ruleFile.matchedSignals ===
+      codingAgentGovernance.codingAgentGovernance.ruleFile.totalSignals,
+  "coding agent governance AGENTS.md rule file is not ready",
+);
+assert(
+  [
+    "https://mcp.swiggy.com/builders/docs/start/coding-agents/",
+    "https://mcp.swiggy.com/builders/llms.txt",
+    "https://mcp.swiggy.com/builders/llms-full.txt",
+  ].every((url) => codingAgentGovernance.codingAgentGovernance.officialSources.some((source) => source.url === url)),
+  "coding agent governance official sources are incomplete",
+);
+assert(
+  ["llms_index", "markdown_twins", "never_invent_tools", "food_tool_count_smoke"].every((id) =>
+    codingAgentGovernance.codingAgentGovernance.requiredSignals.some((signal) => signal.id === id && signal.status === "ready"),
+  ),
+  "coding agent governance required signals are incomplete",
+);
+assert(
+  codingAgentGovernance.codingAgentGovernance.smokeTests.some(
+    (test) =>
+      test.id === "food_tool_count" &&
+      test.command.includes("llms.txt") &&
+      test.expected.includes("Food reference exposes 14 tools"),
+  ),
+  "coding agent governance Food tool-count smoke test is missing",
+);
+assert(
+  codingAgentGovernance.codingAgentGovernance.guardrails.some((guardrail) => guardrail.includes("Never log bearer tokens")) &&
+    codingAgentGovernance.codingAgentGovernance.commands.some((command) => command.includes("/api/coding-agent-governance")),
+  "coding agent governance guardrails or commands are incomplete",
 );
 
 const brandCompliance = await request("/api/brand-compliance-kit");
@@ -2286,7 +2330,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 13, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 14, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -2516,6 +2560,8 @@ console.log(
       enterpriseDelegatedAuthScore: enterpriseAuth.enterpriseAuth.score,
       aiClientConnectScore: aiClientConnect.connectKit.score,
       aiClientTargets: aiClientConnect.connectKit.clientTargets.length,
+      codingAgentGovernanceScore: codingAgentGovernance.codingAgentGovernance.score,
+      codingAgentSignals: codingAgentGovernance.codingAgentGovernance.ruleFile.totalSignals,
       brandComplianceScore: brandCompliance.brandCompliance.score,
       brandSurfaces: brandCompliance.brandCompliance.surfaces.length,
       journeyCompilerScore: journeyCompiler.journeyCompiler.score,

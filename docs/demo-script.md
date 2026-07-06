@@ -123,6 +123,7 @@ Open the Launch Center and show:
 - Luxury Experience Workspace showing lean, premium, family, social, and training modes plus reservation, Food cart, Instamart basket, combined evening, and recovery review surfaces with all 35 Swiggy tools, widget fallbacks, voice contracts, and telemetry.
 - Reviewer Artifact Vault showing proof links, OpenAPI, smoke commands, screenshot targets, demo-video checklist, logs, traces, redaction rules, support context, and Swiggy handoff copy.
 - Visual QA Center showing desktop/tablet/mobile screenshot targets, selectors, artifact paths, no-overlap checks, text-fit rules, widget fallback checks, mobile layout checks, redaction visibility, and automation gates.
+- Coding Agent Governance showing the root `AGENTS.md` file, official Swiggy source rules, tool-count smoke tests, and future-agent guardrails.
 - Staging Cutover Rehearsal showing first read-only MCP probes, fail-closed bearer-token behavior, retry branches, support packet fields, and 48-hour green gates.
 - Staging Certification Matrix showing all 35 tools assigned to staging smoke waves, 48-hour soak, telemetry, rollback, and production-promotion gates.
 - Staging Transcript Export showing session-scoped JSONL, Markdown replay, redaction manifest, support envelope, and non-blind retry evidence.
