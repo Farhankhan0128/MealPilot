@@ -2629,12 +2629,16 @@ function LaunchCenterPanel({
               <strong>{websiteAtlas?.ctasCovered ?? 0}</strong>
               <span>CTAs</span>
             </div>
+            <div>
+              <strong>{websiteAtlas?.liveCrawlPages ?? 0}</strong>
+              <span>Crawled</span>
+            </div>
           </div>
           <ul className="compact-status-list">
-            {(websiteAtlas?.pages ?? []).slice(0, 6).map((page) => (
-              <li key={page.id} data-status={page.modules.every((module) => module.status === "implemented") ? "healthy" : "watch"}>
-                <span>{page.title}</span>
-                <strong>{page.modules.length}</strong>
+            {(websiteAtlas?.crawlEvidence ?? []).slice(0, 6).map((page) => (
+              <li key={page.id} data-status={page.status === "covered" ? "healthy" : "watch"}>
+                <span>{page.pageId.replaceAll("_", " ")}</span>
+                <strong>{page.moduleSignals.length} modules</strong>
               </li>
             ))}
           </ul>

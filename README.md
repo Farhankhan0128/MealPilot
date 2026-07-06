@@ -56,7 +56,7 @@ Planned MCP servers:
 - MCP Backpressure Governor that models Swiggy's current upstream-shedder behavior separately from future 429, `Retry-After`, and `X-RateLimit-*` headers with token buckets, tracking cadence, voice burst shaping, and background-job gates.
 - MCP Capability Registry that maps and locally exercises `mcp:tools`, `mcp:resources`, `mcp:prompts`, OAuth metadata, widgets, prompt contracts, and external Swiggy gates.
 - Resource & Prompt Studio that exercises `resources/list`, `resources/read`, `prompts/list`, and `prompts/get` across Food, Instamart, and Dineout with samples, smoke calls, and live Swiggy gates.
-- Swiggy Website Atlas that maps the Builders header, docs subnav, footer groups, production access page, launch blog, page modules, CTAs, and legal/resource links to MealPilot evidence.
+- Swiggy Website Atlas that maps the Builders header, docs subnav, footer groups, production access page, launch blog, rendered-page crawl evidence, page modules, CTAs, and legal/resource links to MealPilot evidence.
 - Builder Intake Command Center that converts every signup, apply, demo, contact, docs, and footer CTA into owner-assigned next actions, access-form fields, a demo storyboard, and copy-ready handoff drafts.
 - FAQ & Policy Center that maps homepage, developer, enterprise, access-guideline, footer-resource, allowed/restricted/prohibited, operating-principle, and legal policy signals to MealPilot evidence.
 - Growth Partnership Center that turns Swiggy's get-noticed, co-branding, direct-support, hiring, co-marketing, analytics, and strategic-growth signals into launch experiments, proof assets, metrics, and partner asks.
@@ -293,7 +293,7 @@ GET  /api/builder-package.md
 1. Run a plan from the workspace and show Food, Instamart, and Dineout recommendations.
 2. Switch the Launch Center between Chat and Voice to prove surface-specific response shaping.
 3. Open MCP Coverage and show all 35 documented tools mapped across the three Swiggy servers.
-4. Open Website Atlas and show header, footer, production access page, launch blog, page module, CTA, docs-subnav, and legal/resource coverage.
+4. Open Website Atlas and show header, footer, rendered-page crawl evidence, production access page, launch blog, page module, CTA, docs-subnav, and legal/resource coverage.
 5. Open Builder Intake, FAQ & Policy, Growth Partnership, Channel & Multimodal Studio, Nutrition & Budget Intelligence, Household Preference Graph, Guest Collaboration & Calendar, Luxury Experience Workspace, Reviewer Artifact Vault, and Visual QA Center to show every signup/apply/demo/contact/docs CTA, access-form field, FAQ theme, allowed/restricted/prohibited rule, developer build lane, growth experiment, partner ask, channel contract, macro/budget route, consented personalization signal, guest vote, calendar handoff, premium review workspace, reviewer artifact, visual QA target, email draft, and live credential gate.
 6. Open Tool Lab and show 35/35 callable JSON-RPC probes, guarded tools, commercial tools, and innovation lanes.
 7. Open Tool Contract Matrix and show all 35 tool contracts, parameter counts, response envelopes, confirmation gates, retry posture, and planned error codes.

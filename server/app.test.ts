@@ -528,6 +528,24 @@ describe("MealPilot API", () => {
       expect.arrayContaining(["Apply as Developer", "Apply as Enterprise", "Read the docs", "Apply now"]),
     );
     expect(response.body.atlas.modulesCovered).toBeGreaterThanOrEqual(38);
+    expect(response.body.atlas.liveCrawlPages).toBeGreaterThanOrEqual(6);
+    expect(response.body.atlas.liveCrawlSignals).toBeGreaterThanOrEqual(90);
+    expect(response.body.atlas.crawlEvidence.map((item: { pageId: string }) => item.pageId)).toEqual(
+      expect.arrayContaining(["home", "developers", "enterprises", "access", "docs_home", "blog_launch"]),
+    );
+    expect(
+      response.body.atlas.crawlEvidence.some(
+        (item: { pageId: string; renderedLineCount: number; ctaSignals: string[]; moduleSignals: string[]; mealPilotEvidence: string[] }) =>
+          item.pageId === "access" &&
+          item.renderedLineCount >= 200 &&
+          item.ctaSignals.includes("Apply as Developer") &&
+          item.moduleSignals.includes("The Ground Rules") &&
+          item.mealPilotEvidence.includes("/api/submission-console"),
+      ),
+    ).toBe(true);
+    expect(
+      response.body.atlas.coverageAssertions.some((assertion: string) => assertion.includes("Rendered live-page crawl evidence")),
+    ).toBe(true);
   });
 
   it("turns every Swiggy signup and application CTA into an intake action center", async () => {

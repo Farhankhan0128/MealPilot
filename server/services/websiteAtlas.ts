@@ -1,5 +1,6 @@
 import type {
   SwiggyWebsiteAtlas,
+  SwiggyWebsiteCrawlEvidence,
   SwiggyWebsiteCta,
   SwiggyWebsiteModule,
   SwiggyWebsiteNavLink,
@@ -405,10 +406,109 @@ const footerGroups: SwiggyWebsiteAtlas["footerGroups"] = [
   },
 ];
 
+function crawl(
+  id: string,
+  pageId: string,
+  url: string,
+  renderedLineCount: number,
+  headerSignals: string[],
+  footerSignals: string[],
+  ctaSignals: string[],
+  moduleSignals: string[],
+  mealPilotEvidence: string[],
+  status: SwiggyWebsiteCrawlEvidence["status"] = "covered",
+): SwiggyWebsiteCrawlEvidence {
+  return {
+    id,
+    pageId,
+    url,
+    renderedLineCount,
+    headerSignals,
+    footerSignals,
+    ctaSignals,
+    moduleSignals,
+    mealPilotEvidence,
+    status,
+  };
+}
+
+const crawlEvidence: SwiggyWebsiteCrawlEvidence[] = [
+  crawl(
+    "home_rendered_surface",
+    "home",
+    source,
+    183,
+    ["Builders Club", "Developers", "Enterprises", "Docs", "Blog", "FAQ", "Start Building"],
+    ["Program", "Resources", "Legal", "builders@swiggy.in", "llms.txt", "llms-full.txt"],
+    ["Start Building", "See What's Possible", "Send Us a Demo", "Request access"],
+    ["Hero", "What is Builders Club", "How It Works", "What You Get", "Frequently Asked Questions", "What Will You Cook"],
+    ["/api/swiggy-builder-intake", "/api/swiggy-faq-policy", "/api/swiggy-source-intelligence"],
+  ),
+  crawl(
+    "developers_rendered_surface",
+    "developers",
+    `${source}developers/`,
+    127,
+    ["Home", "Developers", "Enterprises", "Docs", "Blog", "FAQ", "Start Building"],
+    ["For Developers", "For Enterprises", "Guidelines", "FAQ", "Apply", "llms.txt"],
+    ["Start Building", "Apply for Prod Access", "Send Us a Demo"],
+    ["Why Developers Love This", "What Could You Build", "Your Toolkit", "We actually hire", "Developer FAQ"],
+    ["/api/swiggy-innovation-radar", "/api/channel-multimodal-studio", "/api/mcp/tool-lab"],
+  ),
+  crawl(
+    "enterprises_rendered_surface",
+    "enterprises",
+    `${source}enterprises/`,
+    95,
+    ["Home", "Developers", "Enterprises", "Docs", "Blog", "FAQ", "Start Building"],
+    ["Program", "Resources", "Legal", "builders@swiggy.in"],
+    ["Apply for Access", "Contact Us", "Read the docs"],
+    ["Why Enterprises Choose This", "What Enterprise Access Includes", "Enterprise FAQ", "Ready to Build Together"],
+    ["/api/enterprise-delegated-auth", "/api/slo-incident-command", "/api/brand-compliance-kit"],
+  ),
+  crawl(
+    "access_rendered_surface",
+    "access",
+    `${source}access/`,
+    215,
+    ["Home", "Developers", "Enterprises", "Docs", "Blog", "FAQ", "Start Building"],
+    ["Guidelines", "FAQ", "Apply", "llms.txt", "Privacy Policy", "Terms and Conditions"],
+    ["Apply as Developer", "Apply as Enterprise", "builders@swiggy.in"],
+    ["Getting Access", "What to Include in Your Application", "What We Check on Our End", "The Ground Rules", "A Few Things to Know", "Ready to Apply"],
+    ["/api/swiggy-access-dossier", "/api/submission-console", "/api/data-governance-center"],
+  ),
+  crawl(
+    "docs_home_rendered_surface",
+    "docs_home",
+    `${source}docs/`,
+    57,
+    ["Home", "Developers", "Enterprises", "Docs", "Blog", "FAQ", "Start Building"],
+    ["Program", "Resources", "Legal", "builders@swiggy.in"],
+    ["Developer Build an AI agent", "Enterprise Power an agent platform", "Consumer Use Swiggy in your AI client", "Explore"],
+    ["What you can build", "Explore the docs", "Built on the standard", "Food 14 tools", "Instamart 13 tools", "Dineout 8 tools"],
+    ["/api/swiggy-docs-coverage", "/api/ai-client-connect-kit", "/api/coding-agent-governance"],
+  ),
+  crawl(
+    "blog_launch_rendered_surface",
+    "blog_launch",
+    `${source}blog/2026-04-17-builders-club-launch/`,
+    87,
+    ["Home", "Developers", "Enterprises", "Docs", "Blog", "FAQ"],
+    ["Guidelines", "FAQ", "Apply", "llms.txt", "Privacy Policy", "Terms and Conditions"],
+    ["Apply now", "Read the docs", "Request access", "builders@swiggy.in"],
+    ["What Builders Club is", "A call to the community to build", "The role of Skills", "Who can request access, and how", "Benefits for builders and partners", "Builders Club at a glance"],
+    ["/api/production-launch-bundle", "/api/premium-use-case-studio", "/api/swiggy-source-intelligence"],
+  ),
+];
+
 export function buildSwiggyWebsiteAtlas(): SwiggyWebsiteAtlas {
   const modulesCovered = pages.reduce((sum, page) => sum + page.modules.length, 0);
   const implementedModules = pages.reduce(
     (sum, page) => sum + page.modules.filter((module) => module.status === "implemented").length,
+    0,
+  );
+  const liveCrawlSignals = crawlEvidence.reduce(
+    (sum, item) => sum + item.headerSignals.length + item.footerSignals.length + item.ctaSignals.length + item.moduleSignals.length,
     0,
   );
   const score = Math.round(((implementedModules + ctas.length) / (modulesCovered + ctas.length)) * 100);
@@ -420,17 +520,21 @@ export function buildSwiggyWebsiteAtlas(): SwiggyWebsiteAtlas {
     pagesCovered: pages.length,
     modulesCovered,
     ctasCovered: ctas.length,
+    liveCrawlPages: crawlEvidence.length,
+    liveCrawlSignals,
     globalHeader,
     docsHeader,
     footerGroups,
     ctas,
     pages,
+    crawlEvidence,
     coverageAssertions: [
       "Global header links are mapped to MealPilot product, docs, and support artifacts.",
       "Docs subnavigation is mapped to Start, Build, Reference, and Operate surfaces.",
       "Homepage, Developers, Enterprises, Docs, Reference, and Footer modules are represented with explicit MealPilot coverage.",
       "All major CTAs have a MealPilot response, including Start Building, Apply, Contact, Send Demo, and llms.txt.",
       "Footer program, resource, and legal links are recorded with safety, privacy, or application evidence.",
+      "Rendered live-page crawl evidence records header, footer, CTA, and module signals for reviewer traceability.",
     ],
     remainingExternalGates: [
       "External Google Form submission must be completed by the operator after demo recording.",

@@ -612,6 +612,19 @@ export interface SwiggyWebsitePageAtlas {
   mealPilotOutcome: string;
 }
 
+export interface SwiggyWebsiteCrawlEvidence {
+  id: string;
+  pageId: string;
+  url: string;
+  renderedLineCount: number;
+  headerSignals: string[];
+  footerSignals: string[];
+  ctaSignals: string[];
+  moduleSignals: string[];
+  mealPilotEvidence: string[];
+  status: "covered" | "watch" | "external_gate";
+}
+
 export interface SwiggyWebsiteAtlas {
   generatedAt: string;
   officialSource: string;
@@ -619,11 +632,14 @@ export interface SwiggyWebsiteAtlas {
   pagesCovered: number;
   modulesCovered: number;
   ctasCovered: number;
+  liveCrawlPages: number;
+  liveCrawlSignals: number;
   globalHeader: SwiggyWebsiteNavLink[];
   docsHeader: SwiggyWebsiteNavLink[];
   footerGroups: Array<{ id: string; title: string; links: SwiggyWebsiteNavLink[] }>;
   ctas: SwiggyWebsiteCta[];
   pages: SwiggyWebsitePageAtlas[];
+  crawlEvidence: SwiggyWebsiteCrawlEvidence[];
   coverageAssertions: string[];
   remainingExternalGates: string[];
 }

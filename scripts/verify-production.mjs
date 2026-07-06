@@ -226,10 +226,33 @@ assert(websiteAtlas.atlas.globalHeader.length >= 7, "Swiggy website global heade
 assert(websiteAtlas.atlas.footerGroups.length >= 3, "Swiggy website footer coverage is incomplete");
 assert(websiteAtlas.atlas.pagesCovered >= 8, "Swiggy website page coverage is incomplete");
 assert(websiteAtlas.atlas.modulesCovered >= 38, "Swiggy website module coverage is incomplete");
+assert(websiteAtlas.atlas.liveCrawlPages >= 6, "Swiggy website live crawl page coverage is incomplete");
+assert(websiteAtlas.atlas.liveCrawlSignals >= 90, "Swiggy website live crawl signals are incomplete");
 assert(websiteAtlas.atlas.ctas.some((cta) => cta.label === "Start Building"), "Start Building CTA coverage is missing");
 assert(
   ["access", "blog_launch"].every((id) => websiteAtlas.atlas.pages.some((page) => page.id === id)),
   "Swiggy access page and launch blog atlas coverage are missing",
+);
+assert(
+  ["home", "developers", "enterprises", "access", "docs_home", "blog_launch"].every((id) =>
+    websiteAtlas.atlas.crawlEvidence.some((item) => item.pageId === id),
+  ),
+  "Swiggy rendered-page crawl evidence is incomplete",
+);
+assert(
+  websiteAtlas.atlas.crawlEvidence.some(
+    (item) =>
+      item.pageId === "access" &&
+      item.renderedLineCount >= 200 &&
+      item.ctaSignals.includes("Apply as Developer") &&
+      item.moduleSignals.includes("The Ground Rules") &&
+      item.mealPilotEvidence.includes("/api/submission-console"),
+  ),
+  "Swiggy access page crawl evidence is incomplete",
+);
+assert(
+  websiteAtlas.atlas.coverageAssertions.some((assertion) => assertion.includes("Rendered live-page crawl evidence")),
+  "Swiggy website crawl assertion is missing",
 );
 assert(
   ["Apply as Developer", "Apply as Enterprise", "Read the docs", "Apply now"].every((label) =>
@@ -2547,6 +2570,8 @@ console.log(
       websiteAtlasPages: websiteAtlas.atlas.pagesCovered,
       websiteAtlasModules: websiteAtlas.atlas.modulesCovered,
       websiteAtlasCtas: websiteAtlas.atlas.ctasCovered,
+      websiteAtlasCrawlPages: websiteAtlas.atlas.liveCrawlPages,
+      websiteAtlasCrawlSignals: websiteAtlas.atlas.liveCrawlSignals,
       builderIntakeScore: builderIntake.intake.score,
       builderIntakeCtas: `${builderIntake.intake.readyCtas}/${builderIntake.intake.totalCtas}`,
       docsCoverageScore: docsCoverage.docsCoverage.score,
