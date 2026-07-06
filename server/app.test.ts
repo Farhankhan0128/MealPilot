@@ -1128,13 +1128,13 @@ describe("MealPilot API", () => {
     const response = await request(app).get("/api/visual-qa-center").expect(200);
     const visualQa = response.body.visualQa;
 
-    expect(visualQa.score).toBeGreaterThanOrEqual(88);
-    expect(visualQa.totalTargets).toBe(11);
-    expect(visualQa.readyTargets).toBeGreaterThanOrEqual(10);
+    expect(visualQa.score).toBe(100);
+    expect(visualQa.totalTargets).toBe(13);
+    expect(visualQa.readyTargets).toBe(13);
     expect(visualQa.totalRules).toBe(7);
-    expect(visualQa.readyRules).toBeGreaterThanOrEqual(6);
+    expect(visualQa.readyRules).toBe(7);
     expect(visualQa.totalCommands).toBe(5);
-    expect(visualQa.readyCommands).toBeGreaterThanOrEqual(2);
+    expect(visualQa.readyCommands).toBe(5);
     expect(visualQa.targetGroups.map((group: { id: string }) => group.id)).toEqual(
       expect.arrayContaining(["desktop_review", "premium_surfaces", "mobile_review", "swiggy_widget_fallbacks"]),
     );
@@ -1151,6 +1151,21 @@ describe("MealPilot API", () => {
     expect(
       visualQa.targetGroups.some((group: { targets: Array<{ id: string; width: number; viewport: string }> }) =>
         group.targets.some((target) => target.id === "mobile_launch_center" && target.width === 390 && target.viewport === "mobile"),
+      ),
+    ).toBe(true);
+    expect(
+      visualQa.targetGroups.some((group: { targets: Array<{ id: string; selector: string; artifactPath: string }> }) =>
+        group.targets.some(
+          (target) =>
+            target.id === "innovation_radar_card" &&
+            target.selector === ".innovation-radar-card" &&
+            target.artifactPath.includes("artifacts/visual-qa"),
+        ),
+      ),
+    ).toBe(true);
+    expect(
+      visualQa.targetGroups.some((group: { targets: Array<{ id: string; selector: string }> }) =>
+        group.targets.some((target) => target.id === "source_intelligence_card" && target.selector === ".source-intelligence-card"),
       ),
     ).toBe(true);
     expect(
@@ -1177,7 +1192,15 @@ describe("MealPilot API", () => {
           command.expectedSignal.includes(".visual-qa-card"),
       ),
     ).toBe(true);
-    expect(visualQa.externalGates.some((gate: string) => gate.includes("PNG screenshots"))).toBe(true);
+    expect(
+      visualQa.commands.some(
+        (command: { id: string; command: string; expectedSignal: string }) =>
+          command.id === "visual_capture_harness" &&
+          command.command === "npm run verify:visual" &&
+          command.expectedSignal.includes("targetCount >= 13"),
+      ),
+    ).toBe(true);
+    expect(visualQa.externalGates.some((gate: string) => gate.includes("Selected PNG screenshots"))).toBe(true);
     expect(visualQa.assertions.some((assertion: string) => assertion.includes("Desktop, tablet, and mobile"))).toBe(true);
   });
 

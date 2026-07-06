@@ -10,6 +10,7 @@ npm test
 npm run build
 npm start
 npm run verify:production
+MEALPILOT_URL=http://localhost:8787 npm run verify:visual
 ```
 
 ## App Structure
@@ -279,7 +280,7 @@ Production should use an HTTPS redirect URI with exact-match allowlisting.
 
 `/api/reviewer-artifact-vault` shows the Swiggy access-submission manifest: proof links, OpenAPI, smoke commands, screenshot targets, demo-video checklist, logs, traces, redaction rules, support context, handoff checklist, and reviewer email copy.
 
-`/api/visual-qa-center` shows reviewer screenshot targets, desktop/tablet/mobile viewport sizes, selector manifests, screenshot artifact paths, no-overlap rules, text-fit rules, widget fallback checks, redaction visibility, commercial confirmation visibility, mobile layout checks, and manual/automation gates.
+`/api/visual-qa-center` shows reviewer screenshot targets, desktop/tablet/mobile viewport sizes, selector manifests, Playwright screenshot artifact paths, no-overlap rules, text-fit rules, widget fallback checks, redaction visibility, commercial confirmation visibility, mobile layout checks, Source Intelligence, Innovation Radar, and automation gates. Run `npm run verify:visual` against the production server to generate PNGs plus `artifacts/visual-qa/report.json`.
 
 ## Safety Tests
 

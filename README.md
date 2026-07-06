@@ -186,6 +186,14 @@ Verify the production server:
 npm run verify:production
 ```
 
+Capture desktop, tablet, and mobile visual proof from the running production server:
+
+```bash
+MEALPILOT_URL=http://localhost:8787 npm run verify:visual
+```
+
+The visual harness writes PNG screenshots and `report.json` to `artifacts/visual-qa/`. Those files are local reviewer evidence and are intentionally ignored by git.
+
 Docker run:
 
 ```bash
@@ -370,7 +378,7 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 
 `GET /api/reviewer-artifact-vault` is the Swiggy access-submission manifest: proof links, OpenAPI, smoke commands, screenshot targets, demo-video checklist, logs, traces, redaction rules, support context, and handoff email copy are bundled in one route.
 
-`GET /api/visual-qa-center` is the screenshot and layout evidence center: desktop, tablet, and mobile selectors, artifact paths, no-overlap rules, text-fit rules, widget fallback checks, redaction visibility, commercial confirmation visibility, and screenshot automation gates are made reviewable.
+`GET /api/visual-qa-center` is the screenshot and layout evidence center: desktop, tablet, and mobile selectors, Playwright artifact paths, no-overlap rules, text-fit rules, widget fallback checks, redaction visibility, commercial confirmation visibility, Source Intelligence, Innovation Radar, and screenshot automation gates are made reviewable.
 
 `GET /api/premium-use-case-studio` is the product innovation map: ten premium MealPilot experiences, all 35 official Swiggy tools placed into use-case routes, cross-server call savings, chat/voice/widget/ops surfaces, safety gates, data boundaries, metrics, differentiators, roadmap, and external gates.
 

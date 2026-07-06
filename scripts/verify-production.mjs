@@ -798,13 +798,13 @@ assert(
 );
 
 const visualQa = await request("/api/visual-qa-center");
-assert(visualQa.visualQa.score >= 88, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 11, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets >= 10, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.score === 100, "visual QA score is below target");
+assert(visualQa.visualQa.totalTargets === 13, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 13, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
-assert(visualQa.visualQa.readyRules >= 6, "visual QA ready rules are incomplete");
+assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
-assert(visualQa.visualQa.readyCommands >= 2, "visual QA ready commands are incomplete");
+assert(visualQa.visualQa.readyCommands === 5, "visual QA ready commands are incomplete");
 assert(
   ["desktop_review", "premium_surfaces", "mobile_review", "swiggy_widget_fallbacks"].every((id) =>
     visualQa.visualQa.targetGroups.some((group) => group.id === id),
@@ -827,6 +827,23 @@ assert(
     group.targets.some((target) => target.id === "mobile_launch_center" && target.width === 390 && target.viewport === "mobile"),
   ),
   "visual QA mobile launch target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some(
+      (target) =>
+        target.id === "innovation_radar_card" &&
+        target.selector === ".innovation-radar-card" &&
+        target.artifactPath.includes("artifacts/visual-qa"),
+    ),
+  ),
+  "visual QA innovation radar target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some((target) => target.id === "source_intelligence_card" && target.selector === ".source-intelligence-card"),
+  ),
+  "visual QA source intelligence target is missing",
 );
 assert(
   visualQa.visualQa.rules.some(
@@ -856,7 +873,16 @@ assert(
   "visual QA manifest command is missing",
 );
 assert(
-  visualQa.visualQa.externalGates.some((gate) => gate.includes("PNG screenshots")) &&
+  visualQa.visualQa.commands.some(
+    (command) =>
+      command.id === "visual_capture_harness" &&
+      command.command === "npm run verify:visual" &&
+      command.expectedSignal.includes("targetCount >= 13"),
+  ),
+  "visual QA Playwright command is missing",
+);
+assert(
+  visualQa.visualQa.externalGates.some((gate) => gate.includes("Selected PNG screenshots")) &&
     visualQa.visualQa.assertions.some((assertion) => assertion.includes("Desktop, tablet, and mobile")),
   "visual QA external gate or assertion is missing",
 );
