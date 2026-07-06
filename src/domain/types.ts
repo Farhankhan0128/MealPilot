@@ -1563,6 +1563,59 @@ export interface SwiggyTalentSignalCenter {
   externalGates: string[];
 }
 
+export type SwiggyConversionStatus = "ready" | "operator_input" | "swiggy_gate";
+export type SwiggyConversionOwner = "MealPilot" | "Operator" | "Swiggy" | "Joint";
+
+export interface SwiggyConversionStep {
+  id: string;
+  label: string;
+  officialCta: string;
+  sourceModule: "final_cta" | "header" | "footer" | "access" | "docs";
+  destination: string;
+  owner: SwiggyConversionOwner;
+  status: SwiggyConversionStatus;
+  userIntent: string;
+  mealPilotExecution: string;
+  proofLinks: string[];
+  completionGate: "none" | "operator_submit" | "swiggy_approval" | "external_site";
+  nextAction: string;
+}
+
+export interface SwiggyConversionProofBundle {
+  id: string;
+  label: string;
+  covers: string[];
+  status: SwiggyConversionStatus;
+  owner: SwiggyConversionOwner;
+  proofLinks: string[];
+}
+
+export interface SwiggyConversionCenter {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  totals: {
+    steps: number;
+    ready: number;
+    operatorInputs: number;
+    swiggyGates: number;
+    proofBundles: number;
+    officialDestinations: number;
+    proofLinks: number;
+  };
+  conversionSteps: SwiggyConversionStep[];
+  proofBundles: SwiggyConversionProofBundle[];
+  operatorRunbook: Array<{ sequence: number; label: string; action: string; proofLinks: string[] }>;
+  handoffDraft: {
+    to: string;
+    subject: string;
+    bodyPreview: string;
+    proofLinks: string[];
+  };
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type SwiggyShowcaseSubmissionStatus = "ready" | "operator_input" | "swiggy_gate";
 
 export interface SwiggyShowcaseSubmissionAsset {

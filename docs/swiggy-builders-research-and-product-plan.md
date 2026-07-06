@@ -188,6 +188,7 @@ MealPilot should become a luxury-grade food and meal intelligence product with t
 | FAQ & Policy Center | `server/services/faqPolicyCenter.ts` |
 | Growth Partnership Center | `server/services/growthPartnership.ts` |
 | Benefits Activation Center | `server/services/benefitsActivationCenter.ts` |
+| Conversion Center | `server/services/conversionCenter.ts` |
 | Showcase Submission Center | `server/services/showcaseSubmissionCenter.ts` |
 | Demo Evidence Director | `server/services/demoEvidenceDirector.ts` |
 | Submission Timeline Center | `server/services/submissionTimelineCenter.ts` |
@@ -254,7 +255,7 @@ MealPilot should become a luxury-grade food and meal intelligence product with t
 | Planner workspace | `src/App.tsx` |
 | Recommendation cards | Food, Instamart, and Dineout cards with item controls |
 | Premium Concierge | Lunch, pantry reset, Dineout evening, dessert reminder, and recovery itinerary slots with official Swiggy route plans |
-| Launch Center | Tool coverage, Tool Contract Matrix, Scenario Runner, State Orchestrator, Widget Runtime Center, Commercial Action Guard, Staging Cutover Rehearsal, Swiggy Handshake Doctor, Capability Registry, Resource & Prompt Studio, Website Atlas, Builder Intake, FAQ & Policy Center, Growth Partnership Center, Showcase Submission Center, Submission Timeline Center, Partner Success Desk, Interaction QA Center, Channel & Multimodal Studio, Nutrition & Budget Intelligence, Household Preference Graph, Guest Collaboration & Calendar Center, Luxury Experience Workspace, Reviewer Artifact Vault, Visual QA Center, Access Evidence Matrix, Docs Coverage, Docs Twin Explorer, llms Manifest Verifier, Upstream Watch, Source Intelligence, Deep Site Map, Developer Quickstart, CTA Execution, Innovation Radar, Tool Lab, gateway, OAuth Status, Credential Cockpit, Credential Vault Center, Delegated Auth Center, Builders map, Support Bridge, go-live, observability, support |
+| Launch Center | Tool coverage, Tool Contract Matrix, Scenario Runner, State Orchestrator, Widget Runtime Center, Commercial Action Guard, Staging Cutover Rehearsal, Swiggy Handshake Doctor, Capability Registry, Resource & Prompt Studio, Website Atlas, Builder Intake, FAQ & Policy Center, Growth Partnership Center, Conversion Center, Showcase Submission Center, Submission Timeline Center, Partner Success Desk, Interaction QA Center, Channel & Multimodal Studio, Nutrition & Budget Intelligence, Household Preference Graph, Guest Collaboration & Calendar Center, Luxury Experience Workspace, Reviewer Artifact Vault, Visual QA Center, Access Evidence Matrix, Docs Coverage, Docs Twin Explorer, llms Manifest Verifier, Upstream Watch, Source Intelligence, Deep Site Map, Developer Quickstart, CTA Execution, Innovation Radar, Tool Lab, gateway, OAuth Status, Credential Cockpit, Credential Vault Center, Delegated Auth Center, Builders map, Support Bridge, go-live, observability, support |
 | Guest Collaboration & Calendar | Guest votes, occasion templates, Dineout-first date nights, guests-at-home prep, office lunch, weekday reset, recovery meal, ICS artifacts, Slack/Teams gates, and voice-safe briefs |
 | Luxury Experience Workspace | Lean, premium, family, social, and training modes plus polished Dineout reservation, Food cart, Instamart basket, combined evening, and recovery review surfaces |
 | Reviewer Artifact Vault | Proof links, OpenAPI, smoke commands, screenshot targets, demo-video checklist, logs, traces, redaction rules, support context, and handoff copy |
@@ -292,6 +293,7 @@ Coverage targets:
 - Benefits Activation Center for live API access, quota expansion, support, co-branding, showcase visibility, hiring visibility, growth partnership, enterprise support, CTAs, owners, and proof links
 - Showcase Submission Center for demo video readiness, pitch blocks, metric packs, visual proof, outreach email, operator inputs, and co-branding/feature approval gates
 - Submission Timeline Center for access-form, demo-handoff, DCR, staging, 48-hour soak, and production-promotion sequencing with proof links and explicit operator/Swiggy gates
+- Conversion Center for the final What Will You Cook CTA funnel, Start Building, See What's Possible, Request Access, Send Us a Demo, builders@swiggy.in, `llms.txt`, `llms-full.txt`, proof bundles, operator runbook, and go-live gates
 - Credential Handoff Center for localhost proof, DCR, OAuth PKCE, exact redirect URI, secret vault, staging credentials, seeded smoke, 48-hour soak, and production promotion in one owner-assigned reviewer room
 - Partner Success Desk for access handoff, support, SLO incidents, capacity review, backpressure, growth showcase, escalation emails, and enterprise Slack/partner-manager external gates
 - Interaction QA Center for clickable portal CTAs, route contracts, visible feedback expectations, automation proof, and explicit Swiggy/operator gates
@@ -375,6 +377,7 @@ MealPilot must keep mock evidence clearly labeled as simulated until these gates
 - Keep `/api/swiggy-faq-resolution-center` as source-of-truth evidence for reviewer-ready FAQ answers, owners, proof links, activation CTAs, reviewer script steps, and operator or Swiggy gates.
 - Keep `/api/swiggy-growth-partnership` as source-of-truth evidence for Swiggy growth-partnership signals, GTM experiments, proof assets, metrics, partner asks, and co-marketing gates.
 - Keep `/api/swiggy-talent-signal-center` as source-of-truth evidence for standout-project, demo, GitHub, portfolio, hiring-readiness, outreach, reviewer narrative, and Swiggy recruiting/feature-placement gates.
+- Keep `/api/swiggy-conversion-center` as source-of-truth evidence for the final Builders CTA funnel, access-form and demo-email handoff, docs retrieval links, proof bundles, operator runbook, and Swiggy go-live gates.
 - Keep `/api/swiggy-benefits-activation-center` as source-of-truth evidence for turning Builders benefits into owner-assigned activation lanes, CTAs, proof routes, and external Swiggy/operator gates.
 - Keep `/api/swiggy-docs-coverage` as source-of-truth evidence for all 69 Swiggy `llms.txt` pages and their implementation or external-gate status.
 - Keep `/api/swiggy-docs-twin-explorer` as source-of-truth evidence for every official markdown twin, rendered page URL, retrieval lane, proof route, assertion, and drift gate.

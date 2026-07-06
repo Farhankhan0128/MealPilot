@@ -413,6 +413,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-conversion-center": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Builders Conversion Center for the final CTA funnel and operator handoff",
+          responses: {
+            "200": {
+              description:
+                "What Will You Cook, Start Building, Request Access, Send Us a Demo, builders@swiggy.in, llms.txt, llms-full.txt, proof bundles, operator runbook, and Swiggy go-live gates mapped to MealPilot evidence",
+            },
+          },
+        },
+      },
       "/api/swiggy-benefits-activation-center": {
         get: {
           tags: ["Builder Access"],

@@ -219,6 +219,7 @@ Open Production Evidence and show:
 - Builders Launch Story Center artifact for launch-blog story beats, 18+ to 35-tool reconciliation, demo journey, showcase packet, CTA paths, and external co-marketing gates.
 - Deep Site Map coverage for every Builders page row, module signal, CTA gate, source section, proof link, assertion, and external gate.
 - Builder Intake Command Center for CTA ownership, access-form values, demo storyboard, outbound drafts, and live credential gates.
+- Swiggy Builders Conversion Center for the final What Will You Cook funnel, Start Building, See What's Possible, Request Access, Send Us a Demo, builders@swiggy.in, `llms.txt`, `llms-full.txt`, proof bundles, operator runbook, and go-live gates.
 - Channel & Multimodal Studio for voice, auto-restock, group ordering, dietary planner, reservation, and screenshot-to-order channel contracts plus local execution packets for route plans, response rules, confirmation gates, and telemetry.
 - Visual Dish Capture Center for dish photo, menu screenshot, pantry photo, and chat-image captions routed into Food, Instamart, Dineout, or combined plans with no raw-image retention and confirmation-first labels.
 - Voice Commerce Rehearsal Center for quick Food orders, Instamart restock, Dineout bookings, and combined spoken intents with short TTS, card fallbacks, no raw-audio retention, and confirmation prompts.
@@ -264,6 +265,7 @@ Briefly show production readiness:
 - `/api/swiggy-faq-resolution-center`
 - `/api/swiggy-growth-partnership`
 - `/api/swiggy-talent-signal-center`
+- `/api/swiggy-conversion-center`
 - `/api/channel-multimodal-studio`
 - `/api/nutrition-budget-intelligence`
 - `/api/household-preference-graph`

@@ -152,6 +152,11 @@ assert(
   "OpenAPI talent signal center contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-conversion-center"].get.summary.includes("Conversion Center") &&
+    openApi.paths["/api/swiggy-conversion-center"].get.responses["200"].description.includes("What Will You Cook"),
+  "OpenAPI conversion center contract is missing",
+);
+assert(
   openApi.paths["/api/swiggy-benefits-activation-center"].get.summary.includes("Benefits Activation") &&
     openApi.paths["/api/swiggy-benefits-activation-center"].get.responses["200"].description.includes("live API access"),
   "OpenAPI benefits activation center contract is missing",
@@ -888,6 +893,38 @@ assert(
   talentSignal.talentSignal.assertions.some((assertion) => assertion.includes("not a promise")) &&
     talentSignal.talentSignal.externalGates.some((gate) => gate.includes("hiring conversation")),
   "talent signal boundary assertions are missing",
+);
+
+const conversion = await request("/api/swiggy-conversion-center");
+assert(conversion.conversion.score >= 85, "conversion center score is below target");
+assert(conversion.conversion.totals.steps === 8, "conversion center step coverage is incomplete");
+assert(conversion.conversion.totals.ready >= 4, "conversion center ready steps are incomplete");
+assert(conversion.conversion.totals.operatorInputs >= 3, "conversion center operator gates are incomplete");
+assert(conversion.conversion.totals.swiggyGates >= 1, "conversion center Swiggy gates are incomplete");
+assert(conversion.conversion.totals.proofBundles === 5, "conversion center proof bundles are incomplete");
+assert(conversion.conversion.totals.officialDestinations >= 6, "conversion center official destinations are incomplete");
+assert(conversion.conversion.totals.proofLinks >= 20, "conversion center proof links are incomplete");
+assert(
+  ["start_building", "request_access", "send_demo", "builders_email", "llms_txt", "llms_full", "go_live_review"].every((id) =>
+    conversion.conversion.conversionSteps.some((step) => step.id === id),
+  ),
+  "conversion center critical CTA steps are missing",
+);
+assert(
+  ["local_build", "submission_packet", "email_packet", "docs_packet", "production_packet"].every((id) =>
+    conversion.conversion.proofBundles.some((bundle) => bundle.id === id),
+  ),
+  "conversion center proof bundle coverage is missing",
+);
+assert(
+  conversion.conversion.operatorRunbook.map((step) => step.sequence).join(",") === "1,2,3,4,5",
+  "conversion center operator runbook is incomplete",
+);
+assert(conversion.conversion.handoffDraft.to === "builders@swiggy.in", "conversion center handoff draft is missing");
+assert(
+  conversion.conversion.assertions.some((assertion) => assertion.includes("closing Builders CTA module")) &&
+    conversion.conversion.externalGates.some((gate) => gate.includes("official access form")),
+  "conversion center boundary assertions are missing",
 );
 
 const benefitsActivation = await request("/api/swiggy-benefits-activation-center");
@@ -2040,11 +2077,15 @@ assert(
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-benefits-activation-center") &&
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-faq-resolution-center") &&
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-talent-signal-center") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-conversion-center") &&
     reviewerArtifactVault.reviewerArtifactVault.artifactSections.some((section) =>
       section.artifacts.some((artifact) => artifact.id === "faq_resolution" && artifact.path === "/api/swiggy-faq-resolution-center"),
     ) &&
     reviewerArtifactVault.reviewerArtifactVault.artifactSections.some((section) =>
       section.artifacts.some((artifact) => artifact.id === "talent_signal" && artifact.path === "/api/swiggy-talent-signal-center"),
+    ) &&
+    reviewerArtifactVault.reviewerArtifactVault.artifactSections.some((section) =>
+      section.artifacts.some((artifact) => artifact.id === "conversion_center" && artifact.path === "/api/swiggy-conversion-center"),
     ),
   "reviewer artifact vault email draft is incomplete",
 );
@@ -2055,8 +2096,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 52, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 52, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 53, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 53, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -2099,6 +2140,17 @@ assert(
     ),
   ),
   "visual QA talent signal target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some(
+      (target) =>
+        target.id === "conversion_center_card" &&
+        target.selector === ".conversion-center-card" &&
+        target.viewport === "desktop",
+    ),
+  ),
+  "visual QA conversion center target is missing",
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
@@ -4217,6 +4269,10 @@ assert(
   "reviewer proof talent signal artifact is missing",
 );
 assert(
+  proof.proof.artifacts.some((artifact) => artifact.label === "Swiggy Builders Conversion Center"),
+  "reviewer proof conversion center artifact is missing",
+);
+assert(
   proof.proof.artifacts.some((artifact) => artifact.label === "Channel & Multimodal Studio"),
   "reviewer proof channel and multimodal artifact is missing",
 );
@@ -5610,7 +5666,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 52, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 53, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -5624,7 +5680,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("52")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("53")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -5662,6 +5718,7 @@ assert(
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy FAQ Resolution Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Growth Partnership Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Builder Talent Signal Center") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Builders Conversion Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Channel & Multimodal Studio") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Visual Dish Capture Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Voice Commerce Rehearsal Center") &&
@@ -5798,6 +5855,10 @@ assert(
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-talent-signal-center"),
   "launch bundle talent signal handoff link is missing",
+);
+assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-conversion-center"),
+  "launch bundle conversion center handoff link is missing",
 );
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-benefits-activation-center"),
@@ -6215,6 +6276,9 @@ console.log(
       talentSignalScore: talentSignal.talentSignal.score,
       talentSignalPaths: talentSignal.talentSignal.totals.talentPaths,
       talentSignalAssets: talentSignal.talentSignal.totals.portfolioAssets,
+      conversionScore: conversion.conversion.score,
+      conversionSteps: conversion.conversion.totals.steps,
+      conversionProofBundles: conversion.conversion.totals.proofBundles,
       benefitsActivationScore: benefitsActivation.benefitsActivation.score,
       benefitsActivationLanes: benefitsActivation.benefitsActivation.totals.benefits,
       benefitsActivationCtas: benefitsActivation.benefitsActivation.totals.activationCtas,

@@ -292,6 +292,7 @@ export function buildReviewerProof(options: {
       { label: "Swiggy FAQ Resolution Center", path: "/api/swiggy-faq-resolution-center" },
       { label: "Growth Partnership Center", path: "/api/swiggy-growth-partnership" },
       { label: "Swiggy Builder Talent Signal Center", path: "/api/swiggy-talent-signal-center" },
+      { label: "Swiggy Builders Conversion Center", path: "/api/swiggy-conversion-center" },
       { label: "Channel & Multimodal Studio", path: "/api/channel-multimodal-studio" },
       { label: "Swiggy Visual Dish Capture Center", path: "/api/swiggy-visual-dish-capture" },
       { label: "Swiggy Voice Commerce Rehearsal Center", path: "/api/swiggy-voice-commerce-center" },

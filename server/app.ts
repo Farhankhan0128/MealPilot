@@ -38,6 +38,7 @@ import { buildSwiggyCartMutationWorkbench, mutateSwiggyCartWithReadback } from "
 import { buildSwiggyChannelMultimodalStudio } from "./services/channelMultimodalStudio.js";
 import { buildCodingAgentGovernance } from "./services/codingAgentGovernance.js";
 import { buildCommercialActionGuard } from "./services/commercialActionGuard.js";
+import { buildSwiggyConversionCenter } from "./services/conversionCenter.js";
 import { buildSwiggyCancellationCareCenter } from "./services/cancellationCareCenter.js";
 import { buildSwiggyConfirmationCommandCenter, executeSwiggyConfirmationCommand } from "./services/confirmationCommandCenter.js";
 import { buildSwiggyCtaExecutionCenter } from "./services/ctaExecutionCenter.js";
@@ -1039,6 +1040,18 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/swiggy-talent-signal-center", (_req, res) => {
     res.json({ talentSignal: buildSwiggyTalentSignalCenter() });
+  });
+
+  app.get("/api/swiggy-conversion-center", (_req, res) => {
+    res.json({
+      conversion: buildSwiggyConversionCenter({
+        config,
+        profile: store.getProfile(),
+        coverage: buildMcpCoverage(),
+        latestPlan: store.getAllPlans().at(-1),
+        handoffState: store.getAccessSubmissionState(),
+      }),
+    });
   });
 
   app.get("/api/swiggy-benefits-activation-center", (_req, res) => {

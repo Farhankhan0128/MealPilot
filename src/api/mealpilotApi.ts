@@ -81,6 +81,7 @@ import type {
   SwiggyChannelMultimodalStudio,
   SwiggyConfirmationCommandCenterReport,
   SwiggyConfirmationExecution,
+  SwiggyConversionCenter,
   SwiggyCredentialHandoffCenter,
   SwiggyCredentialVaultCenter,
   SwiggyDeepSiteMap,
@@ -418,6 +419,10 @@ export function fetchSwiggyGrowthPartnershipCenter() {
 
 export function fetchSwiggyTalentSignalCenter() {
   return requestJson<{ talentSignal: SwiggyTalentSignalCenter }>("/api/swiggy-talent-signal-center");
+}
+
+export function fetchSwiggyConversionCenter() {
+  return requestJson<{ conversion: SwiggyConversionCenter }>("/api/swiggy-conversion-center");
 }
 
 export function fetchSwiggyBenefitsActivationCenter() {

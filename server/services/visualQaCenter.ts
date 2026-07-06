@@ -431,6 +431,17 @@ const targetGroups = [
         "artifacts/visual-qa/talent-signal-card.png",
       ),
       target(
+        "conversion_center_card",
+        "Conversion Center card",
+        "/",
+        ".conversion-center-card",
+        "desktop",
+        1280,
+        900,
+        "Conversion Center shows final Builders CTAs, operator actions, proof bundles, llms sources, and go-live gates.",
+        "artifacts/visual-qa/conversion-center-card.png",
+      ),
+      target(
         "partner_success_card",
         "Partner Success Desk card",
         "/",

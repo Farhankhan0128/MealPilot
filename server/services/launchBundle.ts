@@ -114,6 +114,15 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
         "Turns Swiggy's standout-project, demo, GitHub, and hiring-visibility signals into portfolio assets, talent paths, outreach copy, proof routes, and Swiggy-owned gates.",
     },
     {
+      id: "conversion_center",
+      label: "Swiggy Builders Conversion Center",
+      path: "/api/swiggy-conversion-center",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Turns the final What Will You Cook CTA module, Start Building, Request Access, Send Demo, builders@swiggy.in, llms.txt, and llms-full.txt into one operator handoff funnel.",
+    },
+    {
       id: "benefits_activation",
       label: "Swiggy Benefits Activation Center",
       path: "/api/swiggy-benefits-activation-center",
@@ -816,6 +825,7 @@ function buildPhases(config: ServerConfig, latestPlan: MealPlan | undefined, art
         artifact("faq_resolution"),
         artifact("growth_partnership"),
         artifact("talent_signal"),
+        artifact("conversion_center"),
         artifact("benefits_activation"),
         artifact("channel_multimodal_studio"),
         artifact("visual_dish_capture"),
@@ -1025,6 +1035,7 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- Swiggy FAQ Resolution Center: /api/swiggy-faq-resolution-center",
     "- Growth Partnership Center: /api/swiggy-growth-partnership",
     "- Swiggy Builder Talent Signal Center: /api/swiggy-talent-signal-center",
+    "- Swiggy Builders Conversion Center: /api/swiggy-conversion-center",
     "- Swiggy Benefits Activation Center: /api/swiggy-benefits-activation-center",
     "- Channel & Multimodal Studio: /api/channel-multimodal-studio",
     "- Swiggy Visual Dish Capture Center: /api/swiggy-visual-dish-capture",

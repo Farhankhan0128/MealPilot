@@ -120,6 +120,7 @@ import {
   fetchSwiggyFaqResolutionCenter,
   fetchSwiggyGrowthPartnershipCenter,
   fetchSwiggyTalentSignalCenter,
+  fetchSwiggyConversionCenter,
   fetchSwiggyShowcaseSubmissionCenter,
   fetchSwiggyDemoEvidenceDirector,
   fetchSwiggySubmissionTimelineCenter,
@@ -268,6 +269,7 @@ import type {
   SwiggyFaqResolutionCenter,
   SwiggyGrowthPartnershipCenter,
   SwiggyTalentSignalCenter,
+  SwiggyConversionCenter,
   SwiggyShowcaseSubmissionCenter,
   SwiggyDemoEvidenceDirector,
   SwiggySubmissionTimelineCenter,
@@ -465,6 +467,7 @@ function App() {
   const [faqResolution, setFaqResolution] = useState<SwiggyFaqResolutionCenter | null>(null);
   const [swiggyGrowthPartnership, setSwiggyGrowthPartnership] = useState<SwiggyGrowthPartnershipCenter | null>(null);
   const [talentSignal, setTalentSignal] = useState<SwiggyTalentSignalCenter | null>(null);
+  const [conversionCenter, setConversionCenter] = useState<SwiggyConversionCenter | null>(null);
   const [benefitsActivation, setBenefitsActivation] = useState<SwiggyBenefitsActivationCenter | null>(null);
   const [showcaseSubmission, setShowcaseSubmission] = useState<SwiggyShowcaseSubmissionCenter | null>(null);
   const [demoEvidence, setDemoEvidence] = useState<SwiggyDemoEvidenceDirector | null>(null);
@@ -675,6 +678,7 @@ function App() {
       faqResolutionResponse,
       growthPartnershipResponse,
       talentSignalResponse,
+      conversionResponse,
       benefitsActivationResponse,
       showcaseSubmissionResponse,
       demoEvidenceResponse,
@@ -786,6 +790,7 @@ function App() {
       fetchSwiggyFaqResolutionCenter(),
       fetchSwiggyGrowthPartnershipCenter(),
       fetchSwiggyTalentSignalCenter(),
+      fetchSwiggyConversionCenter(),
       fetchSwiggyBenefitsActivationCenter(),
       fetchSwiggyShowcaseSubmissionCenter(),
       fetchSwiggyDemoEvidenceDirector(),
@@ -898,6 +903,7 @@ function App() {
     setFaqResolution(faqResolutionResponse.faqResolution);
     setSwiggyGrowthPartnership(growthPartnershipResponse.growthPartnership);
     setTalentSignal(talentSignalResponse.talentSignal);
+    setConversionCenter(conversionResponse.conversion);
     setBenefitsActivation(benefitsActivationResponse.benefitsActivation);
     setShowcaseSubmission(showcaseSubmissionResponse.showcaseSubmission);
     setDemoEvidence(demoEvidenceResponse.demoEvidence);
@@ -1013,6 +1019,7 @@ function App() {
       faqResolutionResponse,
       growthPartnershipResponse,
       talentSignalResponse,
+      conversionResponse,
       benefitsActivationResponse,
       showcaseSubmissionResponse,
       demoEvidenceResponse,
@@ -1121,6 +1128,7 @@ function App() {
       fetchSwiggyFaqResolutionCenter(),
       fetchSwiggyGrowthPartnershipCenter(),
       fetchSwiggyTalentSignalCenter(),
+      fetchSwiggyConversionCenter(),
       fetchSwiggyBenefitsActivationCenter(),
       fetchSwiggyShowcaseSubmissionCenter(),
       fetchSwiggyDemoEvidenceDirector(),
@@ -1229,6 +1237,7 @@ function App() {
     setFaqResolution(faqResolutionResponse.faqResolution);
     setSwiggyGrowthPartnership(growthPartnershipResponse.growthPartnership);
     setTalentSignal(talentSignalResponse.talentSignal);
+    setConversionCenter(conversionResponse.conversion);
     setBenefitsActivation(benefitsActivationResponse.benefitsActivation);
     setShowcaseSubmission(showcaseSubmissionResponse.showcaseSubmission);
     setDemoEvidence(demoEvidenceResponse.demoEvidence);
@@ -1912,6 +1921,7 @@ function App() {
                 faqResolution={faqResolution}
                 growthPartnership={swiggyGrowthPartnership}
                 talentSignal={talentSignal}
+                conversionCenter={conversionCenter}
                 benefitsActivation={benefitsActivation}
                 showcaseSubmission={showcaseSubmission}
                 demoEvidence={demoEvidence}
@@ -2510,6 +2520,7 @@ function LaunchCenterPanel({
   faqResolution,
   growthPartnership,
   talentSignal,
+  conversionCenter,
   benefitsActivation,
   showcaseSubmission,
   demoEvidence,
@@ -2591,6 +2602,7 @@ function LaunchCenterPanel({
   faqResolution: SwiggyFaqResolutionCenter | null;
   growthPartnership: SwiggyGrowthPartnershipCenter | null;
   talentSignal: SwiggyTalentSignalCenter | null;
+  conversionCenter: SwiggyConversionCenter | null;
   benefitsActivation: SwiggyBenefitsActivationCenter | null;
   showcaseSubmission: SwiggyShowcaseSubmissionCenter | null;
   demoEvidence: SwiggyDemoEvidenceDirector | null;
@@ -3928,6 +3940,56 @@ function LaunchCenterPanel({
             </a>
             <a href="https://github.com/Farhankhan0128/MealPilot" target="_blank" rel="noreferrer">
               GitHub
+            </a>
+          </div>
+        </article>
+
+        <article className="conversion-center-card">
+          <div className="mini-heading">
+            <MousePointerClick aria-hidden="true" />
+            <strong>Conversion Center</strong>
+          </div>
+          <span>
+            {conversionCenter
+              ? `${conversionCenter.score}/100, ${conversionCenter.totals.ready}/${conversionCenter.totals.steps} CTA steps ready`
+              : "Mapping final Builders CTAs into an operator handoff funnel"}
+          </span>
+          <div className="conversion-center-grid">
+            <div>
+              <strong>{conversionCenter?.totals.operatorInputs ?? 0}</strong>
+              <span>Operator</span>
+            </div>
+            <div>
+              <strong>{conversionCenter?.totals.proofBundles ?? 0}</strong>
+              <span>Bundles</span>
+            </div>
+            <div>
+              <strong>{conversionCenter?.totals.swiggyGates ?? 0}</strong>
+              <span>Gates</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(conversionCenter?.conversionSteps ?? []).slice(0, 5).map((conversionStep) => (
+              <li
+                key={conversionStep.id}
+                data-status={
+                  conversionStep.status === "ready" ? "healthy" : conversionStep.status === "swiggy_gate" ? "blocked" : "watch"
+                }
+              >
+                <span>{conversionStep.label}</span>
+                <strong>{conversionStep.owner}</strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-intelligence-actions" aria-label="Conversion center links">
+            <a href="/api/swiggy-conversion-center" target="_blank" rel="noreferrer">
+              Conversion API
+            </a>
+            <a href="/api/access-submission-studio" target="_blank" rel="noreferrer">
+              Access
+            </a>
+            <a href="https://mcp.swiggy.com/builders/llms-full.txt" target="_blank" rel="noreferrer">
+              llms-full
             </a>
           </div>
         </article>
