@@ -1,6 +1,8 @@
+import crypto from "node:crypto";
 import type { ServerConfig } from "../config.js";
 import type {
   MealPlan,
+  SwiggyLocationSelectionDecision,
   SwiggyLocationTrustControl,
   SwiggyLocationTrustLane,
   SwiggyLocationTrustReport,
@@ -19,6 +21,26 @@ const officialSources = [
   "https://mcp.swiggy.com/builders/docs/reference/dineout/get_saved_locations/",
   "https://mcp.swiggy.com/builders/docs/reference/dineout/search_restaurants_dineout/",
 ];
+
+function hashedLocationLabel(input: {
+  server: "food" | "instamart" | "dineout" | "combined";
+  sourceTool: string;
+  selectedLabel: string;
+}) {
+  return crypto
+    .createHash("sha256")
+    .update(`${input.server}:${input.sourceTool}:${input.selectedLabel.trim().toLowerCase()}`)
+    .digest("hex")
+    .slice(0, 16);
+}
+
+function safeLocationLabel(label: string) {
+  const trimmed = label.trim();
+  if (/[\d,#/]|road|street|block|sector|apartment|floor|tower|phone/i.test(trimmed)) {
+    return "custom_location";
+  }
+  return trimmed.slice(0, 32);
+}
 
 function statusWeight(status: SwiggyLocationTrustStatus) {
   if (status === "ready") return 1;
@@ -247,5 +269,121 @@ export function buildSwiggyLocationTrust(options: { config: ServerConfig; plans:
       "Address switches refresh carts, coupons, products, restaurants, Dineout slots, and confirmation preflight state.",
     ],
     externalGates,
+  };
+}
+
+export function selectSwiggyLocation(input: {
+  config: ServerConfig;
+  server: "food" | "instamart" | "dineout" | "combined";
+  sourceTool: "get_addresses" | "get_saved_locations" | "create_address" | "delete_address";
+  selectedLabel: string;
+  userConfirmed: boolean;
+  downstreamIntent:
+    | "food_discovery"
+    | "instamart_discovery"
+    | "dineout_discovery"
+    | "cart_checkout"
+    | "combined_plan"
+    | "address_create"
+    | "address_delete";
+  previousContextFresh: boolean;
+}): SwiggyLocationSelectionDecision {
+  const riskFlags: string[] = [];
+  const invalidatedSurfaces = new Set<string>();
+  const isAddressMutation = input.sourceTool === "create_address" || input.sourceTool === "delete_address";
+  const selectedLabel = safeLocationLabel(input.selectedLabel);
+
+  if (input.server === "dineout" && input.sourceTool === "get_addresses") {
+    riskFlags.push("dineout_requires_saved_location_context");
+  }
+  if ((input.server === "food" || input.server === "instamart") && input.sourceTool === "get_saved_locations") {
+    riskFlags.push("delivery_requires_food_or_instamart_address_context");
+  }
+  if (!input.previousContextFresh) {
+    riskFlags.push("previous_location_context_is_stale");
+    ["restaurant_search", "product_search", "food_cart", "instamart_cart", "food_coupons", "dineout_slots"].forEach((surface) =>
+      invalidatedSurfaces.add(surface),
+    );
+  }
+  if (!input.userConfirmed) riskFlags.push("location_choice_requires_user_confirmation");
+  if (isAddressMutation) {
+    riskFlags.push("address_mutation_requires_explicit_confirmation");
+    ["saved_address_list", "restaurant_search", "product_search", "food_cart", "instamart_cart"].forEach((surface) =>
+      invalidatedSurfaces.add(surface),
+    );
+  }
+  if (selectedLabel !== input.selectedLabel.trim()) riskFlags.push("selected_label_redacted_to_coarse_bucket");
+  if (input.config.swiggyMode === "mock") riskFlags.push("mock_location_hash_is_not_a_live_swiggy_id");
+
+  let decision: SwiggyLocationSelectionDecision["decision"];
+  if (isAddressMutation) {
+    decision = input.userConfirmed ? "confirm_address_mutation" : "pause_for_user_choice";
+  } else if (!input.userConfirmed) {
+    decision = "pause_for_user_choice";
+  } else if (!input.previousContextFresh && (input.downstreamIntent === "cart_checkout" || input.downstreamIntent === "combined_plan")) {
+    decision = "block_until_refresh";
+  } else {
+    decision = "ready_for_discovery";
+  }
+
+  const requiredNextTool =
+    input.downstreamIntent === "food_discovery"
+      ? "search_restaurants"
+      : input.downstreamIntent === "instamart_discovery"
+        ? "search_products or your_go_to_items"
+        : input.downstreamIntent === "dineout_discovery"
+          ? "search_restaurants_dineout"
+          : input.downstreamIntent === "cart_checkout"
+            ? input.server === "food"
+              ? "get_food_cart"
+              : input.server === "instamart"
+                ? "get_cart"
+                : "get_available_slots or get_booking_status"
+            : input.downstreamIntent === "address_create"
+              ? "create_address then get_addresses"
+              : input.downstreamIntent === "address_delete"
+                ? "delete_address then get_addresses"
+                : "refresh selected Food, Instamart, and Dineout read tools";
+
+  return {
+    generatedAt: new Date().toISOString(),
+    requestId: `location_${Date.now().toString(36)}`,
+    mode: input.config.swiggyMode,
+    input: {
+      server: input.server,
+      sourceTool: input.sourceTool,
+      selectedLabel,
+      userConfirmed: input.userConfirmed,
+      downstreamIntent: input.downstreamIntent,
+      previousContextFresh: input.previousContextFresh,
+    },
+    decision,
+    selectedLocationHash: hashedLocationLabel(input),
+    requiredNextTool,
+    invalidatedSurfaces: Array.from(invalidatedSurfaces),
+    userFacingCopy:
+      decision === "ready_for_discovery"
+        ? `I will use ${selectedLabel} for this Swiggy route and refresh the next result from the official server.`
+        : decision === "confirm_address_mutation"
+          ? `I can ${input.sourceTool === "create_address" ? "create" : "delete"} this address only after this explicit confirmation, then I will re-read saved addresses.`
+          : decision === "block_until_refresh"
+            ? "This location change invalidates existing cart, coupon, product, restaurant, or slot truth. I need a fresh read before checkout."
+            : "Please choose and confirm the address or saved location before I search, build a cart, or reserve.",
+    riskFlags,
+    telemetry: [
+      { field: "server", value: input.server, redaction: "safe enum" },
+      { field: "source_tool", value: input.sourceTool, redaction: "safe enum" },
+      { field: "selected_location_hash", value: hashedLocationLabel(input), redaction: "sha256 prefix only" },
+      { field: "selected_label", value: selectedLabel, redaction: "coarse user-facing label only" },
+      { field: "raw_address_retained", value: "false", redaction: "hard-coded privacy invariant" },
+      { field: "downstream_context_invalidated", value: invalidatedSurfaces.size > 0 ? "true" : "false", redaction: "boolean only" },
+    ],
+    assertions: [
+      "Location selection never logs raw address lines, phone numbers, coordinates, or bearer tokens.",
+      "Food and Instamart delivery discovery must use get_addresses context, not Dineout saved-location coordinates.",
+      "Dineout discovery must use get_saved_locations or a Dineout-compatible location context.",
+      "Address creation and deletion require explicit user confirmation and a post-mutation get_addresses refresh.",
+      "Location switches invalidate carts, coupons, products, restaurants, and Dineout slots before checkout or booking.",
+    ],
   };
 }

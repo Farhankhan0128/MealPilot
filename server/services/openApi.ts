@@ -1062,6 +1062,20 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-location-trust/select": {
+        post: {
+          tags: ["Commerce"],
+          summary: "Select a Swiggy saved address or Dineout saved location before downstream discovery",
+          description:
+            "Location decision, selected-location hash, required next tool, invalidated downstream surfaces, user-facing copy, privacy telemetry, and no-raw-address assertions",
+          responses: {
+            "200": {
+              description:
+                "Address or saved-location selection decision for Food, Instamart, Dineout, combined planning, address creation, and address deletion flows",
+            },
+          },
+        },
+      },
       "/api/swiggy-cart-mutation-workbench": {
         get: {
           tags: ["Commerce"],

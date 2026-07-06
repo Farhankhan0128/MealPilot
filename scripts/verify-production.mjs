@@ -223,6 +223,10 @@ assert(
   "OpenAPI Swiggy Location Trust is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-location-trust/select"].post.summary.includes("Select"),
+  "OpenAPI Swiggy Location Trust select gate is missing",
+);
+assert(
   openApi.paths["/api/swiggy-cart-mutation-workbench"].get.summary.includes("Cart Mutation") &&
     openApi.paths["/api/swiggy-cart-mutation-workbench"].get.responses["200"].description.includes("readback"),
   "OpenAPI Swiggy Cart Mutation Workbench is missing",
@@ -3671,6 +3675,33 @@ assert(
   locationTrust.locationTrust.externalGates.some((gate) => gate.includes("staging credentials")),
   "Location Trust staging credential gate is missing",
 );
+const locationDecision = await request("/api/swiggy-location-trust/select", {
+  method: "POST",
+  body: JSON.stringify({
+    server: "food",
+    sourceTool: "get_addresses",
+    selectedLabel: "Home",
+    userConfirmed: true,
+    downstreamIntent: "cart_checkout",
+    previousContextFresh: false,
+  }),
+});
+assert(locationDecision.locationDecision.decision === "block_until_refresh", "Location select stale checkout decision is wrong");
+assert(locationDecision.locationDecision.requiredNextTool === "get_food_cart", "Location select required next tool is wrong");
+assert(
+  locationDecision.locationDecision.invalidatedSurfaces.includes("food_cart") &&
+    locationDecision.locationDecision.invalidatedSurfaces.includes("food_coupons"),
+  "Location select invalidated surfaces are incomplete",
+);
+assert(/^[a-f0-9]{16}$/.test(locationDecision.locationDecision.selectedLocationHash), "Location select hash is not redacted");
+assert(
+  locationDecision.locationDecision.telemetry.some((field) => field.field === "raw_address_retained" && field.value === "false"),
+  "Location select raw-address telemetry invariant is missing",
+);
+assert(
+  locationDecision.locationDecision.assertions.some((assertion) => assertion.includes("never logs raw address")),
+  "Location select raw-address assertion is missing",
+);
 
 const cartMutation = await request("/api/swiggy-cart-mutation-workbench");
 assert(cartMutation.cartMutation.score >= 85, "Cart Mutation Workbench score is below target");
@@ -4769,6 +4800,7 @@ console.log(
       customizationStudioScore: customizationStudio.customizationStudio.score,
       customizationStudioLanes: customizationStudio.customizationStudio.totals.lanes,
       customizationValidationLane: customizationValidation.validation.selectedLaneId,
+      locationSelectionDecision: locationDecision.locationDecision.decision,
       nutritionBudgetScore: nutritionBudget.nutritionBudget.score,
       nutritionBudgetRoutes: nutritionBudget.nutritionBudget.totalRoutes,
       householdPreferenceScore: householdPreference.householdPreference.score,

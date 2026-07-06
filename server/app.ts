@@ -65,7 +65,7 @@ import { buildSwiggyJourneyCompiler } from "./services/journeyCompiler.js";
 import { buildLaunchBundle } from "./services/launchBundle.js";
 import { buildSwiggyLiveSignalCalibration } from "./services/liveSignalCalibration.js";
 import { buildSwiggyLoadLab } from "./services/loadLab.js";
-import { buildSwiggyLocationTrust } from "./services/locationTrust.js";
+import { buildSwiggyLocationTrust, selectSwiggyLocation } from "./services/locationTrust.js";
 import { buildLuxuryExperienceWorkspace } from "./services/luxuryExperienceWorkspace.js";
 import {
   buildMcpGatewayStatus,
@@ -263,6 +263,23 @@ const offerDecisionSchema = z.object({
   paymentMode: z.enum(["cod", "online", "free_booking", "unknown"]),
   claimedSavings: z.number().min(0).max(100000),
   userConfirmed: z.boolean(),
+});
+
+const locationSelectionSchema = z.object({
+  server: z.enum(["food", "instamart", "dineout", "combined"]),
+  sourceTool: z.enum(["get_addresses", "get_saved_locations", "create_address", "delete_address"]),
+  selectedLabel: z.string().min(1).max(80),
+  userConfirmed: z.boolean(),
+  downstreamIntent: z.enum([
+    "food_discovery",
+    "instamart_discovery",
+    "dineout_discovery",
+    "cart_checkout",
+    "combined_plan",
+    "address_create",
+    "address_delete",
+  ]),
+  previousContextFresh: z.boolean(),
 });
 
 const mcpServerSchema = z.enum(["food", "instamart", "dineout"]);
@@ -1267,6 +1284,16 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/swiggy-location-trust", (_req, res) => {
     res.json({ locationTrust: buildSwiggyLocationTrust({ plans: store.getAllPlans(), config }) });
+  });
+
+  app.post("/api/swiggy-location-trust/select", (req, res) => {
+    const body = locationSelectionSchema.parse(req.body);
+    res.json({
+      locationDecision: selectSwiggyLocation({
+        config,
+        ...body,
+      }),
+    });
   });
 
   app.get("/api/swiggy-cart-mutation-workbench", (_req, res) => {

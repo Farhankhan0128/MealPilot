@@ -3980,6 +3980,39 @@ export interface SwiggyLocationTrustReport {
   externalGates: string[];
 }
 
+export interface SwiggyLocationSelectionDecision {
+  generatedAt: string;
+  requestId: string;
+  mode: "mock" | "staging" | "production";
+  input: {
+    server: SwiggyServer | "combined";
+    sourceTool: "get_addresses" | "get_saved_locations" | "create_address" | "delete_address";
+    selectedLabel: string;
+    userConfirmed: boolean;
+    downstreamIntent:
+      | "food_discovery"
+      | "instamart_discovery"
+      | "dineout_discovery"
+      | "cart_checkout"
+      | "combined_plan"
+      | "address_create"
+      | "address_delete";
+    previousContextFresh: boolean;
+  };
+  decision: "ready_for_discovery" | "pause_for_user_choice" | "block_until_refresh" | "confirm_address_mutation";
+  selectedLocationHash: string;
+  requiredNextTool: string;
+  invalidatedSurfaces: string[];
+  userFacingCopy: string;
+  riskFlags: string[];
+  telemetry: Array<{
+    field: string;
+    value: string;
+    redaction: string;
+  }>;
+  assertions: string[];
+}
+
 export type SwiggyCartMutationStatus = "ready" | "watch" | "external_gate";
 
 export interface SwiggyCartMutationLane {

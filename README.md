@@ -34,6 +34,7 @@ Planned MCP servers:
 - Carbon-inspired premium portal shell with `src/assets/mealpilot-logo.svg`, sticky header, mobile navigation, footer, responsive 2x grid rules, visible CTA feedback, and documented interaction contracts in `docs/design-language.md`.
 - Express API that owns planning sessions, confirmations, OAuth start/callback, and mock MCP routes.
 - Mock Swiggy MCP JSON-RPC endpoint for localhost demos before credentials are issued, including `tools/call`, `resources/list`, `resources/read`, `prompts/list`, and `prompts/get`.
+- Staging/production MCP gateway forwarding for `tools/call`, `resources/list`, `resources/read`, `prompts/list`, and `prompts/get` once OAuth tokens are available.
 - Swiggy staging/production endpoint map for the eventual MCP swap.
 - OAuth 2.1 PKCE helper for the Swiggy authorization flow.
 - Swiggy OAuth Status panel and endpoint for redacted authorize URL, callback outcome, pending PKCE verifier count, token source, expiry, storage policy, and exact-match redirect readiness.
@@ -298,6 +299,7 @@ GET  /api/swiggy-load-lab
 GET  /api/swiggy-offer-intelligence
 GET  /api/swiggy-order-lifecycle
 GET  /api/swiggy-location-trust
+POST /api/swiggy-location-trust/select
 GET  /api/swiggy-cart-mutation-workbench
 GET  /api/swiggy-discovery-freshness
 GET  /api/swiggy-confirmation-command-center
@@ -510,7 +512,7 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 
 `GET /api/swiggy-order-lifecycle` is the post-confirmation command center: it maps Food `get_food_orders`, `get_food_order_details`, `track_food_order`, Instamart `get_orders`, `get_order_details`, `track_order`, and Dineout `get_booking_status` into status timelines, non-blind retry probes, tracking cadence, redacted telemetry, and support packet rules.
 
-`GET /api/swiggy-location-trust` is the saved-address and location trust center: it covers shared Food/Instamart `get_addresses`, Instamart `create_address` and `delete_address`, Dineout `get_saved_locations`, address-choice pauses, address switch refresh guards, raw-address redaction, and staging credential gates.
+`GET /api/swiggy-location-trust` plus `POST /api/swiggy-location-trust/select` is the saved-address and location trust center: it covers shared Food/Instamart `get_addresses`, Instamart `create_address` and `delete_address`, Dineout `get_saved_locations`, address-choice pauses, executable ready/pause/block/mutation decisions, address switch refresh guards, raw-address redaction, and staging credential gates.
 
 `GET /api/swiggy-cart-mutation-workbench` is the cart mutation control room: it covers Food `get_food_cart`, `update_food_cart`, and `flush_food_cart`, Instamart `get_cart`, `update_cart`, and `clear_cart`, Dineout `create_cart`, readback-after-write rules, payment-method truth, add-on confirmation, and live cart-write gates.
 

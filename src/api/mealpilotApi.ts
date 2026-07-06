@@ -85,6 +85,7 @@ import type {
   SwiggyInnovationRadarReport,
   SwiggyJourneyCompilerReport,
   SwiggyLoadLabReport,
+  SwiggyLocationSelectionDecision,
   SwiggyLocationTrustReport,
   SwiggyOfferDecision,
   SwiggyOfferIntelligenceReport,
@@ -727,6 +728,27 @@ export function fetchSwiggyOrderLifecycle() {
 
 export function fetchSwiggyLocationTrust() {
   return requestJson<{ locationTrust: SwiggyLocationTrustReport }>("/api/swiggy-location-trust");
+}
+
+export function selectSwiggyLocation(input: {
+  server: "food" | "instamart" | "dineout" | "combined";
+  sourceTool: "get_addresses" | "get_saved_locations" | "create_address" | "delete_address";
+  selectedLabel: string;
+  userConfirmed: boolean;
+  downstreamIntent:
+    | "food_discovery"
+    | "instamart_discovery"
+    | "dineout_discovery"
+    | "cart_checkout"
+    | "combined_plan"
+    | "address_create"
+    | "address_delete";
+  previousContextFresh: boolean;
+}) {
+  return requestJson<{ locationDecision: SwiggyLocationSelectionDecision }>("/api/swiggy-location-trust/select", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
 }
 
 export function fetchSwiggyCartMutationWorkbench() {

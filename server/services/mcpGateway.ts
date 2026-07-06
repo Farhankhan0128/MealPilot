@@ -1,9 +1,10 @@
 import type { ServerConfig } from "../config.js";
 import type { JsonRpcRequest } from "../mock/swiggyToolRouter.js";
-import { callSwiggyTool, swiggyEndpoints } from "../../src/integrations/swiggy/client.js";
+import { callSwiggyJsonRpc, callSwiggyTool, swiggyEndpoints } from "../../src/integrations/swiggy/client.js";
 import type { McpGatewayCheck, McpGatewayStatus, SwiggyServer } from "../../src/domain/types.js";
 
 const servers: SwiggyServer[] = ["food", "instamart", "dineout"];
+const supportedJsonRpcMethods = new Set(["tools/call", "resources/list", "resources/read", "prompts/list", "prompts/get"]);
 
 export interface RuntimeCredentialState {
   accessToken?: string;
@@ -184,11 +185,19 @@ export async function callConfiguredSwiggyTool(options: {
     throw new Error("callConfiguredSwiggyTool should only be used outside mock mode.");
   }
 
-  if (options.request.jsonrpc !== "2.0" || options.request.method !== "tools/call") {
+  if (options.request.jsonrpc !== "2.0") {
     return {
       jsonrpc: "2.0",
       id: options.request.id,
-      error: { code: -32600, message: "Only MCP tools/call is supported." },
+      error: { code: -32600, message: "Invalid JSON-RPC request." },
+    };
+  }
+
+  if (!supportedJsonRpcMethods.has(options.request.method)) {
+    return {
+      jsonrpc: "2.0",
+      id: options.request.id,
+      error: { code: -32601, message: `Unsupported MCP method: ${options.request.method}` },
     };
   }
 
@@ -201,6 +210,15 @@ export async function callConfiguredSwiggyTool(options: {
         message: "Swiggy OAuth token is required before staging or production MCP calls.",
       },
     };
+  }
+
+  if (options.request.method !== "tools/call") {
+    return callSwiggyJsonRpc({
+      environment: options.config.swiggyMode,
+      server: options.server,
+      request: options.request as unknown as Record<string, unknown>,
+      accessToken: options.accessToken,
+    });
   }
 
   return callSwiggyTool({

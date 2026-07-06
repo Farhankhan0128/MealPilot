@@ -110,7 +110,9 @@ The verifier also validates `/api/swiggy-offer-intelligence` and `/api/swiggy-of
 
 The verifier also validates `/api/swiggy-order-lifecycle` for Food, Instamart, and Dineout status tools, tracking cadence, non-blind retry recovery, timeline telemetry redaction, support-ready lifecycle packets, and launch-bundle handoff coverage.
 
-The verifier also validates `/api/swiggy-location-trust` for Food/Instamart saved-address tools, Instamart create/delete address flows, Dineout saved locations, address-choice pauses, address switch refresh guards, raw-address redaction, and staging credential gates.
+The verifier also validates `/api/swiggy-location-trust` and `/api/swiggy-location-trust/select` for Food/Instamart saved-address tools, Instamart create/delete address flows, Dineout saved locations, address-choice pauses, executable ready/pause/block/mutation decisions, address switch refresh guards, raw-address redaction, and staging credential gates.
+
+The MCP gateway test suite covers staging/production forwarding for `tools/call`, `resources/list`, `resources/read`, `prompts/list`, and `prompts/get`; unsupported methods stay fail-closed with JSON-RPC errors, and missing live tokens still return 401.
 
 The verifier also validates `/api/swiggy-cart-mutation-workbench` for Food cart readback, Instamart full-cart replacement, Dineout create_cart gates, payment-method truth, add-on confirmation, commercial single-flight rules, and staging cart-write gates.
 
@@ -263,6 +265,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/swiggy-offer-intelligence`
 - `GET /api/swiggy-order-lifecycle`
 - `GET /api/swiggy-location-trust`
+- `POST /api/swiggy-location-trust/select`
 - `GET /api/swiggy-cart-mutation-workbench`
 - `GET /api/swiggy-discovery-freshness`
 - `GET /api/swiggy-confirmation-command-center`

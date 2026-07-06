@@ -2,7 +2,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import request from "supertest";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { createMealPilotServer } from "./app.js";
 import { createFileSessionStore } from "./store/sessionStore.js";
 
@@ -132,6 +132,7 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/swiggy-order-lifecycle"].get.responses["200"].description).toContain("non-blind retry");
     expect(openApi.body.paths["/api/swiggy-location-trust"].get.summary).toContain("Location Trust");
     expect(openApi.body.paths["/api/swiggy-location-trust"].get.responses["200"].description).toContain("address");
+    expect(openApi.body.paths["/api/swiggy-location-trust/select"].post.summary).toContain("Select");
     expect(openApi.body.paths["/api/swiggy-cart-mutation-workbench"].get.summary).toContain("Cart Mutation");
     expect(openApi.body.paths["/api/swiggy-cart-mutation-workbench"].get.responses["200"].description).toContain("readback");
     expect(openApi.body.paths["/api/swiggy-discovery-freshness"].get.summary).toContain("Discovery Freshness");
@@ -300,6 +301,68 @@ describe("MealPilot API", () => {
       .expect(401);
 
     expect(blocked.body.error.message).toContain("OAuth token");
+  });
+
+  it("forwards live MCP resources and prompts without rewriting JSON-RPC methods", async () => {
+    const originalFetch = globalThis.fetch;
+    const forwardedBodies: Array<Record<string, unknown>> = [];
+    const fetchMock = vi.fn(async (_url: string | URL | Request, init?: RequestInit) => {
+      const body = JSON.parse(String(init?.body ?? "{}")) as Record<string, unknown>;
+      forwardedBodies.push(body);
+      return new Response(
+        JSON.stringify({
+          jsonrpc: "2.0",
+          id: body.id,
+          result:
+            body.method === "resources/list"
+              ? { resources: [{ uri: "swiggy://food/session", name: "Food session" }] }
+              : { messages: [{ role: "user", content: { type: "text", text: "Prompt forwarded" } }] },
+        }),
+        { status: 200, headers: { "Content-Type": "application/json" } },
+      );
+    });
+    globalThis.fetch = fetchMock as typeof fetch;
+
+    try {
+      const { app } = createMealPilotServer({
+        config: {
+          appName: "MealPilot India",
+          port: 8787,
+          swiggyMode: "staging",
+          swiggyClientId: "client_staging",
+          swiggyRedirectUri: "https://mealpilot.app/auth/swiggy/callback",
+          swiggyScope: "mcp:tools mcp:resources mcp:prompts",
+          swiggyBaseUrl: "https://mcp-staging.swiggy.com",
+          swiggyAccessToken: "staging_token",
+          planRetentionDays: 14,
+        },
+      });
+
+      const resources = await request(app)
+        .post("/api/mcp/food")
+        .send({ jsonrpc: "2.0", id: "live-resources", method: "resources/list" })
+        .expect(200);
+
+      const prompt = await request(app)
+        .post("/api/mcp/dineout")
+        .send({
+          jsonrpc: "2.0",
+          id: "live-prompt",
+          method: "prompts/get",
+          params: { name: "dineout_evening_planner", arguments: { guests: 4 } },
+        })
+        .expect(200);
+
+      expect(resources.body.result.resources[0].uri).toBe("swiggy://food/session");
+      expect(prompt.body.result.messages[0].content.text).toBe("Prompt forwarded");
+      expect(forwardedBodies.map((body) => body.method)).toEqual(["resources/list", "prompts/get"]);
+      expect(forwardedBodies[1].params).toEqual({ name: "dineout_evening_planner", arguments: { guests: 4 } });
+      expect(fetchMock.mock.calls[0][0]).toBe("https://mcp-staging.swiggy.com/food");
+      expect(fetchMock.mock.calls[1][0]).toBe("https://mcp-staging.swiggy.com/dineout");
+      expect(new Headers(fetchMock.mock.calls[0][1]?.headers).get("Authorization")).toBe("Bearer staging_token");
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
   });
 
   it("returns a Swiggy staging cutover rehearsal for real MCP transport", async () => {
@@ -3835,6 +3898,28 @@ describe("MealPilot API", () => {
     );
     expect(trust.assertions.some((assertion: string) => assertion.includes("Raw addresses never leave"))).toBe(true);
     expect(trust.externalGates.some((gate: string) => gate.includes("staging credentials"))).toBe(true);
+
+    const decisionResponse = await request(app)
+      .post("/api/swiggy-location-trust/select")
+      .send({
+        server: "food",
+        sourceTool: "get_addresses",
+        selectedLabel: "Home",
+        userConfirmed: true,
+        downstreamIntent: "cart_checkout",
+        previousContextFresh: false,
+      })
+      .expect(200);
+
+    const decision = decisionResponse.body.locationDecision;
+    expect(decision.decision).toBe("block_until_refresh");
+    expect(decision.requiredNextTool).toBe("get_food_cart");
+    expect(decision.invalidatedSurfaces).toEqual(expect.arrayContaining(["food_cart", "food_coupons"]));
+    expect(decision.selectedLocationHash).toMatch(/^[a-f0-9]{16}$/);
+    expect(decision.telemetry.some((field: { field: string; value: string }) => field.field === "raw_address_retained" && field.value === "false")).toBe(
+      true,
+    );
+    expect(decision.assertions.some((assertion: string) => assertion.includes("never logs raw address"))).toBe(true);
   });
 
   it("returns Swiggy Cart Mutation Workbench for cart readback and checkout-safe mutations", async () => {

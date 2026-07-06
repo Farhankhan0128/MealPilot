@@ -23,22 +23,21 @@ export interface RawMcpToolCall {
   environment: Exclude<SwiggyEnvironment, "mock">;
 }
 
-export async function callSwiggyTool<T>(call: RawMcpToolCall): Promise<T> {
+export interface RawMcpJsonRpcCall {
+  server: SwiggyServer;
+  request: Record<string, unknown>;
+  accessToken: string;
+  environment: Exclude<SwiggyEnvironment, "mock">;
+}
+
+export async function callSwiggyJsonRpc<T>(call: RawMcpJsonRpcCall): Promise<T> {
   const response = await fetch(swiggyEndpoints[call.environment][call.server], {
     method: "POST",
     headers: {
       Authorization: `Bearer ${call.accessToken}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      jsonrpc: "2.0",
-      id: crypto.randomUUID(),
-      method: "tools/call",
-      params: {
-        name: call.tool,
-        arguments: call.arguments ?? {},
-      },
-    }),
+    body: JSON.stringify(call.request),
   });
 
   if (!response.ok) {
@@ -49,4 +48,21 @@ export async function callSwiggyTool<T>(call: RawMcpToolCall): Promise<T> {
   }
 
   return (await response.json()) as T;
+}
+
+export async function callSwiggyTool<T>(call: RawMcpToolCall): Promise<T> {
+  return callSwiggyJsonRpc<T>({
+    environment: call.environment,
+    server: call.server,
+    accessToken: call.accessToken,
+    request: {
+      jsonrpc: "2.0",
+      id: crypto.randomUUID(),
+      method: "tools/call",
+      params: {
+        name: call.tool,
+        arguments: call.arguments ?? {},
+      },
+    },
+  });
 }
