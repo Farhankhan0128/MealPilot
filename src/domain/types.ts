@@ -1561,6 +1561,73 @@ export interface SwiggyPartnerSuccessDesk {
   externalGates: string[];
 }
 
+export type SwiggyPartnerSupportRoomStatus = "ready" | "manual_input" | "external_gate";
+export type SwiggyPartnerSupportRoomOwner = "MealPilot" | "Operator" | "Swiggy" | "Joint";
+
+export interface SwiggyPartnerSupportChannel {
+  id: string;
+  label: string;
+  owner: SwiggyPartnerSupportRoomOwner;
+  status: SwiggyPartnerSupportRoomStatus;
+  useCase: string;
+  entrypoint: string;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyPartnerSupportIncidentLane {
+  id: string;
+  severity: "S0" | "S1" | "S2" | "S3";
+  label: string;
+  owner: SwiggyPartnerSupportRoomOwner;
+  status: SwiggyPartnerSupportRoomStatus;
+  trigger: string;
+  responseCadence: string;
+  proofLinks: string[];
+}
+
+export interface SwiggyPartnerSupportAttachment {
+  id: string;
+  label: string;
+  source: string;
+  status: SwiggyPartnerSupportRoomStatus;
+  proves: string;
+  redaction: string;
+}
+
+export interface SwiggyPartnerSupportRoom {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  supportPosture: string;
+  totals: {
+    channels: number;
+    readyChannels: number;
+    incidentLanes: number;
+    readyIncidentLanes: number;
+    evidenceAttachments: number;
+    readyEvidenceAttachments: number;
+    escalationSteps: number;
+    operatorInputs: number;
+    swiggyGates: number;
+    proofLinks: number;
+  };
+  channels: SwiggyPartnerSupportChannel[];
+  incidentLanes: SwiggyPartnerSupportIncidentLane[];
+  evidenceAttachments: SwiggyPartnerSupportAttachment[];
+  escalationRunbook: Array<{
+    sequence: number;
+    id: string;
+    label: string;
+    owner: SwiggyPartnerSupportRoomOwner;
+    status: SwiggyPartnerSupportRoomStatus;
+    action: string;
+    evidenceLinks: string[];
+  }>;
+  emailDrafts: Array<{ id: string; to: string; subject: string; bodyPreview: string; source: string }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type SwiggyInteractionQaStatus = "working" | "manual_gate" | "external_gate";
 export type SwiggyInteractionQaSurface = "planner" | "launch_center" | "production_evidence" | "settings";
 

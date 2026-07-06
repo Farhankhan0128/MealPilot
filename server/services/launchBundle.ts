@@ -222,6 +222,15 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
         "Coordinates the 2-3 minute demo storyboard, proof assets, recording gates, redaction checks, runbook commands, and builders@swiggy.in handoff copy.",
     },
     {
+      id: "partner_support_room",
+      label: "Swiggy Partner Support Room",
+      path: "/api/swiggy-partner-support-room",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Composes report_error readiness, support channels, S0-S3 incident lanes, evidence attachments, escalation runbook, capacity email, and enterprise support gates.",
+    },
+    {
       id: "access_evidence_matrix",
       label: "Swiggy Access Evidence Matrix",
       path: "/api/swiggy-access-evidence-matrix",
@@ -988,6 +997,7 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- Luxury Experience Workspace: /api/luxury-experience-workspace",
     "- Reviewer Artifact Vault: /api/reviewer-artifact-vault",
     "- Swiggy Demo Evidence Director: /api/swiggy-demo-evidence-director",
+    "- Swiggy Partner Support Room: /api/swiggy-partner-support-room",
     "- Swiggy Access Evidence Matrix: /api/swiggy-access-evidence-matrix",
     "- Visual QA Center: /api/visual-qa-center",
     "- Submission Console: /api/submission-console",

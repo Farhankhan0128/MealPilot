@@ -107,6 +107,7 @@ import { buildSwiggyOfferIntelligence, decideSwiggyOffer } from "./services/offe
 import { buildSwiggyOperatingContractCenter } from "./services/operatingContractCenter.js";
 import { buildSwiggyOrderLifecycle, probeSwiggyOrderLifecycle } from "./services/orderLifecycle.js";
 import { buildSwiggyPartnerSuccessDesk } from "./services/partnerSuccessDesk.js";
+import { buildSwiggyPartnerSupportRoom } from "./services/partnerSupportRoom.js";
 import { buildSwiggyPaymentTruthCenter, reconcileSwiggyPaymentTruth } from "./services/paymentTruthCenter.js";
 import { buildSwiggyMealWindowCenter, forecastSwiggyMealWindow } from "./services/mealWindowIntelligence.js";
 import { buildPremiumConciergeItinerary } from "./services/premiumConciergeItinerary.js";
@@ -1033,6 +1034,18 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
   app.get("/api/swiggy-partner-success-desk", (_req, res) => {
     res.json({
       partnerSuccess: buildSwiggyPartnerSuccessDesk({
+        config,
+        profile: store.getProfile(),
+        coverage: buildMcpCoverage(),
+        plans: store.getAllPlans(),
+        telemetry: telemetry.buildReport(),
+      }),
+    });
+  });
+
+  app.get("/api/swiggy-partner-support-room", (_req, res) => {
+    res.json({
+      partnerSupport: buildSwiggyPartnerSupportRoom({
         config,
         profile: store.getProfile(),
         coverage: buildMcpCoverage(),

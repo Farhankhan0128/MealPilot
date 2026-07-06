@@ -267,6 +267,7 @@ Briefly show production readiness:
 - `/api/luxury-experience-workspace`
 - `/api/reviewer-artifact-vault`
 - `/api/swiggy-demo-evidence-director`
+- `/api/swiggy-partner-support-room`
 - `/api/visual-qa-center`
 - `/api/premium-concierge-itinerary`
 - `/api/mcp/tool-contract-matrix`

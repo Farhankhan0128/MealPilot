@@ -437,6 +437,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-partner-support-room": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Partner Support Room for report_error, incident, capacity, and enterprise support operations",
+          responses: {
+            "200": {
+              description:
+                "Post-access support room with contact channels, report_error readiness, S0-S3 incident lanes, redacted evidence attachments, escalation runbook, support email drafts, capacity escalation, and Swiggy-owned enterprise support gates",
+            },
+          },
+        },
+      },
       "/api/swiggy-interaction-qa-center": {
         get: {
           tags: ["Builder Access"],

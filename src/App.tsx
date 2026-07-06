@@ -137,6 +137,7 @@ import {
   fetchSwiggyInnovationRadar,
   fetchSwiggyJourneyCompiler,
   fetchSwiggyPartnerSuccessDesk,
+  fetchSwiggyPartnerSupportRoom,
   fetchSwiggyScenarioRunner,
   fetchSwiggySourceIntelligence,
   fetchSwiggyStagingCutover,
@@ -264,6 +265,7 @@ import type {
   SwiggySubmissionTimelineCenter,
   SwiggyInteractionQaCenter,
   SwiggyPartnerSuccessDesk,
+  SwiggyPartnerSupportRoom,
   SwiggyHandshakeDoctor,
   SwiggyLlmsManifestVerifier,
   SwiggyInnovationRadarReport,
@@ -457,6 +459,7 @@ function App() {
   const [demoEvidence, setDemoEvidence] = useState<SwiggyDemoEvidenceDirector | null>(null);
   const [submissionTimeline, setSubmissionTimeline] = useState<SwiggySubmissionTimelineCenter | null>(null);
   const [partnerSuccess, setPartnerSuccess] = useState<SwiggyPartnerSuccessDesk | null>(null);
+  const [partnerSupport, setPartnerSupport] = useState<SwiggyPartnerSupportRoom | null>(null);
   const [interactionQa, setInteractionQa] = useState<SwiggyInteractionQaCenter | null>(null);
   const [channelMultimodalStudio, setChannelMultimodalStudio] =
     useState<SwiggyChannelMultimodalStudio | null>(null);
@@ -662,6 +665,7 @@ function App() {
       demoEvidenceResponse,
       submissionTimelineResponse,
       partnerSuccessResponse,
+      partnerSupportResponse,
       interactionQaResponse,
       channelMultimodalResponse,
       visualDishCaptureResponse,
@@ -768,6 +772,7 @@ function App() {
       fetchSwiggyDemoEvidenceDirector(),
       fetchSwiggySubmissionTimelineCenter(),
       fetchSwiggyPartnerSuccessDesk(),
+      fetchSwiggyPartnerSupportRoom(),
       fetchSwiggyInteractionQaCenter(),
       fetchChannelMultimodalStudio(),
       fetchSwiggyVisualDishCapture(),
@@ -875,6 +880,7 @@ function App() {
     setDemoEvidence(demoEvidenceResponse.demoEvidence);
     setSubmissionTimeline(submissionTimelineResponse.submissionTimeline);
     setPartnerSuccess(partnerSuccessResponse.partnerSuccess);
+    setPartnerSupport(partnerSupportResponse.partnerSupport);
     setInteractionQa(interactionQaResponse.interactionQa);
     setChannelMultimodalStudio(channelMultimodalResponse.channelMultimodalStudio);
     setVisualDishCapture(visualDishCaptureResponse.visualDishCapture);
@@ -985,6 +991,7 @@ function App() {
       demoEvidenceResponse,
       submissionTimelineResponse,
       partnerSuccessResponse,
+      partnerSupportResponse,
       interactionQaResponse,
       channelMultimodalResponse,
       visualDishCaptureResponse,
@@ -1088,6 +1095,7 @@ function App() {
       fetchSwiggyDemoEvidenceDirector(),
       fetchSwiggySubmissionTimelineCenter(),
       fetchSwiggyPartnerSuccessDesk(),
+      fetchSwiggyPartnerSupportRoom(),
       fetchSwiggyInteractionQaCenter(),
       fetchChannelMultimodalStudio(),
       fetchSwiggyVisualDishCapture(),
@@ -1191,6 +1199,7 @@ function App() {
     setDemoEvidence(demoEvidenceResponse.demoEvidence);
     setSubmissionTimeline(submissionTimelineResponse.submissionTimeline);
     setPartnerSuccess(partnerSuccessResponse.partnerSuccess);
+    setPartnerSupport(partnerSupportResponse.partnerSupport);
     setInteractionQa(interactionQaResponse.interactionQa);
     setChannelMultimodalStudio(channelMultimodalResponse.channelMultimodalStudio);
     setVisualDishCapture(visualDishCaptureResponse.visualDishCapture);
@@ -1869,6 +1878,7 @@ function App() {
                 demoEvidence={demoEvidence}
                 submissionTimeline={submissionTimeline}
                 partnerSuccess={partnerSuccess}
+                partnerSupport={partnerSupport}
                 interactionQa={interactionQa}
                 channelMultimodalStudio={channelMultimodalStudio}
                 visualDishCapture={visualDishCapture}
@@ -2462,6 +2472,7 @@ function LaunchCenterPanel({
   demoEvidence,
   submissionTimeline,
   partnerSuccess,
+  partnerSupport,
   interactionQa,
   channelMultimodalStudio,
   visualDishCapture,
@@ -2538,6 +2549,7 @@ function LaunchCenterPanel({
   demoEvidence: SwiggyDemoEvidenceDirector | null;
   submissionTimeline: SwiggySubmissionTimelineCenter | null;
   partnerSuccess: SwiggyPartnerSuccessDesk | null;
+  partnerSupport: SwiggyPartnerSupportRoom | null;
   interactionQa: SwiggyInteractionQaCenter | null;
   channelMultimodalStudio: SwiggyChannelMultimodalStudio | null;
   visualDishCapture: SwiggyVisualDishCaptureCenter | null;
@@ -3962,6 +3974,54 @@ function LaunchCenterPanel({
             </a>
             <a href="/api/traffic-readiness-plan" target="_blank" rel="noreferrer">
               Capacity
+            </a>
+          </div>
+        </article>
+
+        <article className="partner-support-card">
+          <div className="mini-heading">
+            <MessageSquare aria-hidden="true" />
+            <strong>Partner Support Room</strong>
+          </div>
+          <span>
+            {partnerSupport
+              ? `${partnerSupport.score}/100, ${partnerSupport.totals.readyChannels}/${partnerSupport.totals.channels} channels ready`
+              : "Preparing report_error, incident, and capacity support room"}
+          </span>
+          <div className="partner-support-grid">
+            <div>
+              <strong>{partnerSupport?.totals.incidentLanes ?? 0}</strong>
+              <span>Incident lanes</span>
+            </div>
+            <div>
+              <strong>{partnerSupport?.totals.evidenceAttachments ?? 0}</strong>
+              <span>Attachments</span>
+            </div>
+            <div>
+              <strong>{partnerSupport?.totals.operatorInputs ?? 0}</strong>
+              <span>Inputs</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(partnerSupport?.channels ?? []).slice(0, 5).map((channel) => (
+              <li
+                key={channel.id}
+                data-status={channel.status === "ready" ? "healthy" : channel.status === "external_gate" ? "blocked" : "watch"}
+              >
+                <span>{channel.label}</span>
+                <strong>{channel.owner}</strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-intelligence-actions" aria-label="Partner support links">
+            <a href="/api/swiggy-partner-support-room" target="_blank" rel="noreferrer">
+              Support room
+            </a>
+            <a href="/api/support/bridge" target="_blank" rel="noreferrer">
+              Bridge
+            </a>
+            <a href="/api/slo-incident-command" target="_blank" rel="noreferrer">
+              SLO
             </a>
           </div>
         </article>

@@ -409,6 +409,17 @@ const targetGroups = [
         "artifacts/visual-qa/partner-success-card.png",
       ),
       target(
+        "partner_support_card",
+        "Partner Support Room card",
+        "/",
+        ".partner-support-card",
+        "desktop",
+        1280,
+        900,
+        "Partner Support Room shows report_error readiness, incident lanes, evidence attachments, operator inputs, and Swiggy support gates.",
+        "artifacts/visual-qa/partner-support-card.png",
+      ),
+      target(
         "showcase_submission_card",
         "Showcase Submission card",
         "/",

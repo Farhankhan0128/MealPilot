@@ -191,6 +191,7 @@ MealPilot should become a luxury-grade food and meal intelligence product with t
 | Demo Evidence Director | `server/services/demoEvidenceDirector.ts` |
 | Submission Timeline Center | `server/services/submissionTimelineCenter.ts` |
 | Partner Success Desk | `server/services/partnerSuccessDesk.ts` |
+| Partner Support Room | `server/services/partnerSupportRoom.ts` |
 | Interaction QA Center | `server/services/interactionQaCenter.ts` |
 | Staging Seed & Smoke Center | `server/services/stagingSeedSmokeCenter.ts` |
 | Swiggy Builders map | `server/services/swiggyBuildersMap.ts` |

@@ -156,6 +156,10 @@ assert(
   "OpenAPI partner success desk contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-partner-support-room"].get.summary.includes("Partner Support Room"),
+  "OpenAPI partner support room contract is missing",
+);
+assert(
   openApi.paths["/api/swiggy-interaction-qa-center"].get.summary.includes("Interaction QA"),
   "OpenAPI interaction QA center contract is missing",
 );
@@ -937,6 +941,50 @@ assert(
   partnerSuccess.partnerSuccess.assertions.some((assertion) => assertion.includes("existing verified support")) &&
     partnerSuccess.partnerSuccess.externalGates.some((gate) => gate.includes("Slack")),
   "Partner Success Desk assertions or external gates are missing",
+);
+
+const partnerSupport = await request("/api/swiggy-partner-support-room");
+assert(partnerSupport.partnerSupport.score >= 88, "Partner Support Room score is below target");
+assert(partnerSupport.partnerSupport.supportPosture.includes("support-ready"), "Partner Support Room posture is missing");
+assert(
+  partnerSupport.partnerSupport.totals.channels === 5 &&
+    partnerSupport.partnerSupport.totals.readyChannels === 2 &&
+    partnerSupport.partnerSupport.totals.incidentLanes === 4 &&
+    partnerSupport.partnerSupport.totals.readyIncidentLanes === 4 &&
+    partnerSupport.partnerSupport.totals.evidenceAttachments === 8 &&
+    partnerSupport.partnerSupport.totals.readyEvidenceAttachments >= 7 &&
+    partnerSupport.partnerSupport.totals.escalationSteps === 5 &&
+    partnerSupport.partnerSupport.totals.operatorInputs === 4 &&
+    partnerSupport.partnerSupport.totals.swiggyGates === 2,
+  "Partner Support Room totals are incomplete",
+);
+assert(
+  ["report_error:ready", "builders_email:manual_input", "enterprise_slack:external_gate"].every((entry) =>
+    partnerSupport.partnerSupport.channels.some((channel) => `${channel.id}:${channel.status}` === entry),
+  ),
+  "Partner Support Room channels are incomplete",
+);
+assert(
+  partnerSupport.partnerSupport.incidentLanes.map((lane) => lane.severity).join(",") === "S0,S1,S2,S3",
+  "Partner Support Room incident lanes are incomplete",
+);
+assert(
+  ["support_bridge", "slo_command", "runtime_telemetry", "audit_ledger", "traffic_profile", "demo_evidence"].every((id) =>
+    partnerSupport.partnerSupport.evidenceAttachments.some((attachment) => attachment.id === id),
+  ),
+  "Partner Support Room evidence attachments are incomplete",
+);
+assert(
+  partnerSupport.partnerSupport.escalationRunbook.map((step) => step.sequence).join(",") === "1,2,3,4,5" &&
+    ["support_incident", "quota_capacity", "access_handoff"].every((id) =>
+      partnerSupport.partnerSupport.emailDrafts.some((draft) => draft.id === id && draft.to === "builders@swiggy.in"),
+    ),
+  "Partner Support Room runbook or email drafts are incomplete",
+);
+assert(
+  partnerSupport.partnerSupport.assertions.some((assertion) => assertion.includes("No support email")) &&
+    partnerSupport.partnerSupport.externalGates.some((gate) => gate.includes("Enterprise Slack")),
+  "Partner Support Room assertions or external gates are missing",
 );
 
 const interactionQa = await request("/api/swiggy-interaction-qa-center");
@@ -1754,6 +1802,17 @@ assert(
   "reviewer artifact vault demo evidence director artifact is missing",
 );
 assert(
+  reviewerArtifactVault.reviewerArtifactVault.artifactSections.some((section) =>
+    section.artifacts.some(
+      (artifact) =>
+        artifact.id === "partner_support_room" &&
+        artifact.label === "Swiggy Partner Support Room" &&
+        artifact.path === "/api/swiggy-partner-support-room",
+    ),
+  ),
+  "reviewer artifact vault partner support room artifact is missing",
+);
+assert(
   reviewerArtifactVault.reviewerArtifactVault.screenshotTargets.some(
     (target) =>
       target.id === "luxury_workspace_card" &&
@@ -1815,7 +1874,8 @@ assert(
 assert(
   reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.to === "builders@swiggy.in" &&
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/reviewer-artifact-vault") &&
-    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-demo-evidence-director"),
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-demo-evidence-director") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-partner-support-room"),
   "reviewer artifact vault email draft is incomplete",
 );
 assert(
@@ -1825,8 +1885,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 47, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 47, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 48, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 48, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -2001,6 +2061,12 @@ assert(
     group.targets.some((target) => target.id === "partner_success_card" && target.selector === ".partner-success-card"),
   ),
   "visual QA Partner Success target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some((target) => target.id === "partner_support_card" && target.selector === ".partner-support-card"),
+  ),
+  "visual QA Partner Support Room target is missing",
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
@@ -5281,7 +5347,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 47, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 48, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -5295,7 +5361,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("47")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("48")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -5345,6 +5411,7 @@ assert(
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Luxury Experience Workspace") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Reviewer Artifact Vault") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Demo Evidence Director") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Partner Support Room") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Access Evidence Matrix") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Visual QA Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Builders Launch Story Center") &&
@@ -5510,6 +5577,10 @@ assert(
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-demo-evidence-director"),
   "launch bundle demo evidence director handoff link is missing",
+);
+assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-partner-support-room"),
+  "launch bundle partner support room handoff link is missing",
 );
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-access-evidence-matrix"),
@@ -5866,6 +5937,9 @@ console.log(
       partnerSuccessScore: partnerSuccess.partnerSuccess.score,
       partnerSuccessLanes: partnerSuccess.partnerSuccess.totals.lanes,
       partnerSuccessExternalGates: partnerSuccess.partnerSuccess.totals.externalGates,
+      partnerSupportScore: partnerSupport.partnerSupport.score,
+      partnerSupportChannels: partnerSupport.partnerSupport.totals.channels,
+      partnerSupportIncidentLanes: partnerSupport.partnerSupport.totals.incidentLanes,
       interactionQaScore: interactionQa.interactionQa.score,
       interactionQaWorking: interactionQa.interactionQa.totals.working,
       interactionQaGates: interactionQa.interactionQa.totals.manualGates + interactionQa.interactionQa.totals.externalGates,

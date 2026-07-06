@@ -98,6 +98,7 @@ import type {
   SwiggyGrowthPartnershipCenter,
   SwiggyDemoEvidenceDirector,
   SwiggyInteractionQaCenter,
+  SwiggyPartnerSupportRoom,
   SwiggyShowcaseSubmissionCenter,
   SwiggySubmissionTimelineCenter,
   SwiggyPartnerSuccessDesk,
@@ -425,6 +426,10 @@ export function fetchSwiggySubmissionTimelineCenter() {
 
 export function fetchSwiggyPartnerSuccessDesk() {
   return requestJson<{ partnerSuccess: SwiggyPartnerSuccessDesk }>("/api/swiggy-partner-success-desk");
+}
+
+export function fetchSwiggyPartnerSupportRoom() {
+  return requestJson<{ partnerSupport: SwiggyPartnerSupportRoom }>("/api/swiggy-partner-support-room");
 }
 
 export function fetchSwiggyInteractionQaCenter() {
