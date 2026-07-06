@@ -104,6 +104,7 @@ The verifier also validates Commercial Action Guard for Food order placement, In
 
 The verifier also validates `/api/swiggy-private-pilot-control-room` for real-user cohort readiness, assigned benchmark journeys, consent artifact counts, telemetry fields, operator runbooks, support paths, Swiggy staging replay gates, and copy-ready `builders@swiggy.in` handoff evidence.
 The verifier also validates `/api/swiggy-staging-replay` and `/api/swiggy-staging-replay/run` for safe replay probes, dry-run versus credentialed execution state, response hashes, redaction telemetry, missing-token fail-closed behavior, commercial-action blocking, and Swiggy handoff copy.
+The verifier also validates `/api/swiggy-hosted-widget-activation` for parent-origin policy, iframe sandboxing, origin-verified postMessage handshakes, semantic fallback parity, no-signed-URL telemetry, commercial confirmation routing, visual proof, and hosted-widget external gates.
 
 The verifier also validates `/api/swiggy-route-optimizer` for official source links, call-saving rollups, optimizer profiles, explicit parallel batches, commercial-action exclusion from parallel batches, cross-server handoff redaction, and source-linked route assertions.
 
@@ -197,6 +198,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/sessions/:sessionId/widgets`
 - `GET /api/mcp/widget-runtime`
 - `GET /api/swiggy-widget-experience-composer`
+- `GET /api/swiggy-hosted-widget-activation`
 - `GET /api/swiggy-agent-experience-benchmark`
 - `GET /api/swiggy-private-pilot-control-room`
 - `GET /api/mcp/backpressure-governor`
@@ -596,6 +598,7 @@ The test suite checks that:
 - Profile, substitution, confirm-all, tracking, and Builder Access package routes work end to end.
 - Pantry, group planning, scheduling, ops, privacy, markdown export, and OAuth callback routes work end to end.
 - Readiness, OpenAPI, preflight, replay, widgets, Widget Runtime, Widget Experience Composer, Agent Experience Benchmark, Private Pilot Control Room, Staging Cutover, submission, Submission Console, Access Evidence Matrix, Production Launch Bundle, rate-limit, version, compliance, data governance, audit ledger, and reviewer proof routes work end to end.
+- Hosted Widget Activation Center keeps Swiggy iframe cutover safe: semantic fallbacks stay live, parent origins and hosted URLs remain external gates, postMessage events require origin verification, and commercial widget events still route through confirmation guards.
 - Resilience drills cover safe 5xx retries, 429 Retry-After handling, 401 reauth, non-idempotent check-then-retry, and deprecation monitoring.
 - Evaluation Lab checks multi-persona city coverage, voice-safe responses, budget fit, preflight gates, confirmation locks, and PII minimization.
 - File-backed storage persists plans across server instances and exposes export/compaction diagnostics.

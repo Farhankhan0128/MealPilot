@@ -1067,7 +1067,8 @@ select:focus {
 }
 
 .widget-runtime-card,
-.widget-experience-card {
+.widget-experience-card,
+.hosted-widget-card {
   grid-column: span 2;
 }
 
@@ -1582,6 +1583,7 @@ select:focus {
 .resource-prompt-grid,
 .widget-runtime-grid,
 .widget-experience-grid,
+.hosted-widget-grid,
 .agent-benchmark-grid,
 .private-pilot-grid,
   .staging-replay-grid,
@@ -1647,6 +1649,7 @@ select:focus {
 .resource-prompt-grid div,
 .widget-runtime-grid div,
 .widget-experience-grid div,
+.hosted-widget-grid div,
 .agent-benchmark-grid div,
 .private-pilot-grid div,
   .staging-replay-grid div,
@@ -1713,6 +1716,7 @@ select:focus {
 .resource-prompt-grid strong,
 .widget-runtime-grid strong,
 .widget-experience-grid strong,
+.hosted-widget-grid strong,
 .agent-benchmark-grid strong,
 .private-pilot-grid strong,
   .staging-replay-grid strong,
@@ -1778,6 +1782,7 @@ select:focus {
 .resource-prompt-grid span,
 .widget-runtime-grid span,
 .widget-experience-grid span,
+.hosted-widget-grid span,
 .agent-benchmark-grid span,
 .private-pilot-grid span,
   .staging-replay-grid span,
@@ -2519,6 +2524,7 @@ select:focus {
   .state-orchestrator-card,
   .widget-runtime-card,
   .widget-experience-card,
+  .hosted-widget-card,
   .agent-benchmark-card,
   .private-pilot-card,
   .staging-replay-card,
@@ -2661,6 +2667,7 @@ select:focus {
   .resource-prompt-grid,
   .widget-runtime-grid,
   .widget-experience-grid,
+  .hosted-widget-grid,
   .agent-benchmark-grid,
   .private-pilot-grid,
   .staging-replay-grid,
@@ -3289,6 +3296,7 @@ select:focus {
 .state-orchestrator-card,
 .widget-runtime-card,
 .widget-experience-card,
+.hosted-widget-card,
 .agent-benchmark-card,
 .private-pilot-card,
 .staging-replay-card,
@@ -3400,6 +3408,7 @@ select:focus {
 .resource-prompt-grid div,
 .widget-runtime-grid div,
 .widget-experience-grid div,
+.hosted-widget-grid div,
 .agent-benchmark-grid div,
 .private-pilot-grid div,
 .staging-replay-grid div,
@@ -3624,6 +3633,7 @@ select:focus {
   .state-orchestrator-card,
   .widget-runtime-card,
   .widget-experience-card,
+  .hosted-widget-card,
   .agent-benchmark-card,
   .private-pilot-card,
   .staging-replay-card,
@@ -3821,6 +3831,7 @@ select:focus {
   .resource-prompt-grid,
   .widget-runtime-grid,
   .widget-experience-grid,
+  .hosted-widget-grid,
   .agent-benchmark-grid,
   .private-pilot-grid,
   .staging-replay-grid,
@@ -3876,6 +3887,7 @@ select:focus {
   .state-orchestrator-card,
   .widget-runtime-card,
   .widget-experience-card,
+  .hosted-widget-card,
   .agent-benchmark-card,
   .private-pilot-card,
   .staging-replay-card,

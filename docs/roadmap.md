@@ -45,6 +45,7 @@ Status: in progress.
 - Add State Orchestrator for official multi-turn cart state, stale-cart recovery, switch guards, and voice/chat response contracts. Complete.
 - Add Widget Runtime Center for Swiggy iframe contracts, postMessage handlers, activation checks, render contracts, semantic fallbacks, voice exclusions, and hosted-widget gates. Complete.
 - Add Swiggy Widget Experience Composer for responsive widget placements, premium gallery states, event-handler safety gates, and hosted-widget activation runbooks. Complete.
+- Add Swiggy Hosted Widget Activation Center for parent-origin policy, iframe sandbox, postMessage handshakes, fallback parity, telemetry redaction, and hosted URL approval gates. Complete.
 - Add Swiggy Agent Experience Benchmark for premium journey scoring, UX acceptance criteria, competitive moats, route savings, multimodal continuity, and staged innovation gates. Complete.
 - Add Swiggy Private Pilot Control Room for real-user cohorts, consent artifacts, success metrics, telemetry targets, operator runbooks, support paths, and Swiggy staging replay gates. Complete.
 - Add Swiggy Staging Replay Center for credential-aware safe replay probes, mock dry-run proof, response hashes, redaction telemetry, and commercial-action blocking. Complete.

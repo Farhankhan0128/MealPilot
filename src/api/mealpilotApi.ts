@@ -99,6 +99,7 @@ import type {
   SwiggyCtaLiveAuditor,
   SwiggyWidget,
   SwiggyWidgetExperienceComposer,
+  SwiggyHostedWidgetActivationCenter,
   SwiggyAgentExperienceBenchmark,
   SwiggyPrivatePilotControlRoom,
   SwiggyBuildersMap,
@@ -362,6 +363,12 @@ export function fetchSwiggyWidgetRuntime() {
 
 export function fetchSwiggyWidgetExperienceComposer() {
   return requestJson<{ widgetExperience: SwiggyWidgetExperienceComposer }>("/api/swiggy-widget-experience-composer");
+}
+
+export function fetchSwiggyHostedWidgetActivationCenter() {
+  return requestJson<{ hostedWidgetActivation: SwiggyHostedWidgetActivationCenter }>(
+    "/api/swiggy-hosted-widget-activation",
+  );
 }
 
 export function fetchSwiggyAgentExperienceBenchmark() {

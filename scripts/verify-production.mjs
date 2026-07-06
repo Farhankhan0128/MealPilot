@@ -310,6 +310,11 @@ assert(
   "OpenAPI widget experience composer is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-hosted-widget-activation"]?.get?.summary?.includes("Hosted Widget Activation") &&
+    openApi.paths["/api/swiggy-hosted-widget-activation"]?.get?.responses?.["200"]?.description?.includes("postMessage"),
+  "OpenAPI hosted widget activation center is missing",
+);
+assert(
   openApi.paths["/api/swiggy-agent-experience-benchmark"].get.summary.includes("Agent Experience Benchmark"),
   "OpenAPI agent experience benchmark is missing",
 );
@@ -2197,7 +2202,7 @@ const reviewerArtifactVault = await request("/api/reviewer-artifact-vault");
 assert(reviewerArtifactVault.reviewerArtifactVault.score >= 90, "reviewer artifact vault score is below target");
 assert(reviewerArtifactVault.reviewerArtifactVault.totalArtifacts >= 30, "reviewer artifact vault artifacts are incomplete");
 assert(reviewerArtifactVault.reviewerArtifactVault.readyArtifacts >= 30, "reviewer artifact vault ready artifacts are incomplete");
-assert(reviewerArtifactVault.reviewerArtifactVault.totalScreenshotTargets === 17, "reviewer artifact vault screenshot targets are incomplete");
+assert(reviewerArtifactVault.reviewerArtifactVault.totalScreenshotTargets === 18, "reviewer artifact vault screenshot targets are incomplete");
 assert(reviewerArtifactVault.reviewerArtifactVault.readyScreenshotTargets >= 5, "reviewer artifact vault ready screenshots are incomplete");
 assert(reviewerArtifactVault.reviewerArtifactVault.totalCommands === 7, "reviewer artifact vault commands are incomplete");
 assert(reviewerArtifactVault.reviewerArtifactVault.readyCommands >= 6, "reviewer artifact vault ready commands are incomplete");
@@ -2345,6 +2350,17 @@ assert(
   reviewerArtifactVault.reviewerArtifactVault.artifactSections.some((section) =>
     section.artifacts.some(
       (artifact) =>
+        artifact.id === "hosted_widget_activation" &&
+        artifact.label === "Swiggy Hosted Widget Activation Center" &&
+        artifact.path === "/api/swiggy-hosted-widget-activation",
+    ),
+  ),
+  "reviewer artifact vault hosted widget activation artifact is missing",
+);
+assert(
+  reviewerArtifactVault.reviewerArtifactVault.artifactSections.some((section) =>
+    section.artifacts.some(
+      (artifact) =>
         artifact.id === "agent_experience_benchmark" &&
         artifact.label === "Swiggy Agent Experience Benchmark" &&
         artifact.path === "/api/swiggy-agent-experience-benchmark",
@@ -2409,6 +2425,15 @@ assert(
       target.status === "ready",
   ),
   "reviewer artifact vault widget experience screenshot target is missing",
+);
+assert(
+  reviewerArtifactVault.reviewerArtifactVault.screenshotTargets.some(
+    (target) =>
+      target.id === "hosted_widget_activation" &&
+      target.selector === ".hosted-widget-card" &&
+      target.status === "ready",
+  ),
+  "reviewer artifact vault hosted widget activation screenshot target is missing",
 );
 assert(
   reviewerArtifactVault.reviewerArtifactVault.screenshotTargets.some(
@@ -2538,8 +2563,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 63, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 63, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 64, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 64, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -2839,6 +2864,12 @@ assert(
     group.targets.some((target) => target.id === "widget_experience_composer" && target.selector === ".widget-experience-card"),
   ),
   "visual QA widget experience composer target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some((target) => target.id === "hosted_widget_activation" && target.selector === ".hosted-widget-card"),
+  ),
+  "visual QA hosted widget activation target is missing",
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
@@ -4723,6 +4754,74 @@ assert(
   "widget experience hosted iframe gate is missing",
 );
 
+const hostedWidgetActivation = await request("/api/swiggy-hosted-widget-activation");
+assert(hostedWidgetActivation.hostedWidgetActivation.score >= 75, "hosted widget activation score is below target");
+assert(hostedWidgetActivation.hostedWidgetActivation.totals.surfaces >= 7, "hosted widget activation surfaces are incomplete");
+assert(hostedWidgetActivation.hostedWidgetActivation.totals.hostPolicies === 6, "hosted widget host policies are incomplete");
+assert(
+  hostedWidgetActivation.hostedWidgetActivation.totals.readyHostPolicies >= 4 &&
+    hostedWidgetActivation.hostedWidgetActivation.totals.handshakes ===
+      hostedWidgetActivation.hostedWidgetActivation.totals.surfaces &&
+    hostedWidgetActivation.hostedWidgetActivation.totals.readyHandshakes ===
+      hostedWidgetActivation.hostedWidgetActivation.totals.handshakes,
+  "hosted widget activation policy or handshake readiness is incomplete",
+);
+assert(
+  hostedWidgetActivation.hostedWidgetActivation.totals.fallbackParity ===
+    hostedWidgetActivation.hostedWidgetActivation.totals.surfaces &&
+    hostedWidgetActivation.hostedWidgetActivation.totals.readyFallbackParity ===
+      hostedWidgetActivation.hostedWidgetActivation.totals.fallbackParity,
+  "hosted widget fallback parity is incomplete",
+);
+assert(hostedWidgetActivation.hostedWidgetActivation.totals.eventHandlers >= 14, "hosted widget event handlers are incomplete");
+assert(hostedWidgetActivation.hostedWidgetActivation.totals.swiggyTools >= 18, "hosted widget tool coverage is incomplete");
+assert(
+  hostedWidgetActivation.hostedWidgetActivation.hostPolicies.some(
+    (policy) => policy.id === "approved_parent_origin" && policy.status === "external_gate",
+  ),
+  "hosted widget parent-origin gate is missing",
+);
+assert(
+  hostedWidgetActivation.hostedWidgetActivation.hostPolicies.some(
+    (policy) => policy.id === "origin_verified_postmessage" && policy.status === "ready",
+  ),
+  "hosted widget origin verified postMessage policy is missing",
+);
+assert(
+  hostedWidgetActivation.hostedWidgetActivation.handshakes.some(
+    (handshake) =>
+      handshake.surfaceId === "food_cart_widget" &&
+      handshake.expectedOrigin === "https://mcp.swiggy.com" &&
+      handshake.expectedEvents.includes("cart.checkout-requested") &&
+      handshake.status === "semantic_fallback",
+  ),
+  "hosted widget food cart handshake is missing",
+);
+assert(
+  hostedWidgetActivation.hostedWidgetActivation.fallbackParity.some(
+    (fallback) =>
+      fallback.surfaceId === "dineout_slot_picker" &&
+      fallback.hostedRequirement.includes("sandbox=") &&
+      fallback.voiceBehavior.includes("Voice"),
+  ),
+  "hosted widget Dineout fallback parity is missing",
+);
+assert(
+  hostedWidgetActivation.hostedWidgetActivation.activationRunbook.map((step) => step.sequence).join(",") === "1,2,3,4,5",
+  "hosted widget activation runbook is incomplete",
+);
+assert(
+  hostedWidgetActivation.hostedWidgetActivation.telemetryContract.some(
+    (field) => field.field === "hosted_url_logged" && field.value === "false",
+  ),
+  "hosted widget telemetry redaction contract is missing",
+);
+assert(
+  hostedWidgetActivation.hostedWidgetActivation.reviewerPacket.to === "builders@swiggy.in" &&
+    hostedWidgetActivation.hostedWidgetActivation.externalGates.some((gate) => gate.includes("hosted iframe URLs")),
+  "hosted widget reviewer packet or external gates are missing",
+);
+
 const agentBenchmark = await request("/api/swiggy-agent-experience-benchmark");
 assert(agentBenchmark.agentBenchmark.score >= 90, "agent experience benchmark score is below target");
 assert(agentBenchmark.agentBenchmark.totals.journeys >= 8, "agent experience benchmark journeys are incomplete");
@@ -6378,7 +6477,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 63, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 64, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -6392,7 +6491,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("63")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("64")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -6489,6 +6588,7 @@ assert(
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Resource & Prompt Studio") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Widget Runtime Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Widget Experience Composer") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Hosted Widget Activation Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Agent Experience Benchmark") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Private Pilot Control Room") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Staging Replay Center") &&
@@ -6739,6 +6839,10 @@ assert(
   "launch bundle widget experience composer handoff link is missing",
 );
 assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-hosted-widget-activation"),
+  "launch bundle hosted widget activation handoff link is missing",
+);
+assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-agent-experience-benchmark"),
   "launch bundle agent experience benchmark handoff link is missing",
 );
@@ -6940,6 +7044,9 @@ console.log(
       widgetRuntimeSurfaces: widgetRuntime.widgetRuntime.totalSurfaces,
       widgetExperienceScore: widgetExperience.widgetExperience.score,
       widgetExperiencePlacements: widgetExperience.widgetExperience.totals.placements,
+      hostedWidgetActivationScore: hostedWidgetActivation.hostedWidgetActivation.score,
+      hostedWidgetActivationHandshakes: hostedWidgetActivation.hostedWidgetActivation.totals.handshakes,
+      hostedWidgetExternalGates: hostedWidgetActivation.hostedWidgetActivation.totals.externalGates,
       agentBenchmarkScore: agentBenchmark.agentBenchmark.score,
       agentBenchmarkJourneys: agentBenchmark.agentBenchmark.totals.journeys,
       privatePilotScore: privatePilot.privatePilot.score,

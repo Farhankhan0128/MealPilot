@@ -71,6 +71,7 @@ import { buildSwiggyFaqResolutionCenter } from "./services/faqResolutionCenter.j
 import { buildGuestCollaborationCenter } from "./services/guestCollaborationCenter.js";
 import { buildSwiggyGrowthPartnershipCenter } from "./services/growthPartnership.js";
 import { buildSwiggyDemoEvidenceDirector } from "./services/demoEvidenceDirector.js";
+import { buildSwiggyHostedWidgetActivationCenter } from "./services/hostedWidgetActivation.js";
 import { buildSwiggyBuildersHomepageExperienceCenter } from "./services/homepageExperienceCenter.js";
 import { buildHouseholdPreferenceGraph } from "./services/householdPreferenceGraph.js";
 import { buildSwiggyInteractionQaCenter } from "./services/interactionQaCenter.js";
@@ -1042,6 +1043,10 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/swiggy-widget-experience-composer", (_req, res) => {
     res.json({ widgetExperience: buildSwiggyWidgetExperienceComposer(store.getAllPlans().at(-1)) });
+  });
+
+  app.get("/api/swiggy-hosted-widget-activation", (_req, res) => {
+    res.json({ hostedWidgetActivation: buildSwiggyHostedWidgetActivationCenter(store.getAllPlans().at(-1)) });
   });
 
   app.get("/api/swiggy-agent-experience-benchmark", (_req, res) => {

@@ -4904,6 +4904,79 @@ export interface SwiggyWidgetExperienceComposer {
   externalGates: string[];
 }
 
+export type SwiggyHostedWidgetActivationStatus = "ready" | "semantic_fallback" | "external_gate" | "blocked";
+
+export interface SwiggyHostedWidgetHostPolicy {
+  id: string;
+  label: string;
+  status: SwiggyHostedWidgetActivationStatus;
+  requirement: string;
+  mealPilotControl: string;
+  evidenceLinks: string[];
+}
+
+export interface SwiggyHostedWidgetHandshake {
+  id: string;
+  surfaceId: string;
+  server: SwiggyServer;
+  widgetType: SwiggyWidget["type"];
+  status: SwiggyHostedWidgetActivationStatus;
+  expectedOrigin: string;
+  expectedEvents: string[];
+  fallbackParity: string;
+  activationGate: string;
+  proofLinks: string[];
+}
+
+export interface SwiggyHostedWidgetFallbackParity {
+  id: string;
+  surfaceId: string;
+  label: string;
+  status: SwiggyHostedWidgetActivationStatus;
+  semanticRenderer: string;
+  hostedRequirement: string;
+  voiceBehavior: string;
+  proofLinks: string[];
+}
+
+export interface SwiggyHostedWidgetActivationCenter {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  totals: {
+    surfaces: number;
+    readyHostPolicies: number;
+    hostPolicies: number;
+    handshakes: number;
+    readyHandshakes: number;
+    fallbackParity: number;
+    readyFallbackParity: number;
+    eventHandlers: number;
+    externalGates: number;
+    swiggyTools: number;
+  };
+  hostPolicies: SwiggyHostedWidgetHostPolicy[];
+  handshakes: SwiggyHostedWidgetHandshake[];
+  fallbackParity: SwiggyHostedWidgetFallbackParity[];
+  activationRunbook: Array<{
+    sequence: number;
+    label: string;
+    owner: "MealPilot" | "Operator" | "Swiggy";
+    status: SwiggyHostedWidgetActivationStatus;
+    action: string;
+    proofLinks: string[];
+  }>;
+  telemetryContract: Array<{ field: string; value: string; redaction: string }>;
+  reviewerPacket: {
+    to: string;
+    subject: string;
+    body: string;
+    proofLinks: string[];
+  };
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type SwiggyAgentExperienceBenchmarkStatus = "best_in_class" | "ready" | "watch" | "external_gate";
 
 export type SwiggyAgentExperienceDimension =

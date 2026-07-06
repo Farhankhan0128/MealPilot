@@ -124,6 +124,8 @@ The `/api/staging-certification-matrix` endpoint turns launch safety into staged
 
 The `/api/swiggy-staging-replay` and `/api/swiggy-staging-replay/run` endpoints enforce the same boundary at execution time. Only allowlisted read, tracking, cart-read, and `report_error` probes can run; mock responses are labelled dry-run; non-mock mode requires OAuth bearer state; commercial actions are blocked; and responses are represented with hashes plus redaction telemetry instead of raw credential or user payload data.
 
+The `/api/swiggy-hosted-widget-activation` endpoint keeps hosted iframe activation behind explicit safety gates. MealPilot verifies parent-origin policy, iframe sandbox settings, postMessage event origins, semantic fallback parity, no signed widget URL logging, and confirmation routing before hosted widgets can replace local semantic fallbacks.
+
 The `/api/swiggy-live-signal-calibration` endpoint prevents local personalization fixtures from being mistaken for live Swiggy data. It requires read-only Food, Instamart, and Dineout staging probes, privacy redaction, drift thresholds, fallback rules, and 48-hour green soak before real user order, pantry, location, booking, discovery, or offer signals can influence production claims.
 
 The `/api/sessions/:sessionId/staging-transcript` endpoint exports one session as Swiggy-ready JSONL and Markdown with request IDs, session IDs, hashed user identifiers, certification-wave mapping, redaction manifest, and support envelope. It is designed to be safe to attach to `builders@swiggy.in` because raw tokens, payment credentials, full addresses, phone, email, and full tool payloads are excluded.

@@ -231,6 +231,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-hosted-widget-activation": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Hosted Widget Activation Center",
+          responses: {
+            "200": {
+              description:
+                "Hosted widget activation proof with parent-origin policy, iframe sandbox rules, origin-verified postMessage handshakes, semantic fallback parity, telemetry redaction, commercial confirmation routing, reviewer packet, and Swiggy-owned hosted URL gates",
+            },
+          },
+        },
+      },
       "/api/swiggy-agent-experience-benchmark": {
         get: {
           tags: ["Builder Access"],

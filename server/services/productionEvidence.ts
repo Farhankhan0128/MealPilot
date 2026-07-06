@@ -284,6 +284,7 @@ export function buildReviewerProof(options: {
       { label: "Widget contracts", path: latest ? `/api/sessions/${latest.id}/widgets` : "/api/widgets/latest" },
       { label: "Widget Runtime Center", path: "/api/mcp/widget-runtime" },
       { label: "Swiggy Widget Experience Composer", path: "/api/swiggy-widget-experience-composer" },
+      { label: "Swiggy Hosted Widget Activation Center", path: "/api/swiggy-hosted-widget-activation" },
       { label: "Swiggy Agent Experience Benchmark", path: "/api/swiggy-agent-experience-benchmark" },
       { label: "Swiggy Private Pilot Control Room", path: "/api/swiggy-private-pilot-control-room" },
       { label: "Swiggy Staging Replay Center", path: "/api/swiggy-staging-replay" },

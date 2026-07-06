@@ -155,6 +155,7 @@ import {
   fetchSwiggyStagingCutover,
   fetchSwiggyStateOrchestrator,
   fetchSwiggyWidgetExperienceComposer,
+  fetchSwiggyHostedWidgetActivationCenter,
   fetchSwiggyAgentExperienceBenchmark,
   fetchSwiggyPrivatePilotControlRoom,
   fetchSwiggyStagingReplayCenter,
@@ -320,6 +321,7 @@ import type {
   SwiggyWebsiteAtlas,
   SwiggyUpstreamWatchReport,
   SwiggyWidgetExperienceComposer,
+  SwiggyHostedWidgetActivationCenter,
   SwiggyAgentExperienceBenchmark,
   SwiggyPrivatePilotControlRoom,
   SwiggyWidgetRuntimeReport,
@@ -469,6 +471,8 @@ function App() {
   const [stateOrchestrator, setStateOrchestrator] = useState<SwiggyStateOrchestratorReport | null>(null);
   const [widgetRuntime, setWidgetRuntime] = useState<SwiggyWidgetRuntimeReport | null>(null);
   const [widgetExperience, setWidgetExperience] = useState<SwiggyWidgetExperienceComposer | null>(null);
+  const [hostedWidgetActivation, setHostedWidgetActivation] =
+    useState<SwiggyHostedWidgetActivationCenter | null>(null);
   const [agentBenchmark, setAgentBenchmark] = useState<SwiggyAgentExperienceBenchmark | null>(null);
   const [privatePilot, setPrivatePilot] = useState<SwiggyPrivatePilotControlRoom | null>(null);
   const [stagingReplay, setStagingReplay] = useState<SwiggyStagingReplayCenter | null>(null);
@@ -693,6 +697,7 @@ function App() {
       stateOrchestratorResponse,
       widgetRuntimeResponse,
       widgetExperienceResponse,
+      hostedWidgetActivationResponse,
       agentBenchmarkResponse,
       privatePilotResponse,
       stagingReplayResponse,
@@ -815,6 +820,7 @@ function App() {
       fetchSwiggyStateOrchestrator(),
       fetchSwiggyWidgetRuntime(),
       fetchSwiggyWidgetExperienceComposer(),
+      fetchSwiggyHostedWidgetActivationCenter(),
       fetchSwiggyAgentExperienceBenchmark(),
       fetchSwiggyPrivatePilotControlRoom(),
       fetchSwiggyStagingReplayCenter(),
@@ -938,6 +944,7 @@ function App() {
     setStateOrchestrator(stateOrchestratorResponse.stateOrchestrator);
     setWidgetRuntime(widgetRuntimeResponse.widgetRuntime);
     setWidgetExperience(widgetExperienceResponse.widgetExperience);
+    setHostedWidgetActivation(hostedWidgetActivationResponse.hostedWidgetActivation);
     setAgentBenchmark(agentBenchmarkResponse.agentBenchmark);
     setPrivatePilot(privatePilotResponse.privatePilot);
     setStagingReplay(stagingReplayResponse.stagingReplay);
@@ -1064,6 +1071,7 @@ function App() {
       stateOrchestratorResponse,
       widgetRuntimeResponse,
       widgetExperienceResponse,
+      hostedWidgetActivationResponse,
       agentBenchmarkResponse,
       privatePilotResponse,
       stagingReplayResponse,
@@ -1183,6 +1191,7 @@ function App() {
       fetchSwiggyStateOrchestrator(),
       fetchSwiggyWidgetRuntime(),
       fetchSwiggyWidgetExperienceComposer(),
+      fetchSwiggyHostedWidgetActivationCenter(),
       fetchSwiggyAgentExperienceBenchmark(),
       fetchSwiggyPrivatePilotControlRoom(),
       fetchSwiggyStagingReplayCenter(),
@@ -1302,6 +1311,7 @@ function App() {
     setStateOrchestrator(stateOrchestratorResponse.stateOrchestrator);
     setWidgetRuntime(widgetRuntimeResponse.widgetRuntime);
     setWidgetExperience(widgetExperienceResponse.widgetExperience);
+    setHostedWidgetActivation(hostedWidgetActivationResponse.hostedWidgetActivation);
     setAgentBenchmark(agentBenchmarkResponse.agentBenchmark);
     setPrivatePilot(privatePilotResponse.privatePilot);
     setStagingReplay(stagingReplayResponse.stagingReplay);
@@ -1996,6 +2006,7 @@ function App() {
                 stateOrchestrator={stateOrchestrator}
                 widgetRuntime={widgetRuntime}
                 widgetExperience={widgetExperience}
+                hostedWidgetActivation={hostedWidgetActivation}
                 agentBenchmark={agentBenchmark}
                 privatePilot={privatePilot}
                 stagingReplay={stagingReplay}
@@ -2605,6 +2616,7 @@ function LaunchCenterPanel({
   stateOrchestrator,
   widgetRuntime,
   widgetExperience,
+  hostedWidgetActivation,
   agentBenchmark,
   privatePilot,
   stagingReplay,
@@ -2697,6 +2709,7 @@ function LaunchCenterPanel({
   stateOrchestrator: SwiggyStateOrchestratorReport | null;
   widgetRuntime: SwiggyWidgetRuntimeReport | null;
   widgetExperience: SwiggyWidgetExperienceComposer | null;
+  hostedWidgetActivation: SwiggyHostedWidgetActivationCenter | null;
   agentBenchmark: SwiggyAgentExperienceBenchmark | null;
   privatePilot: SwiggyPrivatePilotControlRoom | null;
   stagingReplay: SwiggyStagingReplayCenter | null;
@@ -3153,6 +3166,45 @@ function LaunchCenterPanel({
               <li key={placement.id} data-status={placement.status === "external_gate" ? "watch" : "healthy"}>
                 <span>{placement.label}</span>
                 <strong>{placement.placement.replaceAll("_", " ")}</strong>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article className="hosted-widget-card">
+          <div className="mini-heading">
+            <Radio aria-hidden="true" />
+            <strong>Hosted Widgets</strong>
+          </div>
+          <span>
+            {hostedWidgetActivation
+              ? `${hostedWidgetActivation.score}/100, ${hostedWidgetActivation.totals.readyHandshakes}/${hostedWidgetActivation.totals.handshakes} handshakes`
+              : "Preparing hosted widget activation"}
+          </span>
+          <div className="hosted-widget-grid">
+            <div>
+              <strong>
+                {hostedWidgetActivation?.totals.readyHostPolicies ?? 0}/{hostedWidgetActivation?.totals.hostPolicies ?? 0}
+              </strong>
+              <span>Policies</span>
+            </div>
+            <div>
+              <strong>{hostedWidgetActivation?.totals.readyFallbackParity ?? 0}</strong>
+              <span>Fallbacks</span>
+            </div>
+            <div>
+              <strong>{hostedWidgetActivation?.totals.externalGates ?? 0}</strong>
+              <span>Gates</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(hostedWidgetActivation?.hostPolicies ?? []).slice(0, 5).map((policy) => (
+              <li
+                key={policy.id}
+                data-status={policy.status === "ready" || policy.status === "semantic_fallback" ? "healthy" : "watch"}
+              >
+                <span>{policy.label}</span>
+                <strong>{policy.status.replaceAll("_", " ")}</strong>
               </li>
             ))}
           </ul>

@@ -107,6 +107,7 @@ Open the Launch Center and show:
 - Tool Contract Matrix showing parameter contracts, response envelopes, confirmation gates, retry posture, fixture previews, and planned error codes for all 35 tools.
 - Widget Runtime Center showing iframe sandbox policy, origin checks, postMessage handlers, semantic fallbacks, voice exclusions, and hosted-widget gates.
 - Swiggy Widget Experience Composer showing premium widget placements, responsive gallery states, event-handler safety gates, and hosted-widget activation runbook.
+- Swiggy Hosted Widget Activation Center showing parent-origin policy, iframe sandbox, postMessage handshakes, fallback parity, telemetry redaction, and hosted URL approval gates.
 - Swiggy Agent Experience Benchmark showing route speed, trust, personalization, multimodal continuity, resilience, commercial safety, UX gates, and innovation moats.
 - Swiggy Private Pilot Control Room showing real-user pilot cohorts, assigned journeys, consent artifacts, telemetry targets, support paths, operator runbook, and Swiggy staging replay gates.
 - Swiggy Staging Replay Center showing safe replay probes, dry-run/live counts, server readiness, response-hash proof, redaction telemetry, and commercial-action blocks.
@@ -216,6 +217,7 @@ Open Production Evidence and show:
 - Resource & Prompt Studio artifact for MCP resource and prompt reads across all three Swiggy servers.
 - Staging Cutover Rehearsal artifact for real MCP transport readiness, OAuth gates, first-call probes, support packet fields, and production promotion checks.
 - Swiggy Staging Replay Center artifact at `/api/swiggy-staging-replay` with safe probe coverage and `/api/swiggy-staging-replay/run` proof for mock dry-run execution and commercial-action refusal.
+- Swiggy Hosted Widget Activation Center artifact at `/api/swiggy-hosted-widget-activation` with origin approval, iframe sandbox, postMessage, fallback parity, visual QA, and no-signed-URL telemetry proof.
 - Visual Dish Capture artifact at `/api/swiggy-visual-dish-capture` plus `/api/swiggy-visual-dish-capture/analyze` for screenshot-to-order smoke proof.
 - Voice Commerce artifact at `/api/swiggy-voice-commerce-center` plus `/api/swiggy-voice-commerce-center/rehearse` for spoken Swiggy route rehearsal.
 - Quality Loop artifact at `/api/swiggy-quality-loop-center` plus `/api/swiggy-quality-loop-center/feedback` for post-experience learning and support-safe feedback proof.

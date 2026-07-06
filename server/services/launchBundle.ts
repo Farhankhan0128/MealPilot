@@ -630,6 +630,15 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
         "Composes Swiggy widget runtime surfaces into premium desktop, tablet, mobile, voice, and reviewer placements with fallback galleries and activation runbooks.",
     },
     {
+      id: "hosted_widget_activation",
+      label: "Swiggy Hosted Widget Activation Center",
+      path: "/api/swiggy-hosted-widget-activation",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Packages hosted widget parent-origin policy, iframe sandbox rules, postMessage handshakes, fallback parity, telemetry redaction, and Swiggy-owned hosted URL gates.",
+    },
+    {
       id: "agent_experience_benchmark",
       label: "Swiggy Agent Experience Benchmark",
       path: "/api/swiggy-agent-experience-benchmark",
@@ -1172,6 +1181,7 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- State Orchestrator: /api/mcp/state-orchestrator",
     "- Widget Runtime Center: /api/mcp/widget-runtime",
     "- Swiggy Widget Experience Composer: /api/swiggy-widget-experience-composer",
+    "- Swiggy Hosted Widget Activation Center: /api/swiggy-hosted-widget-activation",
     "- Swiggy Agent Experience Benchmark: /api/swiggy-agent-experience-benchmark",
     "- Swiggy Private Pilot Control Room: /api/swiggy-private-pilot-control-room",
     "- Swiggy Staging Replay Center: /api/swiggy-staging-replay",

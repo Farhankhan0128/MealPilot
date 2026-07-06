@@ -729,6 +729,17 @@ const targetGroups = [
         "artifacts/visual-qa/widget-experience-composer.png",
       ),
       target(
+        "hosted_widget_activation",
+        "Swiggy Hosted Widget Activation Center",
+        "/",
+        ".hosted-widget-card",
+        "desktop",
+        1280,
+        900,
+        "Hosted-widget host policies, handshakes, fallback parity, event gates, and external Swiggy approval gates are visible.",
+        "artifacts/visual-qa/hosted-widget-activation.png",
+      ),
+      target(
         "agent_experience_benchmark",
         "Swiggy Agent Experience Benchmark",
         "/",
