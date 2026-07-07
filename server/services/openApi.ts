@@ -1155,6 +1155,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/household-preference-graph/simulate": {
+        post: {
+          tags: ["Personalization"],
+          summary: "Simulate consent-aware Household Preference personalization before Swiggy route ranking",
+          responses: {
+            "200": {
+              description:
+                "Selected Food, Instamart, Dineout, or local-only personalization decision with household member, signal, forecast, automation, confidence, retention policy, checklist, redacted telemetry, and no raw Swiggy history retention assertions",
+            },
+          },
+        },
+      },
       "/api/guest-collaboration-calendar": {
         get: {
           tags: ["Builder Access"],

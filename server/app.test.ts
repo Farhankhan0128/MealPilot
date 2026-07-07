@@ -135,6 +135,7 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/nutrition-budget-intelligence"].get.summary).toContain("Nutrition and Budget");
     expect(openApi.body.paths["/api/nutrition-budget-intelligence/advise"].post.summary).toContain("nutrition");
     expect(openApi.body.paths["/api/household-preference-graph"].get.summary).toContain("Household Preference Graph");
+    expect(openApi.body.paths["/api/household-preference-graph/simulate"].post.summary).toContain("Household Preference");
     expect(openApi.body.paths["/api/guest-collaboration-calendar"].get.summary).toContain("Guest Collaboration");
     expect(openApi.body.paths["/api/luxury-experience-workspace"].get.summary).toContain("Luxury Experience Workspace");
     expect(openApi.body.paths["/api/reviewer-artifact-vault"].get.summary).toContain("Reviewer Artifact Vault");
@@ -3309,6 +3310,46 @@ describe("MealPilot API", () => {
     expect(graph.privacyControls.some((control: string) => control.includes("model training"))).toBe(true);
     expect(graph.externalGates.some((gate: string) => gate.includes("staging and production credentials"))).toBe(true);
     expect(graph.assertions.some((assertion: string) => assertion.includes("Cancellation requests"))).toBe(true);
+
+    const localOnlyResponse = await request(app)
+      .post("/api/household-preference-graph/simulate")
+      .send({
+        city: "Bengaluru",
+        householdMode: "family_group",
+        preferredServer: "food",
+        consentToUseHistory: false,
+        recentFailure: false,
+        occasionMode: false,
+      })
+      .expect(200);
+    const localOnly = localOnlyResponse.body.preferenceSimulation;
+
+    expect(localOnly.decision).toBe("local_only");
+    expect(localOnly.selectedSignalId).toBe("local_household_profile");
+    expect(localOnly.telemetry.some((item: { field: string; value: string }) => item.field === "raw_swiggy_history_retained" && item.value === "false")).toBe(
+      true,
+    );
+    expect(localOnly.assertions.some((assertion: string) => assertion.includes("not used when consentToUseHistory is false"))).toBe(
+      true,
+    );
+
+    const fallbackResponse = await request(app)
+      .post("/api/household-preference-graph/simulate")
+      .send({
+        city: "Mumbai",
+        householdMode: "weekend_guest",
+        preferredServer: "dineout",
+        consentToUseHistory: true,
+        recentFailure: true,
+        occasionMode: true,
+      })
+      .expect(200);
+    const fallback = fallbackResponse.body.preferenceSimulation;
+
+    expect(fallback.decision).toBe("support_safe_fallback");
+    expect(fallback.selectedSignalId).toBe("support_and_failure_memory");
+    expect(fallback.selectedForecastId).toBe("support_safe_fallback");
+    expect(fallback.checklist.map((step: { tool: string }) => step.tool)).toEqual(expect.arrayContaining(["dineout.report_error"]));
   });
 
   it("returns guest collaboration and calendar handoff plans for Swiggy occasions", async () => {

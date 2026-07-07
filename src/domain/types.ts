@@ -3311,6 +3311,33 @@ export interface HouseholdPreferenceGraph {
   externalGates: string[];
 }
 
+export type HouseholdPreferenceDecision = "personalized" | "local_only" | "support_safe_fallback";
+
+export interface HouseholdPreferenceSimulation {
+  generatedAt: string;
+  requestId: string;
+  input: {
+    city: "Bengaluru" | "Delhi NCR" | "Mumbai";
+    householdMode: "primary_planner" | "family_group" | "office_team" | "weekend_guest";
+    preferredServer: SwiggyServer | "combined";
+    consentToUseHistory: boolean;
+    recentFailure: boolean;
+    occasionMode: boolean;
+  };
+  decision: HouseholdPreferenceDecision;
+  selectedSignalId: string;
+  selectedMemberId: string;
+  selectedForecastId: string;
+  selectedAutomationId: string;
+  confidence: number;
+  recommendedAction: string;
+  swiggySignals: string[];
+  retainedData: string[];
+  checklist: Array<{ sequence: number; label: string; tool: string; guardrail: string }>;
+  telemetry: Array<{ field: string; value: string; redaction: string }>;
+  assertions: string[];
+}
+
 export type GuestCollaborationStatus = "ready" | "manual_input" | "external_gate";
 export type GuestCollaborationChannel = "web_share" | "slack_teams" | "calendar_ics" | "email_draft" | "voice_brief";
 

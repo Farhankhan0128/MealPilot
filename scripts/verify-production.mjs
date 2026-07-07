@@ -323,7 +323,8 @@ assert(
   "OpenAPI nutrition and budget intelligence contract is missing",
 );
 assert(
-  openApi.paths["/api/household-preference-graph"].get.summary.includes("Household Preference Graph"),
+  openApi.paths["/api/household-preference-graph"].get.summary.includes("Household Preference Graph") &&
+    openApi.paths["/api/household-preference-graph/simulate"].post.summary.includes("Household Preference"),
   "OpenAPI household preference graph contract is missing",
 );
 assert(
@@ -2712,6 +2713,46 @@ assert(
 assert(
   householdPreference.householdPreference.externalGates.some((gate) => gate.includes("staging and production credentials")),
   "household preference live credential gate is missing",
+);
+const localOnlyPreference = await request("/api/household-preference-graph/simulate", {
+  method: "POST",
+  body: JSON.stringify({
+    city: "Bengaluru",
+    householdMode: "family_group",
+    preferredServer: "food",
+    consentToUseHistory: false,
+    recentFailure: false,
+    occasionMode: false,
+  }),
+});
+assert(
+  localOnlyPreference.preferenceSimulation.decision === "local_only" &&
+    localOnlyPreference.preferenceSimulation.selectedSignalId === "local_household_profile" &&
+    localOnlyPreference.preferenceSimulation.telemetry.some(
+      (item) => item.field === "raw_swiggy_history_retained" && item.value === "false",
+    ) &&
+    localOnlyPreference.preferenceSimulation.assertions.some((assertion) =>
+      assertion.includes("not used when consentToUseHistory is false"),
+    ),
+  "household preference local-only simulation is wrong",
+);
+const fallbackPreference = await request("/api/household-preference-graph/simulate", {
+  method: "POST",
+  body: JSON.stringify({
+    city: "Mumbai",
+    householdMode: "weekend_guest",
+    preferredServer: "dineout",
+    consentToUseHistory: true,
+    recentFailure: true,
+    occasionMode: true,
+  }),
+});
+assert(
+  fallbackPreference.preferenceSimulation.decision === "support_safe_fallback" &&
+    fallbackPreference.preferenceSimulation.selectedSignalId === "support_and_failure_memory" &&
+    fallbackPreference.preferenceSimulation.selectedForecastId === "support_safe_fallback" &&
+    fallbackPreference.preferenceSimulation.checklist.some((step) => step.tool === "dineout.report_error"),
+  "household preference support fallback simulation is wrong",
 );
 
 const guestCollaboration = await request("/api/guest-collaboration-calendar");

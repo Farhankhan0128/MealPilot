@@ -1,10 +1,13 @@
 import type {
   HouseholdPreferenceAutomation,
+  HouseholdPreferenceDecision,
   HouseholdPreferenceForecast,
   HouseholdPreferenceGraph,
   HouseholdPreferenceMember,
+  HouseholdPreferenceSimulation,
   HouseholdPreferenceSignal,
   HouseholdPreferenceStatus,
+  SwiggyServer,
 } from "../../src/domain/types.js";
 
 const officialSources = [
@@ -322,6 +325,121 @@ export function buildHouseholdPreferenceGraph(): HouseholdPreferenceGraph {
       "Any long-term analytics or model-training use of Swiggy-originated data requires separate explicit user consent and Swiggy DPA approval.",
       "Swiggy-originated DSR requests must be completed through Swiggy's own user flows; MealPilot can only delete derived local data.",
       "Production preference learning must be verified against live rate limits, support policies, and 90-day audit-log expectations.",
+    ],
+  };
+}
+
+function signalFor(input: { consentToUseHistory: boolean; recentFailure: boolean; preferredServer: SwiggyServer | "combined"; occasionMode: boolean }) {
+  if (input.recentFailure) return signals.find((item) => item.id === "support_and_failure_memory") ?? signals[4];
+  if (!input.consentToUseHistory) return signals.find((item) => item.id === "local_household_profile") ?? signals[3];
+  if (input.occasionMode || input.preferredServer === "dineout") return signals.find((item) => item.id === "dineout_location_occasion") ?? signals[2];
+  if (input.preferredServer === "instamart") return signals.find((item) => item.id === "instamart_go_to_reorder") ?? signals[1];
+  return signals.find((item) => item.id === "food_active_order_taste") ?? signals[0];
+}
+
+function forecastFor(input: { recentFailure: boolean; preferredServer: SwiggyServer | "combined"; occasionMode: boolean; householdMode: HouseholdPreferenceSimulation["input"]["householdMode"] }) {
+  if (input.recentFailure) return forecasts.find((item) => item.id === "support_safe_fallback") ?? forecasts[3];
+  if (input.occasionMode || input.preferredServer === "dineout" || input.householdMode === "weekend_guest") {
+    return forecasts.find((item) => item.id === "weekend_evening_occasion") ?? forecasts[2];
+  }
+  if (input.preferredServer === "instamart") return forecasts.find((item) => item.id === "protein_staple_depletion") ?? forecasts[0];
+  return forecasts.find((item) => item.id === "weekday_lunch_repeat") ?? forecasts[1];
+}
+
+function automationFor(input: { recentFailure: boolean; preferredServer: SwiggyServer | "combined"; occasionMode: boolean }) {
+  if (input.recentFailure) return automations.find((item) => item.id === "active_order_tracking_memory") ?? automations[2];
+  if (input.occasionMode || input.preferredServer === "dineout") return automations.find((item) => item.id === "occasion_mode_switch") ?? automations[3];
+  if (input.preferredServer === "instamart") return automations.find((item) => item.id === "go_to_restock_nudge") ?? automations[0];
+  return automations.find((item) => item.id === "preference_weighted_search") ?? automations[1];
+}
+
+function decisionFor(input: { consentToUseHistory: boolean; recentFailure: boolean }): HouseholdPreferenceDecision {
+  if (input.recentFailure) return "support_safe_fallback";
+  if (!input.consentToUseHistory) return "local_only";
+  return "personalized";
+}
+
+function retainedDataFor(decision: HouseholdPreferenceDecision) {
+  if (decision === "personalized") return ["derived taste tags", "coarse area tags", "cadence buckets", "redacted audit ids"];
+  if (decision === "support_safe_fallback") return ["failure class", "server", "session id hash", "fallback route id"];
+  return ["local profile constraints", "diet tags", "budget band", "hard exclusions"];
+}
+
+function confidenceFor(input: { decision: HouseholdPreferenceDecision; signalStatus: HouseholdPreferenceStatus; forecastConfidence: number }) {
+  if (input.decision === "local_only") return Math.min(76, input.forecastConfidence);
+  if (input.decision === "support_safe_fallback") return Math.max(82, input.forecastConfidence);
+  return input.signalStatus === "ready" ? input.forecastConfidence : Math.min(74, input.forecastConfidence);
+}
+
+function checklist(
+  signalItem: HouseholdPreferenceSignal,
+  forecastItem: HouseholdPreferenceForecast,
+  automationItem: HouseholdPreferenceAutomation,
+): HouseholdPreferenceSimulation["checklist"] {
+  const tools = [...new Set([...signalItem.swiggyTools, ...forecastItem.swiggyTools, ...automationItem.swiggyTools])].slice(0, 5);
+  return tools.map((tool, index) => ({
+    sequence: index + 1,
+    label: index === 0 ? "Read consent-safe source" : `Use ${tool.split(".").at(-1) ?? tool}`,
+    tool,
+    guardrail:
+      index === 0
+        ? signalItem.retentionRule
+        : index >= 3
+          ? automationItem.guardrail
+          : forecastItem.confirmationGate,
+  }));
+}
+
+export function simulateHouseholdPreference(input: {
+  city: "Bengaluru" | "Delhi NCR" | "Mumbai";
+  householdMode: "primary_planner" | "family_group" | "office_team" | "weekend_guest";
+  preferredServer: SwiggyServer | "combined";
+  consentToUseHistory: boolean;
+  recentFailure: boolean;
+  occasionMode: boolean;
+}): HouseholdPreferenceSimulation {
+  const selectedSignal = signalFor(input);
+  const selectedMember = members.find((item) => item.id === input.householdMode) ?? members[0];
+  const selectedForecast = forecastFor(input);
+  const selectedAutomation = automationFor(input);
+  const decision = decisionFor(input);
+  const confidence = confidenceFor({
+    decision,
+    signalStatus: selectedSignal.status,
+    forecastConfidence: selectedForecast.confidence,
+  });
+
+  return {
+    generatedAt: new Date().toISOString(),
+    requestId: `pref_${Date.now().toString(36)}`,
+    input,
+    decision,
+    selectedSignalId: selectedSignal.id,
+    selectedMemberId: selectedMember.id,
+    selectedForecastId: selectedForecast.id,
+    selectedAutomationId: selectedAutomation.id,
+    confidence,
+    recommendedAction:
+      decision === "local_only"
+        ? "Use MealPilot local profile constraints only; ask for consent before reading Swiggy order or booking history."
+        : decision === "support_safe_fallback"
+          ? "Downrank the failing route, prepare a safer Swiggy fallback, and keep report_error context redacted."
+          : "Rank candidates with consented Swiggy signals, then require fresh cart, order, slot, or booking truth before action.",
+    swiggySignals: [...new Set([...selectedSignal.swiggyTools, ...selectedMember.swiggySignals, ...selectedForecast.swiggyTools])],
+    retainedData: retainedDataFor(decision),
+    checklist: checklist(selectedSignal, selectedForecast, selectedAutomation),
+    telemetry: [
+      { field: "city", value: input.city, redaction: "safe enum" },
+      { field: "preference_decision", value: decision, redaction: "derived bucket only" },
+      { field: "selected_signal", value: selectedSignal.id, redaction: "signal id only" },
+      { field: "raw_swiggy_history_retained", value: "false", redaction: "hard-coded privacy invariant" },
+      { field: "model_training_allowed", value: "false", redaction: "hard-coded privacy invariant" },
+    ],
+    assertions: [
+      "Household preference simulation does not call a live Swiggy tool.",
+      "Raw Food, Instamart, Dineout order, cart, slot, booking, or address payloads are not retained.",
+      "Swiggy-originated history is not used when consentToUseHistory is false.",
+      "Personalized recommendations still require fresh Swiggy cart, order, slot, or booking truth before commercial action.",
     ],
   };
 }

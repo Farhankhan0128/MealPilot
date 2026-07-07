@@ -315,6 +315,7 @@ POST /api/swiggy-customization-studio/validate
 GET  /api/nutrition-budget-intelligence
 POST /api/nutrition-budget-intelligence/advise
 GET  /api/household-preference-graph
+POST /api/household-preference-graph/simulate
 GET  /api/guest-collaboration-calendar
 GET  /api/luxury-experience-workspace
 GET  /api/reviewer-artifact-vault
@@ -611,7 +612,7 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 
 `GET /api/nutrition-budget-intelligence` and `POST /api/nutrition-budget-intelligence/advise` are the premium nutrition and budget layer: Food menu search, coupons, cart reads, Instamart go-to items, product search, Dineout slots, and combined routes become protein-per-rupee, pantry-gap, group-budget, and evening-balance playbooks with explicit nutrition-estimate safety controls. The Launch Center advisor accepts city, budget, protein target, party size, route preference, coupon sensitivity, and Dineout intent, then returns budget fit, selected Swiggy route, protein coverage, fresh-read checklist, and no-medical-claim telemetry without mutating carts.
 
-`GET /api/household-preference-graph` is the consented personalization layer: Food active-order signals, Instamart order history and go-to items, Dineout saved-location and booking signals, household modes, pantry forecasts, and support failure memory become ranking weights with retention rules and DPDP controls.
+`GET /api/household-preference-graph` and `POST /api/household-preference-graph/simulate` are the consented personalization layer: Food active-order signals, Instamart order history and go-to items, Dineout saved-location and booking signals, household modes, pantry forecasts, and support failure memory become ranking weights with retention rules and DPDP controls. The Launch Center simulator accepts city, household mode, preferred Swiggy server, history consent, recent-failure context, and occasion mode, returning a local-only, personalized, or support-safe fallback decision with redacted telemetry and no raw Swiggy history retention.
 
 `GET /api/guest-collaboration-calendar` is the group planning and calendar layer: guest votes, Dineout-first date nights, guests-at-home prep, office lunch, weekday reset, recovery meals, ICS reminders, share links, Slack/Teams digests, and voice briefs stay aligned with separate Swiggy confirmations and the Food v1 no-scheduled-delivery constraint.
 

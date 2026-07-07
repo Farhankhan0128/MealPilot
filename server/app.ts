@@ -73,7 +73,7 @@ import { buildSwiggyGrowthPartnershipCenter, composeSwiggyGrowthPartnershipAsk }
 import { buildSwiggyDemoEvidenceDirector } from "./services/demoEvidenceDirector.js";
 import { buildSwiggyHostedWidgetActivationCenter } from "./services/hostedWidgetActivation.js";
 import { buildSwiggyBuildersHomepageExperienceCenter } from "./services/homepageExperienceCenter.js";
-import { buildHouseholdPreferenceGraph } from "./services/householdPreferenceGraph.js";
+import { buildHouseholdPreferenceGraph, simulateHouseholdPreference } from "./services/householdPreferenceGraph.js";
 import { buildSwiggyInteractionQaCenter, rehearseSwiggyInteractionQaLane } from "./services/interactionQaCenter.js";
 import { buildSwiggyInnovationRadar } from "./services/innovationRadar.js";
 import { buildSwiggyJourneyCompiler } from "./services/journeyCompiler.js";
@@ -298,6 +298,15 @@ const nutritionBudgetAdviceSchema = z.object({
   preference: z.enum(["food", "instamart", "dineout", "combined"]),
   couponSensitive: z.boolean(),
   includeDineout: z.boolean(),
+});
+
+const householdPreferenceSimulationSchema = z.object({
+  city: z.enum(["Bengaluru", "Delhi NCR", "Mumbai"]),
+  householdMode: z.enum(["primary_planner", "family_group", "office_team", "weekend_guest"]),
+  preferredServer: z.enum(["food", "instamart", "dineout", "combined"]),
+  consentToUseHistory: z.boolean(),
+  recentFailure: z.boolean(),
+  occasionMode: z.boolean(),
 });
 
 const offerDecisionSchema = z.object({
@@ -1531,6 +1540,11 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/household-preference-graph", (_req, res) => {
     res.json({ householdPreference: buildHouseholdPreferenceGraph() });
+  });
+
+  app.post("/api/household-preference-graph/simulate", (req, res) => {
+    const body = householdPreferenceSimulationSchema.parse(req.body);
+    res.json({ preferenceSimulation: simulateHouseholdPreference(body) });
   });
 
   app.get("/api/guest-collaboration-calendar", (_req, res) => {

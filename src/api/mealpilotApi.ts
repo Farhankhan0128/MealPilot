@@ -27,6 +27,7 @@ import type {
   GroupMember,
   GroupPlan,
   HouseholdPreferenceGraph,
+  HouseholdPreferenceSimulation,
   IncidentReport,
   LaunchBundle,
   LuxuryExperienceWorkspace,
@@ -825,6 +826,20 @@ export function adviseNutritionBudget(input: {
 
 export function fetchHouseholdPreferenceGraph() {
   return requestJson<{ householdPreference: HouseholdPreferenceGraph }>("/api/household-preference-graph");
+}
+
+export function simulateHouseholdPreference(input: {
+  city: "Bengaluru" | "Delhi NCR" | "Mumbai";
+  householdMode: "primary_planner" | "family_group" | "office_team" | "weekend_guest";
+  preferredServer: "food" | "instamart" | "dineout" | "combined";
+  consentToUseHistory: boolean;
+  recentFailure: boolean;
+  occasionMode: boolean;
+}) {
+  return requestJson<{ preferenceSimulation: HouseholdPreferenceSimulation }>("/api/household-preference-graph/simulate", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
 }
 
 export function fetchGuestCollaborationCenter() {

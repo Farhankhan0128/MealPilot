@@ -194,6 +194,7 @@ import {
   reconcileSwiggyPaymentTruth,
   runSwiggySubmissionTimelineCheckpoint,
   schedulePlan,
+  simulateHouseholdPreference,
   startSwiggyAuth,
   substituteRecommendationItem,
   validateSwiggyCustomization,
@@ -233,6 +234,7 @@ import type {
   GuestCollaborationCenter,
   GroupPlan,
   HouseholdPreferenceGraph,
+  HouseholdPreferenceSimulation,
   IncidentReport,
   LaunchBundle,
   LuxuryExperienceWorkspace,
@@ -2969,6 +2971,23 @@ function LaunchCenterPanel({
   });
   const [nutritionAdvice, setNutritionAdvice] = useState<NutritionBudgetAdvice | null>(null);
   const [nutritionAdviceStatus, setNutritionAdviceStatus] = useState<"idle" | "loading" | "error">("idle");
+  const [preferenceSimulationForm, setPreferenceSimulationForm] = useState<{
+    city: "Bengaluru" | "Delhi NCR" | "Mumbai";
+    householdMode: "primary_planner" | "family_group" | "office_team" | "weekend_guest";
+    preferredServer: "food" | "instamart" | "dineout" | "combined";
+    consentToUseHistory: boolean;
+    recentFailure: boolean;
+    occasionMode: boolean;
+  }>({
+    city: "Bengaluru",
+    householdMode: "family_group",
+    preferredServer: "instamart",
+    consentToUseHistory: true,
+    recentFailure: false,
+    occasionMode: false,
+  });
+  const [preferenceSimulation, setPreferenceSimulation] = useState<HouseholdPreferenceSimulation | null>(null);
+  const [preferenceSimulationStatus, setPreferenceSimulationStatus] = useState<"idle" | "loading" | "error">("idle");
   const [showcaseForm, setShowcaseForm] = useState({
     demoUrl: "https://youtu.be/mealpilot-swiggy-demo",
     githubUrl: "https://github.com/Farhankhan0128/MealPilot",
@@ -3120,6 +3139,18 @@ function LaunchCenterPanel({
       setNutritionAdviceStatus("idle");
     } catch {
       setNutritionAdviceStatus("error");
+    }
+  }
+
+  async function runPreferenceSimulation(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setPreferenceSimulationStatus("loading");
+    try {
+      const response = await simulateHouseholdPreference(preferenceSimulationForm);
+      setPreferenceSimulation(response.preferenceSimulation);
+      setPreferenceSimulationStatus("idle");
+    } catch {
+      setPreferenceSimulationStatus("error");
     }
   }
 
@@ -6724,6 +6755,119 @@ function LaunchCenterPanel({
               <strong>{householdPreference?.uniqueToolsCovered ?? 0}</strong>
               <span>Tools</span>
             </div>
+          </div>
+          <form className="preference-simulator" onSubmit={runPreferenceSimulation}>
+            <label htmlFor="preference-city">City</label>
+            <select
+              id="preference-city"
+              value={preferenceSimulationForm.city}
+              onChange={(event) =>
+                setPreferenceSimulationForm((current) => ({
+                  ...current,
+                  city: event.target.value as typeof preferenceSimulationForm.city,
+                }))
+              }
+            >
+              <option value="Bengaluru">Bengaluru</option>
+              <option value="Delhi NCR">Delhi NCR</option>
+              <option value="Mumbai">Mumbai</option>
+            </select>
+            <label htmlFor="preference-mode">Mode</label>
+            <select
+              id="preference-mode"
+              value={preferenceSimulationForm.householdMode}
+              onChange={(event) =>
+                setPreferenceSimulationForm((current) => ({
+                  ...current,
+                  householdMode: event.target.value as typeof preferenceSimulationForm.householdMode,
+                }))
+              }
+            >
+              <option value="primary_planner">Primary planner</option>
+              <option value="family_group">Family group</option>
+              <option value="office_team">Office team</option>
+              <option value="weekend_guest">Weekend guest</option>
+            </select>
+            <label htmlFor="preference-server">Server</label>
+            <select
+              id="preference-server"
+              value={preferenceSimulationForm.preferredServer}
+              onChange={(event) =>
+                setPreferenceSimulationForm((current) => ({
+                  ...current,
+                  preferredServer: event.target.value as typeof preferenceSimulationForm.preferredServer,
+                  occasionMode: event.target.value === "dineout" ? true : current.occasionMode,
+                }))
+              }
+            >
+              <option value="food">Food</option>
+              <option value="instamart">Instamart</option>
+              <option value="dineout">Dineout</option>
+              <option value="combined">Combined</option>
+            </select>
+            <div className="preference-toggle-grid">
+              <label htmlFor="preference-consent">
+                <input
+                  id="preference-consent"
+                  type="checkbox"
+                  checked={preferenceSimulationForm.consentToUseHistory}
+                  onChange={(event) =>
+                    setPreferenceSimulationForm((current) => ({ ...current, consentToUseHistory: event.target.checked }))
+                  }
+                />
+                History consent
+              </label>
+              <label htmlFor="preference-failure">
+                <input
+                  id="preference-failure"
+                  type="checkbox"
+                  checked={preferenceSimulationForm.recentFailure}
+                  onChange={(event) =>
+                    setPreferenceSimulationForm((current) => ({ ...current, recentFailure: event.target.checked }))
+                  }
+                />
+                Recent failure
+              </label>
+              <label htmlFor="preference-occasion">
+                <input
+                  id="preference-occasion"
+                  type="checkbox"
+                  checked={preferenceSimulationForm.occasionMode}
+                  onChange={(event) =>
+                    setPreferenceSimulationForm((current) => ({ ...current, occasionMode: event.target.checked }))
+                  }
+                />
+                Occasion mode
+              </label>
+            </div>
+            <button type="submit" disabled={preferenceSimulationStatus === "loading"} aria-label="Simulate household preference">
+              {preferenceSimulationStatus === "loading" ? <Loader2 aria-hidden="true" /> : <Users aria-hidden="true" />}
+              Simulate
+            </button>
+            {preferenceSimulationStatus === "error" ? (
+              <small role="status">Household preference simulation unavailable.</small>
+            ) : null}
+          </form>
+          <div
+            className="preference-simulation-result"
+            data-status={
+              preferenceSimulation?.decision === "personalized"
+                ? "healthy"
+                : preferenceSimulation?.decision === "support_safe_fallback"
+                  ? "blocked"
+                  : "watch"
+            }
+          >
+            <div>
+              <span>Decision</span>
+              <strong>{preferenceSimulation ? preferenceSimulation.decision.replace(/_/g, " ") : "Awaiting simulation"}</strong>
+            </div>
+            <p>
+              {preferenceSimulation
+                ? `${preferenceSimulation.selectedSignalId} / ${preferenceSimulation.selectedForecastId} / ${preferenceSimulation.confidence}% confidence`
+                : "Simulate consented personalization before ranking Food, Instamart, Dineout, or fallback routes."}
+            </p>
+            {preferenceSimulation ? <small>{preferenceSimulation.recommendedAction}</small> : null}
           </div>
           <ul className="compact-status-list">
             {(householdPreference?.signals ?? []).slice(0, 5).map((signalItem) => (

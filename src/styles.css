@@ -2701,7 +2701,8 @@ select:focus {
 .payment-truth-reconciler,
 .meal-window-forecaster,
 .customization-validator,
-.nutrition-advisor {
+.nutrition-advisor,
+.preference-simulator {
   display: grid;
   gap: 8px;
   border-radius: 8px;
@@ -2712,7 +2713,8 @@ select:focus {
 .payment-truth-reconciler label,
 .meal-window-forecaster label,
 .customization-validator label,
-.nutrition-advisor label {
+.nutrition-advisor label,
+.preference-simulator label {
   color: var(--ink-muted);
   font-size: 0.75rem;
   font-weight: 900;
@@ -2727,7 +2729,9 @@ select:focus {
 .customization-validator input,
 .customization-validator textarea,
 .nutrition-advisor select,
-.nutrition-advisor input {
+.nutrition-advisor input,
+.preference-simulator select,
+.preference-simulator input {
   width: 100%;
   min-width: 0;
   border: 1px solid var(--line);
@@ -2757,7 +2761,8 @@ select:focus {
 
 .meal-window-toggle,
 .customization-toggle-grid label,
-.nutrition-toggle-grid label {
+.nutrition-toggle-grid label,
+.preference-toggle-grid label {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -2765,7 +2770,8 @@ select:focus {
 }
 
 .customization-toggle-grid,
-.nutrition-toggle-grid {
+.nutrition-toggle-grid,
+.preference-toggle-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
@@ -2777,7 +2783,8 @@ select:focus {
 
 .meal-window-toggle input,
 .customization-toggle-grid input,
-.nutrition-toggle-grid input {
+.nutrition-toggle-grid input,
+.preference-toggle-grid input {
   width: 18px;
   height: 18px;
   accent-color: var(--green);
@@ -2787,7 +2794,8 @@ select:focus {
 .payment-truth-reconciler button,
 .meal-window-forecaster button,
 .customization-validator button,
-.nutrition-advisor button {
+.nutrition-advisor button,
+.preference-simulator button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -2804,7 +2812,8 @@ select:focus {
 .payment-truth-reconciler button:disabled,
 .meal-window-forecaster button:disabled,
 .customization-validator button:disabled,
-.nutrition-advisor button:disabled {
+.nutrition-advisor button:disabled,
+.preference-simulator button:disabled {
   cursor: wait;
   opacity: 0.72;
 }
@@ -2812,7 +2821,8 @@ select:focus {
 .payment-truth-reconciler svg,
 .meal-window-forecaster svg,
 .customization-validator svg,
-.nutrition-advisor svg {
+.nutrition-advisor svg,
+.preference-simulator svg {
   width: 17px;
   height: 17px;
 }
@@ -2820,7 +2830,8 @@ select:focus {
 .payment-truth-reconciler small,
 .meal-window-forecaster small,
 .customization-validator small,
-.nutrition-advisor small {
+.nutrition-advisor small,
+.preference-simulator small {
   color: var(--coral);
   font-weight: 850;
 }
@@ -2828,7 +2839,8 @@ select:focus {
 .payment-truth-result,
 .meal-window-result,
 .customization-result,
-.nutrition-advice-result {
+.nutrition-advice-result,
+.preference-simulation-result {
   display: grid;
   gap: 8px;
   border-radius: 8px;
@@ -2840,27 +2852,31 @@ select:focus {
 .payment-truth-result[data-status="healthy"],
 .meal-window-result[data-status="healthy"],
 .customization-result[data-status="healthy"],
-.nutrition-advice-result[data-status="healthy"] {
+.nutrition-advice-result[data-status="healthy"],
+.preference-simulation-result[data-status="healthy"] {
   border-left-color: var(--green);
 }
 
 .payment-truth-result[data-status="blocked"],
 .meal-window-result[data-status="blocked"],
 .customization-result[data-status="blocked"],
-.nutrition-advice-result[data-status="blocked"] {
+.nutrition-advice-result[data-status="blocked"],
+.preference-simulation-result[data-status="blocked"] {
   border-left-color: var(--coral);
 }
 
 .meal-window-result[data-status="watch"],
 .customization-result[data-status="watch"],
-.nutrition-advice-result[data-status="watch"] {
+.nutrition-advice-result[data-status="watch"],
+.preference-simulation-result[data-status="watch"] {
   border-left-color: var(--gold);
 }
 
 .payment-truth-result > div,
 .meal-window-result > div,
 .customization-result > div,
-.nutrition-advice-result > div {
+.nutrition-advice-result > div,
+.preference-simulation-result > div {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -2870,7 +2886,8 @@ select:focus {
 .payment-truth-result span,
 .meal-window-result span,
 .customization-result span,
-.nutrition-advice-result span {
+.nutrition-advice-result span,
+.preference-simulation-result span {
   color: var(--ink-muted);
   font-size: 0.75rem;
   font-weight: 900;
@@ -2880,7 +2897,8 @@ select:focus {
 .payment-truth-result strong,
 .meal-window-result strong,
 .customization-result strong,
-.nutrition-advice-result strong {
+.nutrition-advice-result strong,
+.preference-simulation-result strong {
   color: var(--green-dark);
   font-size: 0.84rem;
   text-align: right;
@@ -2893,7 +2911,9 @@ select:focus {
 .customization-result p,
 .customization-result small,
 .nutrition-advice-result p,
-.nutrition-advice-result small {
+.nutrition-advice-result small,
+.preference-simulation-result p,
+.preference-simulation-result small {
   margin: 0;
   color: var(--ink-muted);
   font-size: 0.82rem;
@@ -2903,7 +2923,8 @@ select:focus {
 
 .meal-window-result small,
 .customization-result small,
-.nutrition-advice-result small {
+.nutrition-advice-result small,
+.preference-simulation-result small {
   color: var(--green-dark);
   font-weight: 850;
 }
@@ -5060,7 +5081,8 @@ select:focus {
   }
 
   .customization-toggle-grid,
-  .nutrition-toggle-grid {
+  .nutrition-toggle-grid,
+  .preference-toggle-grid {
     grid-template-columns: 1fr;
   }
 
