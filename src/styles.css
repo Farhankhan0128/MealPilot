@@ -3505,6 +3505,67 @@ select:focus {
   border-left-color: var(--mp-yellow);
 }
 
+.faq-answer-console {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.faq-answer-console label {
+  color: var(--mp-muted);
+  font-size: 0.73rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.faq-answer-console div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 40px;
+  gap: 8px;
+  align-items: center;
+}
+
+.faq-answer-console input {
+  width: 100%;
+  min-width: 0;
+  min-height: 40px;
+  border: 1px solid var(--mp-border);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--mp-ink);
+  font: inherit;
+  font-size: 0.86rem;
+  padding: 9px 10px;
+}
+
+.faq-answer-console button {
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--mp-blue);
+  border-radius: 8px;
+  background: var(--mp-blue);
+  color: #fff;
+}
+
+.faq-answer-console button:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
+.faq-answer-console button svg {
+  width: 17px;
+  height: 17px;
+}
+
+.faq-answer-console small {
+  color: var(--mp-red);
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
 .faq-answer-strip {
   display: grid;
   gap: 8px;

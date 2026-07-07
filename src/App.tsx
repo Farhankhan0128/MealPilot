@@ -36,7 +36,7 @@ import {
   Users,
   X,
 } from "lucide-react";
-import type { ReactNode } from "react";
+import type { FormEvent, ReactNode } from "react";
 import { useEffect, useMemo, useState } from "react";
 import {
   answerSwiggyFaqQuestion,
@@ -2823,6 +2823,22 @@ function LaunchCenterPanel({
     new Set((sourceIntelligence?.buildQueue ?? []).flatMap((item) => item.evidenceLinks)),
   ).slice(0, 3);
   const officialSourceLinks = (sourceIntelligence?.officialSources ?? []).slice(0, 2);
+  const [faqAnswerQuestion, setFaqAnswerQuestion] = useState(FAQ_ANSWER_SAMPLE_QUESTION);
+  const [interactiveFaqAnswer, setInteractiveFaqAnswer] = useState<SwiggyFaqAnswerResolution | null>(null);
+  const [faqAnswerStatus, setFaqAnswerStatus] = useState<"idle" | "loading" | "error">("idle");
+  const visibleFaqAnswer = interactiveFaqAnswer ?? faqAnswer;
+
+  async function runFaqAnswerConsole(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setFaqAnswerStatus("loading");
+    try {
+      const response = await answerSwiggyFaqQuestion(faqAnswerQuestion);
+      setInteractiveFaqAnswer(response.faqAnswer);
+      setFaqAnswerStatus("idle");
+    } catch {
+      setFaqAnswerStatus("error");
+    }
+  }
 
   return (
     <section className="analysis-panel launch-panel" id="launch-center">
@@ -4461,12 +4477,27 @@ function LaunchCenterPanel({
               <span>CTAs</span>
             </div>
           </div>
+          <form className="faq-answer-console" onSubmit={runFaqAnswerConsole}>
+            <label htmlFor="faq-answer-question">Reviewer question</label>
+            <div>
+              <input
+                id="faq-answer-question"
+                type="text"
+                value={faqAnswerQuestion}
+                onChange={(event) => setFaqAnswerQuestion(event.target.value)}
+              />
+              <button type="submit" disabled={faqAnswerStatus === "loading"} aria-label="Resolve FAQ answer">
+                {faqAnswerStatus === "loading" ? <Loader2 aria-hidden="true" /> : <Search aria-hidden="true" />}
+              </button>
+            </div>
+            {faqAnswerStatus === "error" ? <small role="status">Answer console unavailable.</small> : null}
+          </form>
           <div
             className="faq-answer-strip"
             data-status={
-              faqAnswer?.decision === "answered"
+              visibleFaqAnswer?.decision === "answered"
                 ? "healthy"
-                : faqAnswer?.decision === "blocked_empty"
+                : visibleFaqAnswer?.decision === "blocked_empty"
                   ? "blocked"
                   : "watch"
             }
@@ -4474,15 +4505,15 @@ function LaunchCenterPanel({
             <div>
               <span>Reviewer answer</span>
               <strong>
-                {faqAnswer
-                  ? `${faqAnswer.decision.replace(/_/g, " ")} / ${faqAnswer.confidence} / ${faqAnswer.matchScore}/100`
+                {visibleFaqAnswer
+                  ? `${visibleFaqAnswer.decision.replace(/_/g, " ")} / ${visibleFaqAnswer.confidence} / ${visibleFaqAnswer.matchScore}/100`
                   : "Resolving sample question"}
               </strong>
             </div>
-            <p>{faqAnswer?.answer ?? FAQ_ANSWER_SAMPLE_QUESTION}</p>
+            <p>{visibleFaqAnswer?.answer ?? FAQ_ANSWER_SAMPLE_QUESTION}</p>
             <small>
-              {faqAnswer
-                ? `${faqAnswer.proofLinks.length} proof links / ${faqAnswer.activationCtas.length} CTAs / ${faqAnswer.owner}`
+              {visibleFaqAnswer
+                ? `${visibleFaqAnswer.proofLinks.length} proof links / ${visibleFaqAnswer.activationCtas.length} CTAs / ${visibleFaqAnswer.owner}`
                 : "Waiting for answer console"}
             </small>
           </div>

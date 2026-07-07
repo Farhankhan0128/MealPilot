@@ -556,7 +556,7 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 
 `GET /api/swiggy-faq-resolution-center` turns public Builders FAQ questions and policy rules into reviewer-ready answers with owners, proof links, activation CTAs, a five-step reviewer script, support contact, and explicit operator or Swiggy gates.
 
-`POST /api/swiggy-faq-resolution-center/answer` accepts one reviewer question and returns the matched FAQ answer, confidence, owner/status, proof links, related policy rules, activation CTAs, support contact, and explicit gates. Blank questions return `blocked_empty` so MealPilot never fabricates an access-review answer or triggers external forms, email, credentials, or Swiggy approvals.
+`POST /api/swiggy-faq-resolution-center/answer` powers the Launch Center FAQ Answer Console: it accepts one reviewer question and returns the matched FAQ answer, confidence, owner/status, proof links, related policy rules, activation CTAs, support contact, and explicit gates. Blank questions return `blocked_empty` so MealPilot never fabricates an access-review answer or triggers external forms, email, credentials, or Swiggy approvals.
 
 `GET /api/swiggy-growth-partnership` is the growth partnership center: official get-noticed, hiring, co-branding, direct-support, enterprise analytics, and joint go-to-market signals become MealPilot launch experiments, proof assets, metric targets, and explicit partner asks while Swiggy feature placement, co-marketing approval, Slack, partner manager, dashboard access, and higher limits remain external gates.
 
