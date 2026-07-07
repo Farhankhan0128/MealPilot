@@ -338,7 +338,8 @@ assert(
   "OpenAPI luxury experience workspace contract is missing",
 );
 assert(
-  openApi.paths["/api/reviewer-artifact-vault"].get.summary.includes("Reviewer Artifact Vault"),
+  openApi.paths["/api/reviewer-artifact-vault"].get.summary.includes("Reviewer Artifact Vault") &&
+    openApi.paths["/api/reviewer-artifact-vault/compose"].post.summary.includes("Reviewer Artifact Vault"),
   "OpenAPI reviewer artifact vault contract is missing",
 );
 assert(
@@ -3322,6 +3323,47 @@ assert(
 assert(
   reviewerArtifactVault.reviewerArtifactVault.externalGates.some((gate) => gate.includes("staging credentials")),
   "reviewer artifact vault external gates are missing",
+);
+const readyReviewerPacket = await request("/api/reviewer-artifact-vault/compose", {
+  method: "POST",
+  body: JSON.stringify({
+    sectionId: "mcp_contracts",
+    channel: "github_packet",
+    audience: "partner_support",
+    includeScreenshots: true,
+    includeDemoVideo: false,
+    includeCredentialGates: false,
+  }),
+});
+assert(
+  readyReviewerPacket.reviewerArtifactPacket.decision === "ready_packet" &&
+    readyReviewerPacket.reviewerArtifactPacket.readinessScore >= 90 &&
+    readyReviewerPacket.reviewerArtifactPacket.includedArtifacts.some((artifact) => artifact.id === "openapi_contract") &&
+    readyReviewerPacket.reviewerArtifactPacket.commands.some((command) => command.id === "verify_production") &&
+    readyReviewerPacket.reviewerArtifactPacket.reviewerEmail.body.includes("Partner support packet") &&
+    readyReviewerPacket.reviewerArtifactPacket.assertions.some((assertion) =>
+      assertion.includes("does not attach bearer tokens"),
+    ),
+  "reviewer artifact ready packet composer is incomplete",
+);
+const gatedReviewerPacket = await request("/api/reviewer-artifact-vault/compose", {
+  method: "POST",
+  body: JSON.stringify({
+    sectionId: "submission_packet",
+    channel: "access_form",
+    audience: "builder_access",
+    includeScreenshots: true,
+    includeDemoVideo: true,
+    includeCredentialGates: true,
+  }),
+});
+assert(
+  gatedReviewerPacket.reviewerArtifactPacket.decision === "manual_attachment_gate" &&
+    gatedReviewerPacket.reviewerArtifactPacket.missingInputs.includes("demo video URL") &&
+    gatedReviewerPacket.reviewerArtifactPacket.missingInputs.includes("selected screenshots") &&
+    gatedReviewerPacket.reviewerArtifactPacket.missingInputs.includes("final redirect URI and static IP") &&
+    gatedReviewerPacket.reviewerArtifactPacket.reviewerEmail.to === "builders@swiggy.in",
+  "reviewer artifact gated packet composer is incomplete",
 );
 
 const visualQa = await request("/api/visual-qa-center");

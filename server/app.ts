@@ -129,7 +129,7 @@ import { buildPremiumUseCaseStudio } from "./services/premiumUseCaseStudio.js";
 import { buildSwiggyQuotaNegotiationCenter } from "./services/quotaNegotiationCenter.js";
 import { analyzeSwiggyQualityFeedback, buildSwiggyQualityLoopCenter } from "./services/qualityLoopCenter.js";
 import { buildSwiggyRitualAutopilotCenter, planSwiggyRitualAutopilot } from "./services/ritualAutopilotCenter.js";
-import { buildReviewerArtifactVault } from "./services/reviewerArtifactVault.js";
+import { buildReviewerArtifactVault, composeReviewerArtifactPacket } from "./services/reviewerArtifactVault.js";
 import { createPkcePair, createState } from "./services/pkce.js";
 import { buildMcpResourcePromptStudio, executeMcpResourcePrompt } from "./services/resourcePromptStudio.js";
 import { buildSwiggyStagingCredentialDrill } from "./services/stagingCredentialDrill.js";
@@ -324,6 +324,15 @@ const luxuryExperienceComposeSchema = z.object({
   guestCount: z.number().int().min(1).max(50),
   budget: z.number().int().min(250).max(50000),
   includeDineout: z.boolean(),
+});
+
+const reviewerArtifactPacketSchema = z.object({
+  sectionId: z.string().trim().min(2).max(80),
+  channel: z.enum(["access_form", "email_draft", "github_packet"]),
+  audience: z.enum(["builder_access", "demo_review", "partner_support"]),
+  includeScreenshots: z.boolean(),
+  includeDemoVideo: z.boolean(),
+  includeCredentialGates: z.boolean(),
 });
 
 const offerDecisionSchema = z.object({
@@ -1584,6 +1593,11 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/reviewer-artifact-vault", (_req, res) => {
     res.json({ reviewerArtifactVault: buildReviewerArtifactVault() });
+  });
+
+  app.post("/api/reviewer-artifact-vault/compose", (req, res) => {
+    const body = reviewerArtifactPacketSchema.parse(req.body);
+    res.json({ reviewerArtifactPacket: composeReviewerArtifactPacket(body) });
   });
 
   app.get("/api/visual-qa-center", (_req, res) => {

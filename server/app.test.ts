@@ -143,6 +143,9 @@ describe("MealPilot API", () => {
       "Luxury Experience Workspace",
     );
     expect(openApi.body.paths["/api/reviewer-artifact-vault"].get.summary).toContain("Reviewer Artifact Vault");
+    expect(openApi.body.paths["/api/reviewer-artifact-vault/compose"].post.summary).toContain(
+      "Reviewer Artifact Vault",
+    );
     expect(openApi.body.paths["/api/visual-qa-center"].get.summary).toContain("Visual QA Center");
     expect(openApi.body.paths["/api/swiggy-docs-coverage"].get.summary).toContain("llms.txt");
     expect(openApi.body.paths["/api/swiggy-docs-twin-explorer"].get.summary).toContain("docs twin");
@@ -3896,6 +3899,52 @@ describe("MealPilot API", () => {
       ),
     ).toBe(true);
     expect(vault.externalGates.some((gate: string) => gate.includes("staging credentials"))).toBe(true);
+  });
+
+  it("composes reviewer artifact packets with redaction and attachment gates", async () => {
+    const { app } = createMealPilotServer();
+
+    const readyResponse = await request(app)
+      .post("/api/reviewer-artifact-vault/compose")
+      .send({
+        sectionId: "mcp_contracts",
+        channel: "github_packet",
+        audience: "partner_support",
+        includeScreenshots: true,
+        includeDemoVideo: false,
+        includeCredentialGates: false,
+      })
+      .expect(200);
+    const ready = readyResponse.body.reviewerArtifactPacket;
+
+    expect(ready.decision).toBe("ready_packet");
+    expect(ready.readinessScore).toBeGreaterThanOrEqual(90);
+    expect(ready.selectedSection.id).toBe("mcp_contracts");
+    expect(ready.includedArtifacts.some((artifact: { id: string }) => artifact.id === "openapi_contract")).toBe(true);
+    expect(ready.screenshotTargets.length).toBeGreaterThan(0);
+    expect(ready.commands.some((command: { id: string }) => command.id === "verify_production")).toBe(true);
+    expect(ready.reviewerEmail.body).toContain("Partner support packet");
+    expect(ready.assertions.some((assertion: string) => assertion.includes("does not attach bearer tokens"))).toBe(true);
+
+    const gatedResponse = await request(app)
+      .post("/api/reviewer-artifact-vault/compose")
+      .send({
+        sectionId: "submission_packet",
+        channel: "access_form",
+        audience: "builder_access",
+        includeScreenshots: true,
+        includeDemoVideo: true,
+        includeCredentialGates: true,
+      })
+      .expect(200);
+    const gated = gatedResponse.body.reviewerArtifactPacket;
+
+    expect(gated.decision).toBe("manual_attachment_gate");
+    expect(gated.missingInputs).toEqual(
+      expect.arrayContaining(["demo video URL", "selected screenshots", "final redirect URI and static IP"]),
+    );
+    expect(gated.reviewerEmail.to).toBe("builders@swiggy.in");
+    expect(gated.nextAction).toContain("Resolve");
   });
 
   it("returns visual QA evidence for reviewer screenshots and responsive layout", async () => {

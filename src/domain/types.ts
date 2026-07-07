@@ -3597,6 +3597,28 @@ export interface ReviewerArtifactVault {
   externalGates: string[];
 }
 
+export type ReviewerArtifactPacketChannel = "access_form" | "email_draft" | "github_packet";
+export type ReviewerArtifactPacketDecision = "ready_packet" | "manual_attachment_gate" | "unknown_section";
+
+export interface ReviewerArtifactPacketComposition {
+  generatedAt: string;
+  decision: ReviewerArtifactPacketDecision;
+  readinessScore: number;
+  channel: ReviewerArtifactPacketChannel;
+  audience: "builder_access" | "demo_review" | "partner_support";
+  selectedSection?: { id: string; label: string; artifacts: ReviewerArtifactItem[] };
+  includedArtifacts: ReviewerArtifactItem[];
+  screenshotTargets: ReviewerScreenshotTarget[];
+  commands: ReviewerArtifactCommand[];
+  handoffChecklist: Array<{ id: string; label: string; status: ReviewerArtifactStatus; owner: string; evidenceLinks: string[] }>;
+  missingInputs: string[];
+  redactionRules: string[];
+  reviewerEmail: { to: string; subject: string; body: string };
+  telemetry: Array<{ field: string; value: string; redaction: string }>;
+  assertions: string[];
+  nextAction: string;
+}
+
 export type VisualQaStatus = "ready" | "manual_input" | "external_gate";
 export type VisualQaViewport = "desktop" | "tablet" | "mobile";
 

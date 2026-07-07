@@ -1227,6 +1227,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/reviewer-artifact-vault/compose": {
+        post: {
+          tags: ["Builder Access"],
+          summary: "Compose a Reviewer Artifact Vault packet for Swiggy access handoff",
+          responses: {
+            "200": {
+              description:
+                "Selected artifact section, handoff channel, audience, proof links, screenshots, verification commands, redaction rules, reviewer email copy, readiness decision, missing attachment gates, and telemetry for Swiggy Builder Access review",
+            },
+          },
+        },
+      },
       "/api/visual-qa-center": {
         get: {
           tags: ["Builder Access"],

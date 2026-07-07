@@ -321,6 +321,7 @@ POST /api/guest-collaboration-calendar/compose
 GET  /api/luxury-experience-workspace
 POST /api/luxury-experience-workspace/compose
 GET  /api/reviewer-artifact-vault
+POST /api/reviewer-artifact-vault/compose
 GET  /api/visual-qa-center
 GET  /api/swiggy-docs-coverage
 GET  /api/swiggy-docs-twin-explorer
@@ -620,7 +621,7 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 
 `GET /api/luxury-experience-workspace` and `POST /api/luxury-experience-workspace/compose` are the premium review layer: lean, premium, family, social, and training modes become Dineout reservation, Food cart, Instamart basket, combined evening, and recovery workspaces with all 35 Swiggy tools, authoritative reads, widget fallbacks, voice contracts, telemetry, and separate confirmation gates. The Launch Center composer accepts mode, workspace, city, guest count, budget, and Dineout confirmation, then returns a read-only route rehearsal with review artifacts, missing gates, redacted telemetry, no-commerce assertions, and separate Food, Instamart, and Dineout approval boundaries.
 
-`GET /api/reviewer-artifact-vault` is the Swiggy access-submission manifest: proof links, OpenAPI, smoke commands, screenshot targets, Demo Evidence Director, demo-video checklist, logs, traces, redaction rules, support context, and handoff email copy are bundled in one route.
+`GET /api/reviewer-artifact-vault` and `POST /api/reviewer-artifact-vault/compose` are the Swiggy access-submission manifest and packet composer: proof links, OpenAPI, smoke commands, screenshot targets, Demo Evidence Director, demo-video checklist, logs, traces, redaction rules, support context, and handoff email copy are bundled in one route. The Launch Center composer accepts artifact section, channel, audience, screenshots, demo-video, and credential-gate inputs, then returns a reviewer-safe packet with included artifacts, commands, redaction rules, email copy, missing attachment gates, telemetry, and explicit no-secret assertions.
 
 `GET /api/visual-qa-center` is the screenshot and layout evidence center: desktop, tablet, and mobile selectors, Playwright artifact paths, no-overlap rules, text-fit rules, widget fallback checks, redaction visibility, commercial confirmation visibility, Source Intelligence, Deep Site Map, Innovation Radar, and screenshot automation gates are made reviewable.
 

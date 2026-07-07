@@ -45,6 +45,7 @@ import {
   completeSwiggyAuth,
   composeGuestCollaborationHandoff,
   composeLuxuryExperienceWorkspace,
+  composeReviewerArtifactPacket,
   composeSwiggyChannelExecutionPacket,
   composeSwiggyGrowthPartnershipAsk,
   composeSwiggyPartnerSuccessHandoff,
@@ -265,6 +266,8 @@ import type {
   ResilienceDrill,
   ResilienceRunbook,
   ReviewerProof,
+  ReviewerArtifactPacketChannel,
+  ReviewerArtifactPacketComposition,
   ReviewerArtifactVault,
   RestockSuggestion,
   RuntimeTelemetryReport,
@@ -3027,6 +3030,23 @@ function LaunchCenterPanel({
   const [luxuryWorkspaceComposition, setLuxuryWorkspaceComposition] =
     useState<LuxuryExperienceComposition | null>(null);
   const [luxuryWorkspaceStatus, setLuxuryWorkspaceStatus] = useState<"idle" | "loading" | "error">("idle");
+  const [reviewerPacketForm, setReviewerPacketForm] = useState<{
+    sectionId: string;
+    channel: ReviewerArtifactPacketChannel;
+    audience: "builder_access" | "demo_review" | "partner_support";
+    includeScreenshots: boolean;
+    includeDemoVideo: boolean;
+    includeCredentialGates: boolean;
+  }>({
+    sectionId: "submission_packet",
+    channel: "access_form",
+    audience: "builder_access",
+    includeScreenshots: true,
+    includeDemoVideo: true,
+    includeCredentialGates: true,
+  });
+  const [reviewerPacket, setReviewerPacket] = useState<ReviewerArtifactPacketComposition | null>(null);
+  const [reviewerPacketStatus, setReviewerPacketStatus] = useState<"idle" | "loading" | "error">("idle");
   const [showcaseForm, setShowcaseForm] = useState({
     demoUrl: "https://youtu.be/mealpilot-swiggy-demo",
     githubUrl: "https://github.com/Farhankhan0128/MealPilot",
@@ -3214,6 +3234,18 @@ function LaunchCenterPanel({
       setLuxuryWorkspaceStatus("idle");
     } catch {
       setLuxuryWorkspaceStatus("error");
+    }
+  }
+
+  async function runReviewerPacketComposer(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setReviewerPacketStatus("loading");
+    try {
+      const response = await composeReviewerArtifactPacket(reviewerPacketForm);
+      setReviewerPacket(response.reviewerArtifactPacket);
+      setReviewerPacketStatus("idle");
+    } catch {
+      setReviewerPacketStatus("error");
     }
   }
 
@@ -7236,6 +7268,115 @@ function LaunchCenterPanel({
               <strong>{reviewerArtifactVault?.totalRedactionRules ?? 0}</strong>
               <span>Redactions</span>
             </div>
+          </div>
+          <form className="reviewer-packet-composer" onSubmit={runReviewerPacketComposer}>
+            <label htmlFor="reviewer-section">Section</label>
+            <select
+              id="reviewer-section"
+              value={reviewerPacketForm.sectionId}
+              onChange={(event) => setReviewerPacketForm((current) => ({ ...current, sectionId: event.target.value }))}
+            >
+              {(reviewerArtifactVault?.artifactSections ?? []).map((section) => (
+                <option key={section.id} value={section.id}>
+                  {section.label}
+                </option>
+              ))}
+            </select>
+            <label htmlFor="reviewer-channel">Channel</label>
+            <select
+              id="reviewer-channel"
+              value={reviewerPacketForm.channel}
+              onChange={(event) =>
+                setReviewerPacketForm((current) => ({
+                  ...current,
+                  channel: event.target.value as ReviewerArtifactPacketChannel,
+                }))
+              }
+            >
+              <option value="access_form">Access form</option>
+              <option value="email_draft">Email draft</option>
+              <option value="github_packet">GitHub packet</option>
+            </select>
+            <label htmlFor="reviewer-audience">Audience</label>
+            <select
+              id="reviewer-audience"
+              value={reviewerPacketForm.audience}
+              onChange={(event) =>
+                setReviewerPacketForm((current) => ({
+                  ...current,
+                  audience: event.target.value as typeof reviewerPacketForm.audience,
+                }))
+              }
+            >
+              <option value="builder_access">Builder access</option>
+              <option value="demo_review">Demo review</option>
+              <option value="partner_support">Partner support</option>
+            </select>
+            <div className="reviewer-packet-toggle-grid">
+              <label htmlFor="reviewer-screenshots">
+                <input
+                  id="reviewer-screenshots"
+                  type="checkbox"
+                  checked={reviewerPacketForm.includeScreenshots}
+                  onChange={(event) =>
+                    setReviewerPacketForm((current) => ({ ...current, includeScreenshots: event.target.checked }))
+                  }
+                />
+                Screenshots
+              </label>
+              <label htmlFor="reviewer-demo-video">
+                <input
+                  id="reviewer-demo-video"
+                  type="checkbox"
+                  checked={reviewerPacketForm.includeDemoVideo}
+                  onChange={(event) =>
+                    setReviewerPacketForm((current) => ({ ...current, includeDemoVideo: event.target.checked }))
+                  }
+                />
+                Demo video
+              </label>
+              <label htmlFor="reviewer-credentials">
+                <input
+                  id="reviewer-credentials"
+                  type="checkbox"
+                  checked={reviewerPacketForm.includeCredentialGates}
+                  onChange={(event) =>
+                    setReviewerPacketForm((current) => ({ ...current, includeCredentialGates: event.target.checked }))
+                  }
+                />
+                Credentials
+              </label>
+            </div>
+            <button type="submit" disabled={reviewerPacketStatus === "loading"} aria-label="Compose reviewer artifact packet">
+              {reviewerPacketStatus === "loading" ? <Loader2 aria-hidden="true" /> : <ClipboardCheck aria-hidden="true" />}
+              Compose
+            </button>
+            {reviewerPacketStatus === "error" ? <small role="status">Reviewer artifact packet unavailable.</small> : null}
+          </form>
+          <div
+            className="reviewer-packet-result"
+            data-status={
+              reviewerPacket?.decision === "ready_packet"
+                ? "healthy"
+                : reviewerPacket?.decision === "manual_attachment_gate"
+                  ? "watch"
+                  : "blocked"
+            }
+          >
+            <div>
+              <span>Packet</span>
+              <strong>
+                {reviewerPacket
+                  ? `${reviewerPacket.decision.replace(/_/g, " ")} / ${reviewerPacket.readinessScore}`
+                  : "Awaiting packet"}
+              </strong>
+            </div>
+            <p>
+              {reviewerPacket
+                ? `${reviewerPacket.selectedSection?.id ?? "unknown"} / ${reviewerPacket.includedArtifacts.length} artifacts / ${reviewerPacket.screenshotTargets.length} screenshots`
+                : "Compose a Swiggy reviewer handoff with proof links, commands, screenshots, redaction rules, and manual gates."}
+            </p>
+            {reviewerPacket ? <small>{reviewerPacket.nextAction}</small> : null}
           </div>
           <ul className="compact-status-list">
             {(reviewerArtifactVault?.artifactSections ?? []).slice(0, 4).map((section) => (

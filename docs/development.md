@@ -261,6 +261,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/luxury-experience-workspace`
 - `POST /api/luxury-experience-workspace/compose`
 - `GET /api/reviewer-artifact-vault`
+- `POST /api/reviewer-artifact-vault/compose`
 - `GET /api/swiggy-builders-review-decision`
 - `GET /api/visual-qa-center`
 - `GET /api/swiggy-showcase-submission-center`
@@ -466,7 +467,7 @@ Production should use an HTTPS redirect URI with exact-match allowlisting.
 
 `/api/luxury-experience-workspace` shows premium review workspaces: lean, premium, family, social, and training modes; Dineout reservation review; Food cart review; Instamart basket review; combined evening planning; recovery desk; widget fallbacks; voice contracts; and telemetry gates. `/api/luxury-experience-workspace/compose` powers the Launch Center composer with mode, workspace, city, guest count, budget, and Dineout confirmation inputs, returning route steps, review artifacts, readiness decision, manual confirmation gaps, redacted telemetry, no-commerce assertions, and separate Food, Instamart, and Dineout approval boundaries.
 
-`/api/reviewer-artifact-vault` shows the Swiggy access-submission manifest: proof links, Deep Site Map, OpenAPI, smoke commands, screenshot targets, demo-video checklist, logs, traces, redaction rules, support context, handoff checklist, and reviewer email copy.
+`/api/reviewer-artifact-vault` shows the Swiggy access-submission manifest: proof links, Deep Site Map, OpenAPI, smoke commands, screenshot targets, demo-video checklist, logs, traces, redaction rules, support context, handoff checklist, and reviewer email copy. `/api/reviewer-artifact-vault/compose` powers the Launch Center packet composer with artifact section, channel, audience, screenshots, demo-video, and credential-gate inputs, returning included artifacts, commands, redaction rules, reviewer email copy, readiness decision, missing attachment gates, safe telemetry, and explicit no-secret assertions.
 
 `/api/visual-qa-center` shows reviewer screenshot targets, desktop/tablet/mobile viewport sizes, selector manifests, Playwright screenshot artifact paths, no-overlap rules, text-fit rules, widget fallback checks, redaction visibility, commercial confirmation visibility, mobile layout checks, Source Intelligence, Deep Site Map, Innovation Radar, Access Evidence Matrix card proof, and automation gates. Run `npm run verify:visual` against the production server to generate PNGs plus `artifacts/visual-qa/report.json`.
 

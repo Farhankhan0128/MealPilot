@@ -1,6 +1,8 @@
 import type {
   ReviewerArtifactCommand,
   ReviewerArtifactItem,
+  ReviewerArtifactPacketChannel,
+  ReviewerArtifactPacketComposition,
   ReviewerArtifactStatus,
   ReviewerArtifactVault,
   ReviewerScreenshotTarget,
@@ -269,6 +271,117 @@ const handoffChecklist = [
     evidenceLinks: ["/api/staging-certification-matrix", "/api/slo-incident-command"],
   },
 ];
+
+const audienceCopy: Record<ReviewerArtifactPacketComposition["audience"], string> = {
+  builder_access:
+    "Builder Access packet emphasizes production-readiness proof, OpenAPI, tool coverage, visual evidence, and explicit Swiggy gates.",
+  demo_review:
+    "Demo review packet emphasizes the short working-flow recording, screenshot targets, reviewer script, and visible no-secret posture.",
+  partner_support:
+    "Partner support packet emphasizes report_error readiness, incident evidence, support-safe logs, telemetry, and escalation context.",
+};
+
+function scorePacket(statuses: ReviewerArtifactStatus[]) {
+  return Math.max(40, Math.min(99, Math.round((statuses.reduce((sum, status) => sum + statusScore(status), 0) / statuses.length) * 100)));
+}
+
+function channelLabel(channel: ReviewerArtifactPacketChannel) {
+  if (channel === "access_form") return "access form";
+  if (channel === "github_packet") return "GitHub packet";
+  return "email draft";
+}
+
+export function composeReviewerArtifactPacket(input: {
+  sectionId: string;
+  channel: ReviewerArtifactPacketChannel;
+  audience: ReviewerArtifactPacketComposition["audience"];
+  includeScreenshots: boolean;
+  includeDemoVideo: boolean;
+  includeCredentialGates: boolean;
+}): ReviewerArtifactPacketComposition {
+  const selectedSection = artifactSections.find((section) => section.id === input.sectionId);
+  const includedArtifacts = selectedSection?.artifacts ?? [];
+  const selectedScreenshots = input.includeScreenshots ? screenshotTargets.filter((target) => target.status !== "external_gate").slice(0, 8) : [];
+  const selectedCommands = commands.filter((commandItem) => commandItem.status === "ready");
+  const selectedChecklist = handoffChecklist.filter(
+    (item) => input.includeCredentialGates || !item.label.toLowerCase().includes("credential"),
+  );
+  const missingInputs: string[] = [];
+
+  if (!selectedSection) missingInputs.push("known reviewer artifact section");
+  if (input.includeDemoVideo && handoffChecklist.some((item) => item.id === "record_video" && item.status === "manual_input")) {
+    missingInputs.push("demo video URL");
+  }
+  if (input.includeScreenshots && input.channel === "access_form" && input.audience === "builder_access") {
+    missingInputs.push("selected screenshots");
+  }
+  if (input.includeCredentialGates) missingInputs.push("final redirect URI and static IP");
+
+  const statusInputs = [
+    ...(includedArtifacts.length > 0 ? includedArtifacts.map((item) => item.status) : (["external_gate"] as ReviewerArtifactStatus[])),
+    ...(selectedScreenshots.length > 0 ? selectedScreenshots.map((item) => item.status) : (["manual_input"] as ReviewerArtifactStatus[])),
+    ...selectedCommands.map((item) => item.status),
+    ...selectedChecklist.map((item) => item.status),
+  ];
+  const readinessScore = scorePacket(statusInputs);
+  const decision: ReviewerArtifactPacketComposition["decision"] = !selectedSection
+    ? "unknown_section"
+    : missingInputs.length > 0
+      ? "manual_attachment_gate"
+      : "ready_packet";
+
+  const body = [
+    "Hi Swiggy Builders team,",
+    "",
+    audienceCopy[input.audience],
+    "",
+    `Packet channel: ${channelLabel(input.channel)}`,
+    `Artifact section: ${selectedSection?.label ?? input.sectionId}`,
+    `Included artifacts: ${includedArtifacts.map((artifactItem) => artifactItem.path).join(", ") || "none"}`,
+    `Verification commands: ${selectedCommands.map((commandItem) => commandItem.command).join(" | ")}`,
+    "",
+    missingInputs.length > 0 ? `Manual inputs still needed: ${missingInputs.join(", ")}.` : "All selected packet inputs are ready for reviewer handoff.",
+  ].join("\n");
+
+  return {
+    generatedAt: new Date().toISOString(),
+    decision,
+    readinessScore,
+    channel: input.channel,
+    audience: input.audience,
+    selectedSection,
+    includedArtifacts,
+    screenshotTargets: selectedScreenshots,
+    commands: selectedCommands,
+    handoffChecklist: selectedChecklist,
+    missingInputs,
+    redactionRules,
+    reviewerEmail: {
+      to: "builders@swiggy.in",
+      subject: `MealPilot Swiggy MCP ${channelLabel(input.channel)} packet`,
+      body,
+    },
+    telemetry: [
+      { field: "section_id", value: selectedSection?.id ?? input.sectionId, redaction: "safe artifact section id" },
+      { field: "channel", value: input.channel, redaction: "safe channel enum" },
+      { field: "audience", value: input.audience, redaction: "safe reviewer audience enum" },
+      { field: "artifact_count", value: String(includedArtifacts.length), redaction: "aggregate count only" },
+      { field: "screenshot_count", value: String(selectedScreenshots.length), redaction: "aggregate count only" },
+    ],
+    assertions: [
+      "The packet contains proof links and commands only; it does not attach bearer tokens, OAuth codes, cookies, payment data, or raw Swiggy payloads.",
+      "Manual demo video, screenshots, credentials, redirect URI, and production approval gates remain explicitly labelled instead of fabricated.",
+      "Reviewer-facing copy distinguishes local proof, mock evidence, staging gates, and Swiggy-owned production approval.",
+      "Every included artifact inherits the vault redaction posture before it is shared through form, email, or GitHub packet channels.",
+    ],
+    nextAction:
+      decision === "ready_packet"
+        ? `Attach the ${selectedSection?.label ?? "selected"} packet through the ${channelLabel(input.channel)} with the ready verification commands.`
+        : decision === "manual_attachment_gate"
+          ? `Resolve ${missingInputs.join(", ")} before sending the ${channelLabel(input.channel)} packet.`
+          : "Choose a known reviewer artifact section before preparing a Swiggy handoff packet.",
+  };
+}
 
 export function buildReviewerArtifactVault(): ReviewerArtifactVault {
   const flatArtifacts = artifactSections.flatMap((section) => section.artifacts);

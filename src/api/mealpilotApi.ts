@@ -53,6 +53,8 @@ import type {
   PremiumUseCaseStudio,
   RateLimitPlan,
   Reminder,
+  ReviewerArtifactPacketChannel,
+  ReviewerArtifactPacketComposition,
   ReviewerArtifactVault,
   ResilienceDrill,
   ResilienceRunbook,
@@ -888,6 +890,23 @@ export function composeLuxuryExperienceWorkspace(input: {
 
 export function fetchReviewerArtifactVault() {
   return requestJson<{ reviewerArtifactVault: ReviewerArtifactVault }>("/api/reviewer-artifact-vault");
+}
+
+export function composeReviewerArtifactPacket(input: {
+  sectionId: string;
+  channel: ReviewerArtifactPacketChannel;
+  audience: "builder_access" | "demo_review" | "partner_support";
+  includeScreenshots: boolean;
+  includeDemoVideo: boolean;
+  includeCredentialGates: boolean;
+}) {
+  return requestJson<{ reviewerArtifactPacket: ReviewerArtifactPacketComposition }>(
+    "/api/reviewer-artifact-vault/compose",
+    {
+      method: "POST",
+      body: JSON.stringify(input),
+    },
+  );
 }
 
 export function fetchVisualQaCenter() {
