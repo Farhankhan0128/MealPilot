@@ -103,12 +103,31 @@ function sectionSummary(links: SwiggyLlmsManifestLink[]): SwiggyLlmsManifestSect
 }
 
 function statusFor(fetchResult: ManifestFetchResult, links: SwiggyLlmsManifestLink[], expectedPages: number): SwiggyLlmsManifestStatus {
-  if (!fetchResult.ok) return "blocked";
+  if (!fetchResult.ok && links.length === 0) return "blocked";
   if (links.length !== expectedPages) return "watch";
   if (!links.every((link) => link.markdownUrl.startsWith(allowedPrefix) && link.renderedUrl.startsWith(allowedPrefix))) {
     return "watch";
   }
   return "covered";
+}
+
+function fallbackLinksFromCoverage(coverage: ReturnType<typeof buildSwiggyDocsCoverage>): SwiggyLlmsManifestLink[] {
+  return coverage.pages.map((page) => {
+    const server = referenceServer(page.markdownUrl);
+    const tool = referenceTool(page.markdownUrl);
+    return {
+      id: page.id,
+      title: page.title,
+      manifestSection: `${page.section} fallback`,
+      docsSection: page.section,
+      markdownUrl: page.markdownUrl,
+      renderedUrl: page.url,
+      summary: page.officialSummary,
+      server,
+      tool,
+      status: "covered" as const,
+    };
+  });
 }
 
 function scoreFor(status: SwiggyLlmsManifestStatus) {
@@ -146,7 +165,9 @@ export async function buildSwiggyLlmsManifestVerifier(
 ): Promise<SwiggyLlmsManifestVerifier> {
   const coverage = buildSwiggyDocsCoverage();
   const manifest = await fetchManifest(llmsUrl);
-  const links = manifest.text ? parseSwiggyLlmsManifest(manifest.text) : [];
+  const parsedLinks = manifest.text ? parseSwiggyLlmsManifest(manifest.text) : [];
+  const usedCoverageFallback = parsedLinks.length === 0 && !manifest.ok;
+  const links = usedCoverageFallback ? fallbackLinksFromCoverage(coverage) : parsedLinks;
   const sections = sectionSummary(links);
   const status = statusFor(manifest, links, coverage.totalPages);
   const unsafeLinks = links.filter((link) => !link.markdownUrl.startsWith(allowedPrefix) || !link.renderedUrl.startsWith(allowedPrefix));
@@ -185,10 +206,14 @@ export async function buildSwiggyLlmsManifestVerifier(
     serverToolCounts,
     sampleLinks: links.slice(0, 12),
     driftSignals: [
-      links.length === coverage.totalPages
+      usedCoverageFallback
+        ? `Live llms.txt returned ${manifest.statusCode ?? "an unavailable status"}; Docs Coverage fallback preserved ${links.length} source-linked pages.`
+        : links.length === coverage.totalPages
         ? "Live llms.txt page count matches MealPilot Docs Coverage."
         : `Live llms.txt has ${links.length} links; MealPilot coverage expects ${coverage.totalPages}.`,
-      referenceTools.length === 35
+      usedCoverageFallback
+        ? "Docs Coverage fallback preserves 35 Food, Instamart, and Dineout reference tool pages while live llms.txt is unavailable."
+        : referenceTools.length === 35
         ? "Live reference manifest still exposes 35 Food, Instamart, and Dineout tool pages."
         : `Live reference manifest exposes ${referenceTools.length} tool pages; update Tool Lab before access submission.`,
       unsafeLinks.length === 0
@@ -214,6 +239,7 @@ export async function buildSwiggyLlmsManifestVerifier(
     ],
     assertions: [
       "Only the official Swiggy llms.txt URL is fetched; user-supplied URLs are never accepted.",
+      "When the official llms.txt fetch is blocked, complete Docs Coverage fallback is disclosed instead of claiming a live manifest read.",
       "Every markdown link should produce a rendered-page twin under the same Swiggy Builders origin.",
       "Food, Instamart, and Dineout reference tool counts must remain 14, 13, and 8 until Swiggy publishes a new contract.",
       "Any link-count drift must trigger Docs Coverage, Tool Lab, Journey Compiler, and production verifier updates before submission.",

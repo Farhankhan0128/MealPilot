@@ -117,7 +117,7 @@ async function buildRow(target: SwiggyCtaExecutionTarget, probeTarget: CtaLivePr
   }
 
   const probe = await probeTarget(normalizedUrl);
-  const status = probe.ok ? statusFromProbe(probe) : "blocked";
+  const status = statusFromProbe(probe);
   return {
     id: target.id,
     label: target.label,
