@@ -85,6 +85,13 @@ assert(
   "OpenAPI source freeze diff contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-source-availability-audit"]?.get?.summary?.includes("Source Availability") &&
+    openApi.paths["/api/swiggy-source-availability-audit"]?.get?.responses?.["200"]?.description?.includes(
+      "temporary-glitch",
+    ),
+  "OpenAPI source availability audit contract is missing",
+);
+assert(
   openApi.paths["/api/swiggy-benefits-activation-center/activate"]?.post?.summary?.includes(
     "Benefits Activation action",
   ) &&
@@ -885,7 +892,7 @@ assert(
     buildersCompletion.buildersCompletion.totals.mcpServers === 3 &&
     buildersCompletion.buildersCompletion.totals.mcpTools === 35 &&
     buildersCompletion.buildersCompletion.totals.docsPages >= 69 &&
-    buildersCompletion.buildersCompletion.totals.visualTargets === 68 &&
+    buildersCompletion.buildersCompletion.totals.visualTargets === 69 &&
     buildersCompletion.buildersCompletion.totals.reviewerArtifacts >= 120 &&
     buildersCompletion.buildersCompletion.totals.packetFiles >= 4,
   "Builders completion ledger totals are incomplete",
@@ -1124,6 +1131,39 @@ assert(
     liveSourceResilience.liveSourceResilience.assertions.some((assertion) => assertion.includes("fallback is explicitly reported")) &&
     liveSourceResilience.liveSourceResilience.externalGates.some((gate) => gate.includes("automated requests")),
   "Builders live source resilience assertions are missing",
+);
+
+const sourceAvailability = await request("/api/swiggy-source-availability-audit");
+assert(sourceAvailability.sourceAvailability.score >= 70, "source availability audit score is below target");
+assert(
+  sourceAvailability.sourceAvailability.totals.sources >= 15 &&
+    sourceAvailability.sourceAvailability.totals.probed === sourceAvailability.sourceAvailability.totals.sources &&
+    sourceAvailability.sourceAvailability.totals.websitePages >= 7 &&
+    sourceAvailability.sourceAvailability.totals.docsRoots >= 8 &&
+    sourceAvailability.sourceAvailability.totals.manifests === 2 &&
+    sourceAvailability.sourceAvailability.totals.proofLinks >= 5,
+  "source availability audit totals are incomplete",
+);
+assert(
+  sourceAvailability.sourceAvailability.rows.some((row) => row.id === "page_home") &&
+    sourceAvailability.sourceAvailability.rows.some((row) => row.id === "manifest_llms") &&
+    sourceAvailability.sourceAvailability.rows.every((row) =>
+      ["verified", "fallback", "watch", "blocked"].includes(row.availability),
+    ) &&
+    sourceAvailability.sourceAvailability.rows.every((row) => row.proofLinks.length > 0),
+  "source availability audit rows are incomplete",
+);
+assert(
+  sourceAvailability.sourceAvailability.commands.some((command) =>
+    command.command.includes("/api/swiggy-source-availability-audit"),
+  ) &&
+    sourceAvailability.sourceAvailability.assertions.some((assertion) =>
+      assertion.includes("Temporary-glitch shells"),
+    ) &&
+    sourceAvailability.sourceAvailability.externalGates.some((gate) =>
+      gate.includes("public source availability"),
+    ),
+  "source availability audit commands or gates are missing",
 );
 
 const reviewDecision = await request("/api/swiggy-builders-review-decision");
@@ -3881,8 +3921,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 68, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 68, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 69, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 69, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -4190,6 +4230,14 @@ assert(
     ),
   ),
   "visual QA Live Source Resilience target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some(
+      (target) => target.id === "source_availability_card" && target.selector === ".source-availability-card",
+    ),
+  ),
+  "visual QA Source Availability target is missing",
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
@@ -8191,7 +8239,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 68, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 69, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -8205,7 +8253,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("68")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("69")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -8814,6 +8862,9 @@ console.log(
       liveSourceResilienceScore: liveSourceResilience.liveSourceResilience.score,
       liveSourceResilienceMode: liveSourceResilience.liveSourceResilience.currentFetch.homepageMode,
       liveSourceResilienceLanes: liveSourceResilience.liveSourceResilience.totals.lanes,
+      sourceAvailabilityScore: sourceAvailability.sourceAvailability.score,
+      sourceAvailabilitySources: sourceAvailability.sourceAvailability.totals.sources,
+      sourceAvailabilityFallback: sourceAvailability.sourceAvailability.totals.fallback,
       reviewDecisionScore: reviewDecision.reviewDecision.score,
       reviewDecisionRecommendation: reviewDecision.reviewDecision.recommendation,
       reviewDecisionGates: reviewDecision.reviewDecision.totals.gates,

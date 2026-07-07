@@ -174,6 +174,7 @@ import type {
   SwiggySourceFreezeDiffMode,
   SwiggySourceFreezeBrowserReceipt,
   SwiggySourceFreezeDiffReport,
+  SwiggySourceAvailabilityAudit,
   SwiggySourceIntelligenceReport,
   SwiggyQualityFeedbackAnalysis,
   SwiggyQualityLoopCenter,
@@ -527,6 +528,12 @@ export function fetchSwiggyBuildersSourceEvolution() {
 export function fetchSwiggyBuildersLiveSourceResilience() {
   return requestJson<{ liveSourceResilience: SwiggyBuildersLiveSourceResilienceCenter }>(
     "/api/swiggy-builders-live-source-resilience",
+  );
+}
+
+export function fetchSwiggySourceAvailabilityAudit() {
+  return requestJson<{ sourceAvailability: SwiggySourceAvailabilityAudit }>(
+    "/api/swiggy-source-availability-audit",
   );
 }
 

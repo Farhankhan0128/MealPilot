@@ -139,6 +139,7 @@ import {
   fetchSwiggyBuildersHomepageExperience,
   fetchSwiggyBuildersSourceEvolution,
   fetchSwiggyBuildersLiveSourceResilience,
+  fetchSwiggySourceAvailabilityAudit,
   fetchSwiggyBuildersReviewDecision,
   fetchSwiggyBenefitsActivationCenter,
   fetchSwiggyOperatingContractCenter,
@@ -386,6 +387,7 @@ import type {
   SwiggyScenarioRunnerReport,
   SwiggySourceFreezeDiffMode,
   SwiggySourceFreezeDiffReport,
+  SwiggySourceAvailabilityAudit,
   SwiggySourceIntelligenceReport,
   SwiggyStagingCredentialDrillReport,
   SwiggyStagingSeedSmokeCenter,
@@ -604,6 +606,7 @@ function App() {
   const [sourceEvolution, setSourceEvolution] = useState<SwiggyBuildersSourceEvolutionCenter | null>(null);
   const [liveSourceResilience, setLiveSourceResilience] =
     useState<SwiggyBuildersLiveSourceResilienceCenter | null>(null);
+  const [sourceAvailability, setSourceAvailability] = useState<SwiggySourceAvailabilityAudit | null>(null);
   const [reviewDecision, setReviewDecision] = useState<SwiggyBuildersReviewDecisionCenter | null>(null);
   const [sourceFreezeDiff, setSourceFreezeDiff] = useState<SwiggySourceFreezeDiffReport | null>(null);
   const [operatingContract, setOperatingContract] = useState<SwiggyOperatingContractCenterReport | null>(null);
@@ -835,6 +838,7 @@ function App() {
       homepageExperienceResponse,
       sourceEvolutionResponse,
       liveSourceResilienceResponse,
+      sourceAvailabilityResponse,
       reviewDecisionResponse,
       operatingContractResponse,
       deepSiteMapResponse,
@@ -965,6 +969,7 @@ function App() {
       fetchSwiggyBuildersHomepageExperience(),
       fetchSwiggyBuildersSourceEvolution(),
       fetchSwiggyBuildersLiveSourceResilience(),
+      fetchSwiggySourceAvailabilityAudit(),
       fetchSwiggyBuildersReviewDecision(),
       fetchSwiggyOperatingContractCenter(),
       fetchSwiggyDeepSiteMap(),
@@ -1096,6 +1101,7 @@ function App() {
     setHomepageExperience(homepageExperienceResponse.homepageExperience);
     setSourceEvolution(sourceEvolutionResponse.sourceEvolution);
     setLiveSourceResilience(liveSourceResilienceResponse.liveSourceResilience);
+    setSourceAvailability(sourceAvailabilityResponse.sourceAvailability);
     setReviewDecision(reviewDecisionResponse.reviewDecision);
     setOperatingContract(operatingContractResponse.operatingContract);
     setSwiggyDeepSiteMap(deepSiteMapResponse.deepSiteMap);
@@ -1230,6 +1236,7 @@ function App() {
       homepageExperienceResponse,
       sourceEvolutionResponse,
       liveSourceResilienceResponse,
+      sourceAvailabilityResponse,
       reviewDecisionResponse,
       operatingContractResponse,
       deepSiteMapResponse,
@@ -1357,6 +1364,7 @@ function App() {
       fetchSwiggyBuildersHomepageExperience(),
       fetchSwiggyBuildersSourceEvolution(),
       fetchSwiggyBuildersLiveSourceResilience(),
+      fetchSwiggySourceAvailabilityAudit(),
       fetchSwiggyBuildersReviewDecision(),
       fetchSwiggyOperatingContractCenter(),
       fetchSwiggyDeepSiteMap(),
@@ -1484,6 +1492,7 @@ function App() {
     setHomepageExperience(homepageExperienceResponse.homepageExperience);
     setSourceEvolution(sourceEvolutionResponse.sourceEvolution);
     setLiveSourceResilience(liveSourceResilienceResponse.liveSourceResilience);
+    setSourceAvailability(sourceAvailabilityResponse.sourceAvailability);
     setReviewDecision(reviewDecisionResponse.reviewDecision);
     setOperatingContract(operatingContractResponse.operatingContract);
     setSwiggyDeepSiteMap(deepSiteMapResponse.deepSiteMap);
@@ -2186,6 +2195,7 @@ function App() {
                 homepageExperience={homepageExperience}
                 sourceEvolution={sourceEvolution}
                 liveSourceResilience={liveSourceResilience}
+                sourceAvailability={sourceAvailability}
                 reviewDecision={reviewDecision}
                 operatingContract={operatingContract}
                 deepSiteMap={swiggyDeepSiteMap}
@@ -2805,6 +2815,7 @@ function LaunchCenterPanel({
   homepageExperience,
   sourceEvolution,
   liveSourceResilience,
+  sourceAvailability,
   operatingContract,
   deepSiteMap,
   builderIntake,
@@ -2907,6 +2918,7 @@ function LaunchCenterPanel({
   homepageExperience: SwiggyBuildersHomepageExperienceCenter | null;
   sourceEvolution: SwiggyBuildersSourceEvolutionCenter | null;
   liveSourceResilience: SwiggyBuildersLiveSourceResilienceCenter | null;
+  sourceAvailability: SwiggySourceAvailabilityAudit | null;
   operatingContract: SwiggyOperatingContractCenterReport | null;
   deepSiteMap: SwiggyDeepSiteMap | null;
   builderIntake: SwiggyBuilderIntakeCommandCenter | null;
@@ -5121,6 +5133,64 @@ function LaunchCenterPanel({
             </a>
             <a href="/api/swiggy-docs-twin-explorer" target="_blank" rel="noreferrer">
               Docs twins
+            </a>
+          </div>
+        </article>
+
+        <article className="source-availability-card">
+          <div className="mini-heading">
+            <Radio aria-hidden="true" />
+            <strong>Source Availability</strong>
+          </div>
+          <span>
+            {sourceAvailability
+              ? `${sourceAvailability.score}/100, ${sourceAvailability.totals.verified}/${sourceAvailability.totals.sources} live`
+              : "Probing every public Builders source and fallback proof row"}
+          </span>
+          <div className="source-availability-grid">
+            <div>
+              <strong>{sourceAvailability?.totals.sources ?? 0}</strong>
+              <span>Sources</span>
+            </div>
+            <div>
+              <strong>{sourceAvailability?.totals.fallback ?? 0}</strong>
+              <span>Fallback</span>
+            </div>
+            <div>
+              <strong>{sourceAvailability?.totals.manifests ?? 0}</strong>
+              <span>Manifests</span>
+            </div>
+            <div>
+              <strong>{sourceAvailability?.totals.proofLinks ?? 0}</strong>
+              <span>Proof</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(sourceAvailability?.rows ?? []).slice(0, 5).map((row) => (
+              <li
+                key={row.id}
+                data-status={
+                  row.availability === "verified"
+                    ? "healthy"
+                    : row.availability === "blocked"
+                      ? "blocked"
+                      : "watch"
+                }
+              >
+                <span>{row.label}</span>
+                <strong>{row.contentMode.replace("_", " ")}</strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-intelligence-actions" aria-label="Source availability links">
+            <a href="/api/swiggy-source-availability-audit" target="_blank" rel="noreferrer">
+              Availability API
+            </a>
+            <a href="/api/swiggy-builders-page-mesh" target="_blank" rel="noreferrer">
+              Page mesh
+            </a>
+            <a href="/api/builder-packet-export" target="_blank" rel="noreferrer">
+              Packet
             </a>
           </div>
         </article>

@@ -279,6 +279,17 @@ const targetGroups = [
         "artifacts/visual-qa/live-source-resilience-card.png",
       ),
       target(
+        "source_availability_card",
+        "Source Availability card",
+        "/",
+        ".source-availability-card",
+        "desktop",
+        1280,
+        900,
+        "Source Availability shows live, fallback, blocked, and manifest status across public Builders pages, docs roots, and llms sources.",
+        "artifacts/visual-qa/source-availability-card.png",
+      ),
+      target(
         "builders_page_mesh_card",
         "Builders Page Mesh card",
         "/",

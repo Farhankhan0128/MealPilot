@@ -67,6 +67,7 @@ import {
 import { buildMcpCapabilityRegistry } from "./services/capabilityRegistry.js";
 import { buildSwiggyBuildersCompletionLedger } from "./services/buildersCompletionLedger.js";
 import { buildSwiggyCapabilityTraceability } from "./services/capabilityTraceability.js";
+import { buildSwiggySourceAvailabilityAudit } from "./services/sourceAvailabilityAudit.js";
 import { buildEvaluationLab } from "./services/evaluationLab.js";
 import { buildErrorIntelligenceReport, classifyMcpError } from "./services/errorIntelligence.js";
 import { buildSwiggyFaqPolicyCenter } from "./services/faqPolicyCenter.js";
@@ -1398,6 +1399,13 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
           handoffState: store.getAccessSubmissionState(),
         }),
       });
+    }),
+  );
+
+  app.get(
+    "/api/swiggy-source-availability-audit",
+    asyncRoute(async (_req, res) => {
+      res.json({ sourceAvailability: await buildSwiggySourceAvailabilityAudit() });
     }),
   );
 

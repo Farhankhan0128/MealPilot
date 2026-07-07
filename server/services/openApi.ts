@@ -521,6 +521,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-source-availability-audit": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Source Availability Audit for public Builders pages, docs roots, and llms manifests",
+          responses: {
+            "200": {
+              description:
+                "Official Swiggy Builders source availability board classifying live Builders content, live manifests, temporary-glitch shells, fallback evidence, blocked fetches, public pages, docs roots, llms manifests, proof links, commands, assertions, and external Swiggy source gates",
+            },
+          },
+        },
+      },
       "/api/swiggy-builders-review-decision": {
         get: {
           tags: ["Builder Access"],

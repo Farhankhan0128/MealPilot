@@ -1270,6 +1270,54 @@ export interface SwiggyBuildersLiveSourceResilienceCenter {
   externalGates: string[];
 }
 
+export type SwiggySourceAvailabilityKind = "website_page" | "docs_root" | "manifest" | "legal" | "support";
+export type SwiggySourceAvailabilityStatus = "verified" | "fallback" | "watch" | "blocked";
+export type SwiggySourceAvailabilityMode =
+  | "live_builders"
+  | "live_manifest"
+  | "generic_glitch"
+  | "http_error"
+  | "network_error"
+  | "unexpected_body";
+
+export interface SwiggySourceAvailabilityRow {
+  id: string;
+  label: string;
+  kind: SwiggySourceAvailabilityKind;
+  url: string;
+  statusCode?: number;
+  durationMs: number;
+  contentMode: SwiggySourceAvailabilityMode;
+  availability: SwiggySourceAvailabilityStatus;
+  sourceEvidence: string;
+  mealPilotFallback: string;
+  proofLinks: string[];
+  nextAction: string;
+}
+
+export interface SwiggySourceAvailabilityAudit {
+  generatedAt: string;
+  score: number;
+  officialSources: string[];
+  totals: {
+    sources: number;
+    probed: number;
+    verified: number;
+    fallback: number;
+    watch: number;
+    blocked: number;
+    websitePages: number;
+    docsRoots: number;
+    manifests: number;
+    proofLinks: number;
+  };
+  rows: SwiggySourceAvailabilityRow[];
+  fallbackRunbook: Array<{ sequence: number; label: string; action: string; proofLinks: string[] }>;
+  commands: Array<{ id: string; command: string; proves: string; expectedSignal: string }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type SwiggyBuildersReviewDecisionStatus = "ready" | "operator_input" | "swiggy_gate" | "watch";
 export type SwiggyBuildersReviewDecisionOwner = "MealPilot" | "Operator" | "Swiggy" | "Joint";
 export type SwiggyBuildersReviewDecisionRecommendation =

@@ -6,6 +6,7 @@ import { describe, expect, it, vi } from "vitest";
 import { createMealPilotServer } from "./app.js";
 import { buildSwiggyBuildersPageMeshAuditor } from "./services/buildersPageMeshAuditor.js";
 import { buildSwiggyBuildersSiteParityAuditor } from "./services/buildersSiteParityAuditor.js";
+import { buildSwiggySourceAvailabilityAudit } from "./services/sourceAvailabilityAudit.js";
 import { buildSwiggyCtaLiveAuditor } from "./services/ctaLiveAuditor.js";
 import { buildSwiggyLlmsManifestVerifier, rehearseSwiggyLlmsManifest } from "./services/llmsManifestVerifier.js";
 import { buildSwiggyToolParityAuditor } from "./services/toolParityAuditor.js";
@@ -74,6 +75,8 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/swiggy-builders-source-evolution"].get.responses["200"].description).toContain("35/35");
     expect(openApi.body.paths["/api/swiggy-builders-live-source-resilience"].get.summary).toContain("Live Source Resilience");
     expect(openApi.body.paths["/api/swiggy-builders-live-source-resilience"].get.responses["200"].description).toContain("fallback");
+    expect(openApi.body.paths["/api/swiggy-source-availability-audit"].get.summary).toContain("Source Availability");
+    expect(openApi.body.paths["/api/swiggy-source-availability-audit"].get.responses["200"].description).toContain("temporary-glitch");
     expect(openApi.body.paths["/api/swiggy-builders-review-decision"].get.summary).toContain("Review Decision");
     expect(openApi.body.paths["/api/swiggy-builders-review-decision"].get.responses["200"].description).toContain("approval");
     expect(openApi.body.paths["/api/swiggy-source-freeze-diff"].get.summary).toContain("source freeze diff");
@@ -1849,7 +1852,7 @@ describe("MealPilot API", () => {
     expect(packet.totals.formFields).toBeGreaterThanOrEqual(10);
     expect(packet.totals.requiredAttachments).toBeGreaterThanOrEqual(10);
     expect(packet.totals.launchArtifacts).toBeGreaterThanOrEqual(50);
-    expect(packet.totals.visualTargets).toBe(68);
+    expect(packet.totals.visualTargets).toBe(69);
     expect(packet.files.map((file: { id: string }) => file.id)).toEqual(
       expect.arrayContaining(["packet_json", "packet_markdown", "visual_report", "production_summary"]),
     );
@@ -1861,7 +1864,7 @@ describe("MealPilot API", () => {
     ).toBe(true);
     expect(
       packet.commands.some(
-        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("68"),
+        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("69"),
       ),
     ).toBe(true);
     expect(packet.copyBlocks.formFields).toContain("Redirect URI(s)");
@@ -4446,8 +4449,8 @@ describe("MealPilot API", () => {
     const visualQa = response.body.visualQa;
 
     expect(visualQa.score).toBe(100);
-    expect(visualQa.totalTargets).toBe(68);
-    expect(visualQa.readyTargets).toBe(68);
+    expect(visualQa.totalTargets).toBe(69);
+    expect(visualQa.readyTargets).toBe(69);
     expect(visualQa.totalRules).toBe(7);
     expect(visualQa.readyRules).toBe(7);
     expect(visualQa.totalCommands).toBe(5);
@@ -4531,6 +4534,16 @@ describe("MealPilot API", () => {
           (target) =>
             target.id === "completion_ledger_card" &&
             target.selector === ".completion-ledger-card" &&
+            target.viewport === "desktop",
+        ),
+      ),
+    ).toBe(true);
+    expect(
+      visualQa.targetGroups.some((group: { targets: Array<{ id: string; selector: string; viewport: string }> }) =>
+        group.targets.some(
+          (target) =>
+            target.id === "source_availability_card" &&
+            target.selector === ".source-availability-card" &&
             target.viewport === "desktop",
         ),
       ),
@@ -5294,7 +5307,7 @@ describe("MealPilot API", () => {
     expect(ledger.totals.mcpServers).toBe(3);
     expect(ledger.totals.mcpTools).toBe(35);
     expect(ledger.totals.docsPages).toBeGreaterThanOrEqual(69);
-    expect(ledger.totals.visualTargets).toBe(68);
+    expect(ledger.totals.visualTargets).toBe(69);
     expect(ledger.totals.reviewerArtifacts).toBeGreaterThanOrEqual(120);
     expect(ledger.groups.map((group: { id: string }) => group.id)).toEqual(
       expect.arrayContaining(["source_coverage", "product_depth", "mcp_integration", "operations", "handoff"]),
@@ -5486,6 +5499,49 @@ describe("MealPilot API", () => {
     expect(center.fallbackRunbook.map((step: { sequence: number }) => step.sequence)).toEqual([1, 2, 3, 4]);
     expect(center.assertions.some((assertion: string) => assertion.includes("fallback is explicitly reported"))).toBe(true);
     expect(center.externalGates.some((gate: string) => gate.includes("automated requests"))).toBe(true);
+  });
+
+  it("returns Swiggy Source Availability Audit with fallback disclosure for public source rows", async () => {
+    const glitchHtml = `
+      <html><title>Order food online</title><body>
+        <div class="GenericError__title">We'll be back shortly</div>
+        <div>We are fixing a temporary glitch. Sorry for the inconvenience.</div>
+      </body></html>
+    `;
+    const manifestText = `
+      # Swiggy Builders
+      - [Food Search](https://mcp.swiggy.com/builders/docs/reference/food/search_restaurants.md): Search restaurants.
+      - [Instamart Search](https://mcp.swiggy.com/builders/docs/reference/instamart/search_items.md): Search items.
+      - [Dineout Search](https://mcp.swiggy.com/builders/docs/reference/dineout/search_restaurants.md): Search tables.
+    `;
+    const audit = await buildSwiggySourceAvailabilityAudit(async (url: string) => ({
+      ok: true,
+      statusCode: 200,
+      durationMs: 7,
+      text: url.endsWith("llms.txt") || url.endsWith("llms-full.txt") ? manifestText : glitchHtml,
+    }));
+
+    expect(audit.score).toBeGreaterThanOrEqual(80);
+    expect(audit.totals.sources).toBeGreaterThanOrEqual(15);
+    expect(audit.totals.websitePages).toBeGreaterThanOrEqual(7);
+    expect(audit.totals.docsRoots).toBeGreaterThanOrEqual(8);
+    expect(audit.totals.manifests).toBe(2);
+    expect(audit.totals.fallback).toBeGreaterThanOrEqual(7);
+    expect(audit.totals.verified).toBe(2);
+    expect(audit.rows.some((row: { id: string; contentMode: string; availability: string }) =>
+      row.id === "page_home" && row.contentMode === "generic_glitch" && row.availability === "fallback",
+    )).toBe(true);
+    expect(audit.rows.some((row: { id: string; contentMode: string; availability: string }) =>
+      row.id === "manifest_llms" && row.contentMode === "live_manifest" && row.availability === "verified",
+    )).toBe(true);
+    expect(audit.rows.every((row: { proofLinks: string[] }) => row.proofLinks.length > 0)).toBe(true);
+    expect(audit.commands.some((command: { command: string }) => command.command.includes("/api/swiggy-source-availability-audit"))).toBe(true);
+    expect(audit.assertions.some((assertion: string) => assertion.includes("Temporary-glitch shells"))).toBe(true);
+    expect(audit.externalGates.some((gate: string) => gate.includes("public source availability"))).toBe(true);
+
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/swiggy-source-availability-audit").expect(200);
+    expect(response.body.sourceAvailability.totals.sources).toBeGreaterThanOrEqual(15);
   });
 
   it("returns Swiggy Builders Review Decision for approval readiness", async () => {
