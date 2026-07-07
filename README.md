@@ -309,6 +309,7 @@ GET  /api/swiggy-ritual-autopilot-center
 GET  /api/swiggy-payment-truth-center
 POST /api/swiggy-payment-truth-center/reconcile
 GET  /api/swiggy-meal-window-intelligence
+POST /api/swiggy-meal-window-intelligence/forecast
 GET  /api/swiggy-customization-studio
 GET  /api/nutrition-budget-intelligence
 GET  /api/household-preference-graph
@@ -602,7 +603,7 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 
 `GET /api/swiggy-payment-truth-center` and `POST /api/swiggy-payment-truth-center/reconcile` productize payment and settlement truth: cart totals, coupon savings, payment labels, COD eligibility, Instamart bill breakdown, Dineout free-booking proof, and paid-cart gates come only from Swiggy cart or status readbacks. The Launch Center reconciler makes this interactive by returning settlement status, selected truth lane, risk flags, support-review copy, and no-payment-instrument telemetry.
 
-`GET /api/swiggy-meal-window-intelligence` and `POST /api/swiggy-meal-window-intelligence/forecast` productize meal timing: Food ETA windows, Instamart availability, Dineout slots, and tracking cadence become advisory order/cook/reserve/track/wait routes with no scheduled Food orders and no raw ETA or slot payload retention.
+`GET /api/swiggy-meal-window-intelligence` and `POST /api/swiggy-meal-window-intelligence/forecast` productize meal timing: Food ETA windows, Instamart availability, Dineout slots, and tracking cadence become advisory order/cook/reserve/track/wait routes with no scheduled Food orders and no raw ETA or slot payload retention. The Launch Center forecaster makes this interactive with city, window, urgency, party-size, and Dineout-slot controls that return the selected Swiggy route, ETA risk, and timing-plan proof.
 
 `GET /api/swiggy-customization-studio` and `POST /api/swiggy-customization-studio/validate` productize item choice safety: Food `search_menu` customization shape, menu browsing, add-ons, variants, Instamart pack-size truth, full-cart replacement, allergy cautions, and post-mutation cart readbacks become a visible review layer before any cart write.
 

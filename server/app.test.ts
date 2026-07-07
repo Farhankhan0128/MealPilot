@@ -3014,6 +3014,25 @@ describe("MealPilot API", () => {
     expect(forecast.assertions.some((assertion: string) => assertion.includes("do not schedule Food orders"))).toBe(
       true,
     );
+
+    const dineoutForecastResponse = await request(app)
+      .post("/api/swiggy-meal-window-intelligence/forecast")
+      .send({
+        city: "Mumbai",
+        window: "weekend",
+        partySize: 6,
+        urgency: "today",
+        includeDineout: true,
+      })
+      .expect(200);
+    const dineoutForecast = dineoutForecastResponse.body.forecast;
+
+    expect(dineoutForecast.selectedLaneId).toBe("dineout_slot_window");
+    expect(dineoutForecast.etaRisk).toBe("medium");
+    expect(dineoutForecast.timingPlan.map((step: { tool: string }) => step.tool)).toEqual(
+      expect.arrayContaining(["search_restaurants_dineout", "get_available_slots", "book_table"]),
+    );
+    expect(dineoutForecast.swiggyRoute.confirmationBoundary).toContain("fresh slot");
   });
 
   it("returns customization studio and validates exact-choice cart safety", async () => {

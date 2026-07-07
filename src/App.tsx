@@ -189,6 +189,7 @@ import {
   fetchVisualQaCenter,
   fetchWidgets,
   removeRecommendationItem,
+  forecastSwiggyMealWindow,
   reconcileSwiggyPaymentTruth,
   runSwiggySubmissionTimelineCheckpoint,
   schedulePlan,
@@ -325,7 +326,9 @@ import type {
   SwiggyOfferIntelligenceReport,
   SwiggyOperatingContractCenterReport,
   SwiggyOrderLifecycleReport,
+  SwiggyMealWindow,
   SwiggyMealWindowCenter,
+  SwiggyMealWindowForecast,
   SwiggyPaymentTruthCenter,
   SwiggyPaymentTruthReconciliation,
   SwiggyQualityLoopCenter,
@@ -2911,6 +2914,21 @@ function LaunchCenterPanel({
   });
   const [paymentReconciliation, setPaymentReconciliation] = useState<SwiggyPaymentTruthReconciliation | null>(null);
   const [paymentReconciliationStatus, setPaymentReconciliationStatus] = useState<"idle" | "loading" | "error">("idle");
+  const [mealWindowForm, setMealWindowForm] = useState<{
+    city: "Bengaluru" | "Delhi NCR" | "Mumbai";
+    window: SwiggyMealWindow;
+    partySize: number;
+    urgency: "now" | "today" | "this_week";
+    includeDineout: boolean;
+  }>({
+    city: "Bengaluru",
+    window: "lunch",
+    partySize: 2,
+    urgency: "now",
+    includeDineout: false,
+  });
+  const [mealWindowForecast, setMealWindowForecast] = useState<SwiggyMealWindowForecast | null>(null);
+  const [mealWindowForecastStatus, setMealWindowForecastStatus] = useState<"idle" | "loading" | "error">("idle");
   const [showcaseForm, setShowcaseForm] = useState({
     demoUrl: "https://youtu.be/mealpilot-swiggy-demo",
     githubUrl: "https://github.com/Farhankhan0128/MealPilot",
@@ -3026,6 +3044,18 @@ function LaunchCenterPanel({
       setPaymentReconciliationStatus("idle");
     } catch {
       setPaymentReconciliationStatus("error");
+    }
+  }
+
+  async function runMealWindowForecast(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setMealWindowForecastStatus("loading");
+    try {
+      const response = await forecastSwiggyMealWindow(mealWindowForm);
+      setMealWindowForecast(response.forecast);
+      setMealWindowForecastStatus("idle");
+    } catch {
+      setMealWindowForecastStatus("error");
     }
   }
 
@@ -6193,6 +6223,95 @@ function LaunchCenterPanel({
               <strong>{mealWindow?.totals.externalGates ?? 0}</strong>
               <span>Gates</span>
             </div>
+          </div>
+          <form className="meal-window-forecaster" onSubmit={runMealWindowForecast}>
+            <label htmlFor="meal-window-city">City</label>
+            <select
+              id="meal-window-city"
+              value={mealWindowForm.city}
+              onChange={(event) =>
+                setMealWindowForm((current) => ({ ...current, city: event.target.value as typeof mealWindowForm.city }))
+              }
+            >
+              <option value="Bengaluru">Bengaluru</option>
+              <option value="Delhi NCR">Delhi NCR</option>
+              <option value="Mumbai">Mumbai</option>
+            </select>
+            <label htmlFor="meal-window-window">Window</label>
+            <select
+              id="meal-window-window"
+              value={mealWindowForm.window}
+              onChange={(event) =>
+                setMealWindowForm((current) => ({ ...current, window: event.target.value as SwiggyMealWindow }))
+              }
+            >
+              <option value="breakfast">Breakfast</option>
+              <option value="lunch">Lunch</option>
+              <option value="dinner">Dinner</option>
+              <option value="late_night">Late night</option>
+              <option value="weekend">Weekend</option>
+            </select>
+            <label htmlFor="meal-window-urgency">Urgency</label>
+            <select
+              id="meal-window-urgency"
+              value={mealWindowForm.urgency}
+              onChange={(event) =>
+                setMealWindowForm((current) => ({
+                  ...current,
+                  urgency: event.target.value as typeof mealWindowForm.urgency,
+                }))
+              }
+            >
+              <option value="now">Now</option>
+              <option value="today">Today</option>
+              <option value="this_week">This week</option>
+            </select>
+            <div className="meal-window-number-grid">
+              <label htmlFor="meal-window-party">Party</label>
+              <input
+                id="meal-window-party"
+                type="number"
+                min="1"
+                max="24"
+                value={mealWindowForm.partySize}
+                onChange={(event) =>
+                  setMealWindowForm((current) => ({ ...current, partySize: Number(event.target.value) }))
+                }
+              />
+            </div>
+            <label className="meal-window-toggle" htmlFor="meal-window-dineout">
+              <input
+                id="meal-window-dineout"
+                type="checkbox"
+                checked={mealWindowForm.includeDineout}
+                onChange={(event) =>
+                  setMealWindowForm((current) => ({ ...current, includeDineout: event.target.checked }))
+                }
+              />
+              Dineout slot path
+            </label>
+            <button type="submit" disabled={mealWindowForecastStatus === "loading"} aria-label="Forecast meal window">
+              {mealWindowForecastStatus === "loading" ? <Loader2 aria-hidden="true" /> : <CalendarCheck aria-hidden="true" />}
+              Forecast
+            </button>
+            {mealWindowForecastStatus === "error" ? <small role="status">Meal window forecast unavailable.</small> : null}
+          </form>
+          <div
+            className="meal-window-result"
+            data-status={
+              mealWindowForecast?.etaRisk === "high" ? "blocked" : mealWindowForecast?.etaRisk === "medium" ? "watch" : "healthy"
+            }
+          >
+            <div>
+              <span>ETA risk</span>
+              <strong>{mealWindowForecast ? mealWindowForecast.etaRisk : "Awaiting forecast"}</strong>
+            </div>
+            <p>
+              {mealWindowForecast
+                ? `${mealWindowForecast.selectedLaneId} / ${mealWindowForecast.recommendedRoute} / ${mealWindowForecast.timingPlan.length} timed checks`
+                : "Forecast the right Food, Instamart, Dineout, or combined route before asking for cart or slot confirmation."}
+            </p>
+            {mealWindowForecast ? <small>{mealWindowForecast.recommendedAction}</small> : null}
           </div>
           <ul className="compact-status-list">
             {(mealWindow?.lanes ?? []).slice(0, 5).map((laneItem) => (

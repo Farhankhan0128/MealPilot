@@ -2698,7 +2698,8 @@ select:focus {
   overflow-wrap: anywhere;
 }
 
-.payment-truth-reconciler {
+.payment-truth-reconciler,
+.meal-window-forecaster {
   display: grid;
   gap: 8px;
   border-radius: 8px;
@@ -2706,7 +2707,8 @@ select:focus {
   background: #fff;
 }
 
-.payment-truth-reconciler label {
+.payment-truth-reconciler label,
+.meal-window-forecaster label {
   color: var(--ink-muted);
   font-size: 0.75rem;
   font-weight: 900;
@@ -2714,7 +2716,9 @@ select:focus {
 }
 
 .payment-truth-reconciler select,
-.payment-truth-reconciler input {
+.payment-truth-reconciler input,
+.meal-window-forecaster select,
+.meal-window-forecaster input {
   width: 100%;
   min-width: 0;
   border: 1px solid var(--line);
@@ -2726,14 +2730,29 @@ select:focus {
   font-weight: 850;
 }
 
-.payment-truth-number-grid {
+.payment-truth-number-grid,
+.meal-window-number-grid {
   display: grid;
   grid-template-columns: minmax(0, 0.72fr) minmax(0, 1fr);
   gap: 8px;
   align-items: center;
 }
 
-.payment-truth-reconciler button {
+.meal-window-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 0 2px;
+}
+
+.meal-window-toggle input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--green);
+}
+
+.payment-truth-reconciler button,
+.meal-window-forecaster button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -2747,22 +2766,26 @@ select:focus {
   font-weight: 900;
 }
 
-.payment-truth-reconciler button:disabled {
+.payment-truth-reconciler button:disabled,
+.meal-window-forecaster button:disabled {
   cursor: wait;
   opacity: 0.72;
 }
 
-.payment-truth-reconciler svg {
+.payment-truth-reconciler svg,
+.meal-window-forecaster svg {
   width: 17px;
   height: 17px;
 }
 
-.payment-truth-reconciler small {
+.payment-truth-reconciler small,
+.meal-window-forecaster small {
   color: var(--coral);
   font-weight: 850;
 }
 
-.payment-truth-result {
+.payment-truth-result,
+.meal-window-result {
   display: grid;
   gap: 8px;
   border-radius: 8px;
@@ -2771,41 +2794,57 @@ select:focus {
   border-left: 4px solid var(--gold);
 }
 
-.payment-truth-result[data-status="healthy"] {
+.payment-truth-result[data-status="healthy"],
+.meal-window-result[data-status="healthy"] {
   border-left-color: var(--green);
 }
 
-.payment-truth-result[data-status="blocked"] {
+.payment-truth-result[data-status="blocked"],
+.meal-window-result[data-status="blocked"] {
   border-left-color: var(--coral);
 }
 
-.payment-truth-result > div {
+.meal-window-result[data-status="watch"] {
+  border-left-color: var(--gold);
+}
+
+.payment-truth-result > div,
+.meal-window-result > div {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 10px;
 }
 
-.payment-truth-result span {
+.payment-truth-result span,
+.meal-window-result span {
   color: var(--ink-muted);
   font-size: 0.75rem;
   font-weight: 900;
   text-transform: uppercase;
 }
 
-.payment-truth-result strong {
+.payment-truth-result strong,
+.meal-window-result strong {
   color: var(--green-dark);
   font-size: 0.84rem;
   text-align: right;
   text-transform: capitalize;
 }
 
-.payment-truth-result p {
+.payment-truth-result p,
+.meal-window-result p,
+.meal-window-result small {
   margin: 0;
   color: var(--ink-muted);
   font-size: 0.82rem;
   line-height: 1.45;
   overflow-wrap: anywhere;
+}
+
+.meal-window-result small {
+  color: var(--green-dark);
+  font-weight: 850;
 }
 
 .builders-map-list,

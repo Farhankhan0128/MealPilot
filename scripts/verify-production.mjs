@@ -2404,6 +2404,23 @@ assert(
   ) && mealForecast.forecast.assertions.some((assertion) => assertion.includes("do not schedule Food orders")),
   "meal window forecast safety telemetry is incomplete",
 );
+const dineoutMealForecast = await request("/api/swiggy-meal-window-intelligence/forecast", {
+  method: "POST",
+  body: JSON.stringify({
+    city: "Mumbai",
+    window: "weekend",
+    partySize: 6,
+    urgency: "today",
+    includeDineout: true,
+  }),
+});
+assert(
+    dineoutMealForecast.forecast.selectedLaneId === "dineout_slot_window" &&
+    dineoutMealForecast.forecast.etaRisk === "medium" &&
+    dineoutMealForecast.forecast.timingPlan.some((step) => step.tool === "get_available_slots") &&
+    dineoutMealForecast.forecast.swiggyRoute.confirmationBoundary.includes("fresh slot"),
+  "meal window Dineout forecast route is wrong",
+);
 
 const customizationStudio = await request("/api/swiggy-customization-studio");
 assert(customizationStudio.customizationStudio.score >= 90, "customization studio score is below target");

@@ -249,6 +249,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/swiggy-payment-truth-center`
 - `POST /api/swiggy-payment-truth-center/reconcile`
 - `GET /api/swiggy-meal-window-intelligence`
+- `POST /api/swiggy-meal-window-intelligence/forecast`
 - `GET /api/swiggy-customization-studio`
 - `GET /api/nutrition-budget-intelligence`
 - `GET /api/household-preference-graph`
@@ -448,7 +449,7 @@ Production should use an HTTPS redirect URI with exact-match allowlisting.
 
 `/api/swiggy-payment-truth-center` is the productized payment truth proof surface. It maps Food cart payment truth, Instamart bill checkout truth, Dineout free booking truth, Dineout paid-cart gates, and combined settlement readbacks into source-of-truth guardrails; `POST /api/swiggy-payment-truth-center/reconcile` returns deterministic settlement status, risk flags, support-review copy, selected truth lane, and no-payment-instrument telemetry.
 
-`/api/swiggy-meal-window-intelligence` is the productized timing proof surface. It maps Food lunch ETA, Instamart dinner backup, Dineout slot windows, post-confirmation tracking, and weekend combined planning into safe timing lanes; `/api/swiggy-meal-window-intelligence/forecast` returns ETA risk buckets, timing steps, and no-scheduled-order telemetry.
+`/api/swiggy-meal-window-intelligence` is the productized timing proof surface. It maps Food lunch ETA, Instamart dinner backup, Dineout slot windows, post-confirmation tracking, and weekend combined planning into safe timing lanes; `/api/swiggy-meal-window-intelligence/forecast` returns ETA risk buckets, timing steps, no-scheduled-order telemetry, and the Launch Center forecaster's selected Food, Instamart, Dineout, or combined route proof.
 
 `/api/swiggy-customization-studio` is the productized customization proof surface. It maps Food `search_menu` add-ons and variants, Instamart product pack sizes, allergy-sensitive substitution cautions, voice-safe choice limits, and cart readback gates into exact-choice review lanes; `/api/swiggy-customization-studio/validate` returns deterministic mutation-risk buckets without mutating a cart.
 
