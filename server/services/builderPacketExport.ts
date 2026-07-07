@@ -261,6 +261,13 @@ export function buildBuilderPacketExport(options: {
         "Run this packet when proving that local CTAs and composer buttons produce safe dry-run evidence without submitting Swiggy forms, sending email, exposing secrets, or executing commercial actions.",
       ),
       readiness(
+        "runtime_governance_packet",
+        "Runtime governance packet",
+        "ready",
+        "Reviewer Vault and Launch Bundle now promote health, readiness, config, privacy, storage backup/restore, reviewer proof, evaluation, demo, submission, support-report, session replay, planner, confirmation, and go-live endpoints together.",
+        "Use this packet to prove MealPilot can be operated, exported, restored, audited, replayed, and reviewed without leaking secrets, raw Swiggy payloads, or user PII.",
+      ),
+      readiness(
         "demo_video",
         "Demo video URL",
         "operator_input",

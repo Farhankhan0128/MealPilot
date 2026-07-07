@@ -3032,11 +3032,47 @@ assert(reviewerArtifactVault.reviewerArtifactVault.totalCommands === 7, "reviewe
 assert(reviewerArtifactVault.reviewerArtifactVault.readyCommands >= 6, "reviewer artifact vault ready commands are incomplete");
 assert(reviewerArtifactVault.reviewerArtifactVault.totalRedactionRules >= 6, "reviewer artifact vault redaction rules are incomplete");
 assert(
-  ["submission_packet", "product_depth", "mcp_contracts", "mcp_client_readiness", "source_freeze_live_audit", "executable_rehearsal_matrix", "operations_and_logs"].every((id) =>
+  [
+    "submission_packet",
+    "product_depth",
+    "mcp_contracts",
+    "mcp_client_readiness",
+    "source_freeze_live_audit",
+    "executable_rehearsal_matrix",
+    "runtime_governance",
+    "operations_and_logs",
+  ].every((id) =>
     reviewerArtifactVault.reviewerArtifactVault.artifactSections.some((section) => section.id === id),
   ),
   "reviewer artifact vault sections are missing",
 );
+const runtimeGovernanceArtifacts = [
+  ["/api/health", "health_check", "Health Check"],
+  ["/api/ready", "readiness_check", "Readiness Check"],
+  ["/api/config", "runtime_config", "Runtime Config"],
+  ["/api/privacy", "privacy_delete", "Privacy Delete"],
+  ["/api/privacy/export", "privacy_export", "Privacy Export"],
+  ["/api/storage/status", "storage_status", "Storage Status"],
+  ["/api/storage/export", "storage_export", "Storage Export"],
+  ["/api/storage/compact", "storage_compact", "Storage Compact"],
+  ["/api/storage/restore", "storage_restore", "Storage Restore"],
+  ["/api/reviewer-proof", "reviewer_proof", "Reviewer Proof"],
+  ["/api/evaluation-lab", "evaluation_lab", "Evaluation Lab"],
+  ["/api/submission-package", "submission_package", "Submission Package"],
+  ["/api/demo-studio", "demo_studio", "Demo Studio"],
+  ["/api/support/bridge/report", "support_bridge_report", "Support Bridge Report"],
+  ["/api/sessions/{sessionId}", "session_readback", "Session Readback"],
+  ["/api/sessions/{sessionId}/preflight", "session_preflight", "Session Preflight"],
+  ["/api/sessions/{sessionId}/replay", "session_replay", "Session Replay"],
+  ["/api/sessions/{sessionId}/widgets", "session_widgets", "Session Widgets"],
+  ["/api/sessions/{sessionId}/staging-transcript", "session_staging_transcript", "Session Staging Transcript"],
+  ["/api/plan", "planner_api", "Planner API"],
+  ["/api/confirm", "confirmation_api", "Confirmation API"],
+  ["/api/confirm-all", "confirm_all_api", "Confirm All API"],
+  ["/api/go-live", "go_live", "Go Live Checklist"],
+];
+const runtimeGovernancePaths = runtimeGovernanceArtifacts.map(([path]) => path);
+const runtimeGovernanceLabels = runtimeGovernanceArtifacts.map(([, , label]) => label);
 const mcpClientReadinessSection = reviewerArtifactVault.reviewerArtifactVault.artifactSections.find(
   (section) => section.id === "mcp_client_readiness",
 );
@@ -3096,6 +3132,20 @@ assert(
       ["/api/luxury-experience-workspace/compose", "luxury_experience_composer"],
     ].every(([path, id]) => executableRehearsalMatrixSection.artifacts.some((artifact) => artifact.id === id && artifact.path === path)),
   "reviewer artifact vault executable rehearsal matrix is missing",
+);
+const runtimeGovernanceSection = reviewerArtifactVault.reviewerArtifactVault.artifactSections.find(
+  (section) => section.id === "runtime_governance",
+);
+assert(
+  runtimeGovernanceSection &&
+    runtimeGovernanceArtifacts.every(([path, id]) =>
+      runtimeGovernanceSection.artifacts.some((artifact) => artifact.id === id && artifact.path === path),
+    ),
+  "reviewer artifact vault runtime governance section is missing",
+);
+assert(
+  runtimeGovernancePaths.every((path) => reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes(path)),
+  "reviewer artifact vault runtime governance handoff links are missing",
 );
 assert(
   reviewerArtifactVault.reviewerArtifactVault.artifactSections.some((section) =>
@@ -7949,6 +7999,7 @@ assert(
     builderPacket.packet.readiness.some((item) => item.id === "mcp_client_readiness_packet" && item.status === "ready") &&
     builderPacket.packet.readiness.some((item) => item.id === "source_freeze_live_audit_packet" && item.status === "ready") &&
     builderPacket.packet.readiness.some((item) => item.id === "executable_rehearsal_packet" && item.status === "ready") &&
+    builderPacket.packet.readiness.some((item) => item.id === "runtime_governance_packet" && item.status === "ready") &&
     builderPacket.packet.readiness.some((item) => item.id === "demo_video" && item.status === "operator_input") &&
     builderPacket.packet.readiness.some((item) => item.id === "staging_credentials" && item.status === "external_gate"),
   "builder packet readiness gates are incomplete",
@@ -7964,7 +8015,7 @@ assert(launchBundle.launchBundle.score >= 70, "launch bundle score is below targ
 assert(launchBundle.launchBundle.requestedServers.length === 3, "launch bundle server coverage is incomplete");
 assert(launchBundle.launchBundle.artifacts.length >= 10, "launch bundle artifact set is incomplete");
 assert(
-    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "MCP Tool Lab") &&
+  launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "MCP Tool Lab") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Runtime Telemetry") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Audit Ledger Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Submission Console") &&
@@ -8081,6 +8132,10 @@ assert(
   "launch bundle proof artifacts are incomplete",
 );
 assert(
+  runtimeGovernanceLabels.every((label) => launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === label)),
+  "launch bundle runtime governance artifacts are incomplete",
+);
+assert(
   launchBundle.launchBundle.goLiveGates.some((gate) => gate.status === "external_gate"),
   "launch bundle must preserve external Swiggy gates",
 );
@@ -8151,6 +8206,10 @@ assert(
     launchBundle.launchBundle.handoffEmail.body.includes("/api/guest-collaboration-calendar/compose") &&
     launchBundle.launchBundle.handoffEmail.body.includes("/api/luxury-experience-workspace/compose"),
   "launch bundle executable rehearsal handoff links are missing",
+);
+assert(
+  runtimeGovernancePaths.every((path) => launchBundle.launchBundle.handoffEmail.body.includes(path)),
+  "launch bundle runtime governance handoff links are missing",
 );
 assert(
   launchBundle.launchBundle.artifacts.some(

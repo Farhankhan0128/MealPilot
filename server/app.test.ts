@@ -1869,6 +1869,7 @@ describe("MealPilot API", () => {
     expect(packet.readiness.some((item: { id: string; status: string }) => item.id === "mcp_client_readiness_packet" && item.status === "ready")).toBe(true);
     expect(packet.readiness.some((item: { id: string; status: string }) => item.id === "source_freeze_live_audit_packet" && item.status === "ready")).toBe(true);
     expect(packet.readiness.some((item: { id: string; status: string }) => item.id === "executable_rehearsal_packet" && item.status === "ready")).toBe(true);
+    expect(packet.readiness.some((item: { id: string; status: string }) => item.id === "runtime_governance_packet" && item.status === "ready")).toBe(true);
     expect(packet.readiness.some((item: { id: string; status: string }) => item.id === "demo_video" && item.status === "operator_input")).toBe(true);
     expect(packet.readiness.some((item: { id: string; status: string }) => item.id === "staging_credentials" && item.status === "external_gate")).toBe(true);
     expect(packet.externalGates.some((gate: string) => gate.includes("Google Form"))).toBe(true);
@@ -3775,6 +3776,7 @@ describe("MealPilot API", () => {
         "mcp_client_readiness",
         "source_freeze_live_audit",
         "executable_rehearsal_matrix",
+        "runtime_governance",
         "partner_signal_operations",
         "operations_and_logs",
       ]),
@@ -3907,6 +3909,69 @@ describe("MealPilot API", () => {
     expect(vault.reviewerEmail.body).toContain("/api/access-submission-studio/rehearse");
     expect(vault.reviewerEmail.body).toContain("/api/reviewer-artifact-vault/compose");
     expect(vault.reviewerEmail.body).toContain("/api/luxury-experience-workspace/compose");
+    const runtimeGovernance = vault.artifactSections.find(
+      (section: { id: string; artifacts: Array<{ id: string; path: string }> }) => section.id === "runtime_governance",
+    );
+    expect(runtimeGovernance?.artifacts.map((artifact: { id: string }) => artifact.id)).toEqual(
+      expect.arrayContaining([
+        "health_check",
+        "readiness_check",
+        "runtime_config",
+        "privacy_delete",
+        "privacy_export",
+        "storage_status",
+        "storage_export",
+        "storage_compact",
+        "storage_restore",
+        "reviewer_proof",
+        "evaluation_lab",
+        "submission_package",
+        "demo_studio",
+        "support_bridge_report",
+        "session_readback",
+        "session_preflight",
+        "session_replay",
+        "session_widgets",
+        "session_staging_transcript",
+        "planner_api",
+        "confirmation_api",
+        "confirm_all_api",
+        "go_live",
+      ]),
+    );
+    expect(runtimeGovernance?.artifacts.map((artifact: { path: string }) => artifact.path)).toEqual(
+      expect.arrayContaining([
+        "/api/health",
+        "/api/ready",
+        "/api/config",
+        "/api/privacy",
+        "/api/privacy/export",
+        "/api/storage/status",
+        "/api/storage/export",
+        "/api/storage/compact",
+        "/api/storage/restore",
+        "/api/reviewer-proof",
+        "/api/evaluation-lab",
+        "/api/submission-package",
+        "/api/demo-studio",
+        "/api/support/bridge/report",
+        "/api/sessions/{sessionId}",
+        "/api/sessions/{sessionId}/preflight",
+        "/api/sessions/{sessionId}/replay",
+        "/api/sessions/{sessionId}/widgets",
+        "/api/sessions/{sessionId}/staging-transcript",
+        "/api/plan",
+        "/api/confirm",
+        "/api/confirm-all",
+        "/api/go-live",
+      ]),
+    );
+    expect(vault.reviewerEmail.body).toContain("/api/ready");
+    expect(vault.reviewerEmail.body).toContain("/api/privacy/export");
+    expect(vault.reviewerEmail.body).toContain("/api/storage/export");
+    expect(vault.reviewerEmail.body).toContain("/api/support/bridge/report");
+    expect(vault.reviewerEmail.body).toContain("/api/sessions/{sessionId}/staging-transcript");
+    expect(vault.reviewerEmail.body).toContain("/api/go-live");
     expect(
       vault.artifactSections.some((section: { artifacts: Array<{ id: string; label: string; path: string }> }) =>
         section.artifacts.some(
@@ -7895,6 +7960,29 @@ describe("MealPilot API", () => {
         "MCP Tool Lab",
         "Runtime Telemetry",
         "Audit Ledger Center",
+        "Health Check",
+        "Readiness Check",
+        "Runtime Config",
+        "Privacy Delete",
+        "Privacy Export",
+        "Storage Status",
+        "Storage Export",
+        "Storage Compact",
+        "Storage Restore",
+        "Reviewer Proof",
+        "Evaluation Lab",
+        "Submission Package",
+        "Demo Studio",
+        "Support Bridge Report",
+        "Session Readback",
+        "Session Preflight",
+        "Session Replay",
+        "Session Widgets",
+        "Session Staging Transcript",
+        "Planner API",
+        "Confirmation API",
+        "Confirm All API",
+        "Go Live Checklist",
         "Submission Console",
         "Access Submission Studio",
         "Swiggy Submission Timeline Center",
@@ -8052,6 +8140,31 @@ describe("MealPilot API", () => {
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-operating-contract-center");
     expect(bundle.handoffEmail.body).toContain("/api/auth/swiggy/status");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-auth-lifecycle-center");
+    [
+      "/api/health",
+      "/api/ready",
+      "/api/config",
+      "/api/privacy",
+      "/api/privacy/export",
+      "/api/storage/status",
+      "/api/storage/export",
+      "/api/storage/compact",
+      "/api/storage/restore",
+      "/api/reviewer-proof",
+      "/api/evaluation-lab",
+      "/api/submission-package",
+      "/api/demo-studio",
+      "/api/support/bridge/report",
+      "/api/sessions/{sessionId}",
+      "/api/sessions/{sessionId}/preflight",
+      "/api/sessions/{sessionId}/replay",
+      "/api/sessions/{sessionId}/widgets",
+      "/api/sessions/{sessionId}/staging-transcript",
+      "/api/plan",
+      "/api/confirm",
+      "/api/confirm-all",
+      "/api/go-live",
+    ].forEach((path) => expect(bundle.handoffEmail.body).toContain(path));
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-builder-intake");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-faq-policy");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-faq-resolution-center");
