@@ -5,6 +5,8 @@ import type {
   RuntimeTelemetryReport,
   SwiggyBenefitsActivationCenter,
   SwiggyBenefitsActivationCta,
+  SwiggyBenefitsActivationDecision,
+  SwiggyBenefitsActivationExecution,
   SwiggyBenefitsActivationLane,
   SwiggyBenefitsActivationStatus,
   UserProfile,
@@ -41,6 +43,31 @@ function cta(input: SwiggyBenefitsActivationCta): SwiggyBenefitsActivationCta {
 
 function unique(values: string[]) {
   return [...new Set(values.filter(Boolean))];
+}
+
+function decisionFor(status?: SwiggyBenefitsActivationStatus): SwiggyBenefitsActivationDecision {
+  if (!status) return "unknown_benefit";
+  if (status === "ready") return "ready_local_handoff";
+  if (status === "operator_input") return "needs_operator_action";
+  return "swiggy_gate";
+}
+
+function scoreFor(status?: SwiggyBenefitsActivationStatus) {
+  if (status === "ready") return 100;
+  if (status === "operator_input") return 72;
+  if (status === "swiggy_gate") return 48;
+  return 0;
+}
+
+function ctaForBenefit(benefitId: string) {
+  if (benefitId === "live_api_access") return "request_access";
+  if (benefitId === "quota_expansion") return "ask_quota";
+  if (benefitId === "technical_support") return "ask_support";
+  if (benefitId === "co_branding") return "ask_cobranding";
+  if (benefitId === "growth_partnership") return "ask_growth";
+  if (benefitId === "showcase_visibility" || benefitId === "hiring_visibility") return "send_demo";
+  if (benefitId === "enterprise_support") return "ask_growth";
+  return "";
 }
 
 export function buildSwiggyBenefitsActivationCenter(options: {
@@ -233,5 +260,75 @@ export function buildSwiggyBenefitsActivationCenter(options: {
       "Swiggy must issue official brand assets, co-branding approval, showcase placement, partner manager, Slack, dashboards, or enterprise terms.",
       "Operator must record the demo, submit official forms, send emails, and retain Swiggy acknowledgements before public claims.",
     ],
+  };
+}
+
+export function activateSwiggyBenefit(
+  options: Parameters<typeof buildSwiggyBenefitsActivationCenter>[0] & {
+    benefitId: string;
+  },
+): SwiggyBenefitsActivationExecution {
+  const center = buildSwiggyBenefitsActivationCenter(options);
+  const laneItem = center.lanes.find((item) => item.id === options.benefitId) ?? null;
+  const ctaItem = center.activationCtas.find((item) => item.id === ctaForBenefit(options.benefitId)) ?? null;
+  const decision = decisionFor(laneItem?.status);
+  const proofLinks = unique([
+    "/api/swiggy-benefits-activation-center",
+    ...(laneItem?.proofLinks ?? []),
+    ...(ctaItem?.evidenceLinks ?? []),
+  ]).slice(0, 10);
+  const handoffBody = laneItem
+    ? `${laneItem.label}: ${laneItem.mealPilotActivation} Next action: ${laneItem.nextAction} Proof: ${proofLinks.join(", ")}`
+    : `Unknown Builders benefit '${options.benefitId}'. Open the Benefits Activation Center and choose one of the published benefit lanes before sending anything externally.`;
+
+  return {
+    generatedAt: new Date().toISOString(),
+    benefitId: options.benefitId,
+    decision,
+    readinessScore: scoreFor(laneItem?.status),
+    lane: laneItem,
+    cta: ctaItem,
+    owner: laneItem?.owner ?? "Operator",
+    nextAction: laneItem?.nextAction ?? "Choose a valid Swiggy Builders benefit before preparing an activation packet.",
+    handoffDraft: {
+      to: center.partnerEmail.to,
+      subject: laneItem
+        ? `MealPilot Swiggy Builders benefit activation: ${laneItem.label}`
+        : "MealPilot Swiggy Builders benefit activation",
+      bodyPreview: handoffBody,
+    },
+    checklist: [
+      {
+        id: "benefit_selected",
+        label: laneItem ? `${laneItem.label} selected` : "Valid Builders benefit selected",
+        status: laneItem ? "ready" : "operator_input",
+        owner: "Operator",
+      },
+      {
+        id: "proof_attached",
+        label: "Proof routes attached",
+        status: proofLinks.length >= 3 ? "ready" : "operator_input",
+        owner: "MealPilot",
+      },
+      {
+        id: "cta_prepared",
+        label: ctaItem ? ctaItem.label : "Matching activation CTA prepared",
+        status: ctaItem ? ctaItem.status : "operator_input",
+        owner: ctaItem?.owner ?? "Operator",
+      },
+      {
+        id: "external_gate_respected",
+        label: "External Swiggy approval gate preserved",
+        status: laneItem?.status === "swiggy_gate" ? "swiggy_gate" : "ready",
+        owner: laneItem?.status === "swiggy_gate" ? "Swiggy" : "MealPilot",
+      },
+    ],
+    proofLinks,
+    assertions: [
+      "Benefit activation prepares a local handoff packet only; it never sends email, submits forms, opens Slack, requests assets, or claims approval.",
+      "The selected benefit keeps MealPilot, operator, and Swiggy ownership visible before any external action.",
+      ...center.assertions.slice(0, 2),
+    ],
+    externalGates: center.externalGates,
   };
 }

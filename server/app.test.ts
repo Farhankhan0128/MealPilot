@@ -89,6 +89,9 @@ describe("MealPilot API", () => {
     );
     expect(openApi.body.paths["/api/swiggy-benefits-activation-center"].get.summary).toContain("Benefits Activation");
     expect(openApi.body.paths["/api/swiggy-benefits-activation-center"].get.responses["200"].description).toContain("live API access");
+    expect(openApi.body.paths["/api/swiggy-benefits-activation-center/activate"].post.summary).toContain(
+      "Benefits Activation action",
+    );
     expect(openApi.body.paths["/api/swiggy-showcase-submission-center"].get.summary).toContain("Showcase Submission");
     expect(openApi.body.paths["/api/swiggy-demo-evidence-director"].get.summary).toContain("Demo Evidence Director");
     expect(openApi.body.paths["/api/swiggy-submission-timeline-center"].get.summary).toContain("Submission Timeline");
@@ -1882,6 +1885,53 @@ describe("MealPilot API", () => {
     expect(center.partnerEmail.to).toBe("builders@swiggy.in");
     expect(center.assertions.some((assertion: string) => assertion.includes("Every Builders benefit maps"))).toBe(true);
     expect(center.externalGates.some((gate: string) => gate.includes("rate-limit increase"))).toBe(true);
+  });
+
+  it("activates a single Swiggy Builders benefit as a local handoff packet", async () => {
+    const { app } = createMealPilotServer();
+    await request(app).post("/api/plan").send(planningRequest).expect(201);
+
+    const response = await request(app)
+      .post("/api/swiggy-benefits-activation-center/activate")
+      .send({ benefitId: "quota_expansion" })
+      .expect(200);
+    const execution = response.body.benefitsExecution;
+
+    expect(execution.benefitId).toBe("quota_expansion");
+    expect(execution.decision).toBe("swiggy_gate");
+    expect(execution.readinessScore).toBe(48);
+    expect(execution.lane.id).toBe("quota_expansion");
+    expect(execution.cta.id).toBe("ask_quota");
+    expect(execution.owner).toBe("Joint");
+    expect(execution.proofLinks).toEqual(expect.arrayContaining(["/api/swiggy-quota-negotiation-center"]));
+    expect(execution.handoffDraft.to).toBe("builders@swiggy.in");
+    expect(execution.checklist.map((item: { id: string }) => item.id)).toEqual(
+      expect.arrayContaining(["benefit_selected", "proof_attached", "cta_prepared", "external_gate_respected"]),
+    );
+    expect(
+      execution.assertions.some((assertion: string) =>
+        assertion.includes("never sends email, submits forms, opens Slack, requests assets, or claims approval"),
+      ),
+    ).toBe(true);
+    expect(execution.externalGates.some((gate: string) => gate.includes("rate-limit increase"))).toBe(true);
+  });
+
+  it("keeps unknown Swiggy Builders benefit activation in operator input state", async () => {
+    const { app } = createMealPilotServer();
+
+    const response = await request(app)
+      .post("/api/swiggy-benefits-activation-center/activate")
+      .send({ benefitId: "unknown_lane" })
+      .expect(200);
+    const execution = response.body.benefitsExecution;
+
+    expect(execution.decision).toBe("unknown_benefit");
+    expect(execution.readinessScore).toBe(0);
+    expect(execution.lane).toBeNull();
+    expect(execution.cta).toBeNull();
+    expect(execution.nextAction).toContain("Choose a valid Swiggy Builders benefit");
+    expect(execution.checklist.some((item: { status: string }) => item.status === "operator_input")).toBe(true);
+    expect(execution.handoffDraft.to).toBe("builders@swiggy.in");
   });
 
   it("returns a Swiggy Partner Success Desk for post-access support and growth operations", async () => {

@@ -27,7 +27,7 @@ import { buildAiClientConnectKit, validateAiClientConfig } from "./services/aiCl
 import { buildAccessSubmissionStudio } from "./services/accessSubmissionStudio.js";
 import { buildSwiggyAuthLifecycleCenter } from "./services/authLifecycleCenter.js";
 import { buildAuditLedgerCenter } from "./services/auditLedger.js";
-import { buildSwiggyBenefitsActivationCenter } from "./services/benefitsActivationCenter.js";
+import { activateSwiggyBenefit, buildSwiggyBenefitsActivationCenter } from "./services/benefitsActivationCenter.js";
 import { buildBrandComplianceKit } from "./services/brandCompliance.js";
 import { buildSwiggyBuildersLaunchStoryCenter } from "./services/buildersLaunchStoryCenter.js";
 import { buildSwiggyBuildersLiveSourceResilienceCenter } from "./services/liveSourceResilienceCenter.js";
@@ -1234,6 +1234,19 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
         coverage: buildMcpCoverage(),
         plans: store.getAllPlans(),
         telemetry: telemetry.buildReport(),
+      }),
+    });
+  });
+
+  app.post("/api/swiggy-benefits-activation-center/activate", (req, res) => {
+    res.json({
+      benefitsExecution: activateSwiggyBenefit({
+        config,
+        profile: store.getProfile(),
+        coverage: buildMcpCoverage(),
+        plans: store.getAllPlans(),
+        telemetry: telemetry.buildReport(),
+        benefitId: typeof req.body?.benefitId === "string" ? req.body.benefitId : "",
       }),
     });
   });

@@ -607,6 +607,32 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-benefits-activation-center/activate": {
+        post: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Benefits Activation action for one Builders benefit",
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    benefitId: { type: "string" },
+                  },
+                  required: ["benefitId"],
+                },
+              },
+            },
+          },
+          responses: {
+            "200": {
+              description:
+                "Selected benefit activation packet with decision, owner, CTA, proof links, checklist, handoff draft, assertions, and external Swiggy/operator gates without sending email or submitting external actions",
+            },
+          },
+        },
+      },
       "/api/swiggy-showcase-submission-center": {
         get: {
           tags: ["Builder Access"],

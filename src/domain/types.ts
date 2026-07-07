@@ -1788,6 +1788,11 @@ export interface SwiggyGrowthPartnershipCenter {
 
 export type SwiggyBenefitsActivationStatus = "ready" | "operator_input" | "swiggy_gate";
 export type SwiggyBenefitsActivationOwner = "MealPilot" | "Operator" | "Swiggy" | "Joint";
+export type SwiggyBenefitsActivationDecision =
+  | "ready_local_handoff"
+  | "needs_operator_action"
+  | "swiggy_gate"
+  | "unknown_benefit";
 
 export interface SwiggyBenefitsActivationLane {
   id: string;
@@ -1835,6 +1840,26 @@ export interface SwiggyBenefitsActivationCenter {
     subject: string;
     bodyPreview: string;
   };
+  assertions: string[];
+  externalGates: string[];
+}
+
+export interface SwiggyBenefitsActivationExecution {
+  generatedAt: string;
+  benefitId: string;
+  decision: SwiggyBenefitsActivationDecision;
+  readinessScore: number;
+  lane: SwiggyBenefitsActivationLane | null;
+  cta: SwiggyBenefitsActivationCta | null;
+  owner: SwiggyBenefitsActivationOwner;
+  nextAction: string;
+  handoffDraft: {
+    to: string;
+    subject: string;
+    bodyPreview: string;
+  };
+  checklist: Array<{ id: string; label: string; status: SwiggyBenefitsActivationStatus; owner: SwiggyBenefitsActivationOwner }>;
+  proofLinks: string[];
   assertions: string[];
   externalGates: string[];
 }

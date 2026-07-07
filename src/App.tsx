@@ -39,6 +39,7 @@ import {
 import type { FormEvent, ReactNode } from "react";
 import { useEffect, useMemo, useState } from "react";
 import {
+  activateSwiggyBenefit,
   answerSwiggyFaqQuestion,
   buildServerPlan,
   completeSwiggyAuth,
@@ -258,6 +259,7 @@ import type {
   SwiggyAuthLifecycleCenterReport,
   SwiggyAuthStatusReport,
   SwiggyBenefitsActivationCenter,
+  SwiggyBenefitsActivationExecution,
   SwiggyAccessDossier,
   SwiggyAccessEvidenceMatrix,
   SwiggyBuildersHomepageExperienceCenter,
@@ -2849,6 +2851,9 @@ function LaunchCenterPanel({
   });
   const [timelineCheckpoint, setTimelineCheckpoint] = useState<SwiggySubmissionTimelineCheckpoint | null>(null);
   const [timelineCheckpointStatus, setTimelineCheckpointStatus] = useState<"idle" | "loading" | "error">("idle");
+  const [benefitActivationId, setBenefitActivationId] = useState("quota_expansion");
+  const [benefitExecution, setBenefitExecution] = useState<SwiggyBenefitsActivationExecution | null>(null);
+  const [benefitExecutionStatus, setBenefitExecutionStatus] = useState<"idle" | "loading" | "error">("idle");
 
   async function runFaqAnswerConsole(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -2883,6 +2888,18 @@ function LaunchCenterPanel({
       setTimelineCheckpointStatus("idle");
     } catch {
       setTimelineCheckpointStatus("error");
+    }
+  }
+
+  async function runBenefitActivation(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setBenefitExecutionStatus("loading");
+    try {
+      const response = await activateSwiggyBenefit(benefitActivationId);
+      setBenefitExecution(response.benefitsExecution);
+      setBenefitExecutionStatus("idle");
+    } catch {
+      setBenefitExecutionStatus("error");
     }
   }
 
@@ -4744,6 +4761,50 @@ function LaunchCenterPanel({
               <strong>{benefitsActivation?.totals.activationCtas ?? 0}</strong>
               <span>CTAs</span>
             </div>
+          </div>
+          <form className="benefit-activation-console" onSubmit={runBenefitActivation}>
+            <label htmlFor="benefit-activation-select">Activate benefit</label>
+            <div>
+              <select
+                id="benefit-activation-select"
+                value={benefitActivationId}
+                onChange={(event) => setBenefitActivationId(event.target.value)}
+              >
+                {(benefitsActivation?.lanes ?? []).map((laneItem) => (
+                  <option key={laneItem.id} value={laneItem.id}>
+                    {laneItem.label}
+                  </option>
+                ))}
+              </select>
+              <button type="submit" disabled={benefitExecutionStatus === "loading"} aria-label="Activate Swiggy benefit">
+                {benefitExecutionStatus === "loading" ? <Loader2 aria-hidden="true" /> : <Sparkles aria-hidden="true" />}
+              </button>
+            </div>
+            {benefitExecutionStatus === "error" ? <small role="status">Benefit activation unavailable.</small> : null}
+          </form>
+          <div
+            className="benefit-activation-result"
+            data-status={
+              benefitExecution?.decision === "ready_local_handoff"
+                ? "healthy"
+                : benefitExecution?.decision === "swiggy_gate" || benefitExecution?.decision === "unknown_benefit"
+                  ? "blocked"
+                  : "watch"
+            }
+          >
+            <div>
+              <span>Benefit handoff</span>
+              <strong>
+                {benefitExecution
+                  ? `${benefitExecution.decision.replace(/_/g, " ")} / ${benefitExecution.readinessScore}/100`
+                  : "Awaiting activation"}
+              </strong>
+            </div>
+            <p>
+              {benefitExecution
+                ? `${benefitExecution.owner} / ${benefitExecution.proofLinks.length} proof links / ${benefitExecution.nextAction}`
+                : "Select one Builders benefit to generate its owner, CTA, proof bundle, and Swiggy gate."}
+            </p>
           </div>
           <ul className="compact-status-list">
             {(benefitsActivation?.lanes ?? []).slice(0, 5).map((laneItem) => (

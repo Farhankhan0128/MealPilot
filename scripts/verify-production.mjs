@@ -79,6 +79,15 @@ assert(
   "OpenAPI upstream watch contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-benefits-activation-center/activate"]?.post?.summary?.includes(
+    "Benefits Activation action",
+  ) &&
+    openApi.paths["/api/swiggy-benefits-activation-center/activate"]?.post?.responses?.["200"]?.description?.includes(
+      "without sending email",
+    ),
+  "OpenAPI benefits activation action contract is missing",
+);
+assert(
   openApi.paths["/api/swiggy-docs-twin-explorer"]?.get?.summary?.includes("docs twin"),
   "OpenAPI docs twin explorer contract is missing",
 );
@@ -1338,6 +1347,34 @@ assert(
     ) &&
     benefitsActivation.benefitsActivation.externalGates.some((gate) => gate.includes("rate-limit increase")),
   "benefits activation email, assertion, or external gate is missing",
+);
+const benefitsExecution = await request("/api/swiggy-benefits-activation-center/activate", {
+  method: "POST",
+  body: JSON.stringify({ benefitId: "quota_expansion" }),
+});
+assert(
+  benefitsExecution.benefitsExecution.decision === "swiggy_gate" &&
+    benefitsExecution.benefitsExecution.readinessScore === 48 &&
+    benefitsExecution.benefitsExecution.lane.id === "quota_expansion" &&
+    benefitsExecution.benefitsExecution.cta.id === "ask_quota" &&
+    benefitsExecution.benefitsExecution.proofLinks.includes("/api/swiggy-quota-negotiation-center"),
+  "benefits activation action quota packet is incomplete",
+);
+assert(
+  benefitsExecution.benefitsExecution.handoffDraft.to === "builders@swiggy.in" &&
+    benefitsExecution.benefitsExecution.assertions.some((assertion) => assertion.includes("never sends email")),
+  "benefits activation action safety handoff is missing",
+);
+const unknownBenefitsExecution = await request("/api/swiggy-benefits-activation-center/activate", {
+  method: "POST",
+  body: JSON.stringify({ benefitId: "unknown_lane" }),
+});
+assert(
+  unknownBenefitsExecution.benefitsExecution.decision === "unknown_benefit" &&
+    unknownBenefitsExecution.benefitsExecution.readinessScore === 0 &&
+    unknownBenefitsExecution.benefitsExecution.lane === null &&
+    unknownBenefitsExecution.benefitsExecution.nextAction.includes("Choose a valid Swiggy Builders benefit"),
+  "benefits activation unknown-benefit guard is missing",
 );
 
 const showcaseSubmission = await request("/api/swiggy-showcase-submission-center");

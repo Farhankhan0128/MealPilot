@@ -68,6 +68,7 @@ import type {
   SwiggyAuthStatusReport,
   SwiggyAuthLifecycleCenterReport,
   SwiggyBenefitsActivationCenter,
+  SwiggyBenefitsActivationExecution,
   EnterprisePlatformCenterReport,
   SwiggyBuildersHomepageExperienceCenter,
   SwiggyBuildersLaunchStoryCenterReport,
@@ -519,6 +520,16 @@ export function fetchSwiggyConversionCenter() {
 export function fetchSwiggyBenefitsActivationCenter() {
   return requestJson<{ benefitsActivation: SwiggyBenefitsActivationCenter }>(
     "/api/swiggy-benefits-activation-center",
+  );
+}
+
+export function activateSwiggyBenefit(benefitId: string) {
+  return requestJson<{ benefitsExecution: SwiggyBenefitsActivationExecution }>(
+    "/api/swiggy-benefits-activation-center/activate",
+    {
+      method: "POST",
+      body: JSON.stringify({ benefitId }),
+    },
   );
 }
 
