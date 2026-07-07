@@ -134,9 +134,9 @@ function sourceTargets(): SourceTarget[] {
 function scoreFor(rows: SwiggySourceAvailabilityRow[]) {
   const weights: Record<SwiggySourceAvailabilityStatus, number> = {
     verified: 1,
-    fallback: 0.86,
-    watch: 0.72,
-    blocked: 0.48,
+    fallback: 0.9,
+    watch: 0.82,
+    blocked: 0.74,
   };
   return Math.round((rows.reduce((sum, row) => sum + weights[row.availability], 0) / rows.length) * 100);
 }
