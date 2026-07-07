@@ -149,6 +149,7 @@ import {
   fetchSwiggyDocsCoverage,
   fetchSwiggyDocsTwinExplorer,
   fetchSwiggyLlmsManifestVerifier,
+  rehearseSwiggyLlmsManifest,
   fetchSwiggyToolParityAuditor,
   fetchSwiggyDeepSiteMap,
   fetchSwiggyCancellationCareCenter,
@@ -338,6 +339,8 @@ import type {
   SwiggyPartnerSupportPacket,
   SwiggyHandshakeDoctor,
   SwiggyShowcaseSubmissionComposition,
+  SwiggyLlmsManifestRehearsal,
+  SwiggyLlmsManifestRehearsalMode,
   SwiggyLlmsManifestVerifier,
   SwiggySubmissionTimelineCheckpoint,
   SwiggyInnovationRadarReport,
@@ -3098,6 +3101,19 @@ function LaunchCenterPanel({
   });
   const [docsTwinRehearsal, setDocsTwinRehearsal] = useState<SwiggyDocsTwinRehearsal | null>(null);
   const [docsTwinRehearsalStatus, setDocsTwinRehearsalStatus] = useState<"idle" | "loading" | "error">("idle");
+  const [llmsManifestRehearsalForm, setLlmsManifestRehearsalForm] = useState<{
+    mode: SwiggyLlmsManifestRehearsalMode;
+    includeFullManifest: boolean;
+    enforceToolParity: boolean;
+    includeDriftGates: boolean;
+  }>({
+    mode: "tool_parity",
+    includeFullManifest: true,
+    enforceToolParity: true,
+    includeDriftGates: true,
+  });
+  const [llmsManifestRehearsal, setLlmsManifestRehearsal] = useState<SwiggyLlmsManifestRehearsal | null>(null);
+  const [llmsManifestRehearsalStatus, setLlmsManifestRehearsalStatus] = useState<"idle" | "loading" | "error">("idle");
   const [showcaseForm, setShowcaseForm] = useState({
     demoUrl: "https://youtu.be/mealpilot-swiggy-demo",
     githubUrl: "https://github.com/Farhankhan0128/MealPilot",
@@ -3333,6 +3349,18 @@ function LaunchCenterPanel({
       setDocsTwinRehearsalStatus("idle");
     } catch {
       setDocsTwinRehearsalStatus("error");
+    }
+  }
+
+  async function runLlmsManifestRehearsal(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setLlmsManifestRehearsalStatus("loading");
+    try {
+      const response = await rehearseSwiggyLlmsManifest(llmsManifestRehearsalForm);
+      setLlmsManifestRehearsal(response.llmsManifestRehearsal);
+      setLlmsManifestRehearsalStatus("idle");
+    } catch {
+      setLlmsManifestRehearsalStatus("error");
     }
   }
 
@@ -7938,6 +7966,88 @@ function LaunchCenterPanel({
               <strong>{llmsManifest?.fetch.statusCode ?? "..."}</strong>
               <span>HTTP</span>
             </div>
+          </div>
+          <form className="llms-manifest-rehearsal" onSubmit={runLlmsManifestRehearsal}>
+            <label htmlFor="llms-mode">Mode</label>
+            <select
+              id="llms-mode"
+              value={llmsManifestRehearsalForm.mode}
+              onChange={(event) =>
+                setLlmsManifestRehearsalForm((current) => ({
+                  ...current,
+                  mode: event.target.value as SwiggyLlmsManifestRehearsalMode,
+                }))
+              }
+            >
+              <option value="tool_parity">Tool parity</option>
+              <option value="live_fetch">Live fetch</option>
+              <option value="coverage_fallback">Coverage fallback</option>
+            </select>
+            <div className="llms-manifest-toggle-grid">
+              <label htmlFor="llms-full-manifest">
+                <input
+                  id="llms-full-manifest"
+                  type="checkbox"
+                  checked={llmsManifestRehearsalForm.includeFullManifest}
+                  onChange={(event) =>
+                    setLlmsManifestRehearsalForm((current) => ({ ...current, includeFullManifest: event.target.checked }))
+                  }
+                />
+                llms-full
+              </label>
+              <label htmlFor="llms-tool-parity">
+                <input
+                  id="llms-tool-parity"
+                  type="checkbox"
+                  checked={llmsManifestRehearsalForm.enforceToolParity}
+                  onChange={(event) =>
+                    setLlmsManifestRehearsalForm((current) => ({ ...current, enforceToolParity: event.target.checked }))
+                  }
+                />
+                Tool parity
+              </label>
+              <label htmlFor="llms-drift-gates">
+                <input
+                  id="llms-drift-gates"
+                  type="checkbox"
+                  checked={llmsManifestRehearsalForm.includeDriftGates}
+                  onChange={(event) =>
+                    setLlmsManifestRehearsalForm((current) => ({ ...current, includeDriftGates: event.target.checked }))
+                  }
+                />
+                Drift gates
+              </label>
+            </div>
+            <button type="submit" disabled={llmsManifestRehearsalStatus === "loading"} aria-label="Rehearse Swiggy llms manifest">
+              {llmsManifestRehearsalStatus === "loading" ? <Loader2 aria-hidden="true" /> : <BookOpen aria-hidden="true" />}
+              Rehearse
+            </button>
+            {llmsManifestRehearsalStatus === "error" ? <small role="status">llms manifest rehearsal unavailable.</small> : null}
+          </form>
+          <div
+            className="llms-manifest-rehearsal-result"
+            data-status={
+              llmsManifestRehearsal?.decision === "ready_manifest_packet"
+                ? "healthy"
+                : llmsManifestRehearsal?.decision === "manual_drift_gate"
+                  ? "watch"
+                  : "blocked"
+            }
+          >
+            <div>
+              <span>Manifest</span>
+              <strong>
+                {llmsManifestRehearsal
+                  ? `${llmsManifestRehearsal.decision.replace(/_/g, " ")} / ${llmsManifestRehearsal.readinessScore}`
+                  : "Awaiting rehearsal"}
+              </strong>
+            </div>
+            <p>
+              {llmsManifestRehearsal
+                ? `${llmsManifestRehearsal.mode.replace(/_/g, " ")} / ${llmsManifestRehearsal.selectedSections.length} sections / ${llmsManifestRehearsal.sampleLinks.length} links`
+                : "Prepare manifest source evidence, llms-full disclosure, and Food, Instamart, and Dineout tool parity gates."}
+            </p>
+            {llmsManifestRehearsal ? <small>{llmsManifestRehearsal.nextAction}</small> : null}
           </div>
           <ul className="compact-status-list">
             {(llmsManifest?.serverToolCounts ?? []).map((server) => (

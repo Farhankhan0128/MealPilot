@@ -2708,7 +2708,8 @@ select:focus {
 .reviewer-packet-composer,
 .visual-qa-rehearsal,
 .docs-coverage-drill,
-.docs-twin-rehearsal {
+.docs-twin-rehearsal,
+.llms-manifest-rehearsal {
   display: grid;
   gap: 8px;
   border-radius: 8px;
@@ -2726,7 +2727,8 @@ select:focus {
 .reviewer-packet-composer label,
 .visual-qa-rehearsal label,
 .docs-coverage-drill label,
-.docs-twin-rehearsal label {
+.docs-twin-rehearsal label,
+.llms-manifest-rehearsal label {
   color: var(--ink-muted);
   font-size: 0.75rem;
   font-weight: 900;
@@ -2755,7 +2757,9 @@ select:focus {
 .docs-coverage-drill select,
 .docs-coverage-drill input,
 .docs-twin-rehearsal select,
-.docs-twin-rehearsal input {
+.docs-twin-rehearsal input,
+.llms-manifest-rehearsal select,
+.llms-manifest-rehearsal input {
   width: 100%;
   min-width: 0;
   border: 1px solid var(--line);
@@ -2794,7 +2798,8 @@ select:focus {
 .reviewer-packet-toggle-grid label,
 .visual-qa-toggle-grid label,
 .docs-coverage-toggle-grid label,
-.docs-twin-toggle-grid label {
+.docs-twin-toggle-grid label,
+.llms-manifest-toggle-grid label {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -2807,7 +2812,8 @@ select:focus {
 .reviewer-packet-toggle-grid,
 .visual-qa-toggle-grid,
 .docs-coverage-toggle-grid,
-.docs-twin-toggle-grid {
+.docs-twin-toggle-grid,
+.llms-manifest-toggle-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
@@ -2826,7 +2832,8 @@ select:focus {
 .reviewer-packet-toggle-grid input,
 .visual-qa-toggle-grid input,
 .docs-coverage-toggle-grid input,
-.docs-twin-toggle-grid input {
+.docs-twin-toggle-grid input,
+.llms-manifest-toggle-grid input {
   width: 18px;
   height: 18px;
   accent-color: var(--green);
@@ -2843,7 +2850,8 @@ select:focus {
 .reviewer-packet-composer button,
 .visual-qa-rehearsal button,
 .docs-coverage-drill button,
-.docs-twin-rehearsal button {
+.docs-twin-rehearsal button,
+.llms-manifest-rehearsal button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -2867,7 +2875,8 @@ select:focus {
 .reviewer-packet-composer button:disabled,
 .visual-qa-rehearsal button:disabled,
 .docs-coverage-drill button:disabled,
-.docs-twin-rehearsal button:disabled {
+.docs-twin-rehearsal button:disabled,
+.llms-manifest-rehearsal button:disabled {
   cursor: wait;
   opacity: 0.72;
 }
@@ -2882,7 +2891,8 @@ select:focus {
 .reviewer-packet-composer svg,
 .visual-qa-rehearsal svg,
 .docs-coverage-drill svg,
-.docs-twin-rehearsal svg {
+.docs-twin-rehearsal svg,
+.llms-manifest-rehearsal svg {
   width: 17px;
   height: 17px;
 }
@@ -2897,7 +2907,8 @@ select:focus {
 .reviewer-packet-composer small,
 .visual-qa-rehearsal small,
 .docs-coverage-drill small,
-.docs-twin-rehearsal small {
+.docs-twin-rehearsal small,
+.llms-manifest-rehearsal small {
   color: var(--coral);
   font-weight: 850;
 }
@@ -2912,7 +2923,8 @@ select:focus {
 .reviewer-packet-result,
 .visual-qa-rehearsal-result,
 .docs-coverage-drill-result,
-.docs-twin-rehearsal-result {
+.docs-twin-rehearsal-result,
+.llms-manifest-rehearsal-result {
   display: grid;
   gap: 8px;
   border-radius: 8px;
@@ -2931,7 +2943,8 @@ select:focus {
 .reviewer-packet-result[data-status="healthy"],
 .visual-qa-rehearsal-result[data-status="healthy"],
 .docs-coverage-drill-result[data-status="healthy"],
-.docs-twin-rehearsal-result[data-status="healthy"] {
+.docs-twin-rehearsal-result[data-status="healthy"],
+.llms-manifest-rehearsal-result[data-status="healthy"] {
   border-left-color: var(--green);
 }
 
@@ -2945,7 +2958,8 @@ select:focus {
 .reviewer-packet-result[data-status="blocked"],
 .visual-qa-rehearsal-result[data-status="blocked"],
 .docs-coverage-drill-result[data-status="blocked"],
-.docs-twin-rehearsal-result[data-status="blocked"] {
+.docs-twin-rehearsal-result[data-status="blocked"],
+.llms-manifest-rehearsal-result[data-status="blocked"] {
   border-left-color: var(--coral);
 }
 
@@ -2958,7 +2972,8 @@ select:focus {
 .reviewer-packet-result[data-status="watch"],
 .visual-qa-rehearsal-result[data-status="watch"],
 .docs-coverage-drill-result[data-status="watch"],
-.docs-twin-rehearsal-result[data-status="watch"] {
+.docs-twin-rehearsal-result[data-status="watch"],
+.llms-manifest-rehearsal-result[data-status="watch"] {
   border-left-color: var(--gold);
 }
 
@@ -2972,7 +2987,8 @@ select:focus {
 .reviewer-packet-result > div,
 .visual-qa-rehearsal-result > div,
 .docs-coverage-drill-result > div,
-.docs-twin-rehearsal-result > div {
+.docs-twin-rehearsal-result > div,
+.llms-manifest-rehearsal-result > div {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -2989,7 +3005,8 @@ select:focus {
 .reviewer-packet-result span,
 .visual-qa-rehearsal-result span,
 .docs-coverage-drill-result span,
-.docs-twin-rehearsal-result span {
+.docs-twin-rehearsal-result span,
+.llms-manifest-rehearsal-result span {
   color: var(--ink-muted);
   font-size: 0.75rem;
   font-weight: 900;
@@ -3006,7 +3023,8 @@ select:focus {
 .reviewer-packet-result strong,
 .visual-qa-rehearsal-result strong,
 .docs-coverage-drill-result strong,
-.docs-twin-rehearsal-result strong {
+.docs-twin-rehearsal-result strong,
+.llms-manifest-rehearsal-result strong {
   color: var(--green-dark);
   font-size: 0.84rem;
   text-align: right;
@@ -3033,7 +3051,9 @@ select:focus {
 .docs-coverage-drill-result p,
 .docs-coverage-drill-result small,
 .docs-twin-rehearsal-result p,
-.docs-twin-rehearsal-result small {
+.docs-twin-rehearsal-result small,
+.llms-manifest-rehearsal-result p,
+.llms-manifest-rehearsal-result small {
   margin: 0;
   color: var(--ink-muted);
   font-size: 0.82rem;
@@ -3050,7 +3070,8 @@ select:focus {
 .reviewer-packet-result small,
 .visual-qa-rehearsal-result small,
 .docs-coverage-drill-result small,
-.docs-twin-rehearsal-result small {
+.docs-twin-rehearsal-result small,
+.llms-manifest-rehearsal-result small {
   color: var(--green-dark);
   font-weight: 850;
 }

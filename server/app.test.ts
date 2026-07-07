@@ -7,7 +7,7 @@ import { createMealPilotServer } from "./app.js";
 import { buildSwiggyBuildersPageMeshAuditor } from "./services/buildersPageMeshAuditor.js";
 import { buildSwiggyBuildersSiteParityAuditor } from "./services/buildersSiteParityAuditor.js";
 import { buildSwiggyCtaLiveAuditor } from "./services/ctaLiveAuditor.js";
-import { buildSwiggyLlmsManifestVerifier } from "./services/llmsManifestVerifier.js";
+import { buildSwiggyLlmsManifestVerifier, rehearseSwiggyLlmsManifest } from "./services/llmsManifestVerifier.js";
 import { buildSwiggyToolParityAuditor } from "./services/toolParityAuditor.js";
 import { buildSwiggyHandshakeDoctor } from "./services/swiggyHandshakeDoctor.js";
 import { createFileSessionStore } from "./store/sessionStore.js";
@@ -154,6 +154,7 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/swiggy-docs-twin-explorer/rehearse"].post.summary).toContain("Docs Twin");
     expect(openApi.body.paths["/api/swiggy-llms-manifest-verifier"].get.summary).toContain("llms.txt manifest");
     expect(openApi.body.paths["/api/swiggy-llms-manifest-verifier"].get.responses["200"].description).toContain("Instamart 13");
+    expect(openApi.body.paths["/api/swiggy-llms-manifest-verifier/rehearse"].post.summary).toContain("llms.txt manifest");
     expect(openApi.body.paths["/api/swiggy-tool-parity-auditor"].get.summary).toContain("tool parity");
     expect(openApi.body.paths["/api/swiggy-tool-parity-auditor"].get.responses["200"].description).toContain("Food 14");
     expect(openApi.body.paths["/api/swiggy-upstream-watch"].get.summary).toContain("upstream docs");
@@ -5351,6 +5352,94 @@ describe("MealPilot API", () => {
     ]);
     expect(verifier.driftSignals.some((signal) => signal.includes("Docs Coverage fallback"))).toBe(true);
     expect(verifier.assertions.some((assertion) => assertion.includes("Docs Coverage fallback"))).toBe(true);
+  });
+
+  it("rehearses Swiggy llms manifest verification with reviewer gates", async () => {
+    const ready = await rehearseSwiggyLlmsManifest({
+      mode: "tool_parity",
+      includeFullManifest: true,
+      enforceToolParity: true,
+      includeDriftGates: true,
+      fetchManifest: async () => ({
+        ok: false,
+        statusCode: 403,
+        durationMs: 7,
+      }),
+    });
+
+    expect(ready.decision).toBe("ready_manifest_packet");
+    expect(ready.expectedCoveragePages).toBe(69);
+    expect(ready.serverToolCounts.map((server) => `${server.server}:${server.tools}/${server.expectedTools}`)).toEqual([
+      "food:14/14",
+      "instamart:13/13",
+      "dineout:8/8",
+    ]);
+    expect(ready.commands.some((command) => command.command.includes("llms.txt"))).toBe(true);
+    expect(ready.assertions.some((assertion) => assertion.includes("official Swiggy llms.txt"))).toBe(true);
+
+    const gated = await rehearseSwiggyLlmsManifest({
+      mode: "coverage_fallback",
+      includeFullManifest: true,
+      enforceToolParity: true,
+      includeDriftGates: false,
+      fetchManifest: async () => ({
+        ok: true,
+        statusCode: 200,
+        durationMs: 7,
+        text: "# Swiggy Builders Club\n## Docs\n- [Developer quickstart](https://mcp.swiggy.com/builders/docs/start/developer/index.md): First call.",
+      }),
+    });
+
+    expect(gated.decision).toBe("manual_drift_gate");
+    expect(gated.missingInputs).toEqual(
+      expect.arrayContaining(["fallback disclosure gate", "llms-full storage disclosure", "source drift review"]),
+    );
+  });
+
+  it("serves executable Swiggy llms manifest rehearsals from the API", async () => {
+    const { app } = createMealPilotServer();
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => ({
+        ok: false,
+        status: 403,
+        text: async () => "",
+      })),
+    );
+
+    try {
+      const ready = await request(app)
+        .post("/api/swiggy-llms-manifest-verifier/rehearse")
+        .send({
+          mode: "tool_parity",
+          includeFullManifest: true,
+          enforceToolParity: true,
+          includeDriftGates: true,
+        })
+        .expect(200);
+
+      expect(ready.body.llmsManifestRehearsal.decision).toBe("ready_manifest_packet");
+      expect(ready.body.llmsManifestRehearsal.serverToolCounts.map((server: { server: string; tools: number }) => `${server.server}:${server.tools}`)).toEqual([
+        "food:14",
+        "instamart:13",
+        "dineout:8",
+      ]);
+
+      const gated = await request(app)
+        .post("/api/swiggy-llms-manifest-verifier/rehearse")
+        .send({
+          mode: "coverage_fallback",
+          includeFullManifest: true,
+          enforceToolParity: true,
+          includeDriftGates: false,
+        })
+        .expect(200);
+
+      expect(gated.body.llmsManifestRehearsal.decision).toBe("manual_drift_gate");
+      expect(gated.body.llmsManifestRehearsal.missingInputs).toContain("llms-full storage disclosure");
+    } finally {
+      vi.unstubAllGlobals();
+    }
   });
 
   it("audits live Swiggy reference tools against local tool contracts safely", async () => {

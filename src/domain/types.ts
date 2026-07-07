@@ -1573,6 +1573,29 @@ export interface SwiggyLlmsManifestVerifier {
   externalGates: string[];
 }
 
+export type SwiggyLlmsManifestRehearsalMode = "live_fetch" | "coverage_fallback" | "tool_parity";
+export type SwiggyLlmsManifestRehearsalDecision = "ready_manifest_packet" | "manual_drift_gate" | "blocked_manifest_source";
+
+export interface SwiggyLlmsManifestRehearsal {
+  generatedAt: string;
+  decision: SwiggyLlmsManifestRehearsalDecision;
+  readinessScore: number;
+  mode: SwiggyLlmsManifestRehearsalMode;
+  includeFullManifest: boolean;
+  enforceToolParity: boolean;
+  sourceUrl: string;
+  expectedCoveragePages: number;
+  selectedSections: SwiggyLlmsManifestSection[];
+  sampleLinks: SwiggyLlmsManifestLink[];
+  serverToolCounts: SwiggyLlmsManifestVerifier["serverToolCounts"];
+  commands: Array<{ command: string; proves: string }>;
+  driftSignals: string[];
+  missingInputs: string[];
+  telemetry: Array<{ field: string; value: string; redaction: string }>;
+  assertions: string[];
+  nextAction: string;
+}
+
 export type SwiggyDocsTwinStatus = "ready" | "documented" | "watch" | "external_gate";
 
 export interface SwiggyDocsTwinRow {

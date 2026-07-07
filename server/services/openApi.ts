@@ -1323,6 +1323,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-llms-manifest-verifier/rehearse": {
+        post: {
+          tags: ["Builder Access"],
+          summary: "Rehearse Swiggy llms.txt manifest verification for reviewer source evidence",
+          responses: {
+            "200": {
+              description:
+                "Selected manifest rehearsal mode with live/fallback disclosure, expected coverage pages, section counts, Food/Instamart/Dineout tool parity, commands, drift signals, missing gates, telemetry, and source-safety assertions",
+            },
+          },
+        },
+      },
       "/api/swiggy-tool-parity-auditor": {
         get: {
           tags: ["Builder Access"],

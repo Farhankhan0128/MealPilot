@@ -98,7 +98,7 @@ import { buildSwiggyDiscoveryFreshness, resolveSwiggyDiscoveryFreshness } from "
 import { buildSwiggyDineoutPrecisionCenter } from "./services/dineoutPrecisionCenter.js";
 import { buildSwiggyDocsCoverage, drillSwiggyDocsCoverage } from "./services/docsCoverage.js";
 import { buildSwiggyDocsTwinExplorer, rehearseSwiggyDocsTwinRetrieval } from "./services/docsTwinExplorer.js";
-import { buildSwiggyLlmsManifestVerifier } from "./services/llmsManifestVerifier.js";
+import { buildSwiggyLlmsManifestVerifier, rehearseSwiggyLlmsManifest } from "./services/llmsManifestVerifier.js";
 import { buildEnterpriseDelegatedAuthCenter } from "./services/enterpriseDelegatedAuth.js";
 import { buildEnterprisePlatformCenter } from "./services/enterprisePlatformCenter.js";
 import {
@@ -355,6 +355,13 @@ const docsTwinRehearsalSchema = z.object({
   section: z.enum(["start", "build", "operate", "reference", "blog"]),
   includeRenderedPages: z.boolean(),
   includeProofLinks: z.boolean(),
+});
+
+const llmsManifestRehearsalSchema = z.object({
+  mode: z.enum(["live_fetch", "coverage_fallback", "tool_parity"]),
+  includeFullManifest: z.boolean(),
+  enforceToolParity: z.boolean(),
+  includeDriftGates: z.boolean(),
 });
 
 const offerDecisionSchema = z.object({
@@ -1653,6 +1660,14 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
     "/api/swiggy-llms-manifest-verifier",
     asyncRoute(async (_req, res) => {
       res.json({ llmsManifest: await buildSwiggyLlmsManifestVerifier() });
+    }),
+  );
+
+  app.post(
+    "/api/swiggy-llms-manifest-verifier/rehearse",
+    asyncRoute(async (req, res) => {
+      const body = llmsManifestRehearsalSchema.parse(req.body);
+      res.json({ llmsManifestRehearsal: await rehearseSwiggyLlmsManifest(body) });
     }),
   );
 

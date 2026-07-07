@@ -103,7 +103,8 @@ assert(
 );
 assert(
   openApi.paths["/api/swiggy-llms-manifest-verifier"]?.get?.summary?.includes("llms.txt manifest") &&
-    openApi.paths["/api/swiggy-llms-manifest-verifier"]?.get?.responses?.["200"]?.description?.includes("Food 14"),
+    openApi.paths["/api/swiggy-llms-manifest-verifier"]?.get?.responses?.["200"]?.description?.includes("Food 14") &&
+    openApi.paths["/api/swiggy-llms-manifest-verifier/rehearse"]?.post?.summary?.includes("llms.txt manifest"),
   "OpenAPI llms manifest verifier contract is missing",
 );
 assert(
@@ -4002,6 +4003,38 @@ assert(
       (signal) => signal.includes("Live llms.txt page count matches") || signal.includes("Docs Coverage fallback"),
     ),
   "Swiggy llms manifest safety assertions or drift signals are missing",
+);
+
+const readyLlmsManifestRehearsal = await request("/api/swiggy-llms-manifest-verifier/rehearse", {
+  method: "POST",
+  body: JSON.stringify({
+    mode: "tool_parity",
+    includeFullManifest: true,
+    enforceToolParity: true,
+    includeDriftGates: true,
+  }),
+});
+assert(
+  readyLlmsManifestRehearsal.llmsManifestRehearsal.decision === "ready_manifest_packet" &&
+    readyLlmsManifestRehearsal.llmsManifestRehearsal.serverToolCounts
+      .map((server) => `${server.server}:${server.tools}/${server.expectedTools}`)
+      .join(",") === "food:14/14,instamart:13/13,dineout:8/8" &&
+    readyLlmsManifestRehearsal.llmsManifestRehearsal.commands.some((command) => command.command.includes("llms.txt")),
+  "Swiggy llms manifest ready rehearsal is incomplete",
+);
+const gatedLlmsManifestRehearsal = await request("/api/swiggy-llms-manifest-verifier/rehearse", {
+  method: "POST",
+  body: JSON.stringify({
+    mode: "coverage_fallback",
+    includeFullManifest: true,
+    enforceToolParity: true,
+    includeDriftGates: false,
+  }),
+});
+assert(
+  gatedLlmsManifestRehearsal.llmsManifestRehearsal.decision === "manual_drift_gate" &&
+    gatedLlmsManifestRehearsal.llmsManifestRehearsal.missingInputs.includes("llms-full storage disclosure"),
+  "Swiggy llms manifest gated rehearsal is incomplete",
 );
 
 const toolParityAuditor = await request("/api/swiggy-tool-parity-auditor");

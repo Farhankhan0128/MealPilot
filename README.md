@@ -121,6 +121,7 @@ Planned MCP servers:
 - Swiggy Docs Coverage audit that maps all 69 `llms.txt`-linked pages across Start, Build, Operate, Reference, and Blog to MealPilot evidence and external gates.
 - Swiggy Docs Twin Explorer that pairs every official markdown twin with its rendered page URL, retrieval command, section group, proof route, and drift gate.
 - Swiggy llms Manifest Verifier at `/api/swiggy-llms-manifest-verifier` that fetches the live official manifest, parses 69 markdown links, verifies rendered twins, enforces Swiggy-only origins, checks Food 14, Instamart 13, Dineout 8 reference-tool counts, and discloses Docs Coverage fallback when live `llms.txt` is blocked.
+- Swiggy llms Manifest Rehearsal at `/api/swiggy-llms-manifest-verifier/rehearse` that turns live fetch, Docs Coverage fallback, and tool-parity modes into reviewer-ready decisions, commands, drift gates, telemetry, and missing input lists.
 - Swiggy Tool Parity Auditor at `/api/swiggy-tool-parity-auditor` that compares live official reference tools against MealPilot's local contracts, fixtures, route classes, confirmation gates, retry policies, and 35/35 coverage, with Docs Coverage fallback when live `llms.txt` is unavailable.
 - Swiggy Upstream Watch that tracks `llms.txt`, `llms-full.txt`, the changelog, v1.1/v1.2/v2 roadmap, signed manifests, and update actions for future Swiggy MCP changes.
 - Swiggy Source Intelligence that reconciles Builders website pages, CTAs, `llms` docs, markdown twins, reference tool counts, drift signals, and the next build queue against MealPilot evidence.
@@ -329,6 +330,7 @@ POST /api/swiggy-docs-coverage/drill
 GET  /api/swiggy-docs-twin-explorer
 POST /api/swiggy-docs-twin-explorer/rehearse
 GET  /api/swiggy-llms-manifest-verifier
+POST /api/swiggy-llms-manifest-verifier/rehearse
 GET  /api/swiggy-tool-parity-auditor
 GET  /api/swiggy-upstream-watch
 GET  /api/swiggy-source-intelligence
@@ -498,6 +500,8 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 
 `GET /api/swiggy-docs-twin-explorer` is the markdown-twin workbench: every `llms.txt` page is paired with its `.md` source, rendered URL, retrieval command, section group, MealPilot proof route, assertion, and drift gate.
 
+`GET /api/swiggy-llms-manifest-verifier` and `POST /api/swiggy-llms-manifest-verifier/rehearse` are the manifest source layer: the verifier fetches only Swiggy's official `llms.txt`, parses markdown/rendered twins, compares against 69-page Docs Coverage, enforces Swiggy-only origins, and checks Food 14, Instamart 13, and Dineout 8 reference parity. The rehearsal endpoint accepts live-fetch, coverage-fallback, and tool-parity modes plus llms-full, parity, and drift-gate toggles, then returns a ready/manual/blocked decision, commands, sample links, telemetry, assertions, and missing inputs for reviewer packets.
+
 `GET /api/swiggy-source-intelligence` is the source reconciliation center: Builders website pages, homepage/developer/enterprise/docs CTAs, `llms.txt`, `llms-full.txt`, markdown twins, 35-tool reference counts, drift signals, and the build queue are compared against MealPilot evidence so reviewers can see what is implemented, what is watched, and what is gated by Swiggy credentials.
 
 `GET /api/swiggy-builders-site-parity` is the live homepage parity checker: it fetches only the official Swiggy Builders homepage, extracts anchors, metadata, `llms` alternates, module signals, CTA/source/footer/legal links, and safe-origin signals, then matches them back to Website Atlas and CTA evidence.
@@ -631,6 +635,8 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 `GET /api/swiggy-docs-coverage` and `POST /api/swiggy-docs-coverage/drill` are the 69-page Swiggy source coverage layer: every `llms.txt` page across Start, Build, Operate, Reference, and Blog is mapped to rendered and markdown URLs, MealPilot evidence, and external gates. The Launch Center drill accepts docs section, focus, rendered-twin inclusion, and external-gate disclosure, then returns selected pages, evidence routes, retrieval commands, readiness decision, missing source gates, telemetry, and credential/drift assertions.
 
 `GET /api/swiggy-docs-twin-explorer` and `POST /api/swiggy-docs-twin-explorer/rehearse` pair every official markdown twin with its rendered Swiggy page. The Launch Center rehearsal accepts retrieval lane, docs section, rendered-page inclusion, and proof-link inclusion, then returns source pairs, commands, readiness decision, missing drift gates, telemetry, and source-safety assertions.
+
+`GET /api/swiggy-llms-manifest-verifier` and `POST /api/swiggy-llms-manifest-verifier/rehearse` verify the official coding-agent manifest and make it executable from Launch Center. The verifier parses live or fallback manifest links, rendered twins, safe origins, and Food 14 / Instamart 13 / Dineout 8 reference counts. The rehearsal accepts manifest mode, llms-full, tool parity, and drift-gate inputs, then returns reviewer commands, telemetry, assertions, a readiness decision, and manual gates when source evidence is incomplete.
 
 `GET /api/coding-agent-governance` is the repo-native Swiggy coding-agent proof: it reads the actual root `AGENTS.md`, verifies official docs source signals, preserves the Food 14 / Instamart 13 / Dineout 8 smoke split, lists guardrails, and fails production verification when future coding-agent rules drift.
 

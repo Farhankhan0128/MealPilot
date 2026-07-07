@@ -279,6 +279,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/swiggy-docs-twin-explorer`
 - `POST /api/swiggy-docs-twin-explorer/rehearse`
 - `GET /api/swiggy-llms-manifest-verifier`
+- `POST /api/swiggy-llms-manifest-verifier/rehearse`
 - `GET /api/swiggy-tool-parity-auditor`
 - `GET /api/swiggy-upstream-watch`
 - `GET /api/swiggy-source-intelligence`
@@ -436,7 +437,7 @@ Production should use an HTTPS redirect URI with exact-match allowlisting.
 
 `/api/swiggy-credential-handoff-center` shows the owner-assigned credential handoff path: localhost proof, DCR, OAuth PKCE, exact redirect URI, vault storage, Swiggy staging credentials, seeded smoke, 35-tool certification, 48-hour soak, and production promotion.
 
-`/api/swiggy-llms-manifest-verifier` fetches only the official Swiggy `llms.txt` URL, parses markdown links, derives rendered twins, compares live page count against Docs Coverage, verifies Swiggy-only origins, and checks Food 14, Instamart 13, and Dineout 8 reference-tool counts. Tests inject fixture text so CI does not depend on live network for parser correctness.
+`/api/swiggy-llms-manifest-verifier` fetches only the official Swiggy `llms.txt` URL, parses markdown links, derives rendered twins, compares live page count against Docs Coverage, verifies Swiggy-only origins, and checks Food 14, Instamart 13, and Dineout 8 reference-tool counts. `/api/swiggy-llms-manifest-verifier/rehearse` powers the Launch Center manifest rehearsal with live-fetch, coverage-fallback, and tool-parity modes plus llms-full, parity, and drift-gate toggles, returning commands, telemetry, assertions, readiness decisions, and missing source gates. Tests inject fixture text or stub the manifest fetch so CI does not depend on live network for parser correctness.
 
 `/api/swiggy-tool-parity-auditor` reuses that official manifest feed to compare each live reference tool against the local Tool Contract Matrix. It reports matched/missing/orphan contracts, server-by-server 14/13/8 parity, commercial/support route classes, confirmation gates, retry posture, fixtures, and drift signals. Fixture tests inject manifest text; production smoke uses the live Swiggy source.
 
@@ -477,6 +478,8 @@ Production should use an HTTPS redirect URI with exact-match allowlisting.
 `/api/swiggy-docs-coverage` shows the 69-page Swiggy `llms.txt` source map across Start, Build, Operate, Reference, and Blog. `/api/swiggy-docs-coverage/drill` powers the Launch Center source drill with docs section, focus, rendered-twin, and external-gate inputs, returning selected pages, evidence links, retrieval commands, readiness decision, missing source gates, telemetry, and credential/drift assertions that stay aligned with Docs Twin Explorer and llms Manifest Verifier.
 
 `/api/swiggy-docs-twin-explorer` pairs every official markdown twin with its rendered Swiggy page and proof route. `/api/swiggy-docs-twin-explorer/rehearse` powers the Launch Center retrieval rehearsal with lane, section, rendered-page, and proof-link inputs, returning source pairs, commands, readiness decision, missing drift gates, telemetry, and source-safety assertions.
+
+`/api/swiggy-llms-manifest-verifier/rehearse` makes the llms Manifest card executable: operators can rehearse the live manifest fetch, a documented Docs Coverage fallback, or strict Food/Instamart/Dineout tool parity before attaching reviewer evidence. Ready rehearsals return manifest commands and source assertions; incomplete runs return manual drift gates such as fallback disclosure or llms-full storage disclosure.
 
 `/api/swiggy-builders-site-parity` fetches only the official Swiggy Builders homepage, extracts anchors, metadata, `llms` alternates, module signals, CTA/source/footer/legal links, and safe-origin signals, then matches them back to Website Atlas and CTA evidence. Fixture tests avoid live network dependency; production smoke uses the live page.
 
@@ -575,6 +578,7 @@ The test suite checks that:
 - State Orchestrator maps multi-turn cart truth, Food restaurant switches, Instamart address switches, Dineout slot refreshes, stale-cart recovery, and voice/chat/widget response differences to explicit executable guards.
 - Swiggy Docs Coverage maps all 69 `llms.txt` pages across Start, Build, Operate, Reference, and Blog to app evidence and external gates.
 - Swiggy Docs Twin Explorer pairs all 69 official markdown twins with rendered URLs, retrieval lanes, proof links, section groups, and drift gates.
+- Swiggy llms Manifest Rehearsal turns live fetch, coverage fallback, and strict tool parity checks into Launch Center commands, telemetry, source assertions, readiness decisions, and explicit manual drift gates.
 - Swiggy Upstream Watch maps Swiggy's changelog, `llms.txt`, `llms-full.txt`, v1.0 limitations, v1.1/v1.2/v2 roadmap, signed manifests, and action queues to MealPilot proof surfaces.
 - Swiggy Source Intelligence reconciles Builders website pages, CTAs, `llms` docs, markdown twins, reference tool counts, drift signals, and build-queue items into one Launch Center surface.
 - Swiggy Deep Site Map consolidates every Builders page, rendered module signal, CTA, header link, docs subnav item, footer resource, proof link, source-reconciliation section, assertion, and external gate into one Launch Center audit surface.

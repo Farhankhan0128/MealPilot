@@ -138,6 +138,8 @@ import type {
   SwiggyPartnerSuccessHandoffPacket,
   SwiggyPartnerSupportPacket,
   SwiggyInteractionQaRehearsal,
+  SwiggyLlmsManifestRehearsal,
+  SwiggyLlmsManifestRehearsalMode,
   SwiggyLlmsManifestVerifier,
   SwiggyInnovationRadarReport,
   SwiggyJourneyCompilerReport,
@@ -970,6 +972,21 @@ export function rehearseSwiggyDocsTwinRetrieval(input: {
 
 export function fetchSwiggyLlmsManifestVerifier() {
   return requestJson<{ llmsManifest: SwiggyLlmsManifestVerifier }>("/api/swiggy-llms-manifest-verifier");
+}
+
+export function rehearseSwiggyLlmsManifest(input: {
+  mode: SwiggyLlmsManifestRehearsalMode;
+  includeFullManifest: boolean;
+  enforceToolParity: boolean;
+  includeDriftGates: boolean;
+}) {
+  return requestJson<{ llmsManifestRehearsal: SwiggyLlmsManifestRehearsal }>(
+    "/api/swiggy-llms-manifest-verifier/rehearse",
+    {
+      method: "POST",
+      body: JSON.stringify(input),
+    },
+  );
 }
 
 export function fetchSwiggyToolParityAuditor() {

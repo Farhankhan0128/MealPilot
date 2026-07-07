@@ -1,5 +1,7 @@
 import type {
   SwiggyLlmsManifestLink,
+  SwiggyLlmsManifestRehearsal,
+  SwiggyLlmsManifestRehearsalMode,
   SwiggyLlmsManifestSection,
   SwiggyLlmsManifestVerifier,
   SwiggyLlmsManifestStatus,
@@ -249,5 +251,77 @@ export async function buildSwiggyLlmsManifestVerifier(
       "llms-full.txt content volume is intentionally linked but not fully stored in MealPilot artifacts.",
       "New reference tools require Swiggy staging credentials before live behavior can be certified.",
     ],
+  };
+}
+
+export async function rehearseSwiggyLlmsManifest(input: {
+  mode: SwiggyLlmsManifestRehearsalMode;
+  includeFullManifest: boolean;
+  enforceToolParity: boolean;
+  includeDriftGates: boolean;
+  fetchManifest?: ManifestFetchFn;
+}): Promise<SwiggyLlmsManifestRehearsal> {
+  const verifier = await buildSwiggyLlmsManifestVerifier(input.fetchManifest);
+  const selectedSections =
+    input.mode === "tool_parity"
+      ? verifier.sections.filter((section) => section.referenceTools > 0)
+      : verifier.sections;
+  const missingInputs: string[] = [];
+
+  if (input.mode === "live_fetch" && !verifier.fetch.ok) missingInputs.push("live llms.txt fetch");
+  if (input.mode === "coverage_fallback" && verifier.fetch.ok && !input.includeDriftGates) {
+    missingInputs.push("fallback disclosure gate");
+  }
+  if (input.includeFullManifest && !input.includeDriftGates) missingInputs.push("llms-full storage disclosure");
+  if (input.enforceToolParity && verifier.serverToolCounts.some((count) => count.status !== "covered")) {
+    missingInputs.push("Food/Instamart/Dineout tool parity");
+  }
+  if (!input.includeDriftGates && verifier.status !== "covered") missingInputs.push("source drift review");
+
+  const decision: SwiggyLlmsManifestRehearsal["decision"] =
+    verifier.status === "blocked" && input.mode === "live_fetch"
+      ? "blocked_manifest_source"
+      : missingInputs.length > 0
+        ? "manual_drift_gate"
+        : "ready_manifest_packet";
+
+  return {
+    generatedAt: new Date().toISOString(),
+    decision,
+    readinessScore: verifier.score,
+    mode: input.mode,
+    includeFullManifest: input.includeFullManifest,
+    enforceToolParity: input.enforceToolParity,
+    sourceUrl: verifier.sourceUrl,
+    expectedCoveragePages: verifier.totals.expectedCoveragePages,
+    selectedSections,
+    sampleLinks: verifier.sampleLinks,
+    serverToolCounts: verifier.serverToolCounts,
+    commands: [
+      { command: "curl -fsS https://mcp.swiggy.com/builders/llms.txt", proves: "Official Swiggy coding-agent manifest is reachable." },
+      { command: "curl -fsS http://localhost:8787/api/swiggy-llms-manifest-verifier", proves: "MealPilot parses links, rendered twins, reference tools, and drift signals." },
+      { command: "npm run verify:production", proves: "Docs Coverage, Docs Twin Explorer, Tool Lab, and manifest verifier stay aligned." },
+    ],
+    driftSignals: verifier.driftSignals,
+    missingInputs,
+    telemetry: [
+      { field: "mode", value: input.mode, redaction: "safe manifest rehearsal mode" },
+      { field: "manifest_status", value: verifier.status, redaction: "safe status enum" },
+      { field: "live_links", value: String(verifier.totals.liveLinks), redaction: "aggregate count only" },
+      { field: "reference_tools", value: String(verifier.totals.referenceTools), redaction: "aggregate count only" },
+      { field: "unsafe_links", value: String(verifier.totals.unsafeLinks), redaction: "aggregate count only" },
+    ],
+    assertions: [
+      "The rehearsal only references the official Swiggy llms.txt and llms-full.txt URLs; no user-supplied source URL is accepted.",
+      "Coverage fallback is disclosed whenever the live manifest is unavailable or intentionally used.",
+      "Tool parity remains Food 14, Instamart 13, and Dineout 8 until Swiggy publishes a new contract.",
+      "llms-full is linked for reviewer retrieval but not stored as a large local artifact.",
+    ],
+    nextAction:
+      decision === "ready_manifest_packet"
+        ? "Run the manifest verifier and production smoke, then attach drift signals to the reviewer packet."
+        : decision === "manual_drift_gate"
+          ? `Resolve ${missingInputs.join(", ")} before presenting the manifest source packet.`
+          : "Live manifest source is blocked; disclose Docs Coverage fallback and retry the official Swiggy URL before submission.",
   };
 }
