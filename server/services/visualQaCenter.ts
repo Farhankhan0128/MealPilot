@@ -202,6 +202,17 @@ const targetGroups = [
         "artifacts/visual-qa/module-intelligence-card.png",
       ),
       target(
+        "capability_traceability_card",
+        "Capability Traceability card",
+        "/",
+        ".capability-traceability-card",
+        "desktop",
+        1280,
+        900,
+        "Capability Traceability shows official pages, CTAs, tools, lifecycle gates, owner readiness, proof links, and source-to-product matrix actions.",
+        "artifacts/visual-qa/capability-traceability-card.png",
+      ),
+      target(
         "journey_gates_card",
         "Journey Gates card",
         "/",

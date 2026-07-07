@@ -1845,7 +1845,7 @@ describe("MealPilot API", () => {
     expect(packet.totals.formFields).toBeGreaterThanOrEqual(10);
     expect(packet.totals.requiredAttachments).toBeGreaterThanOrEqual(10);
     expect(packet.totals.launchArtifacts).toBeGreaterThanOrEqual(50);
-    expect(packet.totals.visualTargets).toBe(65);
+    expect(packet.totals.visualTargets).toBe(66);
     expect(packet.files.map((file: { id: string }) => file.id)).toEqual(
       expect.arrayContaining(["packet_json", "packet_markdown", "visual_report", "production_summary"]),
     );
@@ -1857,7 +1857,7 @@ describe("MealPilot API", () => {
     ).toBe(true);
     expect(
       packet.commands.some(
-        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("65"),
+        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("66"),
       ),
     ).toBe(true);
     expect(packet.copyBlocks.formFields).toContain("Redirect URI(s)");
@@ -4442,8 +4442,8 @@ describe("MealPilot API", () => {
     const visualQa = response.body.visualQa;
 
     expect(visualQa.score).toBe(100);
-    expect(visualQa.totalTargets).toBe(65);
-    expect(visualQa.readyTargets).toBe(65);
+    expect(visualQa.totalTargets).toBe(66);
+    expect(visualQa.readyTargets).toBe(66);
     expect(visualQa.totalRules).toBe(7);
     expect(visualQa.readyRules).toBe(7);
     expect(visualQa.totalCommands).toBe(5);
@@ -4497,6 +4497,16 @@ describe("MealPilot API", () => {
           (target) =>
             target.id === "module_intelligence_card" &&
             target.selector === ".module-intelligence-card" &&
+            target.viewport === "desktop",
+        ),
+      ),
+    ).toBe(true);
+    expect(
+      visualQa.targetGroups.some((group: { targets: Array<{ id: string; selector: string; viewport: string }> }) =>
+        group.targets.some(
+          (target) =>
+            target.id === "capability_traceability_card" &&
+            target.selector === ".capability-traceability-card" &&
             target.viewport === "desktop",
         ),
       ),

@@ -3750,8 +3750,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 65, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 65, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 66, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 66, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -4013,6 +4013,14 @@ assert(
     group.targets.some((target) => target.id === "module_intelligence_card" && target.selector === ".module-intelligence-card"),
   ),
   "visual QA Module Intelligence target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some(
+      (target) => target.id === "capability_traceability_card" && target.selector === ".capability-traceability-card",
+    ),
+  ),
+  "visual QA Capability Traceability target is missing",
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
@@ -8040,7 +8048,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 65, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 66, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -8054,7 +8062,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("65")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("66")),
   "builder packet visual capture command is stale",
 );
 assert(

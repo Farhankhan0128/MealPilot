@@ -914,6 +914,62 @@ export interface SwiggyBuildersModuleIntelligenceCenter {
   externalGates: string[];
 }
 
+export type SwiggyCapabilityTraceabilityOwner = "MealPilot" | "Operator" | "Swiggy" | "Joint";
+export type SwiggyCapabilityTraceabilityKind =
+  | "official_page"
+  | "website_module"
+  | "official_cta"
+  | "mcp_server"
+  | "lifecycle_gate";
+export type SwiggyCapabilityTraceabilityStatus = "ready" | "watch" | "operator_gate" | "swiggy_gate";
+
+export interface SwiggyCapabilityTraceabilityRow {
+  id: string;
+  kind: SwiggyCapabilityTraceabilityKind;
+  label: string;
+  officialSource: string;
+  officialSignal: string;
+  mealPilotSurface: string;
+  proofLinks: string[];
+  owner: SwiggyCapabilityTraceabilityOwner;
+  status: SwiggyCapabilityTraceabilityStatus;
+  routeOptimization: string;
+  nextAction: string;
+}
+
+export interface SwiggyCapabilityTraceabilityGroup {
+  id: string;
+  label: string;
+  rows: number;
+  ready: number;
+}
+
+export interface SwiggyCapabilityTraceabilityMatrix {
+  generatedAt: string;
+  score: number;
+  officialSource: string;
+  officialSources: string[];
+  totals: {
+    rows: number;
+    officialPages: number;
+    websiteModules: number;
+    officialCtas: number;
+    mcpServers: number;
+    officialTools: number;
+    lifecycleGates: number;
+    ready: number;
+    watch: number;
+    operatorGates: number;
+    swiggyGates: number;
+  };
+  groups: SwiggyCapabilityTraceabilityGroup[];
+  rows: SwiggyCapabilityTraceabilityRow[];
+  routeOptimizations: string[];
+  commands: Array<{ command: string; proves: string; expectedSignal: string }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type SwiggyBuildersJourneyGateStatus = "ready" | "watch" | "operator_gate" | "swiggy_gate";
 export type SwiggyBuildersJourneyGateOwner = "MealPilot" | "Operator" | "Swiggy" | "Joint";
 

@@ -132,6 +132,7 @@ import {
   fetchSwiggyBuilderIntake,
   fetchSwiggyBuildersLaunchStory,
   fetchSwiggyBuildersModuleIntelligence,
+  fetchSwiggyCapabilityTraceability,
   fetchSwiggyBuildersJourneyGates,
   fetchSwiggyBuildersHomepageExperience,
   fetchSwiggyBuildersSourceEvolution,
@@ -306,6 +307,7 @@ import type {
   SwiggyBuildersJourneyGateCenter,
   SwiggyBuildersLiveSourceResilienceCenter,
   SwiggyBuildersModuleIntelligenceCenter,
+  SwiggyCapabilityTraceabilityMatrix,
   SwiggyBuildersReviewDecisionCenter,
   SwiggyBuildersSourceEvolutionCenter,
   SwiggyBuildersPageMeshAuditor,
@@ -588,6 +590,8 @@ function App() {
   const [buildersPageMesh, setBuildersPageMesh] = useState<SwiggyBuildersPageMeshAuditor | null>(null);
   const [buildersLaunchStory, setBuildersLaunchStory] = useState<SwiggyBuildersLaunchStoryCenterReport | null>(null);
   const [moduleIntelligence, setModuleIntelligence] = useState<SwiggyBuildersModuleIntelligenceCenter | null>(null);
+  const [capabilityTraceability, setCapabilityTraceability] =
+    useState<SwiggyCapabilityTraceabilityMatrix | null>(null);
   const [journeyGates, setJourneyGates] = useState<SwiggyBuildersJourneyGateCenter | null>(null);
   const [homepageExperience, setHomepageExperience] = useState<SwiggyBuildersHomepageExperienceCenter | null>(null);
   const [sourceEvolution, setSourceEvolution] = useState<SwiggyBuildersSourceEvolutionCenter | null>(null);
@@ -817,6 +821,7 @@ function App() {
       buildersPageMeshResponse,
       buildersLaunchStoryResponse,
       moduleIntelligenceResponse,
+      capabilityTraceabilityResponse,
       journeyGatesResponse,
       homepageExperienceResponse,
       sourceEvolutionResponse,
@@ -944,6 +949,7 @@ function App() {
       fetchSwiggyBuildersPageMesh(),
       fetchSwiggyBuildersLaunchStory(),
       fetchSwiggyBuildersModuleIntelligence(),
+      fetchSwiggyCapabilityTraceability(),
       fetchSwiggyBuildersJourneyGates(),
       fetchSwiggyBuildersHomepageExperience(),
       fetchSwiggyBuildersSourceEvolution(),
@@ -1072,6 +1078,7 @@ function App() {
     setBuildersPageMesh(buildersPageMeshResponse.buildersPageMesh);
     setBuildersLaunchStory(buildersLaunchStoryResponse.launchStory);
     setModuleIntelligence(moduleIntelligenceResponse.moduleIntelligence);
+    setCapabilityTraceability(capabilityTraceabilityResponse.capabilityTraceability);
     setJourneyGates(journeyGatesResponse.journeyGates);
     setHomepageExperience(homepageExperienceResponse.homepageExperience);
     setSourceEvolution(sourceEvolutionResponse.sourceEvolution);
@@ -1203,6 +1210,7 @@ function App() {
       buildersPageMeshResponse,
       buildersLaunchStoryResponse,
       moduleIntelligenceResponse,
+      capabilityTraceabilityResponse,
       journeyGatesResponse,
       homepageExperienceResponse,
       sourceEvolutionResponse,
@@ -1327,6 +1335,7 @@ function App() {
       fetchSwiggyBuildersPageMesh(),
       fetchSwiggyBuildersLaunchStory(),
       fetchSwiggyBuildersModuleIntelligence(),
+      fetchSwiggyCapabilityTraceability(),
       fetchSwiggyBuildersJourneyGates(),
       fetchSwiggyBuildersHomepageExperience(),
       fetchSwiggyBuildersSourceEvolution(),
@@ -1451,6 +1460,7 @@ function App() {
     setBuildersPageMesh(buildersPageMeshResponse.buildersPageMesh);
     setBuildersLaunchStory(buildersLaunchStoryResponse.launchStory);
     setModuleIntelligence(moduleIntelligenceResponse.moduleIntelligence);
+    setCapabilityTraceability(capabilityTraceabilityResponse.capabilityTraceability);
     setJourneyGates(journeyGatesResponse.journeyGates);
     setHomepageExperience(homepageExperienceResponse.homepageExperience);
     setSourceEvolution(sourceEvolutionResponse.sourceEvolution);
@@ -2150,6 +2160,7 @@ function App() {
                 buildersPageMesh={buildersPageMesh}
                 buildersLaunchStory={buildersLaunchStory}
                 moduleIntelligence={moduleIntelligence}
+                capabilityTraceability={capabilityTraceability}
                 journeyGates={journeyGates}
                 homepageExperience={homepageExperience}
                 sourceEvolution={sourceEvolution}
@@ -2766,6 +2777,7 @@ function LaunchCenterPanel({
   buildersPageMesh,
   buildersLaunchStory,
   moduleIntelligence,
+  capabilityTraceability,
   journeyGates,
   homepageExperience,
   sourceEvolution,
@@ -2865,6 +2877,7 @@ function LaunchCenterPanel({
   buildersPageMesh: SwiggyBuildersPageMeshAuditor | null;
   buildersLaunchStory: SwiggyBuildersLaunchStoryCenterReport | null;
   moduleIntelligence: SwiggyBuildersModuleIntelligenceCenter | null;
+  capabilityTraceability: SwiggyCapabilityTraceabilityMatrix | null;
   journeyGates: SwiggyBuildersJourneyGateCenter | null;
   homepageExperience: SwiggyBuildersHomepageExperienceCenter | null;
   sourceEvolution: SwiggyBuildersSourceEvolutionCenter | null;
@@ -4697,6 +4710,57 @@ function LaunchCenterPanel({
             </a>
             <a href="https://mcp.swiggy.com/builders/" target="_blank" rel="noreferrer">
               Builders
+            </a>
+          </div>
+        </article>
+
+        <article className="capability-traceability-card">
+          <div className="mini-heading">
+            <GitBranch aria-hidden="true" />
+            <strong>Capability Traceability</strong>
+          </div>
+          <span>
+            {capabilityTraceability
+              ? `${capabilityTraceability.score}/100, ${capabilityTraceability.totals.rows} source-to-product rows`
+              : "Mapping official pages, modules, CTAs, tools, and lifecycle gates to MealPilot proof"}
+          </span>
+          <div className="capability-traceability-grid">
+            <div>
+              <strong>{capabilityTraceability?.totals.officialPages ?? 0}</strong>
+              <span>Pages</span>
+            </div>
+            <div>
+              <strong>{capabilityTraceability?.totals.officialCtas ?? 0}</strong>
+              <span>CTAs</span>
+            </div>
+            <div>
+              <strong>{capabilityTraceability?.totals.officialTools ?? 0}</strong>
+              <span>Tools</span>
+            </div>
+            <div>
+              <strong>{capabilityTraceability?.totals.lifecycleGates ?? 0}</strong>
+              <span>Gates</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(capabilityTraceability?.groups ?? []).slice(0, 5).map((group) => (
+              <li key={group.id} data-status={group.rows === group.ready ? "healthy" : group.ready > 0 ? "watch" : "blocked"}>
+                <span>{group.label}</span>
+                <strong>
+                  {group.ready}/{group.rows}
+                </strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-intelligence-actions" aria-label="Capability traceability links">
+            <a href="/api/swiggy-capability-traceability" target="_blank" rel="noreferrer">
+              Matrix API
+            </a>
+            <a href="/api/swiggy-builders-module-intelligence" target="_blank" rel="noreferrer">
+              Modules
+            </a>
+            <a href="/api/swiggy-cta-execution-center" target="_blank" rel="noreferrer">
+              CTAs
             </a>
           </div>
         </article>

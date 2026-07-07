@@ -1174,6 +1174,30 @@ select:focus {
   grid-column: span 2;
 }
 
+.capability-traceability-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.capability-traceability-grid div {
+  display: grid;
+  gap: 3px;
+  min-height: 64px;
+  border-radius: 8px;
+  padding: 9px;
+  background: #fff;
+}
+
+.capability-traceability-grid strong {
+  color: var(--green-dark);
+}
+
+.capability-traceability-grid span {
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
 .journey-gates-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -4632,6 +4656,7 @@ select:focus {
 .faq-resolution-card,
 .growth-partnership-card,
 .module-intelligence-card,
+.capability-traceability-card,
 .talent-signal-card,
 .conversion-center-card,
 .demo-evidence-card,
@@ -5689,5 +5714,9 @@ select:focus {
   .workflow-grid button {
     width: 100%;
     justify-content: center;
+  }
+
+  .capability-traceability-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

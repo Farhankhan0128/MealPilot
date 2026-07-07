@@ -165,6 +165,12 @@ describe("MealPilot app", () => {
     expect(await screen.findByText("Paneer protein bowl")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /MealPilot/i })).toBeInTheDocument();
     expect(screen.getByRole("navigation", { name: "Primary navigation" })).toBeInTheDocument();
+    expect(screen.getByText("Capability Traceability")).toBeInTheDocument();
+    expect(screen.getAllByRole("link", { name: "Matrix API" })).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ href: expect.stringContaining("/api/swiggy-capability-traceability") }),
+      ]),
+    );
 
     fireEvent.click(screen.getByRole("button", { name: /Menu/i }));
     expect(screen.getByRole("navigation", { name: "Mobile navigation" })).toHaveClass("open");
