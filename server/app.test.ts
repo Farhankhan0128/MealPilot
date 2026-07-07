@@ -2946,6 +2946,23 @@ describe("MealPilot API", () => {
       ),
     ).toBe(true);
     expect(reconciliation.assertions.some((assertion: string) => assertion.includes("never stores raw payment"))).toBe(true);
+
+    const supportReviewResponse = await request(app)
+      .post("/api/swiggy-payment-truth-center/reconcile")
+      .send({
+        server: "dineout",
+        cartTotal: 500,
+        expectedDiscount: 0,
+        paymentPreference: "online",
+        city: "Mumbai",
+      })
+      .expect(200);
+    const supportReview = supportReviewResponse.body.reconciliation;
+
+    expect(supportReview.selectedLaneId).toBe("dineout_free_booking_truth");
+    expect(supportReview.settlementStatus).toBe("support_review");
+    expect(supportReview.userFacingCopy).toContain("fresh Swiggy status");
+    expect(supportReview.swiggyRoute.paymentBoundary).toContain("free slots");
   });
 
   it("returns meal window intelligence and forecasts timing safely", async () => {

@@ -189,6 +189,7 @@ import {
   fetchVisualQaCenter,
   fetchWidgets,
   removeRecommendationItem,
+  reconcileSwiggyPaymentTruth,
   runSwiggySubmissionTimelineCheckpoint,
   schedulePlan,
   startSwiggyAuth,
@@ -326,6 +327,7 @@ import type {
   SwiggyOrderLifecycleReport,
   SwiggyMealWindowCenter,
   SwiggyPaymentTruthCenter,
+  SwiggyPaymentTruthReconciliation,
   SwiggyQualityLoopCenter,
   SwiggyRitualAutopilotCenter,
   SwiggyScenarioRunnerReport,
@@ -2894,6 +2896,21 @@ function LaunchCenterPanel({
   });
   const [channelExecutionComposition, setChannelExecutionComposition] = useState<SwiggyChannelExecutionComposition | null>(null);
   const [channelExecutionStatus, setChannelExecutionStatus] = useState<"idle" | "loading" | "error">("idle");
+  const [paymentTruthForm, setPaymentTruthForm] = useState<{
+    server: "food" | "instamart" | "dineout" | "combined";
+    cartTotal: number;
+    expectedDiscount: number;
+    paymentPreference: "cod" | "online" | "free_booking" | "unknown";
+    city: "Bengaluru" | "Delhi NCR" | "Mumbai";
+  }>({
+    server: "food",
+    cartTotal: 720,
+    expectedDiscount: 120,
+    paymentPreference: "cod",
+    city: "Bengaluru",
+  });
+  const [paymentReconciliation, setPaymentReconciliation] = useState<SwiggyPaymentTruthReconciliation | null>(null);
+  const [paymentReconciliationStatus, setPaymentReconciliationStatus] = useState<"idle" | "loading" | "error">("idle");
   const [showcaseForm, setShowcaseForm] = useState({
     demoUrl: "https://youtu.be/mealpilot-swiggy-demo",
     githubUrl: "https://github.com/Farhankhan0128/MealPilot",
@@ -2997,6 +3014,18 @@ function LaunchCenterPanel({
       setChannelExecutionStatus("idle");
     } catch {
       setChannelExecutionStatus("error");
+    }
+  }
+
+  async function runPaymentTruthReconciliation(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setPaymentReconciliationStatus("loading");
+    try {
+      const response = await reconcileSwiggyPaymentTruth(paymentTruthForm);
+      setPaymentReconciliation(response.reconciliation);
+      setPaymentReconciliationStatus("idle");
+    } catch {
+      setPaymentReconciliationStatus("error");
     }
   }
 
@@ -6020,6 +6049,106 @@ function LaunchCenterPanel({
               <strong>{paymentTruth?.totals.externalGates ?? 0}</strong>
               <span>Gates</span>
             </div>
+          </div>
+          <form className="payment-truth-reconciler" onSubmit={runPaymentTruthReconciliation}>
+            <label htmlFor="payment-truth-server">Server</label>
+            <select
+              id="payment-truth-server"
+              value={paymentTruthForm.server}
+              onChange={(event) =>
+                setPaymentTruthForm((current) => ({
+                  ...current,
+                  server: event.target.value as typeof paymentTruthForm.server,
+                }))
+              }
+            >
+              <option value="food">Food</option>
+              <option value="instamart">Instamart</option>
+              <option value="dineout">Dineout</option>
+              <option value="combined">Combined</option>
+            </select>
+            <label htmlFor="payment-truth-preference">Payment</label>
+            <select
+              id="payment-truth-preference"
+              value={paymentTruthForm.paymentPreference}
+              onChange={(event) =>
+                setPaymentTruthForm((current) => ({
+                  ...current,
+                  paymentPreference: event.target.value as typeof paymentTruthForm.paymentPreference,
+                }))
+              }
+            >
+              <option value="cod">COD</option>
+              <option value="online">Online</option>
+              <option value="free_booking">Free booking</option>
+              <option value="unknown">Unknown</option>
+            </select>
+            <label htmlFor="payment-truth-city">City</label>
+            <select
+              id="payment-truth-city"
+              value={paymentTruthForm.city}
+              onChange={(event) =>
+                setPaymentTruthForm((current) => ({
+                  ...current,
+                  city: event.target.value as typeof paymentTruthForm.city,
+                }))
+              }
+            >
+              <option value="Bengaluru">Bengaluru</option>
+              <option value="Delhi NCR">Delhi NCR</option>
+              <option value="Mumbai">Mumbai</option>
+            </select>
+            <div className="payment-truth-number-grid">
+              <label htmlFor="payment-truth-total">Total</label>
+              <input
+                id="payment-truth-total"
+                type="number"
+                min="0"
+                value={paymentTruthForm.cartTotal}
+                onChange={(event) =>
+                  setPaymentTruthForm((current) => ({ ...current, cartTotal: Number(event.target.value) }))
+                }
+              />
+              <label htmlFor="payment-truth-discount">Discount</label>
+              <input
+                id="payment-truth-discount"
+                type="number"
+                min="0"
+                value={paymentTruthForm.expectedDiscount}
+                onChange={(event) =>
+                  setPaymentTruthForm((current) => ({ ...current, expectedDiscount: Number(event.target.value) }))
+                }
+              />
+            </div>
+            <button type="submit" disabled={paymentReconciliationStatus === "loading"} aria-label="Reconcile payment truth">
+              {paymentReconciliationStatus === "loading" ? <Loader2 aria-hidden="true" /> : <ShieldCheck aria-hidden="true" />}
+              Reconcile
+            </button>
+            {paymentReconciliationStatus === "error" ? <small role="status">Payment truth reconciliation unavailable.</small> : null}
+          </form>
+          <div
+            className="payment-truth-result"
+            data-status={
+              paymentReconciliation?.settlementStatus === "ready_for_confirmation"
+                ? "healthy"
+                : paymentReconciliation?.settlementStatus === "support_review"
+                  ? "blocked"
+                  : "watch"
+            }
+          >
+            <div>
+              <span>Settlement truth</span>
+              <strong>
+                {paymentReconciliation
+                  ? paymentReconciliation.settlementStatus.replace(/_/g, " ")
+                  : "Awaiting reconciliation"}
+              </strong>
+            </div>
+            <p>
+              {paymentReconciliation
+                ? `${paymentReconciliation.selectedLaneId} / ${paymentReconciliation.riskFlags.length} flags / raw payment retained false`
+                : "Reconcile cart total, coupon, COD, checkout, or booking copy against Swiggy readback-only rules."}
+            </p>
           </div>
           <ul className="compact-status-list">
             {(paymentTruth?.lanes ?? []).slice(0, 5).map((laneItem) => (

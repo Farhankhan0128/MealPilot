@@ -2698,6 +2698,116 @@ select:focus {
   overflow-wrap: anywhere;
 }
 
+.payment-truth-reconciler {
+  display: grid;
+  gap: 8px;
+  border-radius: 8px;
+  padding: 10px;
+  background: #fff;
+}
+
+.payment-truth-reconciler label {
+  color: var(--ink-muted);
+  font-size: 0.75rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.payment-truth-reconciler select,
+.payment-truth-reconciler input {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 9px 10px;
+  color: var(--ink);
+  background: #f8faf8;
+  font: inherit;
+  font-weight: 850;
+}
+
+.payment-truth-number-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.72fr) minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+}
+
+.payment-truth-reconciler button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+  border: 0;
+  border-radius: 8px;
+  color: #fff;
+  background: var(--green);
+  font: inherit;
+  font-weight: 900;
+}
+
+.payment-truth-reconciler button:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
+.payment-truth-reconciler svg {
+  width: 17px;
+  height: 17px;
+}
+
+.payment-truth-reconciler small {
+  color: var(--coral);
+  font-weight: 850;
+}
+
+.payment-truth-result {
+  display: grid;
+  gap: 8px;
+  border-radius: 8px;
+  padding: 10px;
+  background: #fff;
+  border-left: 4px solid var(--gold);
+}
+
+.payment-truth-result[data-status="healthy"] {
+  border-left-color: var(--green);
+}
+
+.payment-truth-result[data-status="blocked"] {
+  border-left-color: var(--coral);
+}
+
+.payment-truth-result > div {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.payment-truth-result span {
+  color: var(--ink-muted);
+  font-size: 0.75rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.payment-truth-result strong {
+  color: var(--green-dark);
+  font-size: 0.84rem;
+  text-align: right;
+  text-transform: capitalize;
+}
+
+.payment-truth-result p {
+  margin: 0;
+  color: var(--ink-muted);
+  font-size: 0.82rem;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
 .builders-map-list,
 .opportunity-list {
   display: grid;

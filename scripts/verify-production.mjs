@@ -2339,6 +2339,23 @@ assert(
     paymentReconciliation.reconciliation.riskFlags.includes("cod_must_come_from_cart_payment_methods"),
   "payment truth reconciliation route is wrong",
 );
+const supportPaymentReconciliation = await request("/api/swiggy-payment-truth-center/reconcile", {
+  method: "POST",
+  body: JSON.stringify({
+    server: "dineout",
+    cartTotal: 500,
+    expectedDiscount: 0,
+    paymentPreference: "online",
+    city: "Mumbai",
+  }),
+});
+assert(
+  supportPaymentReconciliation.reconciliation.selectedLaneId === "dineout_free_booking_truth" &&
+    supportPaymentReconciliation.reconciliation.settlementStatus === "support_review" &&
+    supportPaymentReconciliation.reconciliation.userFacingCopy.includes("fresh Swiggy status") &&
+    supportPaymentReconciliation.reconciliation.swiggyRoute.paymentBoundary.includes("free slots"),
+  "payment truth support-review route is wrong",
+);
 
 const mealWindow = await request("/api/swiggy-meal-window-intelligence");
 assert(mealWindow.mealWindow.score >= 88, "meal window intelligence score is below target");

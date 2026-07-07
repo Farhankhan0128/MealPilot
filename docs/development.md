@@ -160,7 +160,7 @@ The verifier also validates `/api/swiggy-quality-loop-center` and `/api/swiggy-q
 
 The verifier also validates `/api/swiggy-ritual-autopilot-center` and `/api/swiggy-ritual-autopilot-center/plan` for recurring routine planning: weekday lunches, pantry resets, Dineout slotwatch, and combined weekend routes resolve to consented draft routines with reminder-only cadence, fresh-read gates, and no automatic checkout, order, booking, or subscription behavior.
 
-The verifier also validates `/api/swiggy-payment-truth-center` and `/api/swiggy-payment-truth-center/reconcile` for payment truth: Food cart totals, coupons, COD support, Instamart checkout bills, Dineout free bookings, and paid-cart gates resolve to Swiggy readback-only copy with no payment-instrument retention.
+The verifier also validates `/api/swiggy-payment-truth-center` and `POST /api/swiggy-payment-truth-center/reconcile` for payment truth: Food cart totals, coupons, COD support, Instamart checkout bills, Dineout free bookings, paid-cart gates, interactive Launch Center reconciliation, and support-review paths resolve to Swiggy readback-only copy with no payment-instrument retention.
 
 The verifier also validates `/api/swiggy-meal-window-intelligence` and `/api/swiggy-meal-window-intelligence/forecast` for timing safety: Food ETA, Instamart availability, Dineout slots, and tracking cadence resolve to advisory order/cook/reserve/track/wait routes with no scheduled Food orders and fresh-read gates before commercial action.
 
@@ -247,6 +247,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/swiggy-quality-loop-center`
 - `GET /api/swiggy-ritual-autopilot-center`
 - `GET /api/swiggy-payment-truth-center`
+- `POST /api/swiggy-payment-truth-center/reconcile`
 - `GET /api/swiggy-meal-window-intelligence`
 - `GET /api/swiggy-customization-studio`
 - `GET /api/nutrition-budget-intelligence`
@@ -445,7 +446,7 @@ Production should use an HTTPS redirect URI with exact-match allowlisting.
 
 `/api/swiggy-ritual-autopilot-center` is the productized recurring-routine proof surface. It maps weekday lunch repeat, pantry reset, date-night slotwatch, and family weekend routes into consented draft plans; `/api/swiggy-ritual-autopilot-center/plan` returns deterministic routine slots, no-auto-commercial-action telemetry, and confirmation boundaries.
 
-`/api/swiggy-payment-truth-center` is the productized payment truth proof surface. It maps Food cart payment truth, Instamart bill checkout truth, Dineout free booking truth, Dineout paid-cart gates, and combined settlement readbacks into source-of-truth guardrails; `/api/swiggy-payment-truth-center/reconcile` returns deterministic risk flags and no-payment-instrument telemetry.
+`/api/swiggy-payment-truth-center` is the productized payment truth proof surface. It maps Food cart payment truth, Instamart bill checkout truth, Dineout free booking truth, Dineout paid-cart gates, and combined settlement readbacks into source-of-truth guardrails; `POST /api/swiggy-payment-truth-center/reconcile` returns deterministic settlement status, risk flags, support-review copy, selected truth lane, and no-payment-instrument telemetry.
 
 `/api/swiggy-meal-window-intelligence` is the productized timing proof surface. It maps Food lunch ETA, Instamart dinner backup, Dineout slot windows, post-confirmation tracking, and weekend combined planning into safe timing lanes; `/api/swiggy-meal-window-intelligence/forecast` returns ETA risk buckets, timing steps, and no-scheduled-order telemetry.
 
@@ -543,7 +544,7 @@ The test suite checks that:
 - Swiggy Voice Commerce Rehearsal Center validates spoken Swiggy route planning with no raw-audio retention, no raw ids in TTS, short scripts, visual fallbacks, and confirmation readbacks before live execution.
 - Swiggy Quality Loop Center validates consented post-experience learning, support-safe feedback analysis, repeat optimization, and no raw Swiggy payload storage.
 - Swiggy Ritual Autopilot Center validates recurring routine planning with consented history, reminder-only calendar cadence, fresh reads, explicit confirmations, and no automatic subscription or commercial action.
-- Swiggy Payment Truth Center validates cart totals, coupon savings, COD eligibility, Instamart bills, Dineout free-booking status, paid-cart gates, and no raw payment-instrument retention.
+- Swiggy Payment Truth Center validates cart totals, coupon savings, COD eligibility, Instamart bills, Dineout free-booking status, paid-cart gates, support-review routes, and no raw payment-instrument retention through the Launch Center reconciler.
 - Swiggy Meal Window Intelligence validates order/cook/reserve/track/wait timing gates, no scheduled Food orders, fresh reads before action, and redacted ETA/slot telemetry.
 - Swiggy Customization Studio validates Food add-ons, variants, Instamart pack sizes, allergy cautions, raw-id suppression, and post-mutation cart readbacks.
 - Nutrition & Budget Intelligence maps Food, Instamart, Dineout, coupon, cart, group, and camera-label routes to protein-per-rupee estimates, budget controls, safety notes, and external data gates.

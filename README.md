@@ -307,6 +307,7 @@ GET  /api/swiggy-voice-commerce-center
 GET  /api/swiggy-quality-loop-center
 GET  /api/swiggy-ritual-autopilot-center
 GET  /api/swiggy-payment-truth-center
+POST /api/swiggy-payment-truth-center/reconcile
 GET  /api/swiggy-meal-window-intelligence
 GET  /api/swiggy-customization-studio
 GET  /api/nutrition-budget-intelligence
@@ -599,7 +600,7 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 
 `GET /api/swiggy-ritual-autopilot-center` and `POST /api/swiggy-ritual-autopilot-center/plan` productize recurring household routines: weekday lunches, pantry resets, date-night slotwatch, and weekend route choices become consented drafts with fresh Swiggy reads, reminder-only calendar cadence, and explicit confirmation boundaries before any commercial action.
 
-`GET /api/swiggy-payment-truth-center` and `POST /api/swiggy-payment-truth-center/reconcile` productize payment and settlement truth: cart totals, coupon savings, payment labels, COD eligibility, Instamart bill breakdown, Dineout free-booking proof, and paid-cart gates come only from Swiggy cart or status readbacks.
+`GET /api/swiggy-payment-truth-center` and `POST /api/swiggy-payment-truth-center/reconcile` productize payment and settlement truth: cart totals, coupon savings, payment labels, COD eligibility, Instamart bill breakdown, Dineout free-booking proof, and paid-cart gates come only from Swiggy cart or status readbacks. The Launch Center reconciler makes this interactive by returning settlement status, selected truth lane, risk flags, support-review copy, and no-payment-instrument telemetry.
 
 `GET /api/swiggy-meal-window-intelligence` and `POST /api/swiggy-meal-window-intelligence/forecast` productize meal timing: Food ETA windows, Instamart availability, Dineout slots, and tracking cadence become advisory order/cook/reserve/track/wait routes with no scheduled Food orders and no raw ETA or slot payload retention.
 
