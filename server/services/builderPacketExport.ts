@@ -254,6 +254,13 @@ export function buildBuilderPacketExport(options: {
         "Run this packet before recording the final demo or submitting the access form so every live page, CTA, source-freeze row, secret posture, and seeded-staging gate is visible.",
       ),
       readiness(
+        "capability_traceability_packet",
+        "Capability traceability packet",
+        "ready",
+        "The Capability Traceability Matrix maps official Builders pages, modules, CTAs, MCP server families, lifecycle gates, owners, route optimizations, proof links, and external Swiggy gates to MealPilot surfaces.",
+        "Use this packet when a reviewer asks how every public Swiggy signal connects to implemented product depth, verification commands, and remaining operator or Swiggy-owned gates.",
+      ),
+      readiness(
         "executable_rehearsal_packet",
         "Executable CTA rehearsal packet",
         "ready",

@@ -134,6 +134,11 @@ assert(
   "OpenAPI Builders module intelligence contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-capability-traceability"]?.get?.summary?.includes("capability traceability") &&
+    openApi.paths["/api/swiggy-capability-traceability"]?.get?.responses?.["200"]?.description?.includes("lifecycle gates"),
+  "OpenAPI Swiggy capability traceability contract is missing",
+);
+assert(
   openApi.paths["/api/swiggy-builders-journey-gates"]?.get?.summary?.includes("Journey Gate") &&
     openApi.paths["/api/swiggy-builders-journey-gates"]?.get?.responses?.["200"]?.description?.includes("Quick Review"),
   "OpenAPI Builders journey gates contract is missing",
@@ -754,6 +759,60 @@ assert(
   moduleIntelligence.moduleIntelligence.assertions.some((assertion) => assertion.includes("Every Website Atlas module")) &&
     moduleIntelligence.moduleIntelligence.externalGates.some((gate) => gate.includes("Access forms")),
   "Builders module intelligence assertions are missing",
+);
+
+const capabilityTraceability = await request("/api/swiggy-capability-traceability");
+assert(capabilityTraceability.capabilityTraceability.score >= 88, "capability traceability score is below target");
+assert(
+  capabilityTraceability.capabilityTraceability.totals.officialPages >= 17 &&
+    capabilityTraceability.capabilityTraceability.totals.websiteModules >= 38 &&
+    capabilityTraceability.capabilityTraceability.totals.officialCtas >= 31 &&
+    capabilityTraceability.capabilityTraceability.totals.mcpServers === 3 &&
+    capabilityTraceability.capabilityTraceability.totals.officialTools === 35 &&
+    capabilityTraceability.capabilityTraceability.totals.lifecycleGates === 4,
+  "capability traceability totals are incomplete",
+);
+assert(
+  ["official_pages", "website_modules", "official_ctas", "mcp_servers", "lifecycle_gates"].every((id) =>
+    capabilityTraceability.capabilityTraceability.groups.some((group) => group.id === id),
+  ),
+  "capability traceability groups are incomplete",
+);
+assert(
+  ["page_home", "module_home_hero", "cta_cta_start_building", "mcp_food", "mcp_instamart", "mcp_dineout", "lifecycle_access_review", "lifecycle_staging_soak"].every((id) =>
+    capabilityTraceability.capabilityTraceability.rows.some((row) => row.id === id),
+  ),
+  "capability traceability key rows are missing",
+);
+assert(
+  capabilityTraceability.capabilityTraceability.rows.some(
+    (row) =>
+      row.id === "module_developers_toolkit" &&
+      row.proofLinks.includes("/api/mcp/tool-lab") &&
+      row.routeOptimization.includes("read-first"),
+  ),
+  "capability traceability module proof routing is missing",
+);
+assert(
+  capabilityTraceability.capabilityTraceability.rows.some(
+    (row) =>
+      row.id === "lifecycle_staging_soak" &&
+      row.status === "swiggy_gate" &&
+      row.owner === "Swiggy" &&
+      row.nextAction.includes("staging credentials"),
+  ),
+  "capability traceability staging gate is missing",
+);
+assert(
+  capabilityTraceability.capabilityTraceability.routeOptimizations.some((item) => item.includes("Read-first batching")) &&
+    capabilityTraceability.capabilityTraceability.commands.some((command) =>
+      command.command.includes("/api/swiggy-capability-traceability"),
+    ) &&
+    capabilityTraceability.capabilityTraceability.assertions.some((assertion) =>
+      assertion.includes("Every official Swiggy Builders page"),
+    ) &&
+    capabilityTraceability.capabilityTraceability.externalGates.some((gate) => gate.includes("staging credentials")),
+  "capability traceability runbook or gates are incomplete",
 );
 
 const journeyGates = await request("/api/swiggy-builders-journey-gates");
@@ -3073,6 +3132,20 @@ const runtimeGovernanceArtifacts = [
 ];
 const runtimeGovernancePaths = runtimeGovernanceArtifacts.map(([path]) => path);
 const runtimeGovernanceLabels = runtimeGovernanceArtifacts.map(([, , label]) => label);
+const productDepthSection = reviewerArtifactVault.reviewerArtifactVault.artifactSections.find(
+  (section) => section.id === "product_depth",
+);
+assert(
+  productDepthSection &&
+    [
+      ["/api/swiggy-website-atlas", "website_atlas"],
+      ["/api/swiggy-builders-module-intelligence", "module_intelligence"],
+      ["/api/swiggy-capability-traceability", "capability_traceability"],
+      ["/api/swiggy-builders-journey-gates", "journey_gates"],
+    ].every(([path, id]) => productDepthSection.artifacts.some((artifact) => artifact.id === id && artifact.path === path)) &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-capability-traceability"),
+  "reviewer artifact vault capability traceability artifact is missing",
+);
 const mcpClientReadinessSection = reviewerArtifactVault.reviewerArtifactVault.artifactSections.find(
   (section) => section.id === "mcp_client_readiness",
 );
@@ -7998,6 +8071,7 @@ assert(
     builderPacket.packet.readiness.some((item) => item.id === "post_submit_lifecycle_packet" && item.status === "ready") &&
     builderPacket.packet.readiness.some((item) => item.id === "mcp_client_readiness_packet" && item.status === "ready") &&
     builderPacket.packet.readiness.some((item) => item.id === "source_freeze_live_audit_packet" && item.status === "ready") &&
+    builderPacket.packet.readiness.some((item) => item.id === "capability_traceability_packet" && item.status === "ready") &&
     builderPacket.packet.readiness.some((item) => item.id === "executable_rehearsal_packet" && item.status === "ready") &&
     builderPacket.packet.readiness.some((item) => item.id === "runtime_governance_packet" && item.status === "ready") &&
     builderPacket.packet.readiness.some((item) => item.id === "demo_video" && item.status === "operator_input") &&
@@ -8136,6 +8210,15 @@ assert(
   "launch bundle runtime governance artifacts are incomplete",
 );
 assert(
+  launchBundle.launchBundle.artifacts.some(
+    (artifact) =>
+      artifact.id === "capability_traceability" &&
+      artifact.label === "Swiggy Capability Traceability Matrix" &&
+      artifact.path === "/api/swiggy-capability-traceability",
+  ),
+  "launch bundle capability traceability artifact is missing",
+);
+assert(
   launchBundle.launchBundle.goLiveGates.some((gate) => gate.status === "external_gate"),
   "launch bundle must preserve external Swiggy gates",
 );
@@ -8244,6 +8327,10 @@ assert(
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-builders-module-intelligence"),
   "launch bundle module intelligence handoff link is missing",
+);
+assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-capability-traceability"),
+  "launch bundle capability traceability handoff link is missing",
 );
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-builders-journey-gates"),
@@ -8555,6 +8642,10 @@ console.log(
       moduleIntelligenceScore: moduleIntelligence.moduleIntelligence.score,
       moduleIntelligenceModules: moduleIntelligence.moduleIntelligence.totals.modules,
       moduleIntelligenceJourneys: moduleIntelligence.moduleIntelligence.totals.journeys,
+      capabilityTraceabilityScore: capabilityTraceability.capabilityTraceability.score,
+      capabilityTraceabilityRows: capabilityTraceability.capabilityTraceability.totals.rows,
+      capabilityTraceabilityCtas: capabilityTraceability.capabilityTraceability.totals.officialCtas,
+      capabilityTraceabilityTools: capabilityTraceability.capabilityTraceability.totals.officialTools,
       journeyGateScore: journeyGates.journeyGates.score,
       journeyGateGates: journeyGates.journeyGates.totals.gates,
       journeyGateProofLinks: journeyGates.journeyGates.totals.proofLinks,

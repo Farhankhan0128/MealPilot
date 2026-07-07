@@ -65,6 +65,7 @@ import {
   buildSubmissionPackage,
 } from "./services/demoStudio.js";
 import { buildMcpCapabilityRegistry } from "./services/capabilityRegistry.js";
+import { buildSwiggyCapabilityTraceability } from "./services/capabilityTraceability.js";
 import { buildEvaluationLab } from "./services/evaluationLab.js";
 import { buildErrorIntelligenceReport, classifyMcpError } from "./services/errorIntelligence.js";
 import { buildSwiggyFaqPolicyCenter } from "./services/faqPolicyCenter.js";
@@ -1291,6 +1292,10 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/swiggy-builders-map", (_req, res) => {
     res.json({ map: buildSwiggyBuildersMap() });
+  });
+
+  app.get("/api/swiggy-capability-traceability", (_req, res) => {
+    res.json({ capabilityTraceability: buildSwiggyCapabilityTraceability(config) });
   });
 
   app.get("/api/swiggy-website-atlas", (_req, res) => {

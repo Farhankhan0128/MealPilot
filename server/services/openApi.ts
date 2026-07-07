@@ -382,6 +382,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           responses: { "200": { description: "Pages, CTAs, tool coverage, innovation opportunities, and credential gates" } },
         },
       },
+      "/api/swiggy-capability-traceability": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy source-to-product capability traceability matrix",
+          responses: {
+            "200": {
+              description:
+                "Official Builders pages, website modules, CTAs, MCP server families, lifecycle gates, owners, route optimizations, proof links, verification commands, and external Swiggy gates mapped to MealPilot surfaces",
+            },
+          },
+        },
+      },
       "/api/swiggy-website-atlas": {
         get: {
           tags: ["Builder Access"],

@@ -205,6 +205,7 @@ MealPilot should become a luxury-grade food and meal intelligence product with t
 | Interaction QA Center | `server/services/interactionQaCenter.ts` |
 | Staging Seed & Smoke Center | `server/services/stagingSeedSmokeCenter.ts` |
 | Swiggy Builders map | `server/services/swiggyBuildersMap.ts` |
+| Swiggy Capability Traceability Matrix | `server/services/capabilityTraceability.ts` |
 | Swiggy Docs Coverage | `server/services/docsCoverage.ts` |
 | Swiggy Docs Twin Explorer | `server/services/docsTwinExplorer.ts` |
 | Swiggy llms Manifest Verifier | `server/services/llmsManifestVerifier.ts` |

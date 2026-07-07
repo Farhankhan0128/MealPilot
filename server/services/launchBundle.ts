@@ -33,6 +33,15 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
         "Turns every Builders website module into owner, audience, product promise, route optimization, risk boundary, proof links, and module journeys.",
     },
     {
+      id: "capability_traceability",
+      label: "Swiggy Capability Traceability Matrix",
+      path: "/api/swiggy-capability-traceability",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Maps official pages, website modules, CTAs, MCP server families, lifecycle gates, owners, route optimizations, proof links, and Swiggy external gates into one reviewer matrix.",
+    },
+    {
       id: "journey_gates",
       label: "Swiggy Builders Journey Gate Center",
       path: "/api/swiggy-builders-journey-gates",
@@ -1416,6 +1425,7 @@ function buildPhases(config: ServerConfig, latestPlan: MealPlan | undefined, art
         artifact("staging_transcript"),
         artifact("website_atlas"),
         artifact("module_intelligence"),
+        artifact("capability_traceability"),
         artifact("journey_gates"),
         artifact("homepage_experience"),
         artifact("deep_site_map"),
@@ -1629,6 +1639,7 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- Packet Markdown export: /api/builder-packet-export.md",
     "- Website Atlas: /api/swiggy-website-atlas",
     "- Swiggy Builders Module Intelligence Center: /api/swiggy-builders-module-intelligence",
+    "- Swiggy Capability Traceability Matrix: /api/swiggy-capability-traceability",
     "- Swiggy Builders Journey Gate Center: /api/swiggy-builders-journey-gates",
     "- Swiggy Builders Homepage Experience Center: /api/swiggy-builders-homepage-experience",
     "- Swiggy Builders Source Evolution Center: /api/swiggy-builders-source-evolution",

@@ -224,6 +224,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/swiggy-builders-site-parity`
 - `GET /api/swiggy-builders-page-mesh`
 - `GET /api/swiggy-builders-module-intelligence`
+- `GET /api/swiggy-capability-traceability`
 - `GET /api/swiggy-cta-live-audit`
 - `GET /api/swiggy-builders-launch-story`
 - `GET /api/swiggy-operating-contract-center`
@@ -496,6 +497,8 @@ Production should use an HTTPS redirect URI with exact-match allowlisting.
 
 `/api/swiggy-builders-module-intelligence` converts Website Atlas modules into product-readiness rows with owner, audience, official signal, product promise, Swiggy surface, MealPilot proof, route optimization, risk boundary, CTA mapping, journey placement, and explicit external gates.
 
+`/api/swiggy-capability-traceability` composes Builders Map, Module Intelligence, CTA Execution, and MCP coverage into a reviewer-facing source-to-product matrix. It maps official pages, modules, CTAs/header/docs/footer links, MCP server families, and builder lifecycle gates to MealPilot surfaces, owners, route optimizations, proof links, verifier commands, assertions, and remaining operator or Swiggy-owned gates.
+
 `/api/swiggy-builders-launch-story` turns the April 2026 Builders Club launch blog into a reviewer-ready story center. It reconciles the launch-era 18+ API-tool narrative with the current 35-tool docs snapshot and packages story beats, the demo journey, showcase assets, ecosystem lanes, CTA paths, and co-marketing guardrails.
 
 `/api/swiggy-operating-contract-center` consolidates official operate and ship-to-production guidance into one reviewer contract: SLA and latency targets, current/future rate-limit behavior, traffic rollout, support escalation, version/deprecation watch, runbooks, readiness gates, and Swiggy external approvals. `/api/swiggy-operating-contract-center/rehearse` powers the Launch Center readiness rehearsal with local-packet, staging-cutover, and production-launch modes plus capacity, support, version, status-page, and staging credential gates, returning commands, telemetry, launch email draft, missing inputs, and a ready/manual/blocked decision without sending email or claiming approval.
@@ -550,6 +553,7 @@ The test suite checks that:
 - Website Atlas covers global header, docs subnav, footer groups, production access page, launch blog, rendered-page crawl evidence, page modules, CTAs, resource links, and legal links.
 - Swiggy Builders Page Mesh Auditor fetches every non-external Website Atlas page live and reconciles page reachability, anchor counts, module signals, CTA matches, and safe-origin drift.
 - Swiggy Builders Module Intelligence Center maps each Website Atlas module into owner, product promise, proof links, route optimization, risk boundary, module journeys, and external gates.
+- Swiggy Capability Traceability Matrix maps official Builders pages, website modules, CTAs, MCP server families, and lifecycle gates into one proof matrix with owners, route optimizations, verification commands, and remaining operator or Swiggy-owned gates.
 - Swiggy Builders Journey Gate Center maps the official Start Building, Apply for Prod Access, Quick Review, Go Live, and Show Us What You Built path into owner gates, criteria, proof links, telemetry, blockers, and external Swiggy approvals.
 - Swiggy Builders Homepage Experience Center maps header, hero, how-it-works, benefits, guidelines, FAQ, final CTA, and footer into section proof, mobile checks, reviewer checks, continuity, and external gates.
 - Swiggy Builders Source Evolution Center reconciles homepage 18+ launch copy with current 35/35 callable-tool coverage, llms/docs refresh loops, v1.0/v1.1/v1.2/v2 roadmap drift, signed-manifest/rate-limit gates, visual proof, and reviewer packet regression.

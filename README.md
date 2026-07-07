@@ -91,6 +91,7 @@ Planned MCP servers:
 - Swiggy Builders Site Parity Auditor at `/api/swiggy-builders-site-parity` that fetches the live official homepage, extracts anchors, metadata, `llms` alternates, CTA/source/footer/legal links, and module signals, then reconciles them against Website Atlas.
 - Swiggy Builders Page Mesh Auditor at `/api/swiggy-builders-page-mesh` that fetches every non-external Website Atlas Builders page from the live public site, checks anchors, page titles, CTA/module parity, approved Swiggy/Form/MCP-reference/contact origins, and semantic page integrity so generic temporary-glitch shells are disclosed as Website Atlas fallback.
 - Swiggy Builders Module Intelligence Center at `/api/swiggy-builders-module-intelligence` that turns every official website module into owner, audience, product promise, Swiggy surface, MealPilot proof, route optimization, risk boundary, CTA links, module journeys, and external gates.
+- Swiggy Capability Traceability Matrix at `/api/swiggy-capability-traceability` that ties every official Builders page, website module, CTA/link, MCP server family, and builder lifecycle gate to MealPilot surfaces, owners, route optimizations, proof links, verifier commands, and remaining operator or Swiggy-owned gates.
 - Swiggy Builders Journey Gate Center at `/api/swiggy-builders-journey-gates` that maps Start Building, Apply for Prod Access, Quick Review, Go Live, and Show Us What You Built into owner gates, entry and exit criteria, proof links, telemetry, blockers, and external Swiggy approvals.
 - Swiggy Builders Homepage Experience Center at `/api/swiggy-builders-homepage-experience` that maps the live homepage header, hero, how-it-works, benefits, guidelines, FAQ, final CTA, and footer into proof routes, mobile checks, reviewer checks, continuity, and external gates.
 - Swiggy Builders Source Evolution Center at `/api/swiggy-builders-source-evolution` that reconciles homepage 18+ launch copy with current 35/35 callable-tool coverage, llms/docs refresh loops, roadmap drift, source gates, and reviewer packet regression proof.
@@ -279,6 +280,7 @@ GET  /api/swiggy-website-atlas
 GET  /api/swiggy-builders-site-parity
 GET  /api/swiggy-builders-page-mesh
 GET  /api/swiggy-builders-module-intelligence
+GET  /api/swiggy-capability-traceability
 GET  /api/swiggy-builders-journey-gates
 GET  /api/swiggy-builders-homepage-experience
 GET  /api/swiggy-cta-live-audit
@@ -522,6 +524,8 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 `GET /api/swiggy-builders-page-mesh` is the live public-page mesh checker: it fetches each non-external Builders page listed in Website Atlas, extracts anchors and titles, verifies module and CTA parity, blocks user-supplied URLs, and flags any anchor outside approved Swiggy Builders, Swiggy legal, `forms.gle`, official MCP reference, or `builders@swiggy.in` contact origins.
 
 `GET /api/swiggy-builders-module-intelligence` is the page-module product-readiness layer: every Builders module receives an owner, audience, official signal, product promise, Swiggy surface, MealPilot proof, route optimization, risk boundary, CTA mapping, journey placement, and explicit operator or Swiggy gate.
+
+`GET /api/swiggy-capability-traceability` is the source-to-product proof matrix: official Builders pages, website modules, CTAs/header/docs/footer links, MCP server families, and access lifecycle gates are mapped to MealPilot surfaces, owners, route optimizations, proof links, verifier commands, and external Swiggy gates.
 
 `GET /api/swiggy-builders-journey-gates` is the official Builders journey control room: Start Building, Apply for Prod Access, Quick Review, Go Live, and Show Us What You Built are mapped to owners, readiness, criteria, proof links, telemetry, blockers, and external Swiggy gates.
 

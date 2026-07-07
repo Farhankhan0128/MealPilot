@@ -53,6 +53,8 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/swiggy-handshake-doctor"].get.summary).toContain("handshake doctor");
     expect(openApi.body.paths["/api/mcp/handshake-doctor"].get.responses["200"].description).toContain("Instamart /im");
     expect(openApi.body.paths["/api/swiggy-builders-map"].get.summary).toContain("Swiggy Builders");
+    expect(openApi.body.paths["/api/swiggy-capability-traceability"].get.summary).toContain("capability traceability");
+    expect(openApi.body.paths["/api/swiggy-capability-traceability"].get.responses["200"].description).toContain("lifecycle gates");
     expect(openApi.body.paths["/api/swiggy-website-atlas"].get.summary).toContain("website header");
     expect(openApi.body.paths["/api/swiggy-builders-site-parity"].get.summary).toContain("homepage parity");
     expect(openApi.body.paths["/api/swiggy-builders-page-mesh"].get.summary).toContain("public page mesh");
@@ -1868,6 +1870,7 @@ describe("MealPilot API", () => {
     expect(packet.readiness.some((item: { id: string; status: string }) => item.id === "post_submit_lifecycle_packet" && item.status === "ready")).toBe(true);
     expect(packet.readiness.some((item: { id: string; status: string }) => item.id === "mcp_client_readiness_packet" && item.status === "ready")).toBe(true);
     expect(packet.readiness.some((item: { id: string; status: string }) => item.id === "source_freeze_live_audit_packet" && item.status === "ready")).toBe(true);
+    expect(packet.readiness.some((item: { id: string; status: string }) => item.id === "capability_traceability_packet" && item.status === "ready")).toBe(true);
     expect(packet.readiness.some((item: { id: string; status: string }) => item.id === "executable_rehearsal_packet" && item.status === "ready")).toBe(true);
     expect(packet.readiness.some((item: { id: string; status: string }) => item.id === "runtime_governance_packet" && item.status === "ready")).toBe(true);
     expect(packet.readiness.some((item: { id: string; status: string }) => item.id === "demo_video" && item.status === "operator_input")).toBe(true);
@@ -3801,6 +3804,21 @@ describe("MealPilot API", () => {
         section.artifacts.some((artifact) => artifact.id === "luxury_experience" && artifact.path === "/api/luxury-experience-workspace"),
       ),
     ).toBe(true);
+    const productDepth = vault.artifactSections.find(
+      (section: { id: string; artifacts: Array<{ id: string; path: string }> }) => section.id === "product_depth",
+    );
+    expect(productDepth?.artifacts.map((artifact: { id: string }) => artifact.id)).toEqual(
+      expect.arrayContaining(["website_atlas", "module_intelligence", "capability_traceability", "journey_gates"]),
+    );
+    expect(productDepth?.artifacts.map((artifact: { path: string }) => artifact.path)).toEqual(
+      expect.arrayContaining([
+        "/api/swiggy-website-atlas",
+        "/api/swiggy-builders-module-intelligence",
+        "/api/swiggy-capability-traceability",
+        "/api/swiggy-builders-journey-gates",
+      ]),
+    );
+    expect(vault.reviewerEmail.body).toContain("/api/swiggy-capability-traceability");
     const mcpClientReadiness = vault.artifactSections.find(
       (section: { id: string; artifacts: Array<{ id: string; path: string }> }) => section.id === "mcp_client_readiness",
     );
@@ -5129,6 +5147,56 @@ describe("MealPilot API", () => {
     expect(center.operatorRunbook.map((step: { sequence: number }) => step.sequence)).toEqual([1, 2, 3]);
     expect(center.assertions.some((assertion: string) => assertion.includes("Every Website Atlas module"))).toBe(true);
     expect(center.externalGates.some((gate: string) => gate.includes("Access forms"))).toBe(true);
+  });
+
+  it("returns a Swiggy source-to-product capability traceability matrix", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/swiggy-capability-traceability").expect(200);
+    const matrix = response.body.capabilityTraceability;
+
+    expect(matrix.score).toBeGreaterThanOrEqual(88);
+    expect(matrix.totals.officialPages).toBeGreaterThanOrEqual(17);
+    expect(matrix.totals.websiteModules).toBeGreaterThanOrEqual(38);
+    expect(matrix.totals.officialCtas).toBeGreaterThanOrEqual(31);
+    expect(matrix.totals.mcpServers).toBe(3);
+    expect(matrix.totals.officialTools).toBe(35);
+    expect(matrix.totals.lifecycleGates).toBe(4);
+    expect(matrix.groups.map((group: { id: string }) => group.id)).toEqual(
+      expect.arrayContaining(["official_pages", "website_modules", "official_ctas", "mcp_servers", "lifecycle_gates"]),
+    );
+    expect(matrix.rows.map((row: { id: string }) => row.id)).toEqual(
+      expect.arrayContaining([
+        "page_home",
+        "module_home_hero",
+        "cta_cta_start_building",
+        "mcp_food",
+        "mcp_instamart",
+        "mcp_dineout",
+        "lifecycle_access_review",
+        "lifecycle_staging_soak",
+      ]),
+    );
+    expect(
+      matrix.rows.some(
+        (row: { id: string; proofLinks: string[]; routeOptimization: string }) =>
+          row.id === "module_developers_toolkit" &&
+          row.proofLinks.includes("/api/mcp/tool-lab") &&
+          row.routeOptimization.includes("read-first"),
+      ),
+    ).toBe(true);
+    expect(
+      matrix.rows.some(
+        (row: { id: string; status: string; owner: string; nextAction: string }) =>
+          row.id === "lifecycle_staging_soak" &&
+          row.status === "swiggy_gate" &&
+          row.owner === "Swiggy" &&
+          row.nextAction.includes("staging credentials"),
+      ),
+    ).toBe(true);
+    expect(matrix.routeOptimizations.some((item: string) => item.includes("Read-first batching"))).toBe(true);
+    expect(matrix.commands.some((command: { command: string }) => command.command.includes("/api/swiggy-capability-traceability"))).toBe(true);
+    expect(matrix.assertions.some((assertion: string) => assertion.includes("Every official Swiggy Builders page"))).toBe(true);
+    expect(matrix.externalGates.some((gate: string) => gate.includes("staging credentials"))).toBe(true);
   });
 
   it("returns Swiggy Builders Journey Gates for the official five-step path", async () => {
@@ -8009,6 +8077,7 @@ describe("MealPilot API", () => {
         "Swiggy Website Atlas",
         "Swiggy Builders Launch Story Center",
         "Swiggy Builders Module Intelligence Center",
+        "Swiggy Capability Traceability Matrix",
         "Swiggy Builders Journey Gate Center",
         "Swiggy Builders Homepage Experience Center",
         "Swiggy Builders Source Evolution Center",
@@ -8110,6 +8179,7 @@ describe("MealPilot API", () => {
     expect(bundle.handoffEmail.body).toContain("/api/enterprise-platform-center");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-builders-launch-story");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-builders-module-intelligence");
+    expect(bundle.handoffEmail.body).toContain("/api/swiggy-capability-traceability");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-builders-source-evolution");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-builders-live-source-resilience");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-builders-review-decision");

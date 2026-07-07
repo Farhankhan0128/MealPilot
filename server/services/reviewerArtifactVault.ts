@@ -152,6 +152,7 @@ const artifactSections = [
     artifacts: [
       artifact("website_atlas", "Website Atlas", "api", "/api/swiggy-website-atlas", "Header, footer, page modules, CTAs, launch blog, and access page coverage.", "Public docs only; no user data."),
       artifact("module_intelligence", "Swiggy Builders Module Intelligence Center", "api", "/api/swiggy-builders-module-intelligence", "Every Builders website module mapped to owner, audience, product promise, route optimization, risk boundary, proof links, and module journeys.", "External forms, legal review, co-branding, quotas, credentials, and production approval stay operator or Swiggy-owned."),
+      artifact("capability_traceability", "Swiggy Capability Traceability Matrix", "api", "/api/swiggy-capability-traceability", "Official pages, website modules, CTAs, MCP server families, lifecycle gates, owners, route optimizations, proof links, and external gates mapped to MealPilot proof surfaces.", "External Swiggy form submission, staging credentials, co-branding, quotas, showcase placement, and production approval remain operator or Swiggy-owned."),
       artifact("journey_gates", "Swiggy Builders Journey Gate Center", "api", "/api/swiggy-builders-journey-gates", "Official Start Building, Apply for Prod Access, Quick Review, Go Live, and Show Us What You Built path mapped to owner gates, criteria, proof links, telemetry, and blockers.", "Forms, email, terms, credentials, approval, showcase, and public Swiggy claims stay operator or Swiggy-owned."),
       artifact("homepage_experience", "Swiggy Builders Homepage Experience Center", "api", "/api/swiggy-builders-homepage-experience", "Header, hero, how-it-works, benefits, guidelines, FAQ, final CTA, and footer mapped to proof, continuity, mobile checks, reviewer checks, and gates.", "Official navigation, legal links, forms, email, credentials, quota, brand, and production approvals stay external."),
       artifact("source_evolution", "Swiggy Builders Source Evolution Center", "api", "/api/swiggy-builders-source-evolution", "Homepage 18+ launch copy reconciled with current 35/35 callable-tool coverage, upstream roadmap drift, docs refresh loops, source gates, and reviewer packet regression.", "Public docs and local proof only; roadmap releases, signed manifests, staging credentials, and production approval stay Swiggy-owned."),
@@ -522,6 +523,7 @@ export function buildReviewerArtifactVault(): ReviewerArtifactVault {
     "- Production Launch Bundle: /api/production-launch-bundle",
     "- Swiggy Docs Twin Explorer: /api/swiggy-docs-twin-explorer",
     "- Swiggy Builders Module Intelligence Center: /api/swiggy-builders-module-intelligence",
+    "- Swiggy Capability Traceability Matrix: /api/swiggy-capability-traceability",
     "- Swiggy Builders Journey Gate Center: /api/swiggy-builders-journey-gates",
     "- Swiggy Builders Homepage Experience Center: /api/swiggy-builders-homepage-experience",
     "- Swiggy Builders Source Evolution Center: /api/swiggy-builders-source-evolution",
