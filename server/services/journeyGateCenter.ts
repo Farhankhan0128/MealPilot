@@ -293,7 +293,10 @@ export function buildSwiggyBuildersJourneyGateCenter(options: {
   const proofLinks = unique(gates.flatMap((item) => item.proofLinks));
   const telemetryLinks = unique(gates.flatMap((item) => item.telemetryLinks));
   const score = Math.round((gates.reduce((sum, item) => sum + statusWeight(item.status), 0) / gates.length) * 100);
-  const currentGate = gates.find((item) => item.status === "operator_gate")?.officialStep ?? gates[0].officialStep;
+  const currentGate =
+    gates.find((item) => item.status === "operator_gate" || item.status === "watch")?.officialStep ??
+    gates.find((item) => item.status !== "ready")?.officialStep ??
+    gates[0].officialStep;
 
   return {
     generatedAt: new Date().toISOString(),

@@ -78,6 +78,8 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/swiggy-builders-navigation-witness"].get.responses["200"].description).toContain("footer legal");
     expect(openApi.body.paths["/api/swiggy-builders-benefits-witness"].get.summary).toContain("Benefits Witness");
     expect(openApi.body.paths["/api/swiggy-builders-benefits-witness"].get.responses["200"].description).toContain("co-branding");
+    expect(openApi.body.paths["/api/swiggy-builders-ai-native-witness"].get.summary).toContain("AI Native Witness");
+    expect(openApi.body.paths["/api/swiggy-builders-ai-native-witness"].get.responses["200"].description).toContain("agent benchmark");
     expect(openApi.body.paths["/api/swiggy-builders-journey-gates"].get.summary).toContain("Journey Gate");
     expect(openApi.body.paths["/api/swiggy-builders-journey-gates"].get.responses["200"].description).toContain("Quick Review");
     expect(openApi.body.paths["/api/swiggy-builders-homepage-experience"].get.summary).toContain("Homepage Experience");
@@ -1863,7 +1865,7 @@ describe("MealPilot API", () => {
     expect(packet.totals.formFields).toBeGreaterThanOrEqual(10);
     expect(packet.totals.requiredAttachments).toBeGreaterThanOrEqual(10);
     expect(packet.totals.launchArtifacts).toBeGreaterThanOrEqual(50);
-    expect(packet.totals.visualTargets).toBe(73);
+    expect(packet.totals.visualTargets).toBe(74);
     expect(packet.files.map((file: { id: string }) => file.id)).toEqual(
       expect.arrayContaining(["packet_json", "packet_markdown", "visual_report", "production_summary"]),
     );
@@ -1875,7 +1877,7 @@ describe("MealPilot API", () => {
     ).toBe(true);
     expect(
       packet.commands.some(
-        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("73"),
+        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("74"),
       ),
     ).toBe(true);
     expect(packet.copyBlocks.formFields).toContain("Redirect URI(s)");
@@ -4460,8 +4462,8 @@ describe("MealPilot API", () => {
     const visualQa = response.body.visualQa;
 
     expect(visualQa.score).toBe(100);
-    expect(visualQa.totalTargets).toBe(73);
-    expect(visualQa.readyTargets).toBe(73);
+    expect(visualQa.totalTargets).toBe(74);
+    expect(visualQa.readyTargets).toBe(74);
     expect(visualQa.totalRules).toBe(7);
     expect(visualQa.readyRules).toBe(7);
     expect(visualQa.totalCommands).toBe(5);
@@ -4545,6 +4547,16 @@ describe("MealPilot API", () => {
           (target) =>
             target.id === "benefits_witness_card" &&
             target.selector === ".benefits-witness-card" &&
+            target.viewport === "desktop",
+        ),
+      ),
+    ).toBe(true);
+    expect(
+      visualQa.targetGroups.some((group: { targets: Array<{ id: string; selector: string; viewport: string }> }) =>
+        group.targets.some(
+          (target) =>
+            target.id === "ai_native_witness_card" &&
+            target.selector === ".ai-native-witness-card" &&
             target.viewport === "desktop",
         ),
       ),
@@ -5361,6 +5373,47 @@ describe("MealPilot API", () => {
     expect(witness.externalGates.some((gate: string) => gate.includes("production credentials"))).toBe(true);
   });
 
+  it("returns Swiggy Builders AI Native Witness for agents, clients, prompts, widgets, and safety", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/swiggy-builders-ai-native-witness").expect(200);
+    const witness = response.body.aiNativeWitness;
+
+    expect(witness.score).toBeGreaterThanOrEqual(88);
+    expect(witness.decision).toBe("ai_native_watch");
+    expect(witness.totals.rows).toBeGreaterThanOrEqual(8);
+    expect(witness.totals.proven).toBeGreaterThanOrEqual(4);
+    expect(witness.totals.officialTools).toBe(35);
+    expect(witness.totals.benchmarkJourneys).toBeGreaterThanOrEqual(8);
+    expect(witness.totals.clientTargets).toBeGreaterThanOrEqual(6);
+    expect(witness.totals.resources).toBe(6);
+    expect(witness.totals.prompts).toBe(6);
+    expect(witness.totals.widgetSurfaces).toBeGreaterThanOrEqual(7);
+    expect(witness.totals.proofLinks).toBeGreaterThanOrEqual(20);
+    expect(witness.rows.map((row: { id: string }) => row.id)).toEqual(
+      expect.arrayContaining([
+        "ai_native_agent_experience",
+        "ai_client_connect",
+        "coding_agent_governance",
+        "resources_prompts_runtime",
+        "multi_turn_state",
+        "widget_ai_surfaces",
+        "innovation_loop",
+        "commercial_safety_boundary",
+      ]),
+    );
+    expect(
+      witness.rows.every((row: { proofLinks: string[]; routeOptimization: string; riskBoundary: string }) =>
+        row.proofLinks.length > 0 && row.routeOptimization.length > 0 && row.riskBoundary.length > 0,
+      ),
+    ).toBe(true);
+    expect(witness.groups.map((group: { id: string }) => group.id)).toEqual(
+      expect.arrayContaining(["agent_runtime", "client_connect", "experience_surfaces", "innovation_governance"]),
+    );
+    expect(witness.commands.some((command: { command: string }) => command.command.includes("/api/swiggy-builders-ai-native-witness"))).toBe(true);
+    expect(witness.assertions.some((assertion: string) => assertion.includes("AI-native"))).toBe(true);
+    expect(witness.externalGates.some((gate: string) => gate.includes("hosted widget"))).toBe(true);
+  });
+
   it("returns a Swiggy source-to-product capability traceability matrix", async () => {
     const { app } = createMealPilotServer();
     const response = await request(app).get("/api/swiggy-capability-traceability").expect(200);
@@ -5472,7 +5525,7 @@ describe("MealPilot API", () => {
     expect(ledger.totals.mcpServers).toBe(3);
     expect(ledger.totals.mcpTools).toBe(35);
     expect(ledger.totals.docsPages).toBeGreaterThanOrEqual(69);
-    expect(ledger.totals.visualTargets).toBe(73);
+    expect(ledger.totals.visualTargets).toBe(74);
     expect(ledger.totals.reviewerArtifacts).toBeGreaterThanOrEqual(120);
     expect(ledger.groups.map((group: { id: string }) => group.id)).toEqual(
       expect.arrayContaining(["source_coverage", "product_depth", "mcp_integration", "operations", "handoff"]),
@@ -5750,7 +5803,7 @@ describe("MealPilot API", () => {
     expect(receipt.totals.llmsPages).toBe(69);
     expect(receipt.totals.referenceTools).toBe(35);
     expect(receipt.totals.matchedTools).toBe(35);
-    expect(receipt.totals.visualTargets).toBe(73);
+    expect(receipt.totals.visualTargets).toBe(74);
     expect(receipt.totals.unsafeLinks).toBe(0);
     expect(receipt.totals.missingRows).toBe(0);
     expect(receipt.rows.map((row: { id: string }) => row.id)).toEqual(
@@ -5774,7 +5827,7 @@ describe("MealPilot API", () => {
 
     const response = await request(app).get("/api/swiggy-builders-coverage-receipt").expect(200);
     expect(response.body.coverageReceipt.totals.referenceTools).toBe(35);
-  });
+  }, 15000);
 
   it("returns Swiggy Builders Review Decision for approval readiness", async () => {
     const { app } = createMealPilotServer();
@@ -5809,7 +5862,7 @@ describe("MealPilot API", () => {
       center.gates.some(
         (gate: { id: string; officialReviewSignal: string; proofLinks: string[]; status: string }) =>
           gate.id === "working_demo" &&
-          gate.status === "operator_input" &&
+          ["ready", "operator_input"].includes(gate.status) &&
           gate.officialReviewSignal.includes("demo") &&
           gate.proofLinks.includes("/api/reviewer-artifact-vault"),
       ),

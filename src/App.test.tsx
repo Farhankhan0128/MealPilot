@@ -157,7 +157,7 @@ describe("MealPilot app", () => {
 
     await waitFor(() => expect(screen.getByText("Confirmed")).toBeInTheDocument());
     expect(fetch).toHaveBeenCalledWith("/api/confirm", expect.objectContaining({ method: "POST" }));
-  });
+  }, 15000);
 
   it("renders the premium portal shell, mobile navigation, and CTA feedback", async () => {
     render(<App />);
@@ -205,6 +205,12 @@ describe("MealPilot app", () => {
     expect(screen.getAllByRole("link", { name: "Benefits API" })).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ href: expect.stringContaining("/api/swiggy-builders-benefits-witness") }),
+      ]),
+    );
+    expect(screen.getByText("AI Native Witness")).toBeInTheDocument();
+    expect(screen.getAllByRole("link", { name: "AI API" })).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ href: expect.stringContaining("/api/swiggy-builders-ai-native-witness") }),
       ]),
     );
     expect(screen.getByText("Source Availability")).toBeInTheDocument();

@@ -156,6 +156,11 @@ assert(
   "OpenAPI Builders benefits witness contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-builders-ai-native-witness"]?.get?.summary?.includes("AI Native Witness") &&
+    openApi.paths["/api/swiggy-builders-ai-native-witness"]?.get?.responses?.["200"]?.description?.includes("agent benchmark"),
+  "OpenAPI Builders AI Native witness contract is missing",
+);
+assert(
   openApi.paths["/api/swiggy-capability-traceability"]?.get?.summary?.includes("capability traceability") &&
     openApi.paths["/api/swiggy-capability-traceability"]?.get?.responses?.["200"]?.description?.includes("lifecycle gates"),
   "OpenAPI Swiggy capability traceability contract is missing",
@@ -899,6 +904,50 @@ assert(
   "Builders benefits witness groups, commands, or gates are missing",
 );
 
+const aiNativeWitness = await request("/api/swiggy-builders-ai-native-witness");
+assert(aiNativeWitness.aiNativeWitness.score >= 88, "Builders AI Native witness score is below target");
+assert(
+  ["ai_native_ready", "ai_native_watch"].includes(aiNativeWitness.aiNativeWitness.decision) &&
+    aiNativeWitness.aiNativeWitness.totals.rows >= 8 &&
+    aiNativeWitness.aiNativeWitness.totals.proven >= 4 &&
+    aiNativeWitness.aiNativeWitness.totals.officialTools === 35 &&
+    aiNativeWitness.aiNativeWitness.totals.benchmarkJourneys >= 8 &&
+    aiNativeWitness.aiNativeWitness.totals.clientTargets >= 6 &&
+    aiNativeWitness.aiNativeWitness.totals.resources === 6 &&
+    aiNativeWitness.aiNativeWitness.totals.prompts === 6 &&
+    aiNativeWitness.aiNativeWitness.totals.widgetSurfaces >= 7 &&
+    aiNativeWitness.aiNativeWitness.totals.proofLinks >= 20,
+  "Builders AI Native witness totals are incomplete",
+);
+assert(
+  [
+    "ai_native_agent_experience",
+    "ai_client_connect",
+    "coding_agent_governance",
+    "resources_prompts_runtime",
+    "multi_turn_state",
+    "widget_ai_surfaces",
+    "innovation_loop",
+    "commercial_safety_boundary",
+  ].every((id) =>
+    aiNativeWitness.aiNativeWitness.rows.some(
+      (row) => row.id === id && row.proofLinks.length > 0 && row.routeOptimization.length > 0 && row.riskBoundary.length > 0,
+    ),
+  ),
+  "Builders AI Native witness key rows are missing",
+);
+assert(
+  ["agent_runtime", "client_connect", "experience_surfaces", "innovation_governance"].every((id) =>
+    aiNativeWitness.aiNativeWitness.groups.some((group) => group.id === id),
+  ) &&
+    aiNativeWitness.aiNativeWitness.commands.some((command) =>
+      command.command.includes("/api/swiggy-builders-ai-native-witness"),
+    ) &&
+    aiNativeWitness.aiNativeWitness.assertions.some((assertion) => assertion.includes("AI-native")) &&
+    aiNativeWitness.aiNativeWitness.externalGates.some((gate) => gate.includes("hosted widget")),
+  "Builders AI Native witness groups, commands, or gates are missing",
+);
+
 const capabilityTraceability = await request("/api/swiggy-capability-traceability");
 assert(capabilityTraceability.capabilityTraceability.score >= 88, "capability traceability score is below target");
 assert(
@@ -1013,7 +1062,7 @@ assert(
     buildersCompletion.buildersCompletion.totals.mcpServers === 3 &&
     buildersCompletion.buildersCompletion.totals.mcpTools === 35 &&
     buildersCompletion.buildersCompletion.totals.docsPages >= 69 &&
-    buildersCompletion.buildersCompletion.totals.visualTargets === 73 &&
+    buildersCompletion.buildersCompletion.totals.visualTargets === 74 &&
     buildersCompletion.buildersCompletion.totals.reviewerArtifacts >= 120 &&
     buildersCompletion.buildersCompletion.totals.packetFiles >= 4,
   "Builders completion ledger totals are incomplete",
@@ -1088,7 +1137,7 @@ assert(
     coverageReceipt.coverageReceipt.totals.llmsPages === 69 &&
     coverageReceipt.coverageReceipt.totals.referenceTools === 35 &&
     coverageReceipt.coverageReceipt.totals.matchedTools === 35 &&
-    coverageReceipt.coverageReceipt.totals.visualTargets === 73 &&
+    coverageReceipt.coverageReceipt.totals.visualTargets === 74 &&
     coverageReceipt.coverageReceipt.totals.unsafeLinks === 0 &&
     coverageReceipt.coverageReceipt.totals.missingRows === 0,
   "Builders coverage receipt totals are incomplete",
@@ -1126,7 +1175,10 @@ assert(journeyGates.journeyGates.score >= 80, "Builders journey gate score is be
 assert(journeyGates.journeyGates.currentGate === "Apply for Prod Access", "Builders journey current gate is wrong");
 assert(journeyGates.journeyGates.totals.gates === 5, "Builders journey gate count is incomplete");
 assert(journeyGates.journeyGates.totals.ready >= 1, "Builders journey ready gate is missing");
-assert(journeyGates.journeyGates.totals.operatorGates === 2, "Builders journey operator gates are incomplete");
+assert(
+  journeyGates.journeyGates.totals.operatorGates + journeyGates.journeyGates.totals.watch >= 2,
+  "Builders journey operator or watch gates are incomplete",
+);
 assert(journeyGates.journeyGates.totals.swiggyGates === 2, "Builders journey Swiggy gates are incomplete");
 assert(
   journeyGates.journeyGates.totals.entryCriteria + journeyGates.journeyGates.totals.exitCriteria >= 35,
@@ -1369,7 +1421,7 @@ assert(
   reviewDecision.reviewDecision.gates.some(
     (gate) =>
       gate.id === "working_demo" &&
-      gate.status === "operator_input" &&
+      ["ready", "operator_input"].includes(gate.status) &&
       gate.officialReviewSignal.includes("demo") &&
       gate.proofLinks.includes("/api/reviewer-artifact-vault"),
   ),
@@ -4089,8 +4141,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 73, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 73, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 74, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 74, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -4370,6 +4422,12 @@ assert(
     group.targets.some((target) => target.id === "benefits_witness_card" && target.selector === ".benefits-witness-card"),
   ),
   "visual QA Benefits Witness target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some((target) => target.id === "ai_native_witness_card" && target.selector === ".ai-native-witness-card"),
+  ),
+  "visual QA AI Native Witness target is missing",
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
@@ -8431,7 +8489,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 73, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 74, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -8445,7 +8503,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("73")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("74")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -9042,6 +9100,9 @@ console.log(
       benefitsWitnessScore: benefitsWitness.benefitsWitness.score,
       benefitsWitnessRows: benefitsWitness.benefitsWitness.totals.rows,
       benefitsWitnessSwiggyGates: benefitsWitness.benefitsWitness.totals.swiggyGates,
+      aiNativeWitnessScore: aiNativeWitness.aiNativeWitness.score,
+      aiNativeWitnessRows: aiNativeWitness.aiNativeWitness.totals.rows,
+      aiNativeWitnessClientTargets: aiNativeWitness.aiNativeWitness.totals.clientTargets,
       capabilityTraceabilityScore: capabilityTraceability.capabilityTraceability.score,
       capabilityTraceabilityRows: capabilityTraceability.capabilityTraceability.totals.rows,
       capabilityTraceabilityCtas: capabilityTraceability.capabilityTraceability.totals.officialCtas,

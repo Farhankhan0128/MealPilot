@@ -135,6 +135,7 @@ import {
   fetchSwiggyBuildersModuleWitness,
   fetchSwiggyBuildersNavigationWitness,
   fetchSwiggyBuildersBenefitsWitness,
+  fetchSwiggyBuildersAiNativeWitness,
   fetchSwiggyCapabilityTraceability,
   fetchSwiggyHomepageSignalCoverage,
   fetchSwiggyBuildersCompletionLedger,
@@ -317,6 +318,7 @@ import type {
   SwiggyBuildersModuleWitness,
   SwiggyBuildersNavigationWitness,
   SwiggyBuildersBenefitsWitness,
+  SwiggyBuildersAiNativeWitness,
   SwiggyCapabilityTraceabilityMatrix,
   SwiggyBuildersCompletionLedger,
   SwiggyHomepageSignalCoverageBoard,
@@ -607,6 +609,7 @@ function App() {
   const [moduleWitness, setModuleWitness] = useState<SwiggyBuildersModuleWitness | null>(null);
   const [navigationWitness, setNavigationWitness] = useState<SwiggyBuildersNavigationWitness | null>(null);
   const [benefitsWitness, setBenefitsWitness] = useState<SwiggyBuildersBenefitsWitness | null>(null);
+  const [aiNativeWitness, setAiNativeWitness] = useState<SwiggyBuildersAiNativeWitness | null>(null);
   const [capabilityTraceability, setCapabilityTraceability] =
     useState<SwiggyCapabilityTraceabilityMatrix | null>(null);
   const [homepageSignalCoverage, setHomepageSignalCoverage] =
@@ -846,6 +849,7 @@ function App() {
       moduleWitnessResponse,
       navigationWitnessResponse,
       benefitsWitnessResponse,
+      aiNativeWitnessResponse,
       capabilityTraceabilityResponse,
       homepageSignalCoverageResponse,
       buildersCompletionResponse,
@@ -981,6 +985,7 @@ function App() {
       fetchSwiggyBuildersModuleWitness(),
       fetchSwiggyBuildersNavigationWitness(),
       fetchSwiggyBuildersBenefitsWitness(),
+      fetchSwiggyBuildersAiNativeWitness(),
       fetchSwiggyCapabilityTraceability(),
       fetchSwiggyHomepageSignalCoverage(),
       fetchSwiggyBuildersCompletionLedger(),
@@ -1117,6 +1122,7 @@ function App() {
     setModuleWitness(moduleWitnessResponse.moduleWitness);
     setNavigationWitness(navigationWitnessResponse.navigationWitness);
     setBenefitsWitness(benefitsWitnessResponse.benefitsWitness);
+    setAiNativeWitness(aiNativeWitnessResponse.aiNativeWitness);
     setCapabilityTraceability(capabilityTraceabilityResponse.capabilityTraceability);
     setHomepageSignalCoverage(homepageSignalCoverageResponse.homepageSignalCoverage);
     setBuildersCompletion(buildersCompletionResponse.buildersCompletion);
@@ -1256,6 +1262,7 @@ function App() {
       moduleWitnessResponse,
       navigationWitnessResponse,
       benefitsWitnessResponse,
+      aiNativeWitnessResponse,
       capabilityTraceabilityResponse,
       homepageSignalCoverageResponse,
       buildersCompletionResponse,
@@ -1388,6 +1395,7 @@ function App() {
       fetchSwiggyBuildersModuleWitness(),
       fetchSwiggyBuildersNavigationWitness(),
       fetchSwiggyBuildersBenefitsWitness(),
+      fetchSwiggyBuildersAiNativeWitness(),
       fetchSwiggyCapabilityTraceability(),
       fetchSwiggyHomepageSignalCoverage(),
       fetchSwiggyBuildersCompletionLedger(),
@@ -1520,6 +1528,7 @@ function App() {
     setModuleWitness(moduleWitnessResponse.moduleWitness);
     setNavigationWitness(navigationWitnessResponse.navigationWitness);
     setBenefitsWitness(benefitsWitnessResponse.benefitsWitness);
+    setAiNativeWitness(aiNativeWitnessResponse.aiNativeWitness);
     setCapabilityTraceability(capabilityTraceabilityResponse.capabilityTraceability);
     setHomepageSignalCoverage(homepageSignalCoverageResponse.homepageSignalCoverage);
     setBuildersCompletion(buildersCompletionResponse.buildersCompletion);
@@ -2227,6 +2236,7 @@ function App() {
                 moduleWitness={moduleWitness}
                 navigationWitness={navigationWitness}
                 benefitsWitness={benefitsWitness}
+                aiNativeWitness={aiNativeWitness}
                 capabilityTraceability={capabilityTraceability}
                 homepageSignalCoverage={homepageSignalCoverage}
                 buildersCompletion={buildersCompletion}
@@ -2851,6 +2861,7 @@ function LaunchCenterPanel({
   moduleWitness,
   navigationWitness,
   benefitsWitness,
+  aiNativeWitness,
   capabilityTraceability,
   homepageSignalCoverage,
   buildersCompletion,
@@ -2958,6 +2969,7 @@ function LaunchCenterPanel({
   moduleWitness: SwiggyBuildersModuleWitness | null;
   navigationWitness: SwiggyBuildersNavigationWitness | null;
   benefitsWitness: SwiggyBuildersBenefitsWitness | null;
+  aiNativeWitness: SwiggyBuildersAiNativeWitness | null;
   capabilityTraceability: SwiggyCapabilityTraceabilityMatrix | null;
   homepageSignalCoverage: SwiggyHomepageSignalCoverageBoard | null;
   buildersCompletion: SwiggyBuildersCompletionLedger | null;
@@ -4957,6 +4969,58 @@ function LaunchCenterPanel({
             </a>
             <a href="/api/swiggy-growth-partnership" target="_blank" rel="noreferrer">
               Growth
+            </a>
+          </div>
+        </article>
+
+        <article className="ai-native-witness-card">
+          <div className="mini-heading">
+            <Bot aria-hidden="true" />
+            <strong>AI Native Witness</strong>
+          </div>
+          <span>
+            {aiNativeWitness
+              ? `${aiNativeWitness.score}/100, ${aiNativeWitness.totals.proven + aiNativeWitness.totals.ready}/${aiNativeWitness.totals.rows} AI lanes ready`
+              : "Witnessing agents, clients, prompts, state, widgets, innovation, and commercial safety"}
+          </span>
+          <div className="ai-native-witness-grid">
+            <div>
+              <strong>{aiNativeWitness?.totals.benchmarkJourneys ?? 0}</strong>
+              <span>Journeys</span>
+            </div>
+            <div>
+              <strong>{aiNativeWitness?.totals.clientTargets ?? 0}</strong>
+              <span>Clients</span>
+            </div>
+            <div>
+              <strong>{(aiNativeWitness?.totals.resources ?? 0) + (aiNativeWitness?.totals.prompts ?? 0)}</strong>
+              <span>R/P</span>
+            </div>
+            <div>
+              <strong>{aiNativeWitness?.totals.proofLinks ?? 0}</strong>
+              <span>Proofs</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(aiNativeWitness?.groups ?? []).map((group) => (
+              <li
+                key={group.id}
+                data-status={group.gates > 0 || group.watch > 0 ? "watch" : group.semanticFallbacks > 0 ? "watch" : "healthy"}
+              >
+                <span>{group.label}</span>
+                <strong>{group.proven + group.ready + group.semanticFallbacks}/{group.rows}</strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-intelligence-actions" aria-label="AI Native witness links">
+            <a href="/api/swiggy-builders-ai-native-witness" target="_blank" rel="noreferrer">
+              AI API
+            </a>
+            <a href="/api/swiggy-agent-experience-benchmark" target="_blank" rel="noreferrer">
+              Benchmark
+            </a>
+            <a href="/api/ai-client-connect-kit" target="_blank" rel="noreferrer">
+              Clients
             </a>
           </div>
         </article>

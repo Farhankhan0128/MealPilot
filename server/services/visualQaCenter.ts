@@ -235,6 +235,17 @@ const targetGroups = [
         "artifacts/visual-qa/benefits-witness-card.png",
       ),
       target(
+        "ai_native_witness_card",
+        "AI Native Witness card",
+        "/",
+        ".ai-native-witness-card",
+        "desktop",
+        1280,
+        900,
+        "AI Native Witness shows agent journeys, client targets, MCP resources/prompts, state orchestration, widget surfaces, innovation lanes, and commercial-safety proof.",
+        "artifacts/visual-qa/ai-native-witness-card.png",
+      ),
+      target(
         "capability_traceability_card",
         "Capability Traceability card",
         "/",

@@ -521,6 +521,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-builders-ai-native-witness": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Builders AI Native Witness for agent, client, prompt, widget, and safety proof",
+          responses: {
+            "200": {
+              description:
+                "Official AI-native Builders promises witnessed against agent benchmark journeys, AI client connection targets, coding-agent governance, MCP resources and prompts, multi-turn state, widget surfaces, innovation radar, commercial-safety boundaries, proof links, and Swiggy gates",
+            },
+          },
+        },
+      },
       "/api/swiggy-builders-journey-gates": {
         get: {
           tags: ["Builder Access"],

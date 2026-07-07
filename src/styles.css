@@ -1153,7 +1153,8 @@ select:focus {
 .module-intelligence-card,
 .module-witness-card,
 .navigation-witness-card,
-.benefits-witness-card {
+.benefits-witness-card,
+.ai-native-witness-card {
   grid-column: span 2;
 }
 
@@ -1191,6 +1192,7 @@ select:focus {
 .module-witness-grid,
 .navigation-witness-grid,
 .benefits-witness-grid,
+.ai-native-witness-grid,
 .coverage-receipt-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -1203,6 +1205,7 @@ select:focus {
 .module-witness-grid div,
 .navigation-witness-grid div,
 .benefits-witness-grid div,
+.ai-native-witness-grid div,
 .coverage-receipt-grid div {
   display: grid;
   gap: 3px;
@@ -1218,6 +1221,7 @@ select:focus {
 .module-witness-grid strong,
 .navigation-witness-grid strong,
 .benefits-witness-grid strong,
+.ai-native-witness-grid strong,
 .coverage-receipt-grid strong {
   color: var(--green-dark);
 }
@@ -1228,6 +1232,7 @@ select:focus {
 .module-witness-grid span,
 .navigation-witness-grid span,
 .benefits-witness-grid span,
+.ai-native-witness-grid span,
 .coverage-receipt-grid span {
   color: var(--muted);
   font-size: 0.75rem;
@@ -4747,6 +4752,7 @@ select:focus {
 .module-witness-card,
 .navigation-witness-card,
 .benefits-witness-card,
+.ai-native-witness-card,
 .capability-traceability-card,
 .homepage-signal-card,
 .completion-ledger-card,
@@ -5406,6 +5412,7 @@ select:focus {
 	  .module-witness-card,
 	  .navigation-witness-card,
 	  .benefits-witness-card,
+	  .ai-native-witness-card,
 	  .talent-signal-card,
 	  .conversion-center-card,
 	  .demo-evidence-card,
@@ -5619,6 +5626,7 @@ select:focus {
 	  .module-witness-grid,
 	  .navigation-witness-grid,
 	  .benefits-witness-grid,
+	  .ai-native-witness-grid,
 	  .talent-signal-grid,
 	  .conversion-center-grid,
 	  .benefits-activation-grid,
@@ -5673,6 +5681,7 @@ select:focus {
 	  .module-witness-card,
 	  .navigation-witness-card,
 	  .benefits-witness-card,
+	  .ai-native-witness-card,
 	  .talent-signal-card,
 	  .conversion-center-card,
 	  .demo-evidence-card,

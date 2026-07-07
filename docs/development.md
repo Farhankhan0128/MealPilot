@@ -132,6 +132,8 @@ The verifier also validates `/api/swiggy-benefits-activation-center` and `POST /
 
 The verifier also validates `/api/swiggy-builders-benefits-witness` for the official Builders What You Get promises, including live APIs, quota, room to experiment, support, co-branding, showcase, hiring visibility, growth, enterprise support, proof links, owner gates, route optimizations, and risk boundaries.
 
+The verifier also validates `/api/swiggy-builders-ai-native-witness` for the official AI-native Builders promise, including benchmark journeys, AI client configs, coding-agent rules, MCP resources/prompts, multi-turn state, widget and hosted-widget surfaces, innovation lanes, commercial-safety boundaries, proof links, and Swiggy gates.
+
 The verifier also validates `/api/swiggy-interaction-qa-center` and `POST /api/swiggy-interaction-qa-center/rehearse` for planner, confirmation, support-report, privacy, packet-export, first-call, access-submission, partner-support CTA contracts, dry-run route rehearsals, missing-input guards, automated proof, and explicit Swiggy/operator gates.
 
 The verifier also validates `/api/swiggy-staging-seed-smoke-center` for Food, Instamart, and Dineout seeded fixtures, read/mutation/commercial/support smoke waves, no-blind-retry stop rules, telemetry evidence, and Swiggy staging credential gates.
@@ -544,6 +546,8 @@ Production should use an HTTPS redirect URI with exact-match allowlisting.
 `/api/swiggy-benefits-activation-center` turns Swiggy Builders benefits into an activation room: live APIs, quota expansion, technical support, co-branding, showcase visibility, hiring visibility, growth partnership, and enterprise support each have an owner, proof route, CTA, next action, and external gate. `POST /api/swiggy-benefits-activation-center/activate` generates one local activation packet for the selected benefit, including its readiness decision, matching CTA, proof links, checklist, builders@swiggy.in draft, safety assertions, and unknown-benefit guard.
 
 `/api/swiggy-builders-benefits-witness` sits above that activation room as the reviewer receipt. It maps each official What You Get promise to source URLs, MealPilot surfaces, proof routes, route optimizations, risk boundaries, grouped readiness, and explicit Swiggy/operator gates.
+
+`/api/swiggy-builders-ai-native-witness` is the reviewer receipt for AI-native implementation depth. It maps agent benchmarks, client connection targets, coding-agent governance, resources/prompts, state orchestration, widgets, innovation, and commercial safety to proof routes, grouped readiness, risk boundaries, and explicit Swiggy gates.
 
 `/api/swiggy-interaction-qa-center` composes the clickable portal contract: every locally executable CTA maps to a route, feedback expectation, automated proof, and Swiggy relevance, while access form submission, Slack, partner manager, production credentials, and co-marketing remain manual or external gates. `POST /api/swiggy-interaction-qa-center/rehearse` generates a local CTA dry-run packet with route contract, browser action, expected feedback, proof links, automation coverage, checklist, missing-input guards, and Swiggy-owned form, Slack, credential, and commercial-action gates.
 
