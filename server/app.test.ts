@@ -172,6 +172,7 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/ai-client-connect-kit/validate-config"].post.responses["200"].description).toContain("Instamart /im");
     expect(openApi.body.paths["/api/coding-agent-governance"].get.summary).toContain("coding-agent governance");
     expect(openApi.body.paths["/api/brand-compliance-kit"].get.summary).toContain("brand");
+    expect(openApi.body.paths["/api/brand-compliance-kit/rehearse"].post.summary).toContain("brand");
     expect(openApi.body.paths["/api/swiggy-journey-compiler"].get.summary).toContain("journey compiler");
     expect(openApi.body.paths["/api/swiggy-access-dossier"].get.summary).toContain("access application dossier");
     expect(openApi.body.paths["/api/swiggy-access-evidence-matrix"].get.summary).toContain("access evidence matrix");
@@ -5594,6 +5595,43 @@ describe("MealPilot API", () => {
     expect(kit.paletteAudit.orangeUsage).toBe("reserved_for_swiggy_marks_only");
     expect(kit.externalGates.some((gate: string) => gate.includes("brand asset"))).toBe(true);
     expect(kit.assertions.some((assertion: string) => assertion.includes("does not claim official Swiggy endorsement"))).toBe(true);
+  });
+
+  it("rehearses Swiggy brand compliance without claiming approval", async () => {
+    const { app } = createMealPilotServer();
+
+    const ready = await request(app)
+      .post("/api/brand-compliance-kit/rehearse")
+      .send({
+        mode: "local_review",
+        includeAttributionAudit: true,
+        includeFinalScreenshots: false,
+        includeOfficialAssets: false,
+        includeCobrandApproval: false,
+      })
+      .expect(200);
+
+    expect(ready.body.brandComplianceRehearsal.decision).toBe("ready_brand_packet");
+    expect(ready.body.brandComplianceRehearsal.attributionCopy).toContain("Powered by Swiggy MCP");
+    expect(ready.body.brandComplianceRehearsal.selectedSurfaces.length).toBeGreaterThanOrEqual(5);
+    expect(ready.body.brandComplianceRehearsal.commands.some((command: { command: string }) => command.command.includes("verify:visual"))).toBe(true);
+
+    const gated = await request(app)
+      .post("/api/brand-compliance-kit/rehearse")
+      .send({
+        mode: "cobrand_launch",
+        includeAttributionAudit: true,
+        includeFinalScreenshots: true,
+        includeOfficialAssets: true,
+        includeCobrandApproval: true,
+      })
+      .expect(200);
+
+    expect(gated.body.brandComplianceRehearsal.decision).toBe("blocked_brand_gate");
+    expect(gated.body.brandComplianceRehearsal.missingInputs).toEqual(
+      expect.arrayContaining(["official Swiggy brand asset pack", "written Swiggy co-branding approval"]),
+    );
+    expect(gated.body.brandComplianceRehearsal.assertions.some((assertion: string) => assertion.includes("never uses Swiggy marks"))).toBe(true);
   });
 
   it("compiles official Swiggy journeys and indexes every tool", async () => {

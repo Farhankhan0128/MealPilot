@@ -1491,6 +1491,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/brand-compliance-kit/rehearse": {
+        post: {
+          tags: ["Builder Access"],
+          summary: "Rehearse Swiggy brand attribution and co-branding readiness",
+          responses: {
+            "200": {
+              description:
+                "Selected brand rehearsal mode with Powered by Swiggy attribution, reviewed surfaces, palette status, official asset gates, screenshot gates, co-branding approval gates, commands, telemetry, and missing inputs",
+            },
+          },
+        },
+      },
       "/api/swiggy-journey-compiler": {
         get: {
           tags: ["Builder Access"],

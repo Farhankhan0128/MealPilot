@@ -8,6 +8,8 @@ import type {
   AiClientConfigValidation,
   AiClientTarget,
   BrandComplianceKit,
+  BrandComplianceRehearsal,
+  BrandComplianceRehearsalMode,
   BuilderReadinessItem,
   BuilderPacketExport,
   CartPreflightReport,
@@ -1069,6 +1071,19 @@ export function fetchCodingAgentGovernance() {
 
 export function fetchBrandComplianceKit() {
   return requestJson<{ brandCompliance: BrandComplianceKit }>("/api/brand-compliance-kit");
+}
+
+export function rehearseBrandCompliance(input: {
+  mode: BrandComplianceRehearsalMode;
+  includeAttributionAudit: boolean;
+  includeFinalScreenshots: boolean;
+  includeOfficialAssets: boolean;
+  includeCobrandApproval: boolean;
+}) {
+  return requestJson<{ brandComplianceRehearsal: BrandComplianceRehearsal }>("/api/brand-compliance-kit/rehearse", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
 }
 
 export function fetchSwiggyJourneyCompiler() {

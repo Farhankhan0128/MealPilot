@@ -6934,6 +6934,29 @@ export interface BrandComplianceKit {
   externalGates: string[];
 }
 
+export type BrandComplianceRehearsalMode = "local_review" | "asset_onboarding" | "cobrand_launch";
+export type BrandComplianceRehearsalDecision = "ready_brand_packet" | "manual_brand_gate" | "blocked_brand_gate";
+
+export interface BrandComplianceRehearsal {
+  generatedAt: string;
+  decision: BrandComplianceRehearsalDecision;
+  readinessScore: number;
+  mode: BrandComplianceRehearsalMode;
+  includeAttributionAudit: boolean;
+  includeFinalScreenshots: boolean;
+  includeOfficialAssets: boolean;
+  includeCobrandApproval: boolean;
+  selectedRules: BrandComplianceRule[];
+  selectedSurfaces: BrandSurfacePlacement[];
+  selectedAssetGates: BrandAssetGate[];
+  attributionCopy: string[];
+  commands: Array<{ command: string; proves: string }>;
+  missingInputs: string[];
+  telemetry: Array<{ field: string; value: string; redaction: string }>;
+  assertions: string[];
+  nextAction: string;
+}
+
 export interface ReviewerProof {
   score: number;
   highlights: string[];

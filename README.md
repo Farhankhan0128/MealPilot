@@ -128,7 +128,7 @@ Planned MCP servers:
 - Swiggy Innovation Radar that turns Swiggy developer ideas, enterprise signals, access ground rules, support model, and all MCP servers into premium opportunity lanes, route optimizations, build phases, and partner gates.
 - AI Client Connect Kit that generates and validates Swiggy MCP configs for Claude Desktop, ChatGPT, Cursor, VS Code, Windsurf, generic MCP clients, coding-agent rules, SDK auth modes, endpoint correctness, secret redaction, and delegated-auth gates.
 - Coding Agent Governance that ships root `AGENTS.md`, scores it against official Swiggy `llms.txt`, `llms-full.txt`, markdown-twin, reference, auth, rate-limit, production, confirmation, and redaction rules, and exposes smoke tests for future coding agents.
-- Brand Compliance Kit that maps Powered by Swiggy attribution, co-branding rules, brand asset gates, palette usage, no-endorsement copy, and launch screenshot checks.
+- Brand Compliance Kit plus rehearsal that maps Powered by Swiggy attribution, co-branding rules, brand asset gates, palette usage, no-endorsement copy, launch screenshot checks, and blocked approval gates for official assets or co-brand launch.
 - Data Governance Center that maps Swiggy DPDP roles, India/Singapore residency, tool-call PII flows, DSR routing, 90-day audit logs, token redaction, and signed-manifest watch items.
 - Enterprise Delegated Auth Center that models Swiggy's on-behalf-of OAuth 2.1 PKCE flow, per-user token storage, platform redirect schemes, troubleshooting, architecture review, and partner gates.
 - Swiggy Enterprise Platform Center that turns the official platform-operator lane into tenant controls, delegated-auth boundaries, quota readiness, support SLAs, contract gates, co-branding review, and enterprise audit exports.
@@ -344,6 +344,7 @@ GET  /api/swiggy-innovation-radar
 GET  /api/ai-client-connect-kit
 POST /api/ai-client-connect-kit/validate-config
 GET  /api/brand-compliance-kit
+POST /api/brand-compliance-kit/rehearse
 GET  /api/swiggy-journey-compiler
 GET  /api/swiggy-access-dossier
 GET  /api/swiggy-access-evidence-matrix
@@ -570,7 +571,7 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 
 `GET /api/enterprise-platform-center` turns Swiggy's platform-operator path into reviewer evidence: tenant boundaries, per-user delegated OAuth controls, peak-QPS and quota review, 48-hour staging soak, enterprise support channels, contract gates, co-branding approvals, redacted audit exports, and external Swiggy approvals.
 
-`GET /api/brand-compliance-kit` maps Swiggy attribution and co-branding readiness: Powered by Swiggy copy, no false endorsement, brand asset external gates, #FF5200 usage, white-label restrictions, surface placements, and screenshot checklist.
+`GET /api/brand-compliance-kit` and `POST /api/brand-compliance-kit/rehearse` map Swiggy attribution and co-branding readiness: Powered by Swiggy copy, no false endorsement, brand asset external gates, #FF5200 usage, white-label restrictions, surface placements, and screenshot checklist. The rehearsal accepts local-review, asset-onboarding, and co-brand-launch modes plus attribution, screenshot, official-asset, and co-brand approval gates, then returns commands, telemetry, attribution copy, missing inputs, and a ready/manual/blocked decision without modifying Swiggy marks or claiming approval.
 
 `GET /api/swiggy-access-dossier` is the operator-facing production-access checklist: required and optional application fields, Swiggy review checks, ground rules, legal readiness, developer/enterprise tracks, proof links, and manual inputs before the Google Form submission.
 

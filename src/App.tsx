@@ -53,6 +53,7 @@ import {
   composeSwiggyShowcaseSubmission,
   composeSwiggyTalentOutreach,
   rehearseSwiggyOperatingContract,
+  rehearseBrandCompliance,
   addGroupMember,
   confirmAllRecommendations,
   confirmServerRecommendation,
@@ -226,6 +227,8 @@ import type {
   AiClientConnectKit,
   BuilderPacketExport,
   BrandComplianceKit,
+  BrandComplianceRehearsal,
+  BrandComplianceRehearsalMode,
   CartPreflightReport,
   CommercialActionGuardReport,
   ComplianceEvidence,
@@ -2894,6 +2897,21 @@ function LaunchCenterPanel({
   });
   const [operatingContractRehearsal, setOperatingContractRehearsal] = useState<SwiggyOperatingContractRehearsal | null>(null);
   const [operatingContractRehearsalStatus, setOperatingContractRehearsalStatus] = useState<"idle" | "loading" | "error">("idle");
+  const [brandComplianceForm, setBrandComplianceForm] = useState<{
+    mode: BrandComplianceRehearsalMode;
+    includeAttributionAudit: boolean;
+    includeFinalScreenshots: boolean;
+    includeOfficialAssets: boolean;
+    includeCobrandApproval: boolean;
+  }>({
+    mode: "local_review",
+    includeAttributionAudit: true,
+    includeFinalScreenshots: false,
+    includeOfficialAssets: false,
+    includeCobrandApproval: false,
+  });
+  const [brandComplianceRehearsal, setBrandComplianceRehearsal] = useState<BrandComplianceRehearsal | null>(null);
+  const [brandComplianceRehearsalStatus, setBrandComplianceRehearsalStatus] = useState<"idle" | "loading" | "error">("idle");
   const [faqAnswerQuestion, setFaqAnswerQuestion] = useState(FAQ_ANSWER_SAMPLE_QUESTION);
   const [interactiveFaqAnswer, setInteractiveFaqAnswer] = useState<SwiggyFaqAnswerResolution | null>(null);
   const [faqAnswerStatus, setFaqAnswerStatus] = useState<"idle" | "loading" | "error">("idle");
@@ -3201,6 +3219,18 @@ function LaunchCenterPanel({
       setOperatingContractRehearsalStatus("idle");
     } catch {
       setOperatingContractRehearsalStatus("error");
+    }
+  }
+
+  async function runBrandComplianceRehearsal(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setBrandComplianceRehearsalStatus("loading");
+    try {
+      const response = await rehearseBrandCompliance(brandComplianceForm);
+      setBrandComplianceRehearsal(response.brandComplianceRehearsal);
+      setBrandComplianceRehearsalStatus("idle");
+    } catch {
+      setBrandComplianceRehearsalStatus("error");
     }
   }
 
@@ -8613,6 +8643,99 @@ function LaunchCenterPanel({
               <strong>{brandCompliance?.paletteAudit.status ?? "pending"}</strong>
               <span>Palette</span>
             </div>
+          </div>
+          <form className="brand-compliance-rehearsal" onSubmit={runBrandComplianceRehearsal}>
+            <label htmlFor="brand-mode">Review mode</label>
+            <select
+              id="brand-mode"
+              value={brandComplianceForm.mode}
+              onChange={(event) =>
+                setBrandComplianceForm((current) => ({
+                  ...current,
+                  mode: event.target.value as BrandComplianceRehearsalMode,
+                }))
+              }
+            >
+              <option value="local_review">Local review</option>
+              <option value="asset_onboarding">Asset onboarding</option>
+              <option value="cobrand_launch">Co-brand launch</option>
+            </select>
+            <div className="brand-compliance-toggle-grid">
+              <label htmlFor="brand-attribution">
+                <input
+                  id="brand-attribution"
+                  type="checkbox"
+                  checked={brandComplianceForm.includeAttributionAudit}
+                  onChange={(event) =>
+                    setBrandComplianceForm((current) => ({ ...current, includeAttributionAudit: event.target.checked }))
+                  }
+                />
+                Attribution
+              </label>
+              <label htmlFor="brand-screenshots">
+                <input
+                  id="brand-screenshots"
+                  type="checkbox"
+                  checked={brandComplianceForm.includeFinalScreenshots}
+                  onChange={(event) =>
+                    setBrandComplianceForm((current) => ({ ...current, includeFinalScreenshots: event.target.checked }))
+                  }
+                />
+                Screenshots
+              </label>
+              <label htmlFor="brand-assets">
+                <input
+                  id="brand-assets"
+                  type="checkbox"
+                  checked={brandComplianceForm.includeOfficialAssets}
+                  onChange={(event) =>
+                    setBrandComplianceForm((current) => ({ ...current, includeOfficialAssets: event.target.checked }))
+                  }
+                />
+                Assets
+              </label>
+              <label htmlFor="brand-cobrand">
+                <input
+                  id="brand-cobrand"
+                  type="checkbox"
+                  checked={brandComplianceForm.includeCobrandApproval}
+                  onChange={(event) =>
+                    setBrandComplianceForm((current) => ({ ...current, includeCobrandApproval: event.target.checked }))
+                  }
+                />
+                Co-brand
+              </label>
+            </div>
+            <button type="submit" disabled={brandComplianceRehearsalStatus === "loading"} aria-label="Rehearse Swiggy brand compliance">
+              {brandComplianceRehearsalStatus === "loading" ? <Loader2 aria-hidden="true" /> : <ShieldCheck aria-hidden="true" />}
+              Rehearse
+            </button>
+            {brandComplianceRehearsalStatus === "error" ? <small role="status">Brand compliance rehearsal unavailable.</small> : null}
+          </form>
+          <div
+            className="brand-compliance-rehearsal-result"
+            data-status={
+              brandComplianceRehearsal?.decision === "ready_brand_packet"
+                ? "healthy"
+                : brandComplianceRehearsal?.decision === "manual_brand_gate"
+                  ? "watch"
+                  : "blocked"
+            }
+          >
+            <div>
+              <span>Brand Review</span>
+              <strong>
+                {brandComplianceRehearsal
+                  ? `${brandComplianceRehearsal.decision.replace(/_/g, " ")} / ${brandComplianceRehearsal.readinessScore}`
+                  : "Awaiting rehearsal"}
+              </strong>
+            </div>
+            <p>
+              {brandComplianceRehearsal
+                ? `${brandComplianceRehearsal.mode.replace(/_/g, " ")} / ${brandComplianceRehearsal.selectedSurfaces.length} surfaces / ${brandComplianceRehearsal.selectedAssetGates.length} asset gates`
+                : "Prepare Powered by Swiggy attribution, no-endorsement copy, palette checks, screenshots, and asset gates."}
+            </p>
+            {brandComplianceRehearsal ? <small>{brandComplianceRehearsal.nextAction}</small> : null}
           </div>
           <ul className="compact-status-list">
             {(brandCompliance?.rules ?? []).slice(0, 4).map((rule) => (

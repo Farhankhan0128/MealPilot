@@ -149,6 +149,11 @@ assert(
   "OpenAPI Builders live source resilience contract is missing",
 );
 assert(
+  openApi.paths["/api/brand-compliance-kit"]?.get?.summary?.includes("brand") &&
+    openApi.paths["/api/brand-compliance-kit/rehearse"]?.post?.summary?.includes("brand"),
+  "OpenAPI brand compliance contract is missing",
+);
+assert(
   openApi.paths["/api/swiggy-builders-review-decision"]?.get?.summary?.includes("Review Decision") &&
     openApi.paths["/api/swiggy-builders-review-decision"]?.get?.responses?.["200"]?.description?.includes("approval"),
   "OpenAPI Builders review decision contract is missing",
@@ -4579,6 +4584,38 @@ assert(
   brandCompliance.brandCompliance.paletteAudit.swiggyOrange === "#FF5200" &&
     brandCompliance.brandCompliance.paletteAudit.orangeUsage === "reserved_for_swiggy_marks_only",
   "brand compliance palette audit is incomplete",
+);
+const readyBrandComplianceRehearsal = await request("/api/brand-compliance-kit/rehearse", {
+  method: "POST",
+  body: JSON.stringify({
+    mode: "local_review",
+    includeAttributionAudit: true,
+    includeFinalScreenshots: false,
+    includeOfficialAssets: false,
+    includeCobrandApproval: false,
+  }),
+});
+assert(
+  readyBrandComplianceRehearsal.brandComplianceRehearsal.decision === "ready_brand_packet" &&
+    readyBrandComplianceRehearsal.brandComplianceRehearsal.attributionCopy.includes("Powered by Swiggy MCP") &&
+    readyBrandComplianceRehearsal.brandComplianceRehearsal.commands.some((command) => command.command.includes("verify:visual")),
+  "brand compliance ready rehearsal is incomplete",
+);
+const gatedBrandComplianceRehearsal = await request("/api/brand-compliance-kit/rehearse", {
+  method: "POST",
+  body: JSON.stringify({
+    mode: "cobrand_launch",
+    includeAttributionAudit: true,
+    includeFinalScreenshots: true,
+    includeOfficialAssets: true,
+    includeCobrandApproval: true,
+  }),
+});
+assert(
+  gatedBrandComplianceRehearsal.brandComplianceRehearsal.decision === "blocked_brand_gate" &&
+    gatedBrandComplianceRehearsal.brandComplianceRehearsal.missingInputs.includes("official Swiggy brand asset pack") &&
+    gatedBrandComplianceRehearsal.brandComplianceRehearsal.missingInputs.includes("written Swiggy co-branding approval"),
+  "brand compliance gated rehearsal is incomplete",
 );
 
 const journeyCompiler = await request("/api/swiggy-journey-compiler");

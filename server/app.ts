@@ -28,7 +28,7 @@ import { buildAccessSubmissionStudio } from "./services/accessSubmissionStudio.j
 import { buildSwiggyAuthLifecycleCenter } from "./services/authLifecycleCenter.js";
 import { buildAuditLedgerCenter } from "./services/auditLedger.js";
 import { activateSwiggyBenefit, buildSwiggyBenefitsActivationCenter } from "./services/benefitsActivationCenter.js";
-import { buildBrandComplianceKit } from "./services/brandCompliance.js";
+import { buildBrandComplianceKit, rehearseBrandCompliance } from "./services/brandCompliance.js";
 import { buildSwiggyBuildersLaunchStoryCenter } from "./services/buildersLaunchStoryCenter.js";
 import { buildSwiggyBuildersLiveSourceResilienceCenter } from "./services/liveSourceResilienceCenter.js";
 import { buildSwiggyBuildersModuleIntelligenceCenter } from "./services/moduleIntelligence.js";
@@ -371,6 +371,14 @@ const operatingContractRehearsalSchema = z.object({
   includeVersionWatch: z.boolean(),
   includeStatusPageFallback: z.boolean(),
   includeStagingCredentials: z.boolean(),
+});
+
+const brandComplianceRehearsalSchema = z.object({
+  mode: z.enum(["local_review", "asset_onboarding", "cobrand_launch"]),
+  includeAttributionAudit: z.boolean(),
+  includeFinalScreenshots: z.boolean(),
+  includeOfficialAssets: z.boolean(),
+  includeCobrandApproval: z.boolean(),
 });
 
 const offerDecisionSchema = z.object({
@@ -1786,6 +1794,11 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/brand-compliance-kit", (_req, res) => {
     res.json({ brandCompliance: buildBrandComplianceKit() });
+  });
+
+  app.post("/api/brand-compliance-kit/rehearse", (req, res) => {
+    const body = brandComplianceRehearsalSchema.parse(req.body);
+    res.json({ brandComplianceRehearsal: rehearseBrandCompliance(body) });
   });
 
   app.get("/api/swiggy-journey-compiler", (_req, res) => {

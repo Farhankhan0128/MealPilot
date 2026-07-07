@@ -1,6 +1,8 @@
 import type {
   BrandAssetGate,
   BrandComplianceKit,
+  BrandComplianceRehearsal,
+  BrandComplianceRehearsalMode,
   BrandComplianceRule,
   BrandComplianceStatus,
   BrandSurfacePlacement,
@@ -234,5 +236,90 @@ export function buildBrandComplianceKit(): BrandComplianceKit {
       "Written approval for any custom co-branding, white-label, or enterprise placement.",
       "Final screenshot review after staging credentials and production URL are installed.",
     ],
+  };
+}
+
+export function rehearseBrandCompliance(input: {
+  mode: BrandComplianceRehearsalMode;
+  includeAttributionAudit: boolean;
+  includeFinalScreenshots: boolean;
+  includeOfficialAssets: boolean;
+  includeCobrandApproval: boolean;
+}): BrandComplianceRehearsal {
+  const kit = buildBrandComplianceKit();
+  const missingInputs: string[] = [];
+  const selectedRules =
+    input.mode === "local_review"
+      ? kit.rules.filter((rule) => rule.status !== "external_gate")
+      : kit.rules;
+  const selectedSurfaces =
+    input.mode === "cobrand_launch"
+      ? kit.surfaces
+      : kit.surfaces.filter((surface) => surface.surface !== "launch" || input.includeFinalScreenshots);
+  const selectedAssetGates =
+    input.includeOfficialAssets || input.includeCobrandApproval || input.mode !== "local_review" ? kit.assetGates : [];
+
+  if (input.includeAttributionAudit && kit.surfaces.some((surface) => surface.status !== "ready")) {
+    missingInputs.push("attribution surface review");
+  }
+  if (input.includeFinalScreenshots) missingInputs.push("final production screenshots");
+  if (input.includeOfficialAssets) missingInputs.push("official Swiggy brand asset pack");
+  if (input.includeCobrandApproval || input.mode === "cobrand_launch") missingInputs.push("written Swiggy co-branding approval");
+  if (input.mode === "asset_onboarding" && !input.includeOfficialAssets) missingInputs.push("asset onboarding request");
+
+  const decision: BrandComplianceRehearsal["decision"] =
+    missingInputs.some((item) => item.includes("official Swiggy") || item.includes("written Swiggy"))
+      ? "blocked_brand_gate"
+      : missingInputs.length > 0
+        ? "manual_brand_gate"
+        : "ready_brand_packet";
+
+  return {
+    generatedAt: new Date().toISOString(),
+    decision,
+    readinessScore: kit.score,
+    mode: input.mode,
+    includeAttributionAudit: input.includeAttributionAudit,
+    includeFinalScreenshots: input.includeFinalScreenshots,
+    includeOfficialAssets: input.includeOfficialAssets,
+    includeCobrandApproval: input.includeCobrandApproval,
+    selectedRules,
+    selectedSurfaces,
+    selectedAssetGates,
+    attributionCopy: kit.attributionCopy,
+    commands: [
+      {
+        command: "curl -fsS http://localhost:8787/api/brand-compliance-kit",
+        proves: "Attribution, no-endorsement, palette, asset gates, and surface placements are reviewable.",
+      },
+      {
+        command: "MEALPILOT_URL=http://localhost:8787 npm run verify:visual",
+        proves: "Reviewer screenshots cover premium UI, attribution surfaces, and no-overlap rules.",
+      },
+      {
+        command: "MEALPILOT_URL=http://localhost:8787 npm run verify:production",
+        proves: "Brand compliance remains wired into reviewer proof, launch bundle, and safety assertions.",
+      },
+    ],
+    missingInputs,
+    telemetry: [
+      { field: "mode", value: input.mode, redaction: "safe brand rehearsal mode" },
+      { field: "surfaces", value: String(selectedSurfaces.length), redaction: "aggregate count only" },
+      { field: "rules", value: String(selectedRules.length), redaction: "aggregate count only" },
+      { field: "asset_gates", value: String(selectedAssetGates.length), redaction: "aggregate count only" },
+      { field: "palette_status", value: kit.paletteAudit.status, redaction: "safe status enum" },
+    ],
+    assertions: [
+      "MealPilot keeps its own logo and never uses Swiggy marks as the MealPilot logo.",
+      "Powered by Swiggy attribution is prepared for Swiggy-originated Food, Instamart, Dineout, widget, support, and launch surfaces.",
+      "The rehearsal never downloads, modifies, recolors, or embeds unissued Swiggy brand assets.",
+      "Co-branding and endorsement language remain blocked until Swiggy gives written approval.",
+    ],
+    nextAction:
+      decision === "ready_brand_packet"
+        ? "Attach the brand compliance packet, attribution copy, and visual QA screenshots to the reviewer handoff."
+        : decision === "manual_brand_gate"
+          ? `Resolve ${missingInputs.join(", ")} before final brand review.`
+          : `Keep brand launch blocked on ${missingInputs.join(", ")} and use local attribution evidence only.`,
   };
 }

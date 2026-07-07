@@ -293,6 +293,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `POST /api/ai-client-connect-kit/validate-config`
 - `GET /api/coding-agent-governance`
 - `GET /api/brand-compliance-kit`
+- `POST /api/brand-compliance-kit/rehearse`
 - `GET /api/swiggy-journey-compiler`
 - `GET /api/swiggy-access-dossier`
 - `GET /api/swiggy-access-evidence-matrix`
@@ -592,7 +593,7 @@ The test suite checks that:
 - Swiggy Quota Negotiation Center composes Rate Limit Plan, Traffic Readiness, Backpressure Governor, Load Lab, and Route Optimizer into five capacity asks, four launch scenarios, four runbook steps, Retry-After header readiness, and a `builders@swiggy.in` capacity packet.
 - AI Client Connect Kit generates and validates client configs, coding-agent rule files, SDK auth-mode guidance, endpoint correctness, secret redaction, troubleshooting, privacy notes, and delegated-auth gates.
 - Coding Agent Governance verifies `AGENTS.md` against official Swiggy docs retrieval rules, current tool-count smoke tests, commercial confirmation gates, and sensitive-data redaction boundaries.
-- Brand Compliance Kit maps Powered by Swiggy attribution, co-branding rules, asset gates, palette usage, no-endorsement copy, and final screenshot review.
+- Brand Compliance Kit maps Powered by Swiggy attribution, co-branding rules, asset gates, palette usage, no-endorsement copy, final screenshot review, and executable brand/co-branding readiness rehearsals.
 - Data Governance Center maps Swiggy Data Fiduciary and MealPilot Data Processor roles, India/Singapore residency, tool-call PII flows, local DSR endpoints, Swiggy-originated DSR routing, 90-day audit retention, token redaction, security contacts, and signed-manifest watch items.
 - Enterprise Delegated Auth Center maps Swiggy's multi-tenant on-behalf-of OAuth 2.1 flow, per-user token storage, platform redirect schemes, troubleshooting, architecture review, and external partner gates.
 - Swiggy Enterprise Platform Center maps the official platform-operator lane into tenant boundaries, delegated-auth controls, quota and peak-QPS review, support SLAs, contract gates, co-branding approvals, and enterprise audit exports.
