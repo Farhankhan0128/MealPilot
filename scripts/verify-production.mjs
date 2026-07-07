@@ -343,7 +343,8 @@ assert(
   "OpenAPI reviewer artifact vault contract is missing",
 );
 assert(
-  openApi.paths["/api/visual-qa-center"].get.summary.includes("Visual QA Center"),
+  openApi.paths["/api/visual-qa-center"].get.summary.includes("Visual QA Center") &&
+    openApi.paths["/api/visual-qa-center/rehearse"].post.summary.includes("Visual QA"),
   "OpenAPI visual QA center contract is missing",
 );
 assert(
@@ -3788,6 +3789,40 @@ assert(
   visualQa.visualQa.externalGates.some((gate) => gate.includes("Selected PNG screenshots")) &&
     visualQa.visualQa.assertions.some((assertion) => assertion.includes("Desktop, tablet, and mobile")),
   "visual QA external gate or assertion is missing",
+);
+const readyVisualQaRehearsal = await request("/api/visual-qa-center/rehearse", {
+  method: "POST",
+  body: JSON.stringify({
+    targetGroupId: "premium_surfaces",
+    viewport: "desktop",
+    captureMode: "critical_review",
+    includeSwiggyWidgets: true,
+    includeManualAttachments: true,
+  }),
+});
+assert(
+  readyVisualQaRehearsal.visualQaRehearsal.decision === "ready_capture_plan" &&
+    readyVisualQaRehearsal.visualQaRehearsal.readinessScore >= 95 &&
+    readyVisualQaRehearsal.visualQaRehearsal.selectedTargets.length > 5 &&
+    readyVisualQaRehearsal.visualQaRehearsal.artifactPaths.some((path) => path.includes("visual-qa")) &&
+    readyVisualQaRehearsal.visualQaRehearsal.commands.some((command) => command.id === "production_smoke"),
+  "visual QA ready rehearsal is incomplete",
+);
+const gatedVisualQaRehearsal = await request("/api/visual-qa-center/rehearse", {
+  method: "POST",
+  body: JSON.stringify({
+    targetGroupId: "swiggy_widget_fallbacks",
+    viewport: "desktop",
+    captureMode: "widget_fallback",
+    includeSwiggyWidgets: false,
+    includeManualAttachments: true,
+  }),
+});
+assert(
+  gatedVisualQaRehearsal.visualQaRehearsal.decision === "manual_capture_gate" &&
+    gatedVisualQaRehearsal.visualQaRehearsal.missingInputs.includes("widget fallback review toggle") &&
+    gatedVisualQaRehearsal.visualQaRehearsal.selectedRules.some((rule) => rule.id === "swiggy_widget_security"),
+  "visual QA gated rehearsal is incomplete",
 );
 
 const docsCoverage = await request("/api/swiggy-docs-coverage");

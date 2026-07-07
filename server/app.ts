@@ -157,7 +157,7 @@ import { buildTrafficReadinessPlan } from "./services/trafficReadiness.js";
 import { buildSloIncidentCommandCenter } from "./services/sloIncidentCommand.js";
 import { buildSwiggySourceIntelligence } from "./services/sourceIntelligence.js";
 import { buildSwiggyUpstreamWatch } from "./services/upstreamWatch.js";
-import { buildVisualQaCenter } from "./services/visualQaCenter.js";
+import { buildVisualQaCenter, rehearseVisualQaCapture } from "./services/visualQaCenter.js";
 import { analyzeSwiggyVisualDishCapture, buildSwiggyVisualDishCaptureCenter } from "./services/visualDishCapture.js";
 import { buildSwiggyVoiceCommerceCenter, rehearseSwiggyVoiceCommerce } from "./services/voiceCommerceCenter.js";
 import { buildSwiggyWebsiteAtlas } from "./services/websiteAtlas.js";
@@ -333,6 +333,14 @@ const reviewerArtifactPacketSchema = z.object({
   includeScreenshots: z.boolean(),
   includeDemoVideo: z.boolean(),
   includeCredentialGates: z.boolean(),
+});
+
+const visualQaRehearsalSchema = z.object({
+  targetGroupId: z.string().trim().min(2).max(80),
+  viewport: z.enum(["desktop", "tablet", "mobile"]),
+  captureMode: z.enum(["full_manifest", "critical_review", "mobile_regression", "widget_fallback"]),
+  includeSwiggyWidgets: z.boolean(),
+  includeManualAttachments: z.boolean(),
 });
 
 const offerDecisionSchema = z.object({
@@ -1602,6 +1610,11 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/visual-qa-center", (_req, res) => {
     res.json({ visualQa: buildVisualQaCenter() });
+  });
+
+  app.post("/api/visual-qa-center/rehearse", (req, res) => {
+    const body = visualQaRehearsalSchema.parse(req.body);
+    res.json({ visualQaRehearsal: rehearseVisualQaCapture(body) });
   });
 
   app.get("/api/swiggy-docs-coverage", (_req, res) => {

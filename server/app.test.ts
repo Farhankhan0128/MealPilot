@@ -147,6 +147,7 @@ describe("MealPilot API", () => {
       "Reviewer Artifact Vault",
     );
     expect(openApi.body.paths["/api/visual-qa-center"].get.summary).toContain("Visual QA Center");
+    expect(openApi.body.paths["/api/visual-qa-center/rehearse"].post.summary).toContain("Visual QA");
     expect(openApi.body.paths["/api/swiggy-docs-coverage"].get.summary).toContain("llms.txt");
     expect(openApi.body.paths["/api/swiggy-docs-twin-explorer"].get.summary).toContain("docs twin");
     expect(openApi.body.paths["/api/swiggy-llms-manifest-verifier"].get.summary).toContain("llms.txt manifest");
@@ -4371,6 +4372,47 @@ describe("MealPilot API", () => {
     ).toBe(true);
     expect(visualQa.externalGates.some((gate: string) => gate.includes("Selected PNG screenshots"))).toBe(true);
     expect(visualQa.assertions.some((assertion: string) => assertion.includes("Desktop, tablet, and mobile"))).toBe(true);
+  });
+
+  it("rehearses visual QA capture plans with viewport and widget gates", async () => {
+    const { app } = createMealPilotServer();
+
+    const readyResponse = await request(app)
+      .post("/api/visual-qa-center/rehearse")
+      .send({
+        targetGroupId: "premium_surfaces",
+        viewport: "desktop",
+        captureMode: "critical_review",
+        includeSwiggyWidgets: true,
+        includeManualAttachments: true,
+      })
+      .expect(200);
+    const ready = readyResponse.body.visualQaRehearsal;
+
+    expect(ready.decision).toBe("ready_capture_plan");
+    expect(ready.readinessScore).toBeGreaterThanOrEqual(95);
+    expect(ready.selectedGroup.id).toBe("premium_surfaces");
+    expect(ready.selectedTargets.length).toBeGreaterThan(5);
+    expect(ready.artifactPaths.some((path: string) => path.includes("visual-qa"))).toBe(true);
+    expect(ready.selectedRules.some((rule: { id: string }) => rule.id === "no_overlap")).toBe(true);
+    expect(ready.commands.some((command: { id: string }) => command.id === "production_smoke")).toBe(true);
+
+    const gatedResponse = await request(app)
+      .post("/api/visual-qa-center/rehearse")
+      .send({
+        targetGroupId: "swiggy_widget_fallbacks",
+        viewport: "desktop",
+        captureMode: "widget_fallback",
+        includeSwiggyWidgets: false,
+        includeManualAttachments: true,
+      })
+      .expect(200);
+    const gated = gatedResponse.body.visualQaRehearsal;
+
+    expect(gated.decision).toBe("manual_capture_gate");
+    expect(gated.missingInputs).toEqual(expect.arrayContaining(["widget fallback review toggle"]));
+    expect(gated.selectedRules.some((rule: { id: string }) => rule.id === "swiggy_widget_security")).toBe(true);
+    expect(gated.nextAction).toContain("Resolve");
   });
 
   it("returns page-by-page Swiggy llms.txt docs coverage", async () => {

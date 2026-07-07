@@ -3670,6 +3670,28 @@ export interface VisualQaCenter {
   externalGates: string[];
 }
 
+export type VisualQaRehearsalDecision = "ready_capture_plan" | "manual_capture_gate" | "unknown_target_group";
+export type VisualQaCaptureMode = "full_manifest" | "critical_review" | "mobile_regression" | "widget_fallback";
+
+export interface VisualQaRehearsal {
+  generatedAt: string;
+  decision: VisualQaRehearsalDecision;
+  readinessScore: number;
+  captureMode: VisualQaCaptureMode;
+  targetGroupId: string;
+  viewport: VisualQaViewport;
+  includeSwiggyWidgets: boolean;
+  selectedGroup?: { id: string; label: string; targets: VisualQaTarget[] };
+  selectedTargets: VisualQaTarget[];
+  selectedRules: VisualQaRule[];
+  commands: VisualQaCommand[];
+  artifactPaths: string[];
+  missingInputs: string[];
+  telemetry: Array<{ field: string; value: string; redaction: string }>;
+  assertions: string[];
+  nextAction: string;
+}
+
 export type SwiggyUpstreamWatchStatus = "ready" | "watch" | "external_gate";
 
 export interface SwiggyDocsRetrievalContract {

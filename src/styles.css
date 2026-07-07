@@ -2705,7 +2705,8 @@ select:focus {
 .preference-simulator,
 .guest-handoff-composer,
 .luxury-workspace-composer,
-.reviewer-packet-composer {
+.reviewer-packet-composer,
+.visual-qa-rehearsal {
   display: grid;
   gap: 8px;
   border-radius: 8px;
@@ -2720,7 +2721,8 @@ select:focus {
 .preference-simulator label,
 .guest-handoff-composer label,
 .luxury-workspace-composer label,
-.reviewer-packet-composer label {
+.reviewer-packet-composer label,
+.visual-qa-rehearsal label {
   color: var(--ink-muted);
   font-size: 0.75rem;
   font-weight: 900;
@@ -2743,7 +2745,9 @@ select:focus {
 .luxury-workspace-composer select,
 .luxury-workspace-composer input,
 .reviewer-packet-composer select,
-.reviewer-packet-composer input {
+.reviewer-packet-composer input,
+.visual-qa-rehearsal select,
+.visual-qa-rehearsal input {
   width: 100%;
   min-width: 0;
   border: 1px solid var(--line);
@@ -2779,7 +2783,8 @@ select:focus {
 .preference-toggle-grid label,
 .guest-handoff-toggle,
 .luxury-workspace-toggle,
-.reviewer-packet-toggle-grid label {
+.reviewer-packet-toggle-grid label,
+.visual-qa-toggle-grid label {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -2789,7 +2794,8 @@ select:focus {
 .customization-toggle-grid,
 .nutrition-toggle-grid,
 .preference-toggle-grid,
-.reviewer-packet-toggle-grid {
+.reviewer-packet-toggle-grid,
+.visual-qa-toggle-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
@@ -2805,7 +2811,8 @@ select:focus {
 .preference-toggle-grid input,
 .guest-handoff-toggle input,
 .luxury-workspace-toggle input,
-.reviewer-packet-toggle-grid input {
+.reviewer-packet-toggle-grid input,
+.visual-qa-toggle-grid input {
   width: 18px;
   height: 18px;
   accent-color: var(--green);
@@ -2819,7 +2826,8 @@ select:focus {
 .preference-simulator button,
 .guest-handoff-composer button,
 .luxury-workspace-composer button,
-.reviewer-packet-composer button {
+.reviewer-packet-composer button,
+.visual-qa-rehearsal button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -2840,7 +2848,8 @@ select:focus {
 .preference-simulator button:disabled,
 .guest-handoff-composer button:disabled,
 .luxury-workspace-composer button:disabled,
-.reviewer-packet-composer button:disabled {
+.reviewer-packet-composer button:disabled,
+.visual-qa-rehearsal button:disabled {
   cursor: wait;
   opacity: 0.72;
 }
@@ -2852,7 +2861,8 @@ select:focus {
 .preference-simulator svg,
 .guest-handoff-composer svg,
 .luxury-workspace-composer svg,
-.reviewer-packet-composer svg {
+.reviewer-packet-composer svg,
+.visual-qa-rehearsal svg {
   width: 17px;
   height: 17px;
 }
@@ -2864,7 +2874,8 @@ select:focus {
 .preference-simulator small,
 .guest-handoff-composer small,
 .luxury-workspace-composer small,
-.reviewer-packet-composer small {
+.reviewer-packet-composer small,
+.visual-qa-rehearsal small {
   color: var(--coral);
   font-weight: 850;
 }
@@ -2876,7 +2887,8 @@ select:focus {
 .preference-simulation-result,
 .guest-handoff-result,
 .luxury-workspace-result,
-.reviewer-packet-result {
+.reviewer-packet-result,
+.visual-qa-rehearsal-result {
   display: grid;
   gap: 8px;
   border-radius: 8px;
@@ -2892,7 +2904,8 @@ select:focus {
 .preference-simulation-result[data-status="healthy"],
 .guest-handoff-result[data-status="healthy"],
 .luxury-workspace-result[data-status="healthy"],
-.reviewer-packet-result[data-status="healthy"] {
+.reviewer-packet-result[data-status="healthy"],
+.visual-qa-rehearsal-result[data-status="healthy"] {
   border-left-color: var(--green);
 }
 
@@ -2903,7 +2916,8 @@ select:focus {
 .preference-simulation-result[data-status="blocked"],
 .guest-handoff-result[data-status="blocked"],
 .luxury-workspace-result[data-status="blocked"],
-.reviewer-packet-result[data-status="blocked"] {
+.reviewer-packet-result[data-status="blocked"],
+.visual-qa-rehearsal-result[data-status="blocked"] {
   border-left-color: var(--coral);
 }
 
@@ -2913,7 +2927,8 @@ select:focus {
 .preference-simulation-result[data-status="watch"],
 .guest-handoff-result[data-status="watch"],
 .luxury-workspace-result[data-status="watch"],
-.reviewer-packet-result[data-status="watch"] {
+.reviewer-packet-result[data-status="watch"],
+.visual-qa-rehearsal-result[data-status="watch"] {
   border-left-color: var(--gold);
 }
 
@@ -2924,7 +2939,8 @@ select:focus {
 .preference-simulation-result > div,
 .guest-handoff-result > div,
 .luxury-workspace-result > div,
-.reviewer-packet-result > div {
+.reviewer-packet-result > div,
+.visual-qa-rehearsal-result > div {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -2938,7 +2954,8 @@ select:focus {
 .preference-simulation-result span,
 .guest-handoff-result span,
 .luxury-workspace-result span,
-.reviewer-packet-result span {
+.reviewer-packet-result span,
+.visual-qa-rehearsal-result span {
   color: var(--ink-muted);
   font-size: 0.75rem;
   font-weight: 900;
@@ -2952,7 +2969,8 @@ select:focus {
 .preference-simulation-result strong,
 .guest-handoff-result strong,
 .luxury-workspace-result strong,
-.reviewer-packet-result strong {
+.reviewer-packet-result strong,
+.visual-qa-rehearsal-result strong {
   color: var(--green-dark);
   font-size: 0.84rem;
   text-align: right;
@@ -2973,7 +2991,9 @@ select:focus {
 .luxury-workspace-result p,
 .luxury-workspace-result small,
 .reviewer-packet-result p,
-.reviewer-packet-result small {
+.reviewer-packet-result small,
+.visual-qa-rehearsal-result p,
+.visual-qa-rehearsal-result small {
   margin: 0;
   color: var(--ink-muted);
   font-size: 0.82rem;
@@ -2987,7 +3007,8 @@ select:focus {
 .preference-simulation-result small,
 .guest-handoff-result small,
 .luxury-workspace-result small,
-.reviewer-packet-result small {
+.reviewer-packet-result small,
+.visual-qa-rehearsal-result small {
   color: var(--green-dark);
   font-weight: 850;
 }

@@ -264,6 +264,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `POST /api/reviewer-artifact-vault/compose`
 - `GET /api/swiggy-builders-review-decision`
 - `GET /api/visual-qa-center`
+- `POST /api/visual-qa-center/rehearse`
 - `GET /api/swiggy-showcase-submission-center`
 - `POST /api/swiggy-showcase-submission-center/compose`
 - `GET /api/swiggy-demo-evidence-director`
@@ -469,7 +470,7 @@ Production should use an HTTPS redirect URI with exact-match allowlisting.
 
 `/api/reviewer-artifact-vault` shows the Swiggy access-submission manifest: proof links, Deep Site Map, OpenAPI, smoke commands, screenshot targets, demo-video checklist, logs, traces, redaction rules, support context, handoff checklist, and reviewer email copy. `/api/reviewer-artifact-vault/compose` powers the Launch Center packet composer with artifact section, channel, audience, screenshots, demo-video, and credential-gate inputs, returning included artifacts, commands, redaction rules, reviewer email copy, readiness decision, missing attachment gates, safe telemetry, and explicit no-secret assertions.
 
-`/api/visual-qa-center` shows reviewer screenshot targets, desktop/tablet/mobile viewport sizes, selector manifests, Playwright screenshot artifact paths, no-overlap rules, text-fit rules, widget fallback checks, redaction visibility, commercial confirmation visibility, mobile layout checks, Source Intelligence, Deep Site Map, Innovation Radar, Access Evidence Matrix card proof, and automation gates. Run `npm run verify:visual` against the production server to generate PNGs plus `artifacts/visual-qa/report.json`.
+`/api/visual-qa-center` shows reviewer screenshot targets, desktop/tablet/mobile viewport sizes, selector manifests, Playwright screenshot artifact paths, no-overlap rules, text-fit rules, widget fallback checks, redaction visibility, commercial confirmation visibility, mobile layout checks, Source Intelligence, Deep Site Map, Innovation Radar, Access Evidence Matrix card proof, and automation gates. `/api/visual-qa-center/rehearse` powers the Launch Center capture rehearsal with target group, viewport, capture mode, Swiggy-widget inclusion, and manual attachment inputs, returning screenshot targets, layout rules, commands, artifact paths, readiness decision, missing capture gates, telemetry, and no-blank-render assertions. Run `npm run verify:visual` against the production server to generate PNGs plus `artifacts/visual-qa/report.json`.
 
 `/api/swiggy-builders-site-parity` fetches only the official Swiggy Builders homepage, extracts anchors, metadata, `llms` alternates, module signals, CTA/source/footer/legal links, and safe-origin signals, then matches them back to Website Atlas and CTA evidence. Fixture tests avoid live network dependency; production smoke uses the live page.
 

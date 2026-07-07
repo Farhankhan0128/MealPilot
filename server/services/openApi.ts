@@ -1251,6 +1251,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/visual-qa-center/rehearse": {
+        post: {
+          tags: ["Builder Access"],
+          summary: "Rehearse a Visual QA capture plan for Swiggy reviewer evidence",
+          responses: {
+            "200": {
+              description:
+                "Selected Visual QA target group, viewport, capture mode, screenshot targets, layout rules, verification commands, artifact paths, readiness decision, missing capture gates, telemetry, and no-blank-render assertions",
+            },
+          },
+        },
+      },
       "/api/swiggy-docs-coverage": {
         get: {
           tags: ["Builder Access"],

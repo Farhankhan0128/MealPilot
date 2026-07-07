@@ -192,6 +192,7 @@ import {
   fetchVisualQaCenter,
   fetchWidgets,
   adviseNutritionBudget,
+  rehearseVisualQaCapture,
   removeRecommendationItem,
   forecastSwiggyMealWindow,
   reconcileSwiggyPaymentTruth,
@@ -374,7 +375,10 @@ import type {
   UserPlanningRequest,
   UserProfile,
   VersionMonitor,
+  VisualQaCaptureMode,
   VisualQaCenter,
+  VisualQaRehearsal,
+  VisualQaViewport,
 } from "./domain/types";
 
 const FAQ_ANSWER_SAMPLE_QUESTION = "What proof does Swiggy need before production access?";
@@ -3047,6 +3051,21 @@ function LaunchCenterPanel({
   });
   const [reviewerPacket, setReviewerPacket] = useState<ReviewerArtifactPacketComposition | null>(null);
   const [reviewerPacketStatus, setReviewerPacketStatus] = useState<"idle" | "loading" | "error">("idle");
+  const [visualQaRehearsalForm, setVisualQaRehearsalForm] = useState<{
+    targetGroupId: string;
+    viewport: VisualQaViewport;
+    captureMode: VisualQaCaptureMode;
+    includeSwiggyWidgets: boolean;
+    includeManualAttachments: boolean;
+  }>({
+    targetGroupId: "premium_surfaces",
+    viewport: "desktop",
+    captureMode: "critical_review",
+    includeSwiggyWidgets: true,
+    includeManualAttachments: true,
+  });
+  const [visualQaRehearsal, setVisualQaRehearsal] = useState<VisualQaRehearsal | null>(null);
+  const [visualQaRehearsalStatus, setVisualQaRehearsalStatus] = useState<"idle" | "loading" | "error">("idle");
   const [showcaseForm, setShowcaseForm] = useState({
     demoUrl: "https://youtu.be/mealpilot-swiggy-demo",
     githubUrl: "https://github.com/Farhankhan0128/MealPilot",
@@ -3246,6 +3265,18 @@ function LaunchCenterPanel({
       setReviewerPacketStatus("idle");
     } catch {
       setReviewerPacketStatus("error");
+    }
+  }
+
+  async function runVisualQaRehearsal(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setVisualQaRehearsalStatus("loading");
+    try {
+      const response = await rehearseVisualQaCapture(visualQaRehearsalForm);
+      setVisualQaRehearsal(response.visualQaRehearsal);
+      setVisualQaRehearsalStatus("idle");
+    } catch {
+      setVisualQaRehearsalStatus("error");
     }
   }
 
@@ -7475,6 +7506,101 @@ function LaunchCenterPanel({
               <strong>{visualQa?.targetGroups.length ?? 0}</strong>
               <span>Groups</span>
             </div>
+          </div>
+          <form className="visual-qa-rehearsal" onSubmit={runVisualQaRehearsal}>
+            <label htmlFor="visual-qa-group">Target group</label>
+            <select
+              id="visual-qa-group"
+              value={visualQaRehearsalForm.targetGroupId}
+              onChange={(event) =>
+                setVisualQaRehearsalForm((current) => ({ ...current, targetGroupId: event.target.value }))
+              }
+            >
+              {(visualQa?.targetGroups ?? []).map((group) => (
+                <option key={group.id} value={group.id}>
+                  {group.label}
+                </option>
+              ))}
+            </select>
+            <label htmlFor="visual-qa-viewport">Viewport</label>
+            <select
+              id="visual-qa-viewport"
+              value={visualQaRehearsalForm.viewport}
+              onChange={(event) =>
+                setVisualQaRehearsalForm((current) => ({ ...current, viewport: event.target.value as VisualQaViewport }))
+              }
+            >
+              <option value="desktop">Desktop</option>
+              <option value="tablet">Tablet</option>
+              <option value="mobile">Mobile</option>
+            </select>
+            <label htmlFor="visual-qa-mode">Mode</label>
+            <select
+              id="visual-qa-mode"
+              value={visualQaRehearsalForm.captureMode}
+              onChange={(event) =>
+                setVisualQaRehearsalForm((current) => ({ ...current, captureMode: event.target.value as VisualQaCaptureMode }))
+              }
+            >
+              <option value="critical_review">Critical review</option>
+              <option value="full_manifest">Full manifest</option>
+              <option value="mobile_regression">Mobile regression</option>
+              <option value="widget_fallback">Widget fallback</option>
+            </select>
+            <div className="visual-qa-toggle-grid">
+              <label htmlFor="visual-qa-widgets">
+                <input
+                  id="visual-qa-widgets"
+                  type="checkbox"
+                  checked={visualQaRehearsalForm.includeSwiggyWidgets}
+                  onChange={(event) =>
+                    setVisualQaRehearsalForm((current) => ({ ...current, includeSwiggyWidgets: event.target.checked }))
+                  }
+                />
+                Widgets
+              </label>
+              <label htmlFor="visual-qa-attachments">
+                <input
+                  id="visual-qa-attachments"
+                  type="checkbox"
+                  checked={visualQaRehearsalForm.includeManualAttachments}
+                  onChange={(event) =>
+                    setVisualQaRehearsalForm((current) => ({ ...current, includeManualAttachments: event.target.checked }))
+                  }
+                />
+                Attachments
+              </label>
+            </div>
+            <button type="submit" disabled={visualQaRehearsalStatus === "loading"} aria-label="Rehearse visual QA capture">
+              {visualQaRehearsalStatus === "loading" ? <Loader2 aria-hidden="true" /> : <Camera aria-hidden="true" />}
+              Rehearse
+            </button>
+            {visualQaRehearsalStatus === "error" ? <small role="status">Visual QA rehearsal unavailable.</small> : null}
+          </form>
+          <div
+            className="visual-qa-rehearsal-result"
+            data-status={
+              visualQaRehearsal?.decision === "ready_capture_plan"
+                ? "healthy"
+                : visualQaRehearsal?.decision === "manual_capture_gate"
+                  ? "watch"
+                  : "blocked"
+            }
+          >
+            <div>
+              <span>Capture</span>
+              <strong>
+                {visualQaRehearsal
+                  ? `${visualQaRehearsal.decision.replace(/_/g, " ")} / ${visualQaRehearsal.readinessScore}`
+                  : "Awaiting rehearsal"}
+              </strong>
+            </div>
+            <p>
+              {visualQaRehearsal
+                ? `${visualQaRehearsal.selectedGroup?.id ?? "unknown"} / ${visualQaRehearsal.selectedTargets.length} targets / ${visualQaRehearsal.artifactPaths.length} artifacts`
+                : "Prepare screenshot evidence with target selectors, viewport rules, commands, artifact paths, and Swiggy widget gates."}
+            </p>
+            {visualQaRehearsal ? <small>{visualQaRehearsal.nextAction}</small> : null}
           </div>
           <ul className="compact-status-list">
             {(visualQa?.targetGroups ?? []).slice(0, 4).map((group) => (

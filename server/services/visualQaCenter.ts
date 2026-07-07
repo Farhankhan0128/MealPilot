@@ -1,6 +1,8 @@
 import type {
   VisualQaCenter,
+  VisualQaCaptureMode,
   VisualQaCommand,
+  VisualQaRehearsal,
   VisualQaRule,
   VisualQaStatus,
   VisualQaTarget,
@@ -871,6 +873,90 @@ const commands = [
     "PNG files saved under artifacts/visual-qa/mobile-*.png.",
   ),
 ];
+
+function scoreRehearsal(statuses: VisualQaStatus[]) {
+  return Math.max(35, Math.min(99, Math.round((statuses.reduce((sum, status) => sum + statusScore(status), 0) / statuses.length) * 100)));
+}
+
+function selectTargetsForMode(targets: VisualQaTarget[], captureMode: VisualQaCaptureMode, viewport: VisualQaViewport) {
+  const viewportTargets = targets.filter((item) => item.viewport === viewport);
+  if (captureMode === "full_manifest") return targets;
+  if (captureMode === "mobile_regression") return targets.filter((item) => item.viewport === "mobile" || item.viewport === "tablet");
+  if (captureMode === "widget_fallback") return targets.filter((item) => item.id.includes("widget") || item.selector.includes("widget"));
+  return viewportTargets.length > 0 ? viewportTargets.slice(0, 8) : targets.slice(0, 8);
+}
+
+export function rehearseVisualQaCapture(input: {
+  targetGroupId: string;
+  viewport: VisualQaViewport;
+  captureMode: VisualQaCaptureMode;
+  includeSwiggyWidgets: boolean;
+  includeManualAttachments: boolean;
+}): VisualQaRehearsal {
+  const selectedGroup = targetGroups.find((group) => group.id === input.targetGroupId);
+  const selectedTargets = selectedGroup ? selectTargetsForMode(selectedGroup.targets, input.captureMode, input.viewport) : [];
+  const selectedRules = rules.filter((item) => {
+    if (input.captureMode === "widget_fallback") return item.id === "swiggy_widget_security" || item.id === "automated_screenshot_gate";
+    if (input.captureMode === "mobile_regression") return item.id === "mobile_single_column" || item.id === "text_fit" || item.id === "no_overlap";
+    return item.status === "ready";
+  });
+  const selectedCommands = commands.filter((item) =>
+    input.captureMode === "critical_review" ? item.id !== "visual_capture_harness" || input.includeManualAttachments : true,
+  );
+  const missingInputs: string[] = [];
+
+  if (!selectedGroup) missingInputs.push("known Visual QA target group");
+  if (selectedTargets.length === 0) missingInputs.push("matching screenshot targets");
+  if (!input.includeManualAttachments && input.captureMode === "full_manifest") missingInputs.push("selected PNG attachments");
+  if (input.includeSwiggyWidgets && !input.includeManualAttachments) missingInputs.push("hosted widget approval evidence");
+  if (input.captureMode === "widget_fallback" && !input.includeSwiggyWidgets) missingInputs.push("widget fallback review toggle");
+
+  const statusInputs = [
+    ...(selectedTargets.length > 0 ? selectedTargets.map((item) => item.status) : (["external_gate"] as VisualQaStatus[])),
+    ...(selectedRules.length > 0 ? selectedRules.map((item) => item.status) : (["manual_input"] as VisualQaStatus[])),
+    ...selectedCommands.map((item) => item.status),
+  ];
+  const decision: VisualQaRehearsal["decision"] = !selectedGroup
+    ? "unknown_target_group"
+    : missingInputs.length > 0
+      ? "manual_capture_gate"
+      : "ready_capture_plan";
+
+  return {
+    generatedAt: new Date().toISOString(),
+    decision,
+    readinessScore: scoreRehearsal(statusInputs),
+    captureMode: input.captureMode,
+    targetGroupId: input.targetGroupId,
+    viewport: input.viewport,
+    includeSwiggyWidgets: input.includeSwiggyWidgets,
+    selectedGroup,
+    selectedTargets,
+    selectedRules,
+    commands: selectedCommands,
+    artifactPaths: selectedTargets.map((item) => item.artifactPath),
+    missingInputs,
+    telemetry: [
+      { field: "target_group", value: selectedGroup?.id ?? input.targetGroupId, redaction: "safe target group id" },
+      { field: "capture_mode", value: input.captureMode, redaction: "safe capture mode enum" },
+      { field: "viewport", value: input.viewport, redaction: "safe viewport enum" },
+      { field: "target_count", value: String(selectedTargets.length), redaction: "aggregate count only" },
+      { field: "widget_toggle", value: String(input.includeSwiggyWidgets), redaction: "boolean only" },
+    ],
+    assertions: [
+      "Every selected target has an explicit selector, viewport, dimensions, proof statement, and artifact path.",
+      "The capture plan fails closed on blank renders, missing selectors, invalid boxes, or horizontal page overflow.",
+      "Commercial confirmation visibility and redaction rules remain part of the visual review path.",
+      "Hosted Swiggy widgets stay external-gated; semantic widget fallbacks remain the reviewer-safe default.",
+    ],
+    nextAction:
+      decision === "ready_capture_plan"
+        ? `Run ${selectedCommands[0]?.command ?? "npm run verify:visual"} and attach ${selectedTargets.length} PNG artifact(s).`
+        : decision === "manual_capture_gate"
+          ? `Resolve ${missingInputs.join(", ")} before recording this Visual QA evidence packet.`
+          : "Choose a known Visual QA target group before preparing capture evidence.",
+  };
+}
 
 export function buildVisualQaCenter(): VisualQaCenter {
   const flatTargets = targetGroups.flatMap((group) => group.targets);

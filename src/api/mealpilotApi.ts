@@ -181,7 +181,10 @@ import type {
   UserPlanningRequest,
   UserProfile,
   VersionMonitor,
+  VisualQaCaptureMode,
   VisualQaCenter,
+  VisualQaRehearsal,
+  VisualQaViewport,
 } from "../domain/types";
 
 export interface HealthResponse {
@@ -911,6 +914,19 @@ export function composeReviewerArtifactPacket(input: {
 
 export function fetchVisualQaCenter() {
   return requestJson<{ visualQa: VisualQaCenter }>("/api/visual-qa-center");
+}
+
+export function rehearseVisualQaCapture(input: {
+  targetGroupId: string;
+  viewport: VisualQaViewport;
+  captureMode: VisualQaCaptureMode;
+  includeSwiggyWidgets: boolean;
+  includeManualAttachments: boolean;
+}) {
+  return requestJson<{ visualQaRehearsal: VisualQaRehearsal }>("/api/visual-qa-center/rehearse", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
 }
 
 export function fetchSwiggyDocsCoverage() {
