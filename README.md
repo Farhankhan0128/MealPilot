@@ -311,6 +311,7 @@ POST /api/swiggy-payment-truth-center/reconcile
 GET  /api/swiggy-meal-window-intelligence
 POST /api/swiggy-meal-window-intelligence/forecast
 GET  /api/swiggy-customization-studio
+POST /api/swiggy-customization-studio/validate
 GET  /api/nutrition-budget-intelligence
 GET  /api/household-preference-graph
 GET  /api/guest-collaboration-calendar
@@ -605,7 +606,7 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 
 `GET /api/swiggy-meal-window-intelligence` and `POST /api/swiggy-meal-window-intelligence/forecast` productize meal timing: Food ETA windows, Instamart availability, Dineout slots, and tracking cadence become advisory order/cook/reserve/track/wait routes with no scheduled Food orders and no raw ETA or slot payload retention. The Launch Center forecaster makes this interactive with city, window, urgency, party-size, and Dineout-slot controls that return the selected Swiggy route, ETA risk, and timing-plan proof.
 
-`GET /api/swiggy-customization-studio` and `POST /api/swiggy-customization-studio/validate` productize item choice safety: Food `search_menu` customization shape, menu browsing, add-ons, variants, Instamart pack-size truth, full-cart replacement, allergy cautions, and post-mutation cart readbacks become a visible review layer before any cart write.
+`GET /api/swiggy-customization-studio` and `POST /api/swiggy-customization-studio/validate` productize item choice safety: Food `search_menu` customization shape, menu browsing, add-ons, variants, Instamart pack-size truth, full-cart replacement, allergy cautions, and post-mutation cart readbacks become a visible review layer before any cart write. The Launch Center validator makes this actionable with server, intent, quantity, allergy, variant, and Dineout-aware controls that return mutation risk, selected Swiggy route, required cart readback, and checklist proof.
 
 `GET /api/nutrition-budget-intelligence` is the premium nutrition and budget layer: Food menu search, coupons, cart reads, Instamart go-to items, product search, Dineout slots, and combined routes become protein-per-rupee, pantry-gap, group-budget, and evening-balance playbooks with explicit nutrition-estimate safety controls.
 

@@ -2699,7 +2699,8 @@ select:focus {
 }
 
 .payment-truth-reconciler,
-.meal-window-forecaster {
+.meal-window-forecaster,
+.customization-validator {
   display: grid;
   gap: 8px;
   border-radius: 8px;
@@ -2708,7 +2709,8 @@ select:focus {
 }
 
 .payment-truth-reconciler label,
-.meal-window-forecaster label {
+.meal-window-forecaster label,
+.customization-validator label {
   color: var(--ink-muted);
   font-size: 0.75rem;
   font-weight: 900;
@@ -2718,7 +2720,10 @@ select:focus {
 .payment-truth-reconciler select,
 .payment-truth-reconciler input,
 .meal-window-forecaster select,
-.meal-window-forecaster input {
+.meal-window-forecaster input,
+.customization-validator select,
+.customization-validator input,
+.customization-validator textarea {
   width: 100%;
   min-width: 0;
   border: 1px solid var(--line);
@@ -2730,29 +2735,46 @@ select:focus {
   font-weight: 850;
 }
 
+.customization-validator textarea {
+  resize: vertical;
+  min-height: 78px;
+  line-height: 1.4;
+}
+
 .payment-truth-number-grid,
-.meal-window-number-grid {
+.meal-window-number-grid,
+.customization-number-grid {
   display: grid;
   grid-template-columns: minmax(0, 0.72fr) minmax(0, 1fr);
   gap: 8px;
   align-items: center;
 }
 
-.meal-window-toggle {
+.meal-window-toggle,
+.customization-toggle-grid label {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   padding: 7px 0 2px;
 }
 
-.meal-window-toggle input {
+.customization-toggle-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.meal-window-toggle input,
+.customization-toggle-grid input {
   width: 18px;
   height: 18px;
   accent-color: var(--green);
+  flex: 0 0 auto;
 }
 
 .payment-truth-reconciler button,
-.meal-window-forecaster button {
+.meal-window-forecaster button,
+.customization-validator button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -2767,25 +2789,29 @@ select:focus {
 }
 
 .payment-truth-reconciler button:disabled,
-.meal-window-forecaster button:disabled {
+.meal-window-forecaster button:disabled,
+.customization-validator button:disabled {
   cursor: wait;
   opacity: 0.72;
 }
 
 .payment-truth-reconciler svg,
-.meal-window-forecaster svg {
+.meal-window-forecaster svg,
+.customization-validator svg {
   width: 17px;
   height: 17px;
 }
 
 .payment-truth-reconciler small,
-.meal-window-forecaster small {
+.meal-window-forecaster small,
+.customization-validator small {
   color: var(--coral);
   font-weight: 850;
 }
 
 .payment-truth-result,
-.meal-window-result {
+.meal-window-result,
+.customization-result {
   display: grid;
   gap: 8px;
   border-radius: 8px;
@@ -2795,21 +2821,25 @@ select:focus {
 }
 
 .payment-truth-result[data-status="healthy"],
-.meal-window-result[data-status="healthy"] {
+.meal-window-result[data-status="healthy"],
+.customization-result[data-status="healthy"] {
   border-left-color: var(--green);
 }
 
 .payment-truth-result[data-status="blocked"],
-.meal-window-result[data-status="blocked"] {
+.meal-window-result[data-status="blocked"],
+.customization-result[data-status="blocked"] {
   border-left-color: var(--coral);
 }
 
-.meal-window-result[data-status="watch"] {
+.meal-window-result[data-status="watch"],
+.customization-result[data-status="watch"] {
   border-left-color: var(--gold);
 }
 
 .payment-truth-result > div,
-.meal-window-result > div {
+.meal-window-result > div,
+.customization-result > div {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -2817,7 +2847,8 @@ select:focus {
 }
 
 .payment-truth-result span,
-.meal-window-result span {
+.meal-window-result span,
+.customization-result span {
   color: var(--ink-muted);
   font-size: 0.75rem;
   font-weight: 900;
@@ -2825,7 +2856,8 @@ select:focus {
 }
 
 .payment-truth-result strong,
-.meal-window-result strong {
+.meal-window-result strong,
+.customization-result strong {
   color: var(--green-dark);
   font-size: 0.84rem;
   text-align: right;
@@ -2834,7 +2866,9 @@ select:focus {
 
 .payment-truth-result p,
 .meal-window-result p,
-.meal-window-result small {
+.meal-window-result small,
+.customization-result p,
+.customization-result small {
   margin: 0;
   color: var(--ink-muted);
   font-size: 0.82rem;
@@ -2842,7 +2876,8 @@ select:focus {
   overflow-wrap: anywhere;
 }
 
-.meal-window-result small {
+.meal-window-result small,
+.customization-result small {
   color: var(--green-dark);
   font-weight: 850;
 }
@@ -4996,6 +5031,10 @@ select:focus {
   .login-button span,
   .mobile-menu-button span {
     display: none;
+  }
+
+  .customization-toggle-grid {
+    grid-template-columns: 1fr;
   }
 
   .login-button,

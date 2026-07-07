@@ -3088,6 +3088,43 @@ describe("MealPilot API", () => {
     expect(validation.assertions.some((assertion: string) => assertion.includes("does not call a cart mutation"))).toBe(
       true,
     );
+
+    const instamartValidationResponse = await request(app)
+      .post("/api/swiggy-customization-studio/validate")
+      .send({
+        server: "instamart",
+        intent: "family milk pack larger size",
+        hasAllergy: false,
+        userChangedVariant: false,
+        quantity: 2,
+        includeDineout: false,
+      })
+      .expect(200);
+    const instamartValidation = instamartValidationResponse.body.validation;
+
+    expect(instamartValidation.selectedLaneId).toBe("instamart_pack_size_truth");
+    expect(instamartValidation.mutationRisk).toBe("low");
+    expect(instamartValidation.requiredFreshRead).toBe("get_cart");
+    expect(instamartValidation.checklist.map((step: { tool: string }) => step.tool)).toEqual(
+      expect.arrayContaining(["search_products", "update_cart", "get_cart"]),
+    );
+
+    const combinedValidationResponse = await request(app)
+      .post("/api/swiggy-customization-studio/validate")
+      .send({
+        server: "combined",
+        intent: "compare restaurant bowl against cook-at-home ingredients before changing either cart",
+        hasAllergy: false,
+        userChangedVariant: true,
+        quantity: 2,
+        includeDineout: true,
+      })
+      .expect(200);
+    const combinedValidation = combinedValidationResponse.body.validation;
+
+    expect(combinedValidation.selectedLaneId).toBe("combined_recipe_customization");
+    expect(combinedValidation.mutationRisk).toBe("medium");
+    expect(combinedValidation.swiggyRoute.mutationBoundary).toContain("separate review");
   });
 
   it("returns nutrition and budget intelligence for protein, pantry, coupon, and Dineout routes", async () => {

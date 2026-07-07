@@ -195,6 +195,7 @@ import {
   schedulePlan,
   startSwiggyAuth,
   substituteRecommendationItem,
+  validateSwiggyCustomization,
   updateAccessSubmissionState,
   updateProfile,
   fetchAiClientConnectKit,
@@ -288,6 +289,7 @@ import type {
   SwiggyCredentialHandoffCenter,
   SwiggyCredentialVaultCenter,
   SwiggyCustomizationStudio,
+  SwiggyCustomizationValidation,
   SwiggyCtaExecutionCenter,
   SwiggyCtaLiveAuditor,
   SwiggyDeepSiteMap,
@@ -2929,6 +2931,23 @@ function LaunchCenterPanel({
   });
   const [mealWindowForecast, setMealWindowForecast] = useState<SwiggyMealWindowForecast | null>(null);
   const [mealWindowForecastStatus, setMealWindowForecastStatus] = useState<"idle" | "loading" | "error">("idle");
+  const [customizationForm, setCustomizationForm] = useState<{
+    server: "food" | "instamart" | "dineout" | "combined";
+    intent: string;
+    hasAllergy: boolean;
+    userChangedVariant: boolean;
+    quantity: number;
+    includeDineout: boolean;
+  }>({
+    server: "food",
+    intent: "Paneer bowl, no onion, less spice",
+    hasAllergy: false,
+    userChangedVariant: true,
+    quantity: 1,
+    includeDineout: false,
+  });
+  const [customizationValidation, setCustomizationValidation] = useState<SwiggyCustomizationValidation | null>(null);
+  const [customizationValidationStatus, setCustomizationValidationStatus] = useState<"idle" | "loading" | "error">("idle");
   const [showcaseForm, setShowcaseForm] = useState({
     demoUrl: "https://youtu.be/mealpilot-swiggy-demo",
     githubUrl: "https://github.com/Farhankhan0128/MealPilot",
@@ -3056,6 +3075,18 @@ function LaunchCenterPanel({
       setMealWindowForecastStatus("idle");
     } catch {
       setMealWindowForecastStatus("error");
+    }
+  }
+
+  async function runCustomizationValidation(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setCustomizationValidationStatus("loading");
+    try {
+      const response = await validateSwiggyCustomization(customizationForm);
+      setCustomizationValidation(response.validation);
+      setCustomizationValidationStatus("idle");
+    } catch {
+      setCustomizationValidationStatus("error");
     }
   }
 
@@ -6359,6 +6390,108 @@ function LaunchCenterPanel({
               <strong>{customizationStudio?.totals.samples ?? 0}</strong>
               <span>Samples</span>
             </div>
+          </div>
+          <form className="customization-validator" onSubmit={runCustomizationValidation}>
+            <label htmlFor="customization-server">Server</label>
+            <select
+              id="customization-server"
+              value={customizationForm.server}
+              onChange={(event) =>
+                setCustomizationForm((current) => ({
+                  ...current,
+                  server: event.target.value as typeof customizationForm.server,
+                  includeDineout: event.target.value === "dineout" ? true : current.includeDineout,
+                }))
+              }
+            >
+              <option value="food">Food</option>
+              <option value="instamart">Instamart</option>
+              <option value="dineout">Dineout-aware</option>
+              <option value="combined">Combined</option>
+            </select>
+            <label htmlFor="customization-intent">Intent</label>
+            <textarea
+              id="customization-intent"
+              value={customizationForm.intent}
+              rows={3}
+              onChange={(event) => setCustomizationForm((current) => ({ ...current, intent: event.target.value }))}
+            />
+            <div className="customization-number-grid">
+              <label htmlFor="customization-quantity">Qty</label>
+              <input
+                id="customization-quantity"
+                type="number"
+                min="1"
+                max="24"
+                value={customizationForm.quantity}
+                onChange={(event) =>
+                  setCustomizationForm((current) => ({ ...current, quantity: Number(event.target.value) }))
+                }
+              />
+            </div>
+            <div className="customization-toggle-grid">
+              <label htmlFor="customization-allergy">
+                <input
+                  id="customization-allergy"
+                  type="checkbox"
+                  checked={customizationForm.hasAllergy}
+                  onChange={(event) =>
+                    setCustomizationForm((current) => ({ ...current, hasAllergy: event.target.checked }))
+                  }
+                />
+                Allergy caution
+              </label>
+              <label htmlFor="customization-variant">
+                <input
+                  id="customization-variant"
+                  type="checkbox"
+                  checked={customizationForm.userChangedVariant}
+                  onChange={(event) =>
+                    setCustomizationForm((current) => ({ ...current, userChangedVariant: event.target.checked }))
+                  }
+                />
+                Variant changed
+              </label>
+              <label htmlFor="customization-dineout">
+                <input
+                  id="customization-dineout"
+                  type="checkbox"
+                  checked={customizationForm.includeDineout}
+                  onChange={(event) =>
+                    setCustomizationForm((current) => ({ ...current, includeDineout: event.target.checked }))
+                  }
+                />
+                Include Dineout
+              </label>
+            </div>
+            <button type="submit" disabled={customizationValidationStatus === "loading"} aria-label="Validate customization">
+              {customizationValidationStatus === "loading" ? <Loader2 aria-hidden="true" /> : <Grid3X3 aria-hidden="true" />}
+              Validate
+            </button>
+            {customizationValidationStatus === "error" ? (
+              <small role="status">Customization validation unavailable.</small>
+            ) : null}
+          </form>
+          <div
+            className="customization-result"
+            data-status={
+              customizationValidation?.mutationRisk === "high"
+                ? "blocked"
+                : customizationValidation?.mutationRisk === "medium"
+                  ? "watch"
+                  : "healthy"
+            }
+          >
+            <div>
+              <span>Mutation risk</span>
+              <strong>{customizationValidation ? customizationValidation.mutationRisk : "Awaiting validation"}</strong>
+            </div>
+            <p>
+              {customizationValidation
+                ? `${customizationValidation.selectedLaneId} / readback ${customizationValidation.requiredFreshRead} / ${customizationValidation.checklist.length} checks`
+                : "Validate exact add-ons, variants, pack sizes, and caution copy before any Swiggy cart mutation."}
+            </p>
+            {customizationValidation ? <small>{customizationValidation.recommendedAction}</small> : null}
           </div>
           <ul className="compact-status-list">
             {(customizationStudio?.lanes ?? []).slice(0, 5).map((laneItem) => (

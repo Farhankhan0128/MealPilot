@@ -2475,6 +2475,42 @@ assert(
     ),
   "customization validation safety telemetry is incomplete",
 );
+const instamartCustomizationValidation = await request("/api/swiggy-customization-studio/validate", {
+  method: "POST",
+  body: JSON.stringify({
+    server: "instamart",
+    intent: "family milk pack larger size",
+    hasAllergy: false,
+    userChangedVariant: false,
+    quantity: 2,
+    includeDineout: false,
+  }),
+});
+assert(
+  instamartCustomizationValidation.validation.selectedLaneId === "instamart_pack_size_truth" &&
+    instamartCustomizationValidation.validation.mutationRisk === "low" &&
+    instamartCustomizationValidation.validation.requiredFreshRead === "get_cart" &&
+    instamartCustomizationValidation.validation.checklist.some((step) => step.tool === "search_products") &&
+    instamartCustomizationValidation.validation.checklist.some((step) => step.tool === "update_cart"),
+  "customization Instamart validation route is wrong",
+);
+const combinedCustomizationValidation = await request("/api/swiggy-customization-studio/validate", {
+  method: "POST",
+  body: JSON.stringify({
+    server: "combined",
+    intent: "compare restaurant bowl against cook-at-home ingredients before changing either cart",
+    hasAllergy: false,
+    userChangedVariant: true,
+    quantity: 2,
+    includeDineout: true,
+  }),
+});
+assert(
+  combinedCustomizationValidation.validation.selectedLaneId === "combined_recipe_customization" &&
+    combinedCustomizationValidation.validation.mutationRisk === "medium" &&
+    combinedCustomizationValidation.validation.swiggyRoute.mutationBoundary.includes("separate review"),
+  "customization combined validation route is wrong",
+);
 assert(
   paymentReconciliation.reconciliation.telemetry.some(
     (item) => item.field === "raw_payment_instrument_retained" && item.value === "false",

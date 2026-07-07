@@ -251,6 +251,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/swiggy-meal-window-intelligence`
 - `POST /api/swiggy-meal-window-intelligence/forecast`
 - `GET /api/swiggy-customization-studio`
+- `POST /api/swiggy-customization-studio/validate`
 - `GET /api/nutrition-budget-intelligence`
 - `GET /api/household-preference-graph`
 - `GET /api/guest-collaboration-calendar`
@@ -451,7 +452,7 @@ Production should use an HTTPS redirect URI with exact-match allowlisting.
 
 `/api/swiggy-meal-window-intelligence` is the productized timing proof surface. It maps Food lunch ETA, Instamart dinner backup, Dineout slot windows, post-confirmation tracking, and weekend combined planning into safe timing lanes; `/api/swiggy-meal-window-intelligence/forecast` returns ETA risk buckets, timing steps, no-scheduled-order telemetry, and the Launch Center forecaster's selected Food, Instamart, Dineout, or combined route proof.
 
-`/api/swiggy-customization-studio` is the productized customization proof surface. It maps Food `search_menu` add-ons and variants, Instamart product pack sizes, allergy-sensitive substitution cautions, voice-safe choice limits, and cart readback gates into exact-choice review lanes; `/api/swiggy-customization-studio/validate` returns deterministic mutation-risk buckets without mutating a cart.
+`/api/swiggy-customization-studio` is the productized customization proof surface. It maps Food `search_menu` add-ons and variants, Instamart product pack sizes, allergy-sensitive substitution cautions, voice-safe choice limits, and cart readback gates into exact-choice review lanes; `/api/swiggy-customization-studio/validate` returns deterministic mutation-risk buckets, required readback tools, selected Swiggy route proof, and checklist steps without mutating a cart. The Launch Center validator exercises Food, Instamart, and combined/Dineout-aware customization paths from the UI.
 
 `/api/nutrition-budget-intelligence` shows premium nutrition and budget planning routes: protein-per-rupee Food search, COD-safe coupons, Instamart go-to and product search, group-budget allocation, Dineout evening balance, and camera-label macro planning with no medical claims.
 
