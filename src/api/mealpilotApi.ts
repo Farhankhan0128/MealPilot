@@ -86,6 +86,7 @@ import type {
   SwiggyBuildersJourneyGateCenter,
   SwiggyBuildersLiveSourceResilienceCenter,
   SwiggyBuildersModuleIntelligenceCenter,
+  SwiggyBuildersModuleWitness,
   SwiggyBuildersCoverageReceipt,
   SwiggyCapabilityTraceabilityMatrix,
   SwiggyBuildersCompletionLedger,
@@ -488,6 +489,10 @@ export function fetchSwiggyBuildersModuleIntelligence() {
   return requestJson<{ moduleIntelligence: SwiggyBuildersModuleIntelligenceCenter }>(
     "/api/swiggy-builders-module-intelligence",
   );
+}
+
+export function fetchSwiggyBuildersModuleWitness() {
+  return requestJson<{ moduleWitness: SwiggyBuildersModuleWitness }>("/api/swiggy-builders-module-witness");
 }
 
 export function fetchSwiggyCapabilityTraceability() {

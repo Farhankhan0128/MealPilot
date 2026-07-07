@@ -914,6 +914,80 @@ export interface SwiggyBuildersModuleIntelligenceCenter {
   externalGates: string[];
 }
 
+export type SwiggyBuildersModuleWitnessSourceState =
+  | "live_verified"
+  | "atlas_fallback"
+  | "source_blocked"
+  | "not_live_checked";
+
+export type SwiggyBuildersModuleWitnessStatus =
+  | "proven"
+  | "fallback"
+  | "operator_gate"
+  | "swiggy_gate"
+  | "watch"
+  | "blocked";
+
+export interface SwiggyBuildersModuleWitnessRow {
+  id: string;
+  pageId: string;
+  pageTitle: string;
+  moduleTitle: string;
+  moduleType: SwiggyWebsiteModule["moduleType"];
+  sourceUrl: string;
+  officialSignal: string;
+  status: SwiggyBuildersModuleWitnessStatus;
+  sourceState: SwiggyBuildersModuleWitnessSourceState;
+  owner: "MealPilot" | "Operator" | "Swiggy" | "Joint";
+  pageCoverageStatus: SwiggyBuildersPageMeshStatus | "not_live_checked";
+  proofLinks: string[];
+  evidence: string;
+  nextAction: string;
+  ctaIds: string[];
+  routeOptimization: string;
+  riskBoundary: string;
+}
+
+export interface SwiggyBuildersModuleWitnessPageSummary {
+  pageId: string;
+  title: string;
+  sourceUrl: string;
+  modules: number;
+  proven: number;
+  fallback: number;
+  watch: number;
+  operatorGates: number;
+  swiggyGates: number;
+  sourceState: SwiggyBuildersModuleWitnessSourceState;
+  proofLinks: string[];
+}
+
+export interface SwiggyBuildersModuleWitness {
+  generatedAt: string;
+  score: number;
+  decision: "module_witness_ready" | "module_witness_watch" | "blocked_module_drift";
+  officialSources: string[];
+  totals: {
+    modules: number;
+    proven: number;
+    fallback: number;
+    watch: number;
+    operatorGates: number;
+    swiggyGates: number;
+    blocked: number;
+    pages: number;
+    ctaMappedModules: number;
+    liveVerifiedPages: number;
+    atlasFallbackPages: number;
+    proofLinks: number;
+  };
+  rows: SwiggyBuildersModuleWitnessRow[];
+  pageSummaries: SwiggyBuildersModuleWitnessPageSummary[];
+  commands: Array<{ id: string; command: string; proves: string; expectedSignal: string }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type SwiggyCapabilityTraceabilityOwner = "MealPilot" | "Operator" | "Swiggy" | "Joint";
 export type SwiggyCapabilityTraceabilityKind =
   | "official_page"

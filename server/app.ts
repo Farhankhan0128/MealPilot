@@ -32,6 +32,7 @@ import { buildBrandComplianceKit, rehearseBrandCompliance } from "./services/bra
 import { buildSwiggyBuildersLaunchStoryCenter } from "./services/buildersLaunchStoryCenter.js";
 import { buildSwiggyBuildersLiveSourceResilienceCenter } from "./services/liveSourceResilienceCenter.js";
 import { buildSwiggyBuildersModuleIntelligenceCenter } from "./services/moduleIntelligence.js";
+import { buildSwiggyBuildersModuleWitness } from "./services/buildersModuleWitness.js";
 import { buildSwiggyBuildersReviewDecisionCenter } from "./services/reviewDecisionCenter.js";
 import { buildSwiggyBuildersSourceEvolutionCenter } from "./services/sourceEvolutionCenter.js";
 import { buildSwiggySourceFreezeDiff } from "./services/sourceFreezeDiff.js";
@@ -1359,6 +1360,18 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
   app.get("/api/swiggy-builders-module-intelligence", (_req, res) => {
     res.json({ moduleIntelligence: buildSwiggyBuildersModuleIntelligenceCenter() });
   });
+
+  app.get(
+    "/api/swiggy-builders-module-witness",
+    asyncRoute(async (_req, res) => {
+      res.json({
+        moduleWitness: await buildSwiggyBuildersModuleWitness({
+          config,
+          latestPlan: store.getAllPlans().at(-1),
+        }),
+      });
+    }),
+  );
 
   app.get("/api/swiggy-builders-journey-gates", (_req, res) => {
     res.json({

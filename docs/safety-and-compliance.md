@@ -84,6 +84,8 @@ The `/api/swiggy-conversion-center` endpoint keeps the final Swiggy Builders con
 
 The `/api/swiggy-builders-module-intelligence` endpoint keeps public website interpretation separate from live capability claims. Each module can point to local proof, but legal terms, access forms, email sends, production credentials, quotas, co-branding, and feature placement remain operator or Swiggy-owned gates until explicitly approved.
 
+The `/api/swiggy-builders-module-witness` endpoint keeps row-level module proof auditable without claiming source ownership. Live and fallback source states, proof links, CTA mappings, and next actions are visible locally, while browser re-browse, external forms, legal acceptance, credentials, quotas, production approval, and public Swiggy claims remain operator or Swiggy-owned gates.
+
 The `/api/swiggy-builders-journey-gates` endpoint turns the official Builders journey into explicit ownership gates. MealPilot may prepare Start Building proof, access packets, review evidence, go-live runbooks, and showcase copy, but applying for production access, accepting legal terms, sending email, receiving credentials, going live, and making public Swiggy claims remain operator or Swiggy-owned actions.
 
 The `/api/swiggy-builders-homepage-experience` endpoint keeps section-level website proof honest. Header, hero, how-it-works, benefits, guidelines, FAQ, final CTA, and footer rows can point to local evidence and mobile/reviewer checks, but official navigation, legal pages, forms, email, credentials, quota, brand, and production approvals remain external gates.

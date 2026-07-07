@@ -202,6 +202,17 @@ const targetGroups = [
         "artifacts/visual-qa/module-intelligence-card.png",
       ),
       target(
+        "module_witness_card",
+        "Module Witness card",
+        "/",
+        ".module-witness-card",
+        "desktop",
+        1280,
+        900,
+        "Module Witness shows every Builders module source state, fallback posture, gates, proof links, and source-to-product next actions.",
+        "artifacts/visual-qa/module-witness-card.png",
+      ),
+      target(
         "capability_traceability_card",
         "Capability Traceability card",
         "/",

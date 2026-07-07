@@ -485,6 +485,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-builders-module-witness": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Builders Module Witness for source-state, proof, and gate coverage",
+          responses: {
+            "200": {
+              description:
+                "All 38 Website Atlas modules witnessed with live or fallback source state, owner, CTA mapping, proof links, route optimization, risk boundary, next action, and operator or Swiggy gates",
+            },
+          },
+        },
+      },
       "/api/swiggy-builders-journey-gates": {
         get: {
           tags: ["Builder Access"],

@@ -120,6 +120,8 @@ The verifier also validates `/api/swiggy-conversion-center` for the final What W
 
 The verifier also validates `/api/swiggy-builders-module-intelligence` for every Website Atlas module, page grouping, owner, audience, product promise, route optimization, risk boundary, proof links, module journeys, and external operator or Swiggy gates.
 
+The verifier also validates `/api/swiggy-builders-module-witness` for every Website Atlas module, Page Mesh source state, fallback disclosure, owner, CTA mapping, route optimization, risk boundary, proof links, next action, and explicit operator or Swiggy gate.
+
 The verifier also validates `/api/swiggy-partner-success-desk` and `POST /api/swiggy-partner-success-desk/compose` for access handoff, developer support, SLO incidents, capacity review, backpressure controls, growth showcase asks, escalation emails, local partner-success handoff packets, missing-input guards, and enterprise Slack/partner-manager gates.
 
 The verifier also validates `/api/swiggy-partner-support-room` and `POST /api/swiggy-partner-support-room/compose` for report_error readiness, builders@swiggy.in support email drafts, S0-S3 incident lanes, redacted evidence attachments, local support packets, missing-input guards, capacity escalation, runtime/audit proof, and enterprise Slack/partner-manager gates.
@@ -224,6 +226,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/swiggy-builders-site-parity`
 - `GET /api/swiggy-builders-page-mesh`
 - `GET /api/swiggy-builders-module-intelligence`
+- `GET /api/swiggy-builders-module-witness`
 - `GET /api/swiggy-capability-traceability`
 - `GET /api/swiggy-homepage-signal-coverage`
 - `GET /api/swiggy-builders-completion-ledger`
@@ -499,6 +502,8 @@ Production should use an HTTPS redirect URI with exact-match allowlisting.
 
 `/api/swiggy-builders-module-intelligence` converts Website Atlas modules into product-readiness rows with owner, audience, official signal, product promise, Swiggy surface, MealPilot proof, route optimization, risk boundary, CTA mapping, journey placement, and explicit external gates.
 
+`/api/swiggy-builders-module-witness` joins Module Intelligence, Page Mesh, and Deep Site Map into one module evidence receipt with live/fallback source state, owners, CTA mapping, proof links, route optimization, risk boundary, next action, and visible operator or Swiggy gates.
+
 `/api/swiggy-capability-traceability` composes Builders Map, Module Intelligence, CTA Execution, and MCP coverage into a reviewer-facing source-to-product matrix. It maps official pages, modules, CTAs/header/docs/footer links, MCP server families, and builder lifecycle gates to MealPilot surfaces, owners, route optimizations, proof links, verifier commands, assertions, and remaining operator or Swiggy-owned gates.
 
 `/api/swiggy-homepage-signal-coverage` composes Website Atlas, CTA Execution, llms coverage, FAQ/support/rate-limit/growth/access proof routes, and MCP capability coverage into a homepage-promise board. It maps header, docs subnav, footer resources/legal, Start Building, production access, demo submission, support, rate limits, co-branding, FAQ, llms, and MCP signals to MealPilot surfaces, backend endpoints, frontend visibility, docs proof, tests, owners, proof links, assertions, and remaining operator or Swiggy-owned gates.
@@ -563,6 +568,7 @@ The test suite checks that:
 - Website Atlas covers global header, docs subnav, footer groups, production access page, launch blog, rendered-page crawl evidence, page modules, CTAs, resource links, and legal links.
 - Swiggy Builders Page Mesh Auditor fetches every non-external Website Atlas page live and reconciles page reachability, anchor counts, module signals, CTA matches, and safe-origin drift.
 - Swiggy Builders Module Intelligence Center maps each Website Atlas module into owner, product promise, proof links, route optimization, risk boundary, module journeys, and external gates.
+- Swiggy Builders Module Witness gives each Website Atlas module a row-level source state, fallback disclosure, CTA mapping, proof links, route optimization, risk boundary, next action, and gate owner.
 - Swiggy Capability Traceability Matrix maps official Builders pages, website modules, CTAs, MCP server families, and lifecycle gates into one proof matrix with owners, route optimizations, verification commands, and remaining operator or Swiggy-owned gates.
 - Swiggy Homepage Signal Coverage Board maps public homepage promises, header/docs/footer links, CTAs, llms sources, support, rate limits, growth, demo, access, FAQ, and MCP signals into one reviewer board with proof routes, frontend visibility, tests, owners, assertions, and external gates.
 - Swiggy Builders Completion Ledger maps the full user objective to evidence routes, frontend surfaces, documentation, tests, owner assignment, proof links, and remaining operator or Swiggy gates, including developer and enterprise public promises.
