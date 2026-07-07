@@ -215,6 +215,19 @@ const artifactSections = [
     ],
   },
   {
+    id: "source_freeze_live_audit",
+    label: "Source freeze and live-site QA",
+    artifacts: [
+      artifact("builders_site_parity", "Swiggy Builders Site Parity", "api", "/api/swiggy-builders-site-parity", "Live Builders homepage anchors, metadata, llms alternates, CTA/source/footer/legal links, and Website Atlas reconciliation.", "Fetches only official public Swiggy pages and stores metadata rather than page HTML."),
+      artifact("builders_page_mesh", "Swiggy Builders Page Mesh", "api", "/api/swiggy-builders-page-mesh", "Every non-external Website Atlas Builders page checked for reachability, anchors, titles, CTA/module parity, and approved origins.", "User-supplied URLs are rejected; public source glitches are disclosed as drift."),
+      artifact("cta_live_audit", "CTA Live Audit", "api", "/api/swiggy-cta-live-audit", "Official Builders/docs click targets probed safely, with forms, email, and legal links kept as manual browser gates.", "No external forms, email sends, or legal workflows are auto-submitted."),
+      artifact("interaction_qa", "Swiggy Interaction QA Center", "api", "/api/swiggy-interaction-qa-center", "Planner, confirmation, packet export, support, privacy, first-call, access submission, and partner-support CTAs mapped to executable route contracts and visible feedback.", "External Swiggy gates remain manual and unsafe commercial actions are never executed."),
+      artifact("source_freeze_diff", "Swiggy Source Freeze Diff", "api", "/api/swiggy-source-freeze-diff", "Live page mesh, Website Atlas counts, llms/docs coverage, tool parity, Access Evidence Matrix, Builder Packet Export, Upstream Watch, proof commands, and browser re-browse gates in one pre-submission freeze.", "Browser re-browse receipts are metadata-only and exclude screenshots, cookies, tokens, and page HTML."),
+      artifact("credential_vault_center", "Swiggy Credential Vault Center", "api", "/api/swiggy-credential-vault-center", "Runtime credential metadata, configured-secret posture, redaction rules, rotation runbooks, cutover checks, and support-safe credential packets.", "Full bearer tokens, refresh tokens, authorization codes, client secrets, and PKCE verifiers are never returned."),
+      artifact("staging_seed_smoke", "Swiggy Staging Seed & Smoke Center", "api", "/api/swiggy-staging-seed-smoke-center", "Food, Instamart, and Dineout seeded fixtures mapped to read, mutation, commercial, support, telemetry, and promotion smoke waves.", "Live staging execution waits for Swiggy-issued credentials and seeded test users."),
+    ],
+  },
+  {
     id: "partner_signal_operations",
     label: "Partner, brand, and live-signal operations",
     artifacts: [
@@ -487,6 +500,13 @@ export function buildReviewerArtifactVault(): ReviewerArtifactVault {
     "- Swiggy Credential Handoff Center: /api/swiggy-credential-handoff-center",
     "- Swiggy Credential Readiness Dossier: /api/swiggy-credential-readiness-dossier",
     "- Credential Issuance Receipt State: /api/swiggy-credential-issuance/state",
+    "- Swiggy Builders Site Parity: /api/swiggy-builders-site-parity",
+    "- Swiggy Builders Page Mesh: /api/swiggy-builders-page-mesh",
+    "- CTA Live Audit: /api/swiggy-cta-live-audit",
+    "- Swiggy Interaction QA Center: /api/swiggy-interaction-qa-center",
+    "- Swiggy Source Freeze Diff: /api/swiggy-source-freeze-diff",
+    "- Swiggy Credential Vault Center: /api/swiggy-credential-vault-center",
+    "- Swiggy Staging Seed & Smoke Center: /api/swiggy-staging-seed-smoke-center",
     "- AI Client Connect Kit: /api/ai-client-connect-kit",
     "- Coding Agent Governance: /api/coding-agent-governance",
     "- MCP Gateway: /api/mcp-gateway",

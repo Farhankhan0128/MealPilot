@@ -3032,7 +3032,7 @@ assert(reviewerArtifactVault.reviewerArtifactVault.totalCommands === 7, "reviewe
 assert(reviewerArtifactVault.reviewerArtifactVault.readyCommands >= 6, "reviewer artifact vault ready commands are incomplete");
 assert(reviewerArtifactVault.reviewerArtifactVault.totalRedactionRules >= 6, "reviewer artifact vault redaction rules are incomplete");
 assert(
-  ["submission_packet", "product_depth", "mcp_contracts", "mcp_client_readiness", "operations_and_logs"].every((id) =>
+  ["submission_packet", "product_depth", "mcp_contracts", "mcp_client_readiness", "source_freeze_live_audit", "operations_and_logs"].every((id) =>
     reviewerArtifactVault.reviewerArtifactVault.artifactSections.some((section) => section.id === id),
   ),
   "reviewer artifact vault sections are missing",
@@ -3053,6 +3053,22 @@ assert(
       ["/api/swiggy-docs-coverage", "docs_coverage"],
     ].every(([path, id]) => mcpClientReadinessSection.artifacts.some((artifact) => artifact.id === id && artifact.path === path)),
   "reviewer artifact vault MCP client readiness section is missing",
+);
+const sourceFreezeLiveAuditSection = reviewerArtifactVault.reviewerArtifactVault.artifactSections.find(
+  (section) => section.id === "source_freeze_live_audit",
+);
+assert(
+  sourceFreezeLiveAuditSection &&
+    [
+      ["/api/swiggy-builders-site-parity", "builders_site_parity"],
+      ["/api/swiggy-builders-page-mesh", "builders_page_mesh"],
+      ["/api/swiggy-cta-live-audit", "cta_live_audit"],
+      ["/api/swiggy-interaction-qa-center", "interaction_qa"],
+      ["/api/swiggy-source-freeze-diff", "source_freeze_diff"],
+      ["/api/swiggy-credential-vault-center", "credential_vault_center"],
+      ["/api/swiggy-staging-seed-smoke-center", "staging_seed_smoke"],
+    ].every(([path, id]) => sourceFreezeLiveAuditSection.artifacts.some((artifact) => artifact.id === id && artifact.path === path)),
+  "reviewer artifact vault source-freeze live-audit section is missing",
 );
 assert(
   reviewerArtifactVault.reviewerArtifactVault.artifactSections.some((section) =>
@@ -3508,6 +3524,16 @@ assert(
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-tool-parity-auditor") &&
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-docs-coverage"),
   "reviewer artifact vault MCP client handoff links are incomplete",
+);
+assert(
+  reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-builders-site-parity") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-builders-page-mesh") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-cta-live-audit") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-interaction-qa-center") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-source-freeze-diff") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-credential-vault-center") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-staging-seed-smoke-center"),
+  "reviewer artifact vault source-freeze live-audit handoff links are incomplete",
 );
 const readyReviewerPacket = await request("/api/reviewer-artifact-vault/compose", {
   method: "POST",
@@ -7873,6 +7899,7 @@ assert(
     builderPacket.packet.readiness.some((item) => item.id === "access_submission_packet" && item.status === "ready") &&
     builderPacket.packet.readiness.some((item) => item.id === "post_submit_lifecycle_packet" && item.status === "ready") &&
     builderPacket.packet.readiness.some((item) => item.id === "mcp_client_readiness_packet" && item.status === "ready") &&
+    builderPacket.packet.readiness.some((item) => item.id === "source_freeze_live_audit_packet" && item.status === "ready") &&
     builderPacket.packet.readiness.some((item) => item.id === "demo_video" && item.status === "operator_input") &&
     builderPacket.packet.readiness.some((item) => item.id === "staging_credentials" && item.status === "external_gate"),
   "builder packet readiness gates are incomplete",
@@ -7927,6 +7954,11 @@ assert(
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Visual QA Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Builders Launch Story Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Operating Contract Center") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Builders Site Parity") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Builders Page Mesh") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "CTA Live Audit") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Interaction QA Center") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Source Freeze Diff") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Docs Coverage") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Docs Twin Explorer") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Upstream Watch") &&
@@ -7974,6 +8006,8 @@ assert(
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Commercial Action Guard") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Staging Cutover Rehearsal") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Staging Credential Drill Center") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Credential Vault Center") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Staging Seed & Smoke Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Live Signal Calibration Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Staging Certification Matrix") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Staging Transcript Export"),
@@ -8019,6 +8053,16 @@ assert(
     launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-tool-parity-auditor") &&
     launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-docs-coverage"),
   "launch bundle MCP client handoff links are missing",
+);
+assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-builders-site-parity") &&
+    launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-builders-page-mesh") &&
+    launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-cta-live-audit") &&
+    launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-interaction-qa-center") &&
+    launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-source-freeze-diff") &&
+    launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-credential-vault-center") &&
+    launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-staging-seed-smoke-center"),
+  "launch bundle source-freeze live-audit handoff links are missing",
 );
 assert(
   launchBundle.launchBundle.artifacts.some(

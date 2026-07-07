@@ -247,6 +247,13 @@ export function buildBuilderPacketExport(options: {
         "Use this packet before sharing repo rules, MCP client configs, manifest parity, gateway posture, or handshake evidence with Swiggy reviewers.",
       ),
       readiness(
+        "source_freeze_live_audit_packet",
+        "Source freeze and live-site QA packet",
+        "ready",
+        "Reviewer Vault and Launch Bundle now promote Builders Site Parity, Page Mesh, CTA Live Audit, Interaction QA, Source Freeze Diff, Credential Vault, and Staging Seed & Smoke together.",
+        "Run this packet before recording the final demo or submitting the access form so every live page, CTA, source-freeze row, secret posture, and seeded-staging gate is visible.",
+      ),
+      readiness(
         "demo_video",
         "Demo video URL",
         "operator_input",

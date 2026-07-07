@@ -348,6 +348,51 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
         "Maps demo-critical UI screenshots, viewport targets, selector manifests, text-fit/no-overlap rules, widget fallback checks, mobile layout checks, and screenshot automation gates.",
     },
     {
+      id: "builders_site_parity",
+      label: "Swiggy Builders Site Parity",
+      path: "/api/swiggy-builders-site-parity",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Fetches the live Builders homepage, extracts anchors, llms alternates, CTA/source/footer/legal links, and reconciles them against Website Atlas before reviewer submission.",
+    },
+    {
+      id: "builders_page_mesh",
+      label: "Swiggy Builders Page Mesh",
+      path: "/api/swiggy-builders-page-mesh",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Fetches every non-external Builders page, validates page titles, anchors, module and CTA parity, approved origins, and safe public-page integrity.",
+    },
+    {
+      id: "cta_live_audit",
+      label: "CTA Live Audit",
+      path: "/api/swiggy-cta-live-audit",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Safely probes official Builders/docs click targets while keeping form, email, and legal CTAs as manual browser gates with drift classifications.",
+    },
+    {
+      id: "interaction_qa",
+      label: "Swiggy Interaction QA Center",
+      path: "/api/swiggy-interaction-qa-center",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Maps every executable portal CTA to route contracts, visible feedback, automation proof, dry-run rehearsals, and explicit Swiggy/operator gates.",
+    },
+    {
+      id: "source_freeze_diff",
+      label: "Swiggy Source Freeze Diff",
+      path: "/api/swiggy-source-freeze-diff",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Composes live page mesh, Website Atlas counts, llms/docs coverage, 35-tool parity, access evidence, builder packet export, and browser re-browse gates into the final pre-submission source freeze.",
+    },
+    {
       id: "docs_coverage",
       label: "Swiggy Docs Coverage",
       path: "/api/swiggy-docs-coverage",
@@ -745,6 +790,24 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
       status: "ready",
       evidence:
         "Combines credential signal, first-call JSON-RPC drills, seeded-data requirements, operator runbook, handoff email, and Swiggy-owned promotion gates.",
+    },
+    {
+      id: "credential_vault_center",
+      label: "Swiggy Credential Vault Center",
+      path: "/api/swiggy-credential-vault-center",
+      category: "runtime",
+      status: "ready",
+      evidence:
+        "Summarizes configured secret posture, no-token redaction rules, rotation runbooks, cutover checks, support-safe credential packets, and Swiggy-owned credential gates.",
+    },
+    {
+      id: "staging_seed_smoke",
+      label: "Swiggy Staging Seed & Smoke Center",
+      path: "/api/swiggy-staging-seed-smoke-center",
+      category: "runtime",
+      status: "ready",
+      evidence:
+        "Maps Food, Instamart, and Dineout seeded fixtures to read, mutation, commercial, support, telemetry, and promotion smoke waves before live credential use.",
     },
     {
       id: "live_signal_calibration",
@@ -1258,6 +1321,11 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- Access Submission Studio: /api/access-submission-studio",
     "- Swiggy Submission Timeline Center: /api/swiggy-submission-timeline-center",
     "- Swiggy Partner Success Desk: /api/swiggy-partner-success-desk",
+    "- Swiggy Builders Site Parity: /api/swiggy-builders-site-parity",
+    "- Swiggy Builders Page Mesh: /api/swiggy-builders-page-mesh",
+    "- CTA Live Audit: /api/swiggy-cta-live-audit",
+    "- Swiggy Interaction QA Center: /api/swiggy-interaction-qa-center",
+    "- Swiggy Source Freeze Diff: /api/swiggy-source-freeze-diff",
     "- Swiggy Docs Coverage: /api/swiggy-docs-coverage",
     "- Swiggy Docs Twin Explorer: /api/swiggy-docs-twin-explorer",
     "- Swiggy Upstream Watch: /api/swiggy-upstream-watch",
@@ -1287,6 +1355,8 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- Commercial Action Guard: /api/mcp/commercial-action-guard",
     "- Staging Cutover Rehearsal: /api/mcp/staging-cutover",
     "- Swiggy Staging Credential Drill Center: /api/swiggy-staging-credential-drill",
+    "- Swiggy Credential Vault Center: /api/swiggy-credential-vault-center",
+    "- Swiggy Staging Seed & Smoke Center: /api/swiggy-staging-seed-smoke-center",
     "- Swiggy Credential Handoff Center: /api/swiggy-credential-handoff-center",
     "- Swiggy Credential Readiness Dossier: /api/swiggy-credential-readiness-dossier",
     "- Credential Issuance Receipt State: /api/swiggy-credential-issuance/state",
