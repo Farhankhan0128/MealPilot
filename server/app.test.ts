@@ -79,6 +79,9 @@ describe("MealPilot API", () => {
       "Every public Builders FAQ question",
     );
     expect(openApi.body.paths["/api/swiggy-growth-partnership"].get.summary).toContain("Growth Partnership");
+    expect(openApi.body.paths["/api/swiggy-growth-partnership/compose"].post.summary).toContain(
+      "Growth Partnership ask composer",
+    );
     expect(openApi.body.paths["/api/swiggy-talent-signal-center"].get.summary).toContain("Talent Signal");
     expect(openApi.body.paths["/api/swiggy-talent-signal-center"].get.responses["200"].description).toContain(
       "developer hiring signal",
@@ -1793,6 +1796,53 @@ describe("MealPilot API", () => {
       expect.arrayContaining(["activation", "cross_server", "conversion_safety", "support"]),
     );
     expect(center.externalGates.some((gate: string) => gate.includes("co-marketing"))).toBe(true);
+  });
+
+  it("composes a Swiggy growth partnership ask as a local handoff packet", async () => {
+    const { app } = createMealPilotServer();
+
+    const response = await request(app)
+      .post("/api/swiggy-growth-partnership/compose")
+      .send({
+        experimentId: "luxury_weekend_concierge",
+        askId: "co_marketing_review",
+        audienceNote: "Premium cross-server launch proof for Swiggy Builders review.",
+      })
+      .expect(200);
+    const packet = response.body.growthAsk;
+
+    expect(packet.decision).toBe("swiggy_gate");
+    expect(packet.readinessScore).toBe(64);
+    expect(packet.experiment.id).toBe("luxury_weekend_concierge");
+    expect(packet.ask.id).toBe("co_marketing_review");
+    expect(packet.assets.map((asset: { id: string }) => asset.id)).toEqual(
+      expect.arrayContaining(["demo_storyboard", "growth_metrics_pack", "launch_handoff_email"]),
+    );
+    expect(packet.metrics.map((metric: { id: string }) => metric.id)).toEqual(
+      expect.arrayContaining(["activation", "cross_server", "conversion_safety", "latency"]),
+    );
+    expect(packet.proofLinks).toEqual(expect.arrayContaining(["/api/swiggy-growth-partnership", "/api/brand-compliance-kit"]));
+    expect(packet.handoffDraft.to).toBe("builders@swiggy.in");
+    expect(packet.handoffDraft.bodyPreview).toContain("Premium cross-server launch proof");
+    expect(packet.checklist.some((item: { id: string; status: string }) => item.id === "swiggy_gate_preserved" && item.status === "external_gate")).toBe(true);
+    expect(packet.assertions.some((assertion: string) => assertion.includes("never sends email"))).toBe(true);
+  });
+
+  it("keeps unknown Swiggy growth partnership asks in manual input state", async () => {
+    const { app } = createMealPilotServer();
+
+    const response = await request(app)
+      .post("/api/swiggy-growth-partnership/compose")
+      .send({ experimentId: "missing_experiment", askId: "missing_ask", audienceNote: "" })
+      .expect(200);
+    const packet = response.body.growthAsk;
+
+    expect(packet.decision).toBe("unknown_growth_item");
+    expect(packet.readinessScore).toBe(0);
+    expect(packet.experiment).toBeNull();
+    expect(packet.ask).toBeNull();
+    expect(packet.handoffDraft.bodyPreview).toContain("Unknown growth experiment or partner ask");
+    expect(packet.checklist.some((item: { status: string }) => item.status === "manual_input")).toBe(true);
   });
 
   it("returns Swiggy Builder Talent Signal Center for portfolio and hiring-readiness proof", async () => {

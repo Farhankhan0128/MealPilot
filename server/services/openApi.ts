@@ -571,6 +571,34 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-growth-partnership/compose": {
+        post: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Growth Partnership ask composer for one launch experiment",
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    experimentId: { type: "string" },
+                    askId: { type: "string" },
+                    audienceNote: { type: "string" },
+                  },
+                  required: ["experimentId", "askId"],
+                },
+              },
+            },
+          },
+          responses: {
+            "200": {
+              description:
+                "Selected growth experiment handoff packet with decision, proof links, assets, metrics, checklist, builders@swiggy.in draft, and explicit Swiggy gates without sending email, opening Slack, requesting dashboards, or claiming approval",
+            },
+          },
+        },
+      },
       "/api/swiggy-talent-signal-center": {
         get: {
           tags: ["Builder Access"],

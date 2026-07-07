@@ -232,6 +232,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/swiggy-faq-resolution-center`
 - `POST /api/swiggy-faq-resolution-center/answer`
 - `GET /api/swiggy-growth-partnership`
+- `POST /api/swiggy-growth-partnership/compose`
 - `GET /api/swiggy-talent-signal-center`
 - `GET /api/swiggy-conversion-center`
 - `GET /api/swiggy-partner-success-desk`
@@ -527,7 +528,7 @@ The test suite checks that:
 - Swiggy Operating Contract Center joins SLA, rate limits, support, versioning, changelog, and ship-to-production sources into pillars, runbooks, readiness gates, and external approval gates.
 - Builder Intake Command Center turns all 11 signup, apply, demo, contact, docs, and footer CTA paths into locally prepared action ownership, form values, demo storyboard steps, copy-ready drafts, and explicit external gates for final form/email submission and Swiggy approval.
 - FAQ & Policy Center maps homepage, developer, enterprise, access-guideline, footer-resource, allowed/restricted/prohibited, operating-principle, and legal signals to MealPilot evidence links.
-- Growth Partnership Center maps get-noticed, hiring, co-branding, direct support, co-marketing, analytics, strategic guidance, launch experiments, metrics, proof assets, and external partner asks.
+- Growth Partnership Center maps get-noticed, hiring, co-branding, direct support, co-marketing, analytics, strategic guidance, launch experiments, metrics, proof assets, and external partner asks. `POST /api/swiggy-growth-partnership/compose` generates a local launch-experiment handoff packet with selected partner ask, proof links, assets, metrics, checklist, builders@swiggy.in draft, and Swiggy-owned co-marketing gates.
 - Swiggy Showcase Submission Center packages pitch blocks, demo storyboard, metric pack, visual-gallery links, outreach copy, operator inputs, and Swiggy approval gates for a feature-ready review packet.
 - Swiggy Submission Timeline Center sequences access form submission, demo handoff, DCR, staging seed, 48-hour soak, and production promotion with explicit MealPilot, operator, and Swiggy ownership.
 - Swiggy Builders Conversion Center maps the final CTA funnel, official docs links, email handoff, proof bundles, operator runbook, and go-live gates into one tested reviewer endpoint.

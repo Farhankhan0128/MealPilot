@@ -40,6 +40,7 @@ Planned MCP servers:
 - Swiggy OAuth Status panel and endpoint for redacted authorize URL, callback outcome, pending PKCE verifier count, token source, expiry, storage policy, and exact-match redirect readiness.
 - Swiggy Auth Lifecycle Center at `/api/swiggy-auth-lifecycle-center` that turns PKCE S256, 120-second single-use authorization codes, 5-day access tokens, no refresh-token assumption in v1.0, 401/419 re-auth recovery, exact redirect allowlisting, per-user delegated tokens, and no-token logging into reviewer evidence.
 - Swiggy Benefits Activation Center at `/api/swiggy-benefits-activation-center` plus `POST /api/swiggy-benefits-activation-center/activate` that converts Builders benefits into owner-assigned live API, quota, support, co-branding, showcase, hiring visibility, growth, and enterprise support activation lanes with per-benefit handoff packets.
+- Swiggy Growth Partnership composer at `POST /api/swiggy-growth-partnership/compose` that turns one launch experiment and one partner ask into a local proof packet with assets, metrics, builders@swiggy.in draft, and Swiggy-owned co-marketing gates.
 - Credential Cockpit with Dynamic Client Registration preview, redirect URI audit, scope coverage, OAuth metadata endpoints, and external gate tracking.
 - Swiggy Credential Vault Center at `/api/swiggy-credential-vault-center` for runtime secret posture, no-token redaction rules, rotation runbooks, cutover checks, and support-safe credential packets.
 - Swiggy Credential Handoff Center at `/api/swiggy-credential-handoff-center` for localhost proof, DCR, OAuth PKCE, exact redirect URI, secret vault, staging credentials, seeded smoke, 48-hour soak, and production promotion in one owner-assigned room.
@@ -101,7 +102,7 @@ Planned MCP servers:
 - CTA Live Audit at `/api/swiggy-cta-live-audit` that safely probes official Builders/docs click targets, preserves form/email/legal as manual browser gates, classifies Swiggy-side 403 source blocks as watch evidence, and flags unsafe or truly blocked CTA drift before reviewer submission.
 - Builder Intake Command Center that converts every signup, apply, demo, contact, docs, and footer CTA into owner-assigned next actions, access-form fields, a demo storyboard, and copy-ready handoff drafts.
 - FAQ & Policy Center that maps homepage, developer, enterprise, access-guideline, footer-resource, allowed/restricted/prohibited, operating-principle, and legal policy signals to MealPilot evidence.
-- Growth Partnership Center that turns Swiggy's get-noticed, co-branding, direct-support, hiring, co-marketing, analytics, and strategic-growth signals into launch experiments, proof assets, metrics, and partner asks.
+- Growth Partnership Center that turns Swiggy's get-noticed, co-branding, direct-support, hiring, co-marketing, analytics, and strategic-growth signals into launch experiments, proof assets, metrics, partner asks, and a local growth-ask composer.
 - Swiggy Builder Talent Signal Center at `/api/swiggy-talent-signal-center` that turns standout-project, demo, GitHub, and hiring-visibility signals into portfolio assets, talent paths, outreach copy, proof routes, and Swiggy-owned recruiting gates.
 - Swiggy Builders Conversion Center at `/api/swiggy-conversion-center` that turns the final What Will You Cook CTA funnel into Start Building, See What's Possible, Request Access, Send Us a Demo, builders@swiggy.in, `llms.txt`, `llms-full.txt`, proof bundles, operator runbook, and Swiggy go-live gates.
 - Swiggy Showcase Submission Center at `/api/swiggy-showcase-submission-center` that packages pitch blocks, a 2-minute demo storyboard, proof metrics, visual-gallery links, outreach copy, operator-owned inputs, and Swiggy co-branding/feature gates for a feature-ready review packet.
@@ -284,6 +285,7 @@ GET  /api/swiggy-faq-policy
 GET  /api/swiggy-faq-resolution-center
 POST /api/swiggy-faq-resolution-center/answer
 GET  /api/swiggy-growth-partnership
+POST /api/swiggy-growth-partnership/compose
 GET  /api/swiggy-talent-signal-center
 GET  /api/swiggy-conversion-center
 GET  /api/swiggy-showcase-submission-center
@@ -560,7 +562,7 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 
 `POST /api/swiggy-faq-resolution-center/answer` powers the Launch Center FAQ Answer Console: it accepts one reviewer question and returns the matched FAQ answer, confidence, owner/status, proof links, related policy rules, activation CTAs, support contact, and explicit gates. Blank questions return `blocked_empty` so MealPilot never fabricates an access-review answer or triggers external forms, email, credentials, or Swiggy approvals.
 
-`GET /api/swiggy-growth-partnership` is the growth partnership center: official get-noticed, hiring, co-branding, direct-support, enterprise analytics, and joint go-to-market signals become MealPilot launch experiments, proof assets, metric targets, and explicit partner asks while Swiggy feature placement, co-marketing approval, Slack, partner manager, dashboard access, and higher limits remain external gates.
+`GET /api/swiggy-growth-partnership` is the growth partnership center: official get-noticed, hiring, co-branding, direct-support, enterprise analytics, and joint go-to-market signals become MealPilot launch experiments, proof assets, metric targets, and explicit partner asks while Swiggy feature placement, co-marketing approval, Slack, partner manager, dashboard access, and higher limits remain external gates. `POST /api/swiggy-growth-partnership/compose` powers the Launch Center growth composer for one experiment and one partner ask, returning a readiness decision, proof links, assets, metrics, checklist, builders@swiggy.in draft, and safety assertions without sending email, opening Slack, requesting dashboards, changing limits, or claiming Swiggy approval.
 
 `GET /api/swiggy-talent-signal-center` is the builder talent and portfolio center: standout-project, demo, GitHub, architecture, metrics, visual proof, and outreach signals become portfolio assets and talent paths while Swiggy recruiting, feature placement, endorsement, partner channels, and enterprise support remain explicit external gates.
 

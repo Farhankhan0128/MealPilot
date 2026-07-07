@@ -84,8 +84,17 @@ assert(
   ) &&
     openApi.paths["/api/swiggy-benefits-activation-center/activate"]?.post?.responses?.["200"]?.description?.includes(
       "without sending email",
-    ),
+  ),
   "OpenAPI benefits activation action contract is missing",
+);
+assert(
+  openApi.paths["/api/swiggy-growth-partnership/compose"]?.post?.summary?.includes(
+    "Growth Partnership ask composer",
+  ) &&
+    openApi.paths["/api/swiggy-growth-partnership/compose"]?.post?.responses?.["200"]?.description?.includes(
+      "without sending email",
+    ),
+  "OpenAPI growth partnership composer contract is missing",
 );
 assert(
   openApi.paths["/api/swiggy-docs-twin-explorer"]?.get?.summary?.includes("docs twin"),
@@ -1231,6 +1240,38 @@ assert(
 assert(
   growthPartnership.growthPartnership.externalGates.some((gate) => gate.includes("co-marketing")),
   "growth partnership co-marketing gate is missing",
+);
+const growthAsk = await request("/api/swiggy-growth-partnership/compose", {
+  method: "POST",
+  body: JSON.stringify({
+    experimentId: "luxury_weekend_concierge",
+    askId: "co_marketing_review",
+    audienceNote: "Premium cross-server launch proof for Swiggy Builders review.",
+  }),
+});
+assert(
+  growthAsk.growthAsk.decision === "swiggy_gate" &&
+    growthAsk.growthAsk.readinessScore === 64 &&
+    growthAsk.growthAsk.experiment.id === "luxury_weekend_concierge" &&
+    growthAsk.growthAsk.ask.id === "co_marketing_review" &&
+    growthAsk.growthAsk.proofLinks.includes("/api/brand-compliance-kit"),
+  "growth partnership composer packet is incomplete",
+);
+assert(
+  growthAsk.growthAsk.handoffDraft.to === "builders@swiggy.in" &&
+    growthAsk.growthAsk.assertions.some((assertion) => assertion.includes("never sends email")),
+  "growth partnership composer safety handoff is missing",
+);
+const unknownGrowthAsk = await request("/api/swiggy-growth-partnership/compose", {
+  method: "POST",
+  body: JSON.stringify({ experimentId: "missing_experiment", askId: "missing_ask", audienceNote: "" }),
+});
+assert(
+  unknownGrowthAsk.growthAsk.decision === "unknown_growth_item" &&
+    unknownGrowthAsk.growthAsk.readinessScore === 0 &&
+    unknownGrowthAsk.growthAsk.experiment === null &&
+    unknownGrowthAsk.growthAsk.ask === null,
+  "growth partnership composer unknown-item guard is missing",
 );
 
 const talentSignal = await request("/api/swiggy-talent-signal-center");

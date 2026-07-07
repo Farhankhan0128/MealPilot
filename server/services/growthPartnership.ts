@@ -1,6 +1,8 @@
 import type {
   SwiggyGrowthAsset,
   SwiggyGrowthExperiment,
+  SwiggyGrowthPartnershipAskDecision,
+  SwiggyGrowthPartnershipAskPacket,
   SwiggyGrowthPartnershipCenter,
   SwiggyGrowthPartnershipSignal,
   SwiggyGrowthPartnershipStatus,
@@ -18,6 +20,27 @@ function statusScore(status: SwiggyGrowthPartnershipStatus) {
   if (status === "ready") return 1;
   if (status === "manual_input") return 0.7;
   return 0.45;
+}
+
+function unique(values: string[]) {
+  return Array.from(new Set(values));
+}
+
+function decisionFor(
+  experiment: SwiggyGrowthExperiment | null,
+  ask: SwiggyGrowthAsset | null,
+): SwiggyGrowthPartnershipAskDecision {
+  if (!experiment || !ask) return "unknown_growth_item";
+  if (experiment.status === "manual_input" || ask.status === "manual_input") return "needs_operator_input";
+  if (experiment.status === "external_gate" || ask.status === "external_gate") return "swiggy_gate";
+  return "ready_local_handoff";
+}
+
+function readinessFor(decision: SwiggyGrowthPartnershipAskDecision) {
+  if (decision === "ready_local_handoff") return 100;
+  if (decision === "needs_operator_input") return 72;
+  if (decision === "swiggy_gate") return 64;
+  return 0;
 }
 
 function signal(
@@ -354,5 +377,84 @@ export function buildSwiggyGrowthPartnershipCenter(): SwiggyGrowthPartnershipCen
       "Priority Slack, named partner manager, Swiggy analytics dashboards, and higher production limits require Swiggy access.",
       "Production growth experiments require staging credentials, production credentials, and a final approved launch window.",
     ],
+  };
+}
+
+export function composeSwiggyGrowthPartnershipAsk(options: {
+  experimentId: string;
+  askId: string;
+  audienceNote?: string;
+}): SwiggyGrowthPartnershipAskPacket {
+  const center = buildSwiggyGrowthPartnershipCenter();
+  const experimentItem = center.experiments.find((item) => item.id === options.experimentId) ?? null;
+  const askItem = center.partnershipAsks.find((item) => item.id === options.askId) ?? null;
+  const decision = decisionFor(experimentItem, askItem);
+  const assets = center.assets
+    .filter((item) => item.status === "ready" || item.id === "founder_showcase")
+    .slice(0, 5);
+  const metrics = center.metrics.slice(0, 4);
+  const proofLinks = unique([
+    "/api/swiggy-growth-partnership",
+    ...(experimentItem?.evidenceLinks ?? []),
+    ...(askItem?.evidenceLinks ?? []),
+    ...assets.flatMap((item) => item.evidenceLinks),
+    ...metrics.flatMap((item) => item.evidenceLinks),
+  ]).slice(0, 12);
+  const bodyPreview =
+    experimentItem && askItem
+      ? `${experimentItem.label} growth ask: ${askItem.label}. Hypothesis: ${experimentItem.hypothesis} Metric: ${experimentItem.metric} Guardrail: ${experimentItem.guardrail} Audience note: ${options.audienceNote?.trim() || "MealPilot reviewer-ready Swiggy Builders launch proof."} Proof: ${proofLinks.join(", ")}`
+      : `Unknown growth experiment or partner ask. Choose one published experiment and one published partnership ask before sending anything externally.`;
+
+  return {
+    generatedAt: new Date().toISOString(),
+    experimentId: options.experimentId,
+    askId: options.askId,
+    decision,
+    readinessScore: readinessFor(decision),
+    experiment: experimentItem,
+    ask: askItem,
+    assets,
+    metrics,
+    proofLinks,
+    handoffDraft: {
+      to: "builders@swiggy.in",
+      subject:
+        experimentItem && askItem
+          ? `MealPilot growth partnership ask: ${experimentItem.label} / ${askItem.label}`
+          : "MealPilot growth partnership ask",
+      bodyPreview,
+    },
+    checklist: [
+      {
+        id: "experiment_selected",
+        label: experimentItem ? `${experimentItem.label} selected` : "Valid growth experiment selected",
+        status: experimentItem ? experimentItem.status : "manual_input",
+        owner: "MealPilot",
+      },
+      {
+        id: "partner_ask_selected",
+        label: askItem ? `${askItem.label} selected` : "Valid partnership ask selected",
+        status: askItem ? askItem.status : "manual_input",
+        owner: askItem?.owner ?? "Operator",
+      },
+      {
+        id: "proof_attached",
+        label: `${proofLinks.length} proof links attached`,
+        status: proofLinks.length >= 5 ? "ready" : "manual_input",
+        owner: "MealPilot",
+      },
+      {
+        id: "swiggy_gate_preserved",
+        label: "Swiggy approval gate preserved before public claims",
+        status: decision === "swiggy_gate" ? "external_gate" : "ready",
+        owner: decision === "swiggy_gate" ? "Swiggy" : "MealPilot",
+      },
+    ],
+    assertions: [
+      "Growth partnership ask composition prepares a local handoff packet only; it never sends email, opens Slack, requests dashboards, changes rate limits, or claims Swiggy approval.",
+      "Co-marketing, feature placement, priority Slack, dashboards, higher limits, and partner manager asks stay external Swiggy gates.",
+      ...center.assertions.slice(0, 2),
+    ],
+    externalGates: center.externalGates,
   };
 }

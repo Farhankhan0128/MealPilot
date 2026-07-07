@@ -69,7 +69,7 @@ import { buildErrorIntelligenceReport, classifyMcpError } from "./services/error
 import { buildSwiggyFaqPolicyCenter } from "./services/faqPolicyCenter.js";
 import { answerSwiggyFaqQuestion, buildSwiggyFaqResolutionCenter } from "./services/faqResolutionCenter.js";
 import { buildGuestCollaborationCenter } from "./services/guestCollaborationCenter.js";
-import { buildSwiggyGrowthPartnershipCenter } from "./services/growthPartnership.js";
+import { buildSwiggyGrowthPartnershipCenter, composeSwiggyGrowthPartnershipAsk } from "./services/growthPartnership.js";
 import { buildSwiggyDemoEvidenceDirector } from "./services/demoEvidenceDirector.js";
 import { buildSwiggyHostedWidgetActivationCenter } from "./services/hostedWidgetActivation.js";
 import { buildSwiggyBuildersHomepageExperienceCenter } from "./services/homepageExperienceCenter.js";
@@ -1208,6 +1208,16 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/swiggy-growth-partnership", (_req, res) => {
     res.json({ growthPartnership: buildSwiggyGrowthPartnershipCenter() });
+  });
+
+  app.post("/api/swiggy-growth-partnership/compose", (req, res) => {
+    res.json({
+      growthAsk: composeSwiggyGrowthPartnershipAsk({
+        experimentId: typeof req.body?.experimentId === "string" ? req.body.experimentId : "",
+        askId: typeof req.body?.askId === "string" ? req.body.askId : "",
+        audienceNote: typeof req.body?.audienceNote === "string" ? req.body.audienceNote : "",
+      }),
+    });
   });
 
   app.get("/api/swiggy-talent-signal-center", (_req, res) => {

@@ -43,6 +43,7 @@ import {
   answerSwiggyFaqQuestion,
   buildServerPlan,
   completeSwiggyAuth,
+  composeSwiggyGrowthPartnershipAsk,
   composeSwiggyShowcaseSubmission,
   addGroupMember,
   confirmAllRecommendations,
@@ -292,6 +293,7 @@ import type {
   SwiggyFaqPolicyCenter,
   SwiggyFaqResolutionCenter,
   SwiggyGrowthPartnershipCenter,
+  SwiggyGrowthPartnershipAskPacket,
   SwiggyTalentSignalCenter,
   SwiggyConversionCenter,
   SwiggyShowcaseSubmissionCenter,
@@ -2833,6 +2835,13 @@ function LaunchCenterPanel({
   const [interactiveFaqAnswer, setInteractiveFaqAnswer] = useState<SwiggyFaqAnswerResolution | null>(null);
   const [faqAnswerStatus, setFaqAnswerStatus] = useState<"idle" | "loading" | "error">("idle");
   const visibleFaqAnswer = interactiveFaqAnswer ?? faqAnswer;
+  const [growthAskForm, setGrowthAskForm] = useState({
+    experimentId: "luxury_weekend_concierge",
+    askId: "co_marketing_review",
+    audienceNote: "Premium cross-server launch proof for Swiggy Builders review.",
+  });
+  const [growthAskPacket, setGrowthAskPacket] = useState<SwiggyGrowthPartnershipAskPacket | null>(null);
+  const [growthAskStatus, setGrowthAskStatus] = useState<"idle" | "loading" | "error">("idle");
   const [showcaseForm, setShowcaseForm] = useState({
     demoUrl: "https://youtu.be/mealpilot-swiggy-demo",
     githubUrl: "https://github.com/Farhankhan0128/MealPilot",
@@ -2864,6 +2873,18 @@ function LaunchCenterPanel({
       setFaqAnswerStatus("idle");
     } catch {
       setFaqAnswerStatus("error");
+    }
+  }
+
+  async function runGrowthAskComposer(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setGrowthAskStatus("loading");
+    try {
+      const response = await composeSwiggyGrowthPartnershipAsk(growthAskForm);
+      setGrowthAskPacket(response.growthAsk);
+      setGrowthAskStatus("idle");
+    } catch {
+      setGrowthAskStatus("error");
     }
   }
 
@@ -4629,6 +4650,68 @@ function LaunchCenterPanel({
               <strong>{growthPartnership?.partnershipAsks.length ?? 0}</strong>
               <span>Asks</span>
             </div>
+          </div>
+          <form className="growth-ask-composer" onSubmit={runGrowthAskComposer}>
+            <label htmlFor="growth-experiment-select">Experiment</label>
+            <select
+              id="growth-experiment-select"
+              value={growthAskForm.experimentId}
+              onChange={(event) => setGrowthAskForm((current) => ({ ...current, experimentId: event.target.value }))}
+            >
+              {(growthPartnership?.experiments ?? []).map((item) => (
+                <option key={item.id} value={item.id}>
+                  {item.label}
+                </option>
+              ))}
+            </select>
+            <label htmlFor="growth-ask-select">Partner ask</label>
+            <div>
+              <select
+                id="growth-ask-select"
+                value={growthAskForm.askId}
+                onChange={(event) => setGrowthAskForm((current) => ({ ...current, askId: event.target.value }))}
+              >
+                {(growthPartnership?.partnershipAsks ?? []).map((item) => (
+                  <option key={item.id} value={item.id}>
+                    {item.label}
+                  </option>
+                ))}
+              </select>
+              <button type="submit" disabled={growthAskStatus === "loading"} aria-label="Compose growth ask">
+                {growthAskStatus === "loading" ? <Loader2 aria-hidden="true" /> : <Rocket aria-hidden="true" />}
+              </button>
+            </div>
+            <input
+              aria-label="Growth audience note"
+              type="text"
+              value={growthAskForm.audienceNote}
+              onChange={(event) => setGrowthAskForm((current) => ({ ...current, audienceNote: event.target.value }))}
+            />
+            {growthAskStatus === "error" ? <small role="status">Growth ask composer unavailable.</small> : null}
+          </form>
+          <div
+            className="growth-ask-result"
+            data-status={
+              growthAskPacket?.decision === "ready_local_handoff"
+                ? "healthy"
+                : growthAskPacket?.decision === "swiggy_gate" || growthAskPacket?.decision === "unknown_growth_item"
+                  ? "blocked"
+                  : "watch"
+            }
+          >
+            <div>
+              <span>Growth ask</span>
+              <strong>
+                {growthAskPacket
+                  ? `${growthAskPacket.decision.replace(/_/g, " ")} / ${growthAskPacket.readinessScore}/100`
+                  : "Awaiting composition"}
+              </strong>
+            </div>
+            <p>
+              {growthAskPacket
+                ? `${growthAskPacket.proofLinks.length} proof links / ${growthAskPacket.assets.length} assets / ${growthAskPacket.handoffDraft.to}`
+                : "Choose a growth experiment and partner ask to generate the local Swiggy handoff packet."}
+            </p>
           </div>
           <ul className="compact-status-list">
             {(growthPartnership?.experiments ?? []).slice(0, 5).map((item) => (

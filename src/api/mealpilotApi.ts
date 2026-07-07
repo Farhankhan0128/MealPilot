@@ -112,6 +112,7 @@ import type {
   SwiggyFaqPolicyCenter,
   SwiggyFaqResolutionCenter,
   SwiggyGrowthPartnershipCenter,
+  SwiggyGrowthPartnershipAskPacket,
   SwiggyTalentSignalCenter,
   SwiggyDemoEvidenceDirector,
   SwiggyInteractionQaCenter,
@@ -507,6 +508,17 @@ export function answerSwiggyFaqQuestion(question: string) {
 
 export function fetchSwiggyGrowthPartnershipCenter() {
   return requestJson<{ growthPartnership: SwiggyGrowthPartnershipCenter }>("/api/swiggy-growth-partnership");
+}
+
+export function composeSwiggyGrowthPartnershipAsk(input: {
+  experimentId: string;
+  askId: string;
+  audienceNote: string;
+}) {
+  return requestJson<{ growthAsk: SwiggyGrowthPartnershipAskPacket }>("/api/swiggy-growth-partnership/compose", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
 }
 
 export function fetchSwiggyTalentSignalCenter() {

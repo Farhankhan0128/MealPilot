@@ -1786,6 +1786,38 @@ export interface SwiggyGrowthPartnershipCenter {
   externalGates: string[];
 }
 
+export type SwiggyGrowthPartnershipAskDecision =
+  | "ready_local_handoff"
+  | "needs_operator_input"
+  | "swiggy_gate"
+  | "unknown_growth_item";
+
+export interface SwiggyGrowthPartnershipAskPacket {
+  generatedAt: string;
+  experimentId: string;
+  askId: string;
+  decision: SwiggyGrowthPartnershipAskDecision;
+  readinessScore: number;
+  experiment: SwiggyGrowthExperiment | null;
+  ask: SwiggyGrowthAsset | null;
+  assets: SwiggyGrowthAsset[];
+  metrics: Array<{ id: string; label: string; target: string; evidenceLinks: string[] }>;
+  proofLinks: string[];
+  handoffDraft: {
+    to: string;
+    subject: string;
+    bodyPreview: string;
+  };
+  checklist: Array<{
+    id: string;
+    label: string;
+    status: SwiggyGrowthPartnershipStatus;
+    owner: SwiggyGrowthAsset["owner"];
+  }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type SwiggyBenefitsActivationStatus = "ready" | "operator_input" | "swiggy_gate";
 export type SwiggyBenefitsActivationOwner = "MealPilot" | "Operator" | "Swiggy" | "Joint";
 export type SwiggyBenefitsActivationDecision =
