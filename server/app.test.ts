@@ -2080,6 +2080,45 @@ describe("MealPilot API", () => {
     expect(center.externalGates.some((gate: string) => gate.includes("Dynamic Client Registration"))).toBe(true);
   });
 
+  it("runs a Swiggy submission timeline checkpoint for the access handoff path", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app)
+      .post("/api/swiggy-submission-timeline-center/checkpoint")
+      .send({
+        demoRecorded: true,
+        accessFormSubmitted: true,
+        handoffEmailSent: true,
+        dcrApproved: false,
+        stagingCredentialsIssued: false,
+        stagingSoakComplete: false,
+        productionApproved: false,
+      })
+      .expect(200);
+    const checkpoint = response.body.submissionTimelineCheckpoint;
+
+    expect(checkpoint.decision).toBe("await_swiggy_review");
+    expect(checkpoint.currentPhaseId).toBe("dynamic_client_registration");
+    expect(checkpoint.readinessScore).toBeGreaterThanOrEqual(60);
+    expect(checkpoint.missingOperatorActions).toEqual([]);
+    expect(checkpoint.swiggyGates.some((gate: string) => gate.includes("Dynamic Client Registration"))).toBe(true);
+    expect(checkpoint.proofLinks).toContain("/api/credential-onboarding");
+    expect(checkpoint.assertions.some((assertion: string) => assertion.includes("never submits"))).toBe(true);
+  });
+
+  it("keeps early Swiggy timeline checkpoints operator-owned until demo, form, and email are done", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app)
+      .post("/api/swiggy-submission-timeline-center/checkpoint")
+      .send({})
+      .expect(200);
+    const checkpoint = response.body.submissionTimelineCheckpoint;
+
+    expect(checkpoint.decision).toBe("needs_operator_input");
+    expect(checkpoint.currentPhaseId).toBe("demo_video_capture");
+    expect(checkpoint.missingOperatorActions.length).toBeGreaterThanOrEqual(3);
+    expect(checkpoint.checklist.some((item: { phaseId: string; status: string }) => item.phaseId === "request_access_form" && item.status === "operator_input")).toBe(true);
+  });
+
   it("returns Swiggy Interaction QA Center coverage for clickable portal CTAs", async () => {
     const { app } = createMealPilotServer();
     const response = await request(app).get("/api/swiggy-interaction-qa-center").expect(200);

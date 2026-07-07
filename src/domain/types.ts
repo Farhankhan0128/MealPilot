@@ -2069,6 +2069,13 @@ export interface SwiggyDemoEvidenceDirector {
 
 export type SwiggySubmissionTimelineStatus = "ready" | "operator_input" | "swiggy_gate";
 export type SwiggySubmissionTimelineOwner = "MealPilot" | "Operator" | "Swiggy" | "Joint";
+export type SwiggySubmissionTimelineCheckpointDecision =
+  | "needs_operator_input"
+  | "ready_for_access_handoff"
+  | "await_swiggy_review"
+  | "ready_for_staging_soak"
+  | "await_production_approval"
+  | "ready_for_production_promotion";
 
 export interface SwiggySubmissionTimelinePhase {
   sequence: number;
@@ -2107,6 +2114,37 @@ export interface SwiggySubmissionTimelineCenter {
     packetLinks: string[];
     safetyNote: string;
   };
+  assertions: string[];
+  externalGates: string[];
+}
+
+export interface SwiggySubmissionTimelineCheckpoint {
+  generatedAt: string;
+  decision: SwiggySubmissionTimelineCheckpointDecision;
+  readinessScore: number;
+  currentPhaseId: string;
+  currentStage: string;
+  nextAction: string;
+  inputs: {
+    demoRecorded: boolean;
+    accessFormSubmitted: boolean;
+    handoffEmailSent: boolean;
+    dcrApproved: boolean;
+    stagingCredentialsIssued: boolean;
+    stagingSoakComplete: boolean;
+    productionApproved: boolean;
+  };
+  checklist: Array<{
+    phaseId: string;
+    label: string;
+    owner: SwiggySubmissionTimelineOwner;
+    status: SwiggySubmissionTimelineStatus;
+    action: string;
+    evidenceLinks: string[];
+  }>;
+  missingOperatorActions: string[];
+  swiggyGates: string[];
+  proofLinks: string[];
   assertions: string[];
   externalGates: string[];
 }

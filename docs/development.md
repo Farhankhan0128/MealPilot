@@ -114,7 +114,7 @@ The verifier also validates `/api/swiggy-showcase-submission-center` and `/api/s
 
 The verifier also validates `/api/swiggy-demo-evidence-director` for the 2-3 minute recording storyboard, proof assets, recording gates, redaction checks, visual QA links, runbook commands, builders@swiggy.in handoff copy, and explicit operator/Swiggy gates.
 
-The verifier also validates `/api/swiggy-submission-timeline-center` for the eight-phase Start Building, proof-freeze, demo, access-form, handoff-email, DCR, staging, soak, and production-promotion timeline with proof links and explicit operator/Swiggy gates.
+The verifier also validates `/api/swiggy-submission-timeline-center` and `/api/swiggy-submission-timeline-center/checkpoint` for the eight-phase Start Building, proof-freeze, demo, access-form, handoff-email, DCR, staging, soak, and production-promotion timeline with proof links, executable stage checks, missing operator actions, and explicit operator/Swiggy gates.
 
 The verifier also validates `/api/swiggy-conversion-center` for the final What Will You Cook CTA funnel, Start Building, See What's Possible, Request Access, Send Us a Demo, builders@swiggy.in, `llms.txt`, `llms-full.txt`, proof bundles, operator runbook, and go-live gates.
 
@@ -255,6 +255,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `POST /api/swiggy-showcase-submission-center/compose`
 - `GET /api/swiggy-demo-evidence-director`
 - `GET /api/swiggy-submission-timeline-center`
+- `POST /api/swiggy-submission-timeline-center/checkpoint`
 - `GET /api/swiggy-partner-support-room`
 - `GET /api/builder-packet-export`
 - `GET /api/builder-packet-export.md`
@@ -474,7 +475,7 @@ Production should use an HTTPS redirect URI with exact-match allowlisting.
 
 `/api/swiggy-demo-evidence-director` prepares the final demo recording packet: six timed scenes, proof assets, visual QA expectations, redaction review gates, runbook commands, and handoff email copy are generated locally while recording, URL hosting, final send, access approval, credentials, and co-branding stay operator or Swiggy owned.
 
-`/api/swiggy-submission-timeline-center` prepares the operator launch timeline: eight phases cover Start Building review, packet freeze, demo capture, Request Access form submission, Send Demo handoff, DCR, staging credentials/seed, and production promotion, each with owner, status, entrypoint, checklist, proof links, and no-automatic-external-submission safety.
+`/api/swiggy-submission-timeline-center` prepares the operator launch timeline: eight phases cover Start Building review, packet freeze, demo capture, Request Access form submission, Send Demo handoff, DCR, staging credentials/seed, and production promotion, each with owner, status, entrypoint, checklist, proof links, and no-automatic-external-submission safety. `/api/swiggy-submission-timeline-center/checkpoint` turns stage booleans into a current-phase decision, readiness score, next action, missing operator actions, Swiggy gates, proof links, and Launch Center checkpoint UI.
 
 `/api/swiggy-conversion-center` is the final Swiggy Builders conversion center: it composes CTA Execution, Builder Intake, Submission Timeline, Access Submission Studio, Docs Twin Explorer, and proof bundles into owner-tagged steps for What Will You Cook, Start Building, See What's Possible, Request Access, Send Us a Demo, builders@swiggy.in, `llms.txt`, `llms-full.txt`, and go-live review.
 

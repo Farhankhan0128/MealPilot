@@ -3,6 +3,8 @@ import type {
   AccessSubmissionHandoffState,
   McpServerCoverage,
   MealPlan,
+  SwiggySubmissionTimelineCheckpoint,
+  SwiggySubmissionTimelineCheckpointDecision,
   SwiggySubmissionTimelineCenter,
   SwiggySubmissionTimelinePhase,
   SwiggySubmissionTimelineStatus,
@@ -35,6 +37,18 @@ function phase(input: SwiggySubmissionTimelinePhase): SwiggySubmissionTimelinePh
 
 function firstOpenAction(phases: SwiggySubmissionTimelinePhase[]) {
   return phases.find((item) => item.status === "operator_input")?.nextAction ?? phases.find((item) => item.status === "swiggy_gate")?.nextAction ?? "Keep verifier evidence fresh while Swiggy reviews the packet.";
+}
+
+function asBoolean(value: unknown) {
+  return value === true;
+}
+
+function checkpointDecision(input: SwiggySubmissionTimelineCheckpoint["inputs"]): SwiggySubmissionTimelineCheckpointDecision {
+  if (!input.demoRecorded || !input.accessFormSubmitted || !input.handoffEmailSent) return "needs_operator_input";
+  if (!input.dcrApproved || !input.stagingCredentialsIssued) return "await_swiggy_review";
+  if (!input.stagingSoakComplete) return "ready_for_staging_soak";
+  if (!input.productionApproved) return "await_production_approval";
+  return "ready_for_production_promotion";
 }
 
 export function buildSwiggySubmissionTimelineCenter(options: {
@@ -259,5 +273,81 @@ export function buildSwiggySubmissionTimelineCenter(options: {
       "builders@swiggy.in handoff email must be sent by the operator.",
       "Dynamic Client Registration, staging credentials, seeded data, co-branding, feature placement, and production credentials require Swiggy approval.",
     ],
+  };
+}
+
+export function buildSwiggySubmissionTimelineCheckpoint(
+  options: Parameters<typeof buildSwiggySubmissionTimelineCenter>[0] & {
+    checkpoint: Partial<SwiggySubmissionTimelineCheckpoint["inputs"]>;
+  },
+): SwiggySubmissionTimelineCheckpoint {
+  const center = buildSwiggySubmissionTimelineCenter(options);
+  const inputs = {
+    demoRecorded: asBoolean(options.checkpoint.demoRecorded),
+    accessFormSubmitted: asBoolean(options.checkpoint.accessFormSubmitted),
+    handoffEmailSent: asBoolean(options.checkpoint.handoffEmailSent),
+    dcrApproved: asBoolean(options.checkpoint.dcrApproved),
+    stagingCredentialsIssued: asBoolean(options.checkpoint.stagingCredentialsIssued),
+    stagingSoakComplete: asBoolean(options.checkpoint.stagingSoakComplete),
+    productionApproved: asBoolean(options.checkpoint.productionApproved),
+  };
+  const checkpointStatusByPhase = new Map<string, SwiggySubmissionTimelineStatus>([
+    ["start_building_review", "ready"],
+    ["local_packet_freeze", "ready"],
+    ["demo_video_capture", inputs.demoRecorded ? "ready" : "operator_input"],
+    ["request_access_form", inputs.accessFormSubmitted ? "ready" : "operator_input"],
+    ["send_demo_handoff", inputs.handoffEmailSent ? "ready" : "operator_input"],
+    ["dynamic_client_registration", inputs.dcrApproved ? "ready" : "swiggy_gate"],
+    ["staging_credentials_and_seed", inputs.stagingCredentialsIssued ? "ready" : "swiggy_gate"],
+    ["production_promotion", inputs.productionApproved ? "ready" : "swiggy_gate"],
+  ]);
+  const checklist = center.phases.map((timelinePhase) => {
+    const status = checkpointStatusByPhase.get(timelinePhase.id) ?? timelinePhase.status;
+    return {
+      phaseId: timelinePhase.id,
+      label: timelinePhase.label,
+      owner: timelinePhase.owner,
+      status,
+      action:
+        timelinePhase.id === "production_promotion" && inputs.stagingSoakComplete && !inputs.productionApproved
+          ? "Attach soak summary and request production promotion from Swiggy."
+          : timelinePhase.nextAction,
+      evidenceLinks: timelinePhase.evidenceLinks,
+    };
+  });
+  const decision = checkpointDecision(inputs);
+  const current = checklist.find((item) => item.status !== "ready") ?? checklist.at(-1);
+  const readyCount = checklist.filter((item) => item.status === "ready").length;
+  const missingOperatorActions = checklist
+    .filter((item) => item.status === "operator_input")
+    .map((item) => `${item.label}: ${item.action}`);
+  const swiggyGates = checklist
+    .filter((item) => item.status === "swiggy_gate")
+    .map((item) => `${item.label}: ${item.action}`);
+  const proofLinks = Array.from(new Set(checklist.flatMap((item) => item.evidenceLinks))).slice(0, 24);
+
+  return {
+    generatedAt: new Date().toISOString(),
+    decision,
+    readinessScore: Math.round((readyCount / checklist.length) * 100),
+    currentPhaseId: current?.phaseId ?? "production_promotion",
+    currentStage: current?.label ?? "Production promotion",
+    nextAction:
+      missingOperatorActions[0] ??
+      swiggyGates[0] ??
+      (decision === "ready_for_staging_soak"
+        ? "Run staging seed smoke, attach telemetry, and complete the 48-hour soak."
+        : "Attach final launch evidence and coordinate production promotion with Swiggy."),
+    inputs,
+    checklist,
+    missingOperatorActions,
+    swiggyGates,
+    proofLinks,
+    assertions: [
+      "The checkpoint is a local readiness assessment and never submits the Swiggy form, sends email, registers DCR, or promotes production.",
+      "Operator-owned actions and Swiggy-owned gates remain separate even when earlier timeline phases are complete.",
+      ...center.assertions.slice(0, 2),
+    ],
+    externalGates: center.externalGates,
   };
 }

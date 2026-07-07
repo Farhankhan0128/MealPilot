@@ -182,6 +182,7 @@ import {
   fetchVisualQaCenter,
   fetchWidgets,
   removeRecommendationItem,
+  runSwiggySubmissionTimelineCheckpoint,
   schedulePlan,
   startSwiggyAuth,
   substituteRecommendationItem,
@@ -300,6 +301,7 @@ import type {
   SwiggyHandshakeDoctor,
   SwiggyShowcaseSubmissionComposition,
   SwiggyLlmsManifestVerifier,
+  SwiggySubmissionTimelineCheckpoint,
   SwiggyInnovationRadarReport,
   SwiggyJourneyCompilerReport,
   SwiggyLoadLabReport,
@@ -2836,6 +2838,17 @@ function LaunchCenterPanel({
   });
   const [showcaseComposition, setShowcaseComposition] = useState<SwiggyShowcaseSubmissionComposition | null>(null);
   const [showcaseComposeStatus, setShowcaseComposeStatus] = useState<"idle" | "loading" | "error">("idle");
+  const [timelineCheckpointForm, setTimelineCheckpointForm] = useState<SwiggySubmissionTimelineCheckpoint["inputs"]>({
+    demoRecorded: true,
+    accessFormSubmitted: true,
+    handoffEmailSent: true,
+    dcrApproved: false,
+    stagingCredentialsIssued: false,
+    stagingSoakComplete: false,
+    productionApproved: false,
+  });
+  const [timelineCheckpoint, setTimelineCheckpoint] = useState<SwiggySubmissionTimelineCheckpoint | null>(null);
+  const [timelineCheckpointStatus, setTimelineCheckpointStatus] = useState<"idle" | "loading" | "error">("idle");
 
   async function runFaqAnswerConsole(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -2858,6 +2871,18 @@ function LaunchCenterPanel({
       setShowcaseComposeStatus("idle");
     } catch {
       setShowcaseComposeStatus("error");
+    }
+  }
+
+  async function runTimelineCheckpoint(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setTimelineCheckpointStatus("loading");
+    try {
+      const response = await runSwiggySubmissionTimelineCheckpoint(timelineCheckpointForm);
+      setTimelineCheckpoint(response.submissionTimelineCheckpoint);
+      setTimelineCheckpointStatus("idle");
+    } catch {
+      setTimelineCheckpointStatus("error");
     }
   }
 
@@ -4921,6 +4946,60 @@ function LaunchCenterPanel({
               <strong>{submissionTimeline?.totals.swiggyGates ?? 0}</strong>
               <span>Swiggy gates</span>
             </div>
+          </div>
+          <form className="timeline-checkpoint-form" onSubmit={runTimelineCheckpoint}>
+            {[
+              ["demoRecorded", "Demo"],
+              ["accessFormSubmitted", "Form"],
+              ["handoffEmailSent", "Email"],
+              ["dcrApproved", "DCR"],
+              ["stagingCredentialsIssued", "Staging"],
+              ["stagingSoakComplete", "Soak"],
+              ["productionApproved", "Prod"],
+            ].map(([field, label]) => (
+              <label key={field}>
+                <input
+                  type="checkbox"
+                  checked={timelineCheckpointForm[field as keyof typeof timelineCheckpointForm]}
+                  onChange={(event) =>
+                    setTimelineCheckpointForm((current) => ({
+                      ...current,
+                      [field]: event.target.checked,
+                    }))
+                  }
+                />
+                <span>{label}</span>
+              </label>
+            ))}
+            <button type="submit" disabled={timelineCheckpointStatus === "loading"} aria-label="Run submission timeline checkpoint">
+              {timelineCheckpointStatus === "loading" ? <Loader2 aria-hidden="true" /> : <CalendarCheck aria-hidden="true" />}
+            </button>
+          </form>
+          {timelineCheckpointStatus === "error" ? <small className="timeline-checkpoint-error" role="status">Checkpoint unavailable.</small> : null}
+          <div
+            className="timeline-checkpoint-result"
+            data-status={
+              timelineCheckpoint?.decision === "ready_for_access_handoff" ||
+              timelineCheckpoint?.decision === "ready_for_production_promotion"
+                ? "healthy"
+                : timelineCheckpoint?.decision === "needs_operator_input"
+                  ? "watch"
+                  : "blocked"
+            }
+          >
+            <div>
+              <span>Timeline checkpoint</span>
+              <strong>
+                {timelineCheckpoint
+                  ? `${timelineCheckpoint.decision.replace(/_/g, " ")} / ${timelineCheckpoint.readinessScore}/100`
+                  : "Awaiting checkpoint"}
+              </strong>
+            </div>
+            <p>
+              {timelineCheckpoint
+                ? `${timelineCheckpoint.currentStage}: ${timelineCheckpoint.nextAction}`
+                : "Run a local stage check across demo, form, email, DCR, staging, soak, and production gates."}
+            </p>
           </div>
           <ul className="compact-status-list">
             {(submissionTimeline?.phases ?? []).slice(0, 5).map((item) => (

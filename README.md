@@ -290,6 +290,7 @@ GET  /api/swiggy-showcase-submission-center
 POST /api/swiggy-showcase-submission-center/compose
 GET  /api/swiggy-demo-evidence-director
 GET  /api/swiggy-submission-timeline-center
+POST /api/swiggy-submission-timeline-center/checkpoint
 GET  /api/swiggy-partner-success-desk
 GET  /api/swiggy-partner-support-room
 GET  /api/swiggy-interaction-qa-center
@@ -572,6 +573,8 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 `GET /api/swiggy-demo-evidence-director` is the recording control plane for the Swiggy demo: it prepares a 2-3 minute scene list, proof assets, visual QA requirements, redaction gates, runbook commands, and handoff email copy while leaving video recording, URL hosting, final email send, form submission, credentials, co-branding, and showcase approval as operator or Swiggy-owned gates.
 
 `GET /api/swiggy-submission-timeline-center` is the end-to-end signup timeline: it turns Swiggy's Start Building, Request Access, Send Demo, DCR, staging, soak, and production-promotion path into eight owner-tagged phases, daily runbook actions, proof links, and external gates while preventing local automation from submitting forms, sending email, or claiming approval.
+
+`POST /api/swiggy-submission-timeline-center/checkpoint` powers the Launch Center timeline checkpoint: it accepts demo/form/email/DCR/staging/soak/production stage booleans and returns the current phase, readiness score, next action, missing operator actions, Swiggy gates, proof links, and no-external-submission assertions.
 
 `GET /api/swiggy-partner-success-desk` is the post-access operator room: access handoff, developer support, SLO incident readiness, capacity review, backpressure controls, growth showcase asks, and enterprise Slack/partner-manager gates are composed from existing verified proof routes with escalation email drafts.
 

@@ -671,6 +671,37 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-submission-timeline-center/checkpoint": {
+        post: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Submission Timeline Checkpoint for operator and Swiggy gate readiness",
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    demoRecorded: { type: "boolean" },
+                    accessFormSubmitted: { type: "boolean" },
+                    handoffEmailSent: { type: "boolean" },
+                    dcrApproved: { type: "boolean" },
+                    stagingCredentialsIssued: { type: "boolean" },
+                    stagingSoakComplete: { type: "boolean" },
+                    productionApproved: { type: "boolean" },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            "200": {
+              description:
+                "Local checkpoint decision with readiness score, current phase, next action, checklist, missing operator actions, Swiggy gates, proof links, assertions, and external gates without submitting forms, sending email, registering DCR, or promoting production",
+            },
+          },
+        },
+      },
       "/api/swiggy-partner-success-desk": {
         get: {
           tags: ["Builder Access"],

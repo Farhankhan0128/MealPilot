@@ -117,6 +117,7 @@ import type {
   SwiggyPartnerSupportRoom,
   SwiggyShowcaseSubmissionComposition,
   SwiggyShowcaseSubmissionCenter,
+  SwiggySubmissionTimelineCheckpoint,
   SwiggySubmissionTimelineCenter,
   SwiggyPartnerSuccessDesk,
   SwiggyLlmsManifestVerifier,
@@ -549,6 +550,16 @@ export function fetchSwiggyDemoEvidenceDirector() {
 export function fetchSwiggySubmissionTimelineCenter() {
   return requestJson<{ submissionTimeline: SwiggySubmissionTimelineCenter }>(
     "/api/swiggy-submission-timeline-center",
+  );
+}
+
+export function runSwiggySubmissionTimelineCheckpoint(input: SwiggySubmissionTimelineCheckpoint["inputs"]) {
+  return requestJson<{ submissionTimelineCheckpoint: SwiggySubmissionTimelineCheckpoint }>(
+    "/api/swiggy-submission-timeline-center/checkpoint",
+    {
+      method: "POST",
+      body: JSON.stringify(input),
+    },
   );
 }
 

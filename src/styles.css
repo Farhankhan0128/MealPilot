@@ -3674,6 +3674,112 @@ select:focus {
   line-height: 1.45;
 }
 
+.timeline-checkpoint-form {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) 40px;
+  gap: 8px;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.timeline-checkpoint-form label {
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid var(--mp-border);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--mp-ink);
+  font-size: 0.73rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.timeline-checkpoint-form input {
+  width: 13px;
+  height: 13px;
+  accent-color: var(--mp-blue);
+}
+
+.timeline-checkpoint-form button {
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--mp-blue);
+  border-radius: 8px;
+  background: var(--mp-blue);
+  color: #fff;
+}
+
+.timeline-checkpoint-form button:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
+.timeline-checkpoint-form button svg {
+  width: 17px;
+  height: 17px;
+}
+
+.timeline-checkpoint-error {
+  display: block;
+  margin-top: 8px;
+  color: var(--mp-red);
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.timeline-checkpoint-result {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+  border: 1px solid var(--mp-border);
+  border-left: 4px solid var(--mp-yellow);
+  border-radius: 8px;
+  background: #fff;
+  padding: 12px;
+}
+
+.timeline-checkpoint-result[data-status="healthy"] {
+  border-left-color: var(--mp-green);
+}
+
+.timeline-checkpoint-result[data-status="blocked"] {
+  border-left-color: var(--mp-red);
+}
+
+.timeline-checkpoint-result div {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.timeline-checkpoint-result span {
+  color: var(--mp-muted);
+  font-size: 0.73rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.timeline-checkpoint-result strong {
+  color: var(--mp-ink);
+  font-size: 0.78rem;
+  text-transform: capitalize;
+}
+
+.timeline-checkpoint-result p {
+  margin: 0;
+  color: var(--mp-ink);
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
 .faq-answer-strip {
   display: grid;
   gap: 8px;

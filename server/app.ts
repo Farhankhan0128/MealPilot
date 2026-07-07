@@ -112,7 +112,7 @@ import { buildResilienceDrills, buildResilienceRunbook } from "./services/resili
 import { buildOpenApiDocument } from "./services/openApi.js";
 import { buildSandboxCredentialWorkbench } from "./services/sandboxCredentialWorkbench.js";
 import { buildSwiggyShowcaseSubmissionCenter, composeSwiggyShowcaseSubmission } from "./services/showcaseSubmissionCenter.js";
-import { buildSwiggySubmissionTimelineCenter } from "./services/submissionTimelineCenter.js";
+import { buildSwiggySubmissionTimelineCenter, buildSwiggySubmissionTimelineCheckpoint } from "./services/submissionTimelineCenter.js";
 import { buildSwiggyTalentSignalCenter } from "./services/talentSignalCenter.js";
 import { buildNutritionBudgetIntelligence } from "./services/nutritionBudgetIntelligence.js";
 import { buildObservabilityTraceReport, buildSwiggyRouteOptimizationReport } from "./services/observability.js";
@@ -1265,6 +1265,27 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
         coverage: buildMcpCoverage(),
         latestPlan: store.getAllPlans().at(-1),
         handoffState: store.getAccessSubmissionState(),
+      }),
+    });
+  });
+
+  app.post("/api/swiggy-submission-timeline-center/checkpoint", (req, res) => {
+    res.json({
+      submissionTimelineCheckpoint: buildSwiggySubmissionTimelineCheckpoint({
+        config,
+        profile: store.getProfile(),
+        coverage: buildMcpCoverage(),
+        latestPlan: store.getAllPlans().at(-1),
+        handoffState: store.getAccessSubmissionState(),
+        checkpoint: {
+          demoRecorded: req.body?.demoRecorded === true,
+          accessFormSubmitted: req.body?.accessFormSubmitted === true,
+          handoffEmailSent: req.body?.handoffEmailSent === true,
+          dcrApproved: req.body?.dcrApproved === true,
+          stagingCredentialsIssued: req.body?.stagingCredentialsIssued === true,
+          stagingSoakComplete: req.body?.stagingSoakComplete === true,
+          productionApproved: req.body?.productionApproved === true,
+        },
       }),
     });
   });

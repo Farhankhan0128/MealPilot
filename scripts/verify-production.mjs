@@ -1485,6 +1485,45 @@ assert(
   "submission timeline safety assertions or gates are missing",
 );
 
+const submissionCheckpoint = await request("/api/swiggy-submission-timeline-center/checkpoint", {
+  method: "POST",
+  body: JSON.stringify({
+    demoRecorded: true,
+    accessFormSubmitted: true,
+    handoffEmailSent: true,
+    dcrApproved: false,
+    stagingCredentialsIssued: false,
+    stagingSoakComplete: false,
+    productionApproved: false,
+  }),
+});
+assert(
+  submissionCheckpoint.submissionTimelineCheckpoint.decision === "await_swiggy_review" &&
+    submissionCheckpoint.submissionTimelineCheckpoint.currentPhaseId === "dynamic_client_registration",
+  "submission timeline checkpoint did not identify the DCR Swiggy gate",
+);
+assert(
+  submissionCheckpoint.submissionTimelineCheckpoint.readinessScore >= 60 &&
+    submissionCheckpoint.submissionTimelineCheckpoint.swiggyGates.some((gate) => gate.includes("Dynamic Client Registration")) &&
+    submissionCheckpoint.submissionTimelineCheckpoint.proofLinks.includes("/api/credential-onboarding"),
+  "submission timeline checkpoint readiness, gate, or proof links are incomplete",
+);
+assert(
+  submissionCheckpoint.submissionTimelineCheckpoint.assertions.some((assertion) => assertion.includes("never submits")),
+  "submission timeline checkpoint safety assertion is missing",
+);
+
+const earlySubmissionCheckpoint = await request("/api/swiggy-submission-timeline-center/checkpoint", {
+  method: "POST",
+  body: JSON.stringify({}),
+});
+assert(
+  earlySubmissionCheckpoint.submissionTimelineCheckpoint.decision === "needs_operator_input" &&
+    earlySubmissionCheckpoint.submissionTimelineCheckpoint.currentPhaseId === "demo_video_capture" &&
+    earlySubmissionCheckpoint.submissionTimelineCheckpoint.missingOperatorActions.length >= 3,
+  "submission timeline checkpoint must keep early access handoff operator-owned",
+);
+
 const partnerSuccess = await request("/api/swiggy-partner-success-desk");
 assert(partnerSuccess.partnerSuccess.score >= 85, "Partner Success Desk score is below target");
 assert(partnerSuccess.partnerSuccess.totals.lanes >= 7, "Partner Success Desk lane coverage is incomplete");
