@@ -151,6 +151,11 @@ assert(
   "OpenAPI Builders navigation witness contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-builders-benefits-witness"]?.get?.summary?.includes("Benefits Witness") &&
+    openApi.paths["/api/swiggy-builders-benefits-witness"]?.get?.responses?.["200"]?.description?.includes("co-branding"),
+  "OpenAPI Builders benefits witness contract is missing",
+);
+assert(
   openApi.paths["/api/swiggy-capability-traceability"]?.get?.summary?.includes("capability traceability") &&
     openApi.paths["/api/swiggy-capability-traceability"]?.get?.responses?.["200"]?.description?.includes("lifecycle gates"),
   "OpenAPI Swiggy capability traceability contract is missing",
@@ -855,6 +860,45 @@ assert(
   "Builders navigation witness gates or commands are missing",
 );
 
+const benefitsWitness = await request("/api/swiggy-builders-benefits-witness");
+assert(benefitsWitness.benefitsWitness.score >= 80, "Builders benefits witness score is below target");
+assert(
+  ["benefits_ready", "benefits_watch"].includes(benefitsWitness.benefitsWitness.decision) &&
+    benefitsWitness.benefitsWitness.totals.rows >= 9 &&
+    benefitsWitness.benefitsWitness.totals.proven >= 2 &&
+    benefitsWitness.benefitsWitness.totals.swiggyGates >= 2 &&
+    benefitsWitness.benefitsWitness.totals.proofLinks >= 20 &&
+    benefitsWitness.benefitsWitness.totals.swiggyMcpServers === 3 &&
+    benefitsWitness.benefitsWitness.totals.officialTools === 35 &&
+    benefitsWitness.benefitsWitness.totals.activationCtas === 6,
+  "Builders benefits witness totals are incomplete",
+);
+assert(
+  [
+    "live_api_access",
+    "quota_expansion",
+    "room_to_experiment",
+    "technical_support",
+    "co_branding",
+    "growth_partnership",
+    "enterprise_support",
+  ].every((id) =>
+    benefitsWitness.benefitsWitness.rows.some(
+      (row) => row.id === id && row.proofLinks.length > 0 && row.routeOptimization.length > 0 && row.riskBoundary.length > 0,
+    ),
+  ),
+  "Builders benefits witness key rows are missing",
+);
+assert(
+  ["platform", "operations", "growth"].every((id) => benefitsWitness.benefitsWitness.groups.some((group) => group.id === id)) &&
+    benefitsWitness.benefitsWitness.commands.some((command) =>
+      command.command.includes("/api/swiggy-builders-benefits-witness"),
+    ) &&
+    benefitsWitness.benefitsWitness.assertions.some((assertion) => assertion.includes("What You Get")) &&
+    benefitsWitness.benefitsWitness.externalGates.some((gate) => gate.includes("production credentials")),
+  "Builders benefits witness groups, commands, or gates are missing",
+);
+
 const capabilityTraceability = await request("/api/swiggy-capability-traceability");
 assert(capabilityTraceability.capabilityTraceability.score >= 88, "capability traceability score is below target");
 assert(
@@ -969,7 +1013,7 @@ assert(
     buildersCompletion.buildersCompletion.totals.mcpServers === 3 &&
     buildersCompletion.buildersCompletion.totals.mcpTools === 35 &&
     buildersCompletion.buildersCompletion.totals.docsPages >= 69 &&
-    buildersCompletion.buildersCompletion.totals.visualTargets === 72 &&
+    buildersCompletion.buildersCompletion.totals.visualTargets === 73 &&
     buildersCompletion.buildersCompletion.totals.reviewerArtifacts >= 120 &&
     buildersCompletion.buildersCompletion.totals.packetFiles >= 4,
   "Builders completion ledger totals are incomplete",
@@ -1044,7 +1088,7 @@ assert(
     coverageReceipt.coverageReceipt.totals.llmsPages === 69 &&
     coverageReceipt.coverageReceipt.totals.referenceTools === 35 &&
     coverageReceipt.coverageReceipt.totals.matchedTools === 35 &&
-    coverageReceipt.coverageReceipt.totals.visualTargets === 72 &&
+    coverageReceipt.coverageReceipt.totals.visualTargets === 73 &&
     coverageReceipt.coverageReceipt.totals.unsafeLinks === 0 &&
     coverageReceipt.coverageReceipt.totals.missingRows === 0,
   "Builders coverage receipt totals are incomplete",
@@ -4045,8 +4089,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 72, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 72, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 73, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 73, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -4320,6 +4364,12 @@ assert(
     group.targets.some((target) => target.id === "navigation_witness_card" && target.selector === ".navigation-witness-card"),
   ),
   "visual QA Navigation Witness target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some((target) => target.id === "benefits_witness_card" && target.selector === ".benefits-witness-card"),
+  ),
+  "visual QA Benefits Witness target is missing",
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
@@ -8381,7 +8431,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 72, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 73, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -8395,7 +8445,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("72")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("73")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -8989,6 +9039,9 @@ console.log(
       navigationWitnessScore: navigationWitness.navigationWitness.score,
       navigationWitnessRows: navigationWitness.navigationWitness.totals.rows,
       navigationWitnessManualGates: navigationWitness.navigationWitness.totals.manualGates,
+      benefitsWitnessScore: benefitsWitness.benefitsWitness.score,
+      benefitsWitnessRows: benefitsWitness.benefitsWitness.totals.rows,
+      benefitsWitnessSwiggyGates: benefitsWitness.benefitsWitness.totals.swiggyGates,
       capabilityTraceabilityScore: capabilityTraceability.capabilityTraceability.score,
       capabilityTraceabilityRows: capabilityTraceability.capabilityTraceability.totals.rows,
       capabilityTraceabilityCtas: capabilityTraceability.capabilityTraceability.totals.officialCtas,

@@ -261,7 +261,7 @@ export async function buildSwiggyBuildersCoverageReceipt(options: {
         id: "visual_receipt_capture",
         command: "MEALPILOT_URL=http://localhost:8787 npm run verify:visual",
         proves: "The Coverage Receipt card is captured with every reviewer-critical surface.",
-        expectedSignal: "72 screenshot targets return no overflow issues",
+        expectedSignal: "73 screenshot targets return no overflow issues",
       },
     ],
     assertions: [

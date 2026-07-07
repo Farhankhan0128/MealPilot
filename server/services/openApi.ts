@@ -509,6 +509,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-builders-benefits-witness": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Builders Benefits Witness for What You Get proof",
+          responses: {
+            "200": {
+              description:
+                "Official Builders benefits witnessed against live API, quota, support, co-branding, showcase, hiring visibility, growth, enterprise, proof links, owners, Swiggy gates, and Launch Center evidence",
+            },
+          },
+        },
+      },
       "/api/swiggy-builders-journey-gates": {
         get: {
           tags: ["Builder Access"],

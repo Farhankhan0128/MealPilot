@@ -1041,6 +1041,60 @@ export interface SwiggyBuildersNavigationWitness {
   externalGates: string[];
 }
 
+export type SwiggyBuildersBenefitsWitnessStatus = "proven" | "operator_gate" | "swiggy_gate" | "watch";
+export type SwiggyBuildersBenefitsWitnessOwner = "MealPilot" | "Operator" | "Swiggy" | "Joint";
+
+export interface SwiggyBuildersBenefitsWitnessRow {
+  id: string;
+  label: string;
+  officialSignal: string;
+  sourceUrl: string;
+  owner: SwiggyBuildersBenefitsWitnessOwner;
+  status: SwiggyBuildersBenefitsWitnessStatus;
+  swiggyPromise: string;
+  mealPilotSurface: string;
+  evidence: string;
+  nextAction: string;
+  riskBoundary: string;
+  routeOptimization: string;
+  proofLinks: string[];
+  relatedApis: string[];
+}
+
+export interface SwiggyBuildersBenefitsWitnessGroup {
+  id: string;
+  label: string;
+  rows: number;
+  proven: number;
+  operatorGates: number;
+  swiggyGates: number;
+  watch: number;
+  proofLinks: string[];
+}
+
+export interface SwiggyBuildersBenefitsWitness {
+  generatedAt: string;
+  score: number;
+  decision: "benefits_ready" | "benefits_watch" | "benefits_blocked";
+  officialSources: string[];
+  totals: {
+    rows: number;
+    proven: number;
+    operatorGates: number;
+    swiggyGates: number;
+    watch: number;
+    proofLinks: number;
+    swiggyMcpServers: number;
+    officialTools: number;
+    activationCtas: number;
+  };
+  rows: SwiggyBuildersBenefitsWitnessRow[];
+  groups: SwiggyBuildersBenefitsWitnessGroup[];
+  commands: Array<{ id: string; command: string; proves: string; expectedSignal: string }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type SwiggyCapabilityTraceabilityOwner = "MealPilot" | "Operator" | "Swiggy" | "Joint";
 export type SwiggyCapabilityTraceabilityKind =
   | "official_page"

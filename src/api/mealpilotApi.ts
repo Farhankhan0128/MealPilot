@@ -81,6 +81,7 @@ import type {
   SwiggyBenefitsActivationCenter,
   SwiggyBenefitsActivationExecution,
   EnterprisePlatformCenterReport,
+  SwiggyBuildersBenefitsWitness,
   SwiggyBuildersHomepageExperienceCenter,
   SwiggyBuildersLaunchStoryCenterReport,
   SwiggyBuildersJourneyGateCenter,
@@ -499,6 +500,12 @@ export function fetchSwiggyBuildersModuleWitness() {
 export function fetchSwiggyBuildersNavigationWitness() {
   return requestJson<{ navigationWitness: SwiggyBuildersNavigationWitness }>(
     "/api/swiggy-builders-navigation-witness",
+  );
+}
+
+export function fetchSwiggyBuildersBenefitsWitness() {
+  return requestJson<{ benefitsWitness: SwiggyBuildersBenefitsWitness }>(
+    "/api/swiggy-builders-benefits-witness",
   );
 }
 

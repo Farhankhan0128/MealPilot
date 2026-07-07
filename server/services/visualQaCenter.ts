@@ -224,6 +224,17 @@ const targetGroups = [
         "artifacts/visual-qa/navigation-witness-card.png",
       ),
       target(
+        "benefits_witness_card",
+        "Benefits Witness card",
+        "/",
+        ".benefits-witness-card",
+        "desktop",
+        1280,
+        900,
+        "Benefits Witness shows What You Get promises, live API, quota, support, co-branding, growth, enterprise gates, and proof links.",
+        "artifacts/visual-qa/benefits-witness-card.png",
+      ),
+      target(
         "capability_traceability_card",
         "Capability Traceability card",
         "/",

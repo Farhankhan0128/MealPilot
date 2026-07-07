@@ -34,6 +34,7 @@ import { buildSwiggyBuildersLiveSourceResilienceCenter } from "./services/liveSo
 import { buildSwiggyBuildersModuleIntelligenceCenter } from "./services/moduleIntelligence.js";
 import { buildSwiggyBuildersModuleWitness } from "./services/buildersModuleWitness.js";
 import { buildSwiggyBuildersNavigationWitness } from "./services/buildersNavigationWitness.js";
+import { buildSwiggyBuildersBenefitsWitness } from "./services/buildersBenefitsWitness.js";
 import { buildSwiggyBuildersReviewDecisionCenter } from "./services/reviewDecisionCenter.js";
 import { buildSwiggyBuildersSourceEvolutionCenter } from "./services/sourceEvolutionCenter.js";
 import { buildSwiggySourceFreezeDiff } from "./services/sourceFreezeDiff.js";
@@ -1385,6 +1386,18 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
       });
     }),
   );
+
+  app.get("/api/swiggy-builders-benefits-witness", (_req, res) => {
+    res.json({
+      benefitsWitness: buildSwiggyBuildersBenefitsWitness({
+        config,
+        profile: store.getProfile(),
+        coverage: buildMcpCoverage(),
+        plans: store.getAllPlans(),
+        telemetry: telemetry.buildReport(),
+      }),
+    });
+  });
 
   app.get("/api/swiggy-builders-journey-gates", (_req, res) => {
     res.json({

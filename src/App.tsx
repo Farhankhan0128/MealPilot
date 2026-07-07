@@ -134,6 +134,7 @@ import {
   fetchSwiggyBuildersModuleIntelligence,
   fetchSwiggyBuildersModuleWitness,
   fetchSwiggyBuildersNavigationWitness,
+  fetchSwiggyBuildersBenefitsWitness,
   fetchSwiggyCapabilityTraceability,
   fetchSwiggyHomepageSignalCoverage,
   fetchSwiggyBuildersCompletionLedger,
@@ -315,6 +316,7 @@ import type {
   SwiggyBuildersModuleIntelligenceCenter,
   SwiggyBuildersModuleWitness,
   SwiggyBuildersNavigationWitness,
+  SwiggyBuildersBenefitsWitness,
   SwiggyCapabilityTraceabilityMatrix,
   SwiggyBuildersCompletionLedger,
   SwiggyHomepageSignalCoverageBoard,
@@ -604,6 +606,7 @@ function App() {
   const [moduleIntelligence, setModuleIntelligence] = useState<SwiggyBuildersModuleIntelligenceCenter | null>(null);
   const [moduleWitness, setModuleWitness] = useState<SwiggyBuildersModuleWitness | null>(null);
   const [navigationWitness, setNavigationWitness] = useState<SwiggyBuildersNavigationWitness | null>(null);
+  const [benefitsWitness, setBenefitsWitness] = useState<SwiggyBuildersBenefitsWitness | null>(null);
   const [capabilityTraceability, setCapabilityTraceability] =
     useState<SwiggyCapabilityTraceabilityMatrix | null>(null);
   const [homepageSignalCoverage, setHomepageSignalCoverage] =
@@ -842,6 +845,7 @@ function App() {
       moduleIntelligenceResponse,
       moduleWitnessResponse,
       navigationWitnessResponse,
+      benefitsWitnessResponse,
       capabilityTraceabilityResponse,
       homepageSignalCoverageResponse,
       buildersCompletionResponse,
@@ -976,6 +980,7 @@ function App() {
       fetchSwiggyBuildersModuleIntelligence(),
       fetchSwiggyBuildersModuleWitness(),
       fetchSwiggyBuildersNavigationWitness(),
+      fetchSwiggyBuildersBenefitsWitness(),
       fetchSwiggyCapabilityTraceability(),
       fetchSwiggyHomepageSignalCoverage(),
       fetchSwiggyBuildersCompletionLedger(),
@@ -1111,6 +1116,7 @@ function App() {
     setModuleIntelligence(moduleIntelligenceResponse.moduleIntelligence);
     setModuleWitness(moduleWitnessResponse.moduleWitness);
     setNavigationWitness(navigationWitnessResponse.navigationWitness);
+    setBenefitsWitness(benefitsWitnessResponse.benefitsWitness);
     setCapabilityTraceability(capabilityTraceabilityResponse.capabilityTraceability);
     setHomepageSignalCoverage(homepageSignalCoverageResponse.homepageSignalCoverage);
     setBuildersCompletion(buildersCompletionResponse.buildersCompletion);
@@ -1249,6 +1255,7 @@ function App() {
       moduleIntelligenceResponse,
       moduleWitnessResponse,
       navigationWitnessResponse,
+      benefitsWitnessResponse,
       capabilityTraceabilityResponse,
       homepageSignalCoverageResponse,
       buildersCompletionResponse,
@@ -1380,6 +1387,7 @@ function App() {
       fetchSwiggyBuildersModuleIntelligence(),
       fetchSwiggyBuildersModuleWitness(),
       fetchSwiggyBuildersNavigationWitness(),
+      fetchSwiggyBuildersBenefitsWitness(),
       fetchSwiggyCapabilityTraceability(),
       fetchSwiggyHomepageSignalCoverage(),
       fetchSwiggyBuildersCompletionLedger(),
@@ -1511,6 +1519,7 @@ function App() {
     setModuleIntelligence(moduleIntelligenceResponse.moduleIntelligence);
     setModuleWitness(moduleWitnessResponse.moduleWitness);
     setNavigationWitness(navigationWitnessResponse.navigationWitness);
+    setBenefitsWitness(benefitsWitnessResponse.benefitsWitness);
     setCapabilityTraceability(capabilityTraceabilityResponse.capabilityTraceability);
     setHomepageSignalCoverage(homepageSignalCoverageResponse.homepageSignalCoverage);
     setBuildersCompletion(buildersCompletionResponse.buildersCompletion);
@@ -2217,6 +2226,7 @@ function App() {
                 moduleIntelligence={moduleIntelligence}
                 moduleWitness={moduleWitness}
                 navigationWitness={navigationWitness}
+                benefitsWitness={benefitsWitness}
                 capabilityTraceability={capabilityTraceability}
                 homepageSignalCoverage={homepageSignalCoverage}
                 buildersCompletion={buildersCompletion}
@@ -2840,6 +2850,7 @@ function LaunchCenterPanel({
   moduleIntelligence,
   moduleWitness,
   navigationWitness,
+  benefitsWitness,
   capabilityTraceability,
   homepageSignalCoverage,
   buildersCompletion,
@@ -2946,6 +2957,7 @@ function LaunchCenterPanel({
   moduleIntelligence: SwiggyBuildersModuleIntelligenceCenter | null;
   moduleWitness: SwiggyBuildersModuleWitness | null;
   navigationWitness: SwiggyBuildersNavigationWitness | null;
+  benefitsWitness: SwiggyBuildersBenefitsWitness | null;
   capabilityTraceability: SwiggyCapabilityTraceabilityMatrix | null;
   homepageSignalCoverage: SwiggyHomepageSignalCoverageBoard | null;
   buildersCompletion: SwiggyBuildersCompletionLedger | null;
@@ -4893,6 +4905,58 @@ function LaunchCenterPanel({
             </a>
             <a href="/api/swiggy-cta-live-audit" target="_blank" rel="noreferrer">
               CTA live
+            </a>
+          </div>
+        </article>
+
+        <article className="benefits-witness-card">
+          <div className="mini-heading">
+            <Sparkles aria-hidden="true" />
+            <strong>Benefits Witness</strong>
+          </div>
+          <span>
+            {benefitsWitness
+              ? `${benefitsWitness.score}/100, ${benefitsWitness.totals.proven}/${benefitsWitness.totals.rows} benefits proven`
+              : "Witnessing live APIs, quota, support, co-branding, growth, showcase, hiring, and enterprise benefits"}
+          </span>
+          <div className="benefits-witness-grid">
+            <div>
+              <strong>{benefitsWitness?.totals.rows ?? 0}</strong>
+              <span>Benefits</span>
+            </div>
+            <div>
+              <strong>{benefitsWitness?.totals.swiggyMcpServers ?? 0}</strong>
+              <span>Servers</span>
+            </div>
+            <div>
+              <strong>{(benefitsWitness?.totals.operatorGates ?? 0) + (benefitsWitness?.totals.swiggyGates ?? 0)}</strong>
+              <span>Gates</span>
+            </div>
+            <div>
+              <strong>{benefitsWitness?.totals.proofLinks ?? 0}</strong>
+              <span>Proofs</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(benefitsWitness?.groups ?? []).map((group) => (
+              <li
+                key={group.id}
+                data-status={group.swiggyGates > 0 ? "blocked" : group.operatorGates > 0 || group.watch > 0 ? "watch" : "healthy"}
+              >
+                <span>{group.label}</span>
+                <strong>{group.proven}/{group.rows}</strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-intelligence-actions" aria-label="Benefits witness links">
+            <a href="/api/swiggy-builders-benefits-witness" target="_blank" rel="noreferrer">
+              Benefits API
+            </a>
+            <a href="/api/swiggy-benefits-activation-center" target="_blank" rel="noreferrer">
+              Activation
+            </a>
+            <a href="/api/swiggy-growth-partnership" target="_blank" rel="noreferrer">
+              Growth
             </a>
           </div>
         </article>
