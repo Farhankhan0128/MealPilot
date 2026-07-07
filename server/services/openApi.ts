@@ -838,6 +838,36 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-partner-support-room/compose": {
+        post: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Partner Support packet composer for one support channel and incident lane",
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    channelId: { type: "string" },
+                    incidentLaneId: { type: "string" },
+                    operatorEmail: { type: "string" },
+                    sessionId: { type: "string" },
+                    summary: { type: "string" },
+                  },
+                  required: ["channelId", "incidentLaneId"],
+                },
+              },
+            },
+          },
+          responses: {
+            "200": {
+              description:
+                "Local Partner Support packet with selected channel, S0-S3 incident lane, redacted evidence attachments, proof links, builders@swiggy.in draft, missing-input guards, safety assertions, and explicit report_error, Slack, partner-manager, and Swiggy approval gates without sending email or changing external Swiggy state",
+            },
+          },
+        },
+      },
       "/api/swiggy-interaction-qa-center": {
         get: {
           tags: ["Builder Access"],

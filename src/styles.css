@@ -2349,6 +2349,113 @@ select:focus {
   overflow-wrap: anywhere;
 }
 
+.partner-support-composer {
+  display: grid;
+  gap: 8px;
+  border-radius: 8px;
+  padding: 10px;
+  background: #fff;
+}
+
+.partner-support-composer label {
+  color: var(--ink-muted);
+  font-size: 0.75rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.partner-support-composer > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 42px;
+  gap: 8px;
+}
+
+.partner-support-composer select,
+.partner-support-composer input {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 9px 10px;
+  color: var(--ink);
+  background: #f8faf8;
+  font: inherit;
+  font-weight: 850;
+}
+
+.partner-support-composer button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  min-height: 42px;
+  border: 0;
+  border-radius: 8px;
+  color: #fff;
+  background: var(--green);
+}
+
+.partner-support-composer button:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
+.partner-support-composer svg {
+  width: 17px;
+  height: 17px;
+}
+
+.partner-support-composer small {
+  color: var(--coral);
+  font-weight: 850;
+}
+
+.partner-support-result {
+  display: grid;
+  gap: 8px;
+  border-radius: 8px;
+  padding: 10px;
+  background: #fff;
+  border-left: 4px solid var(--gold);
+}
+
+.partner-support-result[data-status="healthy"] {
+  border-left-color: var(--green);
+}
+
+.partner-support-result[data-status="blocked"] {
+  border-left-color: var(--coral);
+}
+
+.partner-support-result > div {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.partner-support-result span {
+  color: var(--ink-muted);
+  font-size: 0.75rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.partner-support-result strong {
+  color: var(--green-dark);
+  font-size: 0.84rem;
+  text-align: right;
+  text-transform: capitalize;
+}
+
+.partner-support-result p {
+  margin: 0;
+  color: var(--ink-muted);
+  font-size: 0.82rem;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
 .builders-map-list,
 .opportunity-list {
   display: grid;

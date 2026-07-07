@@ -45,6 +45,7 @@ import {
   completeSwiggyAuth,
   composeSwiggyGrowthPartnershipAsk,
   composeSwiggyPartnerSuccessHandoff,
+  composeSwiggyPartnerSupportPacket,
   composeSwiggyShowcaseSubmission,
   composeSwiggyTalentOutreach,
   addGroupMember,
@@ -306,6 +307,7 @@ import type {
   SwiggyPartnerSuccessDesk,
   SwiggyPartnerSuccessHandoffPacket,
   SwiggyPartnerSupportRoom,
+  SwiggyPartnerSupportPacket,
   SwiggyHandshakeDoctor,
   SwiggyShowcaseSubmissionComposition,
   SwiggyLlmsManifestVerifier,
@@ -2862,6 +2864,15 @@ function LaunchCenterPanel({
   });
   const [partnerSuccessHandoff, setPartnerSuccessHandoff] = useState<SwiggyPartnerSuccessHandoffPacket | null>(null);
   const [partnerSuccessHandoffStatus, setPartnerSuccessHandoffStatus] = useState<"idle" | "loading" | "error">("idle");
+  const [partnerSupportForm, setPartnerSupportForm] = useState({
+    channelId: "report_error",
+    incidentLaneId: "s1",
+    operatorEmail: "operator@example.com",
+    sessionId: "mp_support_demo",
+    summary: "Report-error support packet for a Swiggy Builders review incident.",
+  });
+  const [partnerSupportPacket, setPartnerSupportPacket] = useState<SwiggyPartnerSupportPacket | null>(null);
+  const [partnerSupportPacketStatus, setPartnerSupportPacketStatus] = useState<"idle" | "loading" | "error">("idle");
   const [showcaseForm, setShowcaseForm] = useState({
     demoUrl: "https://youtu.be/mealpilot-swiggy-demo",
     githubUrl: "https://github.com/Farhankhan0128/MealPilot",
@@ -2929,6 +2940,18 @@ function LaunchCenterPanel({
       setPartnerSuccessHandoffStatus("idle");
     } catch {
       setPartnerSuccessHandoffStatus("error");
+    }
+  }
+
+  async function runPartnerSupportPacket(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setPartnerSupportPacketStatus("loading");
+    try {
+      const response = await composeSwiggyPartnerSupportPacket(partnerSupportForm);
+      setPartnerSupportPacket(response.partnerSupportPacket);
+      setPartnerSupportPacketStatus("idle");
+    } catch {
+      setPartnerSupportPacketStatus("error");
     }
   }
 
@@ -5415,6 +5438,83 @@ function LaunchCenterPanel({
               <strong>{partnerSupport?.totals.operatorInputs ?? 0}</strong>
               <span>Inputs</span>
             </div>
+          </div>
+          <form className="partner-support-composer" onSubmit={runPartnerSupportPacket}>
+            <label htmlFor="partner-support-channel">Support channel</label>
+            <select
+              id="partner-support-channel"
+              value={partnerSupportForm.channelId}
+              onChange={(event) => setPartnerSupportForm((current) => ({ ...current, channelId: event.target.value }))}
+            >
+              {(partnerSupport?.channels ?? []).map((channel) => (
+                <option key={channel.id} value={channel.id}>
+                  {channel.label}
+                </option>
+              ))}
+            </select>
+            <label htmlFor="partner-support-incident">Incident lane</label>
+            <select
+              id="partner-support-incident"
+              value={partnerSupportForm.incidentLaneId}
+              onChange={(event) => setPartnerSupportForm((current) => ({ ...current, incidentLaneId: event.target.value }))}
+            >
+              {(partnerSupport?.incidentLanes ?? []).map((lane) => (
+                <option key={lane.id} value={lane.id}>
+                  {lane.label}
+                </option>
+              ))}
+            </select>
+            <label htmlFor="partner-support-email">Operator email</label>
+            <input
+              id="partner-support-email"
+              type="email"
+              value={partnerSupportForm.operatorEmail}
+              onChange={(event) => setPartnerSupportForm((current) => ({ ...current, operatorEmail: event.target.value }))}
+            />
+            <label htmlFor="partner-support-session">Session id</label>
+            <input
+              id="partner-support-session"
+              type="text"
+              value={partnerSupportForm.sessionId}
+              onChange={(event) => setPartnerSupportForm((current) => ({ ...current, sessionId: event.target.value }))}
+            />
+            <div>
+              <input
+                aria-label="Partner support summary"
+                type="text"
+                value={partnerSupportForm.summary}
+                onChange={(event) => setPartnerSupportForm((current) => ({ ...current, summary: event.target.value }))}
+              />
+              <button type="submit" disabled={partnerSupportPacketStatus === "loading"} aria-label="Compose partner support packet">
+                {partnerSupportPacketStatus === "loading" ? <Loader2 aria-hidden="true" /> : <MessageSquare aria-hidden="true" />}
+              </button>
+            </div>
+            {partnerSupportPacketStatus === "error" ? <small role="status">Support packet composer unavailable.</small> : null}
+          </form>
+          <div
+            className="partner-support-result"
+            data-status={
+              partnerSupportPacket?.decision === "ready_local_handoff"
+                ? "healthy"
+                : partnerSupportPacket?.decision === "swiggy_gate" ||
+                    partnerSupportPacket?.decision === "unknown_support_lane"
+                  ? "blocked"
+                  : "watch"
+            }
+          >
+            <div>
+              <span>Support packet</span>
+              <strong>
+                {partnerSupportPacket
+                  ? `${partnerSupportPacket.decision.replace(/_/g, " ")} / ${partnerSupportPacket.readinessScore}/100`
+                  : "Awaiting composition"}
+              </strong>
+            </div>
+            <p>
+              {partnerSupportPacket
+                ? `${partnerSupportPacket.proofLinks.length} proof links / ${partnerSupportPacket.emailDraft.to} / ${partnerSupportPacket.missingInputs.length} missing`
+                : "Choose a support channel and incident lane to generate the local redacted Swiggy support packet."}
+            </p>
           </div>
           <ul className="compact-status-list">
             {(partnerSupport?.channels ?? []).slice(0, 5).map((channel) => (

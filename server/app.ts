@@ -120,7 +120,7 @@ import { buildSwiggyOfferIntelligence, decideSwiggyOffer } from "./services/offe
 import { buildSwiggyOperatingContractCenter } from "./services/operatingContractCenter.js";
 import { buildSwiggyOrderLifecycle, probeSwiggyOrderLifecycle } from "./services/orderLifecycle.js";
 import { buildSwiggyPartnerSuccessDesk, composeSwiggyPartnerSuccessHandoff } from "./services/partnerSuccessDesk.js";
-import { buildSwiggyPartnerSupportRoom } from "./services/partnerSupportRoom.js";
+import { buildSwiggyPartnerSupportRoom, composeSwiggyPartnerSupportPacket } from "./services/partnerSupportRoom.js";
 import { buildSwiggyPaymentTruthCenter, reconcileSwiggyPaymentTruth } from "./services/paymentTruthCenter.js";
 import { buildSwiggyMealWindowCenter, forecastSwiggyMealWindow } from "./services/mealWindowIntelligence.js";
 import { buildSwiggyPrivatePilotControlRoom } from "./services/privatePilotControlRoom.js";
@@ -1360,6 +1360,23 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
         coverage: buildMcpCoverage(),
         plans: store.getAllPlans(),
         telemetry: telemetry.buildReport(),
+      }),
+    });
+  });
+
+  app.post("/api/swiggy-partner-support-room/compose", (req, res) => {
+    res.json({
+      partnerSupportPacket: composeSwiggyPartnerSupportPacket({
+        config,
+        profile: store.getProfile(),
+        coverage: buildMcpCoverage(),
+        plans: store.getAllPlans(),
+        telemetry: telemetry.buildReport(),
+        channelId: typeof req.body?.channelId === "string" ? req.body.channelId : "",
+        incidentLaneId: typeof req.body?.incidentLaneId === "string" ? req.body.incidentLaneId : "",
+        operatorEmail: typeof req.body?.operatorEmail === "string" ? req.body.operatorEmail : "",
+        sessionId: typeof req.body?.sessionId === "string" ? req.body.sessionId : "",
+        summary: typeof req.body?.summary === "string" ? req.body.summary : "",
       }),
     });
   });

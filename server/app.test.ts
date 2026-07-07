@@ -106,6 +106,9 @@ describe("MealPilot API", () => {
       "Partner Success handoff composer",
     );
     expect(openApi.body.paths["/api/swiggy-partner-support-room"].get.summary).toContain("Partner Support Room");
+    expect(openApi.body.paths["/api/swiggy-partner-support-room/compose"].post.summary).toContain(
+      "Partner Support packet composer",
+    );
     expect(openApi.body.paths["/api/swiggy-interaction-qa-center"].get.summary).toContain("Interaction QA");
     expect(openApi.body.paths["/api/swiggy-staging-seed-smoke-center"].get.summary).toContain("Seed and Smoke");
     expect(openApi.body.paths["/api/channel-multimodal-studio"].get.summary).toContain("Channel and Multimodal");
@@ -2165,6 +2168,77 @@ describe("MealPilot API", () => {
     );
     expect(room.assertions.some((assertion: string) => assertion.includes("No support email"))).toBe(true);
     expect(room.externalGates.some((gate: string) => gate.includes("Enterprise Slack"))).toBe(true);
+  });
+
+  it("composes a ready Swiggy Partner Support packet for a selected support channel and incident lane", async () => {
+    const { app } = createMealPilotServer();
+
+    const response = await request(app)
+      .post("/api/swiggy-partner-support-room/compose")
+      .send({
+        channelId: "report_error",
+        incidentLaneId: "s1",
+        operatorEmail: "operator@example.com",
+        sessionId: "mp_support_demo",
+        summary: "Report-error support packet for a Swiggy Builders review incident.",
+      })
+      .expect(200);
+    const packet = response.body.partnerSupportPacket;
+
+    expect(packet.decision).toBe("ready_local_handoff");
+    expect(packet.readinessScore).toBe(100);
+    expect(packet.channel.id).toBe("report_error");
+    expect(packet.incidentLane.severity).toBe("S1");
+    expect(packet.emailDraft.to).toBe("builders@swiggy.in");
+    expect(packet.proofLinks).toEqual(expect.arrayContaining(["/api/swiggy-partner-support-room", "/api/support/bridge/report"]));
+    expect(packet.evidenceAttachments.map((attachment: { id: string }) => attachment.id)).toEqual(
+      expect.arrayContaining(["support_bridge", "slo_command", "runtime_telemetry", "audit_ledger"]),
+    );
+    expect(packet.assertions.some((assertion: string) => assertion.includes("never sends email"))).toBe(true);
+    expect(packet.missingInputs).toEqual([]);
+  });
+
+  it("guards Swiggy Partner Support packet composition when operator inputs are incomplete", async () => {
+    const { app } = createMealPilotServer();
+
+    const response = await request(app)
+      .post("/api/swiggy-partner-support-room/compose")
+      .send({
+        channelId: "report_error",
+        incidentLaneId: "s2",
+        operatorEmail: "bad-email",
+        sessionId: "mp",
+        summary: "short",
+      })
+      .expect(200);
+    const packet = response.body.partnerSupportPacket;
+
+    expect(packet.decision).toBe("needs_operator_input");
+    expect(packet.readinessScore).toBe(68);
+    expect(packet.missingInputs).toEqual(expect.arrayContaining(["operator_email", "session_id", "support_summary"]));
+    expect(packet.checklist.some((item: { id: string; status: string }) => item.id === "operator_identity" && item.status === "manual_input")).toBe(true);
+  });
+
+  it("preserves Swiggy gates for enterprise Partner Support packets", async () => {
+    const { app } = createMealPilotServer();
+
+    const response = await request(app)
+      .post("/api/swiggy-partner-support-room/compose")
+      .send({
+        channelId: "enterprise_slack",
+        incidentLaneId: "s0",
+        operatorEmail: "operator@example.com",
+        sessionId: "mp_enterprise_support",
+        summary: "Enterprise Slack support readiness review for a severe Swiggy incident.",
+      })
+      .expect(200);
+    const packet = response.body.partnerSupportPacket;
+
+    expect(packet.decision).toBe("swiggy_gate");
+    expect(packet.readinessScore).toBe(56);
+    expect(packet.channel.id).toBe("enterprise_slack");
+    expect(packet.checklist.some((item: { id: string; status: string }) => item.id === "swiggy_gate_preserved" && item.status === "external_gate")).toBe(true);
+    expect(packet.externalGates.some((gate: string) => gate.includes("Enterprise Slack"))).toBe(true);
   });
 
   it("returns a Swiggy Showcase Submission Center for demo and feature review", async () => {

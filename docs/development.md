@@ -122,7 +122,7 @@ The verifier also validates `/api/swiggy-builders-module-intelligence` for every
 
 The verifier also validates `/api/swiggy-partner-success-desk` and `POST /api/swiggy-partner-success-desk/compose` for access handoff, developer support, SLO incidents, capacity review, backpressure controls, growth showcase asks, escalation emails, local partner-success handoff packets, missing-input guards, and enterprise Slack/partner-manager gates.
 
-The verifier also validates `/api/swiggy-partner-support-room` for report_error readiness, builders@swiggy.in support email drafts, S0-S3 incident lanes, redacted evidence attachments, capacity escalation, runtime/audit proof, and enterprise Slack/partner-manager gates.
+The verifier also validates `/api/swiggy-partner-support-room` and `POST /api/swiggy-partner-support-room/compose` for report_error readiness, builders@swiggy.in support email drafts, S0-S3 incident lanes, redacted evidence attachments, local support packets, missing-input guards, capacity escalation, runtime/audit proof, and enterprise Slack/partner-manager gates.
 
 The verifier also validates `/api/swiggy-benefits-activation-center` and `POST /api/swiggy-benefits-activation-center/activate` for live API access, quota expansion, technical support, Powered by Swiggy attribution, showcase visibility, hiring visibility, growth partnership, enterprise support, activation CTAs, proof links, per-benefit handoff packets, and explicit Swiggy/operator gates.
 
@@ -260,6 +260,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/swiggy-submission-timeline-center`
 - `POST /api/swiggy-submission-timeline-center/checkpoint`
 - `GET /api/swiggy-partner-support-room`
+- `POST /api/swiggy-partner-support-room/compose`
 - `GET /api/builder-packet-export`
 - `GET /api/builder-packet-export.md`
 - `GET /api/swiggy-docs-coverage`
@@ -484,7 +485,7 @@ Production should use an HTTPS redirect URI with exact-match allowlisting.
 
 `/api/swiggy-partner-success-desk` composes the post-access operator room: access handoff, support bridge, SLO incidents, capacity review, backpressure, growth showcase asks, and enterprise Slack/partner-manager gates are pulled into one reviewer surface with proof links and escalation email drafts.
 
-`/api/swiggy-partner-support-room` prepares the support operating room after access: contact channels, report_error readiness, S0-S3 incident lanes, redacted evidence attachments, escalation runbook steps, builders@swiggy.in drafts, capacity escalation, and enterprise support gates are packaged without sending email or requesting Slack locally.
+`/api/swiggy-partner-support-room` prepares the support operating room after access: contact channels, report_error readiness, S0-S3 incident lanes, redacted evidence attachments, escalation runbook steps, builders@swiggy.in drafts, capacity escalation, and enterprise support gates are packaged without sending email or requesting Slack locally. `POST /api/swiggy-partner-support-room/compose` generates a local channel-and-incident support packet with readiness decision, missing operator inputs, redacted attachments, proof links, builders@swiggy.in draft, safety assertions, and Swiggy-owned report_error, Slack, partner-manager, and enterprise approval gates.
 
 `/api/swiggy-benefits-activation-center` turns Swiggy Builders benefits into an activation room: live APIs, quota expansion, technical support, co-branding, showcase visibility, hiring visibility, growth partnership, and enterprise support each have an owner, proof route, CTA, next action, and external gate. `POST /api/swiggy-benefits-activation-center/activate` generates one local activation packet for the selected benefit, including its readiness decision, matching CTA, proof links, checklist, builders@swiggy.in draft, safety assertions, and unknown-benefit guard.
 

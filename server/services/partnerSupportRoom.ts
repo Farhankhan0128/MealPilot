@@ -6,6 +6,8 @@ import type {
   SwiggyPartnerSupportAttachment,
   SwiggyPartnerSupportChannel,
   SwiggyPartnerSupportIncidentLane,
+  SwiggyPartnerSupportPacket,
+  SwiggyPartnerSupportPacketDecision,
   SwiggyPartnerSupportRoom,
   SwiggyPartnerSupportRoomOwner,
   SwiggyPartnerSupportRoomStatus,
@@ -29,6 +31,10 @@ const officialSources = [
 
 function unique(values: string[]) {
   return [...new Set(values.filter(Boolean))];
+}
+
+function hasEmail(value: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
 }
 
 function statusWeight(status: SwiggyPartnerSupportRoomStatus) {
@@ -66,6 +72,36 @@ function runbookStep(
   evidenceLinks: string[],
 ) {
   return { sequence, id, label, owner, status, action, evidenceLinks };
+}
+
+function packetDecision(
+  channel: SwiggyPartnerSupportChannel | undefined,
+  incidentLane: SwiggyPartnerSupportIncidentLane | undefined,
+  missingInputs: string[],
+): SwiggyPartnerSupportPacketDecision {
+  if (!channel || !incidentLane) return "unknown_support_lane";
+  if (channel.status === "external_gate" || incidentLane.status === "external_gate") return "swiggy_gate";
+  if (missingInputs.length > 0) return "needs_operator_input";
+  return "ready_local_handoff";
+}
+
+function packetScore(
+  decision: SwiggyPartnerSupportPacketDecision,
+  channel: SwiggyPartnerSupportChannel | undefined,
+  incidentLane: SwiggyPartnerSupportIncidentLane | undefined,
+  missingInputs: string[],
+) {
+  if (decision === "unknown_support_lane") return 30;
+  if (decision === "swiggy_gate") return 56;
+  if (missingInputs.length > 0) return 68;
+
+  const readiness = [channel?.status, incidentLane?.status].reduce((sum, status) => {
+    if (status === "ready") return sum + 1;
+    if (status === "manual_input") return sum + 0.82;
+    return sum + 0.58;
+  }, 0);
+
+  return Math.round((readiness / 2) * 100);
 }
 
 export function buildSwiggyPartnerSupportRoom(options: {
@@ -333,6 +369,109 @@ export function buildSwiggyPartnerSupportRoom(options: {
       "Operator must send builders@swiggy.in emails and official form updates manually.",
       "Live report_error execution requires user consent and authenticated Swiggy MCP credentials outside local tests.",
       "Enterprise Slack, named partner manager, dashboards, bespoke SLAs, co-marketing, and higher limits require Swiggy approval.",
+    ],
+  };
+}
+
+export function composeSwiggyPartnerSupportPacket(
+  options: Parameters<typeof buildSwiggyPartnerSupportRoom>[0] & {
+    channelId: string;
+    incidentLaneId: string;
+    operatorEmail?: string;
+    sessionId?: string;
+    summary?: string;
+  },
+): SwiggyPartnerSupportPacket {
+  const room = buildSwiggyPartnerSupportRoom(options);
+  const channel = room.channels.find((item) => item.id === options.channelId);
+  const incidentLane = room.incidentLanes.find((item) => item.id === options.incidentLaneId);
+  const operatorEmail = options.operatorEmail?.trim() ?? "";
+  const sessionId = options.sessionId?.trim() ?? "";
+  const summary = options.summary?.trim() ?? "";
+  const missingInputs = [
+    !hasEmail(operatorEmail) ? "operator_email" : "",
+    sessionId.length < 6 ? "session_id" : "",
+    summary.length < 16 ? "support_summary" : "",
+  ].filter(Boolean);
+  const decision = packetDecision(channel, incidentLane, missingInputs);
+  const readinessScore = packetScore(decision, channel, incidentLane, missingInputs);
+  const evidenceAttachments = room.evidenceAttachments.filter((attachment) =>
+    ["support_bridge", "slo_command", "runtime_telemetry", "audit_ledger", "traffic_profile", "demo_evidence"].includes(attachment.id),
+  );
+  const proofLinks = unique([
+    "/api/swiggy-partner-support-room",
+    channel?.entrypoint.startsWith("/") ? channel.entrypoint : "",
+    ...(channel?.evidenceLinks ?? []),
+    ...(incidentLane?.proofLinks ?? []),
+    ...evidenceAttachments.map((attachment) => attachment.source),
+  ]);
+
+  return {
+    generatedAt: new Date().toISOString(),
+    channelId: options.channelId,
+    incidentLaneId: options.incidentLaneId,
+    decision,
+    readinessScore,
+    channel: channel ?? null,
+    incidentLane: incidentLane ?? null,
+    evidenceAttachments,
+    emailDraft: {
+      to: "builders@swiggy.in",
+      subject: incidentLane
+        ? `MealPilot ${incidentLane.severity} support packet: ${channel?.label ?? options.channelId}`
+        : `MealPilot support packet: ${options.channelId}`,
+      bodyPreview: [
+        `Operator: ${operatorEmail || "missing operator email"}`,
+        `Session: ${sessionId || "missing session id"}`,
+        `Summary: ${summary || "missing support summary"}`,
+        `Decision: ${decision}`,
+        `Evidence: ${proofLinks.join(", ")}`,
+      ].join(" | "),
+    },
+    proofLinks,
+    missingInputs,
+    checklist: [
+      {
+        id: "operator_identity",
+        label: "Named operator email is present for builders@swiggy.in handoff",
+        status: hasEmail(operatorEmail) ? "ready" : "manual_input",
+        owner: "Operator",
+      },
+      {
+        id: "session_scope",
+        label: "Session id and support summary identify the incident without raw payloads",
+        status: sessionId.length >= 6 && summary.length >= 16 ? "ready" : "manual_input",
+        owner: "MealPilot",
+      },
+      {
+        id: "channel_selected",
+        label: channel ? `${channel.label} channel selected` : "Known support channel selected",
+        status: channel?.status ?? "manual_input",
+        owner: channel?.owner ?? "Operator",
+      },
+      {
+        id: "incident_lane_selected",
+        label: incidentLane ? `${incidentLane.label} selected` : "Known S0-S3 incident lane selected",
+        status: incidentLane?.status ?? "manual_input",
+        owner: incidentLane?.owner ?? "Operator",
+      },
+      {
+        id: "swiggy_gate_preserved",
+        label: "Swiggy Slack, partner manager, credential, and enterprise approvals stay external",
+        status: decision === "swiggy_gate" ? "external_gate" : "ready",
+        owner: "Swiggy",
+      },
+    ],
+    assertions: [
+      "Partner Support packet is generated locally and never sends email, Slack messages, report_error payloads, or Swiggy requests.",
+      "The packet uses redacted session, incident, telemetry, audit, support, traffic, and demo evidence links instead of raw Swiggy payload bodies.",
+      "report_error execution still requires user consent and authenticated Swiggy MCP credentials outside local verification.",
+      "Enterprise Slack, partner manager, dashboard, and bespoke SLA requests remain Swiggy-approved external gates.",
+    ],
+    externalGates: [
+      "Operator must review and send builders@swiggy.in email manually.",
+      "Live report_error execution requires user consent plus authenticated Swiggy MCP credentials.",
+      "Enterprise Slack, partner manager, dashboards, bespoke SLAs, and priority support require Swiggy approval.",
     ],
   };
 }

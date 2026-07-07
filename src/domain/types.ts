@@ -2366,6 +2366,38 @@ export interface SwiggyPartnerSupportRoom {
   externalGates: string[];
 }
 
+export type SwiggyPartnerSupportPacketDecision =
+  | "ready_local_handoff"
+  | "needs_operator_input"
+  | "swiggy_gate"
+  | "unknown_support_lane";
+
+export interface SwiggyPartnerSupportPacket {
+  generatedAt: string;
+  channelId: string;
+  incidentLaneId: string;
+  decision: SwiggyPartnerSupportPacketDecision;
+  readinessScore: number;
+  channel: SwiggyPartnerSupportChannel | null;
+  incidentLane: SwiggyPartnerSupportIncidentLane | null;
+  evidenceAttachments: SwiggyPartnerSupportAttachment[];
+  emailDraft: {
+    to: string;
+    subject: string;
+    bodyPreview: string;
+  };
+  proofLinks: string[];
+  missingInputs: string[];
+  checklist: Array<{
+    id: string;
+    label: string;
+    status: SwiggyPartnerSupportRoomStatus;
+    owner: SwiggyPartnerSupportRoomOwner;
+  }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type SwiggyInteractionQaStatus = "working" | "manual_gate" | "external_gate";
 export type SwiggyInteractionQaSurface = "planner" | "launch_center" | "production_evidence" | "settings";
 

@@ -248,6 +248,15 @@ assert(
   "OpenAPI partner support room contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-partner-support-room/compose"]?.post?.summary?.includes(
+    "Partner Support packet composer",
+  ) &&
+    openApi.paths["/api/swiggy-partner-support-room/compose"]?.post?.responses?.["200"]?.description?.includes(
+      "without sending email",
+    ),
+  "OpenAPI partner support packet composer contract is missing",
+);
+assert(
   openApi.paths["/api/swiggy-interaction-qa-center"].get.summary.includes("Interaction QA"),
   "OpenAPI interaction QA center contract is missing",
 );
@@ -1776,6 +1785,64 @@ assert(
   partnerSupport.partnerSupport.assertions.some((assertion) => assertion.includes("No support email")) &&
     partnerSupport.partnerSupport.externalGates.some((gate) => gate.includes("Enterprise Slack")),
   "Partner Support Room assertions or external gates are missing",
+);
+const partnerSupportPacket = await request("/api/swiggy-partner-support-room/compose", {
+  method: "POST",
+  body: JSON.stringify({
+    channelId: "report_error",
+    incidentLaneId: "s1",
+    operatorEmail: "operator@example.com",
+    sessionId: "mp_support_demo",
+    summary: "Report-error support packet for a Swiggy Builders review incident.",
+  }),
+});
+assert(
+  partnerSupportPacket.partnerSupportPacket.decision === "ready_local_handoff" &&
+    partnerSupportPacket.partnerSupportPacket.readinessScore === 100 &&
+    partnerSupportPacket.partnerSupportPacket.channel.id === "report_error" &&
+    partnerSupportPacket.partnerSupportPacket.incidentLane.severity === "S1" &&
+    partnerSupportPacket.partnerSupportPacket.proofLinks.includes("/api/support/bridge/report"),
+  "Partner Support packet composer ready packet is incomplete",
+);
+assert(
+  partnerSupportPacket.partnerSupportPacket.emailDraft.to === "builders@swiggy.in" &&
+    partnerSupportPacket.partnerSupportPacket.assertions.some((assertion) => assertion.includes("never sends email")),
+  "Partner Support packet composer safety assertion is missing",
+);
+const blockedPartnerSupportPacket = await request("/api/swiggy-partner-support-room/compose", {
+  method: "POST",
+  body: JSON.stringify({
+    channelId: "report_error",
+    incidentLaneId: "s2",
+    operatorEmail: "bad-email",
+    sessionId: "mp",
+    summary: "short",
+  }),
+});
+assert(
+  blockedPartnerSupportPacket.partnerSupportPacket.decision === "needs_operator_input" &&
+    blockedPartnerSupportPacket.partnerSupportPacket.readinessScore === 68 &&
+    blockedPartnerSupportPacket.partnerSupportPacket.missingInputs.includes("operator_email") &&
+    blockedPartnerSupportPacket.partnerSupportPacket.missingInputs.includes("session_id") &&
+    blockedPartnerSupportPacket.partnerSupportPacket.missingInputs.includes("support_summary"),
+  "Partner Support packet composer missing-input guard is incomplete",
+);
+const gatedPartnerSupportPacket = await request("/api/swiggy-partner-support-room/compose", {
+  method: "POST",
+  body: JSON.stringify({
+    channelId: "enterprise_slack",
+    incidentLaneId: "s0",
+    operatorEmail: "operator@example.com",
+    sessionId: "mp_enterprise_support",
+    summary: "Enterprise Slack support readiness review for a severe Swiggy incident.",
+  }),
+});
+assert(
+  gatedPartnerSupportPacket.partnerSupportPacket.decision === "swiggy_gate" &&
+    gatedPartnerSupportPacket.partnerSupportPacket.readinessScore === 56 &&
+    gatedPartnerSupportPacket.partnerSupportPacket.channel.id === "enterprise_slack" &&
+    gatedPartnerSupportPacket.partnerSupportPacket.externalGates.some((gate) => gate.includes("Enterprise Slack")),
+  "Partner Support packet composer Swiggy gate is incomplete",
 );
 
 const interactionQa = await request("/api/swiggy-interaction-qa-center");
