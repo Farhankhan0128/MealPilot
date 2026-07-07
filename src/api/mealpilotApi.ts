@@ -123,6 +123,7 @@ import type {
   SwiggySubmissionTimelineCheckpoint,
   SwiggySubmissionTimelineCenter,
   SwiggyPartnerSuccessDesk,
+  SwiggyPartnerSuccessHandoffPacket,
   SwiggyLlmsManifestVerifier,
   SwiggyInnovationRadarReport,
   SwiggyJourneyCompilerReport,
@@ -604,6 +605,21 @@ export function runSwiggySubmissionTimelineCheckpoint(input: SwiggySubmissionTim
 
 export function fetchSwiggyPartnerSuccessDesk() {
   return requestJson<{ partnerSuccess: SwiggyPartnerSuccessDesk }>("/api/swiggy-partner-success-desk");
+}
+
+export function composeSwiggyPartnerSuccessHandoff(input: {
+  laneId: string;
+  operatorEmail: string;
+  launchWindow: string;
+  contextNote: string;
+}) {
+  return requestJson<{ partnerSuccessHandoff: SwiggyPartnerSuccessHandoffPacket }>(
+    "/api/swiggy-partner-success-desk/compose",
+    {
+      method: "POST",
+      body: JSON.stringify(input),
+    },
+  );
 }
 
 export function fetchSwiggyPartnerSupportRoom() {

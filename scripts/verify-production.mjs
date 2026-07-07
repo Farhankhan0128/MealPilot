@@ -235,6 +235,15 @@ assert(
   "OpenAPI partner success desk contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-partner-success-desk/compose"]?.post?.summary?.includes(
+    "Partner Success handoff composer",
+  ) &&
+    openApi.paths["/api/swiggy-partner-success-desk/compose"]?.post?.responses?.["200"]?.description?.includes(
+      "without sending email",
+    ),
+  "OpenAPI partner success handoff composer contract is missing",
+);
+assert(
   openApi.paths["/api/swiggy-partner-support-room"].get.summary.includes("Partner Support Room"),
   "OpenAPI partner support room contract is missing",
 );
@@ -1673,6 +1682,56 @@ assert(
   partnerSuccess.partnerSuccess.assertions.some((assertion) => assertion.includes("existing verified support")) &&
     partnerSuccess.partnerSuccess.externalGates.some((gate) => gate.includes("Slack")),
   "Partner Success Desk assertions or external gates are missing",
+);
+const partnerSuccessHandoff = await request("/api/swiggy-partner-success-desk/compose", {
+  method: "POST",
+  body: JSON.stringify({
+    laneId: "traffic_capacity",
+    operatorEmail: "operator@example.com",
+    launchWindow: "Launch week dry run",
+    contextNote: "Capacity handoff for Swiggy Builders review.",
+  }),
+});
+assert(
+  partnerSuccessHandoff.partnerSuccessHandoff.decision === "ready_local_handoff" &&
+    partnerSuccessHandoff.partnerSuccessHandoff.readinessScore === 100 &&
+    partnerSuccessHandoff.partnerSuccessHandoff.lane.id === "traffic_capacity" &&
+    partnerSuccessHandoff.partnerSuccessHandoff.escalationEmail.id === "capacity" &&
+    partnerSuccessHandoff.partnerSuccessHandoff.proofLinks.includes("/api/traffic-readiness-plan"),
+  "Partner Success handoff composer ready packet is incomplete",
+);
+assert(
+  partnerSuccessHandoff.partnerSuccessHandoff.handoffDraft.to === "builders@swiggy.in" &&
+    partnerSuccessHandoff.partnerSuccessHandoff.assertions.some((assertion) => assertion.includes("never sends email")),
+  "Partner Success handoff composer safety assertion is missing",
+);
+const blockedPartnerSuccessHandoff = await request("/api/swiggy-partner-success-desk/compose", {
+  method: "POST",
+  body: JSON.stringify({ laneId: "developer_support", operatorEmail: "bad-email", launchWindow: "", contextNote: "" }),
+});
+assert(
+  blockedPartnerSuccessHandoff.partnerSuccessHandoff.decision === "needs_operator_input" &&
+    blockedPartnerSuccessHandoff.partnerSuccessHandoff.readinessScore === 68 &&
+    blockedPartnerSuccessHandoff.partnerSuccessHandoff.missingInputs.includes("operator_email") &&
+    blockedPartnerSuccessHandoff.partnerSuccessHandoff.missingInputs.includes("launch_window") &&
+    blockedPartnerSuccessHandoff.partnerSuccessHandoff.missingInputs.includes("context_note"),
+  "Partner Success handoff composer missing-input guard is incomplete",
+);
+const gatedPartnerSuccessHandoff = await request("/api/swiggy-partner-success-desk/compose", {
+  method: "POST",
+  body: JSON.stringify({
+    laneId: "enterprise_slack_partner",
+    operatorEmail: "operator@example.com",
+    launchWindow: "Enterprise review",
+    contextNote: "Partner manager readiness review.",
+  }),
+});
+assert(
+  gatedPartnerSuccessHandoff.partnerSuccessHandoff.decision === "swiggy_gate" &&
+    gatedPartnerSuccessHandoff.partnerSuccessHandoff.readinessScore === 56 &&
+    gatedPartnerSuccessHandoff.partnerSuccessHandoff.lane.id === "enterprise_slack_partner" &&
+    gatedPartnerSuccessHandoff.partnerSuccessHandoff.externalGates.some((gate) => gate.includes("Slack")),
+  "Partner Success handoff composer Swiggy gate is incomplete",
 );
 
 const partnerSupport = await request("/api/swiggy-partner-support-room");

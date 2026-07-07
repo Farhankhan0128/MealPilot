@@ -797,6 +797,35 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-partner-success-desk/compose": {
+        post: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Partner Success handoff composer for one support or growth lane",
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    laneId: { type: "string" },
+                    operatorEmail: { type: "string" },
+                    launchWindow: { type: "string" },
+                    contextNote: { type: "string" },
+                  },
+                  required: ["laneId"],
+                },
+              },
+            },
+          },
+          responses: {
+            "200": {
+              description:
+                "Selected Partner Success handoff packet with lane, escalation email, reviewer runbook, proof links, missing inputs, checklist, builders@swiggy.in draft, and explicit Slack, partner-manager, dashboard, support, rate-limit, and co-marketing gates without sending email or changing external Swiggy state",
+            },
+          },
+        },
+      },
       "/api/swiggy-partner-support-room": {
         get: {
           tags: ["Builder Access"],

@@ -2268,6 +2268,37 @@ export interface SwiggyPartnerSuccessDesk {
   externalGates: string[];
 }
 
+export type SwiggyPartnerSuccessHandoffDecision =
+  | "ready_local_handoff"
+  | "needs_operator_input"
+  | "swiggy_gate"
+  | "unknown_success_lane";
+
+export interface SwiggyPartnerSuccessHandoffPacket {
+  generatedAt: string;
+  laneId: string;
+  decision: SwiggyPartnerSuccessHandoffDecision;
+  readinessScore: number;
+  lane: SwiggyPartnerSuccessLane | null;
+  escalationEmail: { id: string; label: string; to: string; subject: string; source: string } | null;
+  reviewerRunbook: Array<{ sequence: number; label: string; evidenceLinks: string[]; status: SwiggyPartnerSuccessStatus }>;
+  proofLinks: string[];
+  missingInputs: string[];
+  handoffDraft: {
+    to: string;
+    subject: string;
+    bodyPreview: string;
+  };
+  checklist: Array<{
+    id: string;
+    label: string;
+    status: SwiggyPartnerSuccessStatus;
+    owner: SwiggyPartnerSuccessLane["owner"];
+  }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type SwiggyPartnerSupportRoomStatus = "ready" | "manual_input" | "external_gate";
 export type SwiggyPartnerSupportRoomOwner = "MealPilot" | "Operator" | "Swiggy" | "Joint";
 

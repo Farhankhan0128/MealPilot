@@ -119,7 +119,7 @@ import { buildObservabilityTraceReport, buildSwiggyRouteOptimizationReport } fro
 import { buildSwiggyOfferIntelligence, decideSwiggyOffer } from "./services/offerIntelligence.js";
 import { buildSwiggyOperatingContractCenter } from "./services/operatingContractCenter.js";
 import { buildSwiggyOrderLifecycle, probeSwiggyOrderLifecycle } from "./services/orderLifecycle.js";
-import { buildSwiggyPartnerSuccessDesk } from "./services/partnerSuccessDesk.js";
+import { buildSwiggyPartnerSuccessDesk, composeSwiggyPartnerSuccessHandoff } from "./services/partnerSuccessDesk.js";
 import { buildSwiggyPartnerSupportRoom } from "./services/partnerSupportRoom.js";
 import { buildSwiggyPaymentTruthCenter, reconcileSwiggyPaymentTruth } from "./services/paymentTruthCenter.js";
 import { buildSwiggyMealWindowCenter, forecastSwiggyMealWindow } from "./services/mealWindowIntelligence.js";
@@ -1332,6 +1332,22 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
         coverage: buildMcpCoverage(),
         plans: store.getAllPlans(),
         telemetry: telemetry.buildReport(),
+      }),
+    });
+  });
+
+  app.post("/api/swiggy-partner-success-desk/compose", (req, res) => {
+    res.json({
+      partnerSuccessHandoff: composeSwiggyPartnerSuccessHandoff({
+        config,
+        profile: store.getProfile(),
+        coverage: buildMcpCoverage(),
+        plans: store.getAllPlans(),
+        telemetry: telemetry.buildReport(),
+        laneId: typeof req.body?.laneId === "string" ? req.body.laneId : "",
+        operatorEmail: typeof req.body?.operatorEmail === "string" ? req.body.operatorEmail : "",
+        launchWindow: typeof req.body?.launchWindow === "string" ? req.body.launchWindow : "",
+        contextNote: typeof req.body?.contextNote === "string" ? req.body.contextNote : "",
       }),
     });
   });

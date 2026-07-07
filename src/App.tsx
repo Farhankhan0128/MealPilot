@@ -44,6 +44,7 @@ import {
   buildServerPlan,
   completeSwiggyAuth,
   composeSwiggyGrowthPartnershipAsk,
+  composeSwiggyPartnerSuccessHandoff,
   composeSwiggyShowcaseSubmission,
   composeSwiggyTalentOutreach,
   addGroupMember,
@@ -303,6 +304,7 @@ import type {
   SwiggySubmissionTimelineCenter,
   SwiggyInteractionQaCenter,
   SwiggyPartnerSuccessDesk,
+  SwiggyPartnerSuccessHandoffPacket,
   SwiggyPartnerSupportRoom,
   SwiggyHandshakeDoctor,
   SwiggyShowcaseSubmissionComposition,
@@ -2852,6 +2854,14 @@ function LaunchCenterPanel({
   });
   const [talentOutreach, setTalentOutreach] = useState<SwiggyTalentOutreachPacket | null>(null);
   const [talentOutreachStatus, setTalentOutreachStatus] = useState<"idle" | "loading" | "error">("idle");
+  const [partnerSuccessForm, setPartnerSuccessForm] = useState({
+    laneId: "traffic_capacity",
+    operatorEmail: "operator@example.com",
+    launchWindow: "Launch week dry run",
+    contextNote: "Capacity and support handoff for Swiggy Builders review.",
+  });
+  const [partnerSuccessHandoff, setPartnerSuccessHandoff] = useState<SwiggyPartnerSuccessHandoffPacket | null>(null);
+  const [partnerSuccessHandoffStatus, setPartnerSuccessHandoffStatus] = useState<"idle" | "loading" | "error">("idle");
   const [showcaseForm, setShowcaseForm] = useState({
     demoUrl: "https://youtu.be/mealpilot-swiggy-demo",
     githubUrl: "https://github.com/Farhankhan0128/MealPilot",
@@ -2907,6 +2917,18 @@ function LaunchCenterPanel({
       setTalentOutreachStatus("idle");
     } catch {
       setTalentOutreachStatus("error");
+    }
+  }
+
+  async function runPartnerSuccessHandoff(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setPartnerSuccessHandoffStatus("loading");
+    try {
+      const response = await composeSwiggyPartnerSuccessHandoff(partnerSuccessForm);
+      setPartnerSuccessHandoff(response.partnerSuccessHandoff);
+      setPartnerSuccessHandoffStatus("idle");
+    } catch {
+      setPartnerSuccessHandoffStatus("error");
     }
   }
 
@@ -5280,6 +5302,71 @@ function LaunchCenterPanel({
               <strong>{partnerSuccess?.totals.externalGates ?? 0}</strong>
               <span>Gates</span>
             </div>
+          </div>
+          <form className="partner-success-composer" onSubmit={runPartnerSuccessHandoff}>
+            <label htmlFor="partner-success-lane">Success lane</label>
+            <select
+              id="partner-success-lane"
+              value={partnerSuccessForm.laneId}
+              onChange={(event) => setPartnerSuccessForm((current) => ({ ...current, laneId: event.target.value }))}
+            >
+              {(partnerSuccess?.lanes ?? []).map((lane) => (
+                <option key={lane.id} value={lane.id}>
+                  {lane.label}
+                </option>
+              ))}
+            </select>
+            <label htmlFor="partner-success-email">Operator email</label>
+            <input
+              id="partner-success-email"
+              type="email"
+              value={partnerSuccessForm.operatorEmail}
+              onChange={(event) => setPartnerSuccessForm((current) => ({ ...current, operatorEmail: event.target.value }))}
+            />
+            <label htmlFor="partner-success-window">Window</label>
+            <input
+              id="partner-success-window"
+              type="text"
+              value={partnerSuccessForm.launchWindow}
+              onChange={(event) => setPartnerSuccessForm((current) => ({ ...current, launchWindow: event.target.value }))}
+            />
+            <div>
+              <input
+                aria-label="Partner success context"
+                type="text"
+                value={partnerSuccessForm.contextNote}
+                onChange={(event) => setPartnerSuccessForm((current) => ({ ...current, contextNote: event.target.value }))}
+              />
+              <button type="submit" disabled={partnerSuccessHandoffStatus === "loading"} aria-label="Compose partner success handoff">
+                {partnerSuccessHandoffStatus === "loading" ? <Loader2 aria-hidden="true" /> : <LifeBuoy aria-hidden="true" />}
+              </button>
+            </div>
+            {partnerSuccessHandoffStatus === "error" ? <small role="status">Partner handoff unavailable.</small> : null}
+          </form>
+          <div
+            className="partner-success-result"
+            data-status={
+              partnerSuccessHandoff?.decision === "ready_local_handoff"
+                ? "healthy"
+                : partnerSuccessHandoff?.decision === "swiggy_gate" ||
+                    partnerSuccessHandoff?.decision === "unknown_success_lane"
+                  ? "blocked"
+                  : "watch"
+            }
+          >
+            <div>
+              <span>Success handoff</span>
+              <strong>
+                {partnerSuccessHandoff
+                  ? `${partnerSuccessHandoff.decision.replace(/_/g, " ")} / ${partnerSuccessHandoff.readinessScore}/100`
+                  : "Awaiting composition"}
+              </strong>
+            </div>
+            <p>
+              {partnerSuccessHandoff
+                ? `${partnerSuccessHandoff.proofLinks.length} proof links / ${partnerSuccessHandoff.handoffDraft.to} / ${partnerSuccessHandoff.missingInputs.length} missing`
+                : "Choose a support, capacity, growth, or enterprise lane to generate the local Swiggy partner-success packet."}
+            </p>
           </div>
           <ul className="compact-status-list">
             {(partnerSuccess?.lanes ?? []).slice(0, 5).map((lane) => (

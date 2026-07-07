@@ -120,7 +120,7 @@ The verifier also validates `/api/swiggy-conversion-center` for the final What W
 
 The verifier also validates `/api/swiggy-builders-module-intelligence` for every Website Atlas module, page grouping, owner, audience, product promise, route optimization, risk boundary, proof links, module journeys, and external operator or Swiggy gates.
 
-The verifier also validates `/api/swiggy-partner-success-desk` for access handoff, developer support, SLO incidents, capacity review, backpressure controls, growth showcase asks, escalation emails, and enterprise Slack/partner-manager gates.
+The verifier also validates `/api/swiggy-partner-success-desk` and `POST /api/swiggy-partner-success-desk/compose` for access handoff, developer support, SLO incidents, capacity review, backpressure controls, growth showcase asks, escalation emails, local partner-success handoff packets, missing-input guards, and enterprise Slack/partner-manager gates.
 
 The verifier also validates `/api/swiggy-partner-support-room` for report_error readiness, builders@swiggy.in support email drafts, S0-S3 incident lanes, redacted evidence attachments, capacity escalation, runtime/audit proof, and enterprise Slack/partner-manager gates.
 
@@ -237,6 +237,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `POST /api/swiggy-talent-signal-center/compose`
 - `GET /api/swiggy-conversion-center`
 - `GET /api/swiggy-partner-success-desk`
+- `POST /api/swiggy-partner-success-desk/compose`
 - `GET /api/swiggy-interaction-qa-center`
 - `GET /api/channel-multimodal-studio`
 - `GET /api/swiggy-visual-dish-capture`
@@ -533,7 +534,7 @@ The test suite checks that:
 - Swiggy Showcase Submission Center packages pitch blocks, demo storyboard, metric pack, visual-gallery links, outreach copy, operator inputs, and Swiggy approval gates for a feature-ready review packet.
 - Swiggy Submission Timeline Center sequences access form submission, demo handoff, DCR, staging seed, 48-hour soak, and production promotion with explicit MealPilot, operator, and Swiggy ownership.
 - Swiggy Builders Conversion Center maps the final CTA funnel, official docs links, email handoff, proof bundles, operator runbook, and go-live gates into one tested reviewer endpoint.
-- Partner Success Desk composes access handoff, developer support, SLO incident readiness, traffic capacity, backpressure controls, growth showcase asks, escalation emails, and Swiggy-owned Slack/partner-manager gates.
+- Partner Success Desk composes access handoff, developer support, SLO incident readiness, traffic capacity, backpressure controls, growth showcase asks, escalation emails, and Swiggy-owned Slack/partner-manager gates. `POST /api/swiggy-partner-success-desk/compose` generates a local lane-specific handoff packet with operator email/window/context checks, escalation target, proof links, reviewer runbook, checklist, builders@swiggy.in draft, and Swiggy-owned Slack/partner-manager/dashboard gates.
 - Interaction QA Center maps portal CTAs to executable MealPilot routes, visible feedback, regression commands, automation coverage, and explicit Swiggy/operator gates.
 - Channel & Multimodal Studio maps voice, web chat, Slack/Teams, mobile camera, enterprise, and screenshot-to-order channels to Swiggy MCP toolchains, local execution packets, response contracts, telemetry, and external platform gates.
 - Swiggy Voice Commerce Rehearsal Center validates spoken Swiggy route planning with no raw-audio retention, no raw ids in TTS, short scripts, visual fallbacks, and confirmation readbacks before live execution.

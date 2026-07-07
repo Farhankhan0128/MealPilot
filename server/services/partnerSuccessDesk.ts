@@ -4,6 +4,8 @@ import type {
   McpServerCoverage,
   RuntimeTelemetryReport,
   SwiggyPartnerSuccessDesk,
+  SwiggyPartnerSuccessHandoffDecision,
+  SwiggyPartnerSuccessHandoffPacket,
   SwiggyPartnerSuccessLane,
   SwiggyPartnerSuccessStatus,
   UserProfile,
@@ -37,6 +39,33 @@ function statusWeight(status: SwiggyPartnerSuccessStatus) {
   if (status === "ready") return 1;
   if (status === "manual_input") return 0.78;
   return 0.58;
+}
+
+function hasEmail(value?: string) {
+  return Boolean(value?.trim() && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim()));
+}
+
+function emailIdForLane(laneId: string) {
+  if (laneId === "traffic_capacity" || laneId === "backpressure") return "capacity";
+  if (laneId === "demo_handoff") return "access";
+  return "support";
+}
+
+function handoffDecision(
+  laneItem: SwiggyPartnerSuccessLane | null,
+  missingInputs: string[],
+): SwiggyPartnerSuccessHandoffDecision {
+  if (!laneItem) return "unknown_success_lane";
+  if (laneItem.status === "external_gate") return "swiggy_gate";
+  if (missingInputs.length > 0) return "needs_operator_input";
+  return "ready_local_handoff";
+}
+
+function readinessFor(decision: SwiggyPartnerSuccessHandoffDecision) {
+  if (decision === "ready_local_handoff") return 100;
+  if (decision === "needs_operator_input") return 68;
+  if (decision === "swiggy_gate") return 56;
+  return 0;
 }
 
 export function buildSwiggyPartnerSuccessDesk(options: {
@@ -210,5 +239,92 @@ export function buildSwiggyPartnerSuccessDesk(options: {
       "Slack, partner manager, dashboard access, bespoke rate limits, and co-marketing approval are Swiggy-owned gates.",
       "Real support reports and production traffic require authenticated Swiggy MCP credentials.",
     ],
+  };
+}
+
+export function composeSwiggyPartnerSuccessHandoff(
+  options: Parameters<typeof buildSwiggyPartnerSuccessDesk>[0] & {
+    laneId: string;
+    operatorEmail?: string;
+    launchWindow?: string;
+    contextNote?: string;
+  },
+): SwiggyPartnerSuccessHandoffPacket {
+  const desk = buildSwiggyPartnerSuccessDesk(options);
+  const laneItem = desk.lanes.find((item) => item.id === options.laneId) ?? null;
+  const escalationEmail =
+    desk.escalationEmails.find((item) => item.id === emailIdForLane(options.laneId)) ?? desk.escalationEmails[0] ?? null;
+  const missingInputs = [
+    hasEmail(options.operatorEmail) ? "" : "operator_email",
+    options.launchWindow?.trim() ? "" : "launch_window",
+    options.contextNote?.trim() ? "" : "context_note",
+  ].filter(Boolean);
+  const decision = handoffDecision(laneItem, missingInputs);
+  const proofLinks = unique([
+    "/api/swiggy-partner-success-desk",
+    ...(laneItem?.evidenceLinks ?? []),
+    ...(escalationEmail ? [escalationEmail.source] : []),
+    ...desk.reviewerRunbook.flatMap((item) => item.evidenceLinks),
+  ]).slice(0, 12);
+  const bodyPreview =
+    laneItem && decision !== "unknown_success_lane"
+      ? `${laneItem.label}: ${laneItem.mealPilotControl} Next action: ${laneItem.nextAction} Operator: ${options.operatorEmail?.trim() || "[operator email required]"} Launch window: ${options.launchWindow?.trim() || "[launch window required]"} Context: ${options.contextNote?.trim() || "[context required]"} Proof: ${proofLinks.join(", ")}`
+      : "Unknown Partner Success lane. Choose a published lane before preparing an operator handoff.";
+
+  return {
+    generatedAt: new Date().toISOString(),
+    laneId: options.laneId,
+    decision,
+    readinessScore: readinessFor(decision),
+    lane: laneItem,
+    escalationEmail,
+    reviewerRunbook: desk.reviewerRunbook,
+    proofLinks,
+    missingInputs,
+    handoffDraft: {
+      to: escalationEmail?.to ?? "builders@swiggy.in",
+      subject: laneItem
+        ? `MealPilot Partner Success handoff: ${laneItem.label}`
+        : "MealPilot Partner Success handoff",
+      bodyPreview,
+    },
+    checklist: [
+      {
+        id: "success_lane_selected",
+        label: laneItem ? `${laneItem.label} selected` : "Valid Partner Success lane selected",
+        status: laneItem ? laneItem.status : "manual_input",
+        owner: laneItem?.owner ?? "Operator",
+      },
+      {
+        id: "operator_email_attached",
+        label: "Operator contact email attached",
+        status: hasEmail(options.operatorEmail) ? "ready" : "manual_input",
+        owner: "Operator",
+      },
+      {
+        id: "launch_window_attached",
+        label: "Launch or incident window attached",
+        status: options.launchWindow?.trim() ? "ready" : "manual_input",
+        owner: "Operator",
+      },
+      {
+        id: "context_note_attached",
+        label: "Support, capacity, or growth context attached",
+        status: options.contextNote?.trim() ? "ready" : "manual_input",
+        owner: "Operator",
+      },
+      {
+        id: "swiggy_partner_gate_preserved",
+        label: "Slack, partner manager, dashboard, and co-marketing gate preserved",
+        status: laneItem?.status === "external_gate" ? "external_gate" : "ready",
+        owner: laneItem?.status === "external_gate" ? "Swiggy" : "MealPilot",
+      },
+    ],
+    assertions: [
+      "Partner Success handoff composition prepares a local packet only; it never sends email, opens Slack, requests a partner manager, requests dashboard access, changes limits, or claims Swiggy approval.",
+      "Operator contact, launch window, and context remain explicit before any external outreach.",
+      ...desk.assertions.slice(0, 2),
+    ],
+    externalGates: desk.externalGates,
   };
 }
