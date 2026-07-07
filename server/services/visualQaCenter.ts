@@ -290,6 +290,17 @@ const targetGroups = [
         "artifacts/visual-qa/credential-sandbox-witness-card.png",
       ),
       target(
+        "access_policy_witness_card",
+        "Access Policy Witness card",
+        "/",
+        ".access-policy-witness-card",
+        "desktop",
+        1280,
+        900,
+        "Access Policy Witness shows application fields, review checks, policy rules, legal gates, CTAs, attachments, brand/data controls, and approval ownership.",
+        "artifacts/visual-qa/access-policy-witness-card.png",
+      ),
+      target(
         "capability_traceability_card",
         "Capability Traceability card",
         "/",

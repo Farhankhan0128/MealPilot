@@ -331,7 +331,7 @@ export async function buildSwiggyBuildersCredentialSandboxWitness(options: {
         id: "visual_capture",
         command: "MEALPILOT_URL=http://localhost:8787 npm run verify:visual",
         proves: "The Credential Sandbox Witness card is captured with every reviewer-critical Launch Center surface.",
-        expectedSignal: "78 screenshot targets return no overflow issues",
+        expectedSignal: "79 screenshot targets return no overflow issues",
       },
     ],
     assertions: [

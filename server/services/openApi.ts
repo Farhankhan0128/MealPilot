@@ -581,6 +581,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-builders-access-policy-witness": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Builders Access Policy Witness for production access, rules, legal gates, and review proof",
+          responses: {
+            "200": {
+              description:
+                "Official Swiggy access-page policies witnessed against application fields, review checks, allowed/restricted/prohibited rules, legal terms, track CTAs, attachments, browser runbook, brand and data governance, approval ownership, proof links, and Swiggy-owned production access gates",
+            },
+          },
+        },
+      },
       "/api/swiggy-builders-journey-gates": {
         get: {
           tags: ["Builder Access"],

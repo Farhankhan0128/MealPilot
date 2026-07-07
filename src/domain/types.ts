@@ -1478,6 +1478,87 @@ export interface SwiggyBuildersCredentialSandboxWitness {
   externalGates: string[];
 }
 
+export type SwiggyBuildersAccessPolicyWitnessStatus =
+  | "proven"
+  | "ready"
+  | "watch"
+  | "operator_gate"
+  | "swiggy_gate";
+export type SwiggyBuildersAccessPolicyWitnessOwner = "MealPilot" | "Operator" | "Swiggy" | "Joint";
+export type SwiggyBuildersAccessPolicyWitnessKind =
+  | "application_fields"
+  | "review_checks"
+  | "ground_rules"
+  | "legal_terms"
+  | "track_ctas"
+  | "attachments_runbook"
+  | "brand_data_governance"
+  | "approval_decision";
+
+export interface SwiggyBuildersAccessPolicyWitnessRow {
+  id: string;
+  label: string;
+  kind: SwiggyBuildersAccessPolicyWitnessKind;
+  officialSignal: string;
+  sourceUrl: string;
+  owner: SwiggyBuildersAccessPolicyWitnessOwner;
+  status: SwiggyBuildersAccessPolicyWitnessStatus;
+  mealPilotSurface: string;
+  evidence: string;
+  routeOptimization: string;
+  riskBoundary: string;
+  nextAction: string;
+  proofLinks: string[];
+  relatedApis: string[];
+}
+
+export interface SwiggyBuildersAccessPolicyWitnessGroup {
+  id: string;
+  label: string;
+  rows: number;
+  proven: number;
+  ready: number;
+  watch: number;
+  gates: number;
+  proofLinks: string[];
+}
+
+export interface SwiggyBuildersAccessPolicyWitness {
+  generatedAt: string;
+  score: number;
+  decision: "access_policy_ready" | "access_policy_watch" | "access_policy_blocked";
+  recommendedTrack: "developer" | "enterprise";
+  officialSources: string[];
+  totals: {
+    rows: number;
+    proven: number;
+    ready: number;
+    watch: number;
+    operatorGates: number;
+    swiggyGates: number;
+    proofLinks: number;
+    applicationFields: number;
+    readyRequiredApplicationFields: number;
+    requiredApplicationFields: number;
+    reviewChecks: number;
+    policyRules: number;
+    readyPolicyRules: number;
+    legalItems: number;
+    officialTargets: number;
+    requiredAttachments: number;
+    readyRequiredAttachments: number;
+    browserRunbookSteps: number;
+    brandRules: number;
+    dataControls: number;
+    reviewGates: number;
+  };
+  rows: SwiggyBuildersAccessPolicyWitnessRow[];
+  groups: SwiggyBuildersAccessPolicyWitnessGroup[];
+  commands: Array<{ id: string; command: string; proves: string; expectedSignal: string }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type SwiggyCapabilityTraceabilityOwner = "MealPilot" | "Operator" | "Swiggy" | "Joint";
 export type SwiggyCapabilityTraceabilityKind =
   | "official_page"

@@ -181,6 +181,11 @@ assert(
   "OpenAPI Builders Credential Sandbox witness contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-builders-access-policy-witness"]?.get?.summary?.includes("Access Policy Witness") &&
+    openApi.paths["/api/swiggy-builders-access-policy-witness"]?.get?.responses?.["200"]?.description?.includes("production access"),
+  "OpenAPI Builders Access Policy witness contract is missing",
+);
+assert(
   openApi.paths["/api/swiggy-capability-traceability"]?.get?.summary?.includes("capability traceability") &&
     openApi.paths["/api/swiggy-capability-traceability"]?.get?.responses?.["200"]?.description?.includes("lifecycle gates"),
   "OpenAPI Swiggy capability traceability contract is missing",
@@ -1170,6 +1175,63 @@ assert(
   "Builders Credential Sandbox witness groups, commands, or gates are missing",
 );
 
+const accessPolicyWitness = await request("/api/swiggy-builders-access-policy-witness");
+assert(accessPolicyWitness.accessPolicyWitness.score >= 83, "Builders Access Policy witness score is below target");
+assert(
+  ["access_policy_ready", "access_policy_watch", "access_policy_blocked"].includes(
+    accessPolicyWitness.accessPolicyWitness.decision,
+  ) &&
+    accessPolicyWitness.accessPolicyWitness.recommendedTrack === "developer" &&
+    accessPolicyWitness.accessPolicyWitness.totals.rows >= 8 &&
+    accessPolicyWitness.accessPolicyWitness.totals.applicationFields >= 8 &&
+    accessPolicyWitness.accessPolicyWitness.totals.readyRequiredApplicationFields >= 4 &&
+    accessPolicyWitness.accessPolicyWitness.totals.requiredApplicationFields >= 6 &&
+    accessPolicyWitness.accessPolicyWitness.totals.reviewChecks >= 5 &&
+    accessPolicyWitness.accessPolicyWitness.totals.policyRules >= 7 &&
+    accessPolicyWitness.accessPolicyWitness.totals.readyPolicyRules >= 6 &&
+    accessPolicyWitness.accessPolicyWitness.totals.legalItems >= 3 &&
+    accessPolicyWitness.accessPolicyWitness.totals.officialTargets >= 3 &&
+    accessPolicyWitness.accessPolicyWitness.totals.requiredAttachments >= 5 &&
+    accessPolicyWitness.accessPolicyWitness.totals.browserRunbookSteps >= 5 &&
+    accessPolicyWitness.accessPolicyWitness.totals.brandRules >= 6 &&
+    accessPolicyWitness.accessPolicyWitness.totals.dataControls >= 6 &&
+    accessPolicyWitness.accessPolicyWitness.totals.reviewGates >= 6 &&
+    accessPolicyWitness.accessPolicyWitness.totals.proofLinks >= 16,
+  "Builders Access Policy witness totals are incomplete",
+);
+assert(
+  [
+    "access_application_fields",
+    "access_review_checks",
+    "access_ground_rules",
+    "legal_terms_readiness",
+    "track_cta_targets",
+    "attachments_and_runbook",
+    "brand_data_governance",
+    "approval_decision_gate",
+  ].every((id) =>
+    accessPolicyWitness.accessPolicyWitness.rows.some(
+      (row) => row.id === id && row.proofLinks.length > 0 && row.routeOptimization.length > 0 && row.riskBoundary.length > 0,
+    ),
+  ),
+  "Builders Access Policy witness key rows are missing",
+);
+assert(
+  ["application_submission", "review_approval", "policy_safety", "legal_artifacts"].every((id) =>
+    accessPolicyWitness.accessPolicyWitness.groups.some((group) => group.id === id),
+  ) &&
+    accessPolicyWitness.accessPolicyWitness.commands.some((command) =>
+      command.command.includes("/api/swiggy-builders-access-policy-witness"),
+    ) &&
+    accessPolicyWitness.accessPolicyWitness.assertions.some((assertion) =>
+      assertion.includes("Access-policy readiness"),
+    ) &&
+    accessPolicyWitness.accessPolicyWitness.externalGates.some((gate) =>
+      gate.includes("official access form"),
+    ),
+  "Builders Access Policy witness groups, commands, or gates are missing",
+);
+
 const capabilityTraceability = await request("/api/swiggy-capability-traceability");
 assert(capabilityTraceability.capabilityTraceability.score >= 88, "capability traceability score is below target");
 assert(
@@ -1284,7 +1346,7 @@ assert(
     buildersCompletion.buildersCompletion.totals.mcpServers === 3 &&
     buildersCompletion.buildersCompletion.totals.mcpTools === 35 &&
     buildersCompletion.buildersCompletion.totals.docsPages >= 69 &&
-    buildersCompletion.buildersCompletion.totals.visualTargets === 78 &&
+    buildersCompletion.buildersCompletion.totals.visualTargets === 79 &&
     buildersCompletion.buildersCompletion.totals.reviewerArtifacts >= 120 &&
     buildersCompletion.buildersCompletion.totals.packetFiles >= 4,
   "Builders completion ledger totals are incomplete",
@@ -1359,7 +1421,7 @@ assert(
     coverageReceipt.coverageReceipt.totals.llmsPages === 69 &&
     coverageReceipt.coverageReceipt.totals.referenceTools === 35 &&
     coverageReceipt.coverageReceipt.totals.matchedTools === 35 &&
-    coverageReceipt.coverageReceipt.totals.visualTargets === 78 &&
+    coverageReceipt.coverageReceipt.totals.visualTargets === 79 &&
     coverageReceipt.coverageReceipt.totals.unsafeLinks === 0 &&
     coverageReceipt.coverageReceipt.totals.missingRows === 0,
   "Builders coverage receipt totals are incomplete",
@@ -4363,8 +4425,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 78, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 78, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 79, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 79, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -4679,6 +4741,14 @@ assert(
     ),
   ),
   "visual QA Credential Sandbox Witness target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some(
+      (target) => target.id === "access_policy_witness_card" && target.selector === ".access-policy-witness-card",
+    ),
+  ),
+  "visual QA Access Policy Witness target is missing",
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
@@ -8740,7 +8810,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 78, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 79, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -8754,7 +8824,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("78")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("79")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -9367,6 +9437,10 @@ console.log(
       credentialSandboxWitnessRows: credentialSandboxWitness.credentialSandboxWitness.totals.rows,
       credentialSandboxWitnessStagingDrills: credentialSandboxWitness.credentialSandboxWitness.totals.stagingDrills,
       credentialSandboxWitnessCertificationTools: credentialSandboxWitness.credentialSandboxWitness.totals.certificationTools,
+      accessPolicyWitnessScore: accessPolicyWitness.accessPolicyWitness.score,
+      accessPolicyWitnessRows: accessPolicyWitness.accessPolicyWitness.totals.rows,
+      accessPolicyWitnessApplicationFields: accessPolicyWitness.accessPolicyWitness.totals.applicationFields,
+      accessPolicyWitnessPolicyRules: accessPolicyWitness.accessPolicyWitness.totals.policyRules,
       capabilityTraceabilityScore: capabilityTraceability.capabilityTraceability.score,
       capabilityTraceabilityRows: capabilityTraceability.capabilityTraceability.totals.rows,
       capabilityTraceabilityCtas: capabilityTraceability.capabilityTraceability.totals.officialCtas,

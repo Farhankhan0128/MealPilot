@@ -40,6 +40,7 @@ import { buildSwiggyBuildersEnterpriseWitness } from "./services/buildersEnterpr
 import { buildSwiggyBuildersConsumerWitness } from "./services/buildersConsumerWitness.js";
 import { buildSwiggyBuildersToolReferenceWitness } from "./services/buildersToolReferenceWitness.js";
 import { buildSwiggyBuildersCredentialSandboxWitness } from "./services/buildersCredentialSandboxWitness.js";
+import { buildSwiggyBuildersAccessPolicyWitness } from "./services/buildersAccessPolicyWitness.js";
 import { buildSwiggyBuildersReviewDecisionCenter } from "./services/reviewDecisionCenter.js";
 import { buildSwiggyBuildersSourceEvolutionCenter } from "./services/sourceEvolutionCenter.js";
 import { buildSwiggySourceFreezeDiff } from "./services/sourceFreezeDiff.js";
@@ -1453,6 +1454,23 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
           handoffState: store.getAccessSubmissionState(),
           credentialIssuance: store.getCredentialIssuanceState(),
           authStatus: buildAuthStatus(),
+        }),
+      });
+    }),
+  );
+
+  app.get(
+    "/api/swiggy-builders-access-policy-witness",
+    asyncRoute(async (_req, res) => {
+      res.json({
+        accessPolicyWitness: await buildSwiggyBuildersAccessPolicyWitness({
+          config,
+          profile: store.getProfile(),
+          coverage: buildMcpCoverage(),
+          latestPlan: store.getAllPlans().at(-1),
+          plans: store.getAllPlans(),
+          telemetry: telemetry.buildReport(),
+          handoffState: store.getAccessSubmissionState(),
         }),
       });
     }),

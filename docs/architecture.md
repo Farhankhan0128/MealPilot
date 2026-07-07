@@ -317,6 +317,8 @@ The API keeps localhost demos on the deterministic mock router, but staging and 
 
 `/api/swiggy-builders-credential-sandbox-witness` exposes the read-only witness for credential and staging readiness, tying OAuth PKCE, Dynamic Client Registration, credential vault redaction, handoff packets, sandbox workbench, staging first-call drills, seeded smoke, certification, production cutover, live-signal calibration, and delegated auth to source URLs, proof links, route optimizations, risk boundaries, and Swiggy staging credential gates.
 
+`/api/swiggy-builders-access-policy-witness` exposes the read-only witness for production-access policy readiness, tying application fields, review checks, allowed/restricted/prohibited rules, legal terms, official CTAs, attachments, browser runbook, brand/data governance, and approval decision gates to source URLs, proof links, route optimizations, risk boundaries, and Swiggy production access approvals.
+
 `/api/swiggy-live-signal-calibration` connects personalization to future staging evidence. It keeps local preference, discovery, offer, lifecycle, location, and support signals marked as mock until Swiggy staging credentials and seeded users allow read-only calibration, then enforces redaction and drift thresholds before production personalization claims.
 
 `/api/enterprise-delegated-auth` extends the credential model for platform operators. It records Swiggy as Data Fiduciary, MealPilot/platform as Data Processor, the on-behalf-of PKCE flow, 120-second auth codes, 5-day access tokens, 30-day Swiggy user sessions, per-user token storage, logout, 401/419/403 recovery, platform redirect schemes, and the architecture-review topics Swiggy checks before enterprise production.
