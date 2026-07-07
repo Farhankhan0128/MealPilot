@@ -67,7 +67,7 @@ import { buildMcpCapabilityRegistry } from "./services/capabilityRegistry.js";
 import { buildEvaluationLab } from "./services/evaluationLab.js";
 import { buildErrorIntelligenceReport, classifyMcpError } from "./services/errorIntelligence.js";
 import { buildSwiggyFaqPolicyCenter } from "./services/faqPolicyCenter.js";
-import { buildSwiggyFaqResolutionCenter } from "./services/faqResolutionCenter.js";
+import { answerSwiggyFaqQuestion, buildSwiggyFaqResolutionCenter } from "./services/faqResolutionCenter.js";
 import { buildGuestCollaborationCenter } from "./services/guestCollaborationCenter.js";
 import { buildSwiggyGrowthPartnershipCenter } from "./services/growthPartnership.js";
 import { buildSwiggyDemoEvidenceDirector } from "./services/demoEvidenceDirector.js";
@@ -1183,6 +1183,20 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
   app.get("/api/swiggy-faq-resolution-center", (_req, res) => {
     res.json({
       faqResolution: buildSwiggyFaqResolutionCenter({
+        config,
+        profile: store.getProfile(),
+        coverage: buildMcpCoverage(),
+        latestPlan: store.getAllPlans().at(-1),
+        handoffState: store.getAccessSubmissionState(),
+      }),
+    });
+  });
+
+  app.post("/api/swiggy-faq-resolution-center/answer", (req, res) => {
+    const question = typeof req.body?.question === "string" ? req.body.question : "";
+    res.json({
+      faqAnswer: answerSwiggyFaqQuestion({
+        question,
         config,
         profile: store.getProfile(),
         coverage: buildMcpCoverage(),

@@ -3505,6 +3505,54 @@ select:focus {
   border-left-color: var(--mp-yellow);
 }
 
+.faq-answer-strip {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+  border: 1px solid var(--mp-border);
+  border-left: 4px solid var(--mp-yellow);
+  border-radius: 8px;
+  background: #fff;
+  padding: 12px;
+}
+
+.faq-answer-strip[data-status="healthy"] {
+  border-left-color: var(--mp-green);
+}
+
+.faq-answer-strip[data-status="blocked"] {
+  border-left-color: var(--mp-red);
+}
+
+.faq-answer-strip div {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.faq-answer-strip span,
+.faq-answer-strip small {
+  color: var(--mp-muted);
+  font-size: 0.73rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.faq-answer-strip strong {
+  color: var(--mp-ink);
+  font-size: 0.78rem;
+  text-transform: capitalize;
+}
+
+.faq-answer-strip p {
+  margin: 0;
+  color: var(--mp-ink);
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
 .source-intelligence-actions {
   display: flex;
   flex-wrap: wrap;

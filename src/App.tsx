@@ -39,6 +39,7 @@ import {
 import type { ReactNode } from "react";
 import { useEffect, useMemo, useState } from "react";
 import {
+  answerSwiggyFaqQuestion,
   buildServerPlan,
   completeSwiggyAuth,
   addGroupMember,
@@ -283,6 +284,7 @@ import type {
   SwiggyBuildersMap,
   SwiggyDocsCoverageReport,
   SwiggyDocsTwinExplorer,
+  SwiggyFaqAnswerResolution,
   SwiggyFaqPolicyCenter,
   SwiggyFaqResolutionCenter,
   SwiggyGrowthPartnershipCenter,
@@ -336,6 +338,8 @@ import type {
   VersionMonitor,
   VisualQaCenter,
 } from "./domain/types";
+
+const FAQ_ANSWER_SAMPLE_QUESTION = "What proof does Swiggy need before production access?";
 
 const initialRequest: UserPlanningRequest = {
   prompt:
@@ -501,6 +505,7 @@ function App() {
   const [swiggyBuilderIntake, setSwiggyBuilderIntake] = useState<SwiggyBuilderIntakeCommandCenter | null>(null);
   const [swiggyFaqPolicy, setSwiggyFaqPolicy] = useState<SwiggyFaqPolicyCenter | null>(null);
   const [faqResolution, setFaqResolution] = useState<SwiggyFaqResolutionCenter | null>(null);
+  const [faqAnswer, setFaqAnswer] = useState<SwiggyFaqAnswerResolution | null>(null);
   const [swiggyGrowthPartnership, setSwiggyGrowthPartnership] = useState<SwiggyGrowthPartnershipCenter | null>(null);
   const [talentSignal, setTalentSignal] = useState<SwiggyTalentSignalCenter | null>(null);
   const [conversionCenter, setConversionCenter] = useState<SwiggyConversionCenter | null>(null);
@@ -723,6 +728,7 @@ function App() {
       builderIntakeResponse,
       faqPolicyResponse,
       faqResolutionResponse,
+      faqAnswerResponse,
       growthPartnershipResponse,
       talentSignalResponse,
       conversionResponse,
@@ -846,6 +852,7 @@ function App() {
       fetchSwiggyBuilderIntake(),
       fetchSwiggyFaqPolicyCenter(),
       fetchSwiggyFaqResolutionCenter(),
+      answerSwiggyFaqQuestion(FAQ_ANSWER_SAMPLE_QUESTION),
       fetchSwiggyGrowthPartnershipCenter(),
       fetchSwiggyTalentSignalCenter(),
       fetchSwiggyConversionCenter(),
@@ -970,6 +977,7 @@ function App() {
     setSwiggyBuilderIntake(builderIntakeResponse.intake);
     setSwiggyFaqPolicy(faqPolicyResponse.faqPolicy);
     setFaqResolution(faqResolutionResponse.faqResolution);
+    setFaqAnswer(faqAnswerResponse.faqAnswer);
     setSwiggyGrowthPartnership(growthPartnershipResponse.growthPartnership);
     setTalentSignal(talentSignalResponse.talentSignal);
     setConversionCenter(conversionResponse.conversion);
@@ -1097,6 +1105,7 @@ function App() {
       builderIntakeResponse,
       faqPolicyResponse,
       faqResolutionResponse,
+      faqAnswerResponse,
       growthPartnershipResponse,
       talentSignalResponse,
       conversionResponse,
@@ -1217,6 +1226,7 @@ function App() {
       fetchSwiggyBuilderIntake(),
       fetchSwiggyFaqPolicyCenter(),
       fetchSwiggyFaqResolutionCenter(),
+      answerSwiggyFaqQuestion(FAQ_ANSWER_SAMPLE_QUESTION),
       fetchSwiggyGrowthPartnershipCenter(),
       fetchSwiggyTalentSignalCenter(),
       fetchSwiggyConversionCenter(),
@@ -1337,6 +1347,7 @@ function App() {
     setSwiggyBuilderIntake(builderIntakeResponse.intake);
     setSwiggyFaqPolicy(faqPolicyResponse.faqPolicy);
     setFaqResolution(faqResolutionResponse.faqResolution);
+    setFaqAnswer(faqAnswerResponse.faqAnswer);
     setSwiggyGrowthPartnership(growthPartnershipResponse.growthPartnership);
     setTalentSignal(talentSignalResponse.talentSignal);
     setConversionCenter(conversionResponse.conversion);
@@ -2032,6 +2043,7 @@ function App() {
                 builderIntake={swiggyBuilderIntake}
                 faqPolicy={swiggyFaqPolicy}
                 faqResolution={faqResolution}
+                faqAnswer={faqAnswer}
                 growthPartnership={swiggyGrowthPartnership}
                 talentSignal={talentSignal}
                 conversionCenter={conversionCenter}
@@ -2641,6 +2653,7 @@ function LaunchCenterPanel({
   builderIntake,
   faqPolicy,
   faqResolution,
+  faqAnswer,
   growthPartnership,
   talentSignal,
   conversionCenter,
@@ -2734,6 +2747,7 @@ function LaunchCenterPanel({
   builderIntake: SwiggyBuilderIntakeCommandCenter | null;
   faqPolicy: SwiggyFaqPolicyCenter | null;
   faqResolution: SwiggyFaqResolutionCenter | null;
+  faqAnswer: SwiggyFaqAnswerResolution | null;
   growthPartnership: SwiggyGrowthPartnershipCenter | null;
   talentSignal: SwiggyTalentSignalCenter | null;
   conversionCenter: SwiggyConversionCenter | null;
@@ -4446,6 +4460,31 @@ function LaunchCenterPanel({
               <strong>{faqResolution?.totals.activationCtas ?? 0}</strong>
               <span>CTAs</span>
             </div>
+          </div>
+          <div
+            className="faq-answer-strip"
+            data-status={
+              faqAnswer?.decision === "answered"
+                ? "healthy"
+                : faqAnswer?.decision === "blocked_empty"
+                  ? "blocked"
+                  : "watch"
+            }
+          >
+            <div>
+              <span>Reviewer answer</span>
+              <strong>
+                {faqAnswer
+                  ? `${faqAnswer.decision.replace(/_/g, " ")} / ${faqAnswer.confidence} / ${faqAnswer.matchScore}/100`
+                  : "Resolving sample question"}
+              </strong>
+            </div>
+            <p>{faqAnswer?.answer ?? FAQ_ANSWER_SAMPLE_QUESTION}</p>
+            <small>
+              {faqAnswer
+                ? `${faqAnswer.proofLinks.length} proof links / ${faqAnswer.activationCtas.length} CTAs / ${faqAnswer.owner}`
+                : "Waiting for answer console"}
+            </small>
           </div>
           <ul className="compact-status-list">
             {(faqResolution?.questions ?? []).slice(0, 5).map((questionItem) => (

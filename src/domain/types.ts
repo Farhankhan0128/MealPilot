@@ -1614,6 +1614,7 @@ export interface SwiggyDocsTwinExplorer {
 export type SwiggyFaqPolicyStatus = "ready" | "documented" | "external_gate";
 export type SwiggyFaqResolutionStatus = "ready" | "operator_input" | "swiggy_gate";
 export type SwiggyFaqResolutionOwner = "MealPilot" | "Operator" | "Swiggy" | "Joint";
+export type SwiggyFaqAnswerDecision = "answered" | "needs_operator_review" | "blocked_empty";
 
 export interface SwiggyFaqResolutionQuestion {
   id: string;
@@ -1663,6 +1664,30 @@ export interface SwiggyFaqResolutionCenter {
   activationCtas: SwiggyFaqResolutionCta[];
   reviewerScript: Array<{ sequence: number; label: string; say: string; proofLinks: string[] }>;
   supportContact: { email: string; evidenceLinks: string[] };
+  assertions: string[];
+  externalGates: string[];
+}
+
+export interface SwiggyFaqAnswerResolution {
+  generatedAt: string;
+  inputQuestion: string;
+  normalizedQuestion: string;
+  decision: SwiggyFaqAnswerDecision;
+  matchedQuestionId: string | null;
+  confidence: "high" | "medium" | "low";
+  matchScore: number;
+  owner: SwiggyFaqResolutionOwner;
+  status: SwiggyFaqResolutionStatus;
+  audience: SwiggyFaqResolutionQuestion["audience"] | "reviewers";
+  source: SwiggyFaqResolutionQuestion["source"] | "access_guidelines";
+  question: string;
+  answer: string;
+  recommendedCta: string;
+  nextAction: string;
+  proofLinks: string[];
+  relatedPolicyRules: SwiggyFaqResolutionCenter["policyResolutions"];
+  activationCtas: SwiggyFaqResolutionCta[];
+  supportContact: SwiggyFaqResolutionCenter["supportContact"];
   assertions: string[];
   externalGates: string[];
 }

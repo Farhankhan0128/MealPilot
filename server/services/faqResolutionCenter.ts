@@ -3,6 +3,7 @@ import type {
   AccessSubmissionHandoffState,
   McpServerCoverage,
   MealPlan,
+  SwiggyFaqAnswerResolution,
   SwiggyFaqPolicyStatus,
   SwiggyFaqResolutionCenter,
   SwiggyFaqResolutionCta,
@@ -57,6 +58,58 @@ function cta(input: SwiggyFaqResolutionCta): SwiggyFaqResolutionCta {
 
 function unique(values: string[]) {
   return [...new Set(values.filter(Boolean))];
+}
+
+function normalizeQuestion(value: string) {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function tokensFor(value: string) {
+  const stopWords = new Set(["a", "an", "and", "are", "can", "do", "does", "for", "how", "i", "is", "me", "of", "or", "the", "this", "to", "we", "what", "with"]);
+  return normalizeQuestion(value)
+    .split(" ")
+    .filter((token) => token.length > 2 && !stopWords.has(token));
+}
+
+function phraseBoost(normalizedQuestion: string, candidate: SwiggyFaqResolutionQuestion) {
+  let boost = 0;
+  if (normalizedQuestion.includes("production") && candidate.id.includes("application")) boost += 7;
+  if (normalizedQuestion.includes("access") && candidate.id.includes("application")) boost += 7;
+  if (normalizedQuestion.includes("proof") && candidate.id.includes("demo")) boost += 8;
+  if (normalizedQuestion.includes("demo") && candidate.id.includes("demo")) boost += 10;
+  if (normalizedQuestion.includes("rate") && candidate.id.includes("rate_limits")) boost += 12;
+  if (normalizedQuestion.includes("auth") && candidate.id.includes("auth")) boost += 12;
+  if (normalizedQuestion.includes("credential") && candidate.id.includes("sandbox")) boost += 8;
+  if (normalizedQuestion.includes("white") && candidate.id.includes("white_label")) boost += 12;
+  if (normalizedQuestion.includes("enterprise") && candidate.id.includes("enterprise")) boost += 10;
+  if (normalizedQuestion.includes("support") && candidate.id.includes("break_something")) boost += 8;
+  return boost;
+}
+
+function scoreQuestion(normalizedQuestion: string, inputTokens: string[], candidate: SwiggyFaqResolutionQuestion) {
+  const corpusTokens = tokensFor(
+    `${candidate.id} ${candidate.question} ${candidate.officialSignal} ${candidate.resolvedAnswer} ${candidate.recommendedCta} ${candidate.nextAction} ${candidate.source} ${candidate.audience}`,
+  );
+  const corpus = new Set(corpusTokens);
+  const overlap = inputTokens.filter((token) => corpus.has(token)).length;
+  const coverage = inputTokens.length > 0 ? overlap / inputTokens.length : 0;
+  const density = corpusTokens.length > 0 ? overlap / corpusTokens.length : 0;
+  return Math.min(100, Math.round(coverage * 68 + density * 24 + phraseBoost(normalizedQuestion, candidate)));
+}
+
+function confidenceFor(score: number): SwiggyFaqAnswerResolution["confidence"] {
+  if (score >= 70) return "high";
+  if (score >= 42) return "medium";
+  return "low";
+}
+
+function answerDecisionFor(status: SwiggyFaqResolutionStatus, score: number): SwiggyFaqAnswerResolution["decision"] {
+  if (score < 25 || status !== "ready") return "needs_operator_review";
+  return "answered";
 }
 
 export function buildSwiggyFaqResolutionCenter(options: {
@@ -214,5 +267,95 @@ export function buildSwiggyFaqResolutionCenter(options: {
       "Swiggy must issue staging or production credentials, approve co-branding, and grant enterprise terms or partner support channels.",
       "Legal, privacy, white-label, and enterprise contract answers require final Swiggy/legal review before public claims.",
     ],
+  };
+}
+
+export function answerSwiggyFaqQuestion(
+  options: {
+    question: string;
+  } & Parameters<typeof buildSwiggyFaqResolutionCenter>[0],
+): SwiggyFaqAnswerResolution {
+  const center = buildSwiggyFaqResolutionCenter(options);
+  const inputQuestion = options.question.trim();
+  const normalizedQuestion = normalizeQuestion(inputQuestion);
+
+  if (!normalizedQuestion) {
+    return {
+      generatedAt: center.generatedAt,
+      inputQuestion,
+      normalizedQuestion,
+      decision: "blocked_empty",
+      matchedQuestionId: null,
+      confidence: "low",
+      matchScore: 0,
+      owner: "Operator",
+      status: "operator_input",
+      audience: "reviewers",
+      source: "access_guidelines",
+      question: "Ask a Swiggy reviewer question",
+      answer: "Enter the reviewer question before generating a FAQ-backed answer. MealPilot will not guess, submit a form, send an email, or claim Swiggy approval without an explicit question and matching proof.",
+      recommendedCta: "Enter the exact reviewer question and run the FAQ Answer Console again.",
+      nextAction: "Collect the reviewer question, then attach the generated answer packet to the manual access conversation.",
+      proofLinks: ["/api/swiggy-faq-resolution-center", "/api/swiggy-faq-policy"],
+      relatedPolicyRules: [],
+      activationCtas: center.activationCtas.filter((item) => ["answer_packet", "manual_gates"].includes(item.id)),
+      supportContact: center.supportContact,
+      assertions: [
+        "Blank reviewer questions are blocked instead of answered from assumptions.",
+        "No external form, email, credential, approval, or Swiggy production action is executed by this answer.",
+      ],
+      externalGates: center.externalGates,
+    };
+  }
+
+  const inputTokens = tokensFor(inputQuestion);
+  const ranked = center.questions
+    .map((candidate) => ({ candidate, score: scoreQuestion(normalizedQuestion, inputTokens, candidate) }))
+    .sort((left, right) => right.score - left.score);
+  const best = ranked[0]?.candidate ?? center.questions[0];
+  const matchScore = ranked[0]?.score ?? 0;
+  const relatedPolicyRules = center.policyResolutions
+    .map((rule) => {
+      const sharedProof = rule.proofLinks.filter((link) => best.proofLinks.includes(link)).length;
+      const overlap = tokensFor(`${rule.id} ${rule.category} ${rule.answer}`).filter((token) => inputTokens.includes(token)).length;
+      return { rule, score: sharedProof * 20 + overlap * 6 + (rule.status === best.status ? 4 : 0) };
+    })
+    .filter((item) => item.score > 0)
+    .sort((left, right) => right.score - left.score)
+    .slice(0, 3)
+    .map((item) => item.rule);
+  const activationCtas = center.activationCtas
+    .filter((item) => {
+      const linked = item.proofLinks.some((link) => best.proofLinks.includes(link) || link === "/api/swiggy-faq-resolution-center");
+      return linked || ["answer_packet", "proof_routes", "manual_gates"].includes(item.id);
+    })
+    .slice(0, 3);
+
+  return {
+    generatedAt: new Date().toISOString(),
+    inputQuestion,
+    normalizedQuestion,
+    decision: answerDecisionFor(best.status, matchScore),
+    matchedQuestionId: best.id,
+    confidence: confidenceFor(matchScore),
+    matchScore,
+    owner: best.owner,
+    status: best.status,
+    audience: best.audience,
+    source: best.source,
+    question: best.question,
+    answer: `${best.resolvedAnswer} Official signal: ${best.officialSignal}`,
+    recommendedCta: best.recommendedCta,
+    nextAction: best.nextAction,
+    proofLinks: unique(["/api/swiggy-faq-resolution-center", ...best.proofLinks, ...relatedPolicyRules.flatMap((rule) => rule.proofLinks)]).slice(0, 10),
+    relatedPolicyRules,
+    activationCtas,
+    supportContact: center.supportContact,
+    assertions: [
+      "The answer is selected from the Swiggy FAQ Resolution Center corpus and linked back to proof routes.",
+      "No external form, email, credential, approval, or Swiggy production action is executed by this answer.",
+      ...center.assertions.slice(0, 2),
+    ],
+    externalGates: center.externalGates,
   };
 }

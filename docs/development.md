@@ -230,6 +230,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/swiggy-builder-intake`
 - `GET /api/swiggy-faq-policy`
 - `GET /api/swiggy-faq-resolution-center`
+- `POST /api/swiggy-faq-resolution-center/answer`
 - `GET /api/swiggy-growth-partnership`
 - `GET /api/swiggy-talent-signal-center`
 - `GET /api/swiggy-conversion-center`
@@ -556,7 +557,7 @@ The test suite checks that:
 - Swiggy Deep Site Map consolidates every Builders page, rendered module signal, CTA, header link, docs subnav item, footer resource, proof link, source-reconciliation section, assertion, and external gate into one Launch Center audit surface.
 - Developer Quickstart Workbench maps Swiggy's official quickstart, build-agent, OAuth, and `llms.txt` sources to readiness steps, SDK adapters, first-call JSON-RPC drills, recipe handoffs, auth gates, and verifier commands; `/api/swiggy-developer-quickstart/run-first-call` executes read-only drills with redacted response summaries and live credential gates.
 - CTA Execution Center converts official Builders CTAs, header links, docs nav links, footer resources, mailto links, Google Forms, and legal links into click-ready browser actions, keyboard paths, proof bundles, and manual completion gates.
-- Swiggy FAQ Resolution Center converts Builders FAQ and policy coverage into reviewer-ready answers, owners, proof links, activation CTAs, a support contact, and explicit operator or Swiggy gates.
+- Swiggy FAQ Resolution Center converts Builders FAQ and policy coverage into reviewer-ready answers, owners, proof links, activation CTAs, a support contact, and explicit operator or Swiggy gates. Its answer console accepts one reviewer question, returns the matched FAQ answer with confidence and policy context, and blocks blank questions instead of guessing.
 - Swiggy Innovation Radar maps Swiggy developer ideas, enterprise signals, access ground rules, support model, and MCP references into premium product lanes, route optimizations, build phases, differentiators, and partner gates.
 - Swiggy Builder Talent Signal Center converts standout-project, demo, GitHub, hiring-visibility, and portfolio signals into proof assets, talent paths, outreach copy, reviewer narrative, and Swiggy-owned recruiting or feature-placement gates.
 - Traffic Readiness maps expected sessions, daily tool calls, peak QPS, Retry-After behavior, seven-day major-event notice, capacity upgrade email, and the 1% -> 10% -> 50% -> 100% rollout.

@@ -107,6 +107,7 @@ import type {
   SwiggyCustomizationValidation,
   SwiggyDocsCoverageReport,
   SwiggyDocsTwinExplorer,
+  SwiggyFaqAnswerResolution,
   SwiggyFaqPolicyCenter,
   SwiggyFaqResolutionCenter,
   SwiggyGrowthPartnershipCenter,
@@ -492,6 +493,13 @@ export function fetchSwiggyFaqPolicyCenter() {
 
 export function fetchSwiggyFaqResolutionCenter() {
   return requestJson<{ faqResolution: SwiggyFaqResolutionCenter }>("/api/swiggy-faq-resolution-center");
+}
+
+export function answerSwiggyFaqQuestion(question: string) {
+  return requestJson<{ faqAnswer: SwiggyFaqAnswerResolution }>("/api/swiggy-faq-resolution-center/answer", {
+    method: "POST",
+    body: JSON.stringify({ question }),
+  });
 }
 
 export function fetchSwiggyGrowthPartnershipCenter() {

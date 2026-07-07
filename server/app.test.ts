@@ -1716,6 +1716,40 @@ describe("MealPilot API", () => {
     expect(center.externalGates.some((gate: string) => gate.includes("staging or production credentials"))).toBe(true);
   });
 
+  it("answers one Swiggy FAQ reviewer question with proof and manual gates", async () => {
+    const { app } = createMealPilotServer();
+    await request(app).post("/api/plan").send(planningRequest).expect(201);
+    const response = await request(app)
+      .post("/api/swiggy-faq-resolution-center/answer")
+      .send({ question: "What proof does Swiggy need before production access?" })
+      .expect(200);
+    const answer = response.body.faqAnswer;
+
+    expect(answer.decision).toBe("answered");
+    expect(answer.matchedQuestionId).toBeTruthy();
+    expect(answer.matchScore).toBeGreaterThanOrEqual(25);
+    expect(answer.proofLinks).toContain("/api/swiggy-faq-resolution-center");
+    expect(answer.proofLinks.length).toBeGreaterThanOrEqual(3);
+    expect(answer.activationCtas.map((item: { id: string }) => item.id)).toContain("answer_packet");
+    expect(answer.supportContact.email).toBe("builders@swiggy.in");
+    expect(answer.assertions.some((assertion: string) => assertion.includes("No external form"))).toBe(true);
+    expect(answer.externalGates.some((gate: string) => gate.includes("credentials"))).toBe(true);
+  });
+
+  it("blocks blank Swiggy FAQ answer questions instead of guessing", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app)
+      .post("/api/swiggy-faq-resolution-center/answer")
+      .send({ question: "   " })
+      .expect(200);
+    const answer = response.body.faqAnswer;
+
+    expect(answer.decision).toBe("blocked_empty");
+    expect(answer.matchedQuestionId).toBeNull();
+    expect(answer.matchScore).toBe(0);
+    expect(answer.assertions.some((assertion: string) => assertion.includes("Blank reviewer questions are blocked"))).toBe(true);
+  });
+
   it("returns Swiggy growth partnership experiments and partner asks", async () => {
     const { app } = createMealPilotServer();
     const response = await request(app).get("/api/swiggy-growth-partnership").expect(200);

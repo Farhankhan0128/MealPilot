@@ -1144,6 +1144,33 @@ assert(
   "FAQ resolution external gates are missing",
 );
 
+const faqAnswer = await request("/api/swiggy-faq-resolution-center/answer", {
+  method: "POST",
+  body: JSON.stringify({ question: "What proof does Swiggy need before production access?" }),
+});
+assert(faqAnswer.faqAnswer.decision === "answered", "FAQ answer console did not answer the sample reviewer question");
+assert(Boolean(faqAnswer.faqAnswer.matchedQuestionId), "FAQ answer console did not return a matched question");
+assert(faqAnswer.faqAnswer.matchScore >= 25, "FAQ answer console confidence is below target");
+assert(
+  faqAnswer.faqAnswer.proofLinks.includes("/api/swiggy-faq-resolution-center"),
+  "FAQ answer console does not link back to the resolution center",
+);
+assert(
+  faqAnswer.faqAnswer.activationCtas.some((item) => item.id === "answer_packet"),
+  "FAQ answer console answer-packet CTA is missing",
+);
+assert(
+  faqAnswer.faqAnswer.assertions.some((assertion) => assertion.includes("No external form")),
+  "FAQ answer console external-action guard is missing",
+);
+
+const blankFaqAnswer = await request("/api/swiggy-faq-resolution-center/answer", {
+  method: "POST",
+  body: JSON.stringify({ question: " " }),
+});
+assert(blankFaqAnswer.faqAnswer.decision === "blocked_empty", "FAQ answer console must block blank questions");
+assert(blankFaqAnswer.faqAnswer.matchedQuestionId === null, "FAQ answer console must not match blank questions");
+
 const growthPartnership = await request("/api/swiggy-growth-partnership");
 assert(growthPartnership.growthPartnership.score >= 90, "growth partnership score is below target");
 assert(growthPartnership.growthPartnership.totalSignals >= 14, "growth partnership signal coverage is incomplete");

@@ -533,6 +533,32 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-faq-resolution-center/answer": {
+        post: {
+          tags: ["Builder Access"],
+          summary: "Swiggy FAQ Answer Console for one reviewer question",
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    question: { type: "string" },
+                  },
+                  required: ["question"],
+                },
+              },
+            },
+          },
+          responses: {
+            "200": {
+              description:
+                "Matched FAQ answer with confidence, owner, status, proof links, related policy rules, activation CTAs, support contact, assertions, and explicit operator or Swiggy gates without submitting external actions",
+            },
+          },
+        },
+      },
       "/api/swiggy-growth-partnership": {
         get: {
           tags: ["Builder Access"],
