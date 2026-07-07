@@ -1,6 +1,8 @@
 import type {
+  NutritionBudgetAdvice,
   NutritionBudgetIntelligence,
   NutritionBudgetPlaybook,
+  NutritionBudgetPreference,
   NutritionBudgetRecommendation,
   NutritionBudgetRoute,
   NutritionBudgetStatus,
@@ -368,6 +370,118 @@ export function buildNutritionBudgetIntelligence(): NutritionBudgetIntelligence 
       "Real coupon eligibility, stock, prices, and serviceability require Swiggy staging and production credentials.",
       "Camera or OCR-assisted nutrition labeling requires approved vision/OCR tooling before production use.",
       "Health, medical, or therapeutic diet claims require a separate regulated product review outside the Swiggy MCP integration.",
+    ],
+  };
+}
+
+function routeFor(input: {
+  budget: number;
+  partySize: number;
+  preference: NutritionBudgetPreference;
+  couponSensitive: boolean;
+  includeDineout: boolean;
+}) {
+  if (input.includeDineout || input.preference === "dineout") return "dineout_evening_balance";
+  if (input.partySize >= 4) return "group_budget_allocator";
+  if (input.couponSensitive || input.budget < 650) return "coupon_safe_macro_cart";
+  if (input.preference === "instamart") return "instamart_protein_gap";
+  if (input.preference === "combined") return "group_budget_allocator";
+  return "food_protein_lunch";
+}
+
+function recommendationFor(routeId: string) {
+  return (
+    recommendations.find((item) => item.routeId === routeId) ??
+    recommendations.find((item) => item.routeId === "food_protein_lunch") ??
+    recommendations[0]
+  );
+}
+
+function costFor(input: { routeId: string; recommendation: NutritionBudgetRecommendation; partySize: number }) {
+  if (input.routeId === "group_budget_allocator") {
+    return Math.max(input.recommendation.estimatedCost, input.partySize * 290);
+  }
+  if (input.routeId === "dineout_evening_balance") {
+    return input.recommendation.estimatedCost + Math.max(0, input.partySize - 2) * 180;
+  }
+  return input.recommendation.estimatedCost;
+}
+
+function budgetFit(budget: number, estimatedCost: number): NutritionBudgetAdvice["budgetFit"] {
+  if (estimatedCost <= budget * 0.92) return "under_budget";
+  if (estimatedCost <= budget) return "at_risk";
+  return "over_budget";
+}
+
+function checklist(routeItem: NutritionBudgetRoute): NutritionBudgetAdvice["checklist"] {
+  return routeItem.toolchain.slice(0, 5).map((tool, index) => ({
+    sequence: index + 1,
+    label:
+      index === 0
+        ? "Resolve fresh Swiggy context"
+        : index === routeItem.toolchain.length - 1
+          ? "Confirm commercial boundary"
+          : `Run ${tool.split(".").at(-1) ?? tool}`,
+    tool,
+    guardrail:
+      index === 0
+        ? routeItem.dataBoundary
+        : index >= 3
+          ? routeItem.confirmationGate
+          : routeItem.budgetRule,
+  }));
+}
+
+export function adviseNutritionBudget(input: {
+  city: "Bengaluru" | "Delhi NCR" | "Mumbai";
+  budget: number;
+  proteinTargetGrams: number;
+  partySize: number;
+  preference: NutritionBudgetPreference;
+  couponSensitive: boolean;
+  includeDineout: boolean;
+}): NutritionBudgetAdvice {
+  const selectedRouteId = routeFor(input);
+  const swiggyRoute = routes.find((item) => item.id === selectedRouteId) ?? routes[0];
+  const recommendationItem = recommendationFor(swiggyRoute.id);
+  const estimatedCost = costFor({ routeId: swiggyRoute.id, recommendation: recommendationItem, partySize: input.partySize });
+  const estimatedProteinGrams =
+    swiggyRoute.id === "group_budget_allocator"
+      ? Math.max(recommendationItem.estimatedProteinGrams, Math.round(input.partySize * 28))
+      : recommendationItem.estimatedProteinGrams;
+  const proteinCoverage = Number(Math.min(1, estimatedProteinGrams / input.proteinTargetGrams).toFixed(2));
+  const fit = budgetFit(input.budget, estimatedCost);
+
+  return {
+    generatedAt: new Date().toISOString(),
+    requestId: `nutrition_${Date.now().toString(36)}`,
+    input,
+    selectedRouteId: swiggyRoute.id,
+    budgetFit: fit,
+    estimatedCost,
+    estimatedProteinGrams,
+    proteinCoverage,
+    recommendedAction:
+      fit === "over_budget"
+        ? "Run the coupon-safe rescue path, reduce shared add-ons, and refresh Swiggy cart totals before any confirmation."
+        : proteinCoverage < 0.75
+          ? "Add an Instamart protein-gap restock or swap to a higher protein-per-rupee item before cart review."
+          : "Prepare the selected Swiggy route, then show fresh cart or slot truth before checkout, booking, or ordering.",
+    swiggyRoute,
+    recommendation: recommendationItem,
+    checklist: checklist(swiggyRoute),
+    telemetry: [
+      { field: "city", value: input.city, redaction: "safe enum" },
+      { field: "selected_route", value: swiggyRoute.id, redaction: "route id only" },
+      { field: "budget_fit", value: fit, redaction: "derived bucket only" },
+      { field: "protein_coverage", value: String(proteinCoverage), redaction: "derived estimate only" },
+      { field: "raw_nutrition_payload_retained", value: "false", redaction: "hard-coded safety invariant" },
+    ],
+    assertions: [
+      "Nutrition advice is advisory and does not make medical claims.",
+      "Estimated protein and savings never replace fresh Swiggy menu, product, cart, coupon, slot, or checkout truth.",
+      "Food, Instamart, and Dineout commercial actions remain separately confirmed.",
+      "No cart mutation, booking, checkout, or order is executed by the advisor.",
     ],
   };
 }

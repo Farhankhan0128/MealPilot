@@ -188,6 +188,7 @@ import {
   fetchVersionMonitor,
   fetchVisualQaCenter,
   fetchWidgets,
+  adviseNutritionBudget,
   removeRecommendationItem,
   forecastSwiggyMealWindow,
   reconcileSwiggyPaymentTruth,
@@ -242,6 +243,7 @@ import type {
   McpResourcePromptStudio,
   McpToolLabReport,
   McpReplayStep,
+  NutritionBudgetAdvice,
   NutritionBudgetIntelligence,
   ObservabilityMetric,
   ObservabilityTraceReport,
@@ -2948,6 +2950,25 @@ function LaunchCenterPanel({
   });
   const [customizationValidation, setCustomizationValidation] = useState<SwiggyCustomizationValidation | null>(null);
   const [customizationValidationStatus, setCustomizationValidationStatus] = useState<"idle" | "loading" | "error">("idle");
+  const [nutritionAdviceForm, setNutritionAdviceForm] = useState<{
+    city: "Bengaluru" | "Delhi NCR" | "Mumbai";
+    budget: number;
+    proteinTargetGrams: number;
+    partySize: number;
+    preference: "food" | "instamart" | "dineout" | "combined";
+    couponSensitive: boolean;
+    includeDineout: boolean;
+  }>({
+    city: "Bengaluru",
+    budget: 900,
+    proteinTargetGrams: 80,
+    partySize: 1,
+    preference: "food",
+    couponSensitive: true,
+    includeDineout: false,
+  });
+  const [nutritionAdvice, setNutritionAdvice] = useState<NutritionBudgetAdvice | null>(null);
+  const [nutritionAdviceStatus, setNutritionAdviceStatus] = useState<"idle" | "loading" | "error">("idle");
   const [showcaseForm, setShowcaseForm] = useState({
     demoUrl: "https://youtu.be/mealpilot-swiggy-demo",
     githubUrl: "https://github.com/Farhankhan0128/MealPilot",
@@ -3087,6 +3108,18 @@ function LaunchCenterPanel({
       setCustomizationValidationStatus("idle");
     } catch {
       setCustomizationValidationStatus("error");
+    }
+  }
+
+  async function runNutritionAdvice(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setNutritionAdviceStatus("loading");
+    try {
+      const response = await adviseNutritionBudget(nutritionAdviceForm);
+      setNutritionAdvice(response.nutritionAdvice);
+      setNutritionAdviceStatus("idle");
+    } catch {
+      setNutritionAdviceStatus("error");
     }
   }
 
@@ -6537,6 +6570,124 @@ function LaunchCenterPanel({
               <strong>{nutritionBudget?.externalGates.length ?? 0}</strong>
               <span>Gates</span>
             </div>
+          </div>
+          <form className="nutrition-advisor" onSubmit={runNutritionAdvice}>
+            <label htmlFor="nutrition-city">City</label>
+            <select
+              id="nutrition-city"
+              value={nutritionAdviceForm.city}
+              onChange={(event) =>
+                setNutritionAdviceForm((current) => ({ ...current, city: event.target.value as typeof nutritionAdviceForm.city }))
+              }
+            >
+              <option value="Bengaluru">Bengaluru</option>
+              <option value="Delhi NCR">Delhi NCR</option>
+              <option value="Mumbai">Mumbai</option>
+            </select>
+            <label htmlFor="nutrition-preference">Route</label>
+            <select
+              id="nutrition-preference"
+              value={nutritionAdviceForm.preference}
+              onChange={(event) =>
+                setNutritionAdviceForm((current) => ({
+                  ...current,
+                  preference: event.target.value as typeof nutritionAdviceForm.preference,
+                  includeDineout: event.target.value === "dineout" ? true : current.includeDineout,
+                }))
+              }
+            >
+              <option value="food">Food</option>
+              <option value="instamart">Instamart</option>
+              <option value="dineout">Dineout</option>
+              <option value="combined">Combined</option>
+            </select>
+            <div className="nutrition-number-grid">
+              <label htmlFor="nutrition-budget">Budget</label>
+              <input
+                id="nutrition-budget"
+                type="number"
+                min="250"
+                max="50000"
+                value={nutritionAdviceForm.budget}
+                onChange={(event) =>
+                  setNutritionAdviceForm((current) => ({ ...current, budget: Number(event.target.value) }))
+                }
+              />
+              <label htmlFor="nutrition-protein">Protein</label>
+              <input
+                id="nutrition-protein"
+                type="number"
+                min="20"
+                max="300"
+                value={nutritionAdviceForm.proteinTargetGrams}
+                onChange={(event) =>
+                  setNutritionAdviceForm((current) => ({ ...current, proteinTargetGrams: Number(event.target.value) }))
+                }
+              />
+              <label htmlFor="nutrition-party">Party</label>
+              <input
+                id="nutrition-party"
+                type="number"
+                min="1"
+                max="30"
+                value={nutritionAdviceForm.partySize}
+                onChange={(event) =>
+                  setNutritionAdviceForm((current) => ({ ...current, partySize: Number(event.target.value) }))
+                }
+              />
+            </div>
+            <div className="nutrition-toggle-grid">
+              <label htmlFor="nutrition-coupon">
+                <input
+                  id="nutrition-coupon"
+                  type="checkbox"
+                  checked={nutritionAdviceForm.couponSensitive}
+                  onChange={(event) =>
+                    setNutritionAdviceForm((current) => ({ ...current, couponSensitive: event.target.checked }))
+                  }
+                />
+                Coupon sensitive
+              </label>
+              <label htmlFor="nutrition-dineout">
+                <input
+                  id="nutrition-dineout"
+                  type="checkbox"
+                  checked={nutritionAdviceForm.includeDineout}
+                  onChange={(event) =>
+                    setNutritionAdviceForm((current) => ({ ...current, includeDineout: event.target.checked }))
+                  }
+                />
+                Include Dineout
+              </label>
+            </div>
+            <button type="submit" disabled={nutritionAdviceStatus === "loading"} aria-label="Advise nutrition budget route">
+              {nutritionAdviceStatus === "loading" ? <Loader2 aria-hidden="true" /> : <Gauge aria-hidden="true" />}
+              Advise
+            </button>
+            {nutritionAdviceStatus === "error" ? <small role="status">Nutrition budget advice unavailable.</small> : null}
+          </form>
+          <div
+            className="nutrition-advice-result"
+            data-status={
+              nutritionAdvice?.budgetFit === "under_budget"
+                ? "healthy"
+                : nutritionAdvice?.budgetFit === "at_risk"
+                  ? "watch"
+                  : "blocked"
+            }
+          >
+            <div>
+              <span>Budget fit</span>
+              <strong>{nutritionAdvice ? nutritionAdvice.budgetFit.replace("_", " ") : "Awaiting advice"}</strong>
+            </div>
+            <p>
+              {nutritionAdvice
+                ? `${nutritionAdvice.selectedRouteId} / Rs ${nutritionAdvice.estimatedCost} / ${Math.round(
+                    nutritionAdvice.proteinCoverage * 100,
+                  )}% protein coverage`
+                : "Choose a Swiggy route before cart, checkout, booking, or order actions."}
+            </p>
+            {nutritionAdvice ? <small>{nutritionAdvice.recommendedAction}</small> : null}
           </div>
           <ul className="compact-status-list">
             {(nutritionBudget?.routes ?? []).slice(0, 5).map((routeItem) => (

@@ -114,7 +114,7 @@ import { buildSandboxCredentialWorkbench } from "./services/sandboxCredentialWor
 import { buildSwiggyShowcaseSubmissionCenter, composeSwiggyShowcaseSubmission } from "./services/showcaseSubmissionCenter.js";
 import { buildSwiggySubmissionTimelineCenter, buildSwiggySubmissionTimelineCheckpoint } from "./services/submissionTimelineCenter.js";
 import { buildSwiggyTalentSignalCenter, composeSwiggyTalentOutreach } from "./services/talentSignalCenter.js";
-import { buildNutritionBudgetIntelligence } from "./services/nutritionBudgetIntelligence.js";
+import { adviseNutritionBudget, buildNutritionBudgetIntelligence } from "./services/nutritionBudgetIntelligence.js";
 import { buildObservabilityTraceReport, buildSwiggyRouteOptimizationReport } from "./services/observability.js";
 import { buildSwiggyOfferIntelligence, decideSwiggyOffer } from "./services/offerIntelligence.js";
 import { buildSwiggyOperatingContractCenter } from "./services/operatingContractCenter.js";
@@ -287,6 +287,16 @@ const customizationValidationSchema = z.object({
   hasAllergy: z.boolean(),
   userChangedVariant: z.boolean(),
   quantity: z.number().int().min(1).max(20),
+  includeDineout: z.boolean(),
+});
+
+const nutritionBudgetAdviceSchema = z.object({
+  city: z.enum(["Bengaluru", "Delhi NCR", "Mumbai"]),
+  budget: z.number().int().min(250).max(50000),
+  proteinTargetGrams: z.number().int().min(20).max(300),
+  partySize: z.number().int().min(1).max(30),
+  preference: z.enum(["food", "instamart", "dineout", "combined"]),
+  couponSensitive: z.boolean(),
   includeDineout: z.boolean(),
 });
 
@@ -1512,6 +1522,11 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/nutrition-budget-intelligence", (_req, res) => {
     res.json({ nutritionBudget: buildNutritionBudgetIntelligence() });
+  });
+
+  app.post("/api/nutrition-budget-intelligence/advise", (req, res) => {
+    const body = nutritionBudgetAdviceSchema.parse(req.body);
+    res.json({ nutritionAdvice: adviseNutritionBudget(body) });
   });
 
   app.get("/api/household-preference-graph", (_req, res) => {

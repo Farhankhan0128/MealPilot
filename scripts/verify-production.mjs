@@ -318,7 +318,8 @@ assert(
   "OpenAPI customization studio contract is missing",
 );
 assert(
-  openApi.paths["/api/nutrition-budget-intelligence"].get.summary.includes("Nutrition and Budget"),
+  openApi.paths["/api/nutrition-budget-intelligence"].get.summary.includes("Nutrition and Budget") &&
+    openApi.paths["/api/nutrition-budget-intelligence/advise"].post.summary.includes("nutrition"),
   "OpenAPI nutrition and budget intelligence contract is missing",
 );
 assert(
@@ -2599,6 +2600,48 @@ assert(
   nutritionBudget.nutritionBudget.externalGates.some((gate) => gate.includes("nutrition fields")) &&
     nutritionBudget.nutritionBudget.externalGates.some((gate) => gate.includes("vision/OCR")),
   "nutrition and budget external data gates are missing",
+);
+const nutritionAdvice = await request("/api/nutrition-budget-intelligence/advise", {
+  method: "POST",
+  body: JSON.stringify({
+    city: "Bengaluru",
+    budget: 250,
+    proteinTargetGrams: 80,
+    partySize: 1,
+    preference: "food",
+    couponSensitive: true,
+    includeDineout: false,
+  }),
+});
+assert(
+  nutritionAdvice.nutritionAdvice.selectedRouteId === "coupon_safe_macro_cart" &&
+    nutritionAdvice.nutritionAdvice.budgetFit === "over_budget" &&
+    nutritionAdvice.nutritionAdvice.checklist.some((step) => step.tool === "food.apply_food_coupon"),
+  "nutrition and budget advice coupon route is wrong",
+);
+assert(
+  nutritionAdvice.nutritionAdvice.telemetry.some(
+    (item) => item.field === "raw_nutrition_payload_retained" && item.value === "false",
+  ) && nutritionAdvice.nutritionAdvice.assertions.some((assertion) => assertion.includes("does not make medical claims")),
+  "nutrition and budget advice safety telemetry is incomplete",
+);
+const dineoutNutritionAdvice = await request("/api/nutrition-budget-intelligence/advise", {
+  method: "POST",
+  body: JSON.stringify({
+    city: "Mumbai",
+    budget: 1800,
+    proteinTargetGrams: 70,
+    partySize: 2,
+    preference: "dineout",
+    couponSensitive: false,
+    includeDineout: true,
+  }),
+});
+assert(
+  dineoutNutritionAdvice.nutritionAdvice.selectedRouteId === "dineout_evening_balance" &&
+    dineoutNutritionAdvice.nutritionAdvice.swiggyRoute.swiggyServers.includes("dineout") &&
+    dineoutNutritionAdvice.nutritionAdvice.checklist.some((step) => step.tool === "dineout.get_available_slots"),
+  "nutrition and budget Dineout advice route is wrong",
 );
 
 const householdPreference = await request("/api/household-preference-graph");

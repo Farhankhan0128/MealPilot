@@ -313,6 +313,7 @@ POST /api/swiggy-meal-window-intelligence/forecast
 GET  /api/swiggy-customization-studio
 POST /api/swiggy-customization-studio/validate
 GET  /api/nutrition-budget-intelligence
+POST /api/nutrition-budget-intelligence/advise
 GET  /api/household-preference-graph
 GET  /api/guest-collaboration-calendar
 GET  /api/luxury-experience-workspace
@@ -608,7 +609,7 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 
 `GET /api/swiggy-customization-studio` and `POST /api/swiggy-customization-studio/validate` productize item choice safety: Food `search_menu` customization shape, menu browsing, add-ons, variants, Instamart pack-size truth, full-cart replacement, allergy cautions, and post-mutation cart readbacks become a visible review layer before any cart write. The Launch Center validator makes this actionable with server, intent, quantity, allergy, variant, and Dineout-aware controls that return mutation risk, selected Swiggy route, required cart readback, and checklist proof.
 
-`GET /api/nutrition-budget-intelligence` is the premium nutrition and budget layer: Food menu search, coupons, cart reads, Instamart go-to items, product search, Dineout slots, and combined routes become protein-per-rupee, pantry-gap, group-budget, and evening-balance playbooks with explicit nutrition-estimate safety controls.
+`GET /api/nutrition-budget-intelligence` and `POST /api/nutrition-budget-intelligence/advise` are the premium nutrition and budget layer: Food menu search, coupons, cart reads, Instamart go-to items, product search, Dineout slots, and combined routes become protein-per-rupee, pantry-gap, group-budget, and evening-balance playbooks with explicit nutrition-estimate safety controls. The Launch Center advisor accepts city, budget, protein target, party size, route preference, coupon sensitivity, and Dineout intent, then returns budget fit, selected Swiggy route, protein coverage, fresh-read checklist, and no-medical-claim telemetry without mutating carts.
 
 `GET /api/household-preference-graph` is the consented personalization layer: Food active-order signals, Instamart order history and go-to items, Dineout saved-location and booking signals, household modes, pantry forecasts, and support failure memory become ranking weights with retention rules and DPDP controls.
 

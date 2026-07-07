@@ -39,6 +39,7 @@ import type {
   McpToolLabReport,
   McpServerCoverage,
   McpReplayStep,
+  NutritionBudgetAdvice,
   NutritionBudgetIntelligence,
   ObservabilityTraceReport,
   ObservabilityMetric,
@@ -805,6 +806,21 @@ export function reconcileSwiggyPaymentTruth(input: {
 
 export function fetchNutritionBudgetIntelligence() {
   return requestJson<{ nutritionBudget: NutritionBudgetIntelligence }>("/api/nutrition-budget-intelligence");
+}
+
+export function adviseNutritionBudget(input: {
+  city: "Bengaluru" | "Delhi NCR" | "Mumbai";
+  budget: number;
+  proteinTargetGrams: number;
+  partySize: number;
+  preference: "food" | "instamart" | "dineout" | "combined";
+  couponSensitive: boolean;
+  includeDineout: boolean;
+}) {
+  return requestJson<{ nutritionAdvice: NutritionBudgetAdvice }>("/api/nutrition-budget-intelligence/advise", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
 }
 
 export function fetchHouseholdPreferenceGraph() {

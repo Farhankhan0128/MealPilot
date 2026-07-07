@@ -3214,6 +3214,33 @@ export interface NutritionBudgetIntelligence {
   externalGates: string[];
 }
 
+export type NutritionBudgetPreference = "food" | "instamart" | "dineout" | "combined";
+
+export interface NutritionBudgetAdvice {
+  generatedAt: string;
+  requestId: string;
+  input: {
+    city: "Bengaluru" | "Delhi NCR" | "Mumbai";
+    budget: number;
+    proteinTargetGrams: number;
+    partySize: number;
+    preference: NutritionBudgetPreference;
+    couponSensitive: boolean;
+    includeDineout: boolean;
+  };
+  selectedRouteId: string;
+  budgetFit: "under_budget" | "at_risk" | "over_budget";
+  estimatedCost: number;
+  estimatedProteinGrams: number;
+  proteinCoverage: number;
+  recommendedAction: string;
+  swiggyRoute: NutritionBudgetRoute;
+  recommendation: NutritionBudgetRecommendation;
+  checklist: Array<{ sequence: number; label: string; tool: string; guardrail: string }>;
+  telemetry: Array<{ field: string; value: string; redaction: string }>;
+  assertions: string[];
+}
+
 export type HouseholdPreferenceStatus = "ready" | "needs_live_history" | "external_gate";
 
 export interface HouseholdPreferenceSignal {

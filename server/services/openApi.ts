@@ -1131,6 +1131,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/nutrition-budget-intelligence/advise": {
+        post: {
+          tags: ["Commerce"],
+          summary: "Advise a Swiggy nutrition and budget route before cart, checkout, booking, or order actions",
+          responses: {
+            "200": {
+              description:
+                "Selected Food, Instamart, Dineout, or combined nutrition-budget route with budget-fit verdict, protein estimate, fresh-read checklist, redacted telemetry, no-medical-claim assertion, and separate commercial confirmation gates",
+            },
+          },
+        },
+      },
       "/api/household-preference-graph": {
         get: {
           tags: ["Builder Access"],

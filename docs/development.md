@@ -253,6 +253,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/swiggy-customization-studio`
 - `POST /api/swiggy-customization-studio/validate`
 - `GET /api/nutrition-budget-intelligence`
+- `POST /api/nutrition-budget-intelligence/advise`
 - `GET /api/household-preference-graph`
 - `GET /api/guest-collaboration-calendar`
 - `GET /api/luxury-experience-workspace`
@@ -454,7 +455,7 @@ Production should use an HTTPS redirect URI with exact-match allowlisting.
 
 `/api/swiggy-customization-studio` is the productized customization proof surface. It maps Food `search_menu` add-ons and variants, Instamart product pack sizes, allergy-sensitive substitution cautions, voice-safe choice limits, and cart readback gates into exact-choice review lanes; `/api/swiggy-customization-studio/validate` returns deterministic mutation-risk buckets, required readback tools, selected Swiggy route proof, and checklist steps without mutating a cart. The Launch Center validator exercises Food, Instamart, and combined/Dineout-aware customization paths from the UI.
 
-`/api/nutrition-budget-intelligence` shows premium nutrition and budget planning routes: protein-per-rupee Food search, COD-safe coupons, Instamart go-to and product search, group-budget allocation, Dineout evening balance, and camera-label macro planning with no medical claims.
+`/api/nutrition-budget-intelligence` shows premium nutrition and budget planning routes: protein-per-rupee Food search, COD-safe coupons, Instamart go-to and product search, group-budget allocation, Dineout evening balance, and camera-label macro planning with no medical claims. `/api/nutrition-budget-intelligence/advise` powers the Launch Center advisor with city, budget, protein target, party size, route preference, coupon sensitivity, and Dineout intent, returning the selected Swiggy route, budget-fit verdict, protein estimate, fresh-read checklist, and no-medical-claim telemetry without mutating carts.
 
 `/api/household-preference-graph` shows consent-aware personalization routes: Food active-order taste signals, Instamart go-to items and order history, Dineout saved-location memory, household member weights, pantry forecasts, failure memory, retention rules, and DPDP controls.
 
@@ -549,7 +550,7 @@ The test suite checks that:
 - Swiggy Payment Truth Center validates cart totals, coupon savings, COD eligibility, Instamart bills, Dineout free-booking status, paid-cart gates, support-review routes, and no raw payment-instrument retention through the Launch Center reconciler.
 - Swiggy Meal Window Intelligence validates order/cook/reserve/track/wait timing gates, no scheduled Food orders, fresh reads before action, and redacted ETA/slot telemetry.
 - Swiggy Customization Studio validates Food add-ons, variants, Instamart pack sizes, allergy cautions, raw-id suppression, and post-mutation cart readbacks.
-- Nutrition & Budget Intelligence maps Food, Instamart, Dineout, coupon, cart, group, and camera-label routes to protein-per-rupee estimates, budget controls, safety notes, and external data gates.
+- Nutrition & Budget Intelligence maps Food, Instamart, Dineout, coupon, cart, group, and camera-label routes to protein-per-rupee estimates, budget controls, safety notes, external data gates, and an executable advisor endpoint that selects safe Swiggy routes before any commercial action.
 - Household Preference Graph maps active orders, go-to items, order history, saved-location signals, household weights, forecasts, cancellation rules, and retention boundaries to consented personalization evidence.
 - Guest Collaboration & Calendar Center maps group votes, occasion templates, Dineout slot checks, Food reminder handoffs, Instamart prep, calendar artifacts, and Slack/Teams gates to separate Swiggy confirmation controls.
 - Luxury Experience Workspace maps reservation, Food cart, Instamart basket, combined evening, and recovery review surfaces to authoritative Swiggy reads, all-tool coverage, widget fallbacks, voice contracts, telemetry, and separate confirmation gates.

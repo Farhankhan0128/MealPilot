@@ -133,6 +133,7 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/swiggy-customization-studio"].get.summary).toContain("Customization Studio");
     expect(openApi.body.paths["/api/swiggy-customization-studio/validate"].post.summary).toContain("customization");
     expect(openApi.body.paths["/api/nutrition-budget-intelligence"].get.summary).toContain("Nutrition and Budget");
+    expect(openApi.body.paths["/api/nutrition-budget-intelligence/advise"].post.summary).toContain("nutrition");
     expect(openApi.body.paths["/api/household-preference-graph"].get.summary).toContain("Household Preference Graph");
     expect(openApi.body.paths["/api/guest-collaboration-calendar"].get.summary).toContain("Guest Collaboration");
     expect(openApi.body.paths["/api/luxury-experience-workspace"].get.summary).toContain("Luxury Experience Workspace");
@@ -3199,6 +3200,50 @@ describe("MealPilot API", () => {
     expect(intelligence.safetyControls.some((control: string) => control.includes("does not make medical claims"))).toBe(true);
     expect(intelligence.externalGates.some((gate: string) => gate.includes("nutrition fields"))).toBe(true);
     expect(intelligence.externalGates.some((gate: string) => gate.includes("vision/OCR"))).toBe(true);
+
+    const adviceResponse = await request(app)
+      .post("/api/nutrition-budget-intelligence/advise")
+      .send({
+        city: "Bengaluru",
+        budget: 250,
+        proteinTargetGrams: 80,
+        partySize: 1,
+        preference: "food",
+        couponSensitive: true,
+        includeDineout: false,
+      })
+      .expect(200);
+    const advice = adviceResponse.body.nutritionAdvice;
+
+    expect(advice.selectedRouteId).toBe("coupon_safe_macro_cart");
+    expect(advice.budgetFit).toBe("over_budget");
+    expect(advice.checklist.map((step: { tool: string }) => step.tool)).toEqual(
+      expect.arrayContaining(["food.fetch_food_coupons", "food.apply_food_coupon", "food.get_food_cart"]),
+    );
+    expect(advice.assertions.some((assertion: string) => assertion.includes("does not make medical claims"))).toBe(true);
+    expect(
+      advice.telemetry.some(
+        (item: { field: string; value: string }) => item.field === "raw_nutrition_payload_retained" && item.value === "false",
+      ),
+    ).toBe(true);
+
+    const dineoutAdviceResponse = await request(app)
+      .post("/api/nutrition-budget-intelligence/advise")
+      .send({
+        city: "Mumbai",
+        budget: 1800,
+        proteinTargetGrams: 70,
+        partySize: 2,
+        preference: "dineout",
+        couponSensitive: false,
+        includeDineout: true,
+      })
+      .expect(200);
+    const dineoutAdvice = dineoutAdviceResponse.body.nutritionAdvice;
+
+    expect(dineoutAdvice.selectedRouteId).toBe("dineout_evening_balance");
+    expect(dineoutAdvice.swiggyRoute.swiggyServers).toEqual(expect.arrayContaining(["dineout", "food", "instamart"]));
+    expect(dineoutAdvice.checklist.map((step: { tool: string }) => step.tool)).toContain("dineout.get_available_slots");
   });
 
   it("returns a consent-aware household preference graph for Swiggy history and go-to signals", async () => {

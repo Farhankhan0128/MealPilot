@@ -2700,7 +2700,8 @@ select:focus {
 
 .payment-truth-reconciler,
 .meal-window-forecaster,
-.customization-validator {
+.customization-validator,
+.nutrition-advisor {
   display: grid;
   gap: 8px;
   border-radius: 8px;
@@ -2710,7 +2711,8 @@ select:focus {
 
 .payment-truth-reconciler label,
 .meal-window-forecaster label,
-.customization-validator label {
+.customization-validator label,
+.nutrition-advisor label {
   color: var(--ink-muted);
   font-size: 0.75rem;
   font-weight: 900;
@@ -2723,7 +2725,9 @@ select:focus {
 .meal-window-forecaster input,
 .customization-validator select,
 .customization-validator input,
-.customization-validator textarea {
+.customization-validator textarea,
+.nutrition-advisor select,
+.nutrition-advisor input {
   width: 100%;
   min-width: 0;
   border: 1px solid var(--line);
@@ -2743,7 +2747,8 @@ select:focus {
 
 .payment-truth-number-grid,
 .meal-window-number-grid,
-.customization-number-grid {
+.customization-number-grid,
+.nutrition-number-grid {
   display: grid;
   grid-template-columns: minmax(0, 0.72fr) minmax(0, 1fr);
   gap: 8px;
@@ -2751,21 +2756,28 @@ select:focus {
 }
 
 .meal-window-toggle,
-.customization-toggle-grid label {
+.customization-toggle-grid label,
+.nutrition-toggle-grid label {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   padding: 7px 0 2px;
 }
 
-.customization-toggle-grid {
+.customization-toggle-grid,
+.nutrition-toggle-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
 }
 
+.nutrition-toggle-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .meal-window-toggle input,
-.customization-toggle-grid input {
+.customization-toggle-grid input,
+.nutrition-toggle-grid input {
   width: 18px;
   height: 18px;
   accent-color: var(--green);
@@ -2774,7 +2786,8 @@ select:focus {
 
 .payment-truth-reconciler button,
 .meal-window-forecaster button,
-.customization-validator button {
+.customization-validator button,
+.nutrition-advisor button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -2790,28 +2803,32 @@ select:focus {
 
 .payment-truth-reconciler button:disabled,
 .meal-window-forecaster button:disabled,
-.customization-validator button:disabled {
+.customization-validator button:disabled,
+.nutrition-advisor button:disabled {
   cursor: wait;
   opacity: 0.72;
 }
 
 .payment-truth-reconciler svg,
 .meal-window-forecaster svg,
-.customization-validator svg {
+.customization-validator svg,
+.nutrition-advisor svg {
   width: 17px;
   height: 17px;
 }
 
 .payment-truth-reconciler small,
 .meal-window-forecaster small,
-.customization-validator small {
+.customization-validator small,
+.nutrition-advisor small {
   color: var(--coral);
   font-weight: 850;
 }
 
 .payment-truth-result,
 .meal-window-result,
-.customization-result {
+.customization-result,
+.nutrition-advice-result {
   display: grid;
   gap: 8px;
   border-radius: 8px;
@@ -2822,24 +2839,28 @@ select:focus {
 
 .payment-truth-result[data-status="healthy"],
 .meal-window-result[data-status="healthy"],
-.customization-result[data-status="healthy"] {
+.customization-result[data-status="healthy"],
+.nutrition-advice-result[data-status="healthy"] {
   border-left-color: var(--green);
 }
 
 .payment-truth-result[data-status="blocked"],
 .meal-window-result[data-status="blocked"],
-.customization-result[data-status="blocked"] {
+.customization-result[data-status="blocked"],
+.nutrition-advice-result[data-status="blocked"] {
   border-left-color: var(--coral);
 }
 
 .meal-window-result[data-status="watch"],
-.customization-result[data-status="watch"] {
+.customization-result[data-status="watch"],
+.nutrition-advice-result[data-status="watch"] {
   border-left-color: var(--gold);
 }
 
 .payment-truth-result > div,
 .meal-window-result > div,
-.customization-result > div {
+.customization-result > div,
+.nutrition-advice-result > div {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -2848,7 +2869,8 @@ select:focus {
 
 .payment-truth-result span,
 .meal-window-result span,
-.customization-result span {
+.customization-result span,
+.nutrition-advice-result span {
   color: var(--ink-muted);
   font-size: 0.75rem;
   font-weight: 900;
@@ -2857,7 +2879,8 @@ select:focus {
 
 .payment-truth-result strong,
 .meal-window-result strong,
-.customization-result strong {
+.customization-result strong,
+.nutrition-advice-result strong {
   color: var(--green-dark);
   font-size: 0.84rem;
   text-align: right;
@@ -2868,7 +2891,9 @@ select:focus {
 .meal-window-result p,
 .meal-window-result small,
 .customization-result p,
-.customization-result small {
+.customization-result small,
+.nutrition-advice-result p,
+.nutrition-advice-result small {
   margin: 0;
   color: var(--ink-muted);
   font-size: 0.82rem;
@@ -2877,7 +2902,8 @@ select:focus {
 }
 
 .meal-window-result small,
-.customization-result small {
+.customization-result small,
+.nutrition-advice-result small {
   color: var(--green-dark);
   font-weight: 850;
 }
@@ -5033,7 +5059,8 @@ select:focus {
     display: none;
   }
 
-  .customization-toggle-grid {
+  .customization-toggle-grid,
+  .nutrition-toggle-grid {
     grid-template-columns: 1fr;
   }
 
