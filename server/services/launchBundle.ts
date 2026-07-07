@@ -736,6 +736,15 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
         "Unifies localhost proof, DCR, OAuth PKCE, exact redirect URI, secret vault, staging credentials, seeded smoke, 48-hour soak, and production promotion gates.",
     },
     {
+      id: "credential_readiness_dossier",
+      label: "Swiggy Credential Readiness Dossier",
+      path: "/api/swiggy-credential-readiness-dossier",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Joins source-freeze posture, public homepage signals, 35-tool manifest certification, redacted issuance receipt state, DCR, vault, staging credentials, seeded users, proof commands, and production-promotion gates.",
+    },
+    {
       id: "sandbox_credential_workbench",
       label: "Sandbox Credential Workbench",
       path: "/api/sandbox-credential-workbench",
@@ -1189,6 +1198,8 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- Staging Cutover Rehearsal: /api/mcp/staging-cutover",
     "- Swiggy Staging Credential Drill Center: /api/swiggy-staging-credential-drill",
     "- Swiggy Credential Handoff Center: /api/swiggy-credential-handoff-center",
+    "- Swiggy Credential Readiness Dossier: /api/swiggy-credential-readiness-dossier",
+    "- Credential Issuance Receipt State: /api/swiggy-credential-issuance/state",
     "- Swiggy Live Signal Calibration Center: /api/swiggy-live-signal-calibration",
     "- Data Governance Center: /api/data-governance-center",
     "- Enterprise Delegated Auth Center: /api/enterprise-delegated-auth",
@@ -1211,6 +1222,8 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- Resource & Prompt Studio: /api/mcp/resource-prompt-studio",
     "- Credential Cockpit: /api/credential-onboarding",
     "- Credential Handoff Center: /api/swiggy-credential-handoff-center",
+    "- Credential Readiness Dossier: /api/swiggy-credential-readiness-dossier",
+    "- Credential Issuance Receipt State: /api/swiggy-credential-issuance/state",
     "- Sandbox Credential Workbench: /api/sandbox-credential-workbench",
     "- Swiggy OAuth Status: /api/auth/swiggy/status",
     "- Swiggy Auth Lifecycle Center: /api/swiggy-auth-lifecycle-center",

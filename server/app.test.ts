@@ -1861,6 +1861,7 @@ describe("MealPilot API", () => {
     expect(packet.copyBlocks.formFields).toContain("Redirect URI(s)");
     expect(packet.copyBlocks.attachments).toContain("Production Launch Bundle");
     expect(packet.copyBlocks.handoffEmail.to).toBe("builders@swiggy.in");
+    expect(packet.readiness.some((item: { id: string; status: string }) => item.id === "credential_receipt_packet" && item.status === "ready")).toBe(true);
     expect(packet.readiness.some((item: { id: string; status: string }) => item.id === "demo_video" && item.status === "operator_input")).toBe(true);
     expect(packet.readiness.some((item: { id: string; status: string }) => item.id === "staging_credentials" && item.status === "external_gate")).toBe(true);
     expect(packet.externalGates.some((gate: string) => gate.includes("Google Form"))).toBe(true);
@@ -3754,7 +3755,7 @@ describe("MealPilot API", () => {
     expect(vault.score).toBeGreaterThanOrEqual(90);
     expect(vault.totalArtifacts).toBeGreaterThanOrEqual(30);
     expect(vault.readyArtifacts).toBeGreaterThanOrEqual(30);
-    expect(vault.totalScreenshotTargets).toBe(18);
+    expect(vault.totalScreenshotTargets).toBe(19);
     expect(vault.readyScreenshotTargets).toBeGreaterThanOrEqual(5);
     expect(vault.totalCommands).toBe(7);
     expect(vault.readyCommands).toBeGreaterThanOrEqual(6);
@@ -3886,6 +3887,16 @@ describe("MealPilot API", () => {
       vault.artifactSections.some((section: { artifacts: Array<{ id: string; label: string; path: string }> }) =>
         section.artifacts.some(
           (artifact) =>
+            artifact.id === "credential_readiness_dossier" &&
+            artifact.label === "Swiggy Credential Readiness Dossier" &&
+            artifact.path === "/api/swiggy-credential-readiness-dossier",
+        ),
+      ),
+    ).toBe(true);
+    expect(
+      vault.artifactSections.some((section: { artifacts: Array<{ id: string; label: string; path: string }> }) =>
+        section.artifacts.some(
+          (artifact) =>
             artifact.id === "widget_experience_composer" &&
             artifact.label === "Swiggy Widget Experience Composer" &&
             artifact.path === "/api/swiggy-widget-experience-composer",
@@ -3973,6 +3984,14 @@ describe("MealPilot API", () => {
       ),
     ).toBe(true);
     expect(
+      vault.screenshotTargets.some(
+        (target: { id: string; selector: string; status: string }) =>
+          target.id === "credential_readiness_card" &&
+          target.selector === ".credential-readiness-card" &&
+          target.status === "ready",
+      ),
+    ).toBe(true);
+    expect(
       vault.commands.some(
         (command: { id: string; command: string; expectedSignal: string }) =>
           command.id === "verify_production" &&
@@ -3987,6 +4006,8 @@ describe("MealPilot API", () => {
     expect(vault.reviewerEmail.body).toContain("/api/swiggy-demo-evidence-director");
     expect(vault.reviewerEmail.body).toContain("/api/swiggy-partner-support-room");
     expect(vault.reviewerEmail.body).toContain("/api/swiggy-benefits-activation-center");
+    expect(vault.reviewerEmail.body).toContain("/api/swiggy-credential-readiness-dossier");
+    expect(vault.reviewerEmail.body).toContain("/api/swiggy-credential-issuance/state");
     expect(vault.reviewerEmail.body).toContain("/api/swiggy-faq-resolution-center");
     expect(vault.reviewerEmail.body).toContain("/api/swiggy-talent-signal-center");
     expect(vault.reviewerEmail.body).toContain("/api/swiggy-conversion-center");
@@ -7698,6 +7719,7 @@ describe("MealPilot API", () => {
         "Swiggy OAuth Status",
         "Swiggy Auth Lifecycle Center",
         "Sandbox Credential Workbench",
+        "Swiggy Credential Readiness Dossier",
         "Enterprise Delegated Auth Center",
         "Swiggy Enterprise Platform Center",
         "Traffic Readiness Plan",
@@ -7804,6 +7826,8 @@ describe("MealPilot API", () => {
     expect(bundle.handoffEmail.body).toContain("/api/mcp/staging-cutover");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-staging-credential-drill");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-credential-handoff-center");
+    expect(bundle.handoffEmail.body).toContain("/api/swiggy-credential-readiness-dossier");
+    expect(bundle.handoffEmail.body).toContain("/api/swiggy-credential-issuance/state");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-live-signal-calibration");
     expect(bundle.handoffEmail.body).toContain("/api/audit-ledger");
     expect(bundle.commands.some((command: { command: string }) => command.command.includes("npm run verify:production"))).toBe(

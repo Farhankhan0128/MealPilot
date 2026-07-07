@@ -205,6 +205,13 @@ export function buildBuilderPacketExport(options: {
         "Attach GitHub, generated packet, visual report, launch bundle, governance, traffic, and audit links.",
       ),
       readiness(
+        "credential_receipt_packet",
+        "Credential receipt packet",
+        "ready",
+        "Credential Readiness Dossier and redacted issuance state are included in the launch bundle, reviewer vault, and handoff email without secret values.",
+        "Save redacted issuance metadata when Swiggy replies, then rerun verify:production and export:builder-packet.",
+      ),
+      readiness(
         "demo_video",
         "Demo video URL",
         "operator_input",

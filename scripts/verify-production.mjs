@@ -3026,7 +3026,7 @@ const reviewerArtifactVault = await request("/api/reviewer-artifact-vault");
 assert(reviewerArtifactVault.reviewerArtifactVault.score >= 90, "reviewer artifact vault score is below target");
 assert(reviewerArtifactVault.reviewerArtifactVault.totalArtifacts >= 30, "reviewer artifact vault artifacts are incomplete");
 assert(reviewerArtifactVault.reviewerArtifactVault.readyArtifacts >= 30, "reviewer artifact vault ready artifacts are incomplete");
-assert(reviewerArtifactVault.reviewerArtifactVault.totalScreenshotTargets === 18, "reviewer artifact vault screenshot targets are incomplete");
+assert(reviewerArtifactVault.reviewerArtifactVault.totalScreenshotTargets === 19, "reviewer artifact vault screenshot targets are incomplete");
 assert(reviewerArtifactVault.reviewerArtifactVault.readyScreenshotTargets >= 5, "reviewer artifact vault ready screenshots are incomplete");
 assert(reviewerArtifactVault.reviewerArtifactVault.totalCommands === 7, "reviewer artifact vault commands are incomplete");
 assert(reviewerArtifactVault.reviewerArtifactVault.readyCommands >= 6, "reviewer artifact vault ready commands are incomplete");
@@ -3147,6 +3147,17 @@ assert(
     ),
   ),
   "reviewer artifact vault credential handoff artifact is missing",
+);
+assert(
+  reviewerArtifactVault.reviewerArtifactVault.artifactSections.some((section) =>
+    section.artifacts.some(
+      (artifact) =>
+        artifact.id === "credential_readiness_dossier" &&
+        artifact.label === "Swiggy Credential Readiness Dossier" &&
+        artifact.path === "/api/swiggy-credential-readiness-dossier",
+    ),
+  ),
+  "reviewer artifact vault credential readiness dossier artifact is missing",
 );
 assert(
   reviewerArtifactVault.reviewerArtifactVault.artifactSections.some((section) =>
@@ -3307,6 +3318,15 @@ assert(
 assert(
   reviewerArtifactVault.reviewerArtifactVault.screenshotTargets.some(
     (target) =>
+      target.id === "credential_readiness_card" &&
+      target.selector === ".credential-readiness-card" &&
+      target.status === "ready",
+  ),
+  "reviewer artifact vault credential readiness screenshot target is missing",
+);
+assert(
+  reviewerArtifactVault.reviewerArtifactVault.screenshotTargets.some(
+    (target) =>
       target.id === "review_decision_card" &&
       target.selector === ".review-decision-card" &&
       target.status === "ready",
@@ -3333,6 +3353,8 @@ assert(
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-demo-evidence-director") &&
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-partner-support-room") &&
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-benefits-activation-center") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-credential-readiness-dossier") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-credential-issuance/state") &&
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-faq-resolution-center") &&
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-talent-signal-center") &&
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-conversion-center") &&
@@ -7716,7 +7738,8 @@ assert(
   "builder packet copy blocks are incomplete",
 );
 assert(
-  builderPacket.packet.readiness.some((item) => item.id === "demo_video" && item.status === "operator_input") &&
+  builderPacket.packet.readiness.some((item) => item.id === "credential_receipt_packet" && item.status === "ready") &&
+    builderPacket.packet.readiness.some((item) => item.id === "demo_video" && item.status === "operator_input") &&
     builderPacket.packet.readiness.some((item) => item.id === "staging_credentials" && item.status === "external_gate"),
   "builder packet readiness gates are incomplete",
 );
@@ -7781,6 +7804,7 @@ assert(
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy OAuth Status") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Auth Lifecycle Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Sandbox Credential Workbench") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Credential Readiness Dossier") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Enterprise Delegated Auth Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Enterprise Platform Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Traffic Readiness Plan") &&
@@ -7888,6 +7912,14 @@ assert(
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-credential-handoff-center"),
   "launch bundle credential handoff link is missing",
+);
+assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-credential-readiness-dossier"),
+  "launch bundle credential readiness dossier handoff link is missing",
+);
+assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-credential-issuance/state"),
+  "launch bundle credential issuance state handoff link is missing",
 );
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-live-signal-calibration"),
