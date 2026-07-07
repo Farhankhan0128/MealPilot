@@ -139,6 +139,11 @@ assert(
   "OpenAPI Swiggy capability traceability contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-homepage-signal-coverage"]?.get?.summary?.includes("Homepage Signal Coverage") &&
+    openApi.paths["/api/swiggy-homepage-signal-coverage"]?.get?.responses?.["200"]?.description?.includes("header/footer"),
+  "OpenAPI Swiggy homepage signal coverage contract is missing",
+);
+assert(
   openApi.paths["/api/swiggy-builders-journey-gates"]?.get?.summary?.includes("Journey Gate") &&
     openApi.paths["/api/swiggy-builders-journey-gates"]?.get?.responses?.["200"]?.description?.includes("Quick Review"),
   "OpenAPI Builders journey gates contract is missing",
@@ -813,6 +818,58 @@ assert(
     ) &&
     capabilityTraceability.capabilityTraceability.externalGates.some((gate) => gate.includes("staging credentials")),
   "capability traceability runbook or gates are incomplete",
+);
+
+const homepageSignalCoverage = await request("/api/swiggy-homepage-signal-coverage");
+assert(homepageSignalCoverage.homepageSignalCoverage.score >= 80, "homepage signal coverage score is below target");
+assert(
+  homepageSignalCoverage.homepageSignalCoverage.totals.signals === 11 &&
+    homepageSignalCoverage.homepageSignalCoverage.totals.headerLinks >= 7 &&
+    homepageSignalCoverage.homepageSignalCoverage.totals.footerLinks >= 8 &&
+    homepageSignalCoverage.homepageSignalCoverage.totals.ctas >= 11 &&
+    homepageSignalCoverage.homepageSignalCoverage.totals.proofLinks >= 20,
+  "homepage signal coverage totals are incomplete",
+);
+assert(
+  ["navigation", "access", "benefits", "sources"].every((id) =>
+    homepageSignalCoverage.homepageSignalCoverage.groups.some((group) => group.id === id),
+  ),
+  "homepage signal coverage groups are incomplete",
+);
+assert(
+  [
+    "global_header",
+    "docs_subnav",
+    "footer_resources_legal",
+    "start_build_apply",
+    "demo_submission",
+    "generous_rate_limits",
+    "direct_support_slack",
+    "cobrand_growth",
+    "faq_policy",
+    "llms_agent_sources",
+    "mcp_capabilities",
+  ].every((id) => homepageSignalCoverage.homepageSignalCoverage.signals.some((signal) => signal.id === id)),
+  "homepage signal coverage rows are incomplete",
+);
+assert(
+  homepageSignalCoverage.homepageSignalCoverage.signals.some(
+    (signal) =>
+      signal.id === "cobrand_growth" &&
+      signal.status === "swiggy_gate" &&
+      signal.proofLinks.includes("/api/brand-compliance-kit"),
+  ),
+  "homepage signal coverage growth gate is missing",
+);
+assert(
+  homepageSignalCoverage.homepageSignalCoverage.commands.some((command) =>
+    command.command.includes("/api/swiggy-homepage-signal-coverage"),
+  ) &&
+    homepageSignalCoverage.homepageSignalCoverage.assertions.some((assertion) =>
+      assertion.includes("public homepage promise"),
+    ) &&
+    homepageSignalCoverage.homepageSignalCoverage.externalGates.some((gate) => gate.includes("demo")),
+  "homepage signal coverage proof commands or gates are incomplete",
 );
 
 const journeyGates = await request("/api/swiggy-builders-journey-gates");
@@ -3750,8 +3807,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 66, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 66, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 67, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 67, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -4021,6 +4078,12 @@ assert(
     ),
   ),
   "visual QA Capability Traceability target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some((target) => target.id === "homepage_signal_card" && target.selector === ".homepage-signal-card"),
+  ),
+  "visual QA Homepage Signal Coverage target is missing",
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
@@ -8048,7 +8111,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 66, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 67, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -8062,7 +8125,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("66")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("67")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -8654,6 +8717,8 @@ console.log(
       capabilityTraceabilityRows: capabilityTraceability.capabilityTraceability.totals.rows,
       capabilityTraceabilityCtas: capabilityTraceability.capabilityTraceability.totals.officialCtas,
       capabilityTraceabilityTools: capabilityTraceability.capabilityTraceability.totals.officialTools,
+      homepageSignalCoverageScore: homepageSignalCoverage.homepageSignalCoverage.score,
+      homepageSignalCoverageSignals: homepageSignalCoverage.homepageSignalCoverage.totals.signals,
       journeyGateScore: journeyGates.journeyGates.score,
       journeyGateGates: journeyGates.journeyGates.totals.gates,
       journeyGateProofLinks: journeyGates.journeyGates.totals.proofLinks,

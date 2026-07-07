@@ -133,6 +133,7 @@ import {
   fetchSwiggyBuildersLaunchStory,
   fetchSwiggyBuildersModuleIntelligence,
   fetchSwiggyCapabilityTraceability,
+  fetchSwiggyHomepageSignalCoverage,
   fetchSwiggyBuildersJourneyGates,
   fetchSwiggyBuildersHomepageExperience,
   fetchSwiggyBuildersSourceEvolution,
@@ -308,6 +309,7 @@ import type {
   SwiggyBuildersLiveSourceResilienceCenter,
   SwiggyBuildersModuleIntelligenceCenter,
   SwiggyCapabilityTraceabilityMatrix,
+  SwiggyHomepageSignalCoverageBoard,
   SwiggyBuildersReviewDecisionCenter,
   SwiggyBuildersSourceEvolutionCenter,
   SwiggyBuildersPageMeshAuditor,
@@ -592,6 +594,8 @@ function App() {
   const [moduleIntelligence, setModuleIntelligence] = useState<SwiggyBuildersModuleIntelligenceCenter | null>(null);
   const [capabilityTraceability, setCapabilityTraceability] =
     useState<SwiggyCapabilityTraceabilityMatrix | null>(null);
+  const [homepageSignalCoverage, setHomepageSignalCoverage] =
+    useState<SwiggyHomepageSignalCoverageBoard | null>(null);
   const [journeyGates, setJourneyGates] = useState<SwiggyBuildersJourneyGateCenter | null>(null);
   const [homepageExperience, setHomepageExperience] = useState<SwiggyBuildersHomepageExperienceCenter | null>(null);
   const [sourceEvolution, setSourceEvolution] = useState<SwiggyBuildersSourceEvolutionCenter | null>(null);
@@ -822,6 +826,7 @@ function App() {
       buildersLaunchStoryResponse,
       moduleIntelligenceResponse,
       capabilityTraceabilityResponse,
+      homepageSignalCoverageResponse,
       journeyGatesResponse,
       homepageExperienceResponse,
       sourceEvolutionResponse,
@@ -950,6 +955,7 @@ function App() {
       fetchSwiggyBuildersLaunchStory(),
       fetchSwiggyBuildersModuleIntelligence(),
       fetchSwiggyCapabilityTraceability(),
+      fetchSwiggyHomepageSignalCoverage(),
       fetchSwiggyBuildersJourneyGates(),
       fetchSwiggyBuildersHomepageExperience(),
       fetchSwiggyBuildersSourceEvolution(),
@@ -1079,6 +1085,7 @@ function App() {
     setBuildersLaunchStory(buildersLaunchStoryResponse.launchStory);
     setModuleIntelligence(moduleIntelligenceResponse.moduleIntelligence);
     setCapabilityTraceability(capabilityTraceabilityResponse.capabilityTraceability);
+    setHomepageSignalCoverage(homepageSignalCoverageResponse.homepageSignalCoverage);
     setJourneyGates(journeyGatesResponse.journeyGates);
     setHomepageExperience(homepageExperienceResponse.homepageExperience);
     setSourceEvolution(sourceEvolutionResponse.sourceEvolution);
@@ -1211,6 +1218,7 @@ function App() {
       buildersLaunchStoryResponse,
       moduleIntelligenceResponse,
       capabilityTraceabilityResponse,
+      homepageSignalCoverageResponse,
       journeyGatesResponse,
       homepageExperienceResponse,
       sourceEvolutionResponse,
@@ -1336,6 +1344,7 @@ function App() {
       fetchSwiggyBuildersLaunchStory(),
       fetchSwiggyBuildersModuleIntelligence(),
       fetchSwiggyCapabilityTraceability(),
+      fetchSwiggyHomepageSignalCoverage(),
       fetchSwiggyBuildersJourneyGates(),
       fetchSwiggyBuildersHomepageExperience(),
       fetchSwiggyBuildersSourceEvolution(),
@@ -1461,6 +1470,7 @@ function App() {
     setBuildersLaunchStory(buildersLaunchStoryResponse.launchStory);
     setModuleIntelligence(moduleIntelligenceResponse.moduleIntelligence);
     setCapabilityTraceability(capabilityTraceabilityResponse.capabilityTraceability);
+    setHomepageSignalCoverage(homepageSignalCoverageResponse.homepageSignalCoverage);
     setJourneyGates(journeyGatesResponse.journeyGates);
     setHomepageExperience(homepageExperienceResponse.homepageExperience);
     setSourceEvolution(sourceEvolutionResponse.sourceEvolution);
@@ -2161,6 +2171,7 @@ function App() {
                 buildersLaunchStory={buildersLaunchStory}
                 moduleIntelligence={moduleIntelligence}
                 capabilityTraceability={capabilityTraceability}
+                homepageSignalCoverage={homepageSignalCoverage}
                 journeyGates={journeyGates}
                 homepageExperience={homepageExperience}
                 sourceEvolution={sourceEvolution}
@@ -2778,6 +2789,7 @@ function LaunchCenterPanel({
   buildersLaunchStory,
   moduleIntelligence,
   capabilityTraceability,
+  homepageSignalCoverage,
   journeyGates,
   homepageExperience,
   sourceEvolution,
@@ -2878,6 +2890,7 @@ function LaunchCenterPanel({
   buildersLaunchStory: SwiggyBuildersLaunchStoryCenterReport | null;
   moduleIntelligence: SwiggyBuildersModuleIntelligenceCenter | null;
   capabilityTraceability: SwiggyCapabilityTraceabilityMatrix | null;
+  homepageSignalCoverage: SwiggyHomepageSignalCoverageBoard | null;
   journeyGates: SwiggyBuildersJourneyGateCenter | null;
   homepageExperience: SwiggyBuildersHomepageExperienceCenter | null;
   sourceEvolution: SwiggyBuildersSourceEvolutionCenter | null;
@@ -4758,6 +4771,57 @@ function LaunchCenterPanel({
             </a>
             <a href="/api/swiggy-builders-module-intelligence" target="_blank" rel="noreferrer">
               Modules
+            </a>
+            <a href="/api/swiggy-cta-execution-center" target="_blank" rel="noreferrer">
+              CTAs
+            </a>
+          </div>
+        </article>
+
+        <article className="homepage-signal-card">
+          <div className="mini-heading">
+            <MousePointerClick aria-hidden="true" />
+            <strong>Homepage Signal Coverage</strong>
+          </div>
+          <span>
+            {homepageSignalCoverage
+              ? `${homepageSignalCoverage.score}/100, ${homepageSignalCoverage.totals.signals} public signals`
+              : "Mapping homepage promises, header, footer, CTAs, llms, support, growth, and access gates"}
+          </span>
+          <div className="homepage-signal-grid">
+            <div>
+              <strong>{homepageSignalCoverage?.totals.headerLinks ?? 0}</strong>
+              <span>Header</span>
+            </div>
+            <div>
+              <strong>{homepageSignalCoverage?.totals.footerLinks ?? 0}</strong>
+              <span>Footer</span>
+            </div>
+            <div>
+              <strong>{homepageSignalCoverage?.totals.ctas ?? 0}</strong>
+              <span>CTAs</span>
+            </div>
+            <div>
+              <strong>{homepageSignalCoverage?.totals.proofLinks ?? 0}</strong>
+              <span>Proofs</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(homepageSignalCoverage?.groups ?? []).slice(0, 4).map((group) => (
+              <li key={group.id} data-status={group.rows === group.ready ? "healthy" : group.ready > 0 ? "watch" : "blocked"}>
+                <span>{group.label}</span>
+                <strong>
+                  {group.ready}/{group.rows}
+                </strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-intelligence-actions" aria-label="Homepage signal coverage links">
+            <a href="/api/swiggy-homepage-signal-coverage" target="_blank" rel="noreferrer">
+              Signal API
+            </a>
+            <a href="/api/swiggy-builders-homepage-experience" target="_blank" rel="noreferrer">
+              Homepage
             </a>
             <a href="/api/swiggy-cta-execution-center" target="_blank" rel="noreferrer">
               CTAs

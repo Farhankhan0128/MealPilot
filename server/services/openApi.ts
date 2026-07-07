@@ -394,6 +394,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-homepage-signal-coverage": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Homepage Signal Coverage Board for public homepage promises, header, footer, CTAs, and llms links",
+          responses: {
+            "200": {
+              description:
+                "Public Builders homepage signals mapped to MealPilot surfaces, backend endpoints, frontend visibility, docs proof, test proof, owners, gates, header/footer/docs counts, CTAs, llms links, support, rate limits, growth, demo, access, FAQ, and MCP capability coverage",
+            },
+          },
+        },
+      },
       "/api/swiggy-website-atlas": {
         get: {
           tags: ["Builder Access"],

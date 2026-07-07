@@ -171,6 +171,12 @@ describe("MealPilot app", () => {
         expect.objectContaining({ href: expect.stringContaining("/api/swiggy-capability-traceability") }),
       ]),
     );
+    expect(screen.getByText("Homepage Signal Coverage")).toBeInTheDocument();
+    expect(screen.getAllByRole("link", { name: "Signal API" })).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ href: expect.stringContaining("/api/swiggy-homepage-signal-coverage") }),
+      ]),
+    );
 
     fireEvent.click(screen.getByRole("button", { name: /Menu/i }));
     expect(screen.getByRole("navigation", { name: "Mobile navigation" })).toHaveClass("open");

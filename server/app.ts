@@ -75,6 +75,7 @@ import { buildSwiggyGrowthPartnershipCenter, composeSwiggyGrowthPartnershipAsk }
 import { buildSwiggyDemoEvidenceDirector } from "./services/demoEvidenceDirector.js";
 import { buildSwiggyHostedWidgetActivationCenter } from "./services/hostedWidgetActivation.js";
 import { buildSwiggyBuildersHomepageExperienceCenter } from "./services/homepageExperienceCenter.js";
+import { buildSwiggyHomepageSignalCoverageBoard } from "./services/homepageSignalCoverage.js";
 import { buildHouseholdPreferenceGraph, simulateHouseholdPreference } from "./services/householdPreferenceGraph.js";
 import { buildSwiggyInteractionQaCenter, rehearseSwiggyInteractionQaLane } from "./services/interactionQaCenter.js";
 import { buildSwiggyInnovationRadar } from "./services/innovationRadar.js";
@@ -1296,6 +1297,15 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/swiggy-capability-traceability", (_req, res) => {
     res.json({ capabilityTraceability: buildSwiggyCapabilityTraceability(config) });
+  });
+
+  app.get("/api/swiggy-homepage-signal-coverage", (_req, res) => {
+    res.json({
+      homepageSignalCoverage: buildSwiggyHomepageSignalCoverageBoard({
+        config,
+        latestPlan: store.getAllPlans().at(-1),
+      }),
+    });
   });
 
   app.get("/api/swiggy-website-atlas", (_req, res) => {

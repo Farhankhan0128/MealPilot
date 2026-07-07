@@ -55,6 +55,8 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/swiggy-builders-map"].get.summary).toContain("Swiggy Builders");
     expect(openApi.body.paths["/api/swiggy-capability-traceability"].get.summary).toContain("capability traceability");
     expect(openApi.body.paths["/api/swiggy-capability-traceability"].get.responses["200"].description).toContain("lifecycle gates");
+    expect(openApi.body.paths["/api/swiggy-homepage-signal-coverage"].get.summary).toContain("Homepage Signal Coverage");
+    expect(openApi.body.paths["/api/swiggy-homepage-signal-coverage"].get.responses["200"].description).toContain("header/footer");
     expect(openApi.body.paths["/api/swiggy-website-atlas"].get.summary).toContain("website header");
     expect(openApi.body.paths["/api/swiggy-builders-site-parity"].get.summary).toContain("homepage parity");
     expect(openApi.body.paths["/api/swiggy-builders-page-mesh"].get.summary).toContain("public page mesh");
@@ -1845,7 +1847,7 @@ describe("MealPilot API", () => {
     expect(packet.totals.formFields).toBeGreaterThanOrEqual(10);
     expect(packet.totals.requiredAttachments).toBeGreaterThanOrEqual(10);
     expect(packet.totals.launchArtifacts).toBeGreaterThanOrEqual(50);
-    expect(packet.totals.visualTargets).toBe(66);
+    expect(packet.totals.visualTargets).toBe(67);
     expect(packet.files.map((file: { id: string }) => file.id)).toEqual(
       expect.arrayContaining(["packet_json", "packet_markdown", "visual_report", "production_summary"]),
     );
@@ -1857,7 +1859,7 @@ describe("MealPilot API", () => {
     ).toBe(true);
     expect(
       packet.commands.some(
-        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("66"),
+        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("67"),
       ),
     ).toBe(true);
     expect(packet.copyBlocks.formFields).toContain("Redirect URI(s)");
@@ -4442,8 +4444,8 @@ describe("MealPilot API", () => {
     const visualQa = response.body.visualQa;
 
     expect(visualQa.score).toBe(100);
-    expect(visualQa.totalTargets).toBe(66);
-    expect(visualQa.readyTargets).toBe(66);
+    expect(visualQa.totalTargets).toBe(67);
+    expect(visualQa.readyTargets).toBe(67);
     expect(visualQa.totalRules).toBe(7);
     expect(visualQa.readyRules).toBe(7);
     expect(visualQa.totalCommands).toBe(5);
@@ -4507,6 +4509,16 @@ describe("MealPilot API", () => {
           (target) =>
             target.id === "capability_traceability_card" &&
             target.selector === ".capability-traceability-card" &&
+            target.viewport === "desktop",
+        ),
+      ),
+    ).toBe(true);
+    expect(
+      visualQa.targetGroups.some((group: { targets: Array<{ id: string; selector: string; viewport: string }> }) =>
+        group.targets.some(
+          (target) =>
+            target.id === "homepage_signal_card" &&
+            target.selector === ".homepage-signal-card" &&
             target.viewport === "desktop",
         ),
       ),
@@ -5207,6 +5219,55 @@ describe("MealPilot API", () => {
     expect(matrix.commands.some((command: { command: string }) => command.command.includes("/api/swiggy-capability-traceability"))).toBe(true);
     expect(matrix.assertions.some((assertion: string) => assertion.includes("Every official Swiggy Builders page"))).toBe(true);
     expect(matrix.externalGates.some((gate: string) => gate.includes("staging credentials"))).toBe(true);
+  });
+
+  it("returns a Swiggy homepage signal coverage board", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/swiggy-homepage-signal-coverage").expect(200);
+    const board = response.body.homepageSignalCoverage;
+
+    expect(board.score).toBeGreaterThanOrEqual(80);
+    expect(board.officialSource).toBe("https://mcp.swiggy.com/builders/");
+    expect(board.officialSources).toEqual(
+      expect.arrayContaining([
+        "https://mcp.swiggy.com/builders/",
+        "https://mcp.swiggy.com/builders/llms.txt",
+        "https://mcp.swiggy.com/builders/llms-full.txt",
+      ]),
+    );
+    expect(board.totals.signals).toBe(11);
+    expect(board.totals.headerLinks).toBeGreaterThanOrEqual(7);
+    expect(board.totals.footerLinks).toBeGreaterThanOrEqual(8);
+    expect(board.totals.ctas).toBeGreaterThanOrEqual(11);
+    expect(board.groups.map((group: { id: string }) => group.id)).toEqual(
+      expect.arrayContaining(["navigation", "access", "benefits", "sources"]),
+    );
+    expect(board.signals.map((signal: { id: string }) => signal.id)).toEqual(
+      expect.arrayContaining([
+        "global_header",
+        "docs_subnav",
+        "footer_resources_legal",
+        "start_build_apply",
+        "demo_submission",
+        "generous_rate_limits",
+        "direct_support_slack",
+        "cobrand_growth",
+        "faq_policy",
+        "llms_agent_sources",
+        "mcp_capabilities",
+      ]),
+    );
+    expect(
+      board.signals.some(
+        (signal: { id: string; status: string; proofLinks: string[] }) =>
+          signal.id === "cobrand_growth" &&
+          signal.status === "swiggy_gate" &&
+          signal.proofLinks.includes("/api/brand-compliance-kit"),
+      ),
+    ).toBe(true);
+    expect(board.commands.some((command: { command: string }) => command.command.includes("/api/swiggy-homepage-signal-coverage"))).toBe(true);
+    expect(board.assertions.some((assertion: string) => assertion.includes("public homepage promise"))).toBe(true);
+    expect(board.externalGates.some((gate: string) => gate.includes("demo"))).toBe(true);
   });
 
   it("returns Swiggy Builders Journey Gates for the official five-step path", async () => {

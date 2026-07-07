@@ -213,6 +213,17 @@ const targetGroups = [
         "artifacts/visual-qa/capability-traceability-card.png",
       ),
       target(
+        "homepage_signal_card",
+        "Homepage Signal Coverage card",
+        "/",
+        ".homepage-signal-card",
+        "desktop",
+        1280,
+        900,
+        "Homepage Signal Coverage shows public homepage promises, header, footer, CTA, llms, support, rate-limit, growth, demo, access, FAQ, and MCP proof mapping.",
+        "artifacts/visual-qa/homepage-signal-card.png",
+      ),
+      target(
         "journey_gates_card",
         "Journey Gates card",
         "/",

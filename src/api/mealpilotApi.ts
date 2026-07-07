@@ -87,6 +87,7 @@ import type {
   SwiggyBuildersLiveSourceResilienceCenter,
   SwiggyBuildersModuleIntelligenceCenter,
   SwiggyCapabilityTraceabilityMatrix,
+  SwiggyHomepageSignalCoverageBoard,
   SwiggyBuildersReviewDecisionCenter,
   SwiggyBuildersSourceEvolutionCenter,
   SwiggyBuildersPageMeshAuditor,
@@ -489,6 +490,12 @@ export function fetchSwiggyBuildersModuleIntelligence() {
 export function fetchSwiggyCapabilityTraceability() {
   return requestJson<{ capabilityTraceability: SwiggyCapabilityTraceabilityMatrix }>(
     "/api/swiggy-capability-traceability",
+  );
+}
+
+export function fetchSwiggyHomepageSignalCoverage() {
+  return requestJson<{ homepageSignalCoverage: SwiggyHomepageSignalCoverageBoard }>(
+    "/api/swiggy-homepage-signal-coverage",
   );
 }
 

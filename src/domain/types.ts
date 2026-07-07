@@ -970,6 +970,58 @@ export interface SwiggyCapabilityTraceabilityMatrix {
   externalGates: string[];
 }
 
+export type SwiggyHomepageSignalCoverageStatus = "ready" | "watch" | "operator_gate" | "swiggy_gate";
+export type SwiggyHomepageSignalCoverageOwner = "MealPilot" | "Operator" | "Swiggy" | "Joint";
+
+export interface SwiggyHomepageSignalCoverageRow {
+  id: string;
+  label: string;
+  publicSignal: string;
+  sourceLocation: string;
+  mealPilotSurface: string;
+  backendEndpoint: string;
+  frontendVisibility: string;
+  docsProof: string;
+  testProof: string;
+  owner: SwiggyHomepageSignalCoverageOwner;
+  status: SwiggyHomepageSignalCoverageStatus;
+  proofLinks: string[];
+  nextAction: string;
+}
+
+export interface SwiggyHomepageSignalCoverageGroup {
+  id: string;
+  label: string;
+  rows: number;
+  ready: number;
+  operatorGates: number;
+  swiggyGates: number;
+}
+
+export interface SwiggyHomepageSignalCoverageBoard {
+  generatedAt: string;
+  score: number;
+  officialSource: string;
+  officialSources: string[];
+  totals: {
+    signals: number;
+    ready: number;
+    watch: number;
+    operatorGates: number;
+    swiggyGates: number;
+    headerLinks: number;
+    docsLinks: number;
+    footerLinks: number;
+    ctas: number;
+    proofLinks: number;
+  };
+  groups: SwiggyHomepageSignalCoverageGroup[];
+  signals: SwiggyHomepageSignalCoverageRow[];
+  commands: Array<{ command: string; proves: string; expectedSignal: string }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type SwiggyBuildersJourneyGateStatus = "ready" | "watch" | "operator_gate" | "swiggy_gate";
 export type SwiggyBuildersJourneyGateOwner = "MealPilot" | "Operator" | "Swiggy" | "Joint";
 
