@@ -611,6 +611,35 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-talent-signal-center/compose": {
+        post: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Talent Signal outreach composer for one portfolio path",
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    pathId: { type: "string" },
+                    demoUrl: { type: "string" },
+                    githubUrl: { type: "string" },
+                    technicalSummary: { type: "string" },
+                  },
+                  required: ["pathId"],
+                },
+              },
+            },
+          },
+          responses: {
+            "200": {
+              description:
+                "Selected Talent Signal outreach packet with path, portfolio assets, reviewer narrative, proof links, missing inputs, builders@swiggy.in draft, and explicit Swiggy recruiting or feature-placement gates without sending email or claiming endorsement",
+            },
+          },
+        },
+      },
       "/api/swiggy-conversion-center": {
         get: {
           tags: ["Builder Access"],

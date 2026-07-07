@@ -86,6 +86,9 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/swiggy-talent-signal-center"].get.responses["200"].description).toContain(
       "developer hiring signal",
     );
+    expect(openApi.body.paths["/api/swiggy-talent-signal-center/compose"].post.summary).toContain(
+      "Talent Signal outreach composer",
+    );
     expect(openApi.body.paths["/api/swiggy-conversion-center"].get.summary).toContain("Conversion Center");
     expect(openApi.body.paths["/api/swiggy-conversion-center"].get.responses["200"].description).toContain(
       "What Will You Cook",
@@ -1870,6 +1873,52 @@ describe("MealPilot API", () => {
     expect(center.outreachDraft.to).toBe("builders@swiggy.in");
     expect(center.assertions.some((assertion: string) => assertion.includes("not a promise"))).toBe(true);
     expect(center.externalGates.some((gate: string) => gate.includes("hiring conversation"))).toBe(true);
+  });
+
+  it("composes a Swiggy Talent Signal outreach packet for a ready portfolio path", async () => {
+    const { app } = createMealPilotServer();
+
+    const response = await request(app)
+      .post("/api/swiggy-talent-signal-center/compose")
+      .send({
+        pathId: "builder_visibility",
+        demoUrl: "https://youtu.be/mealpilot-swiggy-demo",
+        githubUrl: "https://github.com/Farhankhan0128/MealPilot",
+        technicalSummary: "Complete Food, Instamart, and Dineout MCP product with safety gates.",
+      })
+      .expect(200);
+    const packet = response.body.talentOutreach;
+
+    expect(packet.decision).toBe("ready_local_handoff");
+    expect(packet.readinessScore).toBe(100);
+    expect(packet.path.id).toBe("builder_visibility");
+    expect(packet.missingInputs).toEqual([]);
+    expect(packet.portfolioAssets.map((asset: { id: string }) => asset.id)).toEqual(
+      expect.arrayContaining(["demo_video", "github_repo", "architecture_packet", "talent_outreach"]),
+    );
+    expect(packet.proofLinks).toEqual(
+      expect.arrayContaining(["/api/swiggy-talent-signal-center", "https://github.com/Farhankhan0128/MealPilot"]),
+    );
+    expect(packet.handoffDraft.to).toBe("builders@swiggy.in");
+    expect(packet.handoffDraft.bodyPreview).toContain("Complete Food, Instamart, and Dineout MCP product");
+    expect(packet.checklist.every((item: { status: string }) => item.status === "ready")).toBe(true);
+    expect(packet.assertions.some((assertion: string) => assertion.includes("never sends email"))).toBe(true);
+  });
+
+  it("keeps Swiggy Talent Signal outreach blocked when operator inputs are missing", async () => {
+    const { app } = createMealPilotServer();
+
+    const response = await request(app)
+      .post("/api/swiggy-talent-signal-center/compose")
+      .send({ pathId: "builder_visibility", demoUrl: "", githubUrl: "not-a-url", technicalSummary: "" })
+      .expect(200);
+    const packet = response.body.talentOutreach;
+
+    expect(packet.decision).toBe("needs_operator_input");
+    expect(packet.readinessScore).toBe(66);
+    expect(packet.missingInputs).toEqual(expect.arrayContaining(["demo_url", "github_url", "technical_summary"]));
+    expect(packet.path.id).toBe("builder_visibility");
+    expect(packet.checklist.some((item: { status: string }) => item.status === "operator_input")).toBe(true);
   });
 
   it("returns Swiggy Builders Conversion Center for final CTA handoff", async () => {

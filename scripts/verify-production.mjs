@@ -200,6 +200,15 @@ assert(
   "OpenAPI talent signal center contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-talent-signal-center/compose"]?.post?.summary?.includes(
+    "Talent Signal outreach composer",
+  ) &&
+    openApi.paths["/api/swiggy-talent-signal-center/compose"]?.post?.responses?.["200"]?.description?.includes(
+      "without sending email",
+    ),
+  "OpenAPI talent signal composer contract is missing",
+);
+assert(
   openApi.paths["/api/swiggy-conversion-center"].get.summary.includes("Conversion Center") &&
     openApi.paths["/api/swiggy-conversion-center"].get.responses["200"].description.includes("What Will You Cook"),
   "OpenAPI conversion center contract is missing",
@@ -1309,6 +1318,40 @@ assert(
   talentSignal.talentSignal.assertions.some((assertion) => assertion.includes("not a promise")) &&
     talentSignal.talentSignal.externalGates.some((gate) => gate.includes("hiring conversation")),
   "talent signal boundary assertions are missing",
+);
+const talentOutreach = await request("/api/swiggy-talent-signal-center/compose", {
+  method: "POST",
+  body: JSON.stringify({
+    pathId: "builder_visibility",
+    demoUrl: "https://youtu.be/mealpilot-swiggy-demo",
+    githubUrl: "https://github.com/Farhankhan0128/MealPilot",
+    technicalSummary: "Complete Food, Instamart, and Dineout MCP product with safety gates.",
+  }),
+});
+assert(
+  talentOutreach.talentOutreach.decision === "ready_local_handoff" &&
+    talentOutreach.talentOutreach.readinessScore === 100 &&
+    talentOutreach.talentOutreach.path.id === "builder_visibility" &&
+    talentOutreach.talentOutreach.missingInputs.length === 0 &&
+    talentOutreach.talentOutreach.proofLinks.includes("https://github.com/Farhankhan0128/MealPilot"),
+  "talent signal composer ready packet is incomplete",
+);
+assert(
+  talentOutreach.talentOutreach.handoffDraft.to === "builders@swiggy.in" &&
+    talentOutreach.talentOutreach.assertions.some((assertion) => assertion.includes("never sends email")),
+  "talent signal composer safety handoff is missing",
+);
+const blockedTalentOutreach = await request("/api/swiggy-talent-signal-center/compose", {
+  method: "POST",
+  body: JSON.stringify({ pathId: "builder_visibility", demoUrl: "", githubUrl: "not-a-url", technicalSummary: "" }),
+});
+assert(
+  blockedTalentOutreach.talentOutreach.decision === "needs_operator_input" &&
+    blockedTalentOutreach.talentOutreach.readinessScore === 66 &&
+    blockedTalentOutreach.talentOutreach.missingInputs.includes("demo_url") &&
+    blockedTalentOutreach.talentOutreach.missingInputs.includes("github_url") &&
+    blockedTalentOutreach.talentOutreach.missingInputs.includes("technical_summary"),
+  "talent signal composer missing-input guard is incomplete",
 );
 
 const conversion = await request("/api/swiggy-conversion-center");

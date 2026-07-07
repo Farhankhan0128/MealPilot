@@ -1957,6 +1957,37 @@ export interface SwiggyTalentSignalCenter {
   externalGates: string[];
 }
 
+export type SwiggyTalentOutreachDecision =
+  | "ready_local_handoff"
+  | "needs_operator_input"
+  | "swiggy_gate"
+  | "unknown_talent_path";
+
+export interface SwiggyTalentOutreachPacket {
+  generatedAt: string;
+  pathId: string;
+  decision: SwiggyTalentOutreachDecision;
+  readinessScore: number;
+  path: SwiggyTalentPath | null;
+  portfolioAssets: SwiggyTalentPortfolioAsset[];
+  reviewerNarrative: Array<{ sequence: number; label: string; say: string; proofLinks: string[] }>;
+  proofLinks: string[];
+  missingInputs: string[];
+  handoffDraft: {
+    to: string;
+    subject: string;
+    bodyPreview: string;
+  };
+  checklist: Array<{
+    id: string;
+    label: string;
+    status: SwiggyTalentSignalStatus;
+    owner: SwiggyTalentSignalOwner;
+  }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type SwiggyConversionStatus = "ready" | "operator_input" | "swiggy_gate";
 export type SwiggyConversionOwner = "MealPilot" | "Operator" | "Swiggy" | "Joint";
 

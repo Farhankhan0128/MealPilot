@@ -114,6 +114,7 @@ import type {
   SwiggyGrowthPartnershipCenter,
   SwiggyGrowthPartnershipAskPacket,
   SwiggyTalentSignalCenter,
+  SwiggyTalentOutreachPacket,
   SwiggyDemoEvidenceDirector,
   SwiggyInteractionQaCenter,
   SwiggyPartnerSupportRoom,
@@ -523,6 +524,21 @@ export function composeSwiggyGrowthPartnershipAsk(input: {
 
 export function fetchSwiggyTalentSignalCenter() {
   return requestJson<{ talentSignal: SwiggyTalentSignalCenter }>("/api/swiggy-talent-signal-center");
+}
+
+export function composeSwiggyTalentOutreach(input: {
+  pathId: string;
+  demoUrl: string;
+  githubUrl: string;
+  technicalSummary: string;
+}) {
+  return requestJson<{ talentOutreach: SwiggyTalentOutreachPacket }>(
+    "/api/swiggy-talent-signal-center/compose",
+    {
+      method: "POST",
+      body: JSON.stringify(input),
+    },
+  );
 }
 
 export function fetchSwiggyConversionCenter() {

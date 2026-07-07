@@ -113,7 +113,7 @@ import { buildOpenApiDocument } from "./services/openApi.js";
 import { buildSandboxCredentialWorkbench } from "./services/sandboxCredentialWorkbench.js";
 import { buildSwiggyShowcaseSubmissionCenter, composeSwiggyShowcaseSubmission } from "./services/showcaseSubmissionCenter.js";
 import { buildSwiggySubmissionTimelineCenter, buildSwiggySubmissionTimelineCheckpoint } from "./services/submissionTimelineCenter.js";
-import { buildSwiggyTalentSignalCenter } from "./services/talentSignalCenter.js";
+import { buildSwiggyTalentSignalCenter, composeSwiggyTalentOutreach } from "./services/talentSignalCenter.js";
 import { buildNutritionBudgetIntelligence } from "./services/nutritionBudgetIntelligence.js";
 import { buildObservabilityTraceReport, buildSwiggyRouteOptimizationReport } from "./services/observability.js";
 import { buildSwiggyOfferIntelligence, decideSwiggyOffer } from "./services/offerIntelligence.js";
@@ -1222,6 +1222,17 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/swiggy-talent-signal-center", (_req, res) => {
     res.json({ talentSignal: buildSwiggyTalentSignalCenter() });
+  });
+
+  app.post("/api/swiggy-talent-signal-center/compose", (req, res) => {
+    res.json({
+      talentOutreach: composeSwiggyTalentOutreach({
+        pathId: typeof req.body?.pathId === "string" ? req.body.pathId : "",
+        demoUrl: typeof req.body?.demoUrl === "string" ? req.body.demoUrl : "",
+        githubUrl: typeof req.body?.githubUrl === "string" ? req.body.githubUrl : "",
+        technicalSummary: typeof req.body?.technicalSummary === "string" ? req.body.technicalSummary : "",
+      }),
+    });
   });
 
   app.get("/api/swiggy-conversion-center", (_req, res) => {

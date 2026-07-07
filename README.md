@@ -103,7 +103,7 @@ Planned MCP servers:
 - Builder Intake Command Center that converts every signup, apply, demo, contact, docs, and footer CTA into owner-assigned next actions, access-form fields, a demo storyboard, and copy-ready handoff drafts.
 - FAQ & Policy Center that maps homepage, developer, enterprise, access-guideline, footer-resource, allowed/restricted/prohibited, operating-principle, and legal policy signals to MealPilot evidence.
 - Growth Partnership Center that turns Swiggy's get-noticed, co-branding, direct-support, hiring, co-marketing, analytics, and strategic-growth signals into launch experiments, proof assets, metrics, partner asks, and a local growth-ask composer.
-- Swiggy Builder Talent Signal Center at `/api/swiggy-talent-signal-center` that turns standout-project, demo, GitHub, and hiring-visibility signals into portfolio assets, talent paths, outreach copy, proof routes, and Swiggy-owned recruiting gates.
+- Swiggy Builder Talent Signal Center at `/api/swiggy-talent-signal-center` plus `POST /api/swiggy-talent-signal-center/compose` that turns standout-project, demo, GitHub, and hiring-visibility signals into portfolio assets, talent paths, outreach packets, proof routes, and Swiggy-owned recruiting gates.
 - Swiggy Builders Conversion Center at `/api/swiggy-conversion-center` that turns the final What Will You Cook CTA funnel into Start Building, See What's Possible, Request Access, Send Us a Demo, builders@swiggy.in, `llms.txt`, `llms-full.txt`, proof bundles, operator runbook, and Swiggy go-live gates.
 - Swiggy Showcase Submission Center at `/api/swiggy-showcase-submission-center` that packages pitch blocks, a 2-minute demo storyboard, proof metrics, visual-gallery links, outreach copy, operator-owned inputs, and Swiggy co-branding/feature gates for a feature-ready review packet.
 - Swiggy Demo Evidence Director at `/api/swiggy-demo-evidence-director` that converts the 2-3 minute recording into timed scenes, proof assets, redaction checks, visual QA links, runbook commands, and builders@swiggy.in handoff copy without recording video or sending email locally.
@@ -287,6 +287,7 @@ POST /api/swiggy-faq-resolution-center/answer
 GET  /api/swiggy-growth-partnership
 POST /api/swiggy-growth-partnership/compose
 GET  /api/swiggy-talent-signal-center
+POST /api/swiggy-talent-signal-center/compose
 GET  /api/swiggy-conversion-center
 GET  /api/swiggy-showcase-submission-center
 POST /api/swiggy-showcase-submission-center/compose
@@ -564,7 +565,7 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 
 `GET /api/swiggy-growth-partnership` is the growth partnership center: official get-noticed, hiring, co-branding, direct-support, enterprise analytics, and joint go-to-market signals become MealPilot launch experiments, proof assets, metric targets, and explicit partner asks while Swiggy feature placement, co-marketing approval, Slack, partner manager, dashboard access, and higher limits remain external gates. `POST /api/swiggy-growth-partnership/compose` powers the Launch Center growth composer for one experiment and one partner ask, returning a readiness decision, proof links, assets, metrics, checklist, builders@swiggy.in draft, and safety assertions without sending email, opening Slack, requesting dashboards, changing limits, or claiming Swiggy approval.
 
-`GET /api/swiggy-talent-signal-center` is the builder talent and portfolio center: standout-project, demo, GitHub, architecture, metrics, visual proof, and outreach signals become portfolio assets and talent paths while Swiggy recruiting, feature placement, endorsement, partner channels, and enterprise support remain explicit external gates.
+`GET /api/swiggy-talent-signal-center` is the builder talent and portfolio center: standout-project, demo, GitHub, architecture, metrics, visual proof, and outreach signals become portfolio assets and talent paths while Swiggy recruiting, feature placement, endorsement, partner channels, and enterprise support remain explicit external gates. `POST /api/swiggy-talent-signal-center/compose` powers the Launch Center Talent Signal composer with one talent path, demo URL, GitHub URL, and technical summary, returning a local outreach packet with readiness decision, missing inputs, portfolio assets, reviewer narrative, proof links, builders@swiggy.in draft, and no-endorsement assertions without sending email, applying for a role, requesting an interview, or claiming Swiggy approval.
 
 `GET /api/swiggy-conversion-center` is the final Builders conversion room: What Will You Cook, Start Building, See What's Possible, Request Access, Send Us a Demo, builders@swiggy.in, `llms.txt`, `llms-full.txt`, proof bundles, and go-live review are mapped into owner-tagged steps, a five-step operator runbook, handoff copy, and explicit operator or Swiggy gates.
 

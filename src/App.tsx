@@ -45,6 +45,7 @@ import {
   completeSwiggyAuth,
   composeSwiggyGrowthPartnershipAsk,
   composeSwiggyShowcaseSubmission,
+  composeSwiggyTalentOutreach,
   addGroupMember,
   confirmAllRecommendations,
   confirmServerRecommendation,
@@ -295,6 +296,7 @@ import type {
   SwiggyGrowthPartnershipCenter,
   SwiggyGrowthPartnershipAskPacket,
   SwiggyTalentSignalCenter,
+  SwiggyTalentOutreachPacket,
   SwiggyConversionCenter,
   SwiggyShowcaseSubmissionCenter,
   SwiggyDemoEvidenceDirector,
@@ -2842,6 +2844,14 @@ function LaunchCenterPanel({
   });
   const [growthAskPacket, setGrowthAskPacket] = useState<SwiggyGrowthPartnershipAskPacket | null>(null);
   const [growthAskStatus, setGrowthAskStatus] = useState<"idle" | "loading" | "error">("idle");
+  const [talentOutreachForm, setTalentOutreachForm] = useState({
+    pathId: "builder_visibility",
+    demoUrl: "https://youtu.be/mealpilot-swiggy-demo",
+    githubUrl: "https://github.com/Farhankhan0128/MealPilot",
+    technicalSummary: "Complete Food, Instamart, and Dineout MCP product with premium UX, safety gates, tests, telemetry, and visual QA.",
+  });
+  const [talentOutreach, setTalentOutreach] = useState<SwiggyTalentOutreachPacket | null>(null);
+  const [talentOutreachStatus, setTalentOutreachStatus] = useState<"idle" | "loading" | "error">("idle");
   const [showcaseForm, setShowcaseForm] = useState({
     demoUrl: "https://youtu.be/mealpilot-swiggy-demo",
     githubUrl: "https://github.com/Farhankhan0128/MealPilot",
@@ -2885,6 +2895,18 @@ function LaunchCenterPanel({
       setGrowthAskStatus("idle");
     } catch {
       setGrowthAskStatus("error");
+    }
+  }
+
+  async function runTalentOutreachComposer(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setTalentOutreachStatus("loading");
+    try {
+      const response = await composeSwiggyTalentOutreach(talentOutreachForm);
+      setTalentOutreach(response.talentOutreach);
+      setTalentOutreachStatus("idle");
+    } catch {
+      setTalentOutreachStatus("error");
     }
   }
 
@@ -4746,6 +4768,72 @@ function LaunchCenterPanel({
               <strong>{talentSignal?.totals.swiggyGates ?? 0}</strong>
               <span>Gates</span>
             </div>
+          </div>
+          <form className="talent-outreach-composer" onSubmit={runTalentOutreachComposer}>
+            <label htmlFor="talent-path-select">Talent path</label>
+            <select
+              id="talent-path-select"
+              value={talentOutreachForm.pathId}
+              onChange={(event) => setTalentOutreachForm((current) => ({ ...current, pathId: event.target.value }))}
+            >
+              {(talentSignal?.talentPaths ?? []).map((item) => (
+                <option key={item.id} value={item.id}>
+                  {item.label}
+                </option>
+              ))}
+            </select>
+            <label htmlFor="talent-demo-url">Demo URL</label>
+            <input
+              id="talent-demo-url"
+              type="url"
+              value={talentOutreachForm.demoUrl}
+              onChange={(event) => setTalentOutreachForm((current) => ({ ...current, demoUrl: event.target.value }))}
+            />
+            <label htmlFor="talent-github-url">Repository</label>
+            <input
+              id="talent-github-url"
+              type="url"
+              value={talentOutreachForm.githubUrl}
+              onChange={(event) => setTalentOutreachForm((current) => ({ ...current, githubUrl: event.target.value }))}
+            />
+            <div>
+              <input
+                aria-label="Talent technical summary"
+                type="text"
+                value={talentOutreachForm.technicalSummary}
+                onChange={(event) =>
+                  setTalentOutreachForm((current) => ({ ...current, technicalSummary: event.target.value }))
+                }
+              />
+              <button type="submit" disabled={talentOutreachStatus === "loading"} aria-label="Compose talent outreach">
+                {talentOutreachStatus === "loading" ? <Loader2 aria-hidden="true" /> : <Users aria-hidden="true" />}
+              </button>
+            </div>
+            {talentOutreachStatus === "error" ? <small role="status">Talent composer unavailable.</small> : null}
+          </form>
+          <div
+            className="talent-outreach-result"
+            data-status={
+              talentOutreach?.decision === "ready_local_handoff"
+                ? "healthy"
+                : talentOutreach?.decision === "swiggy_gate" || talentOutreach?.decision === "unknown_talent_path"
+                  ? "blocked"
+                  : "watch"
+            }
+          >
+            <div>
+              <span>Talent outreach</span>
+              <strong>
+                {talentOutreach
+                  ? `${talentOutreach.decision.replace(/_/g, " ")} / ${talentOutreach.readinessScore}/100`
+                  : "Awaiting composition"}
+              </strong>
+            </div>
+            <p>
+              {talentOutreach
+                ? `${talentOutreach.proofLinks.length} proof links / ${talentOutreach.portfolioAssets.length} assets / ${talentOutreach.missingInputs.length} missing`
+                : "Choose a portfolio path and attach demo, repo, and technical summary for a local Swiggy outreach packet."}
+            </p>
           </div>
           <ul className="compact-status-list">
             {(talentSignal?.talentPaths ?? []).slice(0, 4).map((talentPath) => (

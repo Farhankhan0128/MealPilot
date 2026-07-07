@@ -1,5 +1,7 @@
 import type {
   SwiggyTalentPath,
+  SwiggyTalentOutreachDecision,
+  SwiggyTalentOutreachPacket,
   SwiggyTalentPortfolioAsset,
   SwiggyTalentSignal,
   SwiggyTalentSignalCenter,
@@ -25,6 +27,27 @@ function statusWeight(status: SwiggyTalentSignalStatus) {
 
 function unique(values: string[]) {
   return [...new Set(values.filter(Boolean))];
+}
+
+function hasUrl(value?: string) {
+  return Boolean(value?.trim() && /^https?:\/\//i.test(value.trim()));
+}
+
+function talentDecision(
+  pathItem: SwiggyTalentPath | null,
+  missingInputs: string[],
+): SwiggyTalentOutreachDecision {
+  if (!pathItem) return "unknown_talent_path";
+  if (missingInputs.length > 0) return "needs_operator_input";
+  if (pathItem.status === "swiggy_gate") return "swiggy_gate";
+  return "ready_local_handoff";
+}
+
+function talentReadiness(decision: SwiggyTalentOutreachDecision) {
+  if (decision === "ready_local_handoff") return 100;
+  if (decision === "needs_operator_input") return 66;
+  if (decision === "swiggy_gate") return 58;
+  return 0;
 }
 
 function signal(input: SwiggyTalentSignal): SwiggyTalentSignal {
@@ -289,5 +312,92 @@ export function buildSwiggyTalentSignalCenter(): SwiggyTalentSignalCenter {
       "Swiggy must decide any hiring conversation, feature placement, co-marketing, endorsement, or enterprise partner channel.",
       "Swiggy access, staging credentials, production credentials, and official brand approval remain external gates.",
     ],
+  };
+}
+
+export function composeSwiggyTalentOutreach(options: {
+  pathId: string;
+  demoUrl?: string;
+  githubUrl?: string;
+  technicalSummary?: string;
+}): SwiggyTalentOutreachPacket {
+  const center = buildSwiggyTalentSignalCenter();
+  const pathItem = center.talentPaths.find((item) => item.id === options.pathId) ?? null;
+  const missingInputs = [
+    hasUrl(options.demoUrl) ? "" : "demo_url",
+    hasUrl(options.githubUrl) ? "" : "github_url",
+    options.technicalSummary?.trim() ? "" : "technical_summary",
+  ].filter(Boolean);
+  const decision = talentDecision(pathItem, missingInputs);
+  const portfolioAssets = center.portfolioAssets.slice(0, 6);
+  const reviewerNarrative = center.reviewerNarrative;
+  const proofLinks = unique([
+    "/api/swiggy-talent-signal-center",
+    ...(pathItem?.evidenceLinks ?? []),
+    ...portfolioAssets.flatMap((item) => item.proofLinks),
+    ...reviewerNarrative.flatMap((item) => item.proofLinks),
+    options.demoUrl?.trim() ?? "",
+    options.githubUrl?.trim() ?? "",
+  ]).slice(0, 14);
+  const bodyPreview =
+    pathItem && decision !== "unknown_talent_path"
+      ? `${pathItem.label} outreach: ${pathItem.pitch} Demo: ${options.demoUrl?.trim() || "[operator demo URL required]"} Repo: ${options.githubUrl?.trim() || "[operator GitHub URL required]"} Technical summary: ${options.technicalSummary?.trim() || "[operator summary required]"} Boundary: ${pathItem.gate} Proof: ${proofLinks.join(", ")}`
+      : "Unknown talent path. Choose a published Talent Signal path before preparing Swiggy outreach.";
+
+  return {
+    generatedAt: new Date().toISOString(),
+    pathId: options.pathId,
+    decision,
+    readinessScore: talentReadiness(decision),
+    path: pathItem,
+    portfolioAssets,
+    reviewerNarrative,
+    proofLinks,
+    missingInputs,
+    handoffDraft: {
+      to: center.outreachDraft.to,
+      subject: pathItem
+        ? `MealPilot Swiggy talent signal: ${pathItem.label}`
+        : "MealPilot Swiggy talent signal",
+      bodyPreview,
+    },
+    checklist: [
+      {
+        id: "talent_path_selected",
+        label: pathItem ? `${pathItem.label} selected` : "Valid Talent Signal path selected",
+        status: pathItem ? pathItem.status : "operator_input",
+        owner: pathItem?.status === "swiggy_gate" ? "Swiggy" : "MealPilot",
+      },
+      {
+        id: "demo_url_attached",
+        label: "Public demo URL attached",
+        status: hasUrl(options.demoUrl) ? "ready" : "operator_input",
+        owner: "Operator",
+      },
+      {
+        id: "github_url_attached",
+        label: "GitHub repository URL attached",
+        status: hasUrl(options.githubUrl) ? "ready" : "operator_input",
+        owner: "Operator",
+      },
+      {
+        id: "technical_summary_written",
+        label: "Concise technical summary written",
+        status: options.technicalSummary?.trim() ? "ready" : "operator_input",
+        owner: "Operator",
+      },
+      {
+        id: "swiggy_recruiting_gate_preserved",
+        label: "Swiggy recruiting, feature, and endorsement gate preserved",
+        status: pathItem?.status === "swiggy_gate" ? "swiggy_gate" : "ready",
+        owner: pathItem?.status === "swiggy_gate" ? "Swiggy" : "MealPilot",
+      },
+    ],
+    assertions: [
+      "Talent outreach composition prepares a local packet only; it never sends email, applies for a role, requests an interview, claims feature placement, or claims Swiggy endorsement.",
+      "Demo URL, GitHub URL, and technical summary remain operator-owned inputs before any external outreach.",
+      ...center.assertions.slice(0, 2),
+    ],
+    externalGates: center.externalGates,
   };
 }
