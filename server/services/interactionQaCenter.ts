@@ -1,6 +1,8 @@
 import type {
   SwiggyInteractionQaCenter,
   SwiggyInteractionQaLane,
+  SwiggyInteractionQaRehearsal,
+  SwiggyInteractionQaRehearsalDecision,
   SwiggyInteractionQaStatus,
 } from "../../src/domain/types.js";
 
@@ -20,6 +22,33 @@ function statusWeight(status: SwiggyInteractionQaStatus) {
   if (status === "working") return 1;
   if (status === "manual_gate") return 0.78;
   return 0.62;
+}
+
+function hasEmail(value: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+}
+
+function unique(values: string[]) {
+  return [...new Set(values.filter(Boolean))];
+}
+
+function rehearsalDecision(
+  lane: SwiggyInteractionQaLane | undefined,
+  missingInputs: string[],
+): SwiggyInteractionQaRehearsalDecision {
+  if (!lane) return "unknown_cta_lane";
+  if (lane.status === "external_gate") return "swiggy_gate";
+  if (missingInputs.length > 0) return "needs_operator_input";
+  if (lane.status === "manual_gate") return "manual_gate";
+  return "ready_local_rehearsal";
+}
+
+function rehearsalScore(decision: SwiggyInteractionQaRehearsalDecision) {
+  if (decision === "ready_local_rehearsal") return 100;
+  if (decision === "manual_gate") return 78;
+  if (decision === "needs_operator_input") return 68;
+  if (decision === "swiggy_gate") return 56;
+  return 30;
 }
 
 export function buildSwiggyInteractionQaCenter(): SwiggyInteractionQaCenter {
@@ -201,6 +230,94 @@ export function buildSwiggyInteractionQaCenter(): SwiggyInteractionQaCenter {
     externalGates: [
       "Official Swiggy access form, production credential issuance, enterprise Slack, partner manager, and co-marketing approval.",
       "Live commercial order, checkout, booking, cancellation, and payment evidence without approved staging or production credentials.",
+    ],
+  };
+}
+
+export function rehearseSwiggyInteractionQaLane(options: {
+  laneId: string;
+  operatorEmail?: string;
+  evidenceNote?: string;
+  dryRunConfirmed?: boolean;
+}): SwiggyInteractionQaRehearsal {
+  const center = buildSwiggyInteractionQaCenter();
+  const lane = center.lanes.find((item) => item.id === options.laneId);
+  const operatorEmail = options.operatorEmail?.trim() ?? "";
+  const evidenceNote = options.evidenceNote?.trim() ?? "";
+  const missingInputs = [
+    !hasEmail(operatorEmail) ? "operator_email" : "",
+    evidenceNote.length < 16 ? "evidence_note" : "",
+    options.dryRunConfirmed !== true ? "dry_run_confirmation" : "",
+  ].filter(Boolean);
+  const decision = rehearsalDecision(lane, missingInputs);
+  const routeContract: SwiggyInteractionQaRehearsal["routeContract"] = {
+    method: lane?.method ?? "BROWSER",
+    endpoint: lane?.endpoint ?? "unknown",
+    surface: lane?.surface ?? "unknown",
+    browserAction: lane
+      ? `${lane.ctaLabel} on ${lane.surface.replace(/_/g, " ")} should surface: ${lane.expectedFeedback}`
+      : "Choose a known Interaction QA lane before running a local rehearsal.",
+  };
+  const proofLinks = unique([
+    "/api/swiggy-interaction-qa-center",
+    lane?.endpoint.startsWith("/") ? lane.endpoint : "",
+    ...(lane?.evidenceLinks ?? []),
+    "/api/openapi.json",
+    "/api/swiggy-cta-live-audit",
+  ]);
+
+  return {
+    generatedAt: new Date().toISOString(),
+    laneId: options.laneId,
+    decision,
+    readinessScore: rehearsalScore(decision),
+    lane: lane ?? null,
+    routeContract,
+    expectedFeedback: lane?.expectedFeedback ?? "Unknown CTA lane cannot be rehearsed.",
+    proofLinks,
+    automationCoverage: lane?.automationCoverage ?? [],
+    missingInputs,
+    checklist: [
+      {
+        id: "operator_identity",
+        label: "Named operator is attached to the CTA QA evidence",
+        status: hasEmail(operatorEmail) ? "working" : "manual_gate",
+        owner: "Operator",
+      },
+      {
+        id: "dry_run_scope",
+        label: "Dry-run rehearsal is confirmed before checking the CTA contract",
+        status: options.dryRunConfirmed === true ? "working" : "manual_gate",
+        owner: "MealPilot",
+      },
+      {
+        id: "lane_contract",
+        label: lane ? `${lane.ctaLabel} maps to ${lane.method} ${lane.endpoint}` : "Known CTA lane is selected",
+        status: lane?.status ?? "manual_gate",
+        owner: lane?.status === "external_gate" ? "Swiggy" : lane?.status === "manual_gate" ? "Operator" : "MealPilot",
+      },
+      {
+        id: "visible_feedback",
+        label: lane?.expectedFeedback ?? "Visible feedback contract is unavailable",
+        status: lane?.status ?? "manual_gate",
+        owner: lane?.status === "external_gate" ? "Swiggy" : "MealPilot",
+      },
+      {
+        id: "swiggy_gate_preserved",
+        label: "Swiggy-owned form, Slack, credential, production, and commercial gates are not bypassed",
+        status: decision === "swiggy_gate" ? "external_gate" : "working",
+        owner: "Swiggy",
+      },
+    ],
+    assertions: [
+      "Interaction QA rehearsal generates route, browser-action, proof-link, and expected-feedback evidence without executing unsafe external actions.",
+      "Commercial Swiggy actions still require explicit user confirmation and approved staging or production credentials.",
+      "Official access form submission, Slack, partner manager, production credentials, and co-marketing remain operator or Swiggy gates.",
+      "Every ready local CTA rehearsal includes automation coverage or a production verifier proof link before it is treated as working.",
+    ],
+    externalGates: [
+      "Official Swiggy access form submission and production approval remain manual.",
+      "Enterprise Slack, partner manager, production credentials, co-marketing, and live commercial actions require Swiggy approval.",
     ],
   };
 }

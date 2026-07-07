@@ -74,7 +74,7 @@ import { buildSwiggyDemoEvidenceDirector } from "./services/demoEvidenceDirector
 import { buildSwiggyHostedWidgetActivationCenter } from "./services/hostedWidgetActivation.js";
 import { buildSwiggyBuildersHomepageExperienceCenter } from "./services/homepageExperienceCenter.js";
 import { buildHouseholdPreferenceGraph } from "./services/householdPreferenceGraph.js";
-import { buildSwiggyInteractionQaCenter } from "./services/interactionQaCenter.js";
+import { buildSwiggyInteractionQaCenter, rehearseSwiggyInteractionQaLane } from "./services/interactionQaCenter.js";
 import { buildSwiggyInnovationRadar } from "./services/innovationRadar.js";
 import { buildSwiggyJourneyCompiler } from "./services/journeyCompiler.js";
 import { buildSwiggyBuildersJourneyGateCenter } from "./services/journeyGateCenter.js";
@@ -1383,6 +1383,17 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/swiggy-interaction-qa-center", (_req, res) => {
     res.json({ interactionQa: buildSwiggyInteractionQaCenter() });
+  });
+
+  app.post("/api/swiggy-interaction-qa-center/rehearse", (req, res) => {
+    res.json({
+      interactionQaRehearsal: rehearseSwiggyInteractionQaLane({
+        laneId: typeof req.body?.laneId === "string" ? req.body.laneId : "",
+        operatorEmail: typeof req.body?.operatorEmail === "string" ? req.body.operatorEmail : "",
+        evidenceNote: typeof req.body?.evidenceNote === "string" ? req.body.evidenceNote : "",
+        dryRunConfirmed: req.body?.dryRunConfirmed === true,
+      }),
+    });
   });
 
   app.get("/api/channel-multimodal-studio", (_req, res) => {

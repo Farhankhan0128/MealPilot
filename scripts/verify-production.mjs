@@ -261,6 +261,15 @@ assert(
   "OpenAPI interaction QA center contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-interaction-qa-center/rehearse"]?.post?.summary?.includes(
+    "Interaction QA rehearsal",
+  ) &&
+    openApi.paths["/api/swiggy-interaction-qa-center/rehearse"]?.post?.responses?.["200"]?.description?.includes(
+      "without executing unsafe external actions",
+    ),
+  "OpenAPI interaction QA rehearsal contract is missing",
+);
+assert(
   openApi.paths["/api/channel-multimodal-studio"].get.summary.includes("Channel and Multimodal"),
   "OpenAPI channel and multimodal studio contract is missing",
 );
@@ -1872,6 +1881,65 @@ assert(
   interactionQa.interactionQa.clickAssertions.some((assertion) => assertion.includes("Every locally executable CTA")) &&
     interactionQa.interactionQa.externalGates.some((gate) => gate.includes("Slack")),
   "Interaction QA Center assertions or external gates are missing",
+);
+const interactionQaRehearsal = await request("/api/swiggy-interaction-qa-center/rehearse", {
+  method: "POST",
+  body: JSON.stringify({
+    laneId: "developer_first_call",
+    operatorEmail: "operator@example.com",
+    evidenceNote: "Dry-run CTA proof for Swiggy Builders reviewer packet.",
+    dryRunConfirmed: true,
+  }),
+});
+assert(
+  interactionQaRehearsal.interactionQaRehearsal.decision === "ready_local_rehearsal" &&
+    interactionQaRehearsal.interactionQaRehearsal.readinessScore === 100 &&
+    interactionQaRehearsal.interactionQaRehearsal.lane.id === "developer_first_call" &&
+    interactionQaRehearsal.interactionQaRehearsal.routeContract.endpoint ===
+      "/api/swiggy-developer-quickstart/run-first-call" &&
+    interactionQaRehearsal.interactionQaRehearsal.proofLinks.includes("/api/openapi.json"),
+  "Interaction QA rehearsal ready packet is incomplete",
+);
+assert(
+  interactionQaRehearsal.interactionQaRehearsal.assertions.some((assertion) =>
+    assertion.includes("without executing unsafe external actions"),
+  ) && interactionQaRehearsal.interactionQaRehearsal.missingInputs.length === 0,
+  "Interaction QA rehearsal safety assertion is missing",
+);
+const blockedInteractionQaRehearsal = await request("/api/swiggy-interaction-qa-center/rehearse", {
+  method: "POST",
+  body: JSON.stringify({
+    laneId: "support_report",
+    operatorEmail: "bad-email",
+    evidenceNote: "short",
+    dryRunConfirmed: false,
+  }),
+});
+assert(
+  blockedInteractionQaRehearsal.interactionQaRehearsal.decision === "needs_operator_input" &&
+    blockedInteractionQaRehearsal.interactionQaRehearsal.readinessScore === 68 &&
+    blockedInteractionQaRehearsal.interactionQaRehearsal.missingInputs.includes("operator_email") &&
+    blockedInteractionQaRehearsal.interactionQaRehearsal.missingInputs.includes("evidence_note") &&
+    blockedInteractionQaRehearsal.interactionQaRehearsal.missingInputs.includes("dry_run_confirmation"),
+  "Interaction QA rehearsal missing-input guard is incomplete",
+);
+const gatedInteractionQaRehearsal = await request("/api/swiggy-interaction-qa-center/rehearse", {
+  method: "POST",
+  body: JSON.stringify({
+    laneId: "enterprise_slack",
+    operatorEmail: "operator@example.com",
+    evidenceNote: "Dry-run CTA proof for Swiggy enterprise partner support.",
+    dryRunConfirmed: true,
+  }),
+});
+assert(
+  gatedInteractionQaRehearsal.interactionQaRehearsal.decision === "swiggy_gate" &&
+    gatedInteractionQaRehearsal.interactionQaRehearsal.readinessScore === 56 &&
+    gatedInteractionQaRehearsal.interactionQaRehearsal.lane.id === "enterprise_slack" &&
+    gatedInteractionQaRehearsal.interactionQaRehearsal.externalGates.some((gate) =>
+      gate.includes("Enterprise Slack"),
+    ),
+  "Interaction QA rehearsal Swiggy gate is incomplete",
 );
 
 const channelMultimodal = await request("/api/channel-multimodal-studio");

@@ -181,6 +181,7 @@ import {
   fetchSwiggyVisualDishCapture,
   fetchSwiggyVoiceCommerceCenter,
   fetchSwiggyRouteOptimizer,
+  rehearseSwiggyInteractionQa,
   fetchTrafficReadinessPlan,
   fetchTracking,
   fetchVersionMonitor,
@@ -304,6 +305,7 @@ import type {
   SwiggyDemoEvidenceDirector,
   SwiggySubmissionTimelineCenter,
   SwiggyInteractionQaCenter,
+  SwiggyInteractionQaRehearsal,
   SwiggyPartnerSuccessDesk,
   SwiggyPartnerSuccessHandoffPacket,
   SwiggyPartnerSupportRoom,
@@ -2873,6 +2875,14 @@ function LaunchCenterPanel({
   });
   const [partnerSupportPacket, setPartnerSupportPacket] = useState<SwiggyPartnerSupportPacket | null>(null);
   const [partnerSupportPacketStatus, setPartnerSupportPacketStatus] = useState<"idle" | "loading" | "error">("idle");
+  const [interactionQaForm, setInteractionQaForm] = useState({
+    laneId: "developer_first_call",
+    operatorEmail: "operator@example.com",
+    evidenceNote: "Dry-run CTA proof for Swiggy Builders reviewer packet.",
+    dryRunConfirmed: true,
+  });
+  const [interactionQaRehearsal, setInteractionQaRehearsal] = useState<SwiggyInteractionQaRehearsal | null>(null);
+  const [interactionQaRehearsalStatus, setInteractionQaRehearsalStatus] = useState<"idle" | "loading" | "error">("idle");
   const [showcaseForm, setShowcaseForm] = useState({
     demoUrl: "https://youtu.be/mealpilot-swiggy-demo",
     githubUrl: "https://github.com/Farhankhan0128/MealPilot",
@@ -2952,6 +2962,18 @@ function LaunchCenterPanel({
       setPartnerSupportPacketStatus("idle");
     } catch {
       setPartnerSupportPacketStatus("error");
+    }
+  }
+
+  async function runInteractionQaRehearsal(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setInteractionQaRehearsalStatus("loading");
+    try {
+      const response = await rehearseSwiggyInteractionQa(interactionQaForm);
+      setInteractionQaRehearsal(response.interactionQaRehearsal);
+      setInteractionQaRehearsalStatus("idle");
+    } catch {
+      setInteractionQaRehearsalStatus("error");
     }
   }
 
@@ -5563,6 +5585,73 @@ function LaunchCenterPanel({
               <strong>{interactionQa?.totals.externalGates ?? 0}</strong>
               <span>External</span>
             </div>
+          </div>
+          <form className="interaction-qa-rehearsal" onSubmit={runInteractionQaRehearsal}>
+            <label htmlFor="interaction-qa-lane">CTA lane</label>
+            <select
+              id="interaction-qa-lane"
+              value={interactionQaForm.laneId}
+              onChange={(event) => setInteractionQaForm((current) => ({ ...current, laneId: event.target.value }))}
+            >
+              {(interactionQa?.lanes ?? []).map((lane) => (
+                <option key={lane.id} value={lane.id}>
+                  {lane.ctaLabel}
+                </option>
+              ))}
+            </select>
+            <label htmlFor="interaction-qa-email">Operator email</label>
+            <input
+              id="interaction-qa-email"
+              type="email"
+              value={interactionQaForm.operatorEmail}
+              onChange={(event) => setInteractionQaForm((current) => ({ ...current, operatorEmail: event.target.value }))}
+            />
+            <label className="interaction-qa-check" htmlFor="interaction-qa-dry-run">
+              <input
+                id="interaction-qa-dry-run"
+                type="checkbox"
+                checked={interactionQaForm.dryRunConfirmed}
+                onChange={(event) => setInteractionQaForm((current) => ({ ...current, dryRunConfirmed: event.target.checked }))}
+              />
+              Dry run
+            </label>
+            <div>
+              <input
+                aria-label="Interaction QA evidence note"
+                type="text"
+                value={interactionQaForm.evidenceNote}
+                onChange={(event) => setInteractionQaForm((current) => ({ ...current, evidenceNote: event.target.value }))}
+              />
+              <button type="submit" disabled={interactionQaRehearsalStatus === "loading"} aria-label="Run interaction QA rehearsal">
+                {interactionQaRehearsalStatus === "loading" ? <Loader2 aria-hidden="true" /> : <MousePointerClick aria-hidden="true" />}
+              </button>
+            </div>
+            {interactionQaRehearsalStatus === "error" ? <small role="status">Interaction QA rehearsal unavailable.</small> : null}
+          </form>
+          <div
+            className="interaction-qa-result"
+            data-status={
+              interactionQaRehearsal?.decision === "ready_local_rehearsal"
+                ? "healthy"
+                : interactionQaRehearsal?.decision === "swiggy_gate" ||
+                    interactionQaRehearsal?.decision === "unknown_cta_lane"
+                  ? "blocked"
+                  : "watch"
+            }
+          >
+            <div>
+              <span>CTA rehearsal</span>
+              <strong>
+                {interactionQaRehearsal
+                  ? `${interactionQaRehearsal.decision.replace(/_/g, " ")} / ${interactionQaRehearsal.readinessScore}/100`
+                  : "Awaiting dry run"}
+              </strong>
+            </div>
+            <p>
+              {interactionQaRehearsal
+                ? `${interactionQaRehearsal.routeContract.method} ${interactionQaRehearsal.routeContract.endpoint} / ${interactionQaRehearsal.proofLinks.length} proofs / ${interactionQaRehearsal.missingInputs.length} missing`
+                : "Pick one portal CTA to rehearse its route, expected feedback, proof links, and Swiggy-owned gates."}
+            </p>
           </div>
           <ul className="compact-status-list">
             {(interactionQa?.lanes ?? []).slice(0, 5).map((lane) => (

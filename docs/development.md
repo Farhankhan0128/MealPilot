@@ -126,7 +126,7 @@ The verifier also validates `/api/swiggy-partner-support-room` and `POST /api/sw
 
 The verifier also validates `/api/swiggy-benefits-activation-center` and `POST /api/swiggy-benefits-activation-center/activate` for live API access, quota expansion, technical support, Powered by Swiggy attribution, showcase visibility, hiring visibility, growth partnership, enterprise support, activation CTAs, proof links, per-benefit handoff packets, and explicit Swiggy/operator gates.
 
-The verifier also validates `/api/swiggy-interaction-qa-center` for planner, confirmation, support-report, privacy, packet-export, first-call, access-submission, and partner-support CTA contracts with automated proof and explicit Swiggy/operator gates.
+The verifier also validates `/api/swiggy-interaction-qa-center` and `POST /api/swiggy-interaction-qa-center/rehearse` for planner, confirmation, support-report, privacy, packet-export, first-call, access-submission, partner-support CTA contracts, dry-run route rehearsals, missing-input guards, automated proof, and explicit Swiggy/operator gates.
 
 The verifier also validates `/api/swiggy-staging-seed-smoke-center` for Food, Instamart, and Dineout seeded fixtures, read/mutation/commercial/support smoke waves, no-blind-retry stop rules, telemetry evidence, and Swiggy staging credential gates.
 
@@ -239,6 +239,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/swiggy-partner-success-desk`
 - `POST /api/swiggy-partner-success-desk/compose`
 - `GET /api/swiggy-interaction-qa-center`
+- `POST /api/swiggy-interaction-qa-center/rehearse`
 - `GET /api/channel-multimodal-studio`
 - `GET /api/swiggy-visual-dish-capture`
 - `GET /api/swiggy-voice-commerce-center`
@@ -489,7 +490,7 @@ Production should use an HTTPS redirect URI with exact-match allowlisting.
 
 `/api/swiggy-benefits-activation-center` turns Swiggy Builders benefits into an activation room: live APIs, quota expansion, technical support, co-branding, showcase visibility, hiring visibility, growth partnership, and enterprise support each have an owner, proof route, CTA, next action, and external gate. `POST /api/swiggy-benefits-activation-center/activate` generates one local activation packet for the selected benefit, including its readiness decision, matching CTA, proof links, checklist, builders@swiggy.in draft, safety assertions, and unknown-benefit guard.
 
-`/api/swiggy-interaction-qa-center` composes the clickable portal contract: every locally executable CTA maps to a route, feedback expectation, automated proof, and Swiggy relevance, while access form submission, Slack, partner manager, production credentials, and co-marketing remain manual or external gates.
+`/api/swiggy-interaction-qa-center` composes the clickable portal contract: every locally executable CTA maps to a route, feedback expectation, automated proof, and Swiggy relevance, while access form submission, Slack, partner manager, production credentials, and co-marketing remain manual or external gates. `POST /api/swiggy-interaction-qa-center/rehearse` generates a local CTA dry-run packet with route contract, browser action, expected feedback, proof links, automation coverage, checklist, missing-input guards, and Swiggy-owned form, Slack, credential, and commercial-action gates.
 
 `/api/coding-agent-governance` reads the root `AGENTS.md` and scores the rules future coding agents must follow before editing Swiggy integrations: fetch official docs first, prefer page `.md` twins, never invent tools or parameters, preserve commercial confirmation gates, and keep sensitive data out of logs.
 
@@ -536,7 +537,7 @@ The test suite checks that:
 - Swiggy Submission Timeline Center sequences access form submission, demo handoff, DCR, staging seed, 48-hour soak, and production promotion with explicit MealPilot, operator, and Swiggy ownership.
 - Swiggy Builders Conversion Center maps the final CTA funnel, official docs links, email handoff, proof bundles, operator runbook, and go-live gates into one tested reviewer endpoint.
 - Partner Success Desk composes access handoff, developer support, SLO incident readiness, traffic capacity, backpressure controls, growth showcase asks, escalation emails, and Swiggy-owned Slack/partner-manager gates. `POST /api/swiggy-partner-success-desk/compose` generates a local lane-specific handoff packet with operator email/window/context checks, escalation target, proof links, reviewer runbook, checklist, builders@swiggy.in draft, and Swiggy-owned Slack/partner-manager/dashboard gates.
-- Interaction QA Center maps portal CTAs to executable MealPilot routes, visible feedback, regression commands, automation coverage, and explicit Swiggy/operator gates.
+- Interaction QA Center maps portal CTAs to executable MealPilot routes, visible feedback, regression commands, automation coverage, and explicit Swiggy/operator gates. `POST /api/swiggy-interaction-qa-center/rehearse` turns one CTA lane into a reviewer-visible dry-run packet without bypassing Swiggy-owned gates.
 - Channel & Multimodal Studio maps voice, web chat, Slack/Teams, mobile camera, enterprise, and screenshot-to-order channels to Swiggy MCP toolchains, local execution packets, response contracts, telemetry, and external platform gates.
 - Swiggy Voice Commerce Rehearsal Center validates spoken Swiggy route planning with no raw-audio retention, no raw ids in TTS, short scripts, visual fallbacks, and confirmation readbacks before live execution.
 - Swiggy Quality Loop Center validates consented post-experience learning, support-safe feedback analysis, repeat optimization, and no raw Swiggy payload storage.

@@ -880,6 +880,35 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-interaction-qa-center/rehearse": {
+        post: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Interaction QA rehearsal for one portal CTA contract",
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    laneId: { type: "string" },
+                    operatorEmail: { type: "string" },
+                    evidenceNote: { type: "string" },
+                    dryRunConfirmed: { type: "boolean" },
+                  },
+                  required: ["laneId"],
+                },
+              },
+            },
+          },
+          responses: {
+            "200": {
+              description:
+                "Local Interaction QA rehearsal with selected CTA lane, route contract, browser action, expected feedback, proof links, automation coverage, missing-input guards, checklist, and explicit form, Slack, credential, commercial-action, and Swiggy approval gates without executing unsafe external actions",
+            },
+          },
+        },
+      },
       "/api/channel-multimodal-studio": {
         get: {
           tags: ["Builder Access"],

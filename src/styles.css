@@ -2456,6 +2456,127 @@ select:focus {
   overflow-wrap: anywhere;
 }
 
+.interaction-qa-rehearsal {
+  display: grid;
+  gap: 8px;
+  border-radius: 8px;
+  padding: 10px;
+  background: #fff;
+}
+
+.interaction-qa-rehearsal label {
+  color: var(--ink-muted);
+  font-size: 0.75rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.interaction-qa-rehearsal > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 42px;
+  gap: 8px;
+}
+
+.interaction-qa-rehearsal select,
+.interaction-qa-rehearsal input[type="email"],
+.interaction-qa-rehearsal input[type="text"] {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 9px 10px;
+  color: var(--ink);
+  background: #f8faf8;
+  font: inherit;
+  font-weight: 850;
+}
+
+.interaction-qa-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 34px;
+}
+
+.interaction-qa-check input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--green);
+}
+
+.interaction-qa-rehearsal button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  min-height: 42px;
+  border: 0;
+  border-radius: 8px;
+  color: #fff;
+  background: var(--green);
+}
+
+.interaction-qa-rehearsal button:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
+.interaction-qa-rehearsal svg {
+  width: 17px;
+  height: 17px;
+}
+
+.interaction-qa-rehearsal small {
+  color: var(--coral);
+  font-weight: 850;
+}
+
+.interaction-qa-result {
+  display: grid;
+  gap: 8px;
+  border-radius: 8px;
+  padding: 10px;
+  background: #fff;
+  border-left: 4px solid var(--gold);
+}
+
+.interaction-qa-result[data-status="healthy"] {
+  border-left-color: var(--green);
+}
+
+.interaction-qa-result[data-status="blocked"] {
+  border-left-color: var(--coral);
+}
+
+.interaction-qa-result > div {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.interaction-qa-result span {
+  color: var(--ink-muted);
+  font-size: 0.75rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.interaction-qa-result strong {
+  color: var(--green-dark);
+  font-size: 0.84rem;
+  text-align: right;
+  text-transform: capitalize;
+}
+
+.interaction-qa-result p {
+  margin: 0;
+  color: var(--ink-muted);
+  font-size: 0.82rem;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
 .builders-map-list,
 .opportunity-list {
   display: grid;

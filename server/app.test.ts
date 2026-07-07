@@ -110,6 +110,9 @@ describe("MealPilot API", () => {
       "Partner Support packet composer",
     );
     expect(openApi.body.paths["/api/swiggy-interaction-qa-center"].get.summary).toContain("Interaction QA");
+    expect(openApi.body.paths["/api/swiggy-interaction-qa-center/rehearse"].post.summary).toContain(
+      "Interaction QA rehearsal",
+    );
     expect(openApi.body.paths["/api/swiggy-staging-seed-smoke-center"].get.summary).toContain("Seed and Smoke");
     expect(openApi.body.paths["/api/channel-multimodal-studio"].get.summary).toContain("Channel and Multimodal");
     expect(openApi.body.paths["/api/swiggy-visual-dish-capture"].get.summary).toContain("Visual Dish Capture");
@@ -2445,6 +2448,73 @@ describe("MealPilot API", () => {
       true,
     );
     expect(center.externalGates.some((gate: string) => gate.includes("Slack"))).toBe(true);
+  });
+
+  it("rehearses a ready Swiggy Interaction QA CTA contract", async () => {
+    const { app } = createMealPilotServer();
+
+    const response = await request(app)
+      .post("/api/swiggy-interaction-qa-center/rehearse")
+      .send({
+        laneId: "developer_first_call",
+        operatorEmail: "operator@example.com",
+        evidenceNote: "Dry-run CTA proof for Swiggy Builders reviewer packet.",
+        dryRunConfirmed: true,
+      })
+      .expect(200);
+    const rehearsal = response.body.interactionQaRehearsal;
+
+    expect(rehearsal.decision).toBe("ready_local_rehearsal");
+    expect(rehearsal.readinessScore).toBe(100);
+    expect(rehearsal.lane.id).toBe("developer_first_call");
+    expect(rehearsal.routeContract.method).toBe("POST");
+    expect(rehearsal.routeContract.endpoint).toBe("/api/swiggy-developer-quickstart/run-first-call");
+    expect(rehearsal.proofLinks).toEqual(expect.arrayContaining(["/api/swiggy-interaction-qa-center", "/api/openapi.json"]));
+    expect(rehearsal.automationCoverage).toEqual(expect.arrayContaining(["server/app.test.ts", "scripts/verify-production.mjs"]));
+    expect(rehearsal.assertions.some((assertion: string) => assertion.includes("without executing unsafe external actions"))).toBe(true);
+    expect(rehearsal.missingInputs).toEqual([]);
+  });
+
+  it("guards Swiggy Interaction QA rehearsals until operator evidence is present", async () => {
+    const { app } = createMealPilotServer();
+
+    const response = await request(app)
+      .post("/api/swiggy-interaction-qa-center/rehearse")
+      .send({
+        laneId: "support_report",
+        operatorEmail: "bad-email",
+        evidenceNote: "short",
+        dryRunConfirmed: false,
+      })
+      .expect(200);
+    const rehearsal = response.body.interactionQaRehearsal;
+
+    expect(rehearsal.decision).toBe("needs_operator_input");
+    expect(rehearsal.readinessScore).toBe(68);
+    expect(rehearsal.missingInputs).toEqual(expect.arrayContaining(["operator_email", "evidence_note", "dry_run_confirmation"]));
+    expect(rehearsal.checklist.some((item: { id: string; status: string }) => item.id === "operator_identity" && item.status === "manual_gate")).toBe(true);
+  });
+
+  it("preserves Swiggy gates for external Interaction QA CTA rehearsals", async () => {
+    const { app } = createMealPilotServer();
+
+    const response = await request(app)
+      .post("/api/swiggy-interaction-qa-center/rehearse")
+      .send({
+        laneId: "enterprise_slack",
+        operatorEmail: "operator@example.com",
+        evidenceNote: "Dry-run CTA proof for Swiggy enterprise partner support.",
+        dryRunConfirmed: true,
+      })
+      .expect(200);
+    const rehearsal = response.body.interactionQaRehearsal;
+
+    expect(rehearsal.decision).toBe("swiggy_gate");
+    expect(rehearsal.readinessScore).toBe(56);
+    expect(rehearsal.lane.id).toBe("enterprise_slack");
+    expect(rehearsal.routeContract.endpoint).toBe("mailto:builders@swiggy.in");
+    expect(rehearsal.checklist.some((item: { id: string; status: string }) => item.id === "swiggy_gate_preserved" && item.status === "external_gate")).toBe(true);
+    expect(rehearsal.externalGates.some((gate: string) => gate.includes("Enterprise Slack"))).toBe(true);
   });
 
   it("returns channel and multimodal studio coverage for developer build lanes", async () => {

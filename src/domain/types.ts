@@ -2433,6 +2433,39 @@ export interface SwiggyInteractionQaCenter {
   externalGates: string[];
 }
 
+export type SwiggyInteractionQaRehearsalDecision =
+  | "ready_local_rehearsal"
+  | "needs_operator_input"
+  | "manual_gate"
+  | "swiggy_gate"
+  | "unknown_cta_lane";
+
+export interface SwiggyInteractionQaRehearsal {
+  generatedAt: string;
+  laneId: string;
+  decision: SwiggyInteractionQaRehearsalDecision;
+  readinessScore: number;
+  lane: SwiggyInteractionQaLane | null;
+  routeContract: {
+    method: SwiggyInteractionQaLane["method"] | "BROWSER";
+    endpoint: string;
+    surface: SwiggyInteractionQaSurface | "unknown";
+    browserAction: string;
+  };
+  expectedFeedback: string;
+  proofLinks: string[];
+  automationCoverage: string[];
+  missingInputs: string[];
+  checklist: Array<{
+    id: string;
+    label: string;
+    status: SwiggyInteractionQaStatus;
+    owner: "MealPilot" | "Operator" | "Swiggy";
+  }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type SwiggyChannelMultimodalStatus = "ready" | "manual_input" | "external_gate";
 export type SwiggyChannelTarget =
   | "web_chat"
