@@ -284,6 +284,8 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/swiggy-tool-parity-auditor`
 - `GET /api/swiggy-upstream-watch`
 - `GET /api/swiggy-source-intelligence`
+- `GET /api/swiggy-source-freeze-diff`
+- `POST /api/swiggy-source-freeze-diff/freeze`
 - `GET /api/swiggy-deep-site-map`
 - `GET /api/swiggy-developer-quickstart`
 - `POST /api/swiggy-developer-quickstart/run-first-call`
@@ -488,6 +490,8 @@ Production should use an HTTPS redirect URI with exact-match allowlisting.
 
 `/api/swiggy-builders-page-mesh` fetches every non-external Website Atlas Builders page from the live public site, extracts anchors and titles, reconciles module/CTA coverage, rejects user-supplied URLs, and fails production smoke when public pages become unreachable or links leave approved Builders, legal, `forms.gle`, official MCP reference, or builders email contact origins.
 
+`/api/swiggy-source-freeze-diff` is the final source-freeze proof before demo recording or access submission. It composes live Builders Page Mesh, Website Atlas header/footer/CTA counts, llms/docs coverage, 35-tool reference parity, Access Evidence Matrix, Builder Packet Export, Upstream Watch, proof commands, missing inputs, and the operator browser re-browse gate. `POST /api/swiggy-source-freeze-diff/freeze` reruns the same check for pre-demo, pre-access-submission, or post-source-change modes without submitting external state.
+
 `/api/swiggy-builders-module-intelligence` converts Website Atlas modules into product-readiness rows with owner, audience, official signal, product promise, Swiggy surface, MealPilot proof, route optimization, risk boundary, CTA mapping, journey placement, and explicit external gates.
 
 `/api/swiggy-builders-launch-story` turns the April 2026 Builders Club launch blog into a reviewer-ready story center. It reconciles the launch-era 18+ API-tool narrative with the current 35-tool docs snapshot and packages story beats, the demo journey, showcase assets, ecosystem lanes, CTA paths, and co-marketing guardrails.
@@ -548,6 +552,7 @@ The test suite checks that:
 - Swiggy Builders Homepage Experience Center maps header, hero, how-it-works, benefits, guidelines, FAQ, final CTA, and footer into section proof, mobile checks, reviewer checks, continuity, and external gates.
 - Swiggy Builders Source Evolution Center reconciles homepage 18+ launch copy with current 35/35 callable-tool coverage, llms/docs refresh loops, v1.0/v1.1/v1.2/v2 roadmap drift, signed-manifest/rate-limit gates, visual proof, and reviewer packet regression.
 - Swiggy Builders Live Source Resilience Center reports live homepage fetch mode, Website Atlas fallback, every-page mesh coverage, llms markdown recovery, header/footer/CTA parity, and mandatory browser re-browse gates before reviewer submission.
+- Swiggy Source Freeze Diff composes live page mesh, source intelligence, llms/docs coverage, access evidence, builder packet export, upstream watch, proof commands, and browser re-browse gates into one final pre-submission freeze decision.
 - Swiggy Builders Review Decision Center converts official fit, demo, security, API coverage, source-review, credential, ops, and go-live review signals into approval-readiness gates, recommendation, reviewer questions, proof links, operator blockers, and Swiggy-owned gates.
 - CTA Live Audit probes official Builders/docs click targets, keeps form/email/legal CTAs manual, and fails smoke on unsafe or blocked CTA drift.
 - Swiggy Builders Launch Story Center converts the launch blog into a reviewer-ready story, reconciles the launch-era 18+ signal with the current 35-tool docs snapshot, and packages demo journey, showcase assets, ecosystem lanes, CTA paths, and co-marketing guardrails.

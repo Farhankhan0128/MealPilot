@@ -80,6 +80,11 @@ assert(
   "OpenAPI upstream watch contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-source-freeze-diff"]?.get?.summary?.includes("source freeze diff") &&
+    openApi.paths["/api/swiggy-source-freeze-diff/freeze"]?.post?.summary?.includes("source freeze diff"),
+  "OpenAPI source freeze diff contract is missing",
+);
+assert(
   openApi.paths["/api/swiggy-benefits-activation-center/activate"]?.post?.summary?.includes(
     "Benefits Activation action",
   ) &&
@@ -4212,6 +4217,55 @@ assert(
   "source intelligence staging replay queue is missing",
 );
 
+const sourceFreezeDiff = await request("/api/swiggy-source-freeze-diff");
+assert(sourceFreezeDiff.sourceFreezeDiff.score >= 80, "source freeze diff score is below target");
+assert(
+  ["ready_to_freeze", "refresh_required"].includes(sourceFreezeDiff.sourceFreezeDiff.decision) &&
+    sourceFreezeDiff.sourceFreezeDiff.mode === "pre_access_submission",
+  "source freeze diff default decision is incomplete",
+);
+assert(
+  sourceFreezeDiff.sourceFreezeDiff.liveSnapshot.referenceTools === 35 &&
+    sourceFreezeDiff.sourceFreezeDiff.localPacket.accessEvidenceRows >= 50,
+  "source freeze diff snapshot or local packet rollup is incomplete",
+);
+assert(
+  [
+    "builders_pages",
+    "header_footer",
+    "cta_inventory",
+    "llms_docs",
+    "reference_tools",
+    "access_packet",
+    "upstream_watch",
+    "browser_rebrowse",
+  ].every((id) => sourceFreezeDiff.sourceFreezeDiff.diffRows.some((row) => row.id === id)),
+  "source freeze diff rows are incomplete",
+);
+assert(
+  sourceFreezeDiff.sourceFreezeDiff.commands.some((command) => command.command.includes("verify:production")) &&
+    sourceFreezeDiff.sourceFreezeDiff.assertions.some((assertion) => assertion.includes("no user-supplied source URL")) &&
+    sourceFreezeDiff.sourceFreezeDiff.externalGates.some((gate) => gate.includes("official Builders page")),
+  "source freeze diff commands, assertions, or gates are incomplete",
+);
+
+const sourceFreezePostChange = await request("/api/swiggy-source-freeze-diff/freeze", {
+  method: "POST",
+  body: JSON.stringify({
+    mode: "post_source_change",
+    includeLivePageMesh: false,
+    includeLlmsManifest: true,
+    includeAccessPacket: true,
+    includeBrowserRebrowse: false,
+  }),
+});
+assert(
+  sourceFreezePostChange.sourceFreezeDiff.mode === "post_source_change" &&
+    sourceFreezePostChange.sourceFreezeDiff.includeLivePageMesh === false &&
+    sourceFreezePostChange.sourceFreezeDiff.decision === "refresh_required",
+  "source freeze explicit post-source-change mode is incomplete",
+);
+
 const deepSiteMap = await request("/api/swiggy-deep-site-map");
 assert(deepSiteMap.deepSiteMap.score >= 90, "Swiggy deep site map score is below target");
 assert(deepSiteMap.deepSiteMap.totals.pages >= 8, "deep site map page coverage is incomplete");
@@ -8059,6 +8113,9 @@ console.log(
       upstreamRoadmapItems: upstreamWatch.upstreamWatch.roadmapItems.length,
       sourceIntelligenceScore: sourceIntelligence.sourceIntelligence.score,
       sourceDriftSignals: sourceIntelligence.sourceIntelligence.driftSignals.length,
+      sourceFreezeScore: sourceFreezeDiff.sourceFreezeDiff.score,
+      sourceFreezeDecision: sourceFreezeDiff.sourceFreezeDiff.decision,
+      sourceFreezeRows: sourceFreezeDiff.sourceFreezeDiff.diffRows.length,
       deepSiteMapScore: deepSiteMap.deepSiteMap.score,
       deepSiteMapPages: deepSiteMap.deepSiteMap.totals.pages,
       deepSiteMapCtas: deepSiteMap.deepSiteMap.totals.ctas,

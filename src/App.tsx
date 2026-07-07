@@ -167,6 +167,7 @@ import {
   fetchSwiggyPartnerSuccessDesk,
   fetchSwiggyPartnerSupportRoom,
   fetchSwiggyScenarioRunner,
+  fetchSwiggySourceFreezeDiff,
   fetchSwiggySourceIntelligence,
   fetchSwiggyStagingCutover,
   fetchSwiggyStateOrchestrator,
@@ -190,6 +191,7 @@ import {
   fetchSwiggyVisualDishCapture,
   fetchSwiggyVoiceCommerceCenter,
   fetchSwiggyRouteOptimizer,
+  runSwiggySourceFreezeDiff,
   rehearseSwiggyInteractionQa,
   fetchTrafficReadinessPlan,
   fetchTracking,
@@ -368,6 +370,8 @@ import type {
   SwiggyQualityLoopCenter,
   SwiggyRitualAutopilotCenter,
   SwiggyScenarioRunnerReport,
+  SwiggySourceFreezeDiffMode,
+  SwiggySourceFreezeDiffReport,
   SwiggySourceIntelligenceReport,
   SwiggyStagingCredentialDrillReport,
   SwiggyStagingSeedSmokeCenter,
@@ -491,6 +495,14 @@ async function fetchSourceIntelligenceOptional(): Promise<{ sourceIntelligence: 
   }
 }
 
+async function fetchSourceFreezeDiffOptional(): Promise<{ sourceFreezeDiff: SwiggySourceFreezeDiffReport | null }> {
+  try {
+    return await fetchSwiggySourceFreezeDiff();
+  } catch {
+    return { sourceFreezeDiff: null };
+  }
+}
+
 async function fetchInnovationRadarOptional(): Promise<{ innovationRadar: SwiggyInnovationRadarReport | null }> {
   try {
     return await fetchSwiggyInnovationRadar();
@@ -560,6 +572,7 @@ function App() {
   const [liveSourceResilience, setLiveSourceResilience] =
     useState<SwiggyBuildersLiveSourceResilienceCenter | null>(null);
   const [reviewDecision, setReviewDecision] = useState<SwiggyBuildersReviewDecisionCenter | null>(null);
+  const [sourceFreezeDiff, setSourceFreezeDiff] = useState<SwiggySourceFreezeDiffReport | null>(null);
   const [operatingContract, setOperatingContract] = useState<SwiggyOperatingContractCenterReport | null>(null);
   const [swiggyDeepSiteMap, setSwiggyDeepSiteMap] = useState<SwiggyDeepSiteMap | null>(null);
   const [swiggyBuilderIntake, setSwiggyBuilderIntake] = useState<SwiggyBuilderIntakeCommandCenter | null>(null);
@@ -819,6 +832,7 @@ function App() {
       toolParityAuditorResponse,
       upstreamWatchResponse,
       sourceIntelligenceResponse,
+      sourceFreezeDiffResponse,
       developerQuickstartResponse,
       ctaExecutionResponse,
       ctaLiveAuditResponse,
@@ -943,6 +957,7 @@ function App() {
       fetchSwiggyToolParityAuditor(),
       fetchSwiggyUpstreamWatch(),
       fetchSourceIntelligenceOptional(),
+      fetchSourceFreezeDiffOptional(),
       fetchDeveloperQuickstartWorkbench(),
       fetchSwiggyCtaExecutionCenter(),
       fetchSwiggyCtaLiveAudit(),
@@ -1068,6 +1083,7 @@ function App() {
     setToolParityAuditor(toolParityAuditorResponse.toolParityAuditor);
     setSwiggyUpstreamWatch(upstreamWatchResponse.upstreamWatch);
     setSwiggySourceIntelligence(sourceIntelligenceResponse.sourceIntelligence);
+    setSourceFreezeDiff(sourceFreezeDiffResponse.sourceFreezeDiff);
     setDeveloperQuickstart(developerQuickstartResponse.quickstartWorkbench);
     setCtaExecution(ctaExecutionResponse.ctaExecution);
     setCtaLiveAudit(ctaLiveAuditResponse.ctaLiveAudit);
@@ -1196,6 +1212,7 @@ function App() {
       toolParityAuditorResponse,
       upstreamWatchResponse,
       sourceIntelligenceResponse,
+      sourceFreezeDiffResponse,
       developerQuickstartResponse,
       ctaExecutionResponse,
       ctaLiveAuditResponse,
@@ -1317,6 +1334,7 @@ function App() {
       fetchSwiggyToolParityAuditor(),
       fetchSwiggyUpstreamWatch(),
       fetchSourceIntelligenceOptional(),
+      fetchSourceFreezeDiffOptional(),
       fetchDeveloperQuickstartWorkbench(),
       fetchSwiggyCtaExecutionCenter(),
       fetchSwiggyCtaLiveAudit(),
@@ -1438,6 +1456,7 @@ function App() {
     setToolParityAuditor(toolParityAuditorResponse.toolParityAuditor);
     setSwiggyUpstreamWatch(upstreamWatchResponse.upstreamWatch);
     setSwiggySourceIntelligence(sourceIntelligenceResponse.sourceIntelligence);
+    setSourceFreezeDiff(sourceFreezeDiffResponse.sourceFreezeDiff);
     setDeveloperQuickstart(developerQuickstartResponse.quickstartWorkbench);
     setCtaExecution(ctaExecutionResponse.ctaExecution);
     setCtaLiveAudit(ctaLiveAuditResponse.ctaLiveAudit);
@@ -2133,6 +2152,7 @@ function App() {
                 llmsManifest={llmsManifest}
                 upstreamWatch={swiggyUpstreamWatch}
                 sourceIntelligence={swiggySourceIntelligence}
+                sourceFreezeDiff={sourceFreezeDiff}
                 developerQuickstart={developerQuickstart}
                 ctaExecution={ctaExecution}
                 ctaLiveAudit={ctaLiveAudit}
@@ -2744,6 +2764,7 @@ function LaunchCenterPanel({
   llmsManifest,
   upstreamWatch,
   sourceIntelligence,
+  sourceFreezeDiff,
   developerQuickstart,
   ctaExecution,
   ctaLiveAudit,
@@ -2838,6 +2859,7 @@ function LaunchCenterPanel({
   llmsManifest: SwiggyLlmsManifestVerifier | null;
   upstreamWatch: SwiggyUpstreamWatchReport | null;
   sourceIntelligence: SwiggySourceIntelligenceReport | null;
+  sourceFreezeDiff: SwiggySourceFreezeDiffReport | null;
   developerQuickstart: DeveloperQuickstartWorkbench | null;
   ctaExecution: SwiggyCtaExecutionCenter | null;
   ctaLiveAudit: SwiggyCtaLiveAuditor | null;
@@ -2883,6 +2905,22 @@ function LaunchCenterPanel({
     new Set((sourceIntelligence?.buildQueue ?? []).flatMap((item) => item.evidenceLinks)),
   ).slice(0, 3);
   const officialSourceLinks = (sourceIntelligence?.officialSources ?? []).slice(0, 2);
+  const [sourceFreezeForm, setSourceFreezeForm] = useState<{
+    mode: SwiggySourceFreezeDiffMode;
+    includeLivePageMesh: boolean;
+    includeLlmsManifest: boolean;
+    includeAccessPacket: boolean;
+    includeBrowserRebrowse: boolean;
+  }>({
+    mode: "pre_access_submission",
+    includeLivePageMesh: true,
+    includeLlmsManifest: true,
+    includeAccessPacket: true,
+    includeBrowserRebrowse: true,
+  });
+  const [sourceFreezeRun, setSourceFreezeRun] = useState<SwiggySourceFreezeDiffReport | null>(null);
+  const [sourceFreezeStatus, setSourceFreezeStatus] = useState<"idle" | "loading" | "error">("idle");
+  const activeSourceFreeze = sourceFreezeRun ?? sourceFreezeDiff;
   const [operatingContractForm, setOperatingContractForm] = useState<{
     mode: SwiggyOperatingContractRehearsalMode;
     includeCapacityNotice: boolean;
@@ -3222,6 +3260,18 @@ function LaunchCenterPanel({
       setOperatingContractRehearsalStatus("idle");
     } catch {
       setOperatingContractRehearsalStatus("error");
+    }
+  }
+
+  async function runSourceFreezeDiff(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setSourceFreezeStatus("loading");
+    try {
+      const response = await runSwiggySourceFreezeDiff(sourceFreezeForm);
+      setSourceFreezeRun(response.sourceFreezeDiff);
+      setSourceFreezeStatus("idle");
+    } catch {
+      setSourceFreezeStatus("error");
     }
   }
 
@@ -4766,6 +4816,127 @@ function LaunchCenterPanel({
             </a>
             <a href="/api/swiggy-docs-twin-explorer" target="_blank" rel="noreferrer">
               Docs twins
+            </a>
+          </div>
+        </article>
+
+        <article className="source-freeze-card">
+          <div className="mini-heading">
+            <ClipboardCheck aria-hidden="true" />
+            <strong>Source Freeze Diff</strong>
+          </div>
+          <span>
+            {activeSourceFreeze
+              ? `${activeSourceFreeze.score}/100, ${activeSourceFreeze.decision.replace(/_/g, " ")}`
+              : "Freeze live Builders source proof before recording or access submission"}
+          </span>
+          <div className="source-freeze-grid">
+            <div>
+              <strong>{activeSourceFreeze?.liveSnapshot.pageMeshPages ?? 0}</strong>
+              <span>Pages</span>
+            </div>
+            <div>
+              <strong>{activeSourceFreeze?.liveSnapshot.referenceTools ?? 0}</strong>
+              <span>Tools</span>
+            </div>
+            <div>
+              <strong>{activeSourceFreeze?.localPacket.accessEvidenceRows ?? 0}</strong>
+              <span>Evidence</span>
+            </div>
+            <div>
+              <strong>{activeSourceFreeze?.missingInputs.length ?? 0}</strong>
+              <span>Inputs</span>
+            </div>
+          </div>
+          <form className="source-freeze-rehearsal" onSubmit={runSourceFreezeDiff}>
+            <label htmlFor="source-freeze-mode">Freeze mode</label>
+            <select
+              id="source-freeze-mode"
+              value={sourceFreezeForm.mode}
+              onChange={(event) =>
+                setSourceFreezeForm((current) => ({
+                  ...current,
+                  mode: event.target.value as SwiggySourceFreezeDiffMode,
+                }))
+              }
+            >
+              <option value="pre_access_submission">Pre-access submission</option>
+              <option value="pre_demo">Pre-demo</option>
+              <option value="post_source_change">Post-source change</option>
+            </select>
+            <div className="source-freeze-toggle-grid">
+              <label htmlFor="source-freeze-live">
+                <input
+                  id="source-freeze-live"
+                  type="checkbox"
+                  aria-label="Include live page mesh"
+                  checked={sourceFreezeForm.includeLivePageMesh}
+                  onChange={(event) =>
+                    setSourceFreezeForm((current) => ({ ...current, includeLivePageMesh: event.target.checked }))
+                  }
+                />
+                Mesh
+              </label>
+              <label htmlFor="source-freeze-llms">
+                <input
+                  id="source-freeze-llms"
+                  type="checkbox"
+                  checked={sourceFreezeForm.includeLlmsManifest}
+                  onChange={(event) =>
+                    setSourceFreezeForm((current) => ({ ...current, includeLlmsManifest: event.target.checked }))
+                  }
+                />
+                llms
+              </label>
+              <label htmlFor="source-freeze-packet">
+                <input
+                  id="source-freeze-packet"
+                  type="checkbox"
+                  checked={sourceFreezeForm.includeAccessPacket}
+                  onChange={(event) =>
+                    setSourceFreezeForm((current) => ({ ...current, includeAccessPacket: event.target.checked }))
+                  }
+                />
+                Packet
+              </label>
+              <label htmlFor="source-freeze-browser">
+                <input
+                  id="source-freeze-browser"
+                  type="checkbox"
+                  checked={sourceFreezeForm.includeBrowserRebrowse}
+                  onChange={(event) =>
+                    setSourceFreezeForm((current) => ({ ...current, includeBrowserRebrowse: event.target.checked }))
+                  }
+                />
+                Browser
+              </label>
+            </div>
+            <button type="submit" disabled={sourceFreezeStatus === "loading"} aria-label="Run Swiggy source freeze diff">
+              {sourceFreezeStatus === "loading" ? <Loader2 aria-hidden="true" /> : <RefreshCw aria-hidden="true" />}
+              Freeze
+            </button>
+            {sourceFreezeStatus === "error" ? <small role="status">Source freeze diff unavailable.</small> : null}
+          </form>
+          <ul className="compact-status-list">
+            {(activeSourceFreeze?.diffRows ?? []).slice(0, 5).map((diffRow) => (
+              <li
+                key={diffRow.id}
+                data-status={diffRow.status === "matched" ? "healthy" : diffRow.status === "blocked" ? "blocked" : "watch"}
+              >
+                <span>{diffRow.label}</span>
+                <strong>{diffRow.status}</strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-intelligence-actions" aria-label="Source freeze links">
+            <a href="/api/swiggy-source-freeze-diff" target="_blank" rel="noreferrer">
+              Freeze API
+            </a>
+            <a href="/api/swiggy-builders-page-mesh" target="_blank" rel="noreferrer">
+              Page mesh
+            </a>
+            <a href="/api/builder-packet-export" target="_blank" rel="noreferrer">
+              Packet
             </a>
           </div>
         </article>

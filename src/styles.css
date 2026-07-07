@@ -1169,6 +1169,10 @@ select:focus {
   grid-column: span 2;
 }
 
+.source-freeze-card {
+  grid-column: span 2;
+}
+
 .journey-gates-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -1191,6 +1195,13 @@ select:focus {
 }
 
 .live-source-resilience-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.source-freeze-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 8px;
@@ -1233,6 +1244,15 @@ select:focus {
   background: #fff;
 }
 
+.source-freeze-grid div {
+  display: grid;
+  gap: 3px;
+  min-height: 64px;
+  border-radius: 8px;
+  padding: 9px;
+  background: #fff;
+}
+
 .journey-gates-grid strong {
   color: var(--green-dark);
   font-size: 1.18rem;
@@ -1252,6 +1272,12 @@ select:focus {
 }
 
 .live-source-resilience-grid strong {
+  color: var(--green-dark);
+  font-size: 1.18rem;
+  overflow-wrap: anywhere;
+}
+
+.source-freeze-grid strong {
   color: var(--green-dark);
   font-size: 1.18rem;
   overflow-wrap: anywhere;
@@ -1279,6 +1305,13 @@ select:focus {
 }
 
 .live-source-resilience-grid span {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.source-freeze-grid span {
   color: var(--muted);
   font-size: 0.78rem;
   font-weight: 800;
@@ -2712,7 +2745,8 @@ select:focus {
 .llms-manifest-rehearsal,
 .operating-contract-rehearsal,
 .brand-compliance-rehearsal,
-.access-submission-rehearsal {
+.access-submission-rehearsal,
+.source-freeze-rehearsal {
   display: grid;
   gap: 8px;
   border-radius: 8px;
@@ -2734,7 +2768,8 @@ select:focus {
 .llms-manifest-rehearsal label,
 .operating-contract-rehearsal label,
 .brand-compliance-rehearsal label,
-.access-submission-rehearsal label {
+.access-submission-rehearsal label,
+.source-freeze-rehearsal label {
   color: var(--ink-muted);
   font-size: 0.75rem;
   font-weight: 900;
@@ -2771,7 +2806,9 @@ select:focus {
 .brand-compliance-rehearsal select,
 .brand-compliance-rehearsal input,
 .access-submission-rehearsal select,
-.access-submission-rehearsal input {
+.access-submission-rehearsal input,
+.source-freeze-rehearsal select,
+.source-freeze-rehearsal input {
   width: 100%;
   min-width: 0;
   border: 1px solid var(--line);
@@ -2814,7 +2851,8 @@ select:focus {
 .llms-manifest-toggle-grid label,
 .operating-contract-toggle-grid label,
 .brand-compliance-toggle-grid label,
-.access-submission-toggle-grid label {
+.access-submission-toggle-grid label,
+.source-freeze-toggle-grid label {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -2831,7 +2869,8 @@ select:focus {
 .llms-manifest-toggle-grid,
 .operating-contract-toggle-grid,
 .brand-compliance-toggle-grid,
-.access-submission-toggle-grid {
+.access-submission-toggle-grid,
+.source-freeze-toggle-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
@@ -2842,7 +2881,8 @@ select:focus {
 }
 
 .operating-contract-toggle-grid,
-.brand-compliance-toggle-grid {
+.brand-compliance-toggle-grid,
+.source-freeze-toggle-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
@@ -2859,7 +2899,8 @@ select:focus {
 .llms-manifest-toggle-grid input,
 .operating-contract-toggle-grid input,
 .brand-compliance-toggle-grid input,
-.access-submission-toggle-grid input {
+.access-submission-toggle-grid input,
+.source-freeze-toggle-grid input {
   width: 18px;
   height: 18px;
   accent-color: var(--green);
@@ -2880,7 +2921,8 @@ select:focus {
 .llms-manifest-rehearsal button,
 .operating-contract-rehearsal button,
 .brand-compliance-rehearsal button,
-.access-submission-rehearsal button {
+.access-submission-rehearsal button,
+.source-freeze-rehearsal button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -2908,7 +2950,8 @@ select:focus {
 .llms-manifest-rehearsal button:disabled,
 .operating-contract-rehearsal button:disabled,
 .brand-compliance-rehearsal button:disabled,
-.access-submission-rehearsal button:disabled {
+.access-submission-rehearsal button:disabled,
+.source-freeze-rehearsal button:disabled {
   cursor: wait;
   opacity: 0.72;
 }
@@ -2927,7 +2970,8 @@ select:focus {
 .llms-manifest-rehearsal svg,
 .operating-contract-rehearsal svg,
 .brand-compliance-rehearsal svg,
-.access-submission-rehearsal svg {
+.access-submission-rehearsal svg,
+.source-freeze-rehearsal svg {
   width: 17px;
   height: 17px;
 }
@@ -2946,7 +2990,8 @@ select:focus {
 .llms-manifest-rehearsal small,
 .operating-contract-rehearsal small,
 .brand-compliance-rehearsal small,
-.access-submission-rehearsal small {
+.access-submission-rehearsal small,
+.source-freeze-rehearsal small {
   color: var(--coral);
   font-weight: 850;
 }
@@ -3721,6 +3766,10 @@ select:focus {
     grid-column: auto;
   }
 
+  .source-freeze-card {
+    grid-column: auto;
+  }
+
   .journey-gates-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -3734,6 +3783,10 @@ select:focus {
   }
 
   .live-source-resilience-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .source-freeze-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -3860,6 +3913,10 @@ select:focus {
   }
 
   .live-source-resilience-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .source-freeze-grid {
     grid-template-columns: 1fr;
   }
 

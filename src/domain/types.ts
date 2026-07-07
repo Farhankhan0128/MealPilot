@@ -3884,6 +3884,63 @@ export interface SwiggySourceIntelligenceReport {
   externalGates: string[];
 }
 
+export type SwiggySourceFreezeDiffMode = "pre_demo" | "pre_access_submission" | "post_source_change";
+export type SwiggySourceFreezeDiffDecision = "ready_to_freeze" | "refresh_required" | "blocked_external_gate";
+export type SwiggySourceFreezeDiffStatus = "matched" | "watch" | "blocked";
+
+export interface SwiggySourceFreezeDiffRow {
+  id: string;
+  label: string;
+  source: string;
+  liveValue: string;
+  localValue: string;
+  status: SwiggySourceFreezeDiffStatus;
+  evidenceLinks: string[];
+  nextAction: string;
+}
+
+export interface SwiggySourceFreezeDiffReport {
+  generatedAt: string;
+  freezeId: string;
+  decision: SwiggySourceFreezeDiffDecision;
+  score: number;
+  mode: SwiggySourceFreezeDiffMode;
+  includeLivePageMesh: boolean;
+  includeLlmsManifest: boolean;
+  includeAccessPacket: boolean;
+  includeBrowserRebrowse: boolean;
+  officialSources: string[];
+  liveSnapshot: {
+    homepageMode: string;
+    pageMeshPages: number;
+    fetchedPages: number;
+    verifiedPages: number;
+    atlasFallbackPages: number;
+    unsafeLinks: number;
+    ctas: number;
+    headerLinks: number;
+    footerLinks: number;
+    llmsPages: number;
+    referenceTools: number;
+  };
+  localPacket: {
+    sourceIntelligenceScore: number;
+    sourceClusters: number;
+    driftSignals: number;
+    accessEvidenceRows: number;
+    packetFiles: number;
+    packetVisualTargets: number;
+    launchArtifacts: number;
+  };
+  diffRows: SwiggySourceFreezeDiffRow[];
+  commands: Array<{ command: string; proves: string }>;
+  missingInputs: string[];
+  telemetry: Array<{ field: string; value: string; redaction: string }>;
+  assertions: string[];
+  externalGates: string[];
+  nextAction: string;
+}
+
 export type SwiggyInnovationStatus = "ready" | "staging_gate" | "partner_gate";
 
 export interface SwiggyInnovationInput {

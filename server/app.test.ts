@@ -70,6 +70,8 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/swiggy-builders-live-source-resilience"].get.responses["200"].description).toContain("fallback");
     expect(openApi.body.paths["/api/swiggy-builders-review-decision"].get.summary).toContain("Review Decision");
     expect(openApi.body.paths["/api/swiggy-builders-review-decision"].get.responses["200"].description).toContain("approval");
+    expect(openApi.body.paths["/api/swiggy-source-freeze-diff"].get.summary).toContain("source freeze diff");
+    expect(openApi.body.paths["/api/swiggy-source-freeze-diff/freeze"].post.summary).toContain("source freeze diff");
     expect(openApi.body.paths["/api/swiggy-operating-contract-center"].get.summary).toContain("Operating Contract");
     expect(openApi.body.paths["/api/swiggy-operating-contract-center"].get.responses["200"].description).toContain("99.9%");
     expect(openApi.body.paths["/api/swiggy-operating-contract-center/rehearse"].post.summary).toContain("operating contract");
@@ -5017,6 +5019,55 @@ describe("MealPilot API", () => {
       ),
     ).toBe(true);
     expect(report.assertions.some((assertion: string) => assertion.includes("source-intelligence"))).toBe(true);
+  });
+
+  it("freezes Swiggy source diffs before demo or access submission", async () => {
+    const { app } = createMealPilotServer();
+    await request(app).post("/api/plan").send(planningRequest).expect(201);
+
+    const response = await request(app).get("/api/swiggy-source-freeze-diff").expect(200);
+    const freeze = response.body.sourceFreezeDiff;
+    expect(freeze.score).toBeGreaterThanOrEqual(80);
+    expect(["ready_to_freeze", "refresh_required"]).toContain(freeze.decision);
+    expect(freeze.mode).toBe("pre_access_submission");
+    expect(freeze.officialSources).toEqual(
+      expect.arrayContaining([
+        "https://mcp.swiggy.com/builders/",
+        "https://mcp.swiggy.com/builders/llms.txt",
+      ]),
+    );
+    expect(freeze.liveSnapshot.referenceTools).toBe(35);
+    expect(freeze.localPacket.accessEvidenceRows).toBeGreaterThanOrEqual(50);
+    expect(freeze.diffRows.map((row: { id: string }) => row.id)).toEqual(
+      expect.arrayContaining(["builders_pages", "header_footer", "cta_inventory", "llms_docs", "reference_tools", "access_packet", "upstream_watch", "browser_rebrowse"]),
+    );
+    expect(
+      freeze.diffRows.some(
+        (row: { id: string; status: string }) => row.id === "reference_tools" && row.status === "matched",
+      ),
+    ).toBe(true);
+    expect(freeze.commands.some((command: { command: string }) => command.command.includes("verify:production"))).toBe(true);
+    expect(freeze.assertions.some((assertion: string) => assertion.includes("accepts no user-supplied source URL"))).toBe(true);
+    expect(freeze.externalGates.some((gate: string) => gate.includes("official Builders page"))).toBe(true);
+
+    const postChange = await request(app)
+      .post("/api/swiggy-source-freeze-diff/freeze")
+      .send({
+        mode: "post_source_change",
+        includeLivePageMesh: false,
+        includeLlmsManifest: true,
+        includeAccessPacket: true,
+        includeBrowserRebrowse: false,
+      })
+      .expect(200);
+    expect(postChange.body.sourceFreezeDiff.mode).toBe("post_source_change");
+    expect(postChange.body.sourceFreezeDiff.includeLivePageMesh).toBe(false);
+    expect(postChange.body.sourceFreezeDiff.decision).toBe("refresh_required");
+    expect(
+      postChange.body.sourceFreezeDiff.diffRows.some(
+        (row: { id: string; liveValue: string }) => row.id === "builders_pages" && row.liveValue.includes("fallback"),
+      ),
+    ).toBe(true);
   });
 
   it("returns a deep Swiggy site map with page, CTA, header, footer, and proof coverage", async () => {

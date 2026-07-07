@@ -1371,6 +1371,30 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-source-freeze-diff": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy source freeze diff for final pre-submission source proof",
+          responses: {
+            "200": {
+              description:
+                "Composes live Builders page mesh, header/footer/CTA counts, llms docs, MCP tool counts, access packet evidence, upstream watch, proof commands, missing inputs, and browser re-browse gates",
+            },
+          },
+        },
+      },
+      "/api/swiggy-source-freeze-diff/freeze": {
+        post: {
+          tags: ["Builder Access"],
+          summary: "Run an explicit Swiggy source freeze diff mode",
+          responses: {
+            "200": {
+              description:
+                "Mode-specific source freeze decision for pre-demo, pre-access-submission, or post-source-change workflows with local evidence only and no external submission",
+            },
+          },
+        },
+      },
       "/api/swiggy-deep-site-map": {
         get: {
           tags: ["Builder Access"],

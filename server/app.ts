@@ -34,6 +34,7 @@ import { buildSwiggyBuildersLiveSourceResilienceCenter } from "./services/liveSo
 import { buildSwiggyBuildersModuleIntelligenceCenter } from "./services/moduleIntelligence.js";
 import { buildSwiggyBuildersReviewDecisionCenter } from "./services/reviewDecisionCenter.js";
 import { buildSwiggyBuildersSourceEvolutionCenter } from "./services/sourceEvolutionCenter.js";
+import { buildSwiggySourceFreezeDiff } from "./services/sourceFreezeDiff.js";
 import { buildSwiggyBuildersPageMeshAuditor } from "./services/buildersPageMeshAuditor.js";
 import { buildSwiggyBuildersSiteParityAuditor } from "./services/buildersSiteParityAuditor.js";
 import { buildBuilderPacketExport, buildBuilderPacketMarkdown } from "./services/builderPacketExport.js";
@@ -243,6 +244,14 @@ const accessSubmissionRehearsalSchema = z.object({
   includeHandoffEmail: z.boolean(),
   includeCredentialGates: z.boolean(),
   handoffState: accessSubmissionStateSchema.optional(),
+});
+
+const sourceFreezeDiffSchema = z.object({
+  mode: z.enum(["pre_demo", "pre_access_submission", "post_source_change"]),
+  includeLivePageMesh: z.boolean(),
+  includeLlmsManifest: z.boolean(),
+  includeAccessPacket: z.boolean(),
+  includeBrowserRebrowse: z.boolean(),
 });
 
 const visualDishAnalyzeSchema = z.object({
@@ -1710,6 +1719,38 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
   app.get("/api/swiggy-source-intelligence", (_req, res) => {
     res.json({ sourceIntelligence: buildSwiggySourceIntelligence() });
   });
+
+  app.get(
+    "/api/swiggy-source-freeze-diff",
+    asyncRoute(async (_req, res) => {
+      res.json({
+        sourceFreezeDiff: await buildSwiggySourceFreezeDiff({
+          config,
+          profile: store.getProfile(),
+          coverage: buildMcpCoverage(),
+          latestPlan: store.getAllPlans().at(-1),
+          handoffState: store.getAccessSubmissionState(),
+        }),
+      });
+    }),
+  );
+
+  app.post(
+    "/api/swiggy-source-freeze-diff/freeze",
+    asyncRoute(async (req, res) => {
+      const body = sourceFreezeDiffSchema.parse(req.body);
+      res.json({
+        sourceFreezeDiff: await buildSwiggySourceFreezeDiff({
+          config,
+          profile: store.getProfile(),
+          coverage: buildMcpCoverage(),
+          latestPlan: store.getAllPlans().at(-1),
+          handoffState: store.getAccessSubmissionState(),
+          ...body,
+        }),
+      });
+    }),
+  );
 
   app.get("/api/swiggy-deep-site-map", (_req, res) => {
     res.json({

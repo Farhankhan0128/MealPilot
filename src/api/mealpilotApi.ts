@@ -164,6 +164,8 @@ import type {
   SwiggyPaymentTruthReconciliation,
   SwiggyQuotaNegotiationCenter,
   SwiggyScenarioRunnerReport,
+  SwiggySourceFreezeDiffMode,
+  SwiggySourceFreezeDiffReport,
   SwiggySourceIntelligenceReport,
   SwiggyQualityFeedbackAnalysis,
   SwiggyQualityLoopCenter,
@@ -1022,6 +1024,26 @@ export function fetchSwiggyUpstreamWatch() {
 
 export function fetchSwiggySourceIntelligence() {
   return requestJson<{ sourceIntelligence: SwiggySourceIntelligenceReport }>("/api/swiggy-source-intelligence");
+}
+
+export function fetchSwiggySourceFreezeDiff() {
+  return requestJson<{ sourceFreezeDiff: SwiggySourceFreezeDiffReport }>("/api/swiggy-source-freeze-diff");
+}
+
+export function runSwiggySourceFreezeDiff(input: {
+  mode: SwiggySourceFreezeDiffMode;
+  includeLivePageMesh: boolean;
+  includeLlmsManifest: boolean;
+  includeAccessPacket: boolean;
+  includeBrowserRebrowse: boolean;
+}) {
+  return requestJson<{ sourceFreezeDiff: SwiggySourceFreezeDiffReport }>(
+    "/api/swiggy-source-freeze-diff/freeze",
+    {
+      method: "POST",
+      body: JSON.stringify(input),
+    },
+  );
 }
 
 export function fetchSwiggyDeepSiteMap() {
