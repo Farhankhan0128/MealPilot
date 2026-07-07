@@ -185,6 +185,16 @@ const artifactSections = [
     ],
   },
   {
+    id: "partner_signal_operations",
+    label: "Partner, brand, and live-signal operations",
+    artifacts: [
+      artifact("operating_contract", "Swiggy Operating Contract Center", "api", "/api/swiggy-operating-contract-center", "SLA, rate-limit, support, versioning, changelog, ship-to-production, and incident runbooks consolidated for reviewer handoff.", "Swiggy production SLA, support channels, and credentialed go-live remain external gates."),
+      artifact("brand_compliance", "Brand Compliance Kit", "api", "/api/brand-compliance-kit", "Powered by Swiggy attribution, co-branding boundaries, asset-gate checks, launch screenshots, and no-endorsement copy.", "Public Swiggy claims, logo usage, and co-branding approvals stay Swiggy-owned."),
+      artifact("partner_success_desk", "Swiggy Partner Success Desk", "api", "/api/swiggy-partner-success-desk", "Access handoff, developer support, SLO incidents, capacity review, backpressure, growth showcase asks, and enterprise gates in one packet composer.", "Partner manager, Slack, bespoke SLA, dashboard, and email-send actions remain operator or Swiggy gates."),
+      artifact("live_signal_calibration", "Swiggy Live Signal Calibration Center", "api", "/api/swiggy-live-signal-calibration", "Preference, discovery, offer, order, location, and support signal probes mapped to staging reads, privacy controls, drift thresholds, and external credential gates.", "Live Swiggy-originated signal reads require staging or production credentials and are never implied from local fixtures."),
+    ],
+  },
+  {
     id: "operations_and_logs",
     label: "Operations, logs, and support evidence",
     artifacts: [
@@ -425,8 +435,16 @@ export function buildReviewerArtifactVault(): ReviewerArtifactVault {
     "- Developer Quickstart Workbench: /api/swiggy-developer-quickstart",
     "- CTA Execution Center: /api/swiggy-cta-execution-center",
     "- Swiggy FAQ Resolution Center: /api/swiggy-faq-resolution-center",
+    "- Swiggy Operating Contract Center: /api/swiggy-operating-contract-center",
+    "- Brand Compliance Kit: /api/brand-compliance-kit",
+    "- Growth Partnership Center: /api/swiggy-growth-partnership",
+    "- Swiggy Partner Success Desk: /api/swiggy-partner-success-desk",
     "- Swiggy Builder Talent Signal Center: /api/swiggy-talent-signal-center",
     "- Swiggy Builders Conversion Center: /api/swiggy-conversion-center",
+    "- Traffic Readiness Plan: /api/traffic-readiness-plan",
+    "- Swiggy Quota Negotiation Center: /api/swiggy-quota-negotiation-center",
+    "- Data Governance Center: /api/data-governance-center",
+    "- Swiggy Live Signal Calibration Center: /api/swiggy-live-signal-calibration",
     "- Builder packet: /api/builder-package.md",
     "- OpenAPI: /api/openapi.json",
     "- Demo script: docs/demo-script.md",

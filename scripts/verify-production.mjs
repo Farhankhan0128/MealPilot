@@ -3149,6 +3149,37 @@ assert(
   "reviewer artifact vault benefits activation artifact is missing",
 );
 assert(
+  reviewerArtifactVault.reviewerArtifactVault.artifactSections.some(
+    (section) =>
+      section.id === "partner_signal_operations" &&
+      section.artifacts.some(
+        (artifact) =>
+          artifact.id === "operating_contract" &&
+          artifact.label === "Swiggy Operating Contract Center" &&
+          artifact.path === "/api/swiggy-operating-contract-center",
+      ) &&
+      section.artifacts.some(
+        (artifact) =>
+          artifact.id === "brand_compliance" &&
+          artifact.label === "Brand Compliance Kit" &&
+          artifact.path === "/api/brand-compliance-kit",
+      ) &&
+      section.artifacts.some(
+        (artifact) =>
+          artifact.id === "partner_success_desk" &&
+          artifact.label === "Swiggy Partner Success Desk" &&
+          artifact.path === "/api/swiggy-partner-success-desk",
+      ) &&
+      section.artifacts.some(
+        (artifact) =>
+          artifact.id === "live_signal_calibration" &&
+          artifact.label === "Swiggy Live Signal Calibration Center" &&
+          artifact.path === "/api/swiggy-live-signal-calibration",
+      ),
+  ),
+  "reviewer artifact vault partner signal operations section is missing",
+);
+assert(
   reviewerArtifactVault.reviewerArtifactVault.artifactSections.some((section) =>
     section.artifacts.some(
       (artifact) =>
@@ -3365,6 +3396,14 @@ assert(
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-showcase-submission-center") &&
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-partner-support-room") &&
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-benefits-activation-center") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-operating-contract-center") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/brand-compliance-kit") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-growth-partnership") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-partner-success-desk") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/traffic-readiness-plan") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-quota-negotiation-center") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/data-governance-center") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-live-signal-calibration") &&
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-credential-readiness-dossier") &&
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-credential-issuance/state") &&
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-faq-resolution-center") &&
@@ -7778,6 +7817,7 @@ assert(
 assert(
   builderPacket.packet.readiness.some((item) => item.id === "credential_receipt_packet" && item.status === "ready") &&
     builderPacket.packet.readiness.some((item) => item.id === "showcase_submission_packet" && item.status === "ready") &&
+    builderPacket.packet.readiness.some((item) => item.id === "partner_signal_packet" && item.status === "ready") &&
     builderPacket.packet.readiness.some((item) => item.id === "demo_video" && item.status === "operator_input") &&
     builderPacket.packet.readiness.some((item) => item.id === "staging_credentials" && item.status === "external_gate"),
   "builder packet readiness gates are incomplete",

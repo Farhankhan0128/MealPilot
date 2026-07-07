@@ -219,6 +219,13 @@ export function buildBuilderPacketExport(options: {
         "Add the final demo URL and send the showcase email manually after the access packet is reviewed.",
       ),
       readiness(
+        "partner_signal_packet",
+        "Partner and live-signal packet",
+        "ready",
+        "Reviewer Vault and Launch Bundle now expose partner success, benefits activation, growth, support, brand compliance, traffic, quota, governance, operating contract, and live-signal calibration evidence together.",
+        "Use the reviewer vault partner-signal section when asking Swiggy for support channels, quota review, co-branding approval, and staging signal validation.",
+      ),
+      readiness(
         "demo_video",
         "Demo video URL",
         "operator_input",

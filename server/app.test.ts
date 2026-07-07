@@ -1863,6 +1863,7 @@ describe("MealPilot API", () => {
     expect(packet.copyBlocks.handoffEmail.to).toBe("builders@swiggy.in");
     expect(packet.readiness.some((item: { id: string; status: string }) => item.id === "credential_receipt_packet" && item.status === "ready")).toBe(true);
     expect(packet.readiness.some((item: { id: string; status: string }) => item.id === "showcase_submission_packet" && item.status === "ready")).toBe(true);
+    expect(packet.readiness.some((item: { id: string; status: string }) => item.id === "partner_signal_packet" && item.status === "ready")).toBe(true);
     expect(packet.readiness.some((item: { id: string; status: string }) => item.id === "demo_video" && item.status === "operator_input")).toBe(true);
     expect(packet.readiness.some((item: { id: string; status: string }) => item.id === "staging_credentials" && item.status === "external_gate")).toBe(true);
     expect(packet.externalGates.some((gate: string) => gate.includes("Google Form"))).toBe(true);
@@ -3762,7 +3763,7 @@ describe("MealPilot API", () => {
     expect(vault.readyCommands).toBeGreaterThanOrEqual(6);
     expect(vault.totalRedactionRules).toBeGreaterThanOrEqual(6);
     expect(vault.artifactSections.map((section: { id: string }) => section.id)).toEqual(
-      expect.arrayContaining(["submission_packet", "product_depth", "mcp_contracts", "operations_and_logs"]),
+      expect.arrayContaining(["submission_packet", "product_depth", "mcp_contracts", "partner_signal_operations", "operations_and_logs"]),
     );
     expect(
       vault.artifactSections.some((section: { artifacts: Array<{ id: string; path: string }> }) =>
@@ -3852,6 +3853,36 @@ describe("MealPilot API", () => {
             artifact.label === "Swiggy Benefits Activation Center" &&
             artifact.path === "/api/swiggy-benefits-activation-center",
         ),
+      ),
+    ).toBe(true);
+    expect(
+      vault.artifactSections.some(
+        (section: { id: string; artifacts: Array<{ id: string; label: string; path: string }> }) =>
+          section.id === "partner_signal_operations" &&
+          section.artifacts.some(
+            (artifact) =>
+              artifact.id === "operating_contract" &&
+              artifact.label === "Swiggy Operating Contract Center" &&
+              artifact.path === "/api/swiggy-operating-contract-center",
+          ) &&
+          section.artifacts.some(
+            (artifact) =>
+              artifact.id === "brand_compliance" &&
+              artifact.label === "Brand Compliance Kit" &&
+              artifact.path === "/api/brand-compliance-kit",
+          ) &&
+          section.artifacts.some(
+            (artifact) =>
+              artifact.id === "partner_success_desk" &&
+              artifact.label === "Swiggy Partner Success Desk" &&
+              artifact.path === "/api/swiggy-partner-success-desk",
+          ) &&
+          section.artifacts.some(
+            (artifact) =>
+              artifact.id === "live_signal_calibration" &&
+              artifact.label === "Swiggy Live Signal Calibration Center" &&
+              artifact.path === "/api/swiggy-live-signal-calibration",
+          ),
       ),
     ).toBe(true);
     expect(
@@ -4018,6 +4049,14 @@ describe("MealPilot API", () => {
     expect(vault.reviewerEmail.body).toContain("/api/swiggy-showcase-submission-center");
     expect(vault.reviewerEmail.body).toContain("/api/swiggy-partner-support-room");
     expect(vault.reviewerEmail.body).toContain("/api/swiggy-benefits-activation-center");
+    expect(vault.reviewerEmail.body).toContain("/api/swiggy-operating-contract-center");
+    expect(vault.reviewerEmail.body).toContain("/api/brand-compliance-kit");
+    expect(vault.reviewerEmail.body).toContain("/api/swiggy-growth-partnership");
+    expect(vault.reviewerEmail.body).toContain("/api/swiggy-partner-success-desk");
+    expect(vault.reviewerEmail.body).toContain("/api/traffic-readiness-plan");
+    expect(vault.reviewerEmail.body).toContain("/api/swiggy-quota-negotiation-center");
+    expect(vault.reviewerEmail.body).toContain("/api/data-governance-center");
+    expect(vault.reviewerEmail.body).toContain("/api/swiggy-live-signal-calibration");
     expect(vault.reviewerEmail.body).toContain("/api/swiggy-credential-readiness-dossier");
     expect(vault.reviewerEmail.body).toContain("/api/swiggy-credential-issuance/state");
     expect(vault.reviewerEmail.body).toContain("/api/swiggy-faq-resolution-center");
