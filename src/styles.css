@@ -1046,7 +1046,8 @@ select:focus {
   grid-column: span 2;
 }
 
-.credential-card {
+.credential-card,
+.credential-readiness-card {
   grid-column: span 2;
 }
 
@@ -1546,6 +1547,7 @@ select:focus {
 .credential-meta-grid,
 .credential-vault-grid,
 .credential-handoff-grid,
+.credential-readiness-grid,
 .sandbox-workbench-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1561,6 +1563,7 @@ select:focus {
 .credential-meta-grid div,
 .credential-vault-grid div,
 .credential-handoff-grid div,
+.credential-readiness-grid div,
 .sandbox-workbench-grid div {
   display: grid;
   gap: 3px;
@@ -1582,6 +1585,7 @@ select:focus {
 .credential-meta-grid strong,
 .credential-vault-grid strong,
 .credential-handoff-grid strong,
+.credential-readiness-grid strong,
 .sandbox-workbench-grid strong {
   color: var(--green-dark);
   font-size: 0.88rem;
@@ -1598,6 +1602,7 @@ select:focus {
 .credential-meta-grid span,
 .credential-vault-grid span,
 .credential-handoff-grid span,
+.credential-readiness-grid span,
 .sandbox-workbench-grid span {
   font-size: 0.75rem;
   font-weight: 900;
@@ -2745,6 +2750,8 @@ select:focus {
 .llms-manifest-rehearsal,
 .operating-contract-rehearsal,
 .brand-compliance-rehearsal,
+.credential-readiness-form,
+.credential-readiness-rehearsal,
 .access-submission-rehearsal,
 .source-freeze-rehearsal {
   display: grid;
@@ -2768,6 +2775,8 @@ select:focus {
 .llms-manifest-rehearsal label,
 .operating-contract-rehearsal label,
 .brand-compliance-rehearsal label,
+.credential-readiness-form label,
+.credential-readiness-rehearsal label,
 .access-submission-rehearsal label,
 .source-freeze-rehearsal label {
   color: var(--ink-muted);
@@ -2805,6 +2814,10 @@ select:focus {
 .operating-contract-rehearsal input,
 .brand-compliance-rehearsal select,
 .brand-compliance-rehearsal input,
+.credential-readiness-form select,
+.credential-readiness-form input,
+.credential-readiness-rehearsal select,
+.credential-readiness-rehearsal input,
 .access-submission-rehearsal select,
 .access-submission-rehearsal input,
 .source-freeze-rehearsal select,
@@ -2852,6 +2865,7 @@ select:focus {
 .operating-contract-toggle-grid label,
 .brand-compliance-toggle-grid label,
 .access-submission-toggle-grid label,
+.credential-readiness-toggle-grid label,
 .source-freeze-toggle-grid label {
   display: inline-flex;
   align-items: center;
@@ -2870,6 +2884,7 @@ select:focus {
 .operating-contract-toggle-grid,
 .brand-compliance-toggle-grid,
 .access-submission-toggle-grid,
+.credential-readiness-toggle-grid,
 .source-freeze-toggle-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -2882,6 +2897,7 @@ select:focus {
 
 .operating-contract-toggle-grid,
 .brand-compliance-toggle-grid,
+.credential-readiness-toggle-grid,
 .source-freeze-toggle-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
@@ -2900,6 +2916,7 @@ select:focus {
 .operating-contract-toggle-grid input,
 .brand-compliance-toggle-grid input,
 .access-submission-toggle-grid input,
+.credential-readiness-toggle-grid input,
 .source-freeze-toggle-grid input {
   width: 18px;
   height: 18px;
@@ -2921,6 +2938,8 @@ select:focus {
 .llms-manifest-rehearsal button,
 .operating-contract-rehearsal button,
 .brand-compliance-rehearsal button,
+.credential-readiness-form button,
+.credential-readiness-rehearsal button,
 .access-submission-rehearsal button,
 .source-freeze-rehearsal button {
   display: inline-flex;
@@ -2950,6 +2969,8 @@ select:focus {
 .llms-manifest-rehearsal button:disabled,
 .operating-contract-rehearsal button:disabled,
 .brand-compliance-rehearsal button:disabled,
+.credential-readiness-form button:disabled,
+.credential-readiness-rehearsal button:disabled,
 .access-submission-rehearsal button:disabled,
 .source-freeze-rehearsal button:disabled {
   cursor: wait;
@@ -2970,6 +2991,8 @@ select:focus {
 .llms-manifest-rehearsal svg,
 .operating-contract-rehearsal svg,
 .brand-compliance-rehearsal svg,
+.credential-readiness-form svg,
+.credential-readiness-rehearsal svg,
 .access-submission-rehearsal svg,
 .source-freeze-rehearsal svg {
   width: 17px;
@@ -2990,6 +3013,8 @@ select:focus {
 .llms-manifest-rehearsal small,
 .operating-contract-rehearsal small,
 .brand-compliance-rehearsal small,
+.credential-readiness-form small,
+.credential-readiness-rehearsal small,
 .access-submission-rehearsal small,
 .source-freeze-rehearsal small {
   color: var(--coral);
@@ -3010,6 +3035,7 @@ select:focus {
 .llms-manifest-rehearsal-result,
 .operating-contract-rehearsal-result,
 .brand-compliance-rehearsal-result,
+.credential-readiness-result,
 .access-submission-rehearsal-result {
   display: grid;
   gap: 8px;
@@ -3033,6 +3059,7 @@ select:focus {
 .llms-manifest-rehearsal-result[data-status="healthy"],
 .operating-contract-rehearsal-result[data-status="healthy"],
 .brand-compliance-rehearsal-result[data-status="healthy"],
+.credential-readiness-result[data-status="healthy"],
 .access-submission-rehearsal-result[data-status="healthy"] {
   border-left-color: var(--green);
 }
@@ -3051,6 +3078,7 @@ select:focus {
 .llms-manifest-rehearsal-result[data-status="blocked"],
 .operating-contract-rehearsal-result[data-status="blocked"],
 .brand-compliance-rehearsal-result[data-status="blocked"],
+.credential-readiness-result[data-status="blocked"],
 .access-submission-rehearsal-result[data-status="blocked"] {
   border-left-color: var(--coral);
 }
@@ -3068,6 +3096,7 @@ select:focus {
 .llms-manifest-rehearsal-result[data-status="watch"],
 .operating-contract-rehearsal-result[data-status="watch"],
 .brand-compliance-rehearsal-result[data-status="watch"],
+.credential-readiness-result[data-status="watch"],
 .access-submission-rehearsal-result[data-status="watch"] {
   border-left-color: var(--gold);
 }
@@ -3107,6 +3136,7 @@ select:focus {
 .llms-manifest-rehearsal-result span,
 .operating-contract-rehearsal-result span,
 .brand-compliance-rehearsal-result span,
+.credential-readiness-result span,
 .access-submission-rehearsal-result span {
   color: var(--ink-muted);
   font-size: 0.75rem;
@@ -3128,6 +3158,7 @@ select:focus {
 .llms-manifest-rehearsal-result strong,
 .operating-contract-rehearsal-result strong,
 .brand-compliance-rehearsal-result strong,
+.credential-readiness-result strong,
 .access-submission-rehearsal-result strong {
   color: var(--green-dark);
   font-size: 0.84rem;
@@ -3162,6 +3193,8 @@ select:focus {
 .operating-contract-rehearsal-result small,
 .brand-compliance-rehearsal-result p,
 .brand-compliance-rehearsal-result small,
+.credential-readiness-result p,
+.credential-readiness-result small,
 .access-submission-rehearsal-result p,
 .access-submission-rehearsal-result small {
   margin: 0;
@@ -3942,6 +3975,7 @@ select:focus {
   .route-optimizer-grid,
   .credential-vault-grid,
   .credential-handoff-grid,
+  .credential-readiness-grid,
   .enterprise-auth-grid,
   .resource-prompt-grid,
   .widget-runtime-grid,
@@ -4569,6 +4603,7 @@ select:focus {
 .surface-card,
 .builders-map-card,
 .credential-card,
+.credential-readiness-card,
 .sandbox-workbench-card,
 .enterprise-auth-card,
 .scenario-runner-card,
@@ -4677,6 +4712,7 @@ select:focus {
 .credential-meta-grid div,
 .credential-vault-grid div,
 .credential-handoff-grid div,
+.credential-readiness-grid div,
 .sandbox-workbench-grid div,
 .enterprise-auth-grid div,
 .tool-lab-stat-grid div,
@@ -5229,6 +5265,7 @@ select:focus {
   .builders-map-card,
   .credential-card,
   .credential-vault-card,
+  .credential-readiness-card,
   .sandbox-workbench-card,
   .enterprise-auth-card,
   .scenario-runner-card,
@@ -5489,6 +5526,7 @@ select:focus {
   .surface-card,
   .builders-map-card,
   .credential-card,
+  .credential-readiness-card,
   .sandbox-workbench-card,
   .enterprise-auth-card,
   .scenario-runner-card,

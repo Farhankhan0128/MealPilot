@@ -44,6 +44,7 @@ Planned MCP servers:
 - Credential Cockpit with Dynamic Client Registration preview, redirect URI audit, scope coverage, OAuth metadata endpoints, and external gate tracking.
 - Swiggy Credential Vault Center at `/api/swiggy-credential-vault-center` for runtime secret posture, no-token redaction rules, rotation runbooks, cutover checks, and support-safe credential packets.
 - Swiggy Credential Handoff Center at `/api/swiggy-credential-handoff-center` for localhost proof, DCR, OAuth PKCE, exact redirect URI, secret vault, staging credentials, seeded smoke, 48-hour soak, and production promotion in one owner-assigned room.
+- Swiggy Credential Readiness Dossier at `/api/swiggy-credential-readiness-dossier` plus `/api/swiggy-credential-issuance/state` for durable, redacted DCR approval, client-id configured, staging credential issue, seeded-user receipt, support-thread, token-expiry, and first-read readiness metadata without storing secret values.
 - Sandbox Credential Workbench that joins localhost demo proof, Dynamic Client Registration, PKCE, exact redirect allowlisting, Swiggy staging credentials, seeded-data plans, 48-hour soak, and production-promotion gates.
 - Swiggy Staging Seed & Smoke Center at `/api/swiggy-staging-seed-smoke-center` that turns Food, Instamart, and Dineout seeded-data needs into read, mutation, commercial, support, telemetry, and promotion smoke waves.
 - Swiggy Live Signal Calibration Center at `/api/swiggy-live-signal-calibration` that reconciles local preference, discovery, offer, order, location, and support signals with future Food, Instamart, and Dineout staging reads while preserving privacy redaction, drift thresholds, and external credential gates.
@@ -380,6 +381,10 @@ GET  /api/auth/swiggy/status
 GET  /api/swiggy-auth-lifecycle-center
 GET  /api/credential-onboarding
 GET  /api/swiggy-credential-vault-center
+GET  /api/swiggy-credential-issuance/state
+PATCH /api/swiggy-credential-issuance/state
+GET  /api/swiggy-credential-readiness-dossier
+POST /api/swiggy-credential-readiness-dossier/rehearse
 GET  /api/sandbox-credential-workbench
 GET  /api/enterprise-delegated-auth
 GET  /api/enterprise-platform-center
@@ -565,6 +570,10 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 `GET /api/swiggy-benefits-activation-center` activates the Swiggy Builders "What you get" promises: live APIs, quota expansion, technical support, Powered by Swiggy attribution, showcase visibility, hiring visibility, growth partnership, and enterprise support are mapped to MealPilot proof routes, CTAs, owner gates, and a builders@swiggy.in partner email draft. `POST /api/swiggy-benefits-activation-center/activate` powers the Launch Center selector for one benefit at a time, returning a decision, readiness score, owner, matching CTA, proof links, checklist, handoff draft, and explicit operator/Swiggy gates without sending email, submitting forms, opening Slack, requesting assets, or claiming approval.
 
 `GET /api/swiggy-credential-handoff-center` is the credential handoff room: local demo proof, Dynamic Client Registration, exact redirect URI, OAuth PKCE, secret storage, staging credentials, seeded smoke, 35-tool certification, 48-hour soak, handoff email, and production promotion are sequenced with explicit MealPilot, operator, and Swiggy ownership.
+
+`GET /api/swiggy-credential-issuance/state` and `PATCH /api/swiggy-credential-issuance/state` persist the redacted credential receipt ledger after Swiggy responds: DCR approval timestamp, client-id configured flag, staging credential issue timestamp, Food/Instamart/Dineout seeded-user receipt booleans, support thread id, token-expiry recorded flag, first-read probe readiness, and notes. The state never stores bearer tokens, client secrets, auth codes, PKCE verifiers, or raw seeded-user PII.
+
+`GET /api/swiggy-credential-readiness-dossier` and `POST /api/swiggy-credential-readiness-dossier/rehearse` join source freeze, public Builders 3-server and 18+ API-tool homepage signals, 35-tool manifest certification, access submission state, DCR, credential vault, seeded staging receipts, proof commands, and production-promotion gates into one operator room.
 
 `GET /api/sandbox-credential-workbench` is the localhost-to-staging credential runbook: demo-video readiness, Dynamic Client Registration, PKCE, exact redirect allowlisting, Swiggy-issued staging credentials, seeded Food/Instamart/Dineout data, 48-hour soak, and production-promotion gates.
 

@@ -5283,6 +5283,18 @@ export interface AccessSubmissionRehearsal {
   nextAction: string;
 }
 
+export interface SwiggyCredentialIssuanceState {
+  dcrApprovedAt?: string;
+  clientIdConfigured: boolean;
+  stagingCredentialsIssuedAt?: string;
+  seededUsersReceived: Record<SwiggyServer, boolean>;
+  supportThreadId: string;
+  tokenExpiryRecorded: boolean;
+  firstReadProbeReady: boolean;
+  notes: string;
+  updatedAt: string;
+}
+
 export type SwiggyAccessEvidenceStatus = "ready" | "operator_input" | "external_gate" | "watch";
 export type SwiggyAccessEvidenceOwner = "MealPilot" | "Operator" | "Swiggy";
 export type SwiggyAccessEvidenceKind =
@@ -7800,6 +7812,93 @@ export interface SwiggyCredentialHandoffCenter {
   };
   assertions: string[];
   externalGates: string[];
+}
+
+export type SwiggyCredentialReadinessStatus = "ready" | "operator_input" | "swiggy_gate" | "blocked";
+export type SwiggyCredentialReadinessOwner = "MealPilot" | "Operator" | "Swiggy" | "Joint";
+
+export interface SwiggyCredentialReadinessSourceSignal {
+  id: string;
+  label: string;
+  source: string;
+  publicSignal: string;
+  mealPilotInterpretation: string;
+  status: SwiggyCredentialReadinessStatus;
+}
+
+export interface SwiggyCredentialReadinessStage {
+  id: string;
+  sequence: number;
+  label: string;
+  owner: SwiggyCredentialReadinessOwner;
+  status: SwiggyCredentialReadinessStatus;
+  evidenceLinks: string[];
+  proof: string;
+  nextAction: string;
+}
+
+export interface SwiggyCredentialReadinessReceiptItem {
+  id: string;
+  label: string;
+  owner: SwiggyCredentialReadinessOwner;
+  status: SwiggyCredentialReadinessStatus;
+  safeValue: string;
+  requiredBefore: "access_followup" | "staging_smoke" | "production_promotion";
+}
+
+export interface SwiggyCredentialReadinessDossier {
+  generatedAt: string;
+  mode: "mock" | "staging" | "production";
+  score: number;
+  officialSources: string[];
+  publicSourceSnapshot: {
+    buildersServers: number;
+    homepageApiToolsLabel: string;
+    manifestToolPages: number;
+    interpretation: string;
+  };
+  totals: {
+    stages: number;
+    readyStages: number;
+    receiptItems: number;
+    readyReceiptItems: number;
+    swiggyGates: number;
+    operatorInputs: number;
+    proofCommands: number;
+  };
+  sourceSignals: SwiggyCredentialReadinessSourceSignal[];
+  stages: SwiggyCredentialReadinessStage[];
+  receiptChecklist: SwiggyCredentialReadinessReceiptItem[];
+  proofCommands: Array<{ id: string; command: string; proves: string }>;
+  reviewerNarrative: string;
+  assertions: string[];
+  externalGates: string[];
+}
+
+export type SwiggyCredentialReadinessRehearsalMode =
+  | "access_packet_sent"
+  | "staging_credentials_issued"
+  | "production_promotion_ready";
+export type SwiggyCredentialReadinessDecision =
+  | "ready_for_credential_followup"
+  | "ready_for_staging_receipt"
+  | "blocked_on_swiggy_credentials";
+
+export interface SwiggyCredentialReadinessRehearsal {
+  generatedAt: string;
+  mode: SwiggyCredentialReadinessRehearsalMode;
+  decision: SwiggyCredentialReadinessDecision;
+  readinessScore: number;
+  includeSourceFreeze: boolean;
+  includeCredentialReceipt: boolean;
+  includeProductionPromotion: boolean;
+  selectedStages: SwiggyCredentialReadinessStage[];
+  receiptChecklist: SwiggyCredentialReadinessReceiptItem[];
+  commands: Array<{ command: string; proves: string }>;
+  missingInputs: string[];
+  telemetry: Array<{ field: string; value: string; redaction: string }>;
+  nextAction: string;
+  assertions: string[];
 }
 
 export type SwiggyStagingCredentialDrillStatus = "ready" | "operator_input" | "swiggy_gate" | "blocked";

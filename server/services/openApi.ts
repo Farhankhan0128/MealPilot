@@ -1697,6 +1697,52 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-credential-issuance/state": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy credential issuance receipt state",
+          responses: {
+            "200": {
+              description:
+                "Durable redacted state for DCR approval, client-id configuration, staging credential issuance, seeded user receipt, support thread, token-expiry recording, first-read readiness, notes, and update timestamp",
+            },
+          },
+        },
+        patch: {
+          tags: ["Builder Access"],
+          summary: "Update Swiggy credential issuance receipt state",
+          responses: {
+            "200": {
+              description:
+                "Persists redacted credential issuance metadata and returns the refreshed credential readiness dossier without storing tokens, secrets, auth codes, PKCE verifiers, or raw seeded-user PII",
+            },
+          },
+        },
+      },
+      "/api/swiggy-credential-readiness-dossier": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Credential Readiness Dossier for source freeze, access receipt, DCR, vault, staging, and production",
+          responses: {
+            "200": {
+              description:
+                "Credential readiness dossier combining homepage 3-server and 18+ API-tool signals, llms/reference certification, source freeze, access submission state, DCR receipt, vault posture, seeded staging receipts, proof commands, and Swiggy-owned gates",
+            },
+          },
+        },
+      },
+      "/api/swiggy-credential-readiness-dossier/rehearse": {
+        post: {
+          tags: ["Builder Access"],
+          summary: "Swiggy credential readiness dossier rehearsal",
+          responses: {
+            "200": {
+              description:
+                "Local credential receipt rehearsal for access-packet follow-up, staging credential receipt, or production promotion readiness with redacted telemetry and no external Swiggy state changes",
+            },
+          },
+        },
+      },
       "/api/sandbox-credential-workbench": {
         get: {
           tags: ["Builder Access"],

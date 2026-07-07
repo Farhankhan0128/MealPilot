@@ -6,6 +6,7 @@ import type {
   MealPlan,
   PantryItem,
   Reminder,
+  SwiggyCredentialIssuanceState,
   UserProfile,
 } from "../../src/domain/types.js";
 import { defaultUserProfile } from "../../src/domain/profile.js";
@@ -29,6 +30,7 @@ export interface StoreSnapshot {
   reminders: Reminder[];
   authSessions: AuthSession[];
   accessSubmission: AccessSubmissionHandoffState;
+  credentialIssuance: SwiggyCredentialIssuanceState;
 }
 
 export interface StoreDiagnostics {
@@ -41,6 +43,7 @@ export interface StoreDiagnostics {
   authSessionCount: number;
   groupMemberCount: number;
   accessSubmissionUpdatedAt?: string;
+  credentialIssuanceUpdatedAt?: string;
   lastSavedAt?: string;
 }
 
@@ -68,6 +71,8 @@ export interface SessionStore {
   getReminders(sessionId?: string): Reminder[];
   getAccessSubmissionState(): AccessSubmissionHandoffState;
   updateAccessSubmissionState(state: AccessSubmissionHandoffState): AccessSubmissionHandoffState;
+  getCredentialIssuanceState(): SwiggyCredentialIssuanceState;
+  updateCredentialIssuanceState(state: SwiggyCredentialIssuanceState): SwiggyCredentialIssuanceState;
   clearUserData(): void;
   getSnapshot(): StoreSnapshot;
   replaceSnapshot(snapshot: StoreSnapshot): StoreSnapshot;
@@ -118,6 +123,22 @@ export function defaultAccessSubmissionState(): AccessSubmissionHandoffState {
   };
 }
 
+export function defaultCredentialIssuanceState(): SwiggyCredentialIssuanceState {
+  return {
+    clientIdConfigured: false,
+    seededUsersReceived: {
+      food: false,
+      instamart: false,
+      dineout: false,
+    },
+    supportThreadId: "",
+    tokenExpiryRecorded: false,
+    firstReadProbeReady: false,
+    notes: "",
+    updatedAt: new Date().toISOString(),
+  };
+}
+
 function snapshotNow(args: {
   profile: UserProfile;
   pantry: PantryItem[];
@@ -126,6 +147,7 @@ function snapshotNow(args: {
   reminders: Reminder[];
   authSessions: AuthSession[];
   accessSubmission: AccessSubmissionHandoffState;
+  credentialIssuance: SwiggyCredentialIssuanceState;
 }): StoreSnapshot {
   return {
     version: 1,
@@ -148,6 +170,14 @@ function normalizeSnapshot(input: Partial<StoreSnapshot> | undefined): StoreSnap
       ...defaultAccessSubmissionState(),
       ...(input?.accessSubmission ?? {}),
     },
+    credentialIssuance: {
+      ...defaultCredentialIssuanceState(),
+      ...(input?.credentialIssuance ?? {}),
+      seededUsersReceived: {
+        ...defaultCredentialIssuanceState().seededUsersReceived,
+        ...(input?.credentialIssuance?.seededUsersReceived ?? {}),
+      },
+    },
   };
 }
 
@@ -160,6 +190,7 @@ export function createMemorySessionStore(initial?: Partial<StoreSnapshot>): Sess
   let pantry: PantryItem[] = snapshot.pantry;
   let groupPlan: GroupPlan = snapshot.groupPlan;
   let accessSubmission: AccessSubmissionHandoffState = snapshot.accessSubmission;
+  let credentialIssuance: SwiggyCredentialIssuanceState = snapshot.credentialIssuance;
   let lastSavedAt = snapshot.savedAt;
 
   snapshot.plans.forEach((plan) => plans.set(plan.id, plan));
@@ -176,6 +207,7 @@ export function createMemorySessionStore(initial?: Partial<StoreSnapshot>): Sess
       reminders: [...reminders.values()],
       authSessions: [...authSessions.values()],
       accessSubmission,
+      credentialIssuance,
     });
   }
 
@@ -235,6 +267,13 @@ export function createMemorySessionStore(initial?: Partial<StoreSnapshot>): Sess
       accessSubmission = nextState;
       return accessSubmission;
     },
+    getCredentialIssuanceState() {
+      return credentialIssuance;
+    },
+    updateCredentialIssuanceState(nextState) {
+      credentialIssuance = nextState;
+      return credentialIssuance;
+    },
     clearUserData() {
       plans.clear();
       authSessions.clear();
@@ -243,6 +282,7 @@ export function createMemorySessionStore(initial?: Partial<StoreSnapshot>): Sess
       pantry = [];
       groupPlan = emptyGroupPlan();
       accessSubmission = defaultAccessSubmissionState();
+      credentialIssuance = defaultCredentialIssuanceState();
       lastSavedAt = new Date().toISOString();
     },
     getSnapshot() {
@@ -260,6 +300,7 @@ export function createMemorySessionStore(initial?: Partial<StoreSnapshot>): Sess
       pantry = normalized.pantry;
       groupPlan = normalized.groupPlan;
       accessSubmission = normalized.accessSubmission;
+      credentialIssuance = normalized.credentialIssuance;
       lastSavedAt = normalized.savedAt;
       return currentSnapshot();
     },
@@ -310,6 +351,7 @@ export function createMemorySessionStore(initial?: Partial<StoreSnapshot>): Sess
         authSessionCount: authSessions.size,
         groupMemberCount: groupPlan.members.length,
         accessSubmissionUpdatedAt: accessSubmission.updatedAt,
+        credentialIssuanceUpdatedAt: credentialIssuance.updatedAt,
         lastSavedAt,
       };
     },
@@ -389,6 +431,12 @@ export function createFileSessionStore(filePath: string): SessionStore {
     },
     updateAccessSubmissionState(state) {
       return withPersist(() => memoryStore.updateAccessSubmissionState(state));
+    },
+    getCredentialIssuanceState() {
+      return memoryStore.getCredentialIssuanceState();
+    },
+    updateCredentialIssuanceState(state) {
+      return withPersist(() => memoryStore.updateCredentialIssuanceState(state));
     },
     clearUserData() {
       return withPersist(() => memoryStore.clearUserData());

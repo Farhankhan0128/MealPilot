@@ -77,6 +77,8 @@ import {
   fetchDataGovernanceCenter,
   fetchCredentialOnboarding,
   fetchSwiggyCredentialHandoffCenter,
+  fetchSwiggyCredentialIssuanceState,
+  fetchSwiggyCredentialReadinessDossier,
   fetchSwiggyCredentialVaultCenter,
   fetchDeveloperQuickstartWorkbench,
   fetchDemoStudio,
@@ -204,8 +206,10 @@ import {
   forecastSwiggyMealWindow,
   reconcileSwiggyPaymentTruth,
   runSwiggySubmissionTimelineCheckpoint,
+  saveSwiggyCredentialIssuanceState,
   schedulePlan,
   simulateHouseholdPreference,
+  rehearseSwiggyCredentialReadiness,
   rehearseSwiggyDocsTwinRetrieval,
   startSwiggyAuth,
   substituteRecommendationItem,
@@ -313,6 +317,10 @@ import type {
   SwiggyChannelExecutionComposition,
   SwiggyConfirmationCommandCenterReport,
   SwiggyCredentialHandoffCenter,
+  SwiggyCredentialIssuanceState,
+  SwiggyCredentialReadinessDossier,
+  SwiggyCredentialReadinessRehearsal,
+  SwiggyCredentialReadinessRehearsalMode,
   SwiggyCredentialVaultCenter,
   SwiggyCustomizationStudio,
   SwiggyCustomizationValidation,
@@ -422,6 +430,20 @@ const emptyAccessSubmissionState: AccessSubmissionHandoffState = {
   staticEgressIp: "",
   environmentSummary: "",
   termsAcknowledged: false,
+  notes: "",
+  updatedAt: "",
+};
+
+const emptyCredentialIssuanceState: SwiggyCredentialIssuanceState = {
+  clientIdConfigured: false,
+  seededUsersReceived: {
+    food: false,
+    instamart: false,
+    dineout: false,
+  },
+  supportThreadId: "",
+  tokenExpiryRecorded: false,
+  firstReadProbeReady: false,
   notes: "",
   updatedAt: "",
 };
@@ -628,6 +650,10 @@ function App() {
   const [credentialOnboarding, setCredentialOnboarding] = useState<CredentialOnboardingReport | null>(null);
   const [credentialVault, setCredentialVault] = useState<SwiggyCredentialVaultCenter | null>(null);
   const [credentialHandoff, setCredentialHandoff] = useState<SwiggyCredentialHandoffCenter | null>(null);
+  const [credentialIssuance, setCredentialIssuance] =
+    useState<SwiggyCredentialIssuanceState>(emptyCredentialIssuanceState);
+  const [credentialReadinessDossier, setCredentialReadinessDossier] =
+    useState<SwiggyCredentialReadinessDossier | null>(null);
   const [sandboxCredentialWorkbench, setSandboxCredentialWorkbench] =
     useState<SandboxCredentialWorkbench | null>(null);
   const [enterpriseDelegatedAuth, setEnterpriseDelegatedAuth] = useState<EnterpriseDelegatedAuthCenter | null>(null);
@@ -849,6 +875,8 @@ function App() {
       credentialOnboardingResponse,
       credentialVaultResponse,
       credentialHandoffResponse,
+      credentialIssuanceResponse,
+      credentialReadinessResponse,
       sandboxCredentialResponse,
       authLifecycleResponse,
       enterpriseDelegatedAuthResponse,
@@ -974,6 +1002,8 @@ function App() {
       fetchCredentialOnboarding(),
       fetchSwiggyCredentialVaultCenter(),
       fetchSwiggyCredentialHandoffCenter(),
+      fetchSwiggyCredentialIssuanceState(),
+      fetchSwiggyCredentialReadinessDossier(),
       fetchSandboxCredentialWorkbench(),
       fetchSwiggyAuthLifecycleCenter(),
       fetchEnterpriseDelegatedAuthCenter(),
@@ -1100,6 +1130,8 @@ function App() {
     setCredentialOnboarding(credentialOnboardingResponse.onboarding);
     setCredentialVault(credentialVaultResponse.credentialVault);
     setCredentialHandoff(credentialHandoffResponse.credentialHandoff);
+    setCredentialIssuance(credentialIssuanceResponse.credentialIssuance);
+    setCredentialReadinessDossier(credentialReadinessResponse.credentialReadinessDossier);
     setSandboxCredentialWorkbench(sandboxCredentialResponse.sandboxWorkbench);
     setAuthLifecycleCenter(authLifecycleResponse.authLifecycleCenter);
     setEnterpriseDelegatedAuth(enterpriseDelegatedAuthResponse.enterpriseAuth);
@@ -1229,6 +1261,8 @@ function App() {
       credentialOnboardingResponse,
       credentialVaultResponse,
       credentialHandoffResponse,
+      credentialIssuanceResponse,
+      credentialReadinessResponse,
       sandboxCredentialResponse,
       authLifecycleResponse,
       enterpriseDelegatedAuthResponse,
@@ -1351,6 +1385,8 @@ function App() {
       fetchCredentialOnboarding(),
       fetchSwiggyCredentialVaultCenter(),
       fetchSwiggyCredentialHandoffCenter(),
+      fetchSwiggyCredentialIssuanceState(),
+      fetchSwiggyCredentialReadinessDossier(),
       fetchSandboxCredentialWorkbench(),
       fetchSwiggyAuthLifecycleCenter(),
       fetchEnterpriseDelegatedAuthCenter(),
@@ -1473,6 +1509,8 @@ function App() {
     setCredentialOnboarding(credentialOnboardingResponse.onboarding);
     setCredentialVault(credentialVaultResponse.credentialVault);
     setCredentialHandoff(credentialHandoffResponse.credentialHandoff);
+    setCredentialIssuance(credentialIssuanceResponse.credentialIssuance);
+    setCredentialReadinessDossier(credentialReadinessResponse.credentialReadinessDossier);
     setSandboxCredentialWorkbench(sandboxCredentialResponse.sandboxWorkbench);
     setAuthLifecycleCenter(authLifecycleResponse.authLifecycleCenter);
     setEnterpriseDelegatedAuth(enterpriseDelegatedAuthResponse.enterpriseAuth);
@@ -2168,6 +2206,10 @@ function App() {
                 credentialOnboarding={credentialOnboarding}
                 credentialVault={credentialVault}
                 credentialHandoff={credentialHandoff}
+                credentialIssuance={credentialIssuance}
+                credentialReadinessDossier={credentialReadinessDossier}
+                onCredentialIssuanceChange={setCredentialIssuance}
+                onCredentialReadinessDossierChange={setCredentialReadinessDossier}
                 sandboxCredentialWorkbench={sandboxCredentialWorkbench}
                 enterpriseDelegatedAuth={enterpriseDelegatedAuth}
                 surfaceMode={surfaceMode}
@@ -2780,6 +2822,10 @@ function LaunchCenterPanel({
   credentialOnboarding,
   credentialVault,
   credentialHandoff,
+  credentialIssuance,
+  credentialReadinessDossier,
+  onCredentialIssuanceChange,
+  onCredentialReadinessDossierChange,
   sandboxCredentialWorkbench,
   enterpriseDelegatedAuth,
   surfaceMode,
@@ -2875,6 +2921,10 @@ function LaunchCenterPanel({
   credentialOnboarding: CredentialOnboardingReport | null;
   credentialVault: SwiggyCredentialVaultCenter | null;
   credentialHandoff: SwiggyCredentialHandoffCenter | null;
+  credentialIssuance: SwiggyCredentialIssuanceState;
+  credentialReadinessDossier: SwiggyCredentialReadinessDossier | null;
+  onCredentialIssuanceChange: (state: SwiggyCredentialIssuanceState) => void;
+  onCredentialReadinessDossierChange: (dossier: SwiggyCredentialReadinessDossier) => void;
   sandboxCredentialWorkbench: SandboxCredentialWorkbench | null;
   enterpriseDelegatedAuth: EnterpriseDelegatedAuthCenter | null;
   surfaceMode: AgentSurface;
@@ -2921,6 +2971,23 @@ function LaunchCenterPanel({
   const [sourceFreezeRun, setSourceFreezeRun] = useState<SwiggySourceFreezeDiffReport | null>(null);
   const [sourceFreezeStatus, setSourceFreezeStatus] = useState<"idle" | "loading" | "error">("idle");
   const activeSourceFreeze = sourceFreezeRun ?? sourceFreezeDiff;
+  const [credentialIssuanceForm, setCredentialIssuanceForm] =
+    useState<SwiggyCredentialIssuanceState>(credentialIssuance);
+  const [credentialReceiptStatus, setCredentialReceiptStatus] = useState<"idle" | "loading" | "error">("idle");
+  const [credentialReadinessForm, setCredentialReadinessForm] = useState<{
+    mode: SwiggyCredentialReadinessRehearsalMode;
+    includeSourceFreeze: boolean;
+    includeCredentialReceipt: boolean;
+    includeProductionPromotion: boolean;
+  }>({
+    mode: "access_packet_sent",
+    includeSourceFreeze: true,
+    includeCredentialReceipt: true,
+    includeProductionPromotion: false,
+  });
+  const [credentialReadinessRehearsal, setCredentialReadinessRehearsal] =
+    useState<SwiggyCredentialReadinessRehearsal | null>(null);
+  const [credentialReadinessStatus, setCredentialReadinessStatus] = useState<"idle" | "loading" | "error">("idle");
   const [operatingContractForm, setOperatingContractForm] = useState<{
     mode: SwiggyOperatingContractRehearsalMode;
     includeCapacityNotice: boolean;
@@ -3215,6 +3282,10 @@ function LaunchCenterPanel({
   const [benefitExecution, setBenefitExecution] = useState<SwiggyBenefitsActivationExecution | null>(null);
   const [benefitExecutionStatus, setBenefitExecutionStatus] = useState<"idle" | "loading" | "error">("idle");
 
+  useEffect(() => {
+    setCredentialIssuanceForm(credentialIssuance);
+  }, [credentialIssuance]);
+
   async function runFaqAnswerConsole(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setFaqAnswerStatus("loading");
@@ -3272,6 +3343,31 @@ function LaunchCenterPanel({
       setSourceFreezeStatus("idle");
     } catch {
       setSourceFreezeStatus("error");
+    }
+  }
+
+  async function saveCredentialIssuanceReceipt(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setCredentialReceiptStatus("loading");
+    try {
+      const response = await saveSwiggyCredentialIssuanceState(credentialIssuanceForm);
+      onCredentialIssuanceChange(response.credentialIssuance);
+      onCredentialReadinessDossierChange(response.credentialReadinessDossier);
+      setCredentialReceiptStatus("idle");
+    } catch {
+      setCredentialReceiptStatus("error");
+    }
+  }
+
+  async function runCredentialReadinessRehearsal(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setCredentialReadinessStatus("loading");
+    try {
+      const response = await rehearseSwiggyCredentialReadiness(credentialReadinessForm);
+      setCredentialReadinessRehearsal(response.credentialReadinessRehearsal);
+      setCredentialReadinessStatus("idle");
+    } catch {
+      setCredentialReadinessStatus("error");
     }
   }
 
@@ -9082,6 +9178,229 @@ function LaunchCenterPanel({
             </a>
             <a href="mailto:builders@swiggy.in" target="_blank" rel="noreferrer">
               Email
+            </a>
+          </div>
+        </article>
+
+        <article className="credential-readiness-card">
+          <div className="mini-heading">
+            <ClipboardCheck aria-hidden="true" />
+            <strong>Credential Readiness Dossier</strong>
+          </div>
+          <span>
+            {credentialReadinessDossier
+              ? `${credentialReadinessDossier.score}/100, ${credentialReadinessDossier.totals.readyReceiptItems}/${credentialReadinessDossier.totals.receiptItems} receipts ready`
+              : "Preparing source freeze, access receipt, DCR, vault, seeded staging, and promotion evidence"}
+          </span>
+          <div className="credential-readiness-grid">
+            <div>
+              <strong>{credentialReadinessDossier?.publicSourceSnapshot.homepageApiToolsLabel ?? "18+ API Tools"}</strong>
+              <span>Homepage</span>
+            </div>
+            <div>
+              <strong>{credentialReadinessDossier?.publicSourceSnapshot.manifestToolPages ?? 35}</strong>
+              <span>Manifest tools</span>
+            </div>
+            <div>
+              <strong>{credentialReadinessDossier?.totals.swiggyGates ?? 0}</strong>
+              <span>Swiggy gates</span>
+            </div>
+          </div>
+          <form className="credential-readiness-form" onSubmit={saveCredentialIssuanceReceipt}>
+            <div className="credential-readiness-toggle-grid">
+              <label htmlFor="credential-dcr">
+                <input
+                  id="credential-dcr"
+                  type="checkbox"
+                  checked={credentialIssuanceForm.clientIdConfigured}
+                  onChange={(event) =>
+                    setCredentialIssuanceForm((current) => ({
+                      ...current,
+                      clientIdConfigured: event.target.checked,
+                      dcrApprovedAt: event.target.checked ? current.dcrApprovedAt || new Date().toISOString() : undefined,
+                    }))
+                  }
+                />
+                DCR/client id
+              </label>
+              <label htmlFor="credential-token-expiry">
+                <input
+                  id="credential-token-expiry"
+                  type="checkbox"
+                  checked={credentialIssuanceForm.tokenExpiryRecorded}
+                  onChange={(event) =>
+                    setCredentialIssuanceForm((current) => ({
+                      ...current,
+                      tokenExpiryRecorded: event.target.checked,
+                      stagingCredentialsIssuedAt: event.target.checked
+                        ? current.stagingCredentialsIssuedAt || new Date().toISOString()
+                        : undefined,
+                    }))
+                  }
+                />
+                Token expiry logged
+              </label>
+              <label htmlFor="credential-first-read">
+                <input
+                  id="credential-first-read"
+                  type="checkbox"
+                  checked={credentialIssuanceForm.firstReadProbeReady}
+                  onChange={(event) =>
+                    setCredentialIssuanceForm((current) => ({
+                      ...current,
+                      firstReadProbeReady: event.target.checked,
+                    }))
+                  }
+                />
+                First read ready
+              </label>
+            </div>
+            <div className="credential-readiness-toggle-grid">
+              {(["food", "instamart", "dineout"] as SwiggyServer[]).map((serverName) => (
+                <label key={serverName} htmlFor={`credential-seed-${serverName}`}>
+                  <input
+                    id={`credential-seed-${serverName}`}
+                    type="checkbox"
+                    checked={credentialIssuanceForm.seededUsersReceived[serverName]}
+                    onChange={(event) =>
+                      setCredentialIssuanceForm((current) => ({
+                        ...current,
+                        seededUsersReceived: {
+                          ...current.seededUsersReceived,
+                          [serverName]: event.target.checked,
+                        },
+                      }))
+                    }
+                  />
+                  {serverName}
+                </label>
+              ))}
+            </div>
+            <label htmlFor="credential-support-thread">
+              Support thread
+              <input
+                id="credential-support-thread"
+                type="text"
+                value={credentialIssuanceForm.supportThreadId}
+                onChange={(event) =>
+                  setCredentialIssuanceForm((current) => ({ ...current, supportThreadId: event.target.value }))
+                }
+                placeholder="builders thread id"
+              />
+            </label>
+            <button type="submit" disabled={credentialReceiptStatus === "loading"} aria-label="Save credential receipt state">
+              {credentialReceiptStatus === "loading" ? <Loader2 aria-hidden="true" /> : <Check aria-hidden="true" />}
+              Save receipt
+            </button>
+            {credentialReceiptStatus === "error" ? <small role="status">Credential receipt save failed.</small> : null}
+          </form>
+          <form className="credential-readiness-rehearsal" onSubmit={runCredentialReadinessRehearsal}>
+            <label htmlFor="credential-readiness-mode">Rehearsal mode</label>
+            <select
+              id="credential-readiness-mode"
+              value={credentialReadinessForm.mode}
+              onChange={(event) =>
+                setCredentialReadinessForm((current) => ({
+                  ...current,
+                  mode: event.target.value as SwiggyCredentialReadinessRehearsalMode,
+                }))
+              }
+            >
+              <option value="access_packet_sent">Access packet sent</option>
+              <option value="staging_credentials_issued">Staging credentials issued</option>
+              <option value="production_promotion_ready">Production promotion ready</option>
+            </select>
+            <div className="credential-readiness-toggle-grid">
+              <label htmlFor="credential-source-freeze">
+                <input
+                  id="credential-source-freeze"
+                  type="checkbox"
+                  checked={credentialReadinessForm.includeSourceFreeze}
+                  onChange={(event) =>
+                    setCredentialReadinessForm((current) => ({
+                      ...current,
+                      includeSourceFreeze: event.target.checked,
+                    }))
+                  }
+                />
+                Source freeze
+              </label>
+              <label htmlFor="credential-receipt">
+                <input
+                  id="credential-receipt"
+                  type="checkbox"
+                  checked={credentialReadinessForm.includeCredentialReceipt}
+                  onChange={(event) =>
+                    setCredentialReadinessForm((current) => ({
+                      ...current,
+                      includeCredentialReceipt: event.target.checked,
+                    }))
+                  }
+                />
+                Receipts
+              </label>
+              <label htmlFor="credential-production">
+                <input
+                  id="credential-production"
+                  type="checkbox"
+                  checked={credentialReadinessForm.includeProductionPromotion}
+                  onChange={(event) =>
+                    setCredentialReadinessForm((current) => ({
+                      ...current,
+                      includeProductionPromotion: event.target.checked,
+                    }))
+                  }
+                />
+                Promotion
+              </label>
+            </div>
+            <button
+              type="submit"
+              disabled={credentialReadinessStatus === "loading"}
+              aria-label="Rehearse Swiggy credential readiness"
+            >
+              {credentialReadinessStatus === "loading" ? <Loader2 aria-hidden="true" /> : <Rocket aria-hidden="true" />}
+              Rehearse
+            </button>
+            {credentialReadinessStatus === "error" ? <small role="status">Credential rehearsal unavailable.</small> : null}
+          </form>
+          <div
+            className="credential-readiness-result"
+            data-status={credentialReadinessRehearsal?.decision === "blocked_on_swiggy_credentials" ? "blocked" : "healthy"}
+          >
+            <strong>
+              {credentialReadinessRehearsal
+                ? `${credentialReadinessRehearsal.decision.replaceAll("_", " ")} / ${credentialReadinessRehearsal.readinessScore}`
+                : "Receipt workflow ready"}
+            </strong>
+            <span>
+              {credentialReadinessRehearsal
+                ? credentialReadinessRehearsal.nextAction
+                : credentialReadinessDossier?.reviewerNarrative ?? "Save redacted receipt metadata and rehearse the next credential packet."}
+            </span>
+          </div>
+          <ul className="compact-status-list">
+            {(credentialReadinessDossier?.receiptChecklist ?? []).slice(0, 5).map((item) => (
+              <li
+                key={item.id}
+                data-status={
+                  item.status === "ready" ? "healthy" : item.status === "blocked" || item.status === "swiggy_gate" ? "blocked" : "watch"
+                }
+              >
+                <span>{item.label}</span>
+                <strong>{item.status.replaceAll("_", " ")}</strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-intelligence-actions" aria-label="Credential readiness links">
+            <a href="/api/swiggy-credential-readiness-dossier" target="_blank" rel="noreferrer">
+              Dossier API
+            </a>
+            <a href="/api/swiggy-credential-issuance/state" target="_blank" rel="noreferrer">
+              Receipt state
+            </a>
+            <a href="/api/swiggy-source-freeze-diff" target="_blank" rel="noreferrer">
+              Source freeze
             </a>
           </div>
         </article>

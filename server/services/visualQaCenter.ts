@@ -345,6 +345,17 @@ const targetGroups = [
         "artifacts/visual-qa/credential-handoff-card.png",
       ),
       target(
+        "credential_readiness_card",
+        "Credential Readiness Dossier card",
+        "/",
+        ".credential-readiness-card",
+        "mobile",
+        390,
+        844,
+        "Credential Readiness Dossier shows redacted issuance receipts, homepage-vs-manifest source signals, rehearsal controls, and Swiggy credential gates.",
+        "artifacts/visual-qa/credential-readiness-card-mobile.png",
+      ),
+      target(
         "staging_seed_smoke_card",
         "Staging Seed and Smoke card",
         "/",

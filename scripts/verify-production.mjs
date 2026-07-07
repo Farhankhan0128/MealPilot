@@ -541,6 +541,13 @@ assert(
   "OpenAPI Credential Handoff Center contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-credential-issuance/state"].get.summary.includes("issuance receipt") &&
+    openApi.paths["/api/swiggy-credential-issuance/state"].patch.summary.includes("issuance receipt") &&
+    openApi.paths["/api/swiggy-credential-readiness-dossier"].get.summary.includes("Credential Readiness Dossier") &&
+    openApi.paths["/api/swiggy-credential-readiness-dossier/rehearse"].post.summary.includes("credential readiness"),
+  "OpenAPI Credential Readiness Dossier contract is missing",
+);
+assert(
   openApi.paths["/api/swiggy-staging-seed-smoke-center"].get.summary.includes("Seed and Smoke"),
   "OpenAPI Staging Seed and Smoke Center contract is missing",
 );
@@ -3421,8 +3428,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 64, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 64, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 65, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 65, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -5321,6 +5328,76 @@ assert(
     ) &&
     credentialHandoff.credentialHandoff.externalGates.some((gate) => gate.includes("staging credentials")),
   "credential handoff email, assertions, or external gates are missing",
+);
+
+const credentialIssuance = await request("/api/swiggy-credential-issuance/state");
+assert(
+  typeof credentialIssuance.credentialIssuance.clientIdConfigured === "boolean" &&
+    typeof credentialIssuance.credentialIssuance.seededUsersReceived.food === "boolean" &&
+    typeof credentialIssuance.credentialIssuance.updatedAt === "string",
+  "credential issuance receipt state shape is incomplete",
+);
+const savedCredentialIssuance = await request("/api/swiggy-credential-issuance/state", {
+  method: "PATCH",
+  body: JSON.stringify({
+    dcrApprovedAt: "2026-07-07T06:00:00.000Z",
+    clientIdConfigured: true,
+    stagingCredentialsIssuedAt: "2026-07-07T06:15:00.000Z",
+    seededUsersReceived: { food: true, instamart: true, dineout: false },
+    supportThreadId: "builders-thread-verifier",
+    tokenExpiryRecorded: true,
+    firstReadProbeReady: true,
+    notes: "Verifier receipt metadata without credential values.",
+  }),
+});
+assert(
+  savedCredentialIssuance.credentialIssuance.clientIdConfigured &&
+    savedCredentialIssuance.credentialIssuance.seededUsersReceived.instamart &&
+    savedCredentialIssuance.credentialReadinessDossier.receiptChecklist.some(
+      (item) => item.id === "support_thread" && item.status === "ready",
+    ),
+  "credential issuance PATCH did not refresh the readiness dossier",
+);
+assert(
+  !JSON.stringify(savedCredentialIssuance).includes("client_secret") &&
+    !JSON.stringify(savedCredentialIssuance).includes("authorization_code") &&
+    !JSON.stringify(savedCredentialIssuance).includes("Bearer "),
+  "credential issuance state leaked forbidden credential fields",
+);
+const credentialReadinessDossier = await request("/api/swiggy-credential-readiness-dossier");
+assert(
+  credentialReadinessDossier.credentialReadinessDossier.publicSourceSnapshot.buildersServers === 3 &&
+    credentialReadinessDossier.credentialReadinessDossier.publicSourceSnapshot.homepageApiToolsLabel ===
+      "18+ API Tools" &&
+    credentialReadinessDossier.credentialReadinessDossier.publicSourceSnapshot.manifestToolPages >= 35,
+  "credential readiness public source snapshot is incomplete",
+);
+assert(
+  credentialReadinessDossier.credentialReadinessDossier.proofCommands.some((command) =>
+    command.command.includes("/api/swiggy-credential-readiness-dossier"),
+  ) &&
+    credentialReadinessDossier.credentialReadinessDossier.assertions.some((assertion) =>
+      assertion.includes("separates public homepage counts"),
+    ),
+  "credential readiness proof commands or assertions are incomplete",
+);
+const credentialReadinessRehearsal = await request("/api/swiggy-credential-readiness-dossier/rehearse", {
+  method: "POST",
+  body: JSON.stringify({
+    mode: "staging_credentials_issued",
+    includeSourceFreeze: true,
+    includeCredentialReceipt: true,
+    includeProductionPromotion: false,
+  }),
+});
+assert(
+  credentialReadinessRehearsal.credentialReadinessRehearsal.commands.some((command) =>
+    command.command.includes("/api/swiggy-source-freeze-diff"),
+  ) &&
+    credentialReadinessRehearsal.credentialReadinessRehearsal.telemetry.some(
+      (item) => item.field === "missing_inputs" && item.redaction === "counts only",
+    ),
+  "credential readiness rehearsal commands or redacted telemetry are incomplete",
 );
 
 const sandboxWorkbench = await request("/api/sandbox-credential-workbench");
@@ -7615,7 +7692,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 64, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 65, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -7629,7 +7706,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("64")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("65")),
   "builder packet visual capture command is stale",
 );
 assert(

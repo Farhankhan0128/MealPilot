@@ -213,6 +213,10 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/swiggy-credential-vault-center"].get.responses["200"].description).toContain("without full token exposure");
     expect(openApi.body.paths["/api/swiggy-credential-handoff-center"].get.summary).toContain("Credential Handoff");
     expect(openApi.body.paths["/api/swiggy-credential-handoff-center"].get.responses["200"].description).toContain("48-hour soak");
+    expect(openApi.body.paths["/api/swiggy-credential-issuance/state"].get.summary).toContain("issuance receipt");
+    expect(openApi.body.paths["/api/swiggy-credential-issuance/state"].patch.summary).toContain("issuance receipt");
+    expect(openApi.body.paths["/api/swiggy-credential-readiness-dossier"].get.summary).toContain("Credential Readiness Dossier");
+    expect(openApi.body.paths["/api/swiggy-credential-readiness-dossier/rehearse"].post.summary).toContain("credential readiness");
     expect(openApi.body.paths["/api/sandbox-credential-workbench"].get.summary).toContain("sandbox");
     expect(openApi.body.paths["/api/access-submission-studio"].get.summary).toContain("submission studio");
     expect(openApi.body.paths["/api/access-submission-studio/state"].patch.summary).toContain("handoff state");
@@ -658,6 +662,77 @@ describe("MealPilot API", () => {
     expect(handoff.handoffEmail.to).toBe("builders@swiggy.in");
     expect(handoff.assertions.some((assertion: string) => assertion.includes("Every credential step has an owner"))).toBe(true);
     expect(handoff.externalGates.some((gate: string) => gate.includes("staging credentials"))).toBe(true);
+  });
+
+  it("persists redacted Swiggy credential issuance receipt state and refreshes the readiness dossier", async () => {
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "mealpilot-credential-issuance-"));
+    const dataFile = path.join(tempDir, "store.json");
+    const first = createMealPilotServer({ store: createFileSessionStore(dataFile) });
+
+    const initial = await request(first.app).get("/api/swiggy-credential-readiness-dossier").expect(200);
+    expect(initial.body.credentialReadinessDossier.publicSourceSnapshot.homepageApiToolsLabel).toBe("18+ API Tools");
+    expect(initial.body.credentialReadinessDossier.publicSourceSnapshot.manifestToolPages).toBeGreaterThanOrEqual(35);
+    expect(
+      initial.body.credentialReadinessDossier.receiptChecklist.some(
+        (item: { id: string; status: string }) => item.id === "dcr_approved_at" && item.status === "swiggy_gate",
+      ),
+    ).toBe(true);
+
+    const saved = await request(first.app)
+      .patch("/api/swiggy-credential-issuance/state")
+      .send({
+        dcrApprovedAt: "2026-07-07T06:00:00.000Z",
+        clientIdConfigured: true,
+        stagingCredentialsIssuedAt: "2026-07-07T06:15:00.000Z",
+        seededUsersReceived: { food: true, instamart: true, dineout: false },
+        supportThreadId: "builders-thread-123",
+        tokenExpiryRecorded: true,
+        firstReadProbeReady: true,
+        notes: "Staging credential receipt saved without token values.",
+      })
+      .expect(200);
+
+    expect(saved.body.credentialIssuance.clientIdConfigured).toBe(true);
+    expect(saved.body.credentialIssuance.seededUsersReceived).toEqual({
+      food: true,
+      instamart: true,
+      dineout: false,
+    });
+    expect(JSON.stringify(saved.body)).not.toContain("access_token");
+    expect(JSON.stringify(saved.body)).not.toContain("client_secret");
+    expect(
+      saved.body.credentialReadinessDossier.receiptChecklist.some(
+        (item: { id: string; status: string; safeValue: string }) =>
+          item.id === "support_thread" && item.status === "ready" && item.safeValue === "builders-thread-123",
+      ),
+    ).toBe(true);
+
+    const second = createMealPilotServer({ store: createFileSessionStore(dataFile) });
+    const reloaded = await request(second.app).get("/api/swiggy-credential-issuance/state").expect(200);
+    expect(reloaded.body.credentialIssuance.dcrApprovedAt).toBe("2026-07-07T06:00:00.000Z");
+    expect(reloaded.body.credentialIssuance.seededUsersReceived.instamart).toBe(true);
+  });
+
+  it("rehearses the Swiggy credential readiness dossier without external credential writes", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app)
+      .post("/api/swiggy-credential-readiness-dossier/rehearse")
+      .send({
+        mode: "access_packet_sent",
+        includeSourceFreeze: true,
+        includeCredentialReceipt: true,
+        includeProductionPromotion: false,
+      })
+      .expect(200);
+    const rehearsal = response.body.credentialReadinessRehearsal;
+
+    expect(rehearsal.decision).toBe("blocked_on_swiggy_credentials");
+    expect(rehearsal.commands.some((item: { command: string }) => item.command.includes("/api/swiggy-source-freeze-diff"))).toBe(true);
+    expect(rehearsal.receiptChecklist.some((item: { id: string }) => item.id === "support_thread")).toBe(true);
+    expect(rehearsal.telemetry.map((item: { field: string }) => item.field)).toEqual(
+      expect.arrayContaining(["mode", "decision", "receipt_items", "missing_inputs"]),
+    );
+    expect(rehearsal.assertions.some((assertion: string) => assertion.includes("does not submit forms"))).toBe(true);
   });
 
   it("returns a Swiggy staging credential drill for first credentialed access", async () => {
@@ -1768,7 +1843,7 @@ describe("MealPilot API", () => {
     expect(packet.totals.formFields).toBeGreaterThanOrEqual(10);
     expect(packet.totals.requiredAttachments).toBeGreaterThanOrEqual(10);
     expect(packet.totals.launchArtifacts).toBeGreaterThanOrEqual(50);
-    expect(packet.totals.visualTargets).toBe(64);
+    expect(packet.totals.visualTargets).toBe(65);
     expect(packet.files.map((file: { id: string }) => file.id)).toEqual(
       expect.arrayContaining(["packet_json", "packet_markdown", "visual_report", "production_summary"]),
     );
@@ -1780,7 +1855,7 @@ describe("MealPilot API", () => {
     ).toBe(true);
     expect(
       packet.commands.some(
-        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("64"),
+        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("65"),
       ),
     ).toBe(true);
     expect(packet.copyBlocks.formFields).toContain("Redirect URI(s)");
@@ -4068,8 +4143,8 @@ describe("MealPilot API", () => {
     const visualQa = response.body.visualQa;
 
     expect(visualQa.score).toBe(100);
-    expect(visualQa.totalTargets).toBe(64);
-    expect(visualQa.readyTargets).toBe(64);
+    expect(visualQa.totalTargets).toBe(65);
+    expect(visualQa.readyTargets).toBe(65);
     expect(visualQa.totalRules).toBe(7);
     expect(visualQa.readyRules).toBe(7);
     expect(visualQa.totalCommands).toBe(5);

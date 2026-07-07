@@ -91,6 +91,10 @@ import {
 } from "./services/mcpGateway.js";
 import { buildCredentialOnboardingReport } from "./services/credentialOnboarding.js";
 import { buildSwiggyCredentialHandoffCenter } from "./services/credentialHandoffCenter.js";
+import {
+  buildSwiggyCredentialReadinessDossier,
+  rehearseSwiggyCredentialReadiness,
+} from "./services/credentialReadinessDossier.js";
 import { buildSwiggyCredentialVaultCenter } from "./services/credentialVaultCenter.js";
 import { buildDataGovernanceCenter } from "./services/dataGovernance.js";
 import { buildSwiggyDeepSiteMap } from "./services/deepSiteMap.js";
@@ -244,6 +248,30 @@ const accessSubmissionRehearsalSchema = z.object({
   includeHandoffEmail: z.boolean(),
   includeCredentialGates: z.boolean(),
   handoffState: accessSubmissionStateSchema.optional(),
+});
+
+const credentialIssuanceStateSchema = z.object({
+  dcrApprovedAt: z.string().trim().optional(),
+  clientIdConfigured: z.boolean().optional(),
+  stagingCredentialsIssuedAt: z.string().trim().optional(),
+  seededUsersReceived: z
+    .object({
+      food: z.boolean().optional(),
+      instamart: z.boolean().optional(),
+      dineout: z.boolean().optional(),
+    })
+    .optional(),
+  supportThreadId: z.string().trim().optional(),
+  tokenExpiryRecorded: z.boolean().optional(),
+  firstReadProbeReady: z.boolean().optional(),
+  notes: z.string().trim().max(1000).optional(),
+});
+
+const credentialReadinessRehearsalSchema = z.object({
+  mode: z.enum(["access_packet_sent", "staging_credentials_issued", "production_promotion_ready"]),
+  includeSourceFreeze: z.boolean(),
+  includeCredentialReceipt: z.boolean(),
+  includeProductionPromotion: z.boolean(),
 });
 
 const sourceFreezeDiffSchema = z.object({
@@ -889,6 +917,86 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
       }),
     });
   });
+
+  app.get("/api/swiggy-credential-issuance/state", (_req, res) => {
+    res.json({ credentialIssuance: store.getCredentialIssuanceState() });
+  });
+
+  app.patch("/api/swiggy-credential-issuance/state", asyncRoute(async (req, res) => {
+    const body = credentialIssuanceStateSchema.parse(req.body);
+    const current = store.getCredentialIssuanceState();
+    const nextState = store.updateCredentialIssuanceState({
+      ...current,
+      ...body,
+      seededUsersReceived: {
+        ...current.seededUsersReceived,
+        ...(body.seededUsersReceived ?? {}),
+      },
+      updatedAt: new Date().toISOString(),
+    });
+    const runtimeConfig = {
+      ...config,
+      swiggyAccessToken: runtimeAccessToken,
+      swiggyTokenExpiresAt: runtimeTokenExpiresAt,
+    };
+
+    res.json({
+      credentialIssuance: nextState,
+      credentialReadinessDossier: await buildSwiggyCredentialReadinessDossier({
+        config: runtimeConfig,
+        profile: store.getProfile(),
+        coverage: buildMcpCoverage(),
+        latestPlan: store.getAllPlans().at(-1),
+        handoffState: store.getAccessSubmissionState(),
+        credentialIssuance: nextState,
+      }),
+    });
+  }));
+
+  app.get("/api/swiggy-credential-readiness-dossier", asyncRoute(async (_req, res) => {
+    const runtimeConfig = {
+      ...config,
+      swiggyAccessToken: runtimeAccessToken,
+      swiggyTokenExpiresAt: runtimeTokenExpiresAt,
+    };
+    res.json({
+      credentialReadinessDossier: await buildSwiggyCredentialReadinessDossier({
+        config: runtimeConfig,
+        profile: store.getProfile(),
+        coverage: buildMcpCoverage(),
+        latestPlan: store.getAllPlans().at(-1),
+        handoffState: store.getAccessSubmissionState(),
+        credentialIssuance: store.getCredentialIssuanceState(),
+      }),
+    });
+  }));
+
+  app.post("/api/swiggy-credential-readiness-dossier/rehearse", asyncRoute(async (req, res) => {
+    const body = credentialReadinessRehearsalSchema.parse(req.body);
+    const runtimeConfig = {
+      ...config,
+      swiggyAccessToken: runtimeAccessToken,
+      swiggyTokenExpiresAt: runtimeTokenExpiresAt,
+    };
+    const dossier = await buildSwiggyCredentialReadinessDossier({
+      config: runtimeConfig,
+      profile: store.getProfile(),
+      coverage: buildMcpCoverage(),
+      latestPlan: store.getAllPlans().at(-1),
+      handoffState: store.getAccessSubmissionState(),
+      credentialIssuance: store.getCredentialIssuanceState(),
+    });
+
+    res.json({
+      credentialReadinessRehearsal: rehearseSwiggyCredentialReadiness({
+        dossier,
+        mode: body.mode,
+        includeSourceFreeze: body.includeSourceFreeze,
+        includeCredentialReceipt: body.includeCredentialReceipt,
+        includeProductionPromotion: body.includeProductionPromotion,
+      }),
+    });
+  }));
 
   app.get("/api/sandbox-credential-workbench", (_req, res) => {
     res.json({

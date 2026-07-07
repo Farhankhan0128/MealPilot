@@ -102,6 +102,10 @@ import type {
   SwiggyConfirmationExecution,
   SwiggyConversionCenter,
   SwiggyCredentialHandoffCenter,
+  SwiggyCredentialIssuanceState,
+  SwiggyCredentialReadinessDossier,
+  SwiggyCredentialReadinessRehearsal,
+  SwiggyCredentialReadinessRehearsalMode,
   SwiggyCredentialVaultCenter,
   SwiggyDocsCoverageDrill,
   SwiggyDocsCoverageDrillFocus,
@@ -1145,6 +1149,43 @@ export function fetchSwiggyCredentialVaultCenter() {
 export function fetchSwiggyCredentialHandoffCenter() {
   return requestJson<{ credentialHandoff: SwiggyCredentialHandoffCenter }>(
     "/api/swiggy-credential-handoff-center",
+  );
+}
+
+export function fetchSwiggyCredentialIssuanceState() {
+  return requestJson<{ credentialIssuance: SwiggyCredentialIssuanceState }>(
+    "/api/swiggy-credential-issuance/state",
+  );
+}
+
+export function saveSwiggyCredentialIssuanceState(input: Partial<SwiggyCredentialIssuanceState>) {
+  return requestJson<{
+    credentialIssuance: SwiggyCredentialIssuanceState;
+    credentialReadinessDossier: SwiggyCredentialReadinessDossier;
+  }>("/api/swiggy-credential-issuance/state", {
+    method: "PATCH",
+    body: JSON.stringify(input),
+  });
+}
+
+export function fetchSwiggyCredentialReadinessDossier() {
+  return requestJson<{ credentialReadinessDossier: SwiggyCredentialReadinessDossier }>(
+    "/api/swiggy-credential-readiness-dossier",
+  );
+}
+
+export function rehearseSwiggyCredentialReadiness(input: {
+  mode: SwiggyCredentialReadinessRehearsalMode;
+  includeSourceFreeze: boolean;
+  includeCredentialReceipt: boolean;
+  includeProductionPromotion: boolean;
+}) {
+  return requestJson<{ credentialReadinessRehearsal: SwiggyCredentialReadinessRehearsal }>(
+    "/api/swiggy-credential-readiness-dossier/rehearse",
+    {
+      method: "POST",
+      body: JSON.stringify(input),
+    },
   );
 }
 
