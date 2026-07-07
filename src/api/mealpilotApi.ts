@@ -87,6 +87,7 @@ import type {
   SwiggyBuildersLiveSourceResilienceCenter,
   SwiggyBuildersModuleIntelligenceCenter,
   SwiggyCapabilityTraceabilityMatrix,
+  SwiggyBuildersCompletionLedger,
   SwiggyHomepageSignalCoverageBoard,
   SwiggyBuildersReviewDecisionCenter,
   SwiggyBuildersSourceEvolutionCenter,
@@ -496,6 +497,12 @@ export function fetchSwiggyCapabilityTraceability() {
 export function fetchSwiggyHomepageSignalCoverage() {
   return requestJson<{ homepageSignalCoverage: SwiggyHomepageSignalCoverageBoard }>(
     "/api/swiggy-homepage-signal-coverage",
+  );
+}
+
+export function fetchSwiggyBuildersCompletionLedger() {
+  return requestJson<{ buildersCompletion: SwiggyBuildersCompletionLedger }>(
+    "/api/swiggy-builders-completion-ledger",
   );
 }
 

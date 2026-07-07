@@ -1022,6 +1022,66 @@ export interface SwiggyHomepageSignalCoverageBoard {
   externalGates: string[];
 }
 
+export type SwiggyBuildersCompletionStatus = "proven" | "watch" | "operator_gate" | "swiggy_gate";
+export type SwiggyBuildersCompletionOwner = "MealPilot" | "Operator" | "Swiggy" | "Joint";
+
+export interface SwiggyBuildersCompletionRequirement {
+  id: string;
+  group: "source_coverage" | "product_depth" | "mcp_integration" | "operations" | "handoff";
+  label: string;
+  objectiveSignal: string;
+  evidenceSummary: string;
+  frontendSurface: string;
+  backendEndpoints: string[];
+  docsProof: string[];
+  testProof: string[];
+  owner: SwiggyBuildersCompletionOwner;
+  status: SwiggyBuildersCompletionStatus;
+  proofLinks: string[];
+  remainingGate: string;
+  nextAction: string;
+}
+
+export interface SwiggyBuildersCompletionGroup {
+  id: SwiggyBuildersCompletionRequirement["group"];
+  label: string;
+  requirements: number;
+  proven: number;
+  watch: number;
+  operatorGates: number;
+  swiggyGates: number;
+}
+
+export interface SwiggyBuildersCompletionLedger {
+  generatedAt: string;
+  score: number;
+  officialSource: string;
+  officialSources: string[];
+  totals: {
+    requirements: number;
+    proven: number;
+    watch: number;
+    operatorGates: number;
+    swiggyGates: number;
+    officialPages: number;
+    websiteModules: number;
+    officialCtas: number;
+    mcpServers: number;
+    mcpTools: number;
+    docsPages: number;
+    reviewerArtifacts: number;
+    visualTargets: number;
+    launchArtifacts: number;
+    packetFiles: number;
+    proofLinks: number;
+  };
+  groups: SwiggyBuildersCompletionGroup[];
+  requirements: SwiggyBuildersCompletionRequirement[];
+  commands: Array<{ command: string; proves: string; expectedSignal: string }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type SwiggyBuildersJourneyGateStatus = "ready" | "watch" | "operator_gate" | "swiggy_gate";
 export type SwiggyBuildersJourneyGateOwner = "MealPilot" | "Operator" | "Swiggy" | "Joint";
 

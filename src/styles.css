@@ -1175,14 +1175,16 @@ select:focus {
 }
 
 .capability-traceability-grid,
-.homepage-signal-grid {
+.homepage-signal-grid,
+.completion-ledger-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 8px;
 }
 
 .capability-traceability-grid div,
-.homepage-signal-grid div {
+.homepage-signal-grid div,
+.completion-ledger-grid div {
   display: grid;
   gap: 3px;
   min-height: 64px;
@@ -1192,12 +1194,14 @@ select:focus {
 }
 
 .capability-traceability-grid strong,
-.homepage-signal-grid strong {
+.homepage-signal-grid strong,
+.completion-ledger-grid strong {
   color: var(--green-dark);
 }
 
 .capability-traceability-grid span,
-.homepage-signal-grid span {
+.homepage-signal-grid span,
+.completion-ledger-grid span {
   color: var(--muted);
   font-size: 0.75rem;
 }
@@ -4662,6 +4666,7 @@ select:focus {
 .module-intelligence-card,
 .capability-traceability-card,
 .homepage-signal-card,
+.completion-ledger-card,
 .talent-signal-card,
 .conversion-center-card,
 .demo-evidence-card,
@@ -5722,7 +5727,8 @@ select:focus {
   }
 
   .capability-traceability-grid,
-  .homepage-signal-grid {
+  .homepage-signal-grid,
+  .completion-ledger-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

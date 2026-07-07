@@ -67,6 +67,7 @@ Scale-up after staging:
 - Swiggy Builders Module Intelligence Center that maps every official website module to owner, audience, product promise, Swiggy surface, MealPilot proof, route optimization, risk boundary, CTA links, journeys, and gates.
 - Swiggy Builders Journey Gate Center that maps Start Building, Apply for Prod Access, Quick Review, Go Live, and Show Us What You Built to owner gates, entry and exit criteria, proof routes, telemetry, blockers, and explicit external Swiggy decisions.
 - Swiggy Builders Homepage Experience Center that maps homepage header, hero, how-it-works, benefits, guidelines, FAQ, final CTA, and footer sections to local proof, mobile/reviewer checks, continuity, and external gates.
+- Swiggy Builders Completion Ledger that audits the full MealPilot objective across public site coverage, developer and enterprise tracks, all MCP servers/tools, route optimization, frontend, backend, logging, tracing, tests, docs, access submission, sandbox credentials, safety, reviewer packet, launch gates, proof links, and remaining Swiggy/operator gates.
 - Swiggy Builders Source Evolution Center that reconciles homepage 18+ launch copy with current 35/35 callable-tool coverage, llms/docs refresh loops, upstream roadmap drift, source gates, and packet regression proof.
 - Swiggy Builders Live Source Resilience Center that reports live homepage fetch mode, Website Atlas fallback, every-page mesh coverage, llms markdown recovery, header/footer/CTA parity, mandatory browser re-browse gates, and receipt-backed final freeze proof.
 - Swiggy Builders Review Decision Center that converts official review signals into approval-readiness gates, recommendation, reviewer questions, proof links, operator blockers, and Swiggy-owned credential/go-live gates.
@@ -221,6 +222,7 @@ Email: add primary engineering email before submission.
 - Swiggy Builders Module Intelligence Center: `/api/swiggy-builders-module-intelligence`
 - Swiggy Builders Journey Gate Center: `/api/swiggy-builders-journey-gates`
 - Swiggy Builders Homepage Experience Center: `/api/swiggy-builders-homepage-experience`
+- Swiggy Builders Completion Ledger: `/api/swiggy-builders-completion-ledger`
 - Swiggy Builders Source Evolution Center: `/api/swiggy-builders-source-evolution`
 - Swiggy Builders Live Source Resilience Center: `/api/swiggy-builders-live-source-resilience`
 - Swiggy Builders Review Decision Center: `/api/swiggy-builders-review-decision`

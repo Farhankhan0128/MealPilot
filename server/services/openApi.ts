@@ -406,6 +406,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-builders-completion-ledger": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Builders Completion Ledger for the full MealPilot objective",
+          responses: {
+            "200": {
+              description:
+                "Objective-to-evidence ledger covering public site coverage, developer and enterprise tracks, all MCP servers and tools, route optimization, frontend, backend, logging, tracing, tests, docs, access submission, sandbox credentials, safety, reviewer packet, launch gates, owners, proof routes, and remaining operator or Swiggy approvals",
+            },
+          },
+        },
+      },
       "/api/swiggy-website-atlas": {
         get: {
           tags: ["Builder Access"],

@@ -57,6 +57,8 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/swiggy-capability-traceability"].get.responses["200"].description).toContain("lifecycle gates");
     expect(openApi.body.paths["/api/swiggy-homepage-signal-coverage"].get.summary).toContain("Homepage Signal Coverage");
     expect(openApi.body.paths["/api/swiggy-homepage-signal-coverage"].get.responses["200"].description).toContain("header/footer");
+    expect(openApi.body.paths["/api/swiggy-builders-completion-ledger"].get.summary).toContain("Completion Ledger");
+    expect(openApi.body.paths["/api/swiggy-builders-completion-ledger"].get.responses["200"].description).toContain("developer and enterprise");
     expect(openApi.body.paths["/api/swiggy-website-atlas"].get.summary).toContain("website header");
     expect(openApi.body.paths["/api/swiggy-builders-site-parity"].get.summary).toContain("homepage parity");
     expect(openApi.body.paths["/api/swiggy-builders-page-mesh"].get.summary).toContain("public page mesh");
@@ -1847,7 +1849,7 @@ describe("MealPilot API", () => {
     expect(packet.totals.formFields).toBeGreaterThanOrEqual(10);
     expect(packet.totals.requiredAttachments).toBeGreaterThanOrEqual(10);
     expect(packet.totals.launchArtifacts).toBeGreaterThanOrEqual(50);
-    expect(packet.totals.visualTargets).toBe(67);
+    expect(packet.totals.visualTargets).toBe(68);
     expect(packet.files.map((file: { id: string }) => file.id)).toEqual(
       expect.arrayContaining(["packet_json", "packet_markdown", "visual_report", "production_summary"]),
     );
@@ -1859,7 +1861,7 @@ describe("MealPilot API", () => {
     ).toBe(true);
     expect(
       packet.commands.some(
-        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("67"),
+        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("68"),
       ),
     ).toBe(true);
     expect(packet.copyBlocks.formFields).toContain("Redirect URI(s)");
@@ -4444,8 +4446,8 @@ describe("MealPilot API", () => {
     const visualQa = response.body.visualQa;
 
     expect(visualQa.score).toBe(100);
-    expect(visualQa.totalTargets).toBe(67);
-    expect(visualQa.readyTargets).toBe(67);
+    expect(visualQa.totalTargets).toBe(68);
+    expect(visualQa.readyTargets).toBe(68);
     expect(visualQa.totalRules).toBe(7);
     expect(visualQa.readyRules).toBe(7);
     expect(visualQa.totalCommands).toBe(5);
@@ -4519,6 +4521,16 @@ describe("MealPilot API", () => {
           (target) =>
             target.id === "homepage_signal_card" &&
             target.selector === ".homepage-signal-card" &&
+            target.viewport === "desktop",
+        ),
+      ),
+    ).toBe(true);
+    expect(
+      visualQa.targetGroups.some((group: { targets: Array<{ id: string; selector: string; viewport: string }> }) =>
+        group.targets.some(
+          (target) =>
+            target.id === "completion_ledger_card" &&
+            target.selector === ".completion-ledger-card" &&
             target.viewport === "desktop",
         ),
       ),
@@ -5268,6 +5280,60 @@ describe("MealPilot API", () => {
     expect(board.commands.some((command: { command: string }) => command.command.includes("/api/swiggy-homepage-signal-coverage"))).toBe(true);
     expect(board.assertions.some((assertion: string) => assertion.includes("public homepage promise"))).toBe(true);
     expect(board.externalGates.some((gate: string) => gate.includes("demo"))).toBe(true);
+  });
+
+  it("returns a Swiggy Builders completion ledger for the full objective", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/swiggy-builders-completion-ledger").expect(200);
+    const ledger = response.body.buildersCompletion;
+
+    expect(ledger.score).toBeGreaterThanOrEqual(80);
+    expect(ledger.officialSource).toBe("https://mcp.swiggy.com/builders/");
+    expect(ledger.totals.requirements).toBe(12);
+    expect(ledger.totals.proven).toBeGreaterThanOrEqual(8);
+    expect(ledger.totals.mcpServers).toBe(3);
+    expect(ledger.totals.mcpTools).toBe(35);
+    expect(ledger.totals.docsPages).toBeGreaterThanOrEqual(69);
+    expect(ledger.totals.visualTargets).toBe(68);
+    expect(ledger.totals.reviewerArtifacts).toBeGreaterThanOrEqual(120);
+    expect(ledger.groups.map((group: { id: string }) => group.id)).toEqual(
+      expect.arrayContaining(["source_coverage", "product_depth", "mcp_integration", "operations", "handoff"]),
+    );
+    expect(ledger.requirements.map((item: { id: string }) => item.id)).toEqual(
+      expect.arrayContaining([
+        "complete_public_site",
+        "developer_enterprise_tracks",
+        "all_mcp_servers_and_tools",
+        "route_optimization",
+        "premium_frontend",
+        "backend_logging_tracing",
+        "tests_and_verifiers",
+        "signup_access_submission",
+        "sandbox_and_credentials",
+        "reviewer_packet_and_launch",
+      ]),
+    );
+    expect(
+      ledger.requirements.some(
+        (item: { id: string; status: string; backendEndpoints: string[]; remainingGate: string }) =>
+          item.id === "developer_enterprise_tracks" &&
+          item.status === "watch" &&
+          item.backendEndpoints.includes("/api/enterprise-platform-center") &&
+          item.remainingGate.includes("Enterprise contracts"),
+      ),
+    ).toBe(true);
+    expect(
+      ledger.requirements.some(
+        (item: { id: string; status: string; owner: string; proofLinks: string[] }) =>
+          item.id === "sandbox_and_credentials" &&
+          item.status === "swiggy_gate" &&
+          item.owner === "Swiggy" &&
+          item.proofLinks.includes("/api/swiggy-credential-readiness-dossier"),
+      ),
+    ).toBe(true);
+    expect(ledger.commands.some((command: { command: string }) => command.command.includes("/api/swiggy-builders-completion-ledger"))).toBe(true);
+    expect(ledger.assertions.some((assertion: string) => assertion.includes("Every explicit user objective"))).toBe(true);
+    expect(ledger.externalGates.some((gate: string) => gate.includes("Swiggy must grant client credentials"))).toBe(true);
   });
 
   it("returns Swiggy Builders Journey Gates for the official five-step path", async () => {

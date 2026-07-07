@@ -65,6 +65,7 @@ import {
   buildSubmissionPackage,
 } from "./services/demoStudio.js";
 import { buildMcpCapabilityRegistry } from "./services/capabilityRegistry.js";
+import { buildSwiggyBuildersCompletionLedger } from "./services/buildersCompletionLedger.js";
 import { buildSwiggyCapabilityTraceability } from "./services/capabilityTraceability.js";
 import { buildEvaluationLab } from "./services/evaluationLab.js";
 import { buildErrorIntelligenceReport, classifyMcpError } from "./services/errorIntelligence.js";
@@ -1303,6 +1304,17 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
     res.json({
       homepageSignalCoverage: buildSwiggyHomepageSignalCoverageBoard({
         config,
+        latestPlan: store.getAllPlans().at(-1),
+      }),
+    });
+  });
+
+  app.get("/api/swiggy-builders-completion-ledger", (_req, res) => {
+    res.json({
+      buildersCompletion: buildSwiggyBuildersCompletionLedger({
+        config,
+        profile: defaultUserProfile,
+        coverage: buildMcpCoverage(),
         latestPlan: store.getAllPlans().at(-1),
       }),
     });

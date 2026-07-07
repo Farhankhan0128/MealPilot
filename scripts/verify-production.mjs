@@ -144,6 +144,11 @@ assert(
   "OpenAPI Swiggy homepage signal coverage contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-builders-completion-ledger"]?.get?.summary?.includes("Completion Ledger") &&
+    openApi.paths["/api/swiggy-builders-completion-ledger"]?.get?.responses?.["200"]?.description?.includes("developer and enterprise"),
+  "OpenAPI Swiggy Builders completion ledger contract is missing",
+);
+assert(
   openApi.paths["/api/swiggy-builders-journey-gates"]?.get?.summary?.includes("Journey Gate") &&
     openApi.paths["/api/swiggy-builders-journey-gates"]?.get?.responses?.["200"]?.description?.includes("Quick Review"),
   "OpenAPI Builders journey gates contract is missing",
@@ -870,6 +875,75 @@ assert(
     ) &&
     homepageSignalCoverage.homepageSignalCoverage.externalGates.some((gate) => gate.includes("demo")),
   "homepage signal coverage proof commands or gates are incomplete",
+);
+
+const buildersCompletion = await request("/api/swiggy-builders-completion-ledger");
+assert(buildersCompletion.buildersCompletion.score >= 80, "Builders completion ledger score is below target");
+assert(
+  buildersCompletion.buildersCompletion.totals.requirements === 12 &&
+    buildersCompletion.buildersCompletion.totals.proven >= 8 &&
+    buildersCompletion.buildersCompletion.totals.mcpServers === 3 &&
+    buildersCompletion.buildersCompletion.totals.mcpTools === 35 &&
+    buildersCompletion.buildersCompletion.totals.docsPages >= 69 &&
+    buildersCompletion.buildersCompletion.totals.visualTargets === 68 &&
+    buildersCompletion.buildersCompletion.totals.reviewerArtifacts >= 120 &&
+    buildersCompletion.buildersCompletion.totals.packetFiles >= 4,
+  "Builders completion ledger totals are incomplete",
+);
+assert(
+  ["source_coverage", "product_depth", "mcp_integration", "operations", "handoff"].every((id) =>
+    buildersCompletion.buildersCompletion.groups.some((group) => group.id === id),
+  ),
+  "Builders completion ledger groups are incomplete",
+);
+assert(
+  [
+    "complete_public_site",
+    "developer_enterprise_tracks",
+    "all_mcp_servers_and_tools",
+    "route_optimization",
+    "premium_frontend",
+    "backend_logging_tracing",
+    "tests_and_verifiers",
+    "docs_and_research",
+    "signup_access_submission",
+    "sandbox_and_credentials",
+    "safety_privacy_compliance",
+    "reviewer_packet_and_launch",
+  ].every((id) => buildersCompletion.buildersCompletion.requirements.some((item) => item.id === id)),
+  "Builders completion ledger requirements are incomplete",
+);
+assert(
+  buildersCompletion.buildersCompletion.requirements.some(
+    (item) =>
+      item.id === "developer_enterprise_tracks" &&
+      item.status === "watch" &&
+      item.backendEndpoints.includes("/api/enterprise-platform-center") &&
+      item.remainingGate.includes("Enterprise contracts"),
+  ),
+  "Builders completion ledger developer and enterprise row is missing",
+);
+assert(
+  buildersCompletion.buildersCompletion.requirements.some(
+    (item) =>
+      item.id === "sandbox_and_credentials" &&
+      item.status === "swiggy_gate" &&
+      item.owner === "Swiggy" &&
+      item.proofLinks.includes("/api/swiggy-credential-readiness-dossier"),
+  ),
+  "Builders completion ledger credential gate is missing",
+);
+assert(
+  buildersCompletion.buildersCompletion.commands.some((command) =>
+    command.command.includes("/api/swiggy-builders-completion-ledger"),
+  ) &&
+    buildersCompletion.buildersCompletion.assertions.some((assertion) =>
+      assertion.includes("Every explicit user objective"),
+    ) &&
+    buildersCompletion.buildersCompletion.externalGates.some((gate) =>
+      gate.includes("Swiggy must grant client credentials"),
+    ),
+  "Builders completion ledger commands or gates are incomplete",
 );
 
 const journeyGates = await request("/api/swiggy-builders-journey-gates");
@@ -3807,8 +3881,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 67, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 67, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 68, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 68, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -4084,6 +4158,12 @@ assert(
     group.targets.some((target) => target.id === "homepage_signal_card" && target.selector === ".homepage-signal-card"),
   ),
   "visual QA Homepage Signal Coverage target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some((target) => target.id === "completion_ledger_card" && target.selector === ".completion-ledger-card"),
+  ),
+  "visual QA Completion Ledger target is missing",
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
@@ -8111,7 +8191,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 67, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 68, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -8125,7 +8205,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("67")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("68")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -8719,6 +8799,9 @@ console.log(
       capabilityTraceabilityTools: capabilityTraceability.capabilityTraceability.totals.officialTools,
       homepageSignalCoverageScore: homepageSignalCoverage.homepageSignalCoverage.score,
       homepageSignalCoverageSignals: homepageSignalCoverage.homepageSignalCoverage.totals.signals,
+      buildersCompletionScore: buildersCompletion.buildersCompletion.score,
+      buildersCompletionRequirements: buildersCompletion.buildersCompletion.totals.requirements,
+      buildersCompletionMcpTools: buildersCompletion.buildersCompletion.totals.mcpTools,
       journeyGateScore: journeyGates.journeyGates.score,
       journeyGateGates: journeyGates.journeyGates.totals.gates,
       journeyGateProofLinks: journeyGates.journeyGates.totals.proofLinks,

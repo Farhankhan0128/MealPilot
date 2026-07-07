@@ -224,6 +224,17 @@ const targetGroups = [
         "artifacts/visual-qa/homepage-signal-card.png",
       ),
       target(
+        "completion_ledger_card",
+        "Completion Ledger card",
+        "/",
+        ".completion-ledger-card",
+        "desktop",
+        1280,
+        900,
+        "Completion Ledger shows the full objective mapped to source coverage, MCP integration, product depth, operations, docs, tests, handoff, owners, and external gates.",
+        "artifacts/visual-qa/completion-ledger-card.png",
+      ),
+      target(
         "journey_gates_card",
         "Journey Gates card",
         "/",

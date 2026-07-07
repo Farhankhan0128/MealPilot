@@ -134,6 +134,7 @@ import {
   fetchSwiggyBuildersModuleIntelligence,
   fetchSwiggyCapabilityTraceability,
   fetchSwiggyHomepageSignalCoverage,
+  fetchSwiggyBuildersCompletionLedger,
   fetchSwiggyBuildersJourneyGates,
   fetchSwiggyBuildersHomepageExperience,
   fetchSwiggyBuildersSourceEvolution,
@@ -309,6 +310,7 @@ import type {
   SwiggyBuildersLiveSourceResilienceCenter,
   SwiggyBuildersModuleIntelligenceCenter,
   SwiggyCapabilityTraceabilityMatrix,
+  SwiggyBuildersCompletionLedger,
   SwiggyHomepageSignalCoverageBoard,
   SwiggyBuildersReviewDecisionCenter,
   SwiggyBuildersSourceEvolutionCenter,
@@ -596,6 +598,7 @@ function App() {
     useState<SwiggyCapabilityTraceabilityMatrix | null>(null);
   const [homepageSignalCoverage, setHomepageSignalCoverage] =
     useState<SwiggyHomepageSignalCoverageBoard | null>(null);
+  const [buildersCompletion, setBuildersCompletion] = useState<SwiggyBuildersCompletionLedger | null>(null);
   const [journeyGates, setJourneyGates] = useState<SwiggyBuildersJourneyGateCenter | null>(null);
   const [homepageExperience, setHomepageExperience] = useState<SwiggyBuildersHomepageExperienceCenter | null>(null);
   const [sourceEvolution, setSourceEvolution] = useState<SwiggyBuildersSourceEvolutionCenter | null>(null);
@@ -827,6 +830,7 @@ function App() {
       moduleIntelligenceResponse,
       capabilityTraceabilityResponse,
       homepageSignalCoverageResponse,
+      buildersCompletionResponse,
       journeyGatesResponse,
       homepageExperienceResponse,
       sourceEvolutionResponse,
@@ -956,6 +960,7 @@ function App() {
       fetchSwiggyBuildersModuleIntelligence(),
       fetchSwiggyCapabilityTraceability(),
       fetchSwiggyHomepageSignalCoverage(),
+      fetchSwiggyBuildersCompletionLedger(),
       fetchSwiggyBuildersJourneyGates(),
       fetchSwiggyBuildersHomepageExperience(),
       fetchSwiggyBuildersSourceEvolution(),
@@ -1086,6 +1091,7 @@ function App() {
     setModuleIntelligence(moduleIntelligenceResponse.moduleIntelligence);
     setCapabilityTraceability(capabilityTraceabilityResponse.capabilityTraceability);
     setHomepageSignalCoverage(homepageSignalCoverageResponse.homepageSignalCoverage);
+    setBuildersCompletion(buildersCompletionResponse.buildersCompletion);
     setJourneyGates(journeyGatesResponse.journeyGates);
     setHomepageExperience(homepageExperienceResponse.homepageExperience);
     setSourceEvolution(sourceEvolutionResponse.sourceEvolution);
@@ -1219,6 +1225,7 @@ function App() {
       moduleIntelligenceResponse,
       capabilityTraceabilityResponse,
       homepageSignalCoverageResponse,
+      buildersCompletionResponse,
       journeyGatesResponse,
       homepageExperienceResponse,
       sourceEvolutionResponse,
@@ -1345,6 +1352,7 @@ function App() {
       fetchSwiggyBuildersModuleIntelligence(),
       fetchSwiggyCapabilityTraceability(),
       fetchSwiggyHomepageSignalCoverage(),
+      fetchSwiggyBuildersCompletionLedger(),
       fetchSwiggyBuildersJourneyGates(),
       fetchSwiggyBuildersHomepageExperience(),
       fetchSwiggyBuildersSourceEvolution(),
@@ -1471,6 +1479,7 @@ function App() {
     setModuleIntelligence(moduleIntelligenceResponse.moduleIntelligence);
     setCapabilityTraceability(capabilityTraceabilityResponse.capabilityTraceability);
     setHomepageSignalCoverage(homepageSignalCoverageResponse.homepageSignalCoverage);
+    setBuildersCompletion(buildersCompletionResponse.buildersCompletion);
     setJourneyGates(journeyGatesResponse.journeyGates);
     setHomepageExperience(homepageExperienceResponse.homepageExperience);
     setSourceEvolution(sourceEvolutionResponse.sourceEvolution);
@@ -2172,6 +2181,7 @@ function App() {
                 moduleIntelligence={moduleIntelligence}
                 capabilityTraceability={capabilityTraceability}
                 homepageSignalCoverage={homepageSignalCoverage}
+                buildersCompletion={buildersCompletion}
                 journeyGates={journeyGates}
                 homepageExperience={homepageExperience}
                 sourceEvolution={sourceEvolution}
@@ -2790,6 +2800,7 @@ function LaunchCenterPanel({
   moduleIntelligence,
   capabilityTraceability,
   homepageSignalCoverage,
+  buildersCompletion,
   journeyGates,
   homepageExperience,
   sourceEvolution,
@@ -2891,6 +2902,7 @@ function LaunchCenterPanel({
   moduleIntelligence: SwiggyBuildersModuleIntelligenceCenter | null;
   capabilityTraceability: SwiggyCapabilityTraceabilityMatrix | null;
   homepageSignalCoverage: SwiggyHomepageSignalCoverageBoard | null;
+  buildersCompletion: SwiggyBuildersCompletionLedger | null;
   journeyGates: SwiggyBuildersJourneyGateCenter | null;
   homepageExperience: SwiggyBuildersHomepageExperienceCenter | null;
   sourceEvolution: SwiggyBuildersSourceEvolutionCenter | null;
@@ -4825,6 +4837,60 @@ function LaunchCenterPanel({
             </a>
             <a href="/api/swiggy-cta-execution-center" target="_blank" rel="noreferrer">
               CTAs
+            </a>
+          </div>
+        </article>
+
+        <article className="completion-ledger-card">
+          <div className="mini-heading">
+            <ClipboardCheck aria-hidden="true" />
+            <strong>Completion Ledger</strong>
+          </div>
+          <span>
+            {buildersCompletion
+              ? `${buildersCompletion.score}/100, ${buildersCompletion.totals.requirements} objective requirements`
+              : "Auditing the full MealPilot objective against proof, docs, tests, surfaces, owners, and gates"}
+          </span>
+          <div className="completion-ledger-grid">
+            <div>
+              <strong>{buildersCompletion?.totals.mcpTools ?? 0}</strong>
+              <span>Tools</span>
+            </div>
+            <div>
+              <strong>{buildersCompletion?.totals.docsPages ?? 0}</strong>
+              <span>Docs</span>
+            </div>
+            <div>
+              <strong>{buildersCompletion?.totals.visualTargets ?? 0}</strong>
+              <span>Visuals</span>
+            </div>
+            <div>
+              <strong>{buildersCompletion?.totals.reviewerArtifacts ?? 0}</strong>
+              <span>Artifacts</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(buildersCompletion?.groups ?? []).slice(0, 5).map((group) => (
+              <li
+                key={group.id}
+                data-status={group.swiggyGates > 0 ? "blocked" : group.operatorGates > 0 || group.watch > 0 ? "watch" : "healthy"}
+              >
+                <span>{group.label}</span>
+                <strong>
+                  {group.proven}/{group.requirements}
+                </strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-intelligence-actions" aria-label="Completion ledger links">
+            <a href="/api/swiggy-builders-completion-ledger" target="_blank" rel="noreferrer">
+              Ledger API
+            </a>
+            <a href="/api/reviewer-artifact-vault" target="_blank" rel="noreferrer">
+              Artifacts
+            </a>
+            <a href="/api/builder-packet-export" target="_blank" rel="noreferrer">
+              Packet
             </a>
           </div>
         </article>
