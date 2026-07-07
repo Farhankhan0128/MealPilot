@@ -3415,6 +3415,31 @@ export interface GuestCollaborationCenter {
   externalGates: string[];
 }
 
+export type GuestCollaborationDecision = "ready_local_handoff" | "manual_channel_gate" | "unknown_template";
+
+export interface GuestCollaborationComposition {
+  generatedAt: string;
+  requestId: string;
+  input: {
+    templateId: string;
+    channel: GuestCollaborationChannel;
+    guestCount: number;
+    city: "Bengaluru" | "Delhi NCR" | "Mumbai";
+    includeDineout: boolean;
+  };
+  decision: GuestCollaborationDecision;
+  selectedTemplate: OccasionTemplate | null;
+  voteRound: GuestVoteRound | null;
+  calendarArtifact: CalendarHandoffArtifact | null;
+  readinessScore: number;
+  nextAction: string;
+  routePlan: Array<{ sequence: number; label: string; server?: SwiggyServer; tool?: string; guardrail: string }>;
+  missingInputs: string[];
+  swiggyProofLinks: string[];
+  telemetry: Array<{ field: string; value: string; redaction: string }>;
+  assertions: string[];
+}
+
 export type LuxuryExperienceStatus = "ready" | "manual_input" | "external_gate";
 export type LuxuryExperienceMode = "lean" | "premium" | "family" | "social" | "training";
 

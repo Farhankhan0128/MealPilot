@@ -1,6 +1,9 @@
 import type {
   CalendarHandoffArtifact,
   GuestCollaborationCenter,
+  GuestCollaborationChannel,
+  GuestCollaborationComposition,
+  GuestCollaborationDecision,
   GuestCollaborationStatus,
   GuestParticipant,
   GuestVoteRound,
@@ -353,6 +356,90 @@ export function buildGuestCollaborationCenter(): GuestCollaborationCenter {
       "Slack/Teams collaboration requires workspace app install, signing secrets, and payer identity mapping.",
       "Live Dineout slots, Food carts, Instamart carts, and booking/order confirmation require Swiggy staging and production credentials.",
       "Hosted Swiggy widget iframe rendering remains a v1.x external gate; semantic fallbacks are ready locally.",
+    ],
+  };
+}
+
+function voteRoundFor(channel: GuestCollaborationChannel) {
+  if (channel === "calendar_ics") return voteRounds.find((item) => item.id === "slot_vote") ?? voteRounds[1];
+  if (channel === "slack_teams") return voteRounds.find((item) => item.id === "cart_approval") ?? voteRounds[2];
+  if (channel === "voice_brief") return voteRounds.find((item) => item.id === "voice_brief") ?? voteRounds[3];
+  return voteRounds.find((item) => item.id === "cuisine_vote") ?? voteRounds[0];
+}
+
+function artifactFor(channel: GuestCollaborationChannel, includeDineout: boolean) {
+  if (channel === "calendar_ics" && includeDineout) return calendarArtifacts.find((item) => item.id === "ics_dineout_slot") ?? calendarArtifacts[0];
+  if (channel === "calendar_ics") return calendarArtifacts.find((item) => item.id === "dessert_reminder") ?? calendarArtifacts[1];
+  if (channel === "slack_teams") return calendarArtifacts.find((item) => item.id === "slack_digest") ?? calendarArtifacts[3];
+  if (channel === "voice_brief") return calendarArtifacts.find((item) => item.id === "voice_guest_brief") ?? calendarArtifacts[4];
+  return calendarArtifacts.find((item) => item.id === "guest_share_link") ?? calendarArtifacts[2];
+}
+
+function decisionFor(templateItem: OccasionTemplate | undefined, channel: GuestCollaborationChannel): GuestCollaborationDecision {
+  if (!templateItem) return "unknown_template";
+  if (channel === "slack_teams" || templateItem.status === "manual_input") return "manual_channel_gate";
+  return "ready_local_handoff";
+}
+
+function missingInputsFor(decision: GuestCollaborationDecision, input: { guestCount: number; channel: GuestCollaborationChannel }) {
+  const missing: string[] = [];
+  if (input.guestCount < 1) missing.push("guest count");
+  if (decision === "manual_channel_gate") missing.push("workspace app install", "payer identity mapping");
+  if (decision === "unknown_template") missing.push("valid occasion template");
+  return missing;
+}
+
+function scoreFor(decision: GuestCollaborationDecision, artifactItem: CalendarHandoffArtifact | null) {
+  if (decision === "unknown_template") return 0;
+  if (decision === "manual_channel_gate") return 68;
+  return artifactItem?.status === "ready" ? 92 : 76;
+}
+
+export function composeGuestCollaborationHandoff(input: {
+  templateId: string;
+  channel: GuestCollaborationChannel;
+  guestCount: number;
+  city: "Bengaluru" | "Delhi NCR" | "Mumbai";
+  includeDineout: boolean;
+}): GuestCollaborationComposition {
+  const selectedTemplate = templates.find((item) => item.id === input.templateId);
+  const voteRoundItem = selectedTemplate ? voteRoundFor(input.channel) : null;
+  const artifactItem = selectedTemplate ? artifactFor(input.channel, input.includeDineout) : null;
+  const decision = decisionFor(selectedTemplate, input.channel);
+  const missingInputs = missingInputsFor(decision, input);
+
+  return {
+    generatedAt: new Date().toISOString(),
+    requestId: `guest_${Date.now().toString(36)}`,
+    input,
+    decision,
+    selectedTemplate: selectedTemplate ?? null,
+    voteRound: voteRoundItem,
+    calendarArtifact: artifactItem,
+    readinessScore: scoreFor(decision, artifactItem),
+    nextAction:
+      decision === "unknown_template"
+        ? "Choose a published guest collaboration template before composing a handoff."
+        : decision === "manual_channel_gate"
+          ? "Collect manual workspace approvals, payer identity mapping, and final cart review before sharing externally."
+          : "Share the local handoff, collect votes, then require separate Swiggy confirmation before booking, checkout, or ordering.",
+    routePlan: selectedTemplate?.route ?? [],
+    missingInputs,
+    swiggyProofLinks: selectedTemplate
+      ? [...selectedTemplate.evidenceLinks, "/api/guest-collaboration-calendar", "/api/swiggy-confirmation-command-center"]
+      : ["/api/guest-collaboration-calendar"],
+    telemetry: [
+      { field: "city", value: input.city, redaction: "safe enum" },
+      { field: "template", value: input.templateId, redaction: "template id only" },
+      { field: "channel", value: input.channel, redaction: "safe enum" },
+      { field: "raw_guest_vote_payload_retained", value: "false", redaction: "hard-coded privacy invariant" },
+      { field: "scheduled_food_order_created", value: "false", redaction: "hard-coded Swiggy Food v1 invariant" },
+    ],
+    assertions: [
+      "Guest collaboration handoff does not call a live Swiggy tool.",
+      "Calendar artifacts and share links are reminders or vote surfaces, not proof of Swiggy booking, checkout, or order completion.",
+      "Food, Instamart, and Dineout commercial actions remain separately confirmed.",
+      "Guest votes omit raw Swiggy ids, tokens, full addresses, coordinates, payment details, and order ids.",
     ],
   };
 }

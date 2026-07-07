@@ -137,6 +137,7 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/household-preference-graph"].get.summary).toContain("Household Preference Graph");
     expect(openApi.body.paths["/api/household-preference-graph/simulate"].post.summary).toContain("Household Preference");
     expect(openApi.body.paths["/api/guest-collaboration-calendar"].get.summary).toContain("Guest Collaboration");
+    expect(openApi.body.paths["/api/guest-collaboration-calendar/compose"].post.summary).toContain("guest collaboration");
     expect(openApi.body.paths["/api/luxury-experience-workspace"].get.summary).toContain("Luxury Experience Workspace");
     expect(openApi.body.paths["/api/reviewer-artifact-vault"].get.summary).toContain("Reviewer Artifact Vault");
     expect(openApi.body.paths["/api/visual-qa-center"].get.summary).toContain("Visual QA Center");
@@ -3399,6 +3400,44 @@ describe("MealPilot API", () => {
     expect(center.safetyControls.some((control: string) => control.includes("Food delivery is immediate-only"))).toBe(true);
     expect(center.externalGates.some((gate: string) => gate.includes("Slack/Teams"))).toBe(true);
     expect(center.externalGates.some((gate: string) => gate.includes("staging and production credentials"))).toBe(true);
+
+    const calendarResponse = await request(app)
+      .post("/api/guest-collaboration-calendar/compose")
+      .send({
+        templateId: "date_night",
+        channel: "calendar_ics",
+        guestCount: 2,
+        city: "Bengaluru",
+        includeDineout: true,
+      })
+      .expect(200);
+    const calendarHandoff = calendarResponse.body.guestCollaborationHandoff;
+
+    expect(calendarHandoff.decision).toBe("ready_local_handoff");
+    expect(calendarHandoff.selectedTemplate.id).toBe("date_night");
+    expect(calendarHandoff.calendarArtifact.id).toBe("ics_dineout_slot");
+    expect(calendarHandoff.routePlan.map((step: { tool?: string }) => step.tool)).toContain("book_table");
+    expect(
+      calendarHandoff.telemetry.some(
+        (item: { field: string; value: string }) => item.field === "scheduled_food_order_created" && item.value === "false",
+      ),
+    ).toBe(true);
+
+    const slackResponse = await request(app)
+      .post("/api/guest-collaboration-calendar/compose")
+      .send({
+        templateId: "office_lunch",
+        channel: "slack_teams",
+        guestCount: 8,
+        city: "Delhi NCR",
+        includeDineout: false,
+      })
+      .expect(200);
+    const slackHandoff = slackResponse.body.guestCollaborationHandoff;
+
+    expect(slackHandoff.decision).toBe("manual_channel_gate");
+    expect(slackHandoff.missingInputs).toEqual(expect.arrayContaining(["workspace app install", "payer identity mapping"]));
+    expect(slackHandoff.calendarArtifact.id).toBe("slack_digest");
   });
 
   it("returns luxury reservation and cart review workspaces across all Swiggy servers", async () => {

@@ -257,6 +257,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/household-preference-graph`
 - `POST /api/household-preference-graph/simulate`
 - `GET /api/guest-collaboration-calendar`
+- `POST /api/guest-collaboration-calendar/compose`
 - `GET /api/luxury-experience-workspace`
 - `GET /api/reviewer-artifact-vault`
 - `GET /api/swiggy-builders-review-decision`
@@ -460,7 +461,7 @@ Production should use an HTTPS redirect URI with exact-match allowlisting.
 
 `/api/household-preference-graph` shows consent-aware personalization routes: Food active-order taste signals, Instamart go-to items and order history, Dineout saved-location memory, household member weights, pantry forecasts, failure memory, retention rules, and DPDP controls. `/api/household-preference-graph/simulate` powers the Launch Center simulator with city, household mode, preferred server, history consent, recent failure, and occasion mode inputs, returning local-only, personalized, or support-safe fallback decisions without retaining raw Swiggy history.
 
-`/api/guest-collaboration-calendar` shows guest collaboration routes: vote rounds, date night, guests at home, office lunch, weekday reset, recovery meal, calendar reminders, share links, voice briefs, and Slack/Teams handoff gates.
+`/api/guest-collaboration-calendar` shows guest collaboration routes: vote rounds, date night, guests at home, office lunch, weekday reset, recovery meal, calendar reminders, share links, voice briefs, and Slack/Teams handoff gates. `/api/guest-collaboration-calendar/compose` powers the Launch Center composer with template, channel, guest count, city, and Dineout inputs, returning route steps, calendar/share/voice/workspace artifact, readiness decision, missing channel gates, no-scheduled-Food telemetry, and separate Swiggy confirmation boundaries.
 
 `/api/luxury-experience-workspace` shows premium review workspaces: lean, premium, family, social, and training modes; Dineout reservation review; Food cart review; Instamart basket review; combined evening planning; recovery desk; widget fallbacks; voice contracts; and telemetry gates.
 
@@ -553,7 +554,7 @@ The test suite checks that:
 - Swiggy Customization Studio validates Food add-ons, variants, Instamart pack sizes, allergy cautions, raw-id suppression, and post-mutation cart readbacks.
 - Nutrition & Budget Intelligence maps Food, Instamart, Dineout, coupon, cart, group, and camera-label routes to protein-per-rupee estimates, budget controls, safety notes, external data gates, and an executable advisor endpoint that selects safe Swiggy routes before any commercial action.
 - Household Preference Graph maps active orders, go-to items, order history, saved-location signals, household weights, forecasts, cancellation rules, retention boundaries, and executable consent/fallback simulations to personalization evidence.
-- Guest Collaboration & Calendar Center maps group votes, occasion templates, Dineout slot checks, Food reminder handoffs, Instamart prep, calendar artifacts, and Slack/Teams gates to separate Swiggy confirmation controls.
+- Guest Collaboration & Calendar Center maps group votes, occasion templates, Dineout slot checks, Food reminder handoffs, Instamart prep, calendar artifacts, Slack/Teams gates, and executable local handoff composition to separate Swiggy confirmation controls.
 - Luxury Experience Workspace maps reservation, Food cart, Instamart basket, combined evening, and recovery review surfaces to authoritative Swiggy reads, all-tool coverage, widget fallbacks, voice contracts, telemetry, and separate confirmation gates.
 - Reviewer Artifact Vault maps proof links, screenshots, logs, traces, OpenAPI, commands, video checklist, handoff checklist, and redaction rules into one safe Swiggy access-review manifest.
 - Staging Seed & Smoke Center maps seeded Food, Instamart, and Dineout fixture needs to credential intake, read, mutation, commercial, support, telemetry, and promotion smoke waves.

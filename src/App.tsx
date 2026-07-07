@@ -43,6 +43,7 @@ import {
   answerSwiggyFaqQuestion,
   buildServerPlan,
   completeSwiggyAuth,
+  composeGuestCollaborationHandoff,
   composeSwiggyChannelExecutionPacket,
   composeSwiggyGrowthPartnershipAsk,
   composeSwiggyPartnerSuccessHandoff,
@@ -232,6 +233,8 @@ import type {
   EvaluationLab,
   GoLiveCheck,
   GuestCollaborationCenter,
+  GuestCollaborationChannel,
+  GuestCollaborationComposition,
   GroupPlan,
   HouseholdPreferenceGraph,
   HouseholdPreferenceSimulation,
@@ -2988,6 +2991,21 @@ function LaunchCenterPanel({
   });
   const [preferenceSimulation, setPreferenceSimulation] = useState<HouseholdPreferenceSimulation | null>(null);
   const [preferenceSimulationStatus, setPreferenceSimulationStatus] = useState<"idle" | "loading" | "error">("idle");
+  const [guestHandoffForm, setGuestHandoffForm] = useState<{
+    templateId: string;
+    channel: GuestCollaborationChannel;
+    guestCount: number;
+    city: "Bengaluru" | "Delhi NCR" | "Mumbai";
+    includeDineout: boolean;
+  }>({
+    templateId: "date_night",
+    channel: "calendar_ics",
+    guestCount: 2,
+    city: "Bengaluru",
+    includeDineout: true,
+  });
+  const [guestHandoff, setGuestHandoff] = useState<GuestCollaborationComposition | null>(null);
+  const [guestHandoffStatus, setGuestHandoffStatus] = useState<"idle" | "loading" | "error">("idle");
   const [showcaseForm, setShowcaseForm] = useState({
     demoUrl: "https://youtu.be/mealpilot-swiggy-demo",
     githubUrl: "https://github.com/Farhankhan0128/MealPilot",
@@ -3151,6 +3169,18 @@ function LaunchCenterPanel({
       setPreferenceSimulationStatus("idle");
     } catch {
       setPreferenceSimulationStatus("error");
+    }
+  }
+
+  async function runGuestHandoffComposer(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setGuestHandoffStatus("loading");
+    try {
+      const response = await composeGuestCollaborationHandoff(guestHandoffForm);
+      setGuestHandoff(response.guestCollaborationHandoff);
+      setGuestHandoffStatus("idle");
+    } catch {
+      setGuestHandoffStatus("error");
     }
   }
 
@@ -6906,6 +6936,91 @@ function LaunchCenterPanel({
               <strong>{guestCollaboration?.uniqueToolsCovered ?? 0}</strong>
               <span>Tools</span>
             </div>
+          </div>
+          <form className="guest-handoff-composer" onSubmit={runGuestHandoffComposer}>
+            <label htmlFor="guest-template">Template</label>
+            <select
+              id="guest-template"
+              value={guestHandoffForm.templateId}
+              onChange={(event) => setGuestHandoffForm((current) => ({ ...current, templateId: event.target.value }))}
+            >
+              {(guestCollaboration?.templates ?? []).map((templateItem) => (
+                <option key={templateItem.id} value={templateItem.id}>
+                  {templateItem.title}
+                </option>
+              ))}
+            </select>
+            <label htmlFor="guest-channel">Channel</label>
+            <select
+              id="guest-channel"
+              value={guestHandoffForm.channel}
+              onChange={(event) =>
+                setGuestHandoffForm((current) => ({ ...current, channel: event.target.value as GuestCollaborationChannel }))
+              }
+            >
+              <option value="web_share">Web share</option>
+              <option value="calendar_ics">Calendar</option>
+              <option value="voice_brief">Voice brief</option>
+              <option value="slack_teams">Slack/Teams</option>
+            </select>
+            <label htmlFor="guest-city">City</label>
+            <select
+              id="guest-city"
+              value={guestHandoffForm.city}
+              onChange={(event) =>
+                setGuestHandoffForm((current) => ({ ...current, city: event.target.value as typeof guestHandoffForm.city }))
+              }
+            >
+              <option value="Bengaluru">Bengaluru</option>
+              <option value="Delhi NCR">Delhi NCR</option>
+              <option value="Mumbai">Mumbai</option>
+            </select>
+            <div className="guest-handoff-number-grid">
+              <label htmlFor="guest-count">Guests</label>
+              <input
+                id="guest-count"
+                type="number"
+                min="1"
+                max="100"
+                value={guestHandoffForm.guestCount}
+                onChange={(event) => setGuestHandoffForm((current) => ({ ...current, guestCount: Number(event.target.value) }))}
+              />
+            </div>
+            <label className="guest-handoff-toggle" htmlFor="guest-dineout">
+              <input
+                id="guest-dineout"
+                type="checkbox"
+                checked={guestHandoffForm.includeDineout}
+                onChange={(event) => setGuestHandoffForm((current) => ({ ...current, includeDineout: event.target.checked }))}
+              />
+              Dineout-first
+            </label>
+            <button type="submit" disabled={guestHandoffStatus === "loading"} aria-label="Compose guest collaboration handoff">
+              {guestHandoffStatus === "loading" ? <Loader2 aria-hidden="true" /> : <CalendarCheck aria-hidden="true" />}
+              Compose
+            </button>
+            {guestHandoffStatus === "error" ? <small role="status">Guest collaboration handoff unavailable.</small> : null}
+          </form>
+          <div
+            className="guest-handoff-result"
+            data-status={
+              guestHandoff?.decision === "ready_local_handoff"
+                ? "healthy"
+                : guestHandoff?.decision === "manual_channel_gate"
+                  ? "watch"
+                  : "blocked"
+            }
+          >
+            <div>
+              <span>Handoff</span>
+              <strong>{guestHandoff ? `${guestHandoff.decision.replace(/_/g, " ")} / ${guestHandoff.readinessScore}` : "Awaiting handoff"}</strong>
+            </div>
+            <p>
+              {guestHandoff
+                ? `${guestHandoff.selectedTemplate?.id ?? "unknown"} / ${guestHandoff.calendarArtifact?.id ?? "no artifact"} / ${guestHandoff.routePlan.length} steps`
+                : "Compose votes, calendar, voice, or workspace handoffs without treating reminders as Swiggy bookings or orders."}
+            </p>
+            {guestHandoff ? <small>{guestHandoff.nextAction}</small> : null}
           </div>
           <ul className="compact-status-list">
             {(guestCollaboration?.templates ?? []).slice(0, 5).map((templateItem) => (

@@ -24,6 +24,8 @@ import type {
   EvaluationLab,
   GoLiveCheck,
   GuestCollaborationCenter,
+  GuestCollaborationChannel,
+  GuestCollaborationComposition,
   GroupMember,
   GroupPlan,
   HouseholdPreferenceGraph,
@@ -844,6 +846,22 @@ export function simulateHouseholdPreference(input: {
 
 export function fetchGuestCollaborationCenter() {
   return requestJson<{ guestCollaboration: GuestCollaborationCenter }>("/api/guest-collaboration-calendar");
+}
+
+export function composeGuestCollaborationHandoff(input: {
+  templateId: string;
+  channel: GuestCollaborationChannel;
+  guestCount: number;
+  city: "Bengaluru" | "Delhi NCR" | "Mumbai";
+  includeDineout: boolean;
+}) {
+  return requestJson<{ guestCollaborationHandoff: GuestCollaborationComposition }>(
+    "/api/guest-collaboration-calendar/compose",
+    {
+      method: "POST",
+      body: JSON.stringify(input),
+    },
+  );
 }
 
 export function fetchLuxuryExperienceWorkspace() {

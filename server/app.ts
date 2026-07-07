@@ -68,7 +68,7 @@ import { buildEvaluationLab } from "./services/evaluationLab.js";
 import { buildErrorIntelligenceReport, classifyMcpError } from "./services/errorIntelligence.js";
 import { buildSwiggyFaqPolicyCenter } from "./services/faqPolicyCenter.js";
 import { answerSwiggyFaqQuestion, buildSwiggyFaqResolutionCenter } from "./services/faqResolutionCenter.js";
-import { buildGuestCollaborationCenter } from "./services/guestCollaborationCenter.js";
+import { buildGuestCollaborationCenter, composeGuestCollaborationHandoff } from "./services/guestCollaborationCenter.js";
 import { buildSwiggyGrowthPartnershipCenter, composeSwiggyGrowthPartnershipAsk } from "./services/growthPartnership.js";
 import { buildSwiggyDemoEvidenceDirector } from "./services/demoEvidenceDirector.js";
 import { buildSwiggyHostedWidgetActivationCenter } from "./services/hostedWidgetActivation.js";
@@ -307,6 +307,14 @@ const householdPreferenceSimulationSchema = z.object({
   consentToUseHistory: z.boolean(),
   recentFailure: z.boolean(),
   occasionMode: z.boolean(),
+});
+
+const guestCollaborationComposeSchema = z.object({
+  templateId: z.string().trim().min(2).max(80),
+  channel: z.enum(["web_share", "slack_teams", "calendar_ics", "email_draft", "voice_brief"]),
+  guestCount: z.number().int().min(1).max(100),
+  city: z.enum(["Bengaluru", "Delhi NCR", "Mumbai"]),
+  includeDineout: z.boolean(),
 });
 
 const offerDecisionSchema = z.object({
@@ -1549,6 +1557,11 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/guest-collaboration-calendar", (_req, res) => {
     res.json({ guestCollaboration: buildGuestCollaborationCenter() });
+  });
+
+  app.post("/api/guest-collaboration-calendar/compose", (req, res) => {
+    const body = guestCollaborationComposeSchema.parse(req.body);
+    res.json({ guestCollaborationHandoff: composeGuestCollaborationHandoff(body) });
   });
 
   app.get("/api/luxury-experience-workspace", (_req, res) => {

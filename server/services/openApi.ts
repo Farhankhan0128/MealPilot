@@ -1179,6 +1179,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/guest-collaboration-calendar/compose": {
+        post: {
+          tags: ["Collaboration"],
+          summary: "Compose a guest collaboration handoff for Swiggy occasions",
+          responses: {
+            "200": {
+              description:
+                "Selected occasion template, collaboration channel, vote round, calendar or share artifact, route plan, readiness decision, missing channel gates, proof links, redacted telemetry, no-scheduled-Food assertion, and separate Swiggy confirmation boundaries",
+            },
+          },
+        },
+      },
       "/api/luxury-experience-workspace": {
         get: {
           tags: ["Builder Access"],

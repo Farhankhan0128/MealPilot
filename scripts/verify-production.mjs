@@ -328,7 +328,8 @@ assert(
   "OpenAPI household preference graph contract is missing",
 );
 assert(
-  openApi.paths["/api/guest-collaboration-calendar"].get.summary.includes("Guest Collaboration"),
+  openApi.paths["/api/guest-collaboration-calendar"].get.summary.includes("Guest Collaboration") &&
+    openApi.paths["/api/guest-collaboration-calendar/compose"].post.summary.includes("guest collaboration"),
   "OpenAPI guest collaboration calendar contract is missing",
 );
 assert(
@@ -2809,6 +2810,43 @@ assert(
   guestCollaboration.guestCollaboration.externalGates.some((gate) => gate.includes("Slack/Teams")) &&
     guestCollaboration.guestCollaboration.externalGates.some((gate) => gate.includes("staging and production credentials")),
   "guest collaboration external gates are missing",
+);
+const calendarGuestHandoff = await request("/api/guest-collaboration-calendar/compose", {
+  method: "POST",
+  body: JSON.stringify({
+    templateId: "date_night",
+    channel: "calendar_ics",
+    guestCount: 2,
+    city: "Bengaluru",
+    includeDineout: true,
+  }),
+});
+assert(
+  calendarGuestHandoff.guestCollaborationHandoff.decision === "ready_local_handoff" &&
+    calendarGuestHandoff.guestCollaborationHandoff.selectedTemplate.id === "date_night" &&
+    calendarGuestHandoff.guestCollaborationHandoff.calendarArtifact.id === "ics_dineout_slot" &&
+    calendarGuestHandoff.guestCollaborationHandoff.routePlan.some((step) => step.tool === "book_table") &&
+    calendarGuestHandoff.guestCollaborationHandoff.telemetry.some(
+      (item) => item.field === "scheduled_food_order_created" && item.value === "false",
+    ),
+  "guest collaboration calendar handoff composition is wrong",
+);
+const slackGuestHandoff = await request("/api/guest-collaboration-calendar/compose", {
+  method: "POST",
+  body: JSON.stringify({
+    templateId: "office_lunch",
+    channel: "slack_teams",
+    guestCount: 8,
+    city: "Delhi NCR",
+    includeDineout: false,
+  }),
+});
+assert(
+  slackGuestHandoff.guestCollaborationHandoff.decision === "manual_channel_gate" &&
+    slackGuestHandoff.guestCollaborationHandoff.missingInputs.includes("workspace app install") &&
+    slackGuestHandoff.guestCollaborationHandoff.missingInputs.includes("payer identity mapping") &&
+    slackGuestHandoff.guestCollaborationHandoff.calendarArtifact.id === "slack_digest",
+  "guest collaboration Slack handoff composition is wrong",
 );
 
 const luxuryExperience = await request("/api/luxury-experience-workspace");
