@@ -138,6 +138,7 @@ import {
   fetchSwiggyBuildersAiNativeWitness,
   fetchSwiggyBuildersEnterpriseWitness,
   fetchSwiggyBuildersConsumerWitness,
+  fetchSwiggyBuildersToolReferenceWitness,
   fetchSwiggyCapabilityTraceability,
   fetchSwiggyHomepageSignalCoverage,
   fetchSwiggyBuildersCompletionLedger,
@@ -323,6 +324,7 @@ import type {
   SwiggyBuildersAiNativeWitness,
   SwiggyBuildersEnterpriseWitness,
   SwiggyBuildersConsumerWitness,
+  SwiggyBuildersToolReferenceWitness,
   SwiggyCapabilityTraceabilityMatrix,
   SwiggyBuildersCompletionLedger,
   SwiggyHomepageSignalCoverageBoard,
@@ -616,6 +618,8 @@ function App() {
   const [aiNativeWitness, setAiNativeWitness] = useState<SwiggyBuildersAiNativeWitness | null>(null);
   const [enterpriseWitness, setEnterpriseWitness] = useState<SwiggyBuildersEnterpriseWitness | null>(null);
   const [consumerWitness, setConsumerWitness] = useState<SwiggyBuildersConsumerWitness | null>(null);
+  const [toolReferenceWitness, setToolReferenceWitness] =
+    useState<SwiggyBuildersToolReferenceWitness | null>(null);
   const [capabilityTraceability, setCapabilityTraceability] =
     useState<SwiggyCapabilityTraceabilityMatrix | null>(null);
   const [homepageSignalCoverage, setHomepageSignalCoverage] =
@@ -858,6 +862,7 @@ function App() {
       aiNativeWitnessResponse,
       enterpriseWitnessResponse,
       consumerWitnessResponse,
+      toolReferenceWitnessResponse,
       capabilityTraceabilityResponse,
       homepageSignalCoverageResponse,
       buildersCompletionResponse,
@@ -996,6 +1001,7 @@ function App() {
       fetchSwiggyBuildersAiNativeWitness(),
       fetchSwiggyBuildersEnterpriseWitness(),
       fetchSwiggyBuildersConsumerWitness(),
+      fetchSwiggyBuildersToolReferenceWitness(),
       fetchSwiggyCapabilityTraceability(),
       fetchSwiggyHomepageSignalCoverage(),
       fetchSwiggyBuildersCompletionLedger(),
@@ -1135,6 +1141,7 @@ function App() {
     setAiNativeWitness(aiNativeWitnessResponse.aiNativeWitness);
     setEnterpriseWitness(enterpriseWitnessResponse.enterpriseWitness);
     setConsumerWitness(consumerWitnessResponse.consumerWitness);
+    setToolReferenceWitness(toolReferenceWitnessResponse.toolReferenceWitness);
     setCapabilityTraceability(capabilityTraceabilityResponse.capabilityTraceability);
     setHomepageSignalCoverage(homepageSignalCoverageResponse.homepageSignalCoverage);
     setBuildersCompletion(buildersCompletionResponse.buildersCompletion);
@@ -1277,6 +1284,7 @@ function App() {
       aiNativeWitnessResponse,
       enterpriseWitnessResponse,
       consumerWitnessResponse,
+      toolReferenceWitnessResponse,
       capabilityTraceabilityResponse,
       homepageSignalCoverageResponse,
       buildersCompletionResponse,
@@ -1412,6 +1420,7 @@ function App() {
       fetchSwiggyBuildersAiNativeWitness(),
       fetchSwiggyBuildersEnterpriseWitness(),
       fetchSwiggyBuildersConsumerWitness(),
+      fetchSwiggyBuildersToolReferenceWitness(),
       fetchSwiggyCapabilityTraceability(),
       fetchSwiggyHomepageSignalCoverage(),
       fetchSwiggyBuildersCompletionLedger(),
@@ -1547,6 +1556,7 @@ function App() {
     setAiNativeWitness(aiNativeWitnessResponse.aiNativeWitness);
     setEnterpriseWitness(enterpriseWitnessResponse.enterpriseWitness);
     setConsumerWitness(consumerWitnessResponse.consumerWitness);
+    setToolReferenceWitness(toolReferenceWitnessResponse.toolReferenceWitness);
     setCapabilityTraceability(capabilityTraceabilityResponse.capabilityTraceability);
     setHomepageSignalCoverage(homepageSignalCoverageResponse.homepageSignalCoverage);
     setBuildersCompletion(buildersCompletionResponse.buildersCompletion);
@@ -2257,6 +2267,7 @@ function App() {
                 aiNativeWitness={aiNativeWitness}
                 enterpriseWitness={enterpriseWitness}
                 consumerWitness={consumerWitness}
+                toolReferenceWitness={toolReferenceWitness}
                 capabilityTraceability={capabilityTraceability}
                 homepageSignalCoverage={homepageSignalCoverage}
                 buildersCompletion={buildersCompletion}
@@ -2884,6 +2895,7 @@ function LaunchCenterPanel({
   aiNativeWitness,
   enterpriseWitness,
   consumerWitness,
+  toolReferenceWitness,
   capabilityTraceability,
   homepageSignalCoverage,
   buildersCompletion,
@@ -2994,6 +3006,7 @@ function LaunchCenterPanel({
   aiNativeWitness: SwiggyBuildersAiNativeWitness | null;
   enterpriseWitness: SwiggyBuildersEnterpriseWitness | null;
   consumerWitness: SwiggyBuildersConsumerWitness | null;
+  toolReferenceWitness: SwiggyBuildersToolReferenceWitness | null;
   capabilityTraceability: SwiggyCapabilityTraceabilityMatrix | null;
   homepageSignalCoverage: SwiggyHomepageSignalCoverageBoard | null;
   buildersCompletion: SwiggyBuildersCompletionLedger | null;
@@ -5143,6 +5156,55 @@ function LaunchCenterPanel({
             </a>
             <a href="/api/luxury-experience-workspace" target="_blank" rel="noreferrer">
               Premium
+            </a>
+          </div>
+        </article>
+
+        <article className="tool-reference-witness-card">
+          <div className="mini-heading">
+            <ScrollText aria-hidden="true" />
+            <strong>Tool Reference Witness</strong>
+          </div>
+          <span>
+            {toolReferenceWitness
+              ? `${toolReferenceWitness.score}/100, ${toolReferenceWitness.totals.officialTools} Swiggy tools witnessed`
+              : "Witnessing Food, Instamart, Dineout, contracts, probes, recipes, docs twins, and commercial safety"}
+          </span>
+          <div className="tool-reference-witness-grid">
+            <div>
+              <strong>{toolReferenceWitness?.totals.servers ?? 0}</strong>
+              <span>Servers</span>
+            </div>
+            <div>
+              <strong>{toolReferenceWitness?.totals.officialTools ?? 0}</strong>
+              <span>Tools</span>
+            </div>
+            <div>
+              <strong>{toolReferenceWitness?.totals.contractRows ?? 0}</strong>
+              <span>Contracts</span>
+            </div>
+            <div>
+              <strong>{toolReferenceWitness?.totals.scenarioToolsCovered ?? 0}</strong>
+              <span>Scenarios</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(toolReferenceWitness?.groups ?? []).map((group) => (
+              <li key={group.id} data-status={group.gates > 0 || group.watch > 0 ? "watch" : "healthy"}>
+                <span>{group.label}</span>
+                <strong>{group.proven + group.ready}/{group.rows}</strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-intelligence-actions" aria-label="Tool reference witness links">
+            <a href="/api/swiggy-builders-tool-reference-witness" target="_blank" rel="noreferrer">
+              Tools API
+            </a>
+            <a href="/api/swiggy-tool-contract-matrix" target="_blank" rel="noreferrer">
+              Contracts
+            </a>
+            <a href="/api/mcp/tool-lab" target="_blank" rel="noreferrer">
+              Tool Lab
             </a>
           </div>
         </article>

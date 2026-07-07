@@ -268,6 +268,17 @@ const targetGroups = [
         "artifacts/visual-qa/consumer-witness-card.png",
       ),
       target(
+        "tool_reference_witness_card",
+        "Tool Reference Witness card",
+        "/",
+        ".tool-reference-witness-card",
+        "desktop",
+        1280,
+        900,
+        "Tool Reference Witness shows Food, Instamart, Dineout, contract rows, Tool Lab probes, scenario coverage, docs twins, and commercial-safety proof.",
+        "artifacts/visual-qa/tool-reference-witness-card.png",
+      ),
+      target(
         "capability_traceability_card",
         "Capability Traceability card",
         "/",

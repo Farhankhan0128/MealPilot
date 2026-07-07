@@ -84,6 +84,8 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/swiggy-builders-enterprise-witness"].get.responses["200"].description).toContain("delegated OAuth");
     expect(openApi.body.paths["/api/swiggy-builders-consumer-witness"].get.summary).toContain("Consumer Witness");
     expect(openApi.body.paths["/api/swiggy-builders-consumer-witness"].get.responses["200"].description).toContain("visual dish");
+    expect(openApi.body.paths["/api/swiggy-builders-tool-reference-witness"].get.summary).toContain("Tool Reference Witness");
+    expect(openApi.body.paths["/api/swiggy-builders-tool-reference-witness"].get.responses["200"].description).toContain("Food 14");
     expect(openApi.body.paths["/api/swiggy-builders-journey-gates"].get.summary).toContain("Journey Gate");
     expect(openApi.body.paths["/api/swiggy-builders-journey-gates"].get.responses["200"].description).toContain("Quick Review");
     expect(openApi.body.paths["/api/swiggy-builders-homepage-experience"].get.summary).toContain("Homepage Experience");
@@ -1869,7 +1871,7 @@ describe("MealPilot API", () => {
     expect(packet.totals.formFields).toBeGreaterThanOrEqual(10);
     expect(packet.totals.requiredAttachments).toBeGreaterThanOrEqual(10);
     expect(packet.totals.launchArtifacts).toBeGreaterThanOrEqual(50);
-    expect(packet.totals.visualTargets).toBe(76);
+    expect(packet.totals.visualTargets).toBe(77);
     expect(packet.files.map((file: { id: string }) => file.id)).toEqual(
       expect.arrayContaining(["packet_json", "packet_markdown", "visual_report", "production_summary"]),
     );
@@ -1881,7 +1883,7 @@ describe("MealPilot API", () => {
     ).toBe(true);
     expect(
       packet.commands.some(
-        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("76"),
+        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("77"),
       ),
     ).toBe(true);
     expect(packet.copyBlocks.formFields).toContain("Redirect URI(s)");
@@ -4466,8 +4468,8 @@ describe("MealPilot API", () => {
     const visualQa = response.body.visualQa;
 
     expect(visualQa.score).toBe(100);
-    expect(visualQa.totalTargets).toBe(76);
-    expect(visualQa.readyTargets).toBe(76);
+    expect(visualQa.totalTargets).toBe(77);
+    expect(visualQa.readyTargets).toBe(77);
     expect(visualQa.totalRules).toBe(7);
     expect(visualQa.readyRules).toBe(7);
     expect(visualQa.totalCommands).toBe(5);
@@ -4581,6 +4583,16 @@ describe("MealPilot API", () => {
           (target) =>
             target.id === "consumer_witness_card" &&
             target.selector === ".consumer-witness-card" &&
+            target.viewport === "desktop",
+        ),
+      ),
+    ).toBe(true);
+    expect(
+      visualQa.targetGroups.some((group: { targets: Array<{ id: string; selector: string; viewport: string }> }) =>
+        group.targets.some(
+          (target) =>
+            target.id === "tool_reference_witness_card" &&
+            target.selector === ".tool-reference-witness-card" &&
             target.viewport === "desktop",
         ),
       ),
@@ -5525,6 +5537,51 @@ describe("MealPilot API", () => {
     expect(witness.externalGates.some((gate: string) => gate.includes("staging and production credentials"))).toBe(true);
   });
 
+  it("returns Swiggy Builders Tool Reference Witness for all official MCP tools and docs coverage", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/swiggy-builders-tool-reference-witness").expect(200);
+    const witness = response.body.toolReferenceWitness;
+
+    expect(witness.score).toBeGreaterThanOrEqual(90);
+    expect(["tool_reference_ready", "tool_reference_watch", "tool_reference_blocked"]).toContain(witness.decision);
+    expect(witness.totals.rows).toBeGreaterThanOrEqual(8);
+    expect(witness.totals.servers).toBe(3);
+    expect(witness.totals.officialTools).toBe(35);
+    expect(witness.totals.foodTools).toBe(14);
+    expect(witness.totals.instamartTools).toBe(13);
+    expect(witness.totals.dineoutTools).toBe(8);
+    expect(witness.totals.contractRows).toBe(35);
+    expect(witness.totals.contractParameters).toBeGreaterThanOrEqual(40);
+    expect(witness.totals.toolLabProbes).toBe(35);
+    expect(witness.totals.scenarioToolsCovered).toBe(35);
+    expect(witness.totals.docsPages).toBeGreaterThanOrEqual(69);
+    expect(witness.totals.commercialTools).toBe(3);
+    expect(witness.totals.proofLinks).toBeGreaterThanOrEqual(18);
+    expect(witness.rows.map((row: { id: string }) => row.id)).toEqual(
+      expect.arrayContaining([
+        "food_reference_contract",
+        "instamart_reference_contract",
+        "dineout_reference_contract",
+        "contract_matrix_coverage",
+        "tool_lab_probe_coverage",
+        "scenario_runner_recipe_coverage",
+        "docs_reference_coverage",
+        "commercial_safety_classes",
+      ]),
+    );
+    expect(
+      witness.rows.every((row: { proofLinks: string[]; routeOptimization: string; riskBoundary: string }) =>
+        row.proofLinks.length > 0 && row.routeOptimization.length > 0 && row.riskBoundary.length > 0,
+      ),
+    ).toBe(true);
+    expect(witness.groups.map((group: { id: string }) => group.id)).toEqual(
+      expect.arrayContaining(["server_references", "executable_contracts", "docs_and_drift", "commercial_safety"]),
+    );
+    expect(witness.commands.some((command: { command: string }) => command.command.includes("/api/swiggy-builders-tool-reference-witness"))).toBe(true);
+    expect(witness.assertions.some((assertion: string) => assertion.includes("Food, Instamart, and Dineout"))).toBe(true);
+    expect(witness.externalGates.some((gate: string) => gate.includes("staging credentials"))).toBe(true);
+  });
+
   it("returns a Swiggy source-to-product capability traceability matrix", async () => {
     const { app } = createMealPilotServer();
     const response = await request(app).get("/api/swiggy-capability-traceability").expect(200);
@@ -5636,7 +5693,7 @@ describe("MealPilot API", () => {
     expect(ledger.totals.mcpServers).toBe(3);
     expect(ledger.totals.mcpTools).toBe(35);
     expect(ledger.totals.docsPages).toBeGreaterThanOrEqual(69);
-    expect(ledger.totals.visualTargets).toBe(76);
+    expect(ledger.totals.visualTargets).toBe(77);
     expect(ledger.totals.reviewerArtifacts).toBeGreaterThanOrEqual(120);
     expect(ledger.groups.map((group: { id: string }) => group.id)).toEqual(
       expect.arrayContaining(["source_coverage", "product_depth", "mcp_integration", "operations", "handoff"]),
@@ -5914,7 +5971,7 @@ describe("MealPilot API", () => {
     expect(receipt.totals.llmsPages).toBe(69);
     expect(receipt.totals.referenceTools).toBe(35);
     expect(receipt.totals.matchedTools).toBe(35);
-    expect(receipt.totals.visualTargets).toBe(76);
+    expect(receipt.totals.visualTargets).toBe(77);
     expect(receipt.totals.unsafeLinks).toBe(0);
     expect(receipt.totals.missingRows).toBe(0);
     expect(receipt.rows.map((row: { id: string }) => row.id)).toEqual(

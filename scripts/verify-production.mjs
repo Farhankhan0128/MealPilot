@@ -171,6 +171,11 @@ assert(
   "OpenAPI Builders Consumer witness contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-builders-tool-reference-witness"]?.get?.summary?.includes("Tool Reference Witness") &&
+    openApi.paths["/api/swiggy-builders-tool-reference-witness"]?.get?.responses?.["200"]?.description?.includes("Food 14"),
+  "OpenAPI Builders Tool Reference witness contract is missing",
+);
+assert(
   openApi.paths["/api/swiggy-capability-traceability"]?.get?.summary?.includes("capability traceability") &&
     openApi.paths["/api/swiggy-capability-traceability"]?.get?.responses?.["200"]?.description?.includes("lifecycle gates"),
   "OpenAPI Swiggy capability traceability contract is missing",
@@ -1051,6 +1056,58 @@ assert(
   "Builders Consumer witness groups, commands, or gates are missing",
 );
 
+const toolReferenceWitness = await request("/api/swiggy-builders-tool-reference-witness");
+assert(toolReferenceWitness.toolReferenceWitness.score >= 90, "Builders Tool Reference witness score is below target");
+assert(
+  ["tool_reference_ready", "tool_reference_watch", "tool_reference_blocked"].includes(
+    toolReferenceWitness.toolReferenceWitness.decision,
+  ) &&
+    toolReferenceWitness.toolReferenceWitness.totals.rows >= 8 &&
+    toolReferenceWitness.toolReferenceWitness.totals.servers === 3 &&
+    toolReferenceWitness.toolReferenceWitness.totals.officialTools === 35 &&
+    toolReferenceWitness.toolReferenceWitness.totals.foodTools === 14 &&
+    toolReferenceWitness.toolReferenceWitness.totals.instamartTools === 13 &&
+    toolReferenceWitness.toolReferenceWitness.totals.dineoutTools === 8 &&
+    toolReferenceWitness.toolReferenceWitness.totals.contractRows === 35 &&
+    toolReferenceWitness.toolReferenceWitness.totals.contractParameters >= 40 &&
+    toolReferenceWitness.toolReferenceWitness.totals.toolLabProbes === 35 &&
+    toolReferenceWitness.toolReferenceWitness.totals.scenarioToolsCovered === 35 &&
+    toolReferenceWitness.toolReferenceWitness.totals.docsPages >= 69 &&
+    toolReferenceWitness.toolReferenceWitness.totals.commercialTools === 3 &&
+    toolReferenceWitness.toolReferenceWitness.totals.proofLinks >= 18,
+  "Builders Tool Reference witness totals are incomplete",
+);
+assert(
+  [
+    "food_reference_contract",
+    "instamart_reference_contract",
+    "dineout_reference_contract",
+    "contract_matrix_coverage",
+    "tool_lab_probe_coverage",
+    "scenario_runner_recipe_coverage",
+    "docs_reference_coverage",
+    "commercial_safety_classes",
+  ].every((id) =>
+    toolReferenceWitness.toolReferenceWitness.rows.some(
+      (row) => row.id === id && row.proofLinks.length > 0 && row.routeOptimization.length > 0 && row.riskBoundary.length > 0,
+    ),
+  ),
+  "Builders Tool Reference witness key rows are missing",
+);
+assert(
+  ["server_references", "executable_contracts", "docs_and_drift", "commercial_safety"].every((id) =>
+    toolReferenceWitness.toolReferenceWitness.groups.some((group) => group.id === id),
+  ) &&
+    toolReferenceWitness.toolReferenceWitness.commands.some((command) =>
+      command.command.includes("/api/swiggy-builders-tool-reference-witness"),
+    ) &&
+    toolReferenceWitness.toolReferenceWitness.assertions.some((assertion) =>
+      assertion.includes("Food, Instamart, and Dineout"),
+    ) &&
+    toolReferenceWitness.toolReferenceWitness.externalGates.some((gate) => gate.includes("staging credentials")),
+  "Builders Tool Reference witness groups, commands, or gates are missing",
+);
+
 const capabilityTraceability = await request("/api/swiggy-capability-traceability");
 assert(capabilityTraceability.capabilityTraceability.score >= 88, "capability traceability score is below target");
 assert(
@@ -1165,7 +1222,7 @@ assert(
     buildersCompletion.buildersCompletion.totals.mcpServers === 3 &&
     buildersCompletion.buildersCompletion.totals.mcpTools === 35 &&
     buildersCompletion.buildersCompletion.totals.docsPages >= 69 &&
-    buildersCompletion.buildersCompletion.totals.visualTargets === 76 &&
+    buildersCompletion.buildersCompletion.totals.visualTargets === 77 &&
     buildersCompletion.buildersCompletion.totals.reviewerArtifacts >= 120 &&
     buildersCompletion.buildersCompletion.totals.packetFiles >= 4,
   "Builders completion ledger totals are incomplete",
@@ -1240,7 +1297,7 @@ assert(
     coverageReceipt.coverageReceipt.totals.llmsPages === 69 &&
     coverageReceipt.coverageReceipt.totals.referenceTools === 35 &&
     coverageReceipt.coverageReceipt.totals.matchedTools === 35 &&
-    coverageReceipt.coverageReceipt.totals.visualTargets === 76 &&
+    coverageReceipt.coverageReceipt.totals.visualTargets === 77 &&
     coverageReceipt.coverageReceipt.totals.unsafeLinks === 0 &&
     coverageReceipt.coverageReceipt.totals.missingRows === 0,
   "Builders coverage receipt totals are incomplete",
@@ -4244,8 +4301,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 76, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 76, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 77, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 77, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -4543,6 +4600,14 @@ assert(
     group.targets.some((target) => target.id === "consumer_witness_card" && target.selector === ".consumer-witness-card"),
   ),
   "visual QA Consumer Witness target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some(
+      (target) => target.id === "tool_reference_witness_card" && target.selector === ".tool-reference-witness-card",
+    ),
+  ),
+  "visual QA Tool Reference Witness target is missing",
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
@@ -8604,7 +8669,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 76, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 77, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -8618,7 +8683,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("76")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("77")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -9224,6 +9289,9 @@ console.log(
       consumerWitnessScore: consumerWitness.consumerWitness.score,
       consumerWitnessRows: consumerWitness.consumerWitness.totals.rows,
       consumerWitnessClientTargets: consumerWitness.consumerWitness.totals.clientTargets,
+      toolReferenceWitnessScore: toolReferenceWitness.toolReferenceWitness.score,
+      toolReferenceWitnessRows: toolReferenceWitness.toolReferenceWitness.totals.rows,
+      toolReferenceWitnessTools: toolReferenceWitness.toolReferenceWitness.totals.officialTools,
       capabilityTraceabilityScore: capabilityTraceability.capabilityTraceability.score,
       capabilityTraceabilityRows: capabilityTraceability.capabilityTraceability.totals.rows,
       capabilityTraceabilityCtas: capabilityTraceability.capabilityTraceability.totals.officialCtas,

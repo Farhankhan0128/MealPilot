@@ -279,6 +279,7 @@ Briefly show production readiness:
 - `/api/swiggy-faq-policy`
 - `/api/swiggy-faq-resolution-center`
 - `/api/swiggy-builders-consumer-witness`
+- `/api/swiggy-builders-tool-reference-witness`
 - `/api/swiggy-growth-partnership`
 - `/api/swiggy-talent-signal-center`
 - `/api/swiggy-conversion-center`

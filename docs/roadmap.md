@@ -70,6 +70,7 @@ Status: in progress.
 - Add Guest Collaboration & Calendar Center for guest votes, occasion templates, Dineout-first planning, Food reminder handoffs, Instamart prep, calendar artifacts, Slack/Teams gates, and voice-safe briefs. Complete.
 - Add Luxury Experience Workspace for polished reservation, Food cart, Instamart basket, combined evening, and recovery review surfaces with all-tool coverage, concierge modes, widget fallbacks, voice contracts, and telemetry. Complete.
 - Add Swiggy Builders Consumer Witness for the aggregate consumer AI-client proof across AI clients, visual dish capture, voice commerce, nutrition/budget planning, household preferences, guest collaboration, luxury workspaces, and confirmation safety. Complete.
+- Add Swiggy Builders Tool Reference Witness for the official Food 14, Instamart 13, Dineout 8 MCP reference proof across contracts, Tool Lab probes, recipe scenarios, docs twins, and commercial-safety classes. Complete.
 - Add Reviewer Artifact Vault for proof links, OpenAPI, smoke commands, screenshot targets, demo-video checklist, logs, traces, redaction rules, support context, and Swiggy handoff copy. Complete.
 - Add Visual QA Center for reviewer screenshot targets, selector manifests, no-overlap/text-fit rules, widget fallback checks, mobile layout checks, redaction visibility, and screenshot automation gates. Complete.
 - Add Coding Agent Governance with root `AGENTS.md`, official Swiggy docs retrieval rules, 35-tool smoke evidence, and production verifier checks. Complete.

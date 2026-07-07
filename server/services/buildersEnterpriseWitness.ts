@@ -283,7 +283,7 @@ export function buildSwiggyBuildersEnterpriseWitness(options: {
         id: "visual_capture",
         command: "MEALPILOT_URL=http://localhost:8787 npm run verify:visual",
         proves: "The Enterprise Witness card is captured with every reviewer-critical Launch Center surface.",
-        expectedSignal: "76 screenshot targets return no overflow issues",
+        expectedSignal: "77 screenshot targets return no overflow issues",
       },
     ],
     assertions: [

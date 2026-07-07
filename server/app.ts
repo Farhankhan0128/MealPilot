@@ -38,6 +38,7 @@ import { buildSwiggyBuildersBenefitsWitness } from "./services/buildersBenefitsW
 import { buildSwiggyBuildersAiNativeWitness } from "./services/buildersAiNativeWitness.js";
 import { buildSwiggyBuildersEnterpriseWitness } from "./services/buildersEnterpriseWitness.js";
 import { buildSwiggyBuildersConsumerWitness } from "./services/buildersConsumerWitness.js";
+import { buildSwiggyBuildersToolReferenceWitness } from "./services/buildersToolReferenceWitness.js";
 import { buildSwiggyBuildersReviewDecisionCenter } from "./services/reviewDecisionCenter.js";
 import { buildSwiggyBuildersSourceEvolutionCenter } from "./services/sourceEvolutionCenter.js";
 import { buildSwiggySourceFreezeDiff } from "./services/sourceFreezeDiff.js";
@@ -1424,6 +1425,15 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
       }),
     });
   });
+
+  app.get(
+    "/api/swiggy-builders-tool-reference-witness",
+    asyncRoute(async (_req, res) => {
+      res.json({
+        toolReferenceWitness: await buildSwiggyBuildersToolReferenceWitness(),
+      });
+    }),
+  );
 
   app.get("/api/swiggy-builders-journey-gates", (_req, res) => {
     res.json({

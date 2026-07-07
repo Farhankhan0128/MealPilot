@@ -1321,6 +1321,83 @@ export interface SwiggyBuildersConsumerWitness {
   externalGates: string[];
 }
 
+export type SwiggyBuildersToolReferenceWitnessStatus =
+  | "proven"
+  | "ready"
+  | "watch"
+  | "operator_gate"
+  | "swiggy_gate";
+export type SwiggyBuildersToolReferenceWitnessOwner = "MealPilot" | "Operator" | "Swiggy" | "Joint";
+export type SwiggyBuildersToolReferenceWitnessKind =
+  | "food_reference"
+  | "instamart_reference"
+  | "dineout_reference"
+  | "contract_matrix"
+  | "tool_lab"
+  | "scenario_runner"
+  | "docs_coverage"
+  | "commercial_safety";
+
+export interface SwiggyBuildersToolReferenceWitnessRow {
+  id: string;
+  label: string;
+  kind: SwiggyBuildersToolReferenceWitnessKind;
+  officialSignal: string;
+  sourceUrl: string;
+  owner: SwiggyBuildersToolReferenceWitnessOwner;
+  status: SwiggyBuildersToolReferenceWitnessStatus;
+  mealPilotSurface: string;
+  evidence: string;
+  routeOptimization: string;
+  riskBoundary: string;
+  nextAction: string;
+  proofLinks: string[];
+  relatedApis: string[];
+}
+
+export interface SwiggyBuildersToolReferenceWitnessGroup {
+  id: string;
+  label: string;
+  rows: number;
+  proven: number;
+  ready: number;
+  watch: number;
+  gates: number;
+  proofLinks: string[];
+}
+
+export interface SwiggyBuildersToolReferenceWitness {
+  generatedAt: string;
+  score: number;
+  decision: "tool_reference_ready" | "tool_reference_watch" | "tool_reference_blocked";
+  officialSources: string[];
+  totals: {
+    rows: number;
+    proven: number;
+    ready: number;
+    watch: number;
+    operatorGates: number;
+    swiggyGates: number;
+    proofLinks: number;
+    servers: number;
+    officialTools: number;
+    foodTools: number;
+    instamartTools: number;
+    dineoutTools: number;
+    contractRows: number;
+    contractParameters: number;
+    toolLabProbes: number;
+    scenarioToolsCovered: number;
+    docsPages: number;
+    commercialTools: number;
+  };
+  rows: SwiggyBuildersToolReferenceWitnessRow[];
+  groups: SwiggyBuildersToolReferenceWitnessGroup[];
+  commands: Array<{ id: string; command: string; proves: string; expectedSignal: string }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type SwiggyCapabilityTraceabilityOwner = "MealPilot" | "Operator" | "Swiggy" | "Joint";
 export type SwiggyCapabilityTraceabilityKind =
   | "official_page"

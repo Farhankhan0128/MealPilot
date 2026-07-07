@@ -557,6 +557,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-builders-tool-reference-witness": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Builders Tool Reference Witness for Food, Instamart, Dineout, docs, and safety proof",
+          responses: {
+            "200": {
+              description:
+                "Official Swiggy MCP tool references witnessed against Food 14, Instamart 13, Dineout 8, contract rows, parameters, Tool Lab probes, official recipe scenarios, docs coverage, docs twins, commercial safety classes, proof links, and Swiggy-owned live credential gates",
+            },
+          },
+        },
+      },
       "/api/swiggy-builders-journey-gates": {
         get: {
           tags: ["Builder Access"],
