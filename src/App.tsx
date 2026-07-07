@@ -5854,14 +5854,22 @@ function LaunchCenterPanel({
               <strong>{activeSourceFreeze?.liveSnapshot.referenceTools ?? 0}</strong>
               <span>Tools</span>
             </div>
-            <div>
-              <strong>{activeSourceFreeze?.localPacket.accessEvidenceRows ?? 0}</strong>
-              <span>Evidence</span>
-            </div>
-            <div>
-              <strong>{activeSourceFreeze?.missingInputs.length ?? 0}</strong>
-              <span>Inputs</span>
-            </div>
+	            <div>
+	              <strong>{activeSourceFreeze?.localPacket.accessEvidenceRows ?? 0}</strong>
+	              <span>Evidence</span>
+	            </div>
+	            <div>
+	              <strong>{activeSourceFreeze?.localPacket.accessPolicyScore ?? 0}</strong>
+	              <span>Access</span>
+	            </div>
+	            <div>
+	              <strong>{activeSourceFreeze?.localPacket.credentialSandboxScore ?? 0}</strong>
+	              <span>Cred</span>
+	            </div>
+	            <div>
+	              <strong>{activeSourceFreeze?.missingInputs.length ?? 0}</strong>
+	              <span>Inputs</span>
+	            </div>
           </div>
           <form className="source-freeze-rehearsal" onSubmit={runSourceFreezeDiff}>
             <label htmlFor="source-freeze-mode">Freeze mode</label>
@@ -5942,9 +5950,9 @@ function LaunchCenterPanel({
               Freeze
             </button>
             {sourceFreezeStatus === "error" ? <small role="status">Source freeze diff unavailable.</small> : null}
-          </form>
-          <ul className="compact-status-list">
-            {(activeSourceFreeze?.diffRows ?? []).slice(0, 5).map((diffRow) => (
+	          </form>
+	          <ul className="compact-status-list">
+	            {(activeSourceFreeze?.diffRows ?? []).slice(0, 8).map((diffRow) => (
               <li
                 key={diffRow.id}
                 data-status={diffRow.status === "matched" ? "healthy" : diffRow.status === "blocked" ? "blocked" : "watch"}

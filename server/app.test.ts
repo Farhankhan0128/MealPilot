@@ -6236,8 +6236,25 @@ describe("MealPilot API", () => {
     );
     expect(freeze.liveSnapshot.referenceTools).toBe(35);
     expect(freeze.localPacket.accessEvidenceRows).toBeGreaterThanOrEqual(50);
+    expect(freeze.localPacket.credentialSandboxScore).toBeGreaterThanOrEqual(84);
+    expect(freeze.localPacket.credentialSandboxRows).toBeGreaterThanOrEqual(8);
+    expect(freeze.localPacket.credentialSandboxGates).toBeGreaterThanOrEqual(1);
+    expect(freeze.localPacket.accessPolicyScore).toBeGreaterThanOrEqual(83);
+    expect(freeze.localPacket.accessPolicyRows).toBeGreaterThanOrEqual(8);
+    expect(freeze.localPacket.accessPolicyGates).toBeGreaterThanOrEqual(1);
     expect(freeze.diffRows.map((row: { id: string }) => row.id)).toEqual(
-      expect.arrayContaining(["builders_pages", "header_footer", "cta_inventory", "llms_docs", "reference_tools", "access_packet", "upstream_watch", "browser_rebrowse"]),
+      expect.arrayContaining([
+        "builders_pages",
+        "header_footer",
+        "cta_inventory",
+        "llms_docs",
+        "reference_tools",
+        "access_packet",
+        "access_policy_witness",
+        "credential_sandbox_witness",
+        "upstream_watch",
+        "browser_rebrowse",
+      ]),
     );
     expect(
       freeze.diffRows.some(
@@ -6266,9 +6283,20 @@ describe("MealPilot API", () => {
       .expect(200);
     expect(receiptBacked.body.sourceFreezeDiff.decision).toBe("ready_to_freeze");
     expect(receiptBacked.body.sourceFreezeDiff.browserRebrowseReceipt.viewport).toBe("all_form_factors");
+    expect(receiptBacked.body.sourceFreezeDiff.diffRows.length).toBeGreaterThanOrEqual(10);
     expect(
       receiptBacked.body.sourceFreezeDiff.diffRows.some(
         (row: { id: string; status: string }) => row.id === "browser_rebrowse" && row.status === "matched",
+      ),
+    ).toBe(true);
+    expect(
+      receiptBacked.body.sourceFreezeDiff.diffRows.some(
+        (row: { id: string; status: string }) => row.id === "access_policy_witness" && row.status === "matched",
+      ),
+    ).toBe(true);
+    expect(
+      receiptBacked.body.sourceFreezeDiff.diffRows.some(
+        (row: { id: string; status: string }) => row.id === "credential_sandbox_witness" && row.status === "matched",
       ),
     ).toBe(true);
     expect(receiptBacked.body.sourceFreezeDiff.telemetry.some((item: { field: string }) => item.field === "browser_rebrowse_receipt")).toBe(true);

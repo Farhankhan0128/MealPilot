@@ -43,7 +43,11 @@ import { buildSwiggyBuildersCredentialSandboxWitness } from "./services/builders
 import { buildSwiggyBuildersAccessPolicyWitness } from "./services/buildersAccessPolicyWitness.js";
 import { buildSwiggyBuildersReviewDecisionCenter } from "./services/reviewDecisionCenter.js";
 import { buildSwiggyBuildersSourceEvolutionCenter } from "./services/sourceEvolutionCenter.js";
-import { buildSwiggySourceFreezeDiff } from "./services/sourceFreezeDiff.js";
+import {
+  accessPolicyRollupFromWitness,
+  buildSwiggySourceFreezeDiff,
+  credentialSandboxRollupFromWitness,
+} from "./services/sourceFreezeDiff.js";
 import { buildSwiggyBuildersPageMeshAuditor } from "./services/buildersPageMeshAuditor.js";
 import { buildSwiggyBuildersSiteParityAuditor } from "./services/buildersSiteParityAuditor.js";
 import { buildBuilderPacketExport, buildBuilderPacketMarkdown } from "./services/builderPacketExport.js";
@@ -693,6 +697,41 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
       pendingVerifierCount: store.getDiagnostics().authSessionCount,
       latestEvent: latestAuthEvent,
     });
+  }
+
+  async function buildSourceFreezeWitnessRollups() {
+    const runtimeConfig = {
+      ...config,
+      swiggyAccessToken: runtimeAccessToken,
+      swiggyTokenExpiresAt: runtimeTokenExpiresAt,
+    };
+    const profile = store.getProfile();
+    const coverage = buildMcpCoverage();
+    const latestPlan = store.getAllPlans().at(-1);
+    const handoffState = store.getAccessSubmissionState();
+    const accessPolicyWitness = await buildSwiggyBuildersAccessPolicyWitness({
+      config,
+      profile,
+      coverage,
+      latestPlan,
+      plans: store.getAllPlans(),
+      telemetry: telemetry.buildReport(),
+      handoffState,
+    });
+    const credentialSandboxWitness = await buildSwiggyBuildersCredentialSandboxWitness({
+      config: runtimeConfig,
+      profile,
+      coverage,
+      latestPlan,
+      handoffState,
+      credentialIssuance: store.getCredentialIssuanceState(),
+      authStatus: buildAuthStatus(),
+    });
+
+    return {
+      accessPolicyWitness: accessPolicyRollupFromWitness(accessPolicyWitness),
+      credentialSandboxWitness: credentialSandboxRollupFromWitness(credentialSandboxWitness),
+    };
   }
 
   app.get("/api/health", (_req, res) => {
@@ -2003,6 +2042,7 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
   app.get(
     "/api/swiggy-source-freeze-diff",
     asyncRoute(async (_req, res) => {
+      const witnessRollups = await buildSourceFreezeWitnessRollups();
       res.json({
         sourceFreezeDiff: await buildSwiggySourceFreezeDiff({
           config,
@@ -2010,6 +2050,7 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
           coverage: buildMcpCoverage(),
           latestPlan: store.getAllPlans().at(-1),
           handoffState: store.getAccessSubmissionState(),
+          ...witnessRollups,
         }),
       });
     }),
@@ -2019,6 +2060,7 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
     "/api/swiggy-source-freeze-diff/freeze",
     asyncRoute(async (req, res) => {
       const body = sourceFreezeDiffSchema.parse(req.body);
+      const witnessRollups = await buildSourceFreezeWitnessRollups();
       res.json({
         sourceFreezeDiff: await buildSwiggySourceFreezeDiff({
           config,
@@ -2026,6 +2068,7 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
           coverage: buildMcpCoverage(),
           latestPlan: store.getAllPlans().at(-1),
           handoffState: store.getAccessSubmissionState(),
+          ...witnessRollups,
           ...body,
         }),
       });

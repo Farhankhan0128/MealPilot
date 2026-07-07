@@ -4840,15 +4840,21 @@ export interface SwiggySourceFreezeDiffReport {
     llmsPages: number;
     referenceTools: number;
   };
-  localPacket: {
-    sourceIntelligenceScore: number;
-    sourceClusters: number;
-    driftSignals: number;
-    accessEvidenceRows: number;
-    packetFiles: number;
-    packetVisualTargets: number;
-    launchArtifacts: number;
-  };
+	  localPacket: {
+	    sourceIntelligenceScore: number;
+	    sourceClusters: number;
+	    driftSignals: number;
+	    accessEvidenceRows: number;
+	    accessPolicyScore: number;
+	    accessPolicyRows: number;
+	    accessPolicyGates: number;
+	    credentialSandboxScore: number;
+	    credentialSandboxRows: number;
+	    credentialSandboxGates: number;
+	    packetFiles: number;
+	    packetVisualTargets: number;
+	    launchArtifacts: number;
+	  };
   diffRows: SwiggySourceFreezeDiffRow[];
   commands: Array<{ command: string; proves: string }>;
   missingInputs: string[];

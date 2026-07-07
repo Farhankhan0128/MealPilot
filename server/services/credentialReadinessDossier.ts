@@ -94,7 +94,7 @@ function buildSourceSignals(
       source: "/api/swiggy-source-freeze-diff",
       publicSignal: `Latest local source-freeze decision is ${sourceFreezeDecision.replaceAll("_", " ")}.`,
       mealPilotInterpretation: "Re-browse the public source before sending any credential follow-up or demo packet.",
-      status: sourceFreezeDecision === "frozen" ? "ready" : "operator_input",
+      status: sourceFreezeDecision === "ready_to_freeze" ? "ready" : "operator_input",
     },
   ];
 }

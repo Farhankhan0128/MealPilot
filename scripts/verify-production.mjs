@@ -5325,7 +5325,13 @@ assert(
 );
 assert(
   sourceFreezeDiff.sourceFreezeDiff.liveSnapshot.referenceTools === 35 &&
-    sourceFreezeDiff.sourceFreezeDiff.localPacket.accessEvidenceRows >= 50,
+    sourceFreezeDiff.sourceFreezeDiff.localPacket.accessEvidenceRows >= 50 &&
+    sourceFreezeDiff.sourceFreezeDiff.localPacket.credentialSandboxScore >= 84 &&
+    sourceFreezeDiff.sourceFreezeDiff.localPacket.credentialSandboxRows >= 8 &&
+    sourceFreezeDiff.sourceFreezeDiff.localPacket.credentialSandboxGates >= 1 &&
+    sourceFreezeDiff.sourceFreezeDiff.localPacket.accessPolicyScore >= 83 &&
+    sourceFreezeDiff.sourceFreezeDiff.localPacket.accessPolicyRows >= 8 &&
+    sourceFreezeDiff.sourceFreezeDiff.localPacket.accessPolicyGates >= 1,
   "source freeze diff snapshot or local packet rollup is incomplete",
 );
 assert(
@@ -5336,6 +5342,8 @@ assert(
     "llms_docs",
     "reference_tools",
     "access_packet",
+    "access_policy_witness",
+    "credential_sandbox_witness",
     "upstream_watch",
     "browser_rebrowse",
   ].every((id) => sourceFreezeDiff.sourceFreezeDiff.diffRows.some((row) => row.id === id)),
@@ -5367,8 +5375,15 @@ const sourceFreezeReceipt = await request("/api/swiggy-source-freeze-diff/freeze
 assert(
   sourceFreezeReceipt.sourceFreezeDiff.decision === "ready_to_freeze" &&
     sourceFreezeReceipt.sourceFreezeDiff.browserRebrowseReceipt.viewport === "all_form_factors" &&
+    sourceFreezeReceipt.sourceFreezeDiff.diffRows.length >= 10 &&
     sourceFreezeReceipt.sourceFreezeDiff.diffRows.some(
       (row) => row.id === "browser_rebrowse" && row.status === "matched",
+    ) &&
+    sourceFreezeReceipt.sourceFreezeDiff.diffRows.some(
+      (row) => row.id === "access_policy_witness" && row.status === "matched",
+    ) &&
+    sourceFreezeReceipt.sourceFreezeDiff.diffRows.some(
+      (row) => row.id === "credential_sandbox_witness" && row.status === "matched",
     ) &&
     sourceFreezeReceipt.sourceFreezeDiff.telemetry.some((item) => item.field === "browser_rebrowse_receipt"),
   "source freeze receipt-backed decision is incomplete",
@@ -9499,6 +9514,10 @@ console.log(
       sourceFreezeDecision: sourceFreezeDiff.sourceFreezeDiff.decision,
       sourceFreezeReceiptDecision: sourceFreezeReceipt.sourceFreezeDiff.decision,
       sourceFreezeRows: sourceFreezeDiff.sourceFreezeDiff.diffRows.length,
+      sourceFreezeCredentialSandboxScore: sourceFreezeDiff.sourceFreezeDiff.localPacket.credentialSandboxScore,
+      sourceFreezeCredentialSandboxGates: sourceFreezeDiff.sourceFreezeDiff.localPacket.credentialSandboxGates,
+      sourceFreezeAccessPolicyScore: sourceFreezeDiff.sourceFreezeDiff.localPacket.accessPolicyScore,
+      sourceFreezeAccessPolicyGates: sourceFreezeDiff.sourceFreezeDiff.localPacket.accessPolicyGates,
       deepSiteMapScore: deepSiteMap.deepSiteMap.score,
       deepSiteMapPages: deepSiteMap.deepSiteMap.totals.pages,
       deepSiteMapCtas: deepSiteMap.deepSiteMap.totals.ctas,
