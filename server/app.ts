@@ -37,6 +37,7 @@ import { buildSwiggyBuildersNavigationWitness } from "./services/buildersNavigat
 import { buildSwiggyBuildersBenefitsWitness } from "./services/buildersBenefitsWitness.js";
 import { buildSwiggyBuildersAiNativeWitness } from "./services/buildersAiNativeWitness.js";
 import { buildSwiggyBuildersEnterpriseWitness } from "./services/buildersEnterpriseWitness.js";
+import { buildSwiggyBuildersConsumerWitness } from "./services/buildersConsumerWitness.js";
 import { buildSwiggyBuildersReviewDecisionCenter } from "./services/reviewDecisionCenter.js";
 import { buildSwiggyBuildersSourceEvolutionCenter } from "./services/sourceEvolutionCenter.js";
 import { buildSwiggySourceFreezeDiff } from "./services/sourceFreezeDiff.js";
@@ -1411,6 +1412,15 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
         config,
         plans: store.getAllPlans(),
         telemetry: telemetry.buildReport(),
+      }),
+    });
+  });
+
+  app.get("/api/swiggy-builders-consumer-witness", (_req, res) => {
+    res.json({
+      consumerWitness: buildSwiggyBuildersConsumerWitness({
+        config,
+        plans: store.getAllPlans(),
       }),
     });
   });

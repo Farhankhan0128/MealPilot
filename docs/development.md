@@ -136,6 +136,8 @@ The verifier also validates `/api/swiggy-builders-ai-native-witness` for the off
 
 The verifier also validates `/api/swiggy-builders-enterprise-witness` for the official enterprise/platform-operator Builders promise, including delegated OAuth, tenant controls, quota/capacity review, support SLA, contract/compliance gates, audit exports, brand governance, growth asks, proof links, and Swiggy-owned approvals.
 
+The verifier also validates `/api/swiggy-builders-consumer-witness` for the official consumer AI-client Builders promise, including AI client setup, visual dish capture, voice commerce, nutrition/budget planning, household preferences, guest collaboration, luxury workspaces, confirmation safety, proof links, and Swiggy-owned approvals.
+
 The verifier also validates `/api/swiggy-interaction-qa-center` and `POST /api/swiggy-interaction-qa-center/rehearse` for planner, confirmation, support-report, privacy, packet-export, first-call, access-submission, partner-support CTA contracts, dry-run route rehearsals, missing-input guards, automated proof, and explicit Swiggy/operator gates.
 
 The verifier also validates `/api/swiggy-staging-seed-smoke-center` for Food, Instamart, and Dineout seeded fixtures, read/mutation/commercial/support smoke waves, no-blind-retry stop rules, telemetry evidence, and Swiggy staging credential gates.

@@ -545,6 +545,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-builders-consumer-witness": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Builders Consumer Witness for AI client, multimodal, planning, and safety proof",
+          responses: {
+            "200": {
+              description:
+                "Official consumer AI-client Builders promises witnessed against client setup, visual dish capture, voice commerce, nutrition and budget planning, household preferences, guest collaboration, luxury workspaces, confirmation safety, proof links, and Swiggy-owned approvals",
+            },
+          },
+        },
+      },
       "/api/swiggy-builders-journey-gates": {
         get: {
           tags: ["Builder Access"],

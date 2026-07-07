@@ -1247,6 +1247,80 @@ export interface SwiggyBuildersEnterpriseWitness {
   externalGates: string[];
 }
 
+export type SwiggyBuildersConsumerWitnessStatus =
+  | "proven"
+  | "ready"
+  | "watch"
+  | "operator_gate"
+  | "swiggy_gate";
+export type SwiggyBuildersConsumerWitnessOwner = "MealPilot" | "Operator" | "Swiggy" | "Joint";
+export type SwiggyBuildersConsumerWitnessKind =
+  | "ai_client"
+  | "visual_input"
+  | "voice_surface"
+  | "nutrition_budget"
+  | "household_personalization"
+  | "guest_collaboration"
+  | "luxury_workspace"
+  | "confirmation_safety";
+
+export interface SwiggyBuildersConsumerWitnessRow {
+  id: string;
+  label: string;
+  kind: SwiggyBuildersConsumerWitnessKind;
+  officialSignal: string;
+  sourceUrl: string;
+  owner: SwiggyBuildersConsumerWitnessOwner;
+  status: SwiggyBuildersConsumerWitnessStatus;
+  mealPilotSurface: string;
+  evidence: string;
+  routeOptimization: string;
+  riskBoundary: string;
+  nextAction: string;
+  proofLinks: string[];
+  relatedApis: string[];
+}
+
+export interface SwiggyBuildersConsumerWitnessGroup {
+  id: string;
+  label: string;
+  rows: number;
+  proven: number;
+  ready: number;
+  watch: number;
+  gates: number;
+  proofLinks: string[];
+}
+
+export interface SwiggyBuildersConsumerWitness {
+  generatedAt: string;
+  score: number;
+  decision: "consumer_ready" | "consumer_watch" | "consumer_blocked";
+  officialSources: string[];
+  totals: {
+    rows: number;
+    proven: number;
+    ready: number;
+    watch: number;
+    operatorGates: number;
+    swiggyGates: number;
+    proofLinks: number;
+    clientTargets: number;
+    visualRoutes: number;
+    voiceRoutes: number;
+    nutritionTargets: number;
+    householdSignals: number;
+    guestTemplates: number;
+    luxuryWorkspaces: number;
+    confirmationActions: number;
+  };
+  rows: SwiggyBuildersConsumerWitnessRow[];
+  groups: SwiggyBuildersConsumerWitnessGroup[];
+  commands: Array<{ id: string; command: string; proves: string; expectedSignal: string }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type SwiggyCapabilityTraceabilityOwner = "MealPilot" | "Operator" | "Swiggy" | "Joint";
 export type SwiggyCapabilityTraceabilityKind =
   | "official_page"

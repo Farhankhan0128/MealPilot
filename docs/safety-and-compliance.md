@@ -62,6 +62,8 @@ The `/api/error-intelligence` endpoint maps Swiggy's current `success:false` env
 
 The `/api/ai-client-connect-kit` endpoint marks AI-client and coding-agent installs as real Swiggy MCP connections. Operators must treat Claude Desktop, ChatGPT, Cursor, VS Code, Windsurf, and generic MCP clients as capable of live commerce calls after OAuth, so confirmation gates and non-blind retry rules still apply outside the MealPilot web UI.
 
+The `/api/swiggy-builders-consumer-witness` endpoint aggregates that consumer path into a reviewer receipt. It keeps AI clients, visual dish capture, voice commerce, nutrition/budget planning, household preferences, guest collaboration, luxury workspaces, and confirmation safety tied to explicit proof links, no-token rules, user confirmation, and Swiggy-owned live credentials.
+
 The `/api/swiggy-journey-compiler` endpoint keeps official recipe constraints visible in every route: Food placement is COD-only with a commercial confirmation gate, Instamart checkout respects the minimum cart threshold and address serviceability, Dineout booking confirms party details before `book_table`, and future Food scheduling remains a reminder/place-later flow until Swiggy exposes scheduled delivery.
 
 The `/api/mcp/scenario-runner` endpoint validates those official recipes as local JSON-RPC traces before live credentials exist. It exercises Food, Instamart, Dineout, and combined flows, keeps `place_food_order`, `checkout`, and `book_table` confirmation-gated, uses status tools before retrying uncertain commerce calls, and leaves future Food scheduling as a reminder-time external gate.

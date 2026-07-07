@@ -257,6 +257,17 @@ const targetGroups = [
         "artifacts/visual-qa/enterprise-witness-card.png",
       ),
       target(
+        "consumer_witness_card",
+        "Consumer Witness card",
+        "/",
+        ".consumer-witness-card",
+        "desktop",
+        1280,
+        900,
+        "Consumer Witness shows AI clients, visual dish capture, voice commerce, nutrition and budget planning, household preferences, guest collaboration, luxury workspaces, and confirmation safety.",
+        "artifacts/visual-qa/consumer-witness-card.png",
+      ),
+      target(
         "capability_traceability_card",
         "Capability Traceability card",
         "/",

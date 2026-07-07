@@ -278,6 +278,7 @@ Briefly show production readiness:
 - `/api/swiggy-access-evidence-matrix`
 - `/api/swiggy-faq-policy`
 - `/api/swiggy-faq-resolution-center`
+- `/api/swiggy-builders-consumer-witness`
 - `/api/swiggy-growth-partnership`
 - `/api/swiggy-talent-signal-center`
 - `/api/swiggy-conversion-center`

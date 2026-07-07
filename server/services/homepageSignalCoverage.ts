@@ -296,7 +296,7 @@ export function buildSwiggyHomepageSignalCoverageBoard(options: {
       {
         command: "MEALPILOT_URL=http://localhost:8787 npm run verify:visual",
         proves: "Captures the Homepage Signal Coverage card as reviewer screenshot evidence.",
-        expectedSignal: "75 screenshot targets return no overflow issues",
+        expectedSignal: "76 screenshot targets return no overflow issues",
       },
     ],
     assertions: [
