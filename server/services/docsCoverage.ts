@@ -1,4 +1,6 @@
 import type {
+  SwiggyDocsCoverageDrill,
+  SwiggyDocsCoverageDrillFocus,
   SwiggyDocsCoverageItem,
   SwiggyDocsCoverageReport,
   SwiggyDocsSection,
@@ -529,6 +531,97 @@ function summarizeSection(section: SwiggyDocsSection, pages: SwiggyDocsCoverageI
     implemented: sectionPages.filter((page) => page.status === "implemented").length,
     documented: sectionPages.filter((page) => page.status === "documented").length,
     requiresCredentials: sectionPages.filter((page) => page.status === "requires_credentials").length,
+  };
+}
+
+function pagesForDrill(pages: SwiggyDocsCoverageItem[], section: SwiggyDocsSection, focus: SwiggyDocsCoverageDrillFocus) {
+  const sectionPages = pages.filter((page) => page.section === section);
+  if (focus === "mcp_tools") {
+    return sectionPages.filter(
+      (page) =>
+        page.id.startsWith("reference_food_") ||
+        page.id.startsWith("reference_instamart_") ||
+        page.id.startsWith("reference_dineout_"),
+    );
+  }
+  if (focus === "access_review") {
+    return sectionPages.filter((page) =>
+      ["access", "production", "support", "compliance", "sla", "rate", "onboarding", "enterprise"].some((term) =>
+        `${page.id} ${page.title} ${page.officialSummary}`.toLowerCase().includes(term),
+      ),
+    );
+  }
+  if (focus === "agent_build") {
+    return sectionPages.filter((page) =>
+      ["build", "recipe", "agent", "widget", "voice", "chat", "cart", "order", "checkout", "booking"].some((term) =>
+        `${page.id} ${page.title} ${page.officialSummary}`.toLowerCase().includes(term),
+      ),
+    );
+  }
+  return sectionPages;
+}
+
+export function drillSwiggyDocsCoverage(input: {
+  section: SwiggyDocsSection;
+  focus: SwiggyDocsCoverageDrillFocus;
+  includeRenderedTwins: boolean;
+  includeExternalGates: boolean;
+}): SwiggyDocsCoverageDrill {
+  const coverage = buildSwiggyDocsCoverage();
+  const sectionSummary = coverage.sections.find((item) => item.section === input.section);
+  const selectedPages = pagesForDrill(coverage.pages, input.section, input.focus);
+  const evidenceLinks = Array.from(new Set(selectedPages.flatMap((page) => page.evidenceLinks))).slice(0, 12);
+  const missingInputs: string[] = [];
+
+  if (!sectionSummary) missingInputs.push("known docs section");
+  if (selectedPages.length === 0) missingInputs.push("matching docs pages");
+  if (input.includeRenderedTwins && !input.includeExternalGates) missingInputs.push("rendered-page browser proof");
+  if (selectedPages.some((page) => page.status === "requires_credentials") && !input.includeExternalGates) {
+    missingInputs.push("Swiggy credential gate disclosure");
+  }
+
+  const decision: SwiggyDocsCoverageDrill["decision"] = !sectionSummary
+    ? "unknown_section"
+    : missingInputs.length > 0
+      ? "manual_source_gate"
+      : "ready_docs_packet";
+  const readinessScore = Math.max(45, Math.min(99, scoreFor(selectedPages.length > 0 ? selectedPages : coverage.pages)));
+
+  return {
+    generatedAt: new Date().toISOString(),
+    decision,
+    readinessScore,
+    section: input.section,
+    focus: input.focus,
+    includeRenderedTwins: input.includeRenderedTwins,
+    selectedPages,
+    sectionSummary,
+    evidenceLinks,
+    retrievalCommands: [
+      { command: "curl -s http://localhost:8787/api/swiggy-docs-coverage", proves: "Local 69-page llms.txt coverage manifest is available." },
+      { command: "curl -s http://localhost:8787/api/swiggy-docs-twin-explorer", proves: "Markdown and rendered page twins remain paired." },
+      { command: "curl -s http://localhost:8787/api/swiggy-llms-manifest-verifier", proves: "Live llms.txt fetch or disclosed Docs Coverage fallback is visible." },
+    ],
+    missingInputs,
+    telemetry: [
+      { field: "docs_section", value: input.section, redaction: "safe docs section enum" },
+      { field: "focus", value: input.focus, redaction: "safe drill focus enum" },
+      { field: "selected_pages", value: String(selectedPages.length), redaction: "aggregate count only" },
+      { field: "rendered_twins", value: String(input.includeRenderedTwins), redaction: "boolean only" },
+      { field: "credential_gates", value: String(input.includeExternalGates), redaction: "boolean only" },
+    ],
+    assertions: [
+      "Docs drill pages come from the same 69-page Swiggy llms.txt coverage manifest used by the manifest verifier.",
+      "Food, Instamart, and Dineout tool reference pages stay aligned with MCP Catalog, Tool Lab, and Tool Contract Matrix.",
+      "Rendered twins are treated as reviewer proof and never as live Swiggy credentials or production approval.",
+      "Credential, production access, enterprise, and future llms.txt drift gates remain explicit instead of fabricated.",
+    ],
+    nextAction:
+      decision === "ready_docs_packet"
+        ? `Review ${selectedPages.length} ${input.section} docs page(s), then cross-check Docs Twin Explorer and llms Manifest Verifier.`
+        : decision === "manual_source_gate"
+          ? `Resolve ${missingInputs.join(", ")} before presenting this docs coverage packet.`
+          : "Choose a known Swiggy docs section before preparing coverage evidence.",
   };
 }
 

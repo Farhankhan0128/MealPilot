@@ -99,6 +99,8 @@ import type {
   SwiggyConversionCenter,
   SwiggyCredentialHandoffCenter,
   SwiggyCredentialVaultCenter,
+  SwiggyDocsCoverageDrill,
+  SwiggyDocsCoverageDrillFocus,
   SwiggyDeepSiteMap,
   SwiggyDineoutPrecisionCenterReport,
   SwiggyDiscoveryResolution,
@@ -115,6 +117,7 @@ import type {
   SwiggyCustomizationStudio,
   SwiggyCustomizationValidation,
   SwiggyDocsCoverageReport,
+  SwiggyDocsSection,
   SwiggyDocsTwinExplorer,
   SwiggyFaqAnswerResolution,
   SwiggyFaqPolicyCenter,
@@ -931,6 +934,18 @@ export function rehearseVisualQaCapture(input: {
 
 export function fetchSwiggyDocsCoverage() {
   return requestJson<{ docsCoverage: SwiggyDocsCoverageReport }>("/api/swiggy-docs-coverage");
+}
+
+export function drillSwiggyDocsCoverage(input: {
+  section: SwiggyDocsSection;
+  focus: SwiggyDocsCoverageDrillFocus;
+  includeRenderedTwins: boolean;
+  includeExternalGates: boolean;
+}) {
+  return requestJson<{ docsCoverageDrill: SwiggyDocsCoverageDrill }>("/api/swiggy-docs-coverage/drill", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
 }
 
 export function fetchSwiggyDocsTwinExplorer() {

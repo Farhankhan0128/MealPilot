@@ -145,6 +145,7 @@ import {
   fetchSwiggyInteractionQaCenter,
   fetchSwiggyAccessDossier,
   fetchSwiggyAccessEvidenceMatrix,
+  drillSwiggyDocsCoverage,
   fetchSwiggyDocsCoverage,
   fetchSwiggyDocsTwinExplorer,
   fetchSwiggyLlmsManifestVerifier,
@@ -311,7 +312,10 @@ import type {
   SwiggyDiscoveryFreshnessReport,
   SwiggyWidget,
   SwiggyBuildersMap,
+  SwiggyDocsCoverageDrill,
+  SwiggyDocsCoverageDrillFocus,
   SwiggyDocsCoverageReport,
+  SwiggyDocsSection,
   SwiggyDocsTwinExplorer,
   SwiggyFaqAnswerResolution,
   SwiggyFaqPolicyCenter,
@@ -3066,6 +3070,19 @@ function LaunchCenterPanel({
   });
   const [visualQaRehearsal, setVisualQaRehearsal] = useState<VisualQaRehearsal | null>(null);
   const [visualQaRehearsalStatus, setVisualQaRehearsalStatus] = useState<"idle" | "loading" | "error">("idle");
+  const [docsCoverageDrillForm, setDocsCoverageDrillForm] = useState<{
+    section: SwiggyDocsSection;
+    focus: SwiggyDocsCoverageDrillFocus;
+    includeRenderedTwins: boolean;
+    includeExternalGates: boolean;
+  }>({
+    section: "reference",
+    focus: "mcp_tools",
+    includeRenderedTwins: true,
+    includeExternalGates: true,
+  });
+  const [docsCoverageDrill, setDocsCoverageDrill] = useState<SwiggyDocsCoverageDrill | null>(null);
+  const [docsCoverageDrillStatus, setDocsCoverageDrillStatus] = useState<"idle" | "loading" | "error">("idle");
   const [showcaseForm, setShowcaseForm] = useState({
     demoUrl: "https://youtu.be/mealpilot-swiggy-demo",
     githubUrl: "https://github.com/Farhankhan0128/MealPilot",
@@ -3277,6 +3294,18 @@ function LaunchCenterPanel({
       setVisualQaRehearsalStatus("idle");
     } catch {
       setVisualQaRehearsalStatus("error");
+    }
+  }
+
+  async function runDocsCoverageDrill(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setDocsCoverageDrillStatus("loading");
+    try {
+      const response = await drillSwiggyDocsCoverage(docsCoverageDrillForm);
+      setDocsCoverageDrill(response.docsCoverageDrill);
+      setDocsCoverageDrillStatus("idle");
+    } catch {
+      setDocsCoverageDrillStatus("error");
     }
   }
 
@@ -7635,6 +7664,92 @@ function LaunchCenterPanel({
               <strong>{docsCoverage?.sourceInventory.ctas ?? 0}</strong>
               <span>CTAs</span>
             </div>
+          </div>
+          <form className="docs-coverage-drill" onSubmit={runDocsCoverageDrill}>
+            <label htmlFor="docs-coverage-section">Section</label>
+            <select
+              id="docs-coverage-section"
+              value={docsCoverageDrillForm.section}
+              onChange={(event) =>
+                setDocsCoverageDrillForm((current) => ({ ...current, section: event.target.value as SwiggyDocsSection }))
+              }
+            >
+              <option value="start">Start</option>
+              <option value="build">Build</option>
+              <option value="operate">Operate</option>
+              <option value="reference">Reference</option>
+              <option value="blog">Blog</option>
+            </select>
+            <label htmlFor="docs-coverage-focus">Focus</label>
+            <select
+              id="docs-coverage-focus"
+              value={docsCoverageDrillForm.focus}
+              onChange={(event) =>
+                setDocsCoverageDrillForm((current) => ({
+                  ...current,
+                  focus: event.target.value as SwiggyDocsCoverageDrillFocus,
+                }))
+              }
+            >
+              <option value="all_pages">All pages</option>
+              <option value="mcp_tools">MCP tools</option>
+              <option value="access_review">Access review</option>
+              <option value="agent_build">Agent build</option>
+            </select>
+            <div className="docs-coverage-toggle-grid">
+              <label htmlFor="docs-rendered-twins">
+                <input
+                  id="docs-rendered-twins"
+                  type="checkbox"
+                  checked={docsCoverageDrillForm.includeRenderedTwins}
+                  onChange={(event) =>
+                    setDocsCoverageDrillForm((current) => ({ ...current, includeRenderedTwins: event.target.checked }))
+                  }
+                />
+                Rendered twins
+              </label>
+              <label htmlFor="docs-external-gates">
+                <input
+                  id="docs-external-gates"
+                  type="checkbox"
+                  checked={docsCoverageDrillForm.includeExternalGates}
+                  onChange={(event) =>
+                    setDocsCoverageDrillForm((current) => ({ ...current, includeExternalGates: event.target.checked }))
+                  }
+                />
+                Gates
+              </label>
+            </div>
+            <button type="submit" disabled={docsCoverageDrillStatus === "loading"} aria-label="Drill into Swiggy docs coverage">
+              {docsCoverageDrillStatus === "loading" ? <Loader2 aria-hidden="true" /> : <BookOpen aria-hidden="true" />}
+              Drill
+            </button>
+            {docsCoverageDrillStatus === "error" ? <small role="status">Docs coverage drill unavailable.</small> : null}
+          </form>
+          <div
+            className="docs-coverage-drill-result"
+            data-status={
+              docsCoverageDrill?.decision === "ready_docs_packet"
+                ? "healthy"
+                : docsCoverageDrill?.decision === "manual_source_gate"
+                  ? "watch"
+                  : "blocked"
+            }
+          >
+            <div>
+              <span>Docs packet</span>
+              <strong>
+                {docsCoverageDrill
+                  ? `${docsCoverageDrill.decision.replace(/_/g, " ")} / ${docsCoverageDrill.readinessScore}`
+                  : "Awaiting drill"}
+              </strong>
+            </div>
+            <p>
+              {docsCoverageDrill
+                ? `${docsCoverageDrill.section} / ${docsCoverageDrill.selectedPages.length} pages / ${docsCoverageDrill.evidenceLinks.length} links`
+                : "Prepare source evidence from llms.txt pages, rendered twins, proof routes, and credential gates."}
+            </p>
+            {docsCoverageDrill ? <small>{docsCoverageDrill.nextAction}</small> : null}
           </div>
           <ul className="compact-status-list">
             {(docsCoverage?.sections ?? []).map((section) => (

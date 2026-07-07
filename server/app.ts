@@ -96,7 +96,7 @@ import { buildSwiggyDeepSiteMap } from "./services/deepSiteMap.js";
 import { buildDeveloperQuickstartWorkbench, executeDeveloperFirstCall } from "./services/developerQuickstartWorkbench.js";
 import { buildSwiggyDiscoveryFreshness, resolveSwiggyDiscoveryFreshness } from "./services/discoveryFreshness.js";
 import { buildSwiggyDineoutPrecisionCenter } from "./services/dineoutPrecisionCenter.js";
-import { buildSwiggyDocsCoverage } from "./services/docsCoverage.js";
+import { buildSwiggyDocsCoverage, drillSwiggyDocsCoverage } from "./services/docsCoverage.js";
 import { buildSwiggyDocsTwinExplorer } from "./services/docsTwinExplorer.js";
 import { buildSwiggyLlmsManifestVerifier } from "./services/llmsManifestVerifier.js";
 import { buildEnterpriseDelegatedAuthCenter } from "./services/enterpriseDelegatedAuth.js";
@@ -341,6 +341,13 @@ const visualQaRehearsalSchema = z.object({
   captureMode: z.enum(["full_manifest", "critical_review", "mobile_regression", "widget_fallback"]),
   includeSwiggyWidgets: z.boolean(),
   includeManualAttachments: z.boolean(),
+});
+
+const docsCoverageDrillSchema = z.object({
+  section: z.enum(["start", "build", "operate", "reference", "blog"]),
+  focus: z.enum(["all_pages", "mcp_tools", "access_review", "agent_build"]),
+  includeRenderedTwins: z.boolean(),
+  includeExternalGates: z.boolean(),
 });
 
 const offerDecisionSchema = z.object({
@@ -1619,6 +1626,11 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/swiggy-docs-coverage", (_req, res) => {
     res.json({ docsCoverage: buildSwiggyDocsCoverage() });
+  });
+
+  app.post("/api/swiggy-docs-coverage/drill", (req, res) => {
+    const body = docsCoverageDrillSchema.parse(req.body);
+    res.json({ docsCoverageDrill: drillSwiggyDocsCoverage(body) });
   });
 
   app.get("/api/swiggy-docs-twin-explorer", (_req, res) => {

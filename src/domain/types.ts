@@ -1494,6 +1494,26 @@ export interface SwiggyDocsCoverageReport {
   remainingExternalGates: string[];
 }
 
+export type SwiggyDocsCoverageDrillFocus = "all_pages" | "mcp_tools" | "access_review" | "agent_build";
+export type SwiggyDocsCoverageDrillDecision = "ready_docs_packet" | "manual_source_gate" | "unknown_section";
+
+export interface SwiggyDocsCoverageDrill {
+  generatedAt: string;
+  decision: SwiggyDocsCoverageDrillDecision;
+  readinessScore: number;
+  section: SwiggyDocsSection;
+  focus: SwiggyDocsCoverageDrillFocus;
+  includeRenderedTwins: boolean;
+  selectedPages: SwiggyDocsCoverageItem[];
+  sectionSummary?: SwiggyDocsSectionSummary;
+  evidenceLinks: string[];
+  retrievalCommands: Array<{ command: string; proves: string }>;
+  missingInputs: string[];
+  telemetry: Array<{ field: string; value: string; redaction: string }>;
+  assertions: string[];
+  nextAction: string;
+}
+
 export type SwiggyLlmsManifestStatus = "covered" | "watch" | "blocked";
 
 export interface SwiggyLlmsManifestLink {

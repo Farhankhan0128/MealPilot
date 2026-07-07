@@ -275,6 +275,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/builder-packet-export`
 - `GET /api/builder-packet-export.md`
 - `GET /api/swiggy-docs-coverage`
+- `POST /api/swiggy-docs-coverage/drill`
 - `GET /api/swiggy-docs-twin-explorer`
 - `GET /api/swiggy-llms-manifest-verifier`
 - `GET /api/swiggy-tool-parity-auditor`
@@ -471,6 +472,8 @@ Production should use an HTTPS redirect URI with exact-match allowlisting.
 `/api/reviewer-artifact-vault` shows the Swiggy access-submission manifest: proof links, Deep Site Map, OpenAPI, smoke commands, screenshot targets, demo-video checklist, logs, traces, redaction rules, support context, handoff checklist, and reviewer email copy. `/api/reviewer-artifact-vault/compose` powers the Launch Center packet composer with artifact section, channel, audience, screenshots, demo-video, and credential-gate inputs, returning included artifacts, commands, redaction rules, reviewer email copy, readiness decision, missing attachment gates, safe telemetry, and explicit no-secret assertions.
 
 `/api/visual-qa-center` shows reviewer screenshot targets, desktop/tablet/mobile viewport sizes, selector manifests, Playwright screenshot artifact paths, no-overlap rules, text-fit rules, widget fallback checks, redaction visibility, commercial confirmation visibility, mobile layout checks, Source Intelligence, Deep Site Map, Innovation Radar, Access Evidence Matrix card proof, and automation gates. `/api/visual-qa-center/rehearse` powers the Launch Center capture rehearsal with target group, viewport, capture mode, Swiggy-widget inclusion, and manual attachment inputs, returning screenshot targets, layout rules, commands, artifact paths, readiness decision, missing capture gates, telemetry, and no-blank-render assertions. Run `npm run verify:visual` against the production server to generate PNGs plus `artifacts/visual-qa/report.json`.
+
+`/api/swiggy-docs-coverage` shows the 69-page Swiggy `llms.txt` source map across Start, Build, Operate, Reference, and Blog. `/api/swiggy-docs-coverage/drill` powers the Launch Center source drill with docs section, focus, rendered-twin, and external-gate inputs, returning selected pages, evidence links, retrieval commands, readiness decision, missing source gates, telemetry, and credential/drift assertions that stay aligned with Docs Twin Explorer and llms Manifest Verifier.
 
 `/api/swiggy-builders-site-parity` fetches only the official Swiggy Builders homepage, extracts anchors, metadata, `llms` alternates, module signals, CTA/source/footer/legal links, and safe-origin signals, then matches them back to Website Atlas and CTA evidence. Fixture tests avoid live network dependency; production smoke uses the live page.
 

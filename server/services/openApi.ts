@@ -1275,6 +1275,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-docs-coverage/drill": {
+        post: {
+          tags: ["Builder Access"],
+          summary: "Drill into Swiggy Docs Coverage for reviewer source evidence",
+          responses: {
+            "200": {
+              description:
+                "Selected Swiggy docs section and focus with llms.txt pages, rendered twins, evidence links, retrieval commands, readiness decision, missing source gates, telemetry, and credential/drift assertions",
+            },
+          },
+        },
+      },
       "/api/swiggy-docs-twin-explorer": {
         get: {
           tags: ["Builder Access"],

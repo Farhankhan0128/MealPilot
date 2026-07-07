@@ -3863,6 +3863,39 @@ assert(
   ),
   "Swiggy launch blog docs coverage is missing",
 );
+const readyDocsCoverageDrill = await request("/api/swiggy-docs-coverage/drill", {
+  method: "POST",
+  body: JSON.stringify({
+    section: "reference",
+    focus: "mcp_tools",
+    includeRenderedTwins: true,
+    includeExternalGates: true,
+  }),
+});
+assert(
+  readyDocsCoverageDrill.docsCoverageDrill.decision === "ready_docs_packet" &&
+    readyDocsCoverageDrill.docsCoverageDrill.selectedPages.length === 35 &&
+    readyDocsCoverageDrill.docsCoverageDrill.selectedPages.some((page) => page.id === "reference_food_place_food_order") &&
+    readyDocsCoverageDrill.docsCoverageDrill.evidenceLinks.includes("/api/mcp/catalog") &&
+    readyDocsCoverageDrill.docsCoverageDrill.retrievalCommands.some((command) =>
+      command.command.includes("/api/swiggy-docs-twin-explorer"),
+    ),
+  "Swiggy docs coverage ready drill is incomplete",
+);
+const gatedDocsCoverageDrill = await request("/api/swiggy-docs-coverage/drill", {
+  method: "POST",
+  body: JSON.stringify({
+    section: "operate",
+    focus: "access_review",
+    includeRenderedTwins: true,
+    includeExternalGates: false,
+  }),
+});
+assert(
+  gatedDocsCoverageDrill.docsCoverageDrill.decision === "manual_source_gate" &&
+    gatedDocsCoverageDrill.docsCoverageDrill.missingInputs.includes("rendered-page browser proof"),
+  "Swiggy docs coverage gated drill is incomplete",
+);
 
 const docsTwinExplorer = await request("/api/swiggy-docs-twin-explorer");
 assert(docsTwinExplorer.docsTwinExplorer.score >= 95, "Swiggy docs twin explorer score is below target");

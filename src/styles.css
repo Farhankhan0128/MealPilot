@@ -2706,7 +2706,8 @@ select:focus {
 .guest-handoff-composer,
 .luxury-workspace-composer,
 .reviewer-packet-composer,
-.visual-qa-rehearsal {
+.visual-qa-rehearsal,
+.docs-coverage-drill {
   display: grid;
   gap: 8px;
   border-radius: 8px;
@@ -2722,7 +2723,8 @@ select:focus {
 .guest-handoff-composer label,
 .luxury-workspace-composer label,
 .reviewer-packet-composer label,
-.visual-qa-rehearsal label {
+.visual-qa-rehearsal label,
+.docs-coverage-drill label {
   color: var(--ink-muted);
   font-size: 0.75rem;
   font-weight: 900;
@@ -2747,7 +2749,9 @@ select:focus {
 .reviewer-packet-composer select,
 .reviewer-packet-composer input,
 .visual-qa-rehearsal select,
-.visual-qa-rehearsal input {
+.visual-qa-rehearsal input,
+.docs-coverage-drill select,
+.docs-coverage-drill input {
   width: 100%;
   min-width: 0;
   border: 1px solid var(--line);
@@ -2784,7 +2788,8 @@ select:focus {
 .guest-handoff-toggle,
 .luxury-workspace-toggle,
 .reviewer-packet-toggle-grid label,
-.visual-qa-toggle-grid label {
+.visual-qa-toggle-grid label,
+.docs-coverage-toggle-grid label {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -2795,7 +2800,8 @@ select:focus {
 .nutrition-toggle-grid,
 .preference-toggle-grid,
 .reviewer-packet-toggle-grid,
-.visual-qa-toggle-grid {
+.visual-qa-toggle-grid,
+.docs-coverage-toggle-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
@@ -2812,7 +2818,8 @@ select:focus {
 .guest-handoff-toggle input,
 .luxury-workspace-toggle input,
 .reviewer-packet-toggle-grid input,
-.visual-qa-toggle-grid input {
+.visual-qa-toggle-grid input,
+.docs-coverage-toggle-grid input {
   width: 18px;
   height: 18px;
   accent-color: var(--green);
@@ -2827,7 +2834,8 @@ select:focus {
 .guest-handoff-composer button,
 .luxury-workspace-composer button,
 .reviewer-packet-composer button,
-.visual-qa-rehearsal button {
+.visual-qa-rehearsal button,
+.docs-coverage-drill button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -2849,7 +2857,8 @@ select:focus {
 .guest-handoff-composer button:disabled,
 .luxury-workspace-composer button:disabled,
 .reviewer-packet-composer button:disabled,
-.visual-qa-rehearsal button:disabled {
+.visual-qa-rehearsal button:disabled,
+.docs-coverage-drill button:disabled {
   cursor: wait;
   opacity: 0.72;
 }
@@ -2862,7 +2871,8 @@ select:focus {
 .guest-handoff-composer svg,
 .luxury-workspace-composer svg,
 .reviewer-packet-composer svg,
-.visual-qa-rehearsal svg {
+.visual-qa-rehearsal svg,
+.docs-coverage-drill svg {
   width: 17px;
   height: 17px;
 }
@@ -2875,7 +2885,8 @@ select:focus {
 .guest-handoff-composer small,
 .luxury-workspace-composer small,
 .reviewer-packet-composer small,
-.visual-qa-rehearsal small {
+.visual-qa-rehearsal small,
+.docs-coverage-drill small {
   color: var(--coral);
   font-weight: 850;
 }
@@ -2888,7 +2899,8 @@ select:focus {
 .guest-handoff-result,
 .luxury-workspace-result,
 .reviewer-packet-result,
-.visual-qa-rehearsal-result {
+.visual-qa-rehearsal-result,
+.docs-coverage-drill-result {
   display: grid;
   gap: 8px;
   border-radius: 8px;
@@ -2905,7 +2917,8 @@ select:focus {
 .guest-handoff-result[data-status="healthy"],
 .luxury-workspace-result[data-status="healthy"],
 .reviewer-packet-result[data-status="healthy"],
-.visual-qa-rehearsal-result[data-status="healthy"] {
+.visual-qa-rehearsal-result[data-status="healthy"],
+.docs-coverage-drill-result[data-status="healthy"] {
   border-left-color: var(--green);
 }
 
@@ -2917,7 +2930,8 @@ select:focus {
 .guest-handoff-result[data-status="blocked"],
 .luxury-workspace-result[data-status="blocked"],
 .reviewer-packet-result[data-status="blocked"],
-.visual-qa-rehearsal-result[data-status="blocked"] {
+.visual-qa-rehearsal-result[data-status="blocked"],
+.docs-coverage-drill-result[data-status="blocked"] {
   border-left-color: var(--coral);
 }
 
@@ -2928,7 +2942,8 @@ select:focus {
 .guest-handoff-result[data-status="watch"],
 .luxury-workspace-result[data-status="watch"],
 .reviewer-packet-result[data-status="watch"],
-.visual-qa-rehearsal-result[data-status="watch"] {
+.visual-qa-rehearsal-result[data-status="watch"],
+.docs-coverage-drill-result[data-status="watch"] {
   border-left-color: var(--gold);
 }
 
@@ -2940,7 +2955,8 @@ select:focus {
 .guest-handoff-result > div,
 .luxury-workspace-result > div,
 .reviewer-packet-result > div,
-.visual-qa-rehearsal-result > div {
+.visual-qa-rehearsal-result > div,
+.docs-coverage-drill-result > div {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -2955,7 +2971,8 @@ select:focus {
 .guest-handoff-result span,
 .luxury-workspace-result span,
 .reviewer-packet-result span,
-.visual-qa-rehearsal-result span {
+.visual-qa-rehearsal-result span,
+.docs-coverage-drill-result span {
   color: var(--ink-muted);
   font-size: 0.75rem;
   font-weight: 900;
@@ -2970,7 +2987,8 @@ select:focus {
 .guest-handoff-result strong,
 .luxury-workspace-result strong,
 .reviewer-packet-result strong,
-.visual-qa-rehearsal-result strong {
+.visual-qa-rehearsal-result strong,
+.docs-coverage-drill-result strong {
   color: var(--green-dark);
   font-size: 0.84rem;
   text-align: right;
@@ -2993,7 +3011,9 @@ select:focus {
 .reviewer-packet-result p,
 .reviewer-packet-result small,
 .visual-qa-rehearsal-result p,
-.visual-qa-rehearsal-result small {
+.visual-qa-rehearsal-result small,
+.docs-coverage-drill-result p,
+.docs-coverage-drill-result small {
   margin: 0;
   color: var(--ink-muted);
   font-size: 0.82rem;
@@ -3008,7 +3028,8 @@ select:focus {
 .guest-handoff-result small,
 .luxury-workspace-result small,
 .reviewer-packet-result small,
-.visual-qa-rehearsal-result small {
+.visual-qa-rehearsal-result small,
+.docs-coverage-drill-result small {
   color: var(--green-dark);
   font-weight: 850;
 }

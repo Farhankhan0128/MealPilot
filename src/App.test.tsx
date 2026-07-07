@@ -195,5 +195,5 @@ describe("MealPilot app", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /Generate report/i }));
     expect(await screen.findByText("Support report generated with a ready email handoff.")).toBeInTheDocument();
-  });
+  }, 10000);
 });

@@ -149,6 +149,7 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/visual-qa-center"].get.summary).toContain("Visual QA Center");
     expect(openApi.body.paths["/api/visual-qa-center/rehearse"].post.summary).toContain("Visual QA");
     expect(openApi.body.paths["/api/swiggy-docs-coverage"].get.summary).toContain("llms.txt");
+    expect(openApi.body.paths["/api/swiggy-docs-coverage/drill"].post.summary).toContain("Docs Coverage");
     expect(openApi.body.paths["/api/swiggy-docs-twin-explorer"].get.summary).toContain("docs twin");
     expect(openApi.body.paths["/api/swiggy-llms-manifest-verifier"].get.summary).toContain("llms.txt manifest");
     expect(openApi.body.paths["/api/swiggy-llms-manifest-verifier"].get.responses["200"].description).toContain("Instamart 13");
@@ -4459,6 +4460,43 @@ describe("MealPilot API", () => {
     ).toBe(true);
     expect(report.pages.some((page: { id: string }) => page.id === "reference_food_place_food_order")).toBe(true);
     expect(report.assertions.some((assertion: string) => assertion.includes("llms.txt-linked"))).toBe(true);
+  });
+
+  it("drills into Swiggy docs coverage with rendered twin and credential gates", async () => {
+    const { app } = createMealPilotServer();
+
+    const readyResponse = await request(app)
+      .post("/api/swiggy-docs-coverage/drill")
+      .send({
+        section: "reference",
+        focus: "mcp_tools",
+        includeRenderedTwins: true,
+        includeExternalGates: true,
+      })
+      .expect(200);
+    const ready = readyResponse.body.docsCoverageDrill;
+
+    expect(ready.decision).toBe("ready_docs_packet");
+    expect(ready.selectedPages.length).toBe(35);
+    expect(ready.selectedPages.some((page: { id: string }) => page.id === "reference_food_place_food_order")).toBe(true);
+    expect(ready.evidenceLinks).toEqual(expect.arrayContaining(["/api/mcp/catalog"]));
+    expect(ready.retrievalCommands.some((command: { command: string }) => command.command.includes("/api/swiggy-docs-twin-explorer"))).toBe(true);
+    expect(ready.assertions.some((assertion: string) => assertion.includes("69-page Swiggy llms.txt"))).toBe(true);
+
+    const gatedResponse = await request(app)
+      .post("/api/swiggy-docs-coverage/drill")
+      .send({
+        section: "operate",
+        focus: "access_review",
+        includeRenderedTwins: true,
+        includeExternalGates: false,
+      })
+      .expect(200);
+    const gated = gatedResponse.body.docsCoverageDrill;
+
+    expect(gated.decision).toBe("manual_source_gate");
+    expect(gated.missingInputs).toEqual(expect.arrayContaining(["rendered-page browser proof"]));
+    expect(gated.nextAction).toContain("Resolve");
   });
 
   it("returns a Swiggy docs twin explorer for markdown and rendered page retrieval", async () => {
