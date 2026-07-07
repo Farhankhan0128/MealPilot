@@ -112,6 +112,14 @@ const artifactSections = [
         "Keeps demo recording, final email send, and Swiggy approvals as explicit operator or external gates.",
       ),
       artifact(
+        "showcase_submission_center",
+        "Swiggy Showcase Submission Center",
+        "api",
+        "/api/swiggy-showcase-submission-center",
+        "Feature-ready pitch blocks, demo storyboard, metric proof, visual-gallery links, and builders@swiggy.in outreach copy for the Show Us What You Built path.",
+        "Demo video hosting, final email send, co-branding, public Swiggy claims, and showcase approval stay operator or Swiggy-owned.",
+      ),
+      artifact(
         "demo_video_link",
         "Demo video link",
         "video",
@@ -423,6 +431,7 @@ export function buildReviewerArtifactVault(): ReviewerArtifactVault {
     "- OpenAPI: /api/openapi.json",
     "- Demo script: docs/demo-script.md",
     "- Demo Evidence Director: /api/swiggy-demo-evidence-director",
+    "- Swiggy Showcase Submission Center: /api/swiggy-showcase-submission-center",
     "- Swiggy Partner Support Room: /api/swiggy-partner-support-room",
     "- Swiggy Benefits Activation Center: /api/swiggy-benefits-activation-center",
     "- Swiggy Credential Handoff Center: /api/swiggy-credential-handoff-center",

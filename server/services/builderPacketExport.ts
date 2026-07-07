@@ -212,6 +212,13 @@ export function buildBuilderPacketExport(options: {
         "Save redacted issuance metadata when Swiggy replies, then rerun verify:production and export:builder-packet.",
       ),
       readiness(
+        "showcase_submission_packet",
+        "Showcase submission packet",
+        "ready",
+        "Showcase Submission Center is included in launch and reviewer handoff evidence with pitch blocks, demo storyboard, metrics, visual proof, and send-safety gates.",
+        "Add the final demo URL and send the showcase email manually after the access packet is reviewed.",
+      ),
+      readiness(
         "demo_video",
         "Demo video URL",
         "operator_input",

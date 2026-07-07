@@ -114,7 +114,7 @@ Scale-up after staging:
 - Household Preference Graph for consented Food active orders, Instamart go-to items/order history, Dineout saved-location memory, household weights, pantry forecasts, and privacy-safe personalization.
 - Guest Collaboration & Calendar Center for guest votes, date night, guests-at-home, office lunch, weekday reset, recovery meal, calendar reminders, share links, voice briefs, and Slack/Teams handoff gates.
 - Luxury Experience Workspace for premium reservation, Food cart, Instamart basket, combined evening, and recovery review surfaces with all 35 Swiggy tools, widget fallbacks, voice contracts, telemetry, and confirmation gates.
-- Reviewer Artifact Vault for proof links, OpenAPI, smoke commands, screenshot targets, Credential Readiness Dossier, redacted issuance state, demo-video checklist, logs, traces, redaction rules, support context, and Swiggy handoff copy.
+- Reviewer Artifact Vault for proof links, OpenAPI, smoke commands, screenshot targets, Credential Readiness Dossier, Showcase Submission Center, redacted issuance state, demo-video checklist, logs, traces, redaction rules, support context, and Swiggy handoff copy.
 - Visual QA Center for desktop/tablet/mobile screenshot targets, selector manifests, artifact paths, no-overlap and text-fit rules, widget fallback checks, mobile layout checks, redaction visibility, and automation gates.
 - Coding Agent Governance for root `AGENTS.md`, official Swiggy docs retrieval rules, Food 14 / Instamart 13 / Dineout 8 smoke evidence, and future-agent no-invention/no-sensitive-log guardrails.
 - Resource & Prompt Studio for Food, Instamart, and Dineout `mcp:resources` and `mcp:prompts` smoke evidence.

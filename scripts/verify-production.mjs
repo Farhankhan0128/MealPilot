@@ -3119,6 +3119,17 @@ assert(
   reviewerArtifactVault.reviewerArtifactVault.artifactSections.some((section) =>
     section.artifacts.some(
       (artifact) =>
+        artifact.id === "showcase_submission_center" &&
+        artifact.label === "Swiggy Showcase Submission Center" &&
+        artifact.path === "/api/swiggy-showcase-submission-center",
+    ),
+  ),
+  "reviewer artifact vault showcase submission artifact is missing",
+);
+assert(
+  reviewerArtifactVault.reviewerArtifactVault.artifactSections.some((section) =>
+    section.artifacts.some(
+      (artifact) =>
         artifact.id === "partner_support_room" &&
         artifact.label === "Swiggy Partner Support Room" &&
         artifact.path === "/api/swiggy-partner-support-room",
@@ -3351,6 +3362,7 @@ assert(
   reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.to === "builders@swiggy.in" &&
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/reviewer-artifact-vault") &&
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-demo-evidence-director") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-showcase-submission-center") &&
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-partner-support-room") &&
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-benefits-activation-center") &&
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-credential-readiness-dossier") &&
@@ -7765,6 +7777,7 @@ assert(
 );
 assert(
   builderPacket.packet.readiness.some((item) => item.id === "credential_receipt_packet" && item.status === "ready") &&
+    builderPacket.packet.readiness.some((item) => item.id === "showcase_submission_packet" && item.status === "ready") &&
     builderPacket.packet.readiness.some((item) => item.id === "demo_video" && item.status === "operator_input") &&
     builderPacket.packet.readiness.some((item) => item.id === "staging_credentials" && item.status === "external_gate"),
   "builder packet readiness gates are incomplete",
@@ -7857,6 +7870,7 @@ assert(
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Agent Experience Benchmark") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Private Pilot Control Room") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Staging Replay Center") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Showcase Submission Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Commercial Action Guard") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Staging Cutover Rehearsal") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Staging Credential Drill Center") &&
@@ -8038,6 +8052,10 @@ assert(
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-demo-evidence-director"),
   "launch bundle demo evidence director handoff link is missing",
+);
+assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-showcase-submission-center"),
+  "launch bundle showcase submission handoff link is missing",
 );
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-partner-support-room"),
