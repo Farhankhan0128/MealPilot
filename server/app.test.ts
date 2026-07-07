@@ -1864,6 +1864,7 @@ describe("MealPilot API", () => {
     expect(packet.readiness.some((item: { id: string; status: string }) => item.id === "credential_receipt_packet" && item.status === "ready")).toBe(true);
     expect(packet.readiness.some((item: { id: string; status: string }) => item.id === "showcase_submission_packet" && item.status === "ready")).toBe(true);
     expect(packet.readiness.some((item: { id: string; status: string }) => item.id === "partner_signal_packet" && item.status === "ready")).toBe(true);
+    expect(packet.readiness.some((item: { id: string; status: string }) => item.id === "access_submission_packet" && item.status === "ready")).toBe(true);
     expect(packet.readiness.some((item: { id: string; status: string }) => item.id === "demo_video" && item.status === "operator_input")).toBe(true);
     expect(packet.readiness.some((item: { id: string; status: string }) => item.id === "staging_credentials" && item.status === "external_gate")).toBe(true);
     expect(packet.externalGates.some((gate: string) => gate.includes("Google Form"))).toBe(true);
@@ -3771,6 +3772,16 @@ describe("MealPilot API", () => {
       ),
     ).toBe(true);
     expect(
+      vault.artifactSections.some((section: { artifacts: Array<{ id: string; label: string; path: string }> }) =>
+        section.artifacts.some(
+          (artifact) =>
+            artifact.id === "access_submission_studio" &&
+            artifact.label === "Access Submission Studio" &&
+            artifact.path === "/api/access-submission-studio",
+        ),
+      ),
+    ).toBe(true);
+    expect(
       vault.artifactSections.some((section: { artifacts: Array<{ id: string; path: string }> }) =>
         section.artifacts.some((artifact) => artifact.id === "luxury_experience" && artifact.path === "/api/luxury-experience-workspace"),
       ),
@@ -4049,6 +4060,7 @@ describe("MealPilot API", () => {
     expect(vault.reviewerEmail.body).toContain("/api/swiggy-showcase-submission-center");
     expect(vault.reviewerEmail.body).toContain("/api/swiggy-partner-support-room");
     expect(vault.reviewerEmail.body).toContain("/api/swiggy-benefits-activation-center");
+    expect(vault.reviewerEmail.body).toContain("/api/access-submission-studio");
     expect(vault.reviewerEmail.body).toContain("/api/swiggy-operating-contract-center");
     expect(vault.reviewerEmail.body).toContain("/api/brand-compliance-kit");
     expect(vault.reviewerEmail.body).toContain("/api/swiggy-growth-partnership");
@@ -7752,6 +7764,7 @@ describe("MealPilot API", () => {
         "Runtime Telemetry",
         "Audit Ledger Center",
         "Submission Console",
+        "Access Submission Studio",
         "FAQ & Policy Center",
         "Swiggy FAQ Resolution Center",
         "Growth Partnership Center",
@@ -7873,6 +7886,7 @@ describe("MealPilot API", () => {
     expect(bundle.handoffEmail.body).toContain("/api/reviewer-artifact-vault");
     expect(bundle.handoffEmail.body).toContain("/api/visual-qa-center");
     expect(bundle.handoffEmail.body).toContain("/api/submission-console");
+    expect(bundle.handoffEmail.body).toContain("/api/access-submission-studio");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-docs-twin-explorer");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-upstream-watch");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-source-intelligence");

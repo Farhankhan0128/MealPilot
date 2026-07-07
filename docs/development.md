@@ -620,7 +620,7 @@ The test suite checks that:
 - Swiggy Voice Commerce Rehearsal Center validates short spoken scripts, visual card fallbacks, no raw-audio retention, and confirmation prompts across Food, Instamart, Dineout, and combined journeys.
 - Local MCP JSON-RPC supports `resources/list`, `resources/read`, `prompts/list`, and `prompts/get` for review-time evidence before live Swiggy credentials.
 - Submission Console consolidates developer/enterprise access targets, official access requirements, prepared form fields, required attachments, packet order, demo-video gate, runbook steps, blockers, and builders@swiggy.in drafts.
-- Access Submission Studio validates official CTA targets, copy blocks, required proof attachments, browser runbook, generated mailto handoff, local rehearsal decisions, and non-auto-submission gates.
+- Access Submission Studio validates official CTA targets, copy blocks, required proof attachments, browser runbook, generated mailto handoff, local rehearsal decisions, and non-auto-submission gates; the Launch Bundle, Reviewer Artifact Vault, builder-packet readiness list, and reviewer handoff email now carry it as the final access-form operator room.
 - Swiggy Access Evidence Matrix validates required field coverage, attachment readiness, proof-command coverage, owner assignment, and unresolved Swiggy/operator gates.
 - Builder Packet Export writes the copy-ready and machine-readable Swiggy access packet under ignored local artifacts, preserving operator-owned form submission and Swiggy credential gates.
 - GitHub Actions installs Chromium for Playwright, runs production smoke, captures visual evidence, exports the Swiggy builder packet, and uploads ignored reviewer artifacts for every push and pull request.

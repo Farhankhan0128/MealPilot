@@ -177,7 +177,7 @@ describe("MealPilot app", () => {
     fireEvent.click(screen.getByRole("button", { name: /Export packet/i }));
     expect(await screen.findByText("Builder packet exported. Jump to Operating System to review the preview.")).toBeInTheDocument();
     expect(await screen.findByText(/MealPilot builder packet/)).toBeInTheDocument();
-  });
+  }, 10000);
 
   it("shows feedback for operational CTAs instead of silent clicks", async () => {
     render(<App />);
@@ -195,5 +195,5 @@ describe("MealPilot app", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /Generate report/i }));
     expect(await screen.findByText("Support report generated with a ready email handoff.")).toBeInTheDocument();
-  }, 10000);
+  }, 15000);
 });

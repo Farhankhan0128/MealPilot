@@ -226,6 +226,13 @@ export function buildBuilderPacketExport(options: {
         "Use the reviewer vault partner-signal section when asking Swiggy for support channels, quota review, co-branding approval, and staging signal validation.",
       ),
       readiness(
+        "access_submission_packet",
+        "Access submission packet",
+        "ready",
+        "Access Submission Studio is promoted into the launch bundle, reviewer vault, and handoff email with official CTA targets, copy blocks, attachments, saved operator state, browser runbook, and rehearsals.",
+        "Open the studio before the final Swiggy browser submission, resolve operator inputs, then manually submit the official form and send the handoff email.",
+      ),
+      readiness(
         "demo_video",
         "Demo video URL",
         "operator_input",

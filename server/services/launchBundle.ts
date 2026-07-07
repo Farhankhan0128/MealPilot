@@ -816,6 +816,15 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
         "Consolidates official developer/enterprise form targets, prepared access fields, proof attachments, runbook steps, blockers, and handoff drafts.",
     },
     {
+      id: "access_submission_studio",
+      label: "Access Submission Studio",
+      path: "/api/access-submission-studio",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Turns Start Building, Request access, and Send Us a Demo into copy-ready form values, required attachments, browser runbook steps, mailto handoff, saved operator state, and non-auto-submission rehearsals.",
+    },
+    {
       id: "builder_packet_export",
       label: "Builder Packet Export",
       path: "/api/builder-packet-export",
@@ -1183,6 +1192,7 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- Swiggy Access Evidence Matrix: /api/swiggy-access-evidence-matrix",
     "- Visual QA Center: /api/visual-qa-center",
     "- Submission Console: /api/submission-console",
+    "- Access Submission Studio: /api/access-submission-studio",
     "- Swiggy Docs Coverage: /api/swiggy-docs-coverage",
     "- Swiggy Docs Twin Explorer: /api/swiggy-docs-twin-explorer",
     "- Swiggy Upstream Watch: /api/swiggy-upstream-watch",

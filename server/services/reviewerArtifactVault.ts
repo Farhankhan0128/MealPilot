@@ -96,6 +96,14 @@ const artifactSections = [
         "Keeps demo video URL and final contact fields as manual inputs.",
       ),
       artifact(
+        "access_submission_studio",
+        "Access Submission Studio",
+        "api",
+        "/api/access-submission-studio",
+        "Official Start Building, Request access, and Send Us a Demo targets with copy blocks, required attachments, saved handoff state, browser runbook, mailto draft, and local rehearsals.",
+        "Never submits the external Swiggy form or sends email; demo URL, contacts, redirect URI, egress, terms, credentials, and approval stay explicit operator or Swiggy gates.",
+      ),
+      artifact(
         "demo_script",
         "Demo script",
         "doc",
@@ -452,6 +460,7 @@ export function buildReviewerArtifactVault(): ReviewerArtifactVault {
     "- Swiggy Showcase Submission Center: /api/swiggy-showcase-submission-center",
     "- Swiggy Partner Support Room: /api/swiggy-partner-support-room",
     "- Swiggy Benefits Activation Center: /api/swiggy-benefits-activation-center",
+    "- Access Submission Studio: /api/access-submission-studio",
     "- Swiggy Credential Handoff Center: /api/swiggy-credential-handoff-center",
     "- Swiggy Credential Readiness Dossier: /api/swiggy-credential-readiness-dossier",
     "- Credential Issuance Receipt State: /api/swiggy-credential-issuance/state",
