@@ -279,6 +279,17 @@ const targetGroups = [
         "artifacts/visual-qa/tool-reference-witness-card.png",
       ),
       target(
+        "credential_sandbox_witness_card",
+        "Credential Sandbox Witness card",
+        "/",
+        ".credential-sandbox-witness-card",
+        "desktop",
+        1280,
+        900,
+        "Credential Sandbox Witness shows OAuth, DCR, vault redaction, handoff packets, sandbox staging, seed smoke, certification, and production cutover gates.",
+        "artifacts/visual-qa/credential-sandbox-witness-card.png",
+      ),
+      target(
         "capability_traceability_card",
         "Capability Traceability card",
         "/",

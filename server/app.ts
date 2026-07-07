@@ -39,6 +39,7 @@ import { buildSwiggyBuildersAiNativeWitness } from "./services/buildersAiNativeW
 import { buildSwiggyBuildersEnterpriseWitness } from "./services/buildersEnterpriseWitness.js";
 import { buildSwiggyBuildersConsumerWitness } from "./services/buildersConsumerWitness.js";
 import { buildSwiggyBuildersToolReferenceWitness } from "./services/buildersToolReferenceWitness.js";
+import { buildSwiggyBuildersCredentialSandboxWitness } from "./services/buildersCredentialSandboxWitness.js";
 import { buildSwiggyBuildersReviewDecisionCenter } from "./services/reviewDecisionCenter.js";
 import { buildSwiggyBuildersSourceEvolutionCenter } from "./services/sourceEvolutionCenter.js";
 import { buildSwiggySourceFreezeDiff } from "./services/sourceFreezeDiff.js";
@@ -1431,6 +1432,28 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
     asyncRoute(async (_req, res) => {
       res.json({
         toolReferenceWitness: await buildSwiggyBuildersToolReferenceWitness(),
+      });
+    }),
+  );
+
+  app.get(
+    "/api/swiggy-builders-credential-sandbox-witness",
+    asyncRoute(async (_req, res) => {
+      const runtimeConfig = {
+        ...config,
+        swiggyAccessToken: runtimeAccessToken,
+        swiggyTokenExpiresAt: runtimeTokenExpiresAt,
+      };
+      res.json({
+        credentialSandboxWitness: await buildSwiggyBuildersCredentialSandboxWitness({
+          config: runtimeConfig,
+          profile: store.getProfile(),
+          coverage: buildMcpCoverage(),
+          latestPlan: store.getAllPlans().at(-1),
+          handoffState: store.getAccessSubmissionState(),
+          credentialIssuance: store.getCredentialIssuanceState(),
+          authStatus: buildAuthStatus(),
+        }),
       });
     }),
   );

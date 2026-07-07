@@ -1398,6 +1398,86 @@ export interface SwiggyBuildersToolReferenceWitness {
   externalGates: string[];
 }
 
+export type SwiggyBuildersCredentialSandboxWitnessStatus =
+  | "proven"
+  | "ready"
+  | "watch"
+  | "operator_gate"
+  | "swiggy_gate";
+export type SwiggyBuildersCredentialSandboxWitnessOwner = "MealPilot" | "Operator" | "Swiggy" | "Joint";
+export type SwiggyBuildersCredentialSandboxWitnessKind =
+  | "oauth_lifecycle"
+  | "dynamic_client_registration"
+  | "vault_redaction"
+  | "handoff_packet"
+  | "sandbox_workbench"
+  | "staging_drill"
+  | "seed_smoke"
+  | "certification_cutover";
+
+export interface SwiggyBuildersCredentialSandboxWitnessRow {
+  id: string;
+  label: string;
+  kind: SwiggyBuildersCredentialSandboxWitnessKind;
+  officialSignal: string;
+  sourceUrl: string;
+  owner: SwiggyBuildersCredentialSandboxWitnessOwner;
+  status: SwiggyBuildersCredentialSandboxWitnessStatus;
+  mealPilotSurface: string;
+  evidence: string;
+  routeOptimization: string;
+  riskBoundary: string;
+  nextAction: string;
+  proofLinks: string[];
+  relatedApis: string[];
+}
+
+export interface SwiggyBuildersCredentialSandboxWitnessGroup {
+  id: string;
+  label: string;
+  rows: number;
+  proven: number;
+  ready: number;
+  watch: number;
+  gates: number;
+  proofLinks: string[];
+}
+
+export interface SwiggyBuildersCredentialSandboxWitness {
+  generatedAt: string;
+  score: number;
+  decision: "credential_sandbox_ready" | "credential_sandbox_watch" | "credential_sandbox_blocked";
+  officialSources: string[];
+  totals: {
+    rows: number;
+    proven: number;
+    ready: number;
+    watch: number;
+    operatorGates: number;
+    swiggyGates: number;
+    proofLinks: number;
+    onboardingChecks: number;
+    authLifecycleLanes: number;
+    vaultSecrets: number;
+    redactionRules: number;
+    handoffPhases: number;
+    readinessStages: number;
+    sandboxLanes: number;
+    stagingDrills: number;
+    seedFixtures: number;
+    smokeWaves: number;
+    certificationTools: number;
+    cutoverProbes: number;
+    liveCalibrationProbes: number;
+    delegatedAuthSteps: number;
+  };
+  rows: SwiggyBuildersCredentialSandboxWitnessRow[];
+  groups: SwiggyBuildersCredentialSandboxWitnessGroup[];
+  commands: Array<{ id: string; command: string; proves: string; expectedSignal: string }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type SwiggyCapabilityTraceabilityOwner = "MealPilot" | "Operator" | "Swiggy" | "Joint";
 export type SwiggyCapabilityTraceabilityKind =
   | "official_page"

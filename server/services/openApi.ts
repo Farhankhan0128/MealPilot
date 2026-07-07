@@ -569,6 +569,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-builders-credential-sandbox-witness": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Builders Credential Sandbox Witness for OAuth, DCR, staging credentials, and cutover proof",
+          responses: {
+            "200": {
+              description:
+                "Official Swiggy credential and staging lifecycle witnessed against OAuth PKCE, Dynamic Client Registration, credential vault redaction, handoff packet readiness, sandbox workbench, staging credential drills, seeded smoke, 35-tool certification, cutover, live-signal calibration, and Swiggy-owned staging credentials",
+            },
+          },
+        },
+      },
       "/api/swiggy-builders-journey-gates": {
         get: {
           tags: ["Builder Access"],

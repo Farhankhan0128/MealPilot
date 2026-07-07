@@ -82,6 +82,7 @@ import type {
   SwiggyBenefitsActivationExecution,
   EnterprisePlatformCenterReport,
   SwiggyBuildersAiNativeWitness,
+  SwiggyBuildersCredentialSandboxWitness,
   SwiggyBuildersEnterpriseWitness,
   SwiggyBuildersConsumerWitness,
   SwiggyBuildersToolReferenceWitness,
@@ -534,6 +535,12 @@ export function fetchSwiggyBuildersConsumerWitness() {
 export function fetchSwiggyBuildersToolReferenceWitness() {
   return requestJson<{ toolReferenceWitness: SwiggyBuildersToolReferenceWitness }>(
     "/api/swiggy-builders-tool-reference-witness",
+  );
+}
+
+export function fetchSwiggyBuildersCredentialSandboxWitness() {
+  return requestJson<{ credentialSandboxWitness: SwiggyBuildersCredentialSandboxWitness }>(
+    "/api/swiggy-builders-credential-sandbox-witness",
   );
 }
 

@@ -140,6 +140,8 @@ The verifier also validates `/api/swiggy-builders-consumer-witness` for the offi
 
 The verifier also validates `/api/swiggy-builders-tool-reference-witness` for the official Swiggy MCP reference layer, including Food 14, Instamart 13, Dineout 8, contract rows, parameters, Tool Lab probes, recipe scenarios, docs coverage, docs twins, commercial-safety classes, proof links, and Swiggy-owned live credential gates.
 
+The verifier also validates `/api/swiggy-builders-credential-sandbox-witness` for the credential and staging lifecycle, including OAuth PKCE, Dynamic Client Registration, vault redaction, handoff packets, sandbox workbench, staging credential drills, seeded smoke, 35-tool certification, cutover, live-signal calibration, proof links, and Swiggy-owned staging credentials.
+
 The verifier also validates `/api/swiggy-interaction-qa-center` and `POST /api/swiggy-interaction-qa-center/rehearse` for planner, confirmation, support-report, privacy, packet-export, first-call, access-submission, partner-support CTA contracts, dry-run route rehearsals, missing-input guards, automated proof, and explicit Swiggy/operator gates.
 
 The verifier also validates `/api/swiggy-staging-seed-smoke-center` for Food, Instamart, and Dineout seeded fixtures, read/mutation/commercial/support smoke waves, no-blind-retry stop rules, telemetry evidence, and Swiggy staging credential gates.

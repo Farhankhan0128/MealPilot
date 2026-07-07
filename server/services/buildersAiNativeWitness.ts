@@ -263,7 +263,7 @@ export function buildSwiggyBuildersAiNativeWitness(latestPlan?: MealPlan): Swigg
         id: "visual_capture",
         command: "MEALPILOT_URL=http://localhost:8787 npm run verify:visual",
         proves: "The AI Native Witness card is captured with every reviewer-critical Launch Center surface.",
-        expectedSignal: "77 screenshot targets return no overflow issues",
+        expectedSignal: "78 screenshot targets return no overflow issues",
       },
     ],
     assertions: [

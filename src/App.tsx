@@ -139,6 +139,7 @@ import {
   fetchSwiggyBuildersEnterpriseWitness,
   fetchSwiggyBuildersConsumerWitness,
   fetchSwiggyBuildersToolReferenceWitness,
+  fetchSwiggyBuildersCredentialSandboxWitness,
   fetchSwiggyCapabilityTraceability,
   fetchSwiggyHomepageSignalCoverage,
   fetchSwiggyBuildersCompletionLedger,
@@ -325,6 +326,7 @@ import type {
   SwiggyBuildersEnterpriseWitness,
   SwiggyBuildersConsumerWitness,
   SwiggyBuildersToolReferenceWitness,
+  SwiggyBuildersCredentialSandboxWitness,
   SwiggyCapabilityTraceabilityMatrix,
   SwiggyBuildersCompletionLedger,
   SwiggyHomepageSignalCoverageBoard,
@@ -620,6 +622,8 @@ function App() {
   const [consumerWitness, setConsumerWitness] = useState<SwiggyBuildersConsumerWitness | null>(null);
   const [toolReferenceWitness, setToolReferenceWitness] =
     useState<SwiggyBuildersToolReferenceWitness | null>(null);
+  const [credentialSandboxWitness, setCredentialSandboxWitness] =
+    useState<SwiggyBuildersCredentialSandboxWitness | null>(null);
   const [capabilityTraceability, setCapabilityTraceability] =
     useState<SwiggyCapabilityTraceabilityMatrix | null>(null);
   const [homepageSignalCoverage, setHomepageSignalCoverage] =
@@ -863,6 +867,7 @@ function App() {
       enterpriseWitnessResponse,
       consumerWitnessResponse,
       toolReferenceWitnessResponse,
+      credentialSandboxWitnessResponse,
       capabilityTraceabilityResponse,
       homepageSignalCoverageResponse,
       buildersCompletionResponse,
@@ -1002,6 +1007,7 @@ function App() {
       fetchSwiggyBuildersEnterpriseWitness(),
       fetchSwiggyBuildersConsumerWitness(),
       fetchSwiggyBuildersToolReferenceWitness(),
+      fetchSwiggyBuildersCredentialSandboxWitness(),
       fetchSwiggyCapabilityTraceability(),
       fetchSwiggyHomepageSignalCoverage(),
       fetchSwiggyBuildersCompletionLedger(),
@@ -1142,6 +1148,7 @@ function App() {
     setEnterpriseWitness(enterpriseWitnessResponse.enterpriseWitness);
     setConsumerWitness(consumerWitnessResponse.consumerWitness);
     setToolReferenceWitness(toolReferenceWitnessResponse.toolReferenceWitness);
+    setCredentialSandboxWitness(credentialSandboxWitnessResponse.credentialSandboxWitness);
     setCapabilityTraceability(capabilityTraceabilityResponse.capabilityTraceability);
     setHomepageSignalCoverage(homepageSignalCoverageResponse.homepageSignalCoverage);
     setBuildersCompletion(buildersCompletionResponse.buildersCompletion);
@@ -1285,6 +1292,7 @@ function App() {
       enterpriseWitnessResponse,
       consumerWitnessResponse,
       toolReferenceWitnessResponse,
+      credentialSandboxWitnessResponse,
       capabilityTraceabilityResponse,
       homepageSignalCoverageResponse,
       buildersCompletionResponse,
@@ -1421,6 +1429,7 @@ function App() {
       fetchSwiggyBuildersEnterpriseWitness(),
       fetchSwiggyBuildersConsumerWitness(),
       fetchSwiggyBuildersToolReferenceWitness(),
+      fetchSwiggyBuildersCredentialSandboxWitness(),
       fetchSwiggyCapabilityTraceability(),
       fetchSwiggyHomepageSignalCoverage(),
       fetchSwiggyBuildersCompletionLedger(),
@@ -1557,6 +1566,7 @@ function App() {
     setEnterpriseWitness(enterpriseWitnessResponse.enterpriseWitness);
     setConsumerWitness(consumerWitnessResponse.consumerWitness);
     setToolReferenceWitness(toolReferenceWitnessResponse.toolReferenceWitness);
+    setCredentialSandboxWitness(credentialSandboxWitnessResponse.credentialSandboxWitness);
     setCapabilityTraceability(capabilityTraceabilityResponse.capabilityTraceability);
     setHomepageSignalCoverage(homepageSignalCoverageResponse.homepageSignalCoverage);
     setBuildersCompletion(buildersCompletionResponse.buildersCompletion);
@@ -2268,6 +2278,7 @@ function App() {
                 enterpriseWitness={enterpriseWitness}
                 consumerWitness={consumerWitness}
                 toolReferenceWitness={toolReferenceWitness}
+                credentialSandboxWitness={credentialSandboxWitness}
                 capabilityTraceability={capabilityTraceability}
                 homepageSignalCoverage={homepageSignalCoverage}
                 buildersCompletion={buildersCompletion}
@@ -2896,6 +2907,7 @@ function LaunchCenterPanel({
   enterpriseWitness,
   consumerWitness,
   toolReferenceWitness,
+  credentialSandboxWitness,
   capabilityTraceability,
   homepageSignalCoverage,
   buildersCompletion,
@@ -3007,6 +3019,7 @@ function LaunchCenterPanel({
   enterpriseWitness: SwiggyBuildersEnterpriseWitness | null;
   consumerWitness: SwiggyBuildersConsumerWitness | null;
   toolReferenceWitness: SwiggyBuildersToolReferenceWitness | null;
+  credentialSandboxWitness: SwiggyBuildersCredentialSandboxWitness | null;
   capabilityTraceability: SwiggyCapabilityTraceabilityMatrix | null;
   homepageSignalCoverage: SwiggyHomepageSignalCoverageBoard | null;
   buildersCompletion: SwiggyBuildersCompletionLedger | null;
@@ -5205,6 +5218,55 @@ function LaunchCenterPanel({
             </a>
             <a href="/api/mcp/tool-lab" target="_blank" rel="noreferrer">
               Tool Lab
+            </a>
+          </div>
+        </article>
+
+        <article className="credential-sandbox-witness-card">
+          <div className="mini-heading">
+            <LockKeyhole aria-hidden="true" />
+            <strong>Credential Sandbox Witness</strong>
+          </div>
+          <span>
+            {credentialSandboxWitness
+              ? `${credentialSandboxWitness.score}/100, ${credentialSandboxWitness.totals.proven + credentialSandboxWitness.totals.ready}/${credentialSandboxWitness.totals.rows} credential lanes ready`
+              : "Witnessing OAuth, DCR, vault redaction, credential handoff, sandbox staging, seed smoke, and cutover gates"}
+          </span>
+          <div className="credential-sandbox-witness-grid">
+            <div>
+              <strong>{credentialSandboxWitness?.totals.authLifecycleLanes ?? 0}</strong>
+              <span>Auth lanes</span>
+            </div>
+            <div>
+              <strong>{credentialSandboxWitness?.totals.vaultSecrets ?? 0}</strong>
+              <span>Secrets</span>
+            </div>
+            <div>
+              <strong>{credentialSandboxWitness?.totals.stagingDrills ?? 0}</strong>
+              <span>Drills</span>
+            </div>
+            <div>
+              <strong>{credentialSandboxWitness?.totals.certificationTools ?? 0}</strong>
+              <span>Tools</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(credentialSandboxWitness?.groups ?? []).map((group) => (
+              <li key={group.id} data-status={group.gates > 0 || group.watch > 0 ? "watch" : "healthy"}>
+                <span>{group.label}</span>
+                <strong>{group.proven + group.ready}/{group.rows}</strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-intelligence-actions" aria-label="Credential sandbox witness links">
+            <a href="/api/swiggy-builders-credential-sandbox-witness" target="_blank" rel="noreferrer">
+              Credential API
+            </a>
+            <a href="/api/sandbox-credential-workbench" target="_blank" rel="noreferrer">
+              Sandbox
+            </a>
+            <a href="/api/swiggy-credential-readiness-dossier" target="_blank" rel="noreferrer">
+              Dossier
             </a>
           </div>
         </article>

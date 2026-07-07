@@ -66,6 +66,8 @@ The `/api/swiggy-builders-consumer-witness` endpoint aggregates that consumer pa
 
 The `/api/swiggy-builders-tool-reference-witness` endpoint keeps the official MCP reference layer auditable. Food 14, Instamart 13, Dineout 8, contract rows, Tool Lab probes, recipe scenarios, docs twins, and commercial-safety classes remain visible, while live schema drift, staging users, quotas, payments, and production approval remain Swiggy-owned gates.
 
+The `/api/swiggy-builders-credential-sandbox-witness` endpoint keeps sandbox and staging credential readiness auditable without exposing secrets. OAuth PKCE, DCR, vault redaction, credential handoff, seeded staging drills, certification, cutover, and live-signal calibration stay tied to proof links and explicit Swiggy/operator gates.
+
 The `/api/swiggy-journey-compiler` endpoint keeps official recipe constraints visible in every route: Food placement is COD-only with a commercial confirmation gate, Instamart checkout respects the minimum cart threshold and address serviceability, Dineout booking confirms party details before `book_table`, and future Food scheduling remains a reminder/place-later flow until Swiggy exposes scheduled delivery.
 
 The `/api/mcp/scenario-runner` endpoint validates those official recipes as local JSON-RPC traces before live credentials exist. It exercises Food, Instamart, Dineout, and combined flows, keeps `place_food_order`, `checkout`, and `book_table` confirmation-gated, uses status tools before retrying uncertain commerce calls, and leaves future Food scheduling as a reminder-time external gate.

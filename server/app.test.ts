@@ -86,6 +86,8 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/swiggy-builders-consumer-witness"].get.responses["200"].description).toContain("visual dish");
     expect(openApi.body.paths["/api/swiggy-builders-tool-reference-witness"].get.summary).toContain("Tool Reference Witness");
     expect(openApi.body.paths["/api/swiggy-builders-tool-reference-witness"].get.responses["200"].description).toContain("Food 14");
+    expect(openApi.body.paths["/api/swiggy-builders-credential-sandbox-witness"].get.summary).toContain("Credential Sandbox Witness");
+    expect(openApi.body.paths["/api/swiggy-builders-credential-sandbox-witness"].get.responses["200"].description).toContain("staging credentials");
     expect(openApi.body.paths["/api/swiggy-builders-journey-gates"].get.summary).toContain("Journey Gate");
     expect(openApi.body.paths["/api/swiggy-builders-journey-gates"].get.responses["200"].description).toContain("Quick Review");
     expect(openApi.body.paths["/api/swiggy-builders-homepage-experience"].get.summary).toContain("Homepage Experience");
@@ -1871,7 +1873,7 @@ describe("MealPilot API", () => {
     expect(packet.totals.formFields).toBeGreaterThanOrEqual(10);
     expect(packet.totals.requiredAttachments).toBeGreaterThanOrEqual(10);
     expect(packet.totals.launchArtifacts).toBeGreaterThanOrEqual(50);
-    expect(packet.totals.visualTargets).toBe(77);
+    expect(packet.totals.visualTargets).toBe(78);
     expect(packet.files.map((file: { id: string }) => file.id)).toEqual(
       expect.arrayContaining(["packet_json", "packet_markdown", "visual_report", "production_summary"]),
     );
@@ -1883,7 +1885,7 @@ describe("MealPilot API", () => {
     ).toBe(true);
     expect(
       packet.commands.some(
-        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("77"),
+        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("78"),
       ),
     ).toBe(true);
     expect(packet.copyBlocks.formFields).toContain("Redirect URI(s)");
@@ -4468,8 +4470,8 @@ describe("MealPilot API", () => {
     const visualQa = response.body.visualQa;
 
     expect(visualQa.score).toBe(100);
-    expect(visualQa.totalTargets).toBe(77);
-    expect(visualQa.readyTargets).toBe(77);
+    expect(visualQa.totalTargets).toBe(78);
+    expect(visualQa.readyTargets).toBe(78);
     expect(visualQa.totalRules).toBe(7);
     expect(visualQa.readyRules).toBe(7);
     expect(visualQa.totalCommands).toBe(5);
@@ -4593,6 +4595,16 @@ describe("MealPilot API", () => {
           (target) =>
             target.id === "tool_reference_witness_card" &&
             target.selector === ".tool-reference-witness-card" &&
+            target.viewport === "desktop",
+        ),
+      ),
+    ).toBe(true);
+    expect(
+      visualQa.targetGroups.some((group: { targets: Array<{ id: string; selector: string; viewport: string }> }) =>
+        group.targets.some(
+          (target) =>
+            target.id === "credential_sandbox_witness_card" &&
+            target.selector === ".credential-sandbox-witness-card" &&
             target.viewport === "desktop",
         ),
       ),
@@ -5582,6 +5594,58 @@ describe("MealPilot API", () => {
     expect(witness.externalGates.some((gate: string) => gate.includes("staging credentials"))).toBe(true);
   });
 
+  it("returns Swiggy Builders Credential Sandbox Witness for OAuth, DCR, staging credentials, and cutover proof", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app).get("/api/swiggy-builders-credential-sandbox-witness").expect(200);
+    const witness = response.body.credentialSandboxWitness;
+
+    expect(witness.score).toBeGreaterThanOrEqual(84);
+    expect(["credential_sandbox_ready", "credential_sandbox_watch", "credential_sandbox_blocked"]).toContain(witness.decision);
+    expect(witness.totals.rows).toBeGreaterThanOrEqual(8);
+    expect(witness.totals.onboardingChecks).toBeGreaterThanOrEqual(6);
+    expect(witness.totals.authLifecycleLanes).toBeGreaterThanOrEqual(6);
+    expect(witness.totals.vaultSecrets).toBeGreaterThanOrEqual(6);
+    expect(witness.totals.redactionRules).toBeGreaterThanOrEqual(4);
+    expect(witness.totals.handoffPhases).toBeGreaterThanOrEqual(7);
+    expect(witness.totals.readinessStages).toBeGreaterThanOrEqual(5);
+    expect(witness.totals.sandboxLanes).toBeGreaterThanOrEqual(6);
+    expect(witness.totals.stagingDrills).toBe(3);
+    expect(witness.totals.seedFixtures).toBeGreaterThanOrEqual(10);
+    expect(witness.totals.smokeWaves).toBeGreaterThanOrEqual(6);
+    expect(witness.totals.certificationTools).toBe(35);
+    expect(witness.totals.cutoverProbes).toBeGreaterThanOrEqual(3);
+    expect(witness.totals.liveCalibrationProbes).toBeGreaterThanOrEqual(4);
+    expect(witness.totals.delegatedAuthSteps).toBeGreaterThanOrEqual(5);
+    expect(witness.totals.proofLinks).toBeGreaterThanOrEqual(16);
+    expect(witness.rows.map((row: { id: string }) => row.id)).toEqual(
+      expect.arrayContaining([
+        "oauth_lifecycle_pkce",
+        "dynamic_client_registration_receipt",
+        "credential_vault_redaction",
+        "handoff_readiness_packet",
+        "sandbox_credential_workbench",
+        "staging_credential_drill",
+        "seed_smoke_certification",
+        "cutover_live_calibration",
+      ]),
+    );
+    expect(
+      witness.rows.every((row: { proofLinks: string[]; routeOptimization: string; riskBoundary: string }) =>
+        row.proofLinks.length > 0 && row.routeOptimization.length > 0 && row.riskBoundary.length > 0,
+      ),
+    ).toBe(true);
+    expect(witness.groups.map((group: { id: string }) => group.id)).toEqual(
+      expect.arrayContaining(["auth_registration", "secret_handoff", "sandbox_staging", "certification_cutover"]),
+    );
+    expect(
+      witness.commands.some((command: { command: string }) =>
+        command.command.includes("/api/swiggy-builders-credential-sandbox-witness"),
+      ),
+    ).toBe(true);
+    expect(witness.assertions.some((assertion: string) => assertion.includes("Credential access"))).toBe(true);
+    expect(witness.externalGates.some((gate: string) => gate.includes("staging OAuth credentials"))).toBe(true);
+  });
+
   it("returns a Swiggy source-to-product capability traceability matrix", async () => {
     const { app } = createMealPilotServer();
     const response = await request(app).get("/api/swiggy-capability-traceability").expect(200);
@@ -5693,7 +5757,7 @@ describe("MealPilot API", () => {
     expect(ledger.totals.mcpServers).toBe(3);
     expect(ledger.totals.mcpTools).toBe(35);
     expect(ledger.totals.docsPages).toBeGreaterThanOrEqual(69);
-    expect(ledger.totals.visualTargets).toBe(77);
+    expect(ledger.totals.visualTargets).toBe(78);
     expect(ledger.totals.reviewerArtifacts).toBeGreaterThanOrEqual(120);
     expect(ledger.groups.map((group: { id: string }) => group.id)).toEqual(
       expect.arrayContaining(["source_coverage", "product_depth", "mcp_integration", "operations", "handoff"]),
@@ -5971,7 +6035,7 @@ describe("MealPilot API", () => {
     expect(receipt.totals.llmsPages).toBe(69);
     expect(receipt.totals.referenceTools).toBe(35);
     expect(receipt.totals.matchedTools).toBe(35);
-    expect(receipt.totals.visualTargets).toBe(77);
+    expect(receipt.totals.visualTargets).toBe(78);
     expect(receipt.totals.unsafeLinks).toBe(0);
     expect(receipt.totals.missingRows).toBe(0);
     expect(receipt.rows.map((row: { id: string }) => row.id)).toEqual(
