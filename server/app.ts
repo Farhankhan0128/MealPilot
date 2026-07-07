@@ -280,6 +280,14 @@ const sourceFreezeDiffSchema = z.object({
   includeLlmsManifest: z.boolean(),
   includeAccessPacket: z.boolean(),
   includeBrowserRebrowse: z.boolean(),
+  browserRebrowseReceipt: z
+    .object({
+      checkedAt: z.string().datetime(),
+      actor: z.string().trim().min(2).max(80),
+      viewport: z.enum(["desktop", "mobile", "tablet", "desktop_mobile", "all_form_factors"]),
+      notes: z.string().trim().max(240).optional(),
+    })
+    .optional(),
 });
 
 const visualDishAnalyzeSchema = z.object({

@@ -169,6 +169,7 @@ import type {
   SwiggyQuotaNegotiationCenter,
   SwiggyScenarioRunnerReport,
   SwiggySourceFreezeDiffMode,
+  SwiggySourceFreezeBrowserReceipt,
   SwiggySourceFreezeDiffReport,
   SwiggySourceIntelligenceReport,
   SwiggyQualityFeedbackAnalysis,
@@ -1040,6 +1041,7 @@ export function runSwiggySourceFreezeDiff(input: {
   includeLlmsManifest: boolean;
   includeAccessPacket: boolean;
   includeBrowserRebrowse: boolean;
+  browserRebrowseReceipt?: SwiggySourceFreezeBrowserReceipt;
 }) {
   return requestJson<{ sourceFreezeDiff: SwiggySourceFreezeDiffReport }>(
     "/api/swiggy-source-freeze-diff/freeze",

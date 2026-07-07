@@ -2961,12 +2961,14 @@ function LaunchCenterPanel({
     includeLlmsManifest: boolean;
     includeAccessPacket: boolean;
     includeBrowserRebrowse: boolean;
+    browserRebrowseReceiptReady: boolean;
   }>({
     mode: "pre_access_submission",
     includeLivePageMesh: true,
     includeLlmsManifest: true,
     includeAccessPacket: true,
     includeBrowserRebrowse: true,
+    browserRebrowseReceiptReady: false,
   });
   const [sourceFreezeRun, setSourceFreezeRun] = useState<SwiggySourceFreezeDiffReport | null>(null);
   const [sourceFreezeStatus, setSourceFreezeStatus] = useState<"idle" | "loading" | "error">("idle");
@@ -3338,7 +3340,20 @@ function LaunchCenterPanel({
     event.preventDefault();
     setSourceFreezeStatus("loading");
     try {
-      const response = await runSwiggySourceFreezeDiff(sourceFreezeForm);
+      const { browserRebrowseReceiptReady, ...sourceFreezeInput } = sourceFreezeForm;
+      const response = await runSwiggySourceFreezeDiff({
+        ...sourceFreezeInput,
+        ...(browserRebrowseReceiptReady
+          ? {
+              browserRebrowseReceipt: {
+                checkedAt: new Date().toISOString(),
+                actor: "MealPilot operator",
+                viewport: "all_form_factors",
+                notes: "Live Swiggy Builders page opened in browser before freeze rehearsal.",
+              },
+            }
+          : {}),
+      });
       setSourceFreezeRun(response.sourceFreezeDiff);
       setSourceFreezeStatus("idle");
     } catch {
@@ -5006,6 +5021,17 @@ function LaunchCenterPanel({
                 />
                 Browser
               </label>
+              <label htmlFor="source-freeze-browser-receipt">
+                <input
+                  id="source-freeze-browser-receipt"
+                  type="checkbox"
+                  checked={sourceFreezeForm.browserRebrowseReceiptReady}
+                  onChange={(event) =>
+                    setSourceFreezeForm((current) => ({ ...current, browserRebrowseReceiptReady: event.target.checked }))
+                  }
+                />
+                Receipt
+              </label>
             </div>
             <button type="submit" disabled={sourceFreezeStatus === "loading"} aria-label="Run Swiggy source freeze diff">
               {sourceFreezeStatus === "loading" ? <Loader2 aria-hidden="true" /> : <RefreshCw aria-hidden="true" />}
@@ -5024,6 +5050,12 @@ function LaunchCenterPanel({
               </li>
             ))}
           </ul>
+          {activeSourceFreeze?.browserRebrowseReceipt ? (
+            <small>
+              Browser receipt: {activeSourceFreeze.browserRebrowseReceipt.viewport.replace(/_/g, " ")} at{" "}
+              {new Date(activeSourceFreeze.browserRebrowseReceipt.checkedAt).toLocaleString()}
+            </small>
+          ) : null}
           <div className="source-intelligence-actions" aria-label="Source freeze links">
             <a href="/api/swiggy-source-freeze-diff" target="_blank" rel="noreferrer">
               Freeze API

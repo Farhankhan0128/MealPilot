@@ -4278,6 +4278,32 @@ assert(
   "source freeze diff commands, assertions, or gates are incomplete",
 );
 
+const sourceFreezeReceipt = await request("/api/swiggy-source-freeze-diff/freeze", {
+  method: "POST",
+  body: JSON.stringify({
+    mode: "pre_access_submission",
+    includeLivePageMesh: true,
+    includeLlmsManifest: true,
+    includeAccessPacket: true,
+    includeBrowserRebrowse: true,
+    browserRebrowseReceipt: {
+      checkedAt: "2026-07-07T05:30:00.000Z",
+      actor: "MealPilot operator",
+      viewport: "all_form_factors",
+      notes: "Opened the live Builders page before recording.",
+    },
+  }),
+});
+assert(
+  sourceFreezeReceipt.sourceFreezeDiff.decision === "ready_to_freeze" &&
+    sourceFreezeReceipt.sourceFreezeDiff.browserRebrowseReceipt.viewport === "all_form_factors" &&
+    sourceFreezeReceipt.sourceFreezeDiff.diffRows.some(
+      (row) => row.id === "browser_rebrowse" && row.status === "matched",
+    ) &&
+    sourceFreezeReceipt.sourceFreezeDiff.telemetry.some((item) => item.field === "browser_rebrowse_receipt"),
+  "source freeze receipt-backed decision is incomplete",
+);
+
 const sourceFreezePostChange = await request("/api/swiggy-source-freeze-diff/freeze", {
   method: "POST",
   body: JSON.stringify({
@@ -8224,6 +8250,7 @@ console.log(
       sourceDriftSignals: sourceIntelligence.sourceIntelligence.driftSignals.length,
       sourceFreezeScore: sourceFreezeDiff.sourceFreezeDiff.score,
       sourceFreezeDecision: sourceFreezeDiff.sourceFreezeDiff.decision,
+      sourceFreezeReceiptDecision: sourceFreezeReceipt.sourceFreezeDiff.decision,
       sourceFreezeRows: sourceFreezeDiff.sourceFreezeDiff.diffRows.length,
       deepSiteMapScore: deepSiteMap.deepSiteMap.score,
       deepSiteMapPages: deepSiteMap.deepSiteMap.totals.pages,

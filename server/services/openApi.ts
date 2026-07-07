@@ -1390,7 +1390,7 @@ export function buildOpenApiDocument(config: ServerConfig) {
           responses: {
             "200": {
               description:
-                "Mode-specific source freeze decision for pre-demo, pre-access-submission, or post-source-change workflows with local evidence only and no external submission",
+                "Mode-specific source freeze decision for pre-demo, pre-access-submission, or post-source-change workflows, optionally including a metadata-only browser re-browse receipt, with local evidence only and no external submission",
             },
           },
         },

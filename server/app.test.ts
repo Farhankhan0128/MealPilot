@@ -5146,6 +5146,31 @@ describe("MealPilot API", () => {
     expect(freeze.assertions.some((assertion: string) => assertion.includes("accepts no user-supplied source URL"))).toBe(true);
     expect(freeze.externalGates.some((gate: string) => gate.includes("official Builders page"))).toBe(true);
 
+    const receiptBacked = await request(app)
+      .post("/api/swiggy-source-freeze-diff/freeze")
+      .send({
+        mode: "pre_access_submission",
+        includeLivePageMesh: true,
+        includeLlmsManifest: true,
+        includeAccessPacket: true,
+        includeBrowserRebrowse: true,
+        browserRebrowseReceipt: {
+          checkedAt: "2026-07-07T05:30:00.000Z",
+          actor: "MealPilot operator",
+          viewport: "all_form_factors",
+          notes: "Opened the live Builders page before recording.",
+        },
+      })
+      .expect(200);
+    expect(receiptBacked.body.sourceFreezeDiff.decision).toBe("ready_to_freeze");
+    expect(receiptBacked.body.sourceFreezeDiff.browserRebrowseReceipt.viewport).toBe("all_form_factors");
+    expect(
+      receiptBacked.body.sourceFreezeDiff.diffRows.some(
+        (row: { id: string; status: string }) => row.id === "browser_rebrowse" && row.status === "matched",
+      ),
+    ).toBe(true);
+    expect(receiptBacked.body.sourceFreezeDiff.telemetry.some((item: { field: string }) => item.field === "browser_rebrowse_receipt")).toBe(true);
+
     const postChange = await request(app)
       .post("/api/swiggy-source-freeze-diff/freeze")
       .send({

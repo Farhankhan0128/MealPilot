@@ -231,6 +231,7 @@ Open Production Evidence and show:
 - Homepage Experience coverage for header, hero, how-it-works, benefits, guidelines, FAQ, final CTA, and footer continuity with mobile and reviewer checks.
 - Builders Launch Story Center artifact for launch-blog story beats, 18+ to 35-tool reconciliation, demo journey, showcase packet, CTA paths, and external co-marketing gates.
 - Deep Site Map coverage for every Builders page row, module signal, CTA gate, source section, proof link, assertion, and external gate.
+- Receipt-backed Source Freeze Diff for final live browser re-browse proof without storing screenshots, cookies, tokens, profile data, or page HTML.
 - Builder Intake Command Center for CTA ownership, access-form values, demo storyboard, outbound drafts, and live credential gates.
 - Swiggy Builders Conversion Center for the final What Will You Cook funnel, Start Building, See What's Possible, Request Access, Send Us a Demo, builders@swiggy.in, `llms.txt`, `llms-full.txt`, proof bundles, operator runbook, and go-live gates.
 - Channel & Multimodal Studio for voice, auto-restock, group ordering, dietary planner, reservation, and screenshot-to-order channel contracts plus local execution packets for route plans, response rules, confirmation gates, and telemetry.

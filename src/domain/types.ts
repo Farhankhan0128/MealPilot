@@ -3888,6 +3888,13 @@ export type SwiggySourceFreezeDiffMode = "pre_demo" | "pre_access_submission" | 
 export type SwiggySourceFreezeDiffDecision = "ready_to_freeze" | "refresh_required" | "blocked_external_gate";
 export type SwiggySourceFreezeDiffStatus = "matched" | "watch" | "blocked";
 
+export interface SwiggySourceFreezeBrowserReceipt {
+  checkedAt: string;
+  actor: string;
+  viewport: string;
+  notes?: string;
+}
+
 export interface SwiggySourceFreezeDiffRow {
   id: string;
   label: string;
@@ -3909,6 +3916,7 @@ export interface SwiggySourceFreezeDiffReport {
   includeLlmsManifest: boolean;
   includeAccessPacket: boolean;
   includeBrowserRebrowse: boolean;
+  browserRebrowseReceipt?: SwiggySourceFreezeBrowserReceipt;
   officialSources: string[];
   liveSnapshot: {
     homepageMode: string;

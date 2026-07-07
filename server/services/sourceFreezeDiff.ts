@@ -4,6 +4,7 @@ import type {
   MealPlan,
   UserProfile,
   SwiggySourceFreezeDiffMode,
+  SwiggySourceFreezeBrowserReceipt,
   SwiggySourceFreezeDiffReport,
   SwiggySourceFreezeDiffRow,
   SwiggySourceFreezeDiffStatus,
@@ -80,6 +81,7 @@ export async function buildSwiggySourceFreezeDiff(options: {
   includeLlmsManifest?: boolean;
   includeAccessPacket?: boolean;
   includeBrowserRebrowse?: boolean;
+  browserRebrowseReceipt?: SwiggySourceFreezeBrowserReceipt;
   fetchPage?: BuildersPageFetchFn;
 }): Promise<SwiggySourceFreezeDiffReport> {
   const mode = options.mode ?? "pre_access_submission";
@@ -87,6 +89,7 @@ export async function buildSwiggySourceFreezeDiff(options: {
   const includeLlmsManifest = options.includeLlmsManifest ?? true;
   const includeAccessPacket = options.includeAccessPacket ?? true;
   const includeBrowserRebrowse = options.includeBrowserRebrowse ?? mode !== "post_source_change";
+  const browserRebrowseReceipt = includeBrowserRebrowse ? options.browserRebrowseReceipt : undefined;
   const atlas = buildSwiggyWebsiteAtlas();
   const docsCoverage = buildSwiggyDocsCoverage();
   const sourceIntelligence = buildSwiggySourceIntelligence();
@@ -181,11 +184,19 @@ export async function buildSwiggySourceFreezeDiff(options: {
       "browser_rebrowse",
       "Manual browser re-browse gate",
       "Official Swiggy Builders site",
-      includeBrowserRebrowse ? "required before submission" : "not required for this mode",
-      pageMesh?.status ?? "local source freeze",
-      includeBrowserRebrowse && mode === "pre_access_submission" ? "watch" : "matched",
+      includeBrowserRebrowse
+        ? browserRebrowseReceipt
+          ? `receipt saved at ${browserRebrowseReceipt.checkedAt}`
+          : "required before submission"
+        : "not required for this mode",
+      browserRebrowseReceipt
+        ? `${browserRebrowseReceipt.actor} / ${browserRebrowseReceipt.viewport}`
+        : pageMesh?.status ?? "local source freeze",
+      includeBrowserRebrowse && mode === "pre_access_submission" && !browserRebrowseReceipt ? "watch" : "matched",
       ["/api/swiggy-builders-live-source-resilience", "https://mcp.swiggy.com/builders/"],
-      "Open the live Builders site in a browser immediately before recording or submitting the access packet.",
+      browserRebrowseReceipt
+        ? "Attach or reference the final browser screenshot with the builder packet."
+        : "Open the live Builders site in a browser immediately before recording or submitting the access packet.",
     ),
   ];
   const missingInputs = rows
@@ -212,6 +223,7 @@ export async function buildSwiggySourceFreezeDiff(options: {
     includeLlmsManifest,
     includeAccessPacket,
     includeBrowserRebrowse,
+    browserRebrowseReceipt,
     officialSources,
     liveSnapshot: {
       homepageMode: pageMesh?.status ?? "not_fetched",
@@ -258,17 +270,30 @@ export async function buildSwiggySourceFreezeDiff(options: {
       { field: "verified_pages", value: String(verifiedPages), redaction: "aggregate count only" },
       { field: "reference_tools", value: String(sourceIntelligence.inventory.toolReferenceTools), redaction: "aggregate count only" },
       { field: "access_evidence_rows", value: String(accessEvidence.totals.rows), redaction: "aggregate count only" },
+      ...(browserRebrowseReceipt
+        ? [
+            {
+              field: "browser_rebrowse_receipt",
+              value: `${browserRebrowseReceipt.checkedAt} / ${browserRebrowseReceipt.viewport}`,
+              redaction: "operator receipt metadata only",
+            },
+          ]
+        : []),
     ],
     assertions: [
       "The freeze diff accepts no user-supplied source URL; it only reads the official Swiggy Builders source set.",
       "Live fetch fallback is disclosed as atlas fallback and never counted as silent source parity.",
       "Header, footer, CTA, docs, llms, reference-tool, access-packet, and roadmap signals must all align before final submission.",
-      "A browser re-browse remains an operator gate because automated HTTP checks cannot prove the whole human-visible website experience.",
+      browserRebrowseReceipt
+        ? "The browser re-browse operator receipt is metadata-only and does not store screenshots, cookies, profile data, tokens, or page HTML."
+        : "A browser re-browse remains an operator gate because automated HTTP checks cannot prove the whole human-visible website experience.",
     ],
     externalGates: [
       "Swiggy can update Builders pages, llms manifests, docs, or reference tools without notice.",
       "Live staging credentials and seeded users remain required before source freeze can become credentialed replay proof.",
-      "Operator must open the official Builders page in a browser before final access submission.",
+      browserRebrowseReceipt
+        ? "Final screenshot attachment remains operator-owned outside the API response."
+        : "Operator must open the official Builders page in a browser before final access submission.",
     ],
     nextAction:
       decision === "ready_to_freeze"
