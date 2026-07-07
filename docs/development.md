@@ -259,6 +259,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/guest-collaboration-calendar`
 - `POST /api/guest-collaboration-calendar/compose`
 - `GET /api/luxury-experience-workspace`
+- `POST /api/luxury-experience-workspace/compose`
 - `GET /api/reviewer-artifact-vault`
 - `GET /api/swiggy-builders-review-decision`
 - `GET /api/visual-qa-center`
@@ -463,7 +464,7 @@ Production should use an HTTPS redirect URI with exact-match allowlisting.
 
 `/api/guest-collaboration-calendar` shows guest collaboration routes: vote rounds, date night, guests at home, office lunch, weekday reset, recovery meal, calendar reminders, share links, voice briefs, and Slack/Teams handoff gates. `/api/guest-collaboration-calendar/compose` powers the Launch Center composer with template, channel, guest count, city, and Dineout inputs, returning route steps, calendar/share/voice/workspace artifact, readiness decision, missing channel gates, no-scheduled-Food telemetry, and separate Swiggy confirmation boundaries.
 
-`/api/luxury-experience-workspace` shows premium review workspaces: lean, premium, family, social, and training modes; Dineout reservation review; Food cart review; Instamart basket review; combined evening planning; recovery desk; widget fallbacks; voice contracts; and telemetry gates.
+`/api/luxury-experience-workspace` shows premium review workspaces: lean, premium, family, social, and training modes; Dineout reservation review; Food cart review; Instamart basket review; combined evening planning; recovery desk; widget fallbacks; voice contracts; and telemetry gates. `/api/luxury-experience-workspace/compose` powers the Launch Center composer with mode, workspace, city, guest count, budget, and Dineout confirmation inputs, returning route steps, review artifacts, readiness decision, manual confirmation gaps, redacted telemetry, no-commerce assertions, and separate Food, Instamart, and Dineout approval boundaries.
 
 `/api/reviewer-artifact-vault` shows the Swiggy access-submission manifest: proof links, Deep Site Map, OpenAPI, smoke commands, screenshot targets, demo-video checklist, logs, traces, redaction rules, support context, handoff checklist, and reviewer email copy.
 

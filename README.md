@@ -319,6 +319,7 @@ POST /api/household-preference-graph/simulate
 GET  /api/guest-collaboration-calendar
 POST /api/guest-collaboration-calendar/compose
 GET  /api/luxury-experience-workspace
+POST /api/luxury-experience-workspace/compose
 GET  /api/reviewer-artifact-vault
 GET  /api/visual-qa-center
 GET  /api/swiggy-docs-coverage
@@ -617,7 +618,7 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 
 `GET /api/guest-collaboration-calendar` and `POST /api/guest-collaboration-calendar/compose` are the group planning and calendar layer: guest votes, Dineout-first date nights, guests-at-home prep, office lunch, weekday reset, recovery meals, ICS reminders, share links, Slack/Teams digests, and voice briefs stay aligned with separate Swiggy confirmations and the Food v1 no-scheduled-delivery constraint. The Launch Center composer turns a template, channel, guest count, city, and Dineout intent into a local handoff with route steps, calendar/share artifact, missing channel gates, no-scheduled-Food telemetry, and separate booking/order/checkout boundaries.
 
-`GET /api/luxury-experience-workspace` is the premium review layer: lean, premium, family, social, and training modes become Dineout reservation, Food cart, Instamart basket, combined evening, and recovery workspaces with all 35 Swiggy tools, authoritative reads, widget fallbacks, voice contracts, telemetry, and separate confirmation gates.
+`GET /api/luxury-experience-workspace` and `POST /api/luxury-experience-workspace/compose` are the premium review layer: lean, premium, family, social, and training modes become Dineout reservation, Food cart, Instamart basket, combined evening, and recovery workspaces with all 35 Swiggy tools, authoritative reads, widget fallbacks, voice contracts, telemetry, and separate confirmation gates. The Launch Center composer accepts mode, workspace, city, guest count, budget, and Dineout confirmation, then returns a read-only route rehearsal with review artifacts, missing gates, redacted telemetry, no-commerce assertions, and separate Food, Instamart, and Dineout approval boundaries.
 
 `GET /api/reviewer-artifact-vault` is the Swiggy access-submission manifest: proof links, OpenAPI, smoke commands, screenshot targets, Demo Evidence Director, demo-video checklist, logs, traces, redaction rules, support context, and handoff email copy are bundled in one route.
 

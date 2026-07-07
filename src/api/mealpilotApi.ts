@@ -32,6 +32,7 @@ import type {
   HouseholdPreferenceSimulation,
   IncidentReport,
   LaunchBundle,
+  LuxuryExperienceComposition,
   LuxuryExperienceWorkspace,
   MealPlan,
   McpBackpressureGovernorReport,
@@ -866,6 +867,23 @@ export function composeGuestCollaborationHandoff(input: {
 
 export function fetchLuxuryExperienceWorkspace() {
   return requestJson<{ luxuryExperience: LuxuryExperienceWorkspace }>("/api/luxury-experience-workspace");
+}
+
+export function composeLuxuryExperienceWorkspace(input: {
+  modeId: "lean" | "premium" | "family" | "social" | "training";
+  workspaceId: string;
+  city: "Bengaluru" | "Delhi NCR" | "Mumbai";
+  guestCount: number;
+  budget: number;
+  includeDineout: boolean;
+}) {
+  return requestJson<{ luxuryExperienceComposition: LuxuryExperienceComposition }>(
+    "/api/luxury-experience-workspace/compose",
+    {
+      method: "POST",
+      body: JSON.stringify(input),
+    },
+  );
 }
 
 export function fetchReviewerArtifactVault() {

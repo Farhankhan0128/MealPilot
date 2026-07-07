@@ -333,7 +333,8 @@ assert(
   "OpenAPI guest collaboration calendar contract is missing",
 );
 assert(
-  openApi.paths["/api/luxury-experience-workspace"].get.summary.includes("Luxury Experience Workspace"),
+  openApi.paths["/api/luxury-experience-workspace"].get.summary.includes("Luxury Experience Workspace") &&
+    openApi.paths["/api/luxury-experience-workspace/compose"].post.summary.includes("Luxury Experience Workspace"),
   "OpenAPI luxury experience workspace contract is missing",
 );
 assert(
@@ -2914,6 +2915,50 @@ assert(
   luxuryExperience.luxuryExperience.externalGates.some((gate) => gate.includes("staging and production credentials")) &&
     luxuryExperience.luxuryExperience.externalGates.some((gate) => gate.includes("hosted iframe")),
   "luxury experience external gates are missing",
+);
+const luxuryReadyComposition = await request("/api/luxury-experience-workspace/compose", {
+  method: "POST",
+  body: JSON.stringify({
+    modeId: "premium",
+    workspaceId: "reservation_atelier",
+    city: "Bengaluru",
+    guestCount: 2,
+    budget: 2400,
+    includeDineout: true,
+  }),
+});
+assert(
+  luxuryReadyComposition.luxuryExperienceComposition.decision === "ready_review_workspace" &&
+    luxuryReadyComposition.luxuryExperienceComposition.readinessScore >= 90 &&
+    luxuryReadyComposition.luxuryExperienceComposition.routePlan.some((step) => step.tool === "book_table") &&
+    luxuryReadyComposition.luxuryExperienceComposition.confirmationGates.some((gate) =>
+      gate.includes("Dineout booking"),
+    ) &&
+    luxuryReadyComposition.luxuryExperienceComposition.assertions.some((assertion) =>
+      assertion.includes("does not call place_food_order"),
+    ),
+  "luxury experience ready composer is incomplete",
+);
+const luxuryManualComposition = await request("/api/luxury-experience-workspace/compose", {
+  method: "POST",
+  body: JSON.stringify({
+    modeId: "social",
+    workspaceId: "combined_evening_suite",
+    city: "Mumbai",
+    guestCount: 10,
+    budget: 850,
+    includeDineout: false,
+  }),
+});
+assert(
+  luxuryManualComposition.luxuryExperienceComposition.decision === "manual_confirmation_gate" &&
+    luxuryManualComposition.luxuryExperienceComposition.missingInputs.includes("Dineout confirmation enabled") &&
+    luxuryManualComposition.luxuryExperienceComposition.missingInputs.includes("premium budget review") &&
+    luxuryManualComposition.luxuryExperienceComposition.confirmationGates.some((gate) => gate.includes("Food placement")) &&
+    luxuryManualComposition.luxuryExperienceComposition.confirmationGates.some((gate) =>
+      gate.includes("Instamart checkout"),
+    ),
+  "luxury experience manual composer gate is incomplete",
 );
 
 const reviewerArtifactVault = await request("/api/reviewer-artifact-vault");

@@ -2703,7 +2703,8 @@ select:focus {
 .customization-validator,
 .nutrition-advisor,
 .preference-simulator,
-.guest-handoff-composer {
+.guest-handoff-composer,
+.luxury-workspace-composer {
   display: grid;
   gap: 8px;
   border-radius: 8px;
@@ -2716,7 +2717,8 @@ select:focus {
 .customization-validator label,
 .nutrition-advisor label,
 .preference-simulator label,
-.guest-handoff-composer label {
+.guest-handoff-composer label,
+.luxury-workspace-composer label {
   color: var(--ink-muted);
   font-size: 0.75rem;
   font-weight: 900;
@@ -2735,7 +2737,9 @@ select:focus {
 .preference-simulator select,
 .preference-simulator input,
 .guest-handoff-composer select,
-.guest-handoff-composer input {
+.guest-handoff-composer input,
+.luxury-workspace-composer select,
+.luxury-workspace-composer input {
   width: 100%;
   min-width: 0;
   border: 1px solid var(--line);
@@ -2757,7 +2761,8 @@ select:focus {
 .meal-window-number-grid,
 .customization-number-grid,
 .nutrition-number-grid,
-.guest-handoff-number-grid {
+.guest-handoff-number-grid,
+.luxury-workspace-number-grid {
   display: grid;
   grid-template-columns: minmax(0, 0.72fr) minmax(0, 1fr);
   gap: 8px;
@@ -2768,7 +2773,8 @@ select:focus {
 .customization-toggle-grid label,
 .nutrition-toggle-grid label,
 .preference-toggle-grid label,
-.guest-handoff-toggle {
+.guest-handoff-toggle,
+.luxury-workspace-toggle {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -2791,7 +2797,8 @@ select:focus {
 .customization-toggle-grid input,
 .nutrition-toggle-grid input,
 .preference-toggle-grid input,
-.guest-handoff-toggle input {
+.guest-handoff-toggle input,
+.luxury-workspace-toggle input {
   width: 18px;
   height: 18px;
   accent-color: var(--green);
@@ -2803,7 +2810,8 @@ select:focus {
 .customization-validator button,
 .nutrition-advisor button,
 .preference-simulator button,
-.guest-handoff-composer button {
+.guest-handoff-composer button,
+.luxury-workspace-composer button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -2822,7 +2830,8 @@ select:focus {
 .customization-validator button:disabled,
 .nutrition-advisor button:disabled,
 .preference-simulator button:disabled,
-.guest-handoff-composer button:disabled {
+.guest-handoff-composer button:disabled,
+.luxury-workspace-composer button:disabled {
   cursor: wait;
   opacity: 0.72;
 }
@@ -2832,7 +2841,8 @@ select:focus {
 .customization-validator svg,
 .nutrition-advisor svg,
 .preference-simulator svg,
-.guest-handoff-composer svg {
+.guest-handoff-composer svg,
+.luxury-workspace-composer svg {
   width: 17px;
   height: 17px;
 }
@@ -2842,7 +2852,8 @@ select:focus {
 .customization-validator small,
 .nutrition-advisor small,
 .preference-simulator small,
-.guest-handoff-composer small {
+.guest-handoff-composer small,
+.luxury-workspace-composer small {
   color: var(--coral);
   font-weight: 850;
 }
@@ -2852,7 +2863,8 @@ select:focus {
 .customization-result,
 .nutrition-advice-result,
 .preference-simulation-result,
-.guest-handoff-result {
+.guest-handoff-result,
+.luxury-workspace-result {
   display: grid;
   gap: 8px;
   border-radius: 8px;
@@ -2866,7 +2878,8 @@ select:focus {
 .customization-result[data-status="healthy"],
 .nutrition-advice-result[data-status="healthy"],
 .preference-simulation-result[data-status="healthy"],
-.guest-handoff-result[data-status="healthy"] {
+.guest-handoff-result[data-status="healthy"],
+.luxury-workspace-result[data-status="healthy"] {
   border-left-color: var(--green);
 }
 
@@ -2875,7 +2888,8 @@ select:focus {
 .customization-result[data-status="blocked"],
 .nutrition-advice-result[data-status="blocked"],
 .preference-simulation-result[data-status="blocked"],
-.guest-handoff-result[data-status="blocked"] {
+.guest-handoff-result[data-status="blocked"],
+.luxury-workspace-result[data-status="blocked"] {
   border-left-color: var(--coral);
 }
 
@@ -2883,7 +2897,8 @@ select:focus {
 .customization-result[data-status="watch"],
 .nutrition-advice-result[data-status="watch"],
 .preference-simulation-result[data-status="watch"],
-.guest-handoff-result[data-status="watch"] {
+.guest-handoff-result[data-status="watch"],
+.luxury-workspace-result[data-status="watch"] {
   border-left-color: var(--gold);
 }
 
@@ -2892,7 +2907,8 @@ select:focus {
 .customization-result > div,
 .nutrition-advice-result > div,
 .preference-simulation-result > div,
-.guest-handoff-result > div {
+.guest-handoff-result > div,
+.luxury-workspace-result > div {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -2904,7 +2920,8 @@ select:focus {
 .customization-result span,
 .nutrition-advice-result span,
 .preference-simulation-result span,
-.guest-handoff-result span {
+.guest-handoff-result span,
+.luxury-workspace-result span {
   color: var(--ink-muted);
   font-size: 0.75rem;
   font-weight: 900;
@@ -2916,7 +2933,8 @@ select:focus {
 .customization-result strong,
 .nutrition-advice-result strong,
 .preference-simulation-result strong,
-.guest-handoff-result strong {
+.guest-handoff-result strong,
+.luxury-workspace-result strong {
   color: var(--green-dark);
   font-size: 0.84rem;
   text-align: right;
@@ -2933,7 +2951,9 @@ select:focus {
 .preference-simulation-result p,
 .preference-simulation-result small,
 .guest-handoff-result p,
-.guest-handoff-result small {
+.guest-handoff-result small,
+.luxury-workspace-result p,
+.luxury-workspace-result small {
   margin: 0;
   color: var(--ink-muted);
   font-size: 0.82rem;
@@ -2945,7 +2965,8 @@ select:focus {
 .customization-result small,
 .nutrition-advice-result small,
 .preference-simulation-result small,
-.guest-handoff-result small {
+.guest-handoff-result small,
+.luxury-workspace-result small {
   color: var(--green-dark);
   font-weight: 850;
 }

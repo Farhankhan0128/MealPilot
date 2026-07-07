@@ -3511,6 +3511,40 @@ export interface LuxuryExperienceWorkspace {
   externalGates: string[];
 }
 
+export type LuxuryExperienceCompositionDecision =
+  | "ready_review_workspace"
+  | "manual_confirmation_gate"
+  | "unknown_workspace";
+
+export interface LuxuryExperienceRouteStep {
+  sequence: number;
+  label: string;
+  server?: SwiggyServer;
+  tool?: string;
+  risk: LuxuryWorkspaceStep["risk"];
+  surface: LuxuryWorkspaceStep["surface"];
+  guardrail: string;
+  userFacingState: string;
+}
+
+export interface LuxuryExperienceComposition {
+  generatedAt: string;
+  decision: LuxuryExperienceCompositionDecision;
+  readinessScore: number;
+  city: "Bengaluru" | "Delhi NCR" | "Mumbai";
+  guestCount: number;
+  budget: number;
+  selectedMode?: LuxuryExperienceModePlan;
+  selectedWorkspace?: LuxuryReviewWorkspace;
+  routePlan: LuxuryExperienceRouteStep[];
+  confirmationGates: string[];
+  reviewArtifacts: string[];
+  missingInputs: string[];
+  telemetry: Array<{ field: string; value: string; redaction: string }>;
+  assertions: string[];
+  nextAction: string;
+}
+
 export type ReviewerArtifactStatus = "ready" | "manual_input" | "external_gate";
 
 export interface ReviewerArtifactItem {

@@ -44,6 +44,7 @@ import {
   buildServerPlan,
   completeSwiggyAuth,
   composeGuestCollaborationHandoff,
+  composeLuxuryExperienceWorkspace,
   composeSwiggyChannelExecutionPacket,
   composeSwiggyGrowthPartnershipAsk,
   composeSwiggyPartnerSuccessHandoff,
@@ -240,6 +241,8 @@ import type {
   HouseholdPreferenceSimulation,
   IncidentReport,
   LaunchBundle,
+  LuxuryExperienceComposition,
+  LuxuryExperienceMode,
   LuxuryExperienceWorkspace,
   MealPlan,
   McpBackpressureGovernorReport,
@@ -3006,6 +3009,24 @@ function LaunchCenterPanel({
   });
   const [guestHandoff, setGuestHandoff] = useState<GuestCollaborationComposition | null>(null);
   const [guestHandoffStatus, setGuestHandoffStatus] = useState<"idle" | "loading" | "error">("idle");
+  const [luxuryWorkspaceForm, setLuxuryWorkspaceForm] = useState<{
+    modeId: LuxuryExperienceMode;
+    workspaceId: string;
+    city: "Bengaluru" | "Delhi NCR" | "Mumbai";
+    guestCount: number;
+    budget: number;
+    includeDineout: boolean;
+  }>({
+    modeId: "premium",
+    workspaceId: "reservation_atelier",
+    city: "Bengaluru",
+    guestCount: 2,
+    budget: 2400,
+    includeDineout: true,
+  });
+  const [luxuryWorkspaceComposition, setLuxuryWorkspaceComposition] =
+    useState<LuxuryExperienceComposition | null>(null);
+  const [luxuryWorkspaceStatus, setLuxuryWorkspaceStatus] = useState<"idle" | "loading" | "error">("idle");
   const [showcaseForm, setShowcaseForm] = useState({
     demoUrl: "https://youtu.be/mealpilot-swiggy-demo",
     githubUrl: "https://github.com/Farhankhan0128/MealPilot",
@@ -3181,6 +3202,18 @@ function LaunchCenterPanel({
       setGuestHandoffStatus("idle");
     } catch {
       setGuestHandoffStatus("error");
+    }
+  }
+
+  async function runLuxuryWorkspaceComposer(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setLuxuryWorkspaceStatus("loading");
+    try {
+      const response = await composeLuxuryExperienceWorkspace(luxuryWorkspaceForm);
+      setLuxuryWorkspaceComposition(response.luxuryExperienceComposition);
+      setLuxuryWorkspaceStatus("idle");
+    } catch {
+      setLuxuryWorkspaceStatus("error");
     }
   }
 
@@ -7059,6 +7092,112 @@ function LaunchCenterPanel({
               <strong>{luxuryExperience?.uniqueToolsCovered ?? 0}</strong>
               <span>Tools</span>
             </div>
+          </div>
+          <form className="luxury-workspace-composer" onSubmit={runLuxuryWorkspaceComposer}>
+            <label htmlFor="luxury-mode">Mode</label>
+            <select
+              id="luxury-mode"
+              value={luxuryWorkspaceForm.modeId}
+              onChange={(event) =>
+                setLuxuryWorkspaceForm((current) => ({ ...current, modeId: event.target.value as LuxuryExperienceMode }))
+              }
+            >
+              {(luxuryExperience?.modes ?? []).map((modeItem) => (
+                <option key={modeItem.id} value={modeItem.id}>
+                  {modeItem.label}
+                </option>
+              ))}
+            </select>
+            <label htmlFor="luxury-workspace">Workspace</label>
+            <select
+              id="luxury-workspace"
+              value={luxuryWorkspaceForm.workspaceId}
+              onChange={(event) => setLuxuryWorkspaceForm((current) => ({ ...current, workspaceId: event.target.value }))}
+            >
+              {(luxuryExperience?.workspaces ?? []).map((workspaceItem) => (
+                <option key={workspaceItem.id} value={workspaceItem.id}>
+                  {workspaceItem.title}
+                </option>
+              ))}
+            </select>
+            <label htmlFor="luxury-city">City</label>
+            <select
+              id="luxury-city"
+              value={luxuryWorkspaceForm.city}
+              onChange={(event) =>
+                setLuxuryWorkspaceForm((current) => ({ ...current, city: event.target.value as typeof luxuryWorkspaceForm.city }))
+              }
+            >
+              <option value="Bengaluru">Bengaluru</option>
+              <option value="Delhi NCR">Delhi NCR</option>
+              <option value="Mumbai">Mumbai</option>
+            </select>
+            <div className="luxury-workspace-number-grid">
+              <label htmlFor="luxury-guests">Guests</label>
+              <input
+                id="luxury-guests"
+                type="number"
+                min="1"
+                max="50"
+                value={luxuryWorkspaceForm.guestCount}
+                onChange={(event) =>
+                  setLuxuryWorkspaceForm((current) => ({ ...current, guestCount: Number(event.target.value) }))
+                }
+              />
+            </div>
+            <div className="luxury-workspace-number-grid">
+              <label htmlFor="luxury-budget">Budget</label>
+              <input
+                id="luxury-budget"
+                type="number"
+                min="250"
+                max="50000"
+                step="50"
+                value={luxuryWorkspaceForm.budget}
+                onChange={(event) => setLuxuryWorkspaceForm((current) => ({ ...current, budget: Number(event.target.value) }))}
+              />
+            </div>
+            <label className="luxury-workspace-toggle" htmlFor="luxury-dineout">
+              <input
+                id="luxury-dineout"
+                type="checkbox"
+                checked={luxuryWorkspaceForm.includeDineout}
+                onChange={(event) =>
+                  setLuxuryWorkspaceForm((current) => ({ ...current, includeDineout: event.target.checked }))
+                }
+              />
+              Dineout confirmation
+            </label>
+            <button type="submit" disabled={luxuryWorkspaceStatus === "loading"} aria-label="Compose luxury workspace rehearsal">
+              {luxuryWorkspaceStatus === "loading" ? <Loader2 aria-hidden="true" /> : <Sparkles aria-hidden="true" />}
+              Compose
+            </button>
+            {luxuryWorkspaceStatus === "error" ? <small role="status">Luxury workspace rehearsal unavailable.</small> : null}
+          </form>
+          <div
+            className="luxury-workspace-result"
+            data-status={
+              luxuryWorkspaceComposition?.decision === "ready_review_workspace"
+                ? "healthy"
+                : luxuryWorkspaceComposition?.decision === "manual_confirmation_gate"
+                  ? "watch"
+                  : "blocked"
+            }
+          >
+            <div>
+              <span>Workspace</span>
+              <strong>
+                {luxuryWorkspaceComposition
+                  ? `${luxuryWorkspaceComposition.decision.replace(/_/g, " ")} / ${luxuryWorkspaceComposition.readinessScore}`
+                  : "Awaiting rehearsal"}
+              </strong>
+            </div>
+            <p>
+              {luxuryWorkspaceComposition
+                ? `${luxuryWorkspaceComposition.selectedWorkspace?.id ?? "unknown"} / ${luxuryWorkspaceComposition.routePlan.length} steps / ${luxuryWorkspaceComposition.reviewArtifacts.length} artifacts`
+                : "Prepare a premium review workspace without placing Food orders, Instamart checkout, or Dineout bookings."}
+            </p>
+            {luxuryWorkspaceComposition ? <small>{luxuryWorkspaceComposition.nextAction}</small> : null}
           </div>
           <ul className="compact-status-list">
             {(luxuryExperience?.workspaces ?? []).slice(0, 5).map((workspaceItem) => (

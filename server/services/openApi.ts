@@ -1203,6 +1203,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/luxury-experience-workspace/compose": {
+        post: {
+          tags: ["Builder Access"],
+          summary: "Compose a Luxury Experience Workspace rehearsal without live Swiggy commerce",
+          responses: {
+            "200": {
+              description:
+                "Selected luxury mode and review workspace with route steps, confirmation gates, review artifacts, readiness decision, missing inputs, redacted telemetry, no-commerce assertion, and separate Food, Instamart, and Dineout approval boundaries",
+            },
+          },
+        },
+      },
       "/api/reviewer-artifact-vault": {
         get: {
           tags: ["Builder Access"],

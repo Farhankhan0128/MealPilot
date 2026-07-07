@@ -82,7 +82,7 @@ import { buildLaunchBundle } from "./services/launchBundle.js";
 import { buildSwiggyLiveSignalCalibration } from "./services/liveSignalCalibration.js";
 import { buildSwiggyLoadLab } from "./services/loadLab.js";
 import { buildSwiggyLocationTrust, selectSwiggyLocation } from "./services/locationTrust.js";
-import { buildLuxuryExperienceWorkspace } from "./services/luxuryExperienceWorkspace.js";
+import { buildLuxuryExperienceWorkspace, composeLuxuryExperienceWorkspace } from "./services/luxuryExperienceWorkspace.js";
 import {
   buildMcpGatewayStatus,
   callConfiguredSwiggyTool,
@@ -314,6 +314,15 @@ const guestCollaborationComposeSchema = z.object({
   channel: z.enum(["web_share", "slack_teams", "calendar_ics", "email_draft", "voice_brief"]),
   guestCount: z.number().int().min(1).max(100),
   city: z.enum(["Bengaluru", "Delhi NCR", "Mumbai"]),
+  includeDineout: z.boolean(),
+});
+
+const luxuryExperienceComposeSchema = z.object({
+  modeId: z.enum(["lean", "premium", "family", "social", "training"]),
+  workspaceId: z.string().trim().min(2).max(80),
+  city: z.enum(["Bengaluru", "Delhi NCR", "Mumbai"]),
+  guestCount: z.number().int().min(1).max(50),
+  budget: z.number().int().min(250).max(50000),
   includeDineout: z.boolean(),
 });
 
@@ -1566,6 +1575,11 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/luxury-experience-workspace", (_req, res) => {
     res.json({ luxuryExperience: buildLuxuryExperienceWorkspace() });
+  });
+
+  app.post("/api/luxury-experience-workspace/compose", (req, res) => {
+    const body = luxuryExperienceComposeSchema.parse(req.body);
+    res.json({ luxuryExperienceComposition: composeLuxuryExperienceWorkspace(body) });
   });
 
   app.get("/api/reviewer-artifact-vault", (_req, res) => {

@@ -1,4 +1,5 @@
 import type {
+  LuxuryExperienceComposition,
   LuxuryExperienceMode,
   LuxuryExperienceModePlan,
   LuxuryExperienceStatus,
@@ -361,6 +362,121 @@ const artifacts = [
     "external_gate",
   ),
 ];
+
+const commerceGateByServer: Record<SwiggyServer, string> = {
+  food: "Food placement stays behind a fresh get_food_cart read, COD method, Rs 1000 cap, address label, and explicit user approval.",
+  instamart:
+    "Instamart checkout stays behind a fresh get_cart read, address-scoped stock, Rs 99 minimum, substitutions, and explicit user approval.",
+  dineout:
+    "Dineout booking stays behind restaurant, date, time, party size, free-reservation state, and explicit user approval.",
+};
+
+const artifactByWorkspaceKind: Record<LuxuryReviewWorkspace["kind"], string[]> = {
+  reservation: ["Reservation review card", "Slot comparison brief", "Booking-status readback"],
+  food_cart: ["Food cart review sheet", "Coupon and COD audit", "Order-status recovery note"],
+  instamart_cart: ["Instamart basket sheet", "Substitution and minimum-order audit", "Checkout recovery note"],
+  combined_evening: ["Dineout anchor card", "Food reminder review", "Instamart host-prep basket"],
+  recovery: ["Failure bucket brief", "Authoritative status probe", "Support-safe report_error packet"],
+};
+
+function userFacingStateForStep(stepItem: LuxuryWorkspaceStep) {
+  if (stepItem.risk === "commercial") return "Locked until explicit confirmation and status-read recovery.";
+  if (stepItem.risk === "cart_mutation") return "Editable preview; mutation requires a reviewed cart or basket state.";
+  if (stepItem.risk === "support") return "Redacted support context only.";
+  if (stepItem.risk === "handoff") return "Reminder or workspace handoff; no scheduled Swiggy order.";
+  return "Read-only recommendation surface.";
+}
+
+function clampScore(score: number) {
+  return Math.max(35, Math.min(98, score));
+}
+
+export function composeLuxuryExperienceWorkspace(input: {
+  modeId: LuxuryExperienceMode;
+  workspaceId: string;
+  city: "Bengaluru" | "Delhi NCR" | "Mumbai";
+  guestCount: number;
+  budget: number;
+  includeDineout: boolean;
+}): LuxuryExperienceComposition {
+  const selectedMode = modes.find((item) => item.id === input.modeId);
+  const selectedWorkspace = workspaces.find((item) => item.id === input.workspaceId);
+  const missingInputs: string[] = [];
+
+  if (!selectedMode) missingInputs.push("known luxury mode");
+  if (!selectedWorkspace) missingInputs.push("known review workspace");
+  if (selectedWorkspace?.swiggyServers.includes("dineout") && !input.includeDineout) {
+    missingInputs.push("Dineout confirmation enabled");
+  }
+  if (input.budget < 900) missingInputs.push("premium budget review");
+  if (input.guestCount > 8 && selectedWorkspace?.swiggyServers.includes("dineout")) {
+    missingInputs.push("large-party Dineout availability check");
+  }
+
+  const routePlan =
+    selectedWorkspace?.steps.map((stepItem) => ({
+      sequence: stepItem.sequence,
+      label: stepItem.label,
+      server: stepItem.server,
+      tool: stepItem.tool,
+      risk: stepItem.risk,
+      surface: stepItem.surface,
+      guardrail: stepItem.guardrail,
+      userFacingState: userFacingStateForStep(stepItem),
+    })) ?? [];
+
+  const confirmationGates = selectedWorkspace
+    ? selectedWorkspace.swiggyServers.map((server) => commerceGateByServer[server])
+    : [
+        "Choose a known Luxury Experience workspace before preparing any Food, Instamart, or Dineout confirmation state.",
+      ];
+
+  const decision: LuxuryExperienceComposition["decision"] =
+    !selectedMode || !selectedWorkspace
+      ? "unknown_workspace"
+      : missingInputs.length > 0
+        ? "manual_confirmation_gate"
+        : "ready_review_workspace";
+
+  const readinessScore =
+    decision === "unknown_workspace"
+      ? 35
+      : clampScore(97 - missingInputs.length * 11 - (selectedWorkspace?.status === "ready" ? 0 : 9));
+
+  return {
+    generatedAt: new Date().toISOString(),
+    decision,
+    readinessScore,
+    city: input.city,
+    guestCount: input.guestCount,
+    budget: input.budget,
+    selectedMode,
+    selectedWorkspace,
+    routePlan,
+    confirmationGates,
+    reviewArtifacts: selectedWorkspace ? artifactByWorkspaceKind[selectedWorkspace.kind] : [],
+    missingInputs,
+    telemetry: [
+      { field: "workspace_id", value: selectedWorkspace?.id ?? input.workspaceId, redaction: "safe route id" },
+      { field: "mode_id", value: selectedMode?.id ?? input.modeId, redaction: "safe mode id" },
+      { field: "city", value: input.city, redaction: "city only" },
+      { field: "guest_count", value: String(input.guestCount), redaction: "aggregate count only" },
+      { field: "budget_band", value: input.budget < 1200 ? "lean" : input.budget < 3000 ? "premium" : "host", redaction: "banded rupee value" },
+    ],
+    assertions: [
+      "This composition is read-only and does not call place_food_order, checkout, or book_table.",
+      "Food, Instamart, and Dineout confirmations remain separate even in a combined luxury workspace.",
+      "Every commercial retry path requires an authoritative order, checkout, or booking status probe first.",
+      "Shared, voice, and support surfaces hide raw Swiggy ids, tokens, full addresses, phone, email, and payment data.",
+    ],
+    nextAction:
+      decision === "ready_review_workspace"
+        ? "Open the review workspace, refresh authoritative Swiggy reads, then ask for one explicit confirmation per server."
+        : decision === "manual_confirmation_gate"
+          ? `Resolve ${missingInputs.join(", ")} before unlocking any commercial Swiggy action.`
+          : "Select a known concierge mode and review workspace before preparing the luxury route.",
+  };
+}
 
 export function buildLuxuryExperienceWorkspace(): LuxuryExperienceWorkspace {
   const allTools = new Set<string>();

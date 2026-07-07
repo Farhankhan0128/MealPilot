@@ -139,6 +139,9 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/guest-collaboration-calendar"].get.summary).toContain("Guest Collaboration");
     expect(openApi.body.paths["/api/guest-collaboration-calendar/compose"].post.summary).toContain("guest collaboration");
     expect(openApi.body.paths["/api/luxury-experience-workspace"].get.summary).toContain("Luxury Experience Workspace");
+    expect(openApi.body.paths["/api/luxury-experience-workspace/compose"].post.summary).toContain(
+      "Luxury Experience Workspace",
+    );
     expect(openApi.body.paths["/api/reviewer-artifact-vault"].get.summary).toContain("Reviewer Artifact Vault");
     expect(openApi.body.paths["/api/visual-qa-center"].get.summary).toContain("Visual QA Center");
     expect(openApi.body.paths["/api/swiggy-docs-coverage"].get.summary).toContain("llms.txt");
@@ -3497,6 +3500,57 @@ describe("MealPilot API", () => {
     expect(workspace.safetyControls.some((control: string) => control.includes("raw Swiggy ids"))).toBe(true);
     expect(workspace.externalGates.some((gate: string) => gate.includes("staging and production credentials"))).toBe(true);
     expect(workspace.externalGates.some((gate: string) => gate.includes("hosted iframe"))).toBe(true);
+  });
+
+  it("composes luxury workspace rehearsals with explicit Swiggy confirmation gates", async () => {
+    const { app } = createMealPilotServer();
+
+    const readyResponse = await request(app)
+      .post("/api/luxury-experience-workspace/compose")
+      .send({
+        modeId: "premium",
+        workspaceId: "reservation_atelier",
+        city: "Bengaluru",
+        guestCount: 2,
+        budget: 2400,
+        includeDineout: true,
+      })
+      .expect(200);
+    const ready = readyResponse.body.luxuryExperienceComposition;
+
+    expect(ready.decision).toBe("ready_review_workspace");
+    expect(ready.readinessScore).toBeGreaterThanOrEqual(90);
+    expect(ready.selectedMode.id).toBe("premium");
+    expect(ready.selectedWorkspace.id).toBe("reservation_atelier");
+    expect(ready.routePlan.some((step: { tool?: string }) => step.tool === "book_table")).toBe(true);
+    expect(ready.confirmationGates.some((gate: string) => gate.includes("Dineout booking"))).toBe(true);
+    expect(ready.reviewArtifacts).toEqual(expect.arrayContaining(["Reservation review card"]));
+    expect(ready.assertions.some((assertion: string) => assertion.includes("does not call place_food_order"))).toBe(true);
+
+    const manualResponse = await request(app)
+      .post("/api/luxury-experience-workspace/compose")
+      .send({
+        modeId: "social",
+        workspaceId: "combined_evening_suite",
+        city: "Mumbai",
+        guestCount: 10,
+        budget: 850,
+        includeDineout: false,
+      })
+      .expect(200);
+    const manual = manualResponse.body.luxuryExperienceComposition;
+
+    expect(manual.decision).toBe("manual_confirmation_gate");
+    expect(manual.missingInputs).toEqual(
+      expect.arrayContaining([
+        "Dineout confirmation enabled",
+        "premium budget review",
+        "large-party Dineout availability check",
+      ]),
+    );
+    expect(manual.confirmationGates.some((gate: string) => gate.includes("Food placement"))).toBe(true);
+    expect(manual.confirmationGates.some((gate: string) => gate.includes("Instamart checkout"))).toBe(true);
+    expect(manual.nextAction).toContain("Resolve");
   });
 
   it("returns a reviewer artifact vault for Swiggy access submission", async () => {
