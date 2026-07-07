@@ -213,6 +213,17 @@ const targetGroups = [
         "artifacts/visual-qa/module-witness-card.png",
       ),
       target(
+        "navigation_witness_card",
+        "Navigation Witness card",
+        "/",
+        ".navigation-witness-card",
+        "desktop",
+        1280,
+        900,
+        "Navigation Witness shows header, docs nav, footer resources, legal links, CTA matches, and manual gates.",
+        "artifacts/visual-qa/navigation-witness-card.png",
+      ),
+      target(
         "capability_traceability_card",
         "Capability Traceability card",
         "/",

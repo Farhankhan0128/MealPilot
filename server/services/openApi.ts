@@ -497,6 +497,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-builders-navigation-witness": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Builders Navigation Witness for header, docs nav, and footer proof",
+          responses: {
+            "200": {
+              description:
+                "Global header, docs subnav, footer program, footer resources, and footer legal links witnessed with normalized URLs, proof links, CTA live matches, manual legal/email gates, owners, and next actions",
+            },
+          },
+        },
+      },
       "/api/swiggy-builders-journey-gates": {
         get: {
           tags: ["Builder Access"],

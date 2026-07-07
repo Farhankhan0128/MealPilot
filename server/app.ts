@@ -33,6 +33,7 @@ import { buildSwiggyBuildersLaunchStoryCenter } from "./services/buildersLaunchS
 import { buildSwiggyBuildersLiveSourceResilienceCenter } from "./services/liveSourceResilienceCenter.js";
 import { buildSwiggyBuildersModuleIntelligenceCenter } from "./services/moduleIntelligence.js";
 import { buildSwiggyBuildersModuleWitness } from "./services/buildersModuleWitness.js";
+import { buildSwiggyBuildersNavigationWitness } from "./services/buildersNavigationWitness.js";
 import { buildSwiggyBuildersReviewDecisionCenter } from "./services/reviewDecisionCenter.js";
 import { buildSwiggyBuildersSourceEvolutionCenter } from "./services/sourceEvolutionCenter.js";
 import { buildSwiggySourceFreezeDiff } from "./services/sourceFreezeDiff.js";
@@ -1366,6 +1367,18 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
     asyncRoute(async (_req, res) => {
       res.json({
         moduleWitness: await buildSwiggyBuildersModuleWitness({
+          config,
+          latestPlan: store.getAllPlans().at(-1),
+        }),
+      });
+    }),
+  );
+
+  app.get(
+    "/api/swiggy-builders-navigation-witness",
+    asyncRoute(async (_req, res) => {
+      res.json({
+        navigationWitness: await buildSwiggyBuildersNavigationWitness({
           config,
           latestPlan: store.getAllPlans().at(-1),
         }),

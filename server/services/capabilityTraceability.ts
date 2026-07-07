@@ -299,7 +299,7 @@ export function buildSwiggyCapabilityTraceability(config: ServerConfig) {
       {
         command: "MEALPILOT_URL=http://localhost:8787 npm run verify:visual",
         proves: "Keeps Launch Center and reviewer cards visually safe after traceability links are added to handoff artifacts.",
-        expectedSignal: "71 screenshot targets return no overflow issues",
+        expectedSignal: "72 screenshot targets return no overflow issues",
       },
     ],
     assertions: [

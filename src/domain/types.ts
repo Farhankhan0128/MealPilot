@@ -988,6 +988,59 @@ export interface SwiggyBuildersModuleWitness {
   externalGates: string[];
 }
 
+export type SwiggyBuildersNavigationWitnessKind = "header" | "docs_nav" | "footer_program" | "footer_resource" | "footer_legal";
+export type SwiggyBuildersNavigationWitnessStatus = "verified" | "manual_gate" | "watch" | "blocked";
+
+export interface SwiggyBuildersNavigationWitnessRow {
+  id: string;
+  label: string;
+  url: string;
+  normalizedUrl: string;
+  kind: SwiggyBuildersNavigationWitnessKind;
+  location: SwiggyWebsiteNavLink["location"];
+  status: SwiggyBuildersNavigationWitnessStatus;
+  sourceState: "atlas_mapped" | "cta_live_match" | "legal_manual_gate" | "mail_manual_gate";
+  owner: "MealPilot" | "Operator" | "Swiggy" | "Joint";
+  mealPilotCoverage: string;
+  evidence: string;
+  nextAction: string;
+  proofLinks: string[];
+}
+
+export interface SwiggyBuildersNavigationWitnessGroup {
+  id: string;
+  label: string;
+  rows: number;
+  verified: number;
+  manualGates: number;
+  watch: number;
+  blocked: number;
+  proofLinks: string[];
+}
+
+export interface SwiggyBuildersNavigationWitness {
+  generatedAt: string;
+  score: number;
+  decision: "navigation_ready" | "navigation_watch" | "navigation_blocked";
+  officialSources: string[];
+  totals: {
+    rows: number;
+    verified: number;
+    manualGates: number;
+    watch: number;
+    blocked: number;
+    headerLinks: number;
+    docsLinks: number;
+    footerLinks: number;
+    proofLinks: number;
+  };
+  rows: SwiggyBuildersNavigationWitnessRow[];
+  groups: SwiggyBuildersNavigationWitnessGroup[];
+  commands: Array<{ id: string; command: string; proves: string; expectedSignal: string }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type SwiggyCapabilityTraceabilityOwner = "MealPilot" | "Operator" | "Swiggy" | "Joint";
 export type SwiggyCapabilityTraceabilityKind =
   | "official_page"

@@ -146,6 +146,11 @@ assert(
   "OpenAPI Builders module witness contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-builders-navigation-witness"]?.get?.summary?.includes("Navigation Witness") &&
+    openApi.paths["/api/swiggy-builders-navigation-witness"]?.get?.responses?.["200"]?.description?.includes("footer legal"),
+  "OpenAPI Builders navigation witness contract is missing",
+);
+assert(
   openApi.paths["/api/swiggy-capability-traceability"]?.get?.summary?.includes("capability traceability") &&
     openApi.paths["/api/swiggy-capability-traceability"]?.get?.responses?.["200"]?.description?.includes("lifecycle gates"),
   "OpenAPI Swiggy capability traceability contract is missing",
@@ -823,6 +828,33 @@ assert(
   "Builders module witness commands, summaries, or gates are missing",
 );
 
+const navigationWitness = await request("/api/swiggy-builders-navigation-witness");
+assert(navigationWitness.navigationWitness.score >= 90, "Builders navigation witness score is below target");
+assert(
+  ["navigation_ready", "navigation_watch"].includes(navigationWitness.navigationWitness.decision) &&
+    navigationWitness.navigationWitness.totals.rows >= 20 &&
+    navigationWitness.navigationWitness.totals.headerLinks === 7 &&
+    navigationWitness.navigationWitness.totals.docsLinks === 5 &&
+    navigationWitness.navigationWitness.totals.footerLinks >= 8 &&
+    navigationWitness.navigationWitness.totals.blocked === 0,
+  "Builders navigation witness totals are incomplete",
+);
+assert(
+  ["global_header_home", "docs_subnav_docs_reference", "footer_resources_llms", "footer_legal_privacy"].every((id) =>
+    navigationWitness.navigationWitness.rows.some((row) => row.id === id),
+  ),
+  "Builders navigation witness key rows are missing",
+);
+assert(
+  navigationWitness.navigationWitness.rows.some((row) => row.id === "footer_legal_privacy" && row.status === "manual_gate") &&
+    navigationWitness.navigationWitness.groups.some((group) => group.id === "footer_legal" && group.manualGates >= 2) &&
+    navigationWitness.navigationWitness.commands.some((command) =>
+      command.command.includes("/api/swiggy-builders-navigation-witness"),
+    ) &&
+    navigationWitness.navigationWitness.assertions.some((assertion) => assertion.includes("global header")),
+  "Builders navigation witness gates or commands are missing",
+);
+
 const capabilityTraceability = await request("/api/swiggy-capability-traceability");
 assert(capabilityTraceability.capabilityTraceability.score >= 88, "capability traceability score is below target");
 assert(
@@ -937,7 +969,7 @@ assert(
     buildersCompletion.buildersCompletion.totals.mcpServers === 3 &&
     buildersCompletion.buildersCompletion.totals.mcpTools === 35 &&
     buildersCompletion.buildersCompletion.totals.docsPages >= 69 &&
-    buildersCompletion.buildersCompletion.totals.visualTargets === 71 &&
+    buildersCompletion.buildersCompletion.totals.visualTargets === 72 &&
     buildersCompletion.buildersCompletion.totals.reviewerArtifacts >= 120 &&
     buildersCompletion.buildersCompletion.totals.packetFiles >= 4,
   "Builders completion ledger totals are incomplete",
@@ -1012,7 +1044,7 @@ assert(
     coverageReceipt.coverageReceipt.totals.llmsPages === 69 &&
     coverageReceipt.coverageReceipt.totals.referenceTools === 35 &&
     coverageReceipt.coverageReceipt.totals.matchedTools === 35 &&
-    coverageReceipt.coverageReceipt.totals.visualTargets === 71 &&
+    coverageReceipt.coverageReceipt.totals.visualTargets === 72 &&
     coverageReceipt.coverageReceipt.totals.unsafeLinks === 0 &&
     coverageReceipt.coverageReceipt.totals.missingRows === 0,
   "Builders coverage receipt totals are incomplete",
@@ -4013,8 +4045,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 71, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 71, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 72, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 72, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -4282,6 +4314,12 @@ assert(
     group.targets.some((target) => target.id === "module_witness_card" && target.selector === ".module-witness-card"),
   ),
   "visual QA Module Witness target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some((target) => target.id === "navigation_witness_card" && target.selector === ".navigation-witness-card"),
+  ),
+  "visual QA Navigation Witness target is missing",
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
@@ -8343,7 +8381,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 71, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 72, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -8357,7 +8395,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("71")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("72")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -8948,6 +8986,9 @@ console.log(
       moduleWitnessScore: moduleWitness.moduleWitness.score,
       moduleWitnessModules: moduleWitness.moduleWitness.totals.modules,
       moduleWitnessFallback: moduleWitness.moduleWitness.totals.fallback,
+      navigationWitnessScore: navigationWitness.navigationWitness.score,
+      navigationWitnessRows: navigationWitness.navigationWitness.totals.rows,
+      navigationWitnessManualGates: navigationWitness.navigationWitness.totals.manualGates,
       capabilityTraceabilityScore: capabilityTraceability.capabilityTraceability.score,
       capabilityTraceabilityRows: capabilityTraceability.capabilityTraceability.totals.rows,
       capabilityTraceabilityCtas: capabilityTraceability.capabilityTraceability.totals.officialCtas,
