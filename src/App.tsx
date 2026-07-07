@@ -135,6 +135,7 @@ import {
   fetchSwiggyCapabilityTraceability,
   fetchSwiggyHomepageSignalCoverage,
   fetchSwiggyBuildersCompletionLedger,
+  fetchSwiggyBuildersCoverageReceipt,
   fetchSwiggyBuildersJourneyGates,
   fetchSwiggyBuildersHomepageExperience,
   fetchSwiggyBuildersSourceEvolution,
@@ -388,6 +389,7 @@ import type {
   SwiggySourceFreezeDiffMode,
   SwiggySourceFreezeDiffReport,
   SwiggySourceAvailabilityAudit,
+  SwiggyBuildersCoverageReceipt,
   SwiggySourceIntelligenceReport,
   SwiggyStagingCredentialDrillReport,
   SwiggyStagingSeedSmokeCenter,
@@ -601,6 +603,7 @@ function App() {
   const [homepageSignalCoverage, setHomepageSignalCoverage] =
     useState<SwiggyHomepageSignalCoverageBoard | null>(null);
   const [buildersCompletion, setBuildersCompletion] = useState<SwiggyBuildersCompletionLedger | null>(null);
+  const [coverageReceipt, setCoverageReceipt] = useState<SwiggyBuildersCoverageReceipt | null>(null);
   const [journeyGates, setJourneyGates] = useState<SwiggyBuildersJourneyGateCenter | null>(null);
   const [homepageExperience, setHomepageExperience] = useState<SwiggyBuildersHomepageExperienceCenter | null>(null);
   const [sourceEvolution, setSourceEvolution] = useState<SwiggyBuildersSourceEvolutionCenter | null>(null);
@@ -834,6 +837,7 @@ function App() {
       capabilityTraceabilityResponse,
       homepageSignalCoverageResponse,
       buildersCompletionResponse,
+      coverageReceiptResponse,
       journeyGatesResponse,
       homepageExperienceResponse,
       sourceEvolutionResponse,
@@ -965,6 +969,7 @@ function App() {
       fetchSwiggyCapabilityTraceability(),
       fetchSwiggyHomepageSignalCoverage(),
       fetchSwiggyBuildersCompletionLedger(),
+      fetchSwiggyBuildersCoverageReceipt(),
       fetchSwiggyBuildersJourneyGates(),
       fetchSwiggyBuildersHomepageExperience(),
       fetchSwiggyBuildersSourceEvolution(),
@@ -1097,6 +1102,7 @@ function App() {
     setCapabilityTraceability(capabilityTraceabilityResponse.capabilityTraceability);
     setHomepageSignalCoverage(homepageSignalCoverageResponse.homepageSignalCoverage);
     setBuildersCompletion(buildersCompletionResponse.buildersCompletion);
+    setCoverageReceipt(coverageReceiptResponse.coverageReceipt);
     setJourneyGates(journeyGatesResponse.journeyGates);
     setHomepageExperience(homepageExperienceResponse.homepageExperience);
     setSourceEvolution(sourceEvolutionResponse.sourceEvolution);
@@ -1232,6 +1238,7 @@ function App() {
       capabilityTraceabilityResponse,
       homepageSignalCoverageResponse,
       buildersCompletionResponse,
+      coverageReceiptResponse,
       journeyGatesResponse,
       homepageExperienceResponse,
       sourceEvolutionResponse,
@@ -1360,6 +1367,7 @@ function App() {
       fetchSwiggyCapabilityTraceability(),
       fetchSwiggyHomepageSignalCoverage(),
       fetchSwiggyBuildersCompletionLedger(),
+      fetchSwiggyBuildersCoverageReceipt(),
       fetchSwiggyBuildersJourneyGates(),
       fetchSwiggyBuildersHomepageExperience(),
       fetchSwiggyBuildersSourceEvolution(),
@@ -1488,6 +1496,7 @@ function App() {
     setCapabilityTraceability(capabilityTraceabilityResponse.capabilityTraceability);
     setHomepageSignalCoverage(homepageSignalCoverageResponse.homepageSignalCoverage);
     setBuildersCompletion(buildersCompletionResponse.buildersCompletion);
+    setCoverageReceipt(coverageReceiptResponse.coverageReceipt);
     setJourneyGates(journeyGatesResponse.journeyGates);
     setHomepageExperience(homepageExperienceResponse.homepageExperience);
     setSourceEvolution(sourceEvolutionResponse.sourceEvolution);
@@ -2191,6 +2200,7 @@ function App() {
                 capabilityTraceability={capabilityTraceability}
                 homepageSignalCoverage={homepageSignalCoverage}
                 buildersCompletion={buildersCompletion}
+                coverageReceipt={coverageReceipt}
                 journeyGates={journeyGates}
                 homepageExperience={homepageExperience}
                 sourceEvolution={sourceEvolution}
@@ -2811,6 +2821,7 @@ function LaunchCenterPanel({
   capabilityTraceability,
   homepageSignalCoverage,
   buildersCompletion,
+  coverageReceipt,
   journeyGates,
   homepageExperience,
   sourceEvolution,
@@ -2914,6 +2925,7 @@ function LaunchCenterPanel({
   capabilityTraceability: SwiggyCapabilityTraceabilityMatrix | null;
   homepageSignalCoverage: SwiggyHomepageSignalCoverageBoard | null;
   buildersCompletion: SwiggyBuildersCompletionLedger | null;
+  coverageReceipt: SwiggyBuildersCoverageReceipt | null;
   journeyGates: SwiggyBuildersJourneyGateCenter | null;
   homepageExperience: SwiggyBuildersHomepageExperienceCenter | null;
   sourceEvolution: SwiggyBuildersSourceEvolutionCenter | null;
@@ -4903,6 +4915,64 @@ function LaunchCenterPanel({
             </a>
             <a href="/api/builder-packet-export" target="_blank" rel="noreferrer">
               Packet
+            </a>
+          </div>
+        </article>
+
+        <article className="coverage-receipt-card">
+          <div className="mini-heading">
+            <ScrollText aria-hidden="true" />
+            <strong>Coverage Receipt</strong>
+          </div>
+          <span>
+            {coverageReceipt
+              ? `${coverageReceipt.score}/100, ${coverageReceipt.decision.replace(/_/g, " ")}`
+              : "Composing every page, module, CTA, docs, manifest, tool, visual, and gate into one receipt"}
+          </span>
+          <div className="coverage-receipt-grid">
+            <div>
+              <strong>{coverageReceipt?.totals.pages ?? 0}</strong>
+              <span>Pages</span>
+            </div>
+            <div>
+              <strong>{coverageReceipt?.totals.ctaTargets ?? 0}</strong>
+              <span>CTAs</span>
+            </div>
+            <div>
+              <strong>{coverageReceipt?.totals.referenceTools ?? 0}</strong>
+              <span>Tools</span>
+            </div>
+            <div>
+              <strong>{coverageReceipt?.totals.missingRows ?? 0}</strong>
+              <span>Missing</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(coverageReceipt?.rows ?? []).slice(0, 5).map((row) => (
+              <li
+                key={row.id}
+                data-status={
+                  row.status === "covered"
+                    ? "healthy"
+                    : row.status === "blocked"
+                      ? "blocked"
+                      : "watch"
+                }
+              >
+                <span>{row.label}</span>
+                <strong>{row.status.replace("_", " ")}</strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-intelligence-actions" aria-label="Coverage receipt links">
+            <a href="/api/swiggy-builders-coverage-receipt" target="_blank" rel="noreferrer">
+              Receipt API
+            </a>
+            <a href="/api/swiggy-builders-page-mesh" target="_blank" rel="noreferrer">
+              Page mesh
+            </a>
+            <a href="/api/swiggy-tool-parity-auditor" target="_blank" rel="noreferrer">
+              Tool parity
             </a>
           </div>
         </article>

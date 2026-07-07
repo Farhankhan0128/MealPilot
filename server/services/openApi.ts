@@ -418,6 +418,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-builders-coverage-receipt": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Builders Coverage Receipt for every public page, CTA, docs, llms, and tool surface",
+          responses: {
+            "200": {
+              description:
+                "Compact receipt composing Website Atlas, Page Mesh, CTA Live Audit, Docs Coverage, Source Availability, Tool Parity, Visual QA, proof links, commands, coverage decision, missing rows, fallback rows, and external Swiggy gates",
+            },
+          },
+        },
+      },
       "/api/swiggy-website-atlas": {
         get: {
           tags: ["Builder Access"],

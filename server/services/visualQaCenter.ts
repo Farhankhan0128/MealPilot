@@ -235,6 +235,17 @@ const targetGroups = [
         "artifacts/visual-qa/completion-ledger-card.png",
       ),
       target(
+        "coverage_receipt_card",
+        "Coverage Receipt card",
+        "/",
+        ".coverage-receipt-card",
+        "desktop",
+        1280,
+        900,
+        "Coverage Receipt shows public page, module, CTA, nav, docs, llms, tool, visual, fallback, and external-gate coverage in one receipt.",
+        "artifacts/visual-qa/coverage-receipt-card.png",
+      ),
+      target(
         "journey_gates_card",
         "Journey Gates card",
         "/",

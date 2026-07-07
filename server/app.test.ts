@@ -6,6 +6,7 @@ import { describe, expect, it, vi } from "vitest";
 import { createMealPilotServer } from "./app.js";
 import { buildSwiggyBuildersPageMeshAuditor } from "./services/buildersPageMeshAuditor.js";
 import { buildSwiggyBuildersSiteParityAuditor } from "./services/buildersSiteParityAuditor.js";
+import { buildSwiggyBuildersCoverageReceipt } from "./services/buildersCoverageReceipt.js";
 import { buildSwiggySourceAvailabilityAudit } from "./services/sourceAvailabilityAudit.js";
 import { buildSwiggyCtaLiveAuditor } from "./services/ctaLiveAuditor.js";
 import { buildSwiggyLlmsManifestVerifier, rehearseSwiggyLlmsManifest } from "./services/llmsManifestVerifier.js";
@@ -60,6 +61,8 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/swiggy-homepage-signal-coverage"].get.responses["200"].description).toContain("header/footer");
     expect(openApi.body.paths["/api/swiggy-builders-completion-ledger"].get.summary).toContain("Completion Ledger");
     expect(openApi.body.paths["/api/swiggy-builders-completion-ledger"].get.responses["200"].description).toContain("developer and enterprise");
+    expect(openApi.body.paths["/api/swiggy-builders-coverage-receipt"].get.summary).toContain("Coverage Receipt");
+    expect(openApi.body.paths["/api/swiggy-builders-coverage-receipt"].get.responses["200"].description).toContain("missing rows");
     expect(openApi.body.paths["/api/swiggy-website-atlas"].get.summary).toContain("website header");
     expect(openApi.body.paths["/api/swiggy-builders-site-parity"].get.summary).toContain("homepage parity");
     expect(openApi.body.paths["/api/swiggy-builders-page-mesh"].get.summary).toContain("public page mesh");
@@ -1852,7 +1855,7 @@ describe("MealPilot API", () => {
     expect(packet.totals.formFields).toBeGreaterThanOrEqual(10);
     expect(packet.totals.requiredAttachments).toBeGreaterThanOrEqual(10);
     expect(packet.totals.launchArtifacts).toBeGreaterThanOrEqual(50);
-    expect(packet.totals.visualTargets).toBe(69);
+    expect(packet.totals.visualTargets).toBe(70);
     expect(packet.files.map((file: { id: string }) => file.id)).toEqual(
       expect.arrayContaining(["packet_json", "packet_markdown", "visual_report", "production_summary"]),
     );
@@ -1864,7 +1867,7 @@ describe("MealPilot API", () => {
     ).toBe(true);
     expect(
       packet.commands.some(
-        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("69"),
+        (command: { id: string; proves: string }) => command.id === "visual_capture" && command.proves.includes("70"),
       ),
     ).toBe(true);
     expect(packet.copyBlocks.formFields).toContain("Redirect URI(s)");
@@ -4449,8 +4452,8 @@ describe("MealPilot API", () => {
     const visualQa = response.body.visualQa;
 
     expect(visualQa.score).toBe(100);
-    expect(visualQa.totalTargets).toBe(69);
-    expect(visualQa.readyTargets).toBe(69);
+    expect(visualQa.totalTargets).toBe(70);
+    expect(visualQa.readyTargets).toBe(70);
     expect(visualQa.totalRules).toBe(7);
     expect(visualQa.readyRules).toBe(7);
     expect(visualQa.totalCommands).toBe(5);
@@ -4534,6 +4537,16 @@ describe("MealPilot API", () => {
           (target) =>
             target.id === "completion_ledger_card" &&
             target.selector === ".completion-ledger-card" &&
+            target.viewport === "desktop",
+        ),
+      ),
+    ).toBe(true);
+    expect(
+      visualQa.targetGroups.some((group: { targets: Array<{ id: string; selector: string; viewport: string }> }) =>
+        group.targets.some(
+          (target) =>
+            target.id === "coverage_receipt_card" &&
+            target.selector === ".coverage-receipt-card" &&
             target.viewport === "desktop",
         ),
       ),
@@ -5307,7 +5320,7 @@ describe("MealPilot API", () => {
     expect(ledger.totals.mcpServers).toBe(3);
     expect(ledger.totals.mcpTools).toBe(35);
     expect(ledger.totals.docsPages).toBeGreaterThanOrEqual(69);
-    expect(ledger.totals.visualTargets).toBe(69);
+    expect(ledger.totals.visualTargets).toBe(70);
     expect(ledger.totals.reviewerArtifacts).toBeGreaterThanOrEqual(120);
     expect(ledger.groups.map((group: { id: string }) => group.id)).toEqual(
       expect.arrayContaining(["source_coverage", "product_depth", "mcp_integration", "operations", "handoff"]),
@@ -5542,6 +5555,73 @@ describe("MealPilot API", () => {
     const { app } = createMealPilotServer();
     const response = await request(app).get("/api/swiggy-source-availability-audit").expect(200);
     expect(response.body.sourceAvailability.totals.sources).toBeGreaterThanOrEqual(15);
+  });
+
+  it("returns Swiggy Builders Coverage Receipt across public pages, CTAs, docs, tools, and visual proof", async () => {
+    const { config, app } = createMealPilotServer();
+    const glitchHtml = `
+      <html><title>Order food online</title><body>
+        <div class="GenericError__title">We'll be back shortly</div>
+        <div>We are fixing a temporary glitch. Sorry for the inconvenience.</div>
+      </body></html>
+    `;
+    const receipt = await buildSwiggyBuildersCoverageReceipt({
+      config,
+      fetchPage: async () => ({
+        ok: true,
+        statusCode: 200,
+        durationMs: 7,
+        text: glitchHtml,
+      }),
+      probeTarget: async () => ({
+        ok: true,
+        statusCode: 200,
+        durationMs: 5,
+      }),
+      fetchManifest: async () => ({
+        ok: false,
+        statusCode: 503,
+        durationMs: 5,
+        error: "fixture manifest unavailable",
+      }),
+    });
+
+    expect(receipt.score).toBeGreaterThanOrEqual(85);
+    expect(receipt.decision).toBe("coverage_watch");
+    expect(receipt.totals.pages).toBeGreaterThanOrEqual(7);
+    expect(receipt.totals.modules).toBeGreaterThanOrEqual(38);
+    expect(receipt.totals.ctas).toBeGreaterThanOrEqual(11);
+    expect(receipt.totals.ctaTargets).toBeGreaterThanOrEqual(31);
+    expect(receipt.totals.headerLinks).toBeGreaterThanOrEqual(7);
+    expect(receipt.totals.docsLinks).toBeGreaterThanOrEqual(5);
+    expect(receipt.totals.footerLinks).toBeGreaterThanOrEqual(8);
+    expect(receipt.totals.llmsPages).toBe(69);
+    expect(receipt.totals.referenceTools).toBe(35);
+    expect(receipt.totals.matchedTools).toBe(35);
+    expect(receipt.totals.visualTargets).toBe(70);
+    expect(receipt.totals.unsafeLinks).toBe(0);
+    expect(receipt.totals.missingRows).toBe(0);
+    expect(receipt.rows.map((row: { id: string }) => row.id)).toEqual(
+      expect.arrayContaining([
+        "public_pages",
+        "modules",
+        "ctas",
+        "global_header",
+        "docs_nav",
+        "footer_resources",
+        "llms_manifest",
+        "reference_tools",
+        "visual_receipt",
+        "external_gates",
+      ]),
+    );
+    expect(receipt.rows.some((row: { id: string; status: string }) => row.id === "public_pages" && row.status === "fallback")).toBe(true);
+    expect(receipt.commands.some((command: { command: string }) => command.command.includes("/api/swiggy-builders-coverage-receipt"))).toBe(true);
+    expect(receipt.assertions.some((assertion: string) => assertion.includes("second source of truth"))).toBe(true);
+    expect(receipt.externalGates.some((gate: string) => gate.includes("Final access submission"))).toBe(true);
+
+    const response = await request(app).get("/api/swiggy-builders-coverage-receipt").expect(200);
+    expect(response.body.coverageReceipt.totals.referenceTools).toBe(35);
   });
 
   it("returns Swiggy Builders Review Decision for approval readiness", async () => {

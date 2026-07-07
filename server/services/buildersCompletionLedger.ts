@@ -404,7 +404,7 @@ export function buildSwiggyBuildersCompletionLedger(options: {
       {
         command: "curl -s http://localhost:8787/api/swiggy-builders-completion-ledger",
         proves: "Reads the full objective-to-evidence completion ledger.",
-        expectedSignal: "totals.requirements === 12 && totals.mcpTools === 35 && totals.visualTargets >= 69",
+        expectedSignal: "totals.requirements === 12 && totals.mcpTools === 35 && totals.visualTargets >= 70",
       },
       {
         command: "npm run verify:production",
@@ -414,7 +414,7 @@ export function buildSwiggyBuildersCompletionLedger(options: {
       {
         command: "MEALPILOT_URL=http://localhost:8787 npm run verify:visual",
         proves: "Captures the Completion Ledger card along with every reviewer surface.",
-        expectedSignal: "69 screenshot targets return no overflow issues",
+        expectedSignal: "70 screenshot targets return no overflow issues",
       },
     ],
     assertions: [

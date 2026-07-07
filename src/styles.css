@@ -1158,6 +1158,10 @@ select:focus {
   grid-column: span 2;
 }
 
+.coverage-receipt-card {
+  grid-column: span 2;
+}
+
 .homepage-experience-card {
   grid-column: span 2;
 }
@@ -1180,7 +1184,8 @@ select:focus {
 
 .capability-traceability-grid,
 .homepage-signal-grid,
-.completion-ledger-grid {
+.completion-ledger-grid,
+.coverage-receipt-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 8px;
@@ -1188,7 +1193,8 @@ select:focus {
 
 .capability-traceability-grid div,
 .homepage-signal-grid div,
-.completion-ledger-grid div {
+.completion-ledger-grid div,
+.coverage-receipt-grid div {
   display: grid;
   gap: 3px;
   min-height: 64px;
@@ -1199,13 +1205,15 @@ select:focus {
 
 .capability-traceability-grid strong,
 .homepage-signal-grid strong,
-.completion-ledger-grid strong {
+.completion-ledger-grid strong,
+.coverage-receipt-grid strong {
   color: var(--green-dark);
 }
 
 .capability-traceability-grid span,
 .homepage-signal-grid span,
-.completion-ledger-grid span {
+.completion-ledger-grid span,
+.coverage-receipt-grid span {
   color: var(--muted);
   font-size: 0.75rem;
 }
@@ -3852,6 +3860,10 @@ select:focus {
     grid-column: auto;
   }
 
+  .coverage-receipt-card {
+    grid-column: auto;
+  }
+
   .homepage-experience-card {
     grid-column: auto;
   }
@@ -3873,6 +3885,10 @@ select:focus {
   }
 
   .journey-gates-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .coverage-receipt-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -4011,6 +4027,10 @@ select:focus {
   }
 
   .homepage-experience-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .coverage-receipt-grid {
     grid-template-columns: 1fr;
   }
 

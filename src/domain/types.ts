@@ -1318,6 +1318,54 @@ export interface SwiggySourceAvailabilityAudit {
   externalGates: string[];
 }
 
+export type SwiggyBuildersCoverageReceiptDecision = "complete_coverage" | "coverage_watch" | "blocked_drift";
+export type SwiggyBuildersCoverageReceiptStatus = "covered" | "fallback" | "manual_gate" | "watch" | "blocked";
+
+export interface SwiggyBuildersCoverageReceiptRow {
+  id: string;
+  label: string;
+  sourceSignal: string;
+  expected: string;
+  actual: string;
+  status: SwiggyBuildersCoverageReceiptStatus;
+  coveragePercent: number;
+  evidence: string;
+  proofLinks: string[];
+  nextAction: string;
+}
+
+export interface SwiggyBuildersCoverageReceipt {
+  generatedAt: string;
+  decision: SwiggyBuildersCoverageReceiptDecision;
+  score: number;
+  officialSources: string[];
+  totals: {
+    pages: number;
+    modules: number;
+    matchedModules: number;
+    ctas: number;
+    ctaTargets: number;
+    reachableCtas: number;
+    manualCtaGates: number;
+    headerLinks: number;
+    docsLinks: number;
+    footerLinks: number;
+    llmsPages: number;
+    referenceTools: number;
+    matchedTools: number;
+    visualTargets: number;
+    unsafeLinks: number;
+    fallbackPages: number;
+    blockedSources: number;
+    missingRows: number;
+    proofLinks: number;
+  };
+  rows: SwiggyBuildersCoverageReceiptRow[];
+  commands: Array<{ id: string; command: string; proves: string; expectedSignal: string }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type SwiggyBuildersReviewDecisionStatus = "ready" | "operator_input" | "swiggy_gate" | "watch";
 export type SwiggyBuildersReviewDecisionOwner = "MealPilot" | "Operator" | "Swiggy" | "Joint";
 export type SwiggyBuildersReviewDecisionRecommendation =

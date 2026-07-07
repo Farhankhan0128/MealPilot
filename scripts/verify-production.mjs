@@ -156,6 +156,11 @@ assert(
   "OpenAPI Swiggy Builders completion ledger contract is missing",
 );
 assert(
+  openApi.paths["/api/swiggy-builders-coverage-receipt"]?.get?.summary?.includes("Coverage Receipt") &&
+    openApi.paths["/api/swiggy-builders-coverage-receipt"]?.get?.responses?.["200"]?.description?.includes("missing rows"),
+  "OpenAPI Swiggy Builders coverage receipt contract is missing",
+);
+assert(
   openApi.paths["/api/swiggy-builders-journey-gates"]?.get?.summary?.includes("Journey Gate") &&
     openApi.paths["/api/swiggy-builders-journey-gates"]?.get?.responses?.["200"]?.description?.includes("Quick Review"),
   "OpenAPI Builders journey gates contract is missing",
@@ -892,7 +897,7 @@ assert(
     buildersCompletion.buildersCompletion.totals.mcpServers === 3 &&
     buildersCompletion.buildersCompletion.totals.mcpTools === 35 &&
     buildersCompletion.buildersCompletion.totals.docsPages >= 69 &&
-    buildersCompletion.buildersCompletion.totals.visualTargets === 69 &&
+    buildersCompletion.buildersCompletion.totals.visualTargets === 70 &&
     buildersCompletion.buildersCompletion.totals.reviewerArtifacts >= 120 &&
     buildersCompletion.buildersCompletion.totals.packetFiles >= 4,
   "Builders completion ledger totals are incomplete",
@@ -951,6 +956,53 @@ assert(
       gate.includes("Swiggy must grant client credentials"),
     ),
   "Builders completion ledger commands or gates are incomplete",
+);
+
+const coverageReceipt = await request("/api/swiggy-builders-coverage-receipt");
+assert(coverageReceipt.coverageReceipt.score >= 85, "Builders coverage receipt score is below target");
+assert(
+  ["complete_coverage", "coverage_watch"].includes(coverageReceipt.coverageReceipt.decision) &&
+    coverageReceipt.coverageReceipt.totals.pages >= 7 &&
+    coverageReceipt.coverageReceipt.totals.modules >= 38 &&
+    coverageReceipt.coverageReceipt.totals.ctas >= 11 &&
+    coverageReceipt.coverageReceipt.totals.ctaTargets >= 31 &&
+    coverageReceipt.coverageReceipt.totals.headerLinks >= 7 &&
+    coverageReceipt.coverageReceipt.totals.docsLinks >= 5 &&
+    coverageReceipt.coverageReceipt.totals.footerLinks >= 8 &&
+    coverageReceipt.coverageReceipt.totals.llmsPages === 69 &&
+    coverageReceipt.coverageReceipt.totals.referenceTools === 35 &&
+    coverageReceipt.coverageReceipt.totals.matchedTools === 35 &&
+    coverageReceipt.coverageReceipt.totals.visualTargets === 70 &&
+    coverageReceipt.coverageReceipt.totals.unsafeLinks === 0 &&
+    coverageReceipt.coverageReceipt.totals.missingRows === 0,
+  "Builders coverage receipt totals are incomplete",
+);
+assert(
+  [
+    "public_pages",
+    "modules",
+    "ctas",
+    "global_header",
+    "docs_nav",
+    "footer_resources",
+    "llms_manifest",
+    "reference_tools",
+    "visual_receipt",
+    "external_gates",
+  ].every((id) => coverageReceipt.coverageReceipt.rows.some((row) => row.id === id)),
+  "Builders coverage receipt rows are incomplete",
+);
+assert(
+  coverageReceipt.coverageReceipt.commands.some((command) =>
+    command.command.includes("/api/swiggy-builders-coverage-receipt"),
+  ) &&
+    coverageReceipt.coverageReceipt.assertions.some((assertion) =>
+      assertion.includes("does not create a second source of truth"),
+    ) &&
+    coverageReceipt.coverageReceipt.externalGates.some((gate) =>
+      gate.includes("Final access submission"),
+    ),
+  "Builders coverage receipt commands or gates are incomplete",
 );
 
 const journeyGates = await request("/api/swiggy-builders-journey-gates");
@@ -3921,8 +3973,8 @@ assert(
 
 const visualQa = await request("/api/visual-qa-center");
 assert(visualQa.visualQa.score === 100, "visual QA score is below target");
-assert(visualQa.visualQa.totalTargets === 69, "visual QA targets are incomplete");
-assert(visualQa.visualQa.readyTargets === 69, "visual QA ready targets are incomplete");
+assert(visualQa.visualQa.totalTargets === 70, "visual QA targets are incomplete");
+assert(visualQa.visualQa.readyTargets === 70, "visual QA ready targets are incomplete");
 assert(visualQa.visualQa.totalRules === 7, "visual QA rules are incomplete");
 assert(visualQa.visualQa.readyRules === 7, "visual QA ready rules are incomplete");
 assert(visualQa.visualQa.totalCommands === 5, "visual QA commands are incomplete");
@@ -4204,6 +4256,12 @@ assert(
     group.targets.some((target) => target.id === "completion_ledger_card" && target.selector === ".completion-ledger-card"),
   ),
   "visual QA Completion Ledger target is missing",
+);
+assert(
+  visualQa.visualQa.targetGroups.some((group) =>
+    group.targets.some((target) => target.id === "coverage_receipt_card" && target.selector === ".coverage-receipt-card"),
+  ),
+  "visual QA Coverage Receipt target is missing",
 );
 assert(
   visualQa.visualQa.targetGroups.some((group) =>
@@ -8239,7 +8297,7 @@ assert(builderPacket.packet.outputDirectory === "artifacts/builder-packet", "bui
 assert(builderPacket.packet.totals.formFields >= 10, "builder packet form-field coverage is incomplete");
 assert(builderPacket.packet.totals.requiredAttachments >= 10, "builder packet attachment coverage is incomplete");
 assert(builderPacket.packet.totals.launchArtifacts >= 50, "builder packet launch artifact coverage is incomplete");
-assert(builderPacket.packet.totals.visualTargets === 69, "builder packet visual target coverage is incomplete");
+assert(builderPacket.packet.totals.visualTargets === 70, "builder packet visual target coverage is incomplete");
 assert(
   ["packet_json", "packet_markdown", "visual_report", "production_summary"].every((id) =>
     builderPacket.packet.files.some((file) => file.id === id),
@@ -8253,7 +8311,7 @@ assert(
   "builder packet export command is missing",
 );
 assert(
-  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("69")),
+  builderPacket.packet.commands.some((command) => command.id === "visual_capture" && command.proves.includes("70")),
   "builder packet visual capture command is stale",
 );
 assert(
@@ -8850,6 +8908,9 @@ console.log(
       buildersCompletionScore: buildersCompletion.buildersCompletion.score,
       buildersCompletionRequirements: buildersCompletion.buildersCompletion.totals.requirements,
       buildersCompletionMcpTools: buildersCompletion.buildersCompletion.totals.mcpTools,
+      coverageReceiptScore: coverageReceipt.coverageReceipt.score,
+      coverageReceiptDecision: coverageReceipt.coverageReceipt.decision,
+      coverageReceiptRows: coverageReceipt.coverageReceipt.rows.length,
       journeyGateScore: journeyGates.journeyGates.score,
       journeyGateGates: journeyGates.journeyGates.totals.gates,
       journeyGateProofLinks: journeyGates.journeyGates.totals.proofLinks,

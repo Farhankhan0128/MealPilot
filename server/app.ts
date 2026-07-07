@@ -66,6 +66,7 @@ import {
 } from "./services/demoStudio.js";
 import { buildMcpCapabilityRegistry } from "./services/capabilityRegistry.js";
 import { buildSwiggyBuildersCompletionLedger } from "./services/buildersCompletionLedger.js";
+import { buildSwiggyBuildersCoverageReceipt } from "./services/buildersCoverageReceipt.js";
 import { buildSwiggyCapabilityTraceability } from "./services/capabilityTraceability.js";
 import { buildSwiggySourceAvailabilityAudit } from "./services/sourceAvailabilityAudit.js";
 import { buildEvaluationLab } from "./services/evaluationLab.js";
@@ -1320,6 +1321,18 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
       }),
     });
   });
+
+  app.get(
+    "/api/swiggy-builders-coverage-receipt",
+    asyncRoute(async (_req, res) => {
+      res.json({
+        coverageReceipt: await buildSwiggyBuildersCoverageReceipt({
+          config,
+          latestPlan: store.getAllPlans().at(-1),
+        }),
+      });
+    }),
+  );
 
   app.get("/api/swiggy-website-atlas", (_req, res) => {
     res.json({ atlas: buildSwiggyWebsiteAtlas() });
