@@ -1,6 +1,8 @@
 import type {
+  SwiggyShowcaseSubmissionComposition,
   SwiggyShowcaseSubmissionAsset,
   SwiggyShowcaseSubmissionCenter,
+  SwiggyShowcaseSubmissionDecision,
   SwiggyShowcaseSubmissionStatus,
 } from "../../src/domain/types.js";
 import { buildSwiggyBuildersLaunchStoryCenter } from "./buildersLaunchStoryCenter.js";
@@ -26,6 +28,24 @@ function statusWeight(status: SwiggyShowcaseSubmissionStatus) {
 
 function asset(input: SwiggyShowcaseSubmissionAsset): SwiggyShowcaseSubmissionAsset {
   return input;
+}
+
+function normalize(value?: string) {
+  return (value ?? "").trim();
+}
+
+function isExternalUrl(value: string) {
+  return /^https:\/\/[^\s/$.?#].[^\s]*$/i.test(value);
+}
+
+function isEmail(value: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
+
+function compositionDecision(missingInputs: string[]): SwiggyShowcaseSubmissionDecision {
+  if (missingInputs.length >= 3) return "blocked_empty";
+  if (missingInputs.length > 0) return "needs_operator_input";
+  return "ready_to_send";
 }
 
 export function buildSwiggyShowcaseSubmissionCenter(): SwiggyShowcaseSubmissionCenter {
@@ -195,5 +215,114 @@ export function buildSwiggyShowcaseSubmissionCenter(): SwiggyShowcaseSubmissionC
       "Swiggy must approve production access, co-branding, public feature placement, and any partnership announcement.",
       "Swiggy must issue staging/production credentials before live transaction evidence can be shown.",
     ],
+  };
+}
+
+export function composeSwiggyShowcaseSubmission(input: {
+  demoUrl?: string;
+  githubUrl?: string;
+  operatorEmail?: string;
+  note?: string;
+}): SwiggyShowcaseSubmissionComposition {
+  const center = buildSwiggyShowcaseSubmissionCenter();
+  const demoUrl = normalize(input.demoUrl);
+  const githubUrl = normalize(input.githubUrl);
+  const operatorEmail = normalize(input.operatorEmail);
+  const note = normalize(input.note);
+  const missingInputs = [
+    !isExternalUrl(demoUrl) ? "demoUrl" : "",
+    !isExternalUrl(githubUrl) ? "githubUrl" : "",
+    !isEmail(operatorEmail) ? "operatorEmail" : "",
+  ].filter(Boolean);
+  const decision = compositionDecision(missingInputs);
+  const readinessScore = Math.max(0, Math.round(((3 - missingInputs.length) / 3) * 100));
+  const proofLinks = unique([
+    "/api/swiggy-showcase-submission-center",
+    "/api/builder-packet-export",
+    "/api/swiggy-demo-evidence-director",
+    "/api/visual-qa-center",
+    demoUrl,
+    githubUrl,
+    ...center.pitchBlocks.flatMap((block) => block.evidenceLinks),
+    ...center.metricPack.map((metric) => metric.source),
+  ]).slice(0, 14);
+  const checklist = [
+    {
+      id: "demo_url",
+      label: "Unlisted demo video URL attached",
+      status: isExternalUrl(demoUrl) ? "ready" : "operator_input",
+      owner: "Operator",
+    },
+    {
+      id: "github_url",
+      label: "Current GitHub repository attached",
+      status: isExternalUrl(githubUrl) ? "ready" : "operator_input",
+      owner: "Operator",
+    },
+    {
+      id: "operator_email",
+      label: "Technical operator contact included",
+      status: isEmail(operatorEmail) ? "ready" : "operator_input",
+      owner: "Operator",
+    },
+    {
+      id: "proof_packet",
+      label: "MealPilot proof packet and metrics linked",
+      status: "ready",
+      owner: "MealPilot",
+    },
+    {
+      id: "swiggy_approval",
+      label: "Production, feature, and co-branding approvals stay with Swiggy",
+      status: "swiggy_gate",
+      owner: "Swiggy",
+    },
+  ] satisfies SwiggyShowcaseSubmissionComposition["checklist"];
+  const body = [
+    "Hi Swiggy Builders team,",
+    "",
+    "Sharing MealPilot for Swiggy Builders showcase and production-access review.",
+    "",
+    center.pitchBlocks.map((block) => `${block.label}: ${block.copy}`).join("\n\n"),
+    "",
+    `Demo video: ${demoUrl || "[operator to add unlisted demo URL]"}`,
+    `GitHub repository: ${githubUrl || "[operator to add repository URL]"}`,
+    `Technical contact: ${operatorEmail || "[operator to add contact email]"}`,
+    note ? `Operator note: ${note}` : "",
+    "",
+    `Proof packet: ${proofLinks.slice(0, 8).join(", ")}`,
+    "",
+    "Manual gates: this draft does not submit forms, send email, request co-branding, claim production credentials, or imply Swiggy endorsement. We will wait for Swiggy review before production access, public feature placement, co-marketing, or Powered by Swiggy asset use.",
+    "",
+    "Thanks,",
+    "MealPilot operator",
+  ]
+    .filter((line) => line !== "")
+    .join("\n");
+
+  return {
+    generatedAt: new Date().toISOString(),
+    decision,
+    readinessScore,
+    inputs: {
+      demoUrl,
+      githubUrl,
+      operatorEmail,
+      note,
+    },
+    missingInputs,
+    to: center.outreachEmail.to,
+    subject: center.outreachEmail.subject,
+    body,
+    checklist,
+    proofLinks,
+    pitchBlocks: center.pitchBlocks,
+    metricPack: center.metricPack,
+    assertions: [
+      "The composed showcase packet is copy-ready but is not sent automatically.",
+      "Invalid or missing demo, repository, and operator contact inputs remain visible as operator-owned gates.",
+      ...center.assertions.slice(0, 2),
+    ],
+    externalGates: center.externalGates,
   };
 }

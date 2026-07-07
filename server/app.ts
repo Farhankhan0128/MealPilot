@@ -111,7 +111,7 @@ import {
 import { buildResilienceDrills, buildResilienceRunbook } from "./services/resilienceDrills.js";
 import { buildOpenApiDocument } from "./services/openApi.js";
 import { buildSandboxCredentialWorkbench } from "./services/sandboxCredentialWorkbench.js";
-import { buildSwiggyShowcaseSubmissionCenter } from "./services/showcaseSubmissionCenter.js";
+import { buildSwiggyShowcaseSubmissionCenter, composeSwiggyShowcaseSubmission } from "./services/showcaseSubmissionCenter.js";
 import { buildSwiggySubmissionTimelineCenter } from "./services/submissionTimelineCenter.js";
 import { buildSwiggyTalentSignalCenter } from "./services/talentSignalCenter.js";
 import { buildNutritionBudgetIntelligence } from "./services/nutritionBudgetIntelligence.js";
@@ -1240,6 +1240,17 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/swiggy-showcase-submission-center", (_req, res) => {
     res.json({ showcaseSubmission: buildSwiggyShowcaseSubmissionCenter() });
+  });
+
+  app.post("/api/swiggy-showcase-submission-center/compose", (req, res) => {
+    res.json({
+      showcaseComposition: composeSwiggyShowcaseSubmission({
+        demoUrl: typeof req.body?.demoUrl === "string" ? req.body.demoUrl : "",
+        githubUrl: typeof req.body?.githubUrl === "string" ? req.body.githubUrl : "",
+        operatorEmail: typeof req.body?.operatorEmail === "string" ? req.body.operatorEmail : "",
+        note: typeof req.body?.note === "string" ? req.body.note : "",
+      }),
+    });
   });
 
   app.get("/api/swiggy-demo-evidence-director", (_req, res) => {

@@ -287,6 +287,7 @@ GET  /api/swiggy-growth-partnership
 GET  /api/swiggy-talent-signal-center
 GET  /api/swiggy-conversion-center
 GET  /api/swiggy-showcase-submission-center
+POST /api/swiggy-showcase-submission-center/compose
 GET  /api/swiggy-demo-evidence-director
 GET  /api/swiggy-submission-timeline-center
 GET  /api/swiggy-partner-success-desk
@@ -565,6 +566,8 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 `GET /api/swiggy-conversion-center` is the final Builders conversion room: What Will You Cook, Start Building, See What's Possible, Request Access, Send Us a Demo, builders@swiggy.in, `llms.txt`, `llms-full.txt`, proof bundles, and go-live review are mapped into owner-tagged steps, a five-step operator runbook, handoff copy, and explicit operator or Swiggy gates.
 
 `GET /api/swiggy-showcase-submission-center` is the feature-ready Swiggy showcase packet: pitch blocks, demo storyboard, metric pack, visual proof links, and a draft builders@swiggy.in outreach email are prepared locally while the demo video URL remains operator-owned and any Powered by Swiggy or feature-placement claims stay behind Swiggy approval gates.
+
+`POST /api/swiggy-showcase-submission-center/compose` powers the Launch Center Showcase Composer: it accepts the operator demo URL, repository URL, and contact email, then returns a copy-ready `builders@swiggy.in` outreach packet with checklist, proof links, metric pack, missing-input gates, and Swiggy approval gates. It never sends email or submits external forms.
 
 `GET /api/swiggy-demo-evidence-director` is the recording control plane for the Swiggy demo: it prepares a 2-3 minute scene list, proof assets, visual QA requirements, redaction gates, runbook commands, and handoff email copy while leaving video recording, URL hosting, final email send, form submission, credentials, co-branding, and showcase approval as operator or Swiggy-owned gates.
 

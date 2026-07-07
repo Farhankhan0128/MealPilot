@@ -1954,6 +1954,7 @@ export interface SwiggyConversionCenter {
 }
 
 export type SwiggyShowcaseSubmissionStatus = "ready" | "operator_input" | "swiggy_gate";
+export type SwiggyShowcaseSubmissionDecision = "ready_to_send" | "needs_operator_input" | "blocked_empty";
 
 export interface SwiggyShowcaseSubmissionAsset {
   id: string;
@@ -1982,6 +1983,28 @@ export interface SwiggyShowcaseSubmissionCenter {
   demoStoryboard: Array<{ sequence: number; label: string; shot: string; proofLinks: string[] }>;
   metricPack: Array<{ id: string; label: string; target: string; source: string }>;
   outreachEmail: { to: string; subject: string; bodyPreview: string; evidenceLinks: string[] };
+  assertions: string[];
+  externalGates: string[];
+}
+
+export interface SwiggyShowcaseSubmissionComposition {
+  generatedAt: string;
+  decision: SwiggyShowcaseSubmissionDecision;
+  readinessScore: number;
+  inputs: {
+    demoUrl: string;
+    githubUrl: string;
+    operatorEmail: string;
+    note: string;
+  };
+  missingInputs: string[];
+  to: string;
+  subject: string;
+  body: string;
+  checklist: Array<{ id: string; label: string; status: SwiggyShowcaseSubmissionStatus; owner: "MealPilot" | "Operator" | "Swiggy" | "Joint" }>;
+  proofLinks: string[];
+  pitchBlocks: SwiggyShowcaseSubmissionCenter["pitchBlocks"];
+  metricPack: SwiggyShowcaseSubmissionCenter["metricPack"];
   assertions: string[];
   externalGates: string[];
 }

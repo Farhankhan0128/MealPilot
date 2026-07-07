@@ -619,6 +619,34 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-showcase-submission-center/compose": {
+        post: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Showcase Submission Composer for copy-ready demo outreach",
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    demoUrl: { type: "string" },
+                    githubUrl: { type: "string" },
+                    operatorEmail: { type: "string" },
+                    note: { type: "string" },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            "200": {
+              description:
+                "Copy-ready builders@swiggy.in showcase packet with readiness decision, missing operator inputs, checklist, proof links, pitch blocks, metric pack, assertions, and explicit Swiggy approval gates without sending email",
+            },
+          },
+        },
+      },
       "/api/swiggy-demo-evidence-director": {
         get: {
           tags: ["Builder Access"],

@@ -42,6 +42,7 @@ import {
   answerSwiggyFaqQuestion,
   buildServerPlan,
   completeSwiggyAuth,
+  composeSwiggyShowcaseSubmission,
   addGroupMember,
   confirmAllRecommendations,
   confirmServerRecommendation,
@@ -297,6 +298,7 @@ import type {
   SwiggyPartnerSuccessDesk,
   SwiggyPartnerSupportRoom,
   SwiggyHandshakeDoctor,
+  SwiggyShowcaseSubmissionComposition,
   SwiggyLlmsManifestVerifier,
   SwiggyInnovationRadarReport,
   SwiggyJourneyCompilerReport,
@@ -2827,6 +2829,13 @@ function LaunchCenterPanel({
   const [interactiveFaqAnswer, setInteractiveFaqAnswer] = useState<SwiggyFaqAnswerResolution | null>(null);
   const [faqAnswerStatus, setFaqAnswerStatus] = useState<"idle" | "loading" | "error">("idle");
   const visibleFaqAnswer = interactiveFaqAnswer ?? faqAnswer;
+  const [showcaseForm, setShowcaseForm] = useState({
+    demoUrl: "https://youtu.be/mealpilot-swiggy-demo",
+    githubUrl: "https://github.com/Farhankhan0128/MealPilot",
+    operatorEmail: "operator@example.com",
+  });
+  const [showcaseComposition, setShowcaseComposition] = useState<SwiggyShowcaseSubmissionComposition | null>(null);
+  const [showcaseComposeStatus, setShowcaseComposeStatus] = useState<"idle" | "loading" | "error">("idle");
 
   async function runFaqAnswerConsole(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -2837,6 +2846,18 @@ function LaunchCenterPanel({
       setFaqAnswerStatus("idle");
     } catch {
       setFaqAnswerStatus("error");
+    }
+  }
+
+  async function runShowcaseComposer(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setShowcaseComposeStatus("loading");
+    try {
+      const response = await composeSwiggyShowcaseSubmission(showcaseForm);
+      setShowcaseComposition(response.showcaseComposition);
+      setShowcaseComposeStatus("idle");
+    } catch {
+      setShowcaseComposeStatus("error");
     }
   }
 
@@ -4752,6 +4773,58 @@ function LaunchCenterPanel({
               <strong>{showcaseSubmission?.totals.swiggyGates ?? 0}</strong>
               <span>Gates</span>
             </div>
+          </div>
+          <form className="showcase-composer" onSubmit={runShowcaseComposer}>
+            <label htmlFor="showcase-demo-url">Demo URL</label>
+            <input
+              id="showcase-demo-url"
+              type="url"
+              value={showcaseForm.demoUrl}
+              onChange={(event) => setShowcaseForm((current) => ({ ...current, demoUrl: event.target.value }))}
+            />
+            <label htmlFor="showcase-github-url">Repository</label>
+            <input
+              id="showcase-github-url"
+              type="url"
+              value={showcaseForm.githubUrl}
+              onChange={(event) => setShowcaseForm((current) => ({ ...current, githubUrl: event.target.value }))}
+            />
+            <div>
+              <input
+                aria-label="Operator email"
+                type="email"
+                value={showcaseForm.operatorEmail}
+                onChange={(event) => setShowcaseForm((current) => ({ ...current, operatorEmail: event.target.value }))}
+              />
+              <button type="submit" disabled={showcaseComposeStatus === "loading"} aria-label="Compose showcase packet">
+                {showcaseComposeStatus === "loading" ? <Loader2 aria-hidden="true" /> : <Sparkles aria-hidden="true" />}
+              </button>
+            </div>
+            {showcaseComposeStatus === "error" ? <small role="status">Composer unavailable.</small> : null}
+          </form>
+          <div
+            className="showcase-composer-result"
+            data-status={
+              showcaseComposition?.decision === "ready_to_send"
+                ? "healthy"
+                : showcaseComposition?.decision === "blocked_empty"
+                  ? "blocked"
+                  : "watch"
+            }
+          >
+            <div>
+              <span>Outreach packet</span>
+              <strong>
+                {showcaseComposition
+                  ? `${showcaseComposition.decision.replace(/_/g, " ")} / ${showcaseComposition.readinessScore}/100`
+                  : "Awaiting compose"}
+              </strong>
+            </div>
+            <p>
+              {showcaseComposition
+                ? `${showcaseComposition.to} / ${showcaseComposition.proofLinks.length} proof links / ${showcaseComposition.missingInputs.length} missing inputs`
+                : "Compose a copy-ready builders@swiggy.in packet from demo, repository, and contact inputs."}
+            </p>
           </div>
           <ul className="compact-status-list">
             {(showcaseSubmission?.assets ?? []).slice(0, 5).map((item) => (

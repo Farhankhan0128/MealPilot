@@ -3566,6 +3566,114 @@ select:focus {
   font-weight: 800;
 }
 
+.showcase-composer {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.showcase-composer label {
+  color: var(--mp-muted);
+  font-size: 0.73rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.showcase-composer div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 40px;
+  gap: 8px;
+  align-items: center;
+}
+
+.showcase-composer input {
+  width: 100%;
+  min-width: 0;
+  min-height: 38px;
+  border: 1px solid var(--mp-border);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--mp-ink);
+  font: inherit;
+  font-size: 0.84rem;
+  padding: 8px 10px;
+}
+
+.showcase-composer button {
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--mp-blue);
+  border-radius: 8px;
+  background: var(--mp-blue);
+  color: #fff;
+}
+
+.showcase-composer button:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
+.showcase-composer button svg {
+  width: 17px;
+  height: 17px;
+}
+
+.showcase-composer small {
+  color: var(--mp-red);
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.showcase-composer-result {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+  border: 1px solid var(--mp-border);
+  border-left: 4px solid var(--mp-yellow);
+  border-radius: 8px;
+  background: #fff;
+  padding: 12px;
+}
+
+.showcase-composer-result[data-status="healthy"] {
+  border-left-color: var(--mp-green);
+}
+
+.showcase-composer-result[data-status="blocked"] {
+  border-left-color: var(--mp-red);
+}
+
+.showcase-composer-result div {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.showcase-composer-result span {
+  color: var(--mp-muted);
+  font-size: 0.73rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.showcase-composer-result strong {
+  color: var(--mp-ink);
+  font-size: 0.78rem;
+  text-transform: capitalize;
+}
+
+.showcase-composer-result p {
+  margin: 0;
+  color: var(--mp-ink);
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
 .faq-answer-strip {
   display: grid;
   gap: 8px;

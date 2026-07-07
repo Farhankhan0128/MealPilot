@@ -110,7 +110,7 @@ The verifier also validates `/api/swiggy-route-optimizer` for official source li
 
 The verifier also validates `/api/swiggy-cta-live-audit` for safe live Builders/docs CTA probes, manual form/email/legal gates, approved-origin checks, blocked-link drift, and reviewer runbook evidence.
 
-The verifier also validates `/api/swiggy-showcase-submission-center` for feature-ready pitch blocks, demo storyboard steps, metric packs, visual proof, draft outreach email, operator-owned demo inputs, and Swiggy co-branding/feature approval gates.
+The verifier also validates `/api/swiggy-showcase-submission-center` and `/api/swiggy-showcase-submission-center/compose` for feature-ready pitch blocks, demo storyboard steps, metric packs, visual proof, copy-ready outreach packet composition, operator-owned demo/repo/contact inputs, and Swiggy co-branding/feature approval gates.
 
 The verifier also validates `/api/swiggy-demo-evidence-director` for the 2-3 minute recording storyboard, proof assets, recording gates, redaction checks, visual QA links, runbook commands, builders@swiggy.in handoff copy, and explicit operator/Swiggy gates.
 
@@ -252,6 +252,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/swiggy-builders-review-decision`
 - `GET /api/visual-qa-center`
 - `GET /api/swiggy-showcase-submission-center`
+- `POST /api/swiggy-showcase-submission-center/compose`
 - `GET /api/swiggy-demo-evidence-director`
 - `GET /api/swiggy-submission-timeline-center`
 - `GET /api/swiggy-partner-support-room`
@@ -469,7 +470,7 @@ Production should use an HTTPS redirect URI with exact-match allowlisting.
 
 `/api/swiggy-cta-live-audit` verifies the click-readiness workbench against live public targets: Builders/docs URLs are safely probed, form/email/legal links remain manual browser gates, and unsafe or blocked targets become production-smoke failures.
 
-`/api/swiggy-showcase-submission-center` prepares the public Swiggy showcase packet: pitch copy, demo flow, metric proof, visual-gallery links, and a builders@swiggy.in email draft are generated from local evidence while video recording, final email submission, co-branding, and feature placement remain explicit operator or Swiggy gates.
+`/api/swiggy-showcase-submission-center` prepares the public Swiggy showcase packet: pitch copy, demo flow, metric proof, visual-gallery links, and a builders@swiggy.in email draft are generated from local evidence while video recording, final email submission, co-branding, and feature placement remain explicit operator or Swiggy gates. `/api/swiggy-showcase-submission-center/compose` powers the Launch Center Showcase Composer by accepting operator demo, repository, and contact inputs, returning a copy-ready outreach body, readiness score, checklist, proof links, and missing-input gates without sending email.
 
 `/api/swiggy-demo-evidence-director` prepares the final demo recording packet: six timed scenes, proof assets, visual QA expectations, redaction review gates, runbook commands, and handoff email copy are generated locally while recording, URL hosting, final send, access approval, credentials, and co-branding stay operator or Swiggy owned.
 

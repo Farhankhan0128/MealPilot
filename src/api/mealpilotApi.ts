@@ -115,6 +115,7 @@ import type {
   SwiggyDemoEvidenceDirector,
   SwiggyInteractionQaCenter,
   SwiggyPartnerSupportRoom,
+  SwiggyShowcaseSubmissionComposition,
   SwiggyShowcaseSubmissionCenter,
   SwiggySubmissionTimelineCenter,
   SwiggyPartnerSuccessDesk,
@@ -523,6 +524,21 @@ export function fetchSwiggyBenefitsActivationCenter() {
 export function fetchSwiggyShowcaseSubmissionCenter() {
   return requestJson<{ showcaseSubmission: SwiggyShowcaseSubmissionCenter }>(
     "/api/swiggy-showcase-submission-center",
+  );
+}
+
+export function composeSwiggyShowcaseSubmission(input: {
+  demoUrl: string;
+  githubUrl: string;
+  operatorEmail: string;
+  note?: string;
+}) {
+  return requestJson<{ showcaseComposition: SwiggyShowcaseSubmissionComposition }>(
+    "/api/swiggy-showcase-submission-center/compose",
+    {
+      method: "POST",
+      body: JSON.stringify(input),
+    },
   );
 }
 

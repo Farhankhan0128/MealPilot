@@ -1977,6 +1977,48 @@ describe("MealPilot API", () => {
     expect(center.externalGates.some((gate: string) => gate.includes("co-branding"))).toBe(true);
   });
 
+  it("composes a Swiggy showcase submission packet from operator inputs", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app)
+      .post("/api/swiggy-showcase-submission-center/compose")
+      .send({
+        demoUrl: "https://youtu.be/mealpilot-swiggy-demo",
+        githubUrl: "https://github.com/Farhankhan0128/MealPilot",
+        operatorEmail: "operator@example.com",
+        note: "Ready for showcase review.",
+      })
+      .expect(200);
+    const composition = response.body.showcaseComposition;
+
+    expect(composition.decision).toBe("ready_to_send");
+    expect(composition.readinessScore).toBe(100);
+    expect(composition.to).toBe("builders@swiggy.in");
+    expect(composition.missingInputs).toEqual([]);
+    expect(composition.body).toContain("MealPilot");
+    expect(composition.body).toContain("https://github.com/Farhankhan0128/MealPilot");
+    expect(composition.checklist.map((item: { id: string }) => item.id)).toEqual(
+      expect.arrayContaining(["demo_url", "github_url", "operator_email", "proof_packet", "swiggy_approval"]),
+    );
+    expect(composition.proofLinks).toContain("/api/swiggy-showcase-submission-center");
+    expect(composition.assertions.some((assertion: string) => assertion.includes("not sent automatically"))).toBe(true);
+    expect(composition.externalGates.some((gate: string) => gate.includes("co-branding"))).toBe(true);
+  });
+
+  it("keeps incomplete Swiggy showcase compositions as operator gates", async () => {
+    const { app } = createMealPilotServer();
+    const response = await request(app)
+      .post("/api/swiggy-showcase-submission-center/compose")
+      .send({ demoUrl: "", githubUrl: "not-a-url", operatorEmail: "missing" })
+      .expect(200);
+    const composition = response.body.showcaseComposition;
+
+    expect(composition.decision).toBe("blocked_empty");
+    expect(composition.readinessScore).toBe(0);
+    expect(composition.missingInputs).toEqual(["demoUrl", "githubUrl", "operatorEmail"]);
+    expect(composition.checklist.some((item: { id: string; status: string }) => item.id === "demo_url" && item.status === "operator_input")).toBe(true);
+    expect(composition.body).toContain("[operator to add unlisted demo URL]");
+  });
+
   it("returns a Swiggy Demo Evidence Director for the 2-3 minute recording packet", async () => {
     const { app } = createMealPilotServer();
     const response = await request(app).get("/api/swiggy-demo-evidence-director").expect(200);

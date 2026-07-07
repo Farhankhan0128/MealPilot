@@ -1376,6 +1376,36 @@ assert(
   "showcase submission outreach, assertions, or gates are missing",
 );
 
+const showcaseComposition = await request("/api/swiggy-showcase-submission-center/compose", {
+  method: "POST",
+  body: JSON.stringify({
+    demoUrl: "https://youtu.be/mealpilot-swiggy-demo",
+    githubUrl: "https://github.com/Farhankhan0128/MealPilot",
+    operatorEmail: "operator@example.com",
+    note: "Ready for Swiggy Builders showcase review.",
+  }),
+});
+assert(showcaseComposition.showcaseComposition.decision === "ready_to_send", "showcase composer did not produce a ready packet");
+assert(showcaseComposition.showcaseComposition.readinessScore === 100, "showcase composer readiness score is incomplete");
+assert(showcaseComposition.showcaseComposition.to === "builders@swiggy.in", "showcase composer recipient is missing");
+assert(showcaseComposition.showcaseComposition.missingInputs.length === 0, "showcase composer has unexpected missing inputs");
+assert(
+  showcaseComposition.showcaseComposition.proofLinks.includes("/api/swiggy-showcase-submission-center") &&
+    showcaseComposition.showcaseComposition.body.includes("https://github.com/Farhankhan0128/MealPilot"),
+  "showcase composer proof links or body are incomplete",
+);
+assert(
+  showcaseComposition.showcaseComposition.assertions.some((assertion) => assertion.includes("not sent automatically")),
+  "showcase composer send-safety assertion is missing",
+);
+
+const blockedShowcaseComposition = await request("/api/swiggy-showcase-submission-center/compose", {
+  method: "POST",
+  body: JSON.stringify({ demoUrl: "", githubUrl: "", operatorEmail: "" }),
+});
+assert(blockedShowcaseComposition.showcaseComposition.decision === "blocked_empty", "showcase composer must block empty inputs");
+assert(blockedShowcaseComposition.showcaseComposition.missingInputs.length === 3, "showcase composer missing-input gates are incomplete");
+
 const demoEvidence = await request("/api/swiggy-demo-evidence-director");
 assert(demoEvidence.demoEvidence.score >= 85, "demo evidence director score is below target");
 assert(
