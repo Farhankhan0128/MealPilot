@@ -200,6 +200,7 @@ import {
   runSwiggySubmissionTimelineCheckpoint,
   schedulePlan,
   simulateHouseholdPreference,
+  rehearseSwiggyDocsTwinRetrieval,
   startSwiggyAuth,
   substituteRecommendationItem,
   validateSwiggyCustomization,
@@ -317,6 +318,7 @@ import type {
   SwiggyDocsCoverageReport,
   SwiggyDocsSection,
   SwiggyDocsTwinExplorer,
+  SwiggyDocsTwinRehearsal,
   SwiggyFaqAnswerResolution,
   SwiggyFaqPolicyCenter,
   SwiggyFaqResolutionCenter,
@@ -3083,6 +3085,19 @@ function LaunchCenterPanel({
   });
   const [docsCoverageDrill, setDocsCoverageDrill] = useState<SwiggyDocsCoverageDrill | null>(null);
   const [docsCoverageDrillStatus, setDocsCoverageDrillStatus] = useState<"idle" | "loading" | "error">("idle");
+  const [docsTwinRehearsalForm, setDocsTwinRehearsalForm] = useState<{
+    laneId: string;
+    section: SwiggyDocsSection;
+    includeRenderedPages: boolean;
+    includeProofLinks: boolean;
+  }>({
+    laneId: "markdown_twins",
+    section: "start",
+    includeRenderedPages: true,
+    includeProofLinks: true,
+  });
+  const [docsTwinRehearsal, setDocsTwinRehearsal] = useState<SwiggyDocsTwinRehearsal | null>(null);
+  const [docsTwinRehearsalStatus, setDocsTwinRehearsalStatus] = useState<"idle" | "loading" | "error">("idle");
   const [showcaseForm, setShowcaseForm] = useState({
     demoUrl: "https://youtu.be/mealpilot-swiggy-demo",
     githubUrl: "https://github.com/Farhankhan0128/MealPilot",
@@ -3306,6 +3321,18 @@ function LaunchCenterPanel({
       setDocsCoverageDrillStatus("idle");
     } catch {
       setDocsCoverageDrillStatus("error");
+    }
+  }
+
+  async function runDocsTwinRehearsal(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setDocsTwinRehearsalStatus("loading");
+    try {
+      const response = await rehearseSwiggyDocsTwinRetrieval(docsTwinRehearsalForm);
+      setDocsTwinRehearsal(response.docsTwinRehearsal);
+      setDocsTwinRehearsalStatus("idle");
+    } catch {
+      setDocsTwinRehearsalStatus("error");
     }
   }
 
@@ -7784,6 +7811,88 @@ function LaunchCenterPanel({
               <strong>{docsTwinExplorer?.retrievalLanes.length ?? 0}</strong>
               <span>Lanes</span>
             </div>
+          </div>
+          <form className="docs-twin-rehearsal" onSubmit={runDocsTwinRehearsal}>
+            <label htmlFor="docs-twin-lane">Lane</label>
+            <select
+              id="docs-twin-lane"
+              value={docsTwinRehearsalForm.laneId}
+              onChange={(event) => setDocsTwinRehearsalForm((current) => ({ ...current, laneId: event.target.value }))}
+            >
+              {(docsTwinExplorer?.retrievalLanes ?? []).map((lane) => (
+                <option key={lane.id} value={lane.id}>
+                  {lane.label}
+                </option>
+              ))}
+            </select>
+            <label htmlFor="docs-twin-section">Section</label>
+            <select
+              id="docs-twin-section"
+              value={docsTwinRehearsalForm.section}
+              onChange={(event) =>
+                setDocsTwinRehearsalForm((current) => ({ ...current, section: event.target.value as SwiggyDocsSection }))
+              }
+            >
+              <option value="start">Start</option>
+              <option value="build">Build</option>
+              <option value="operate">Operate</option>
+              <option value="reference">Reference</option>
+              <option value="blog">Blog</option>
+            </select>
+            <div className="docs-twin-toggle-grid">
+              <label htmlFor="docs-twin-rendered">
+                <input
+                  id="docs-twin-rendered"
+                  type="checkbox"
+                  checked={docsTwinRehearsalForm.includeRenderedPages}
+                  onChange={(event) =>
+                    setDocsTwinRehearsalForm((current) => ({ ...current, includeRenderedPages: event.target.checked }))
+                  }
+                />
+                Rendered
+              </label>
+              <label htmlFor="docs-twin-proof">
+                <input
+                  id="docs-twin-proof"
+                  type="checkbox"
+                  checked={docsTwinRehearsalForm.includeProofLinks}
+                  onChange={(event) =>
+                    setDocsTwinRehearsalForm((current) => ({ ...current, includeProofLinks: event.target.checked }))
+                  }
+                />
+                Proof links
+              </label>
+            </div>
+            <button type="submit" disabled={docsTwinRehearsalStatus === "loading"} aria-label="Rehearse Swiggy docs twin retrieval">
+              {docsTwinRehearsalStatus === "loading" ? <Loader2 aria-hidden="true" /> : <ScrollText aria-hidden="true" />}
+              Rehearse
+            </button>
+            {docsTwinRehearsalStatus === "error" ? <small role="status">Docs twin rehearsal unavailable.</small> : null}
+          </form>
+          <div
+            className="docs-twin-rehearsal-result"
+            data-status={
+              docsTwinRehearsal?.decision === "ready_retrieval_packet"
+                ? "healthy"
+                : docsTwinRehearsal?.decision === "manual_drift_gate"
+                  ? "watch"
+                  : "blocked"
+            }
+          >
+            <div>
+              <span>Retrieval</span>
+              <strong>
+                {docsTwinRehearsal
+                  ? `${docsTwinRehearsal.decision.replace(/_/g, " ")} / ${docsTwinRehearsal.readinessScore}`
+                  : "Awaiting rehearsal"}
+              </strong>
+            </div>
+            <p>
+              {docsTwinRehearsal
+                ? `${docsTwinRehearsal.laneId} / ${docsTwinRehearsal.sourcePairs.length} pairs / ${docsTwinRehearsal.commands.length} commands`
+                : "Prepare markdown/rendered source pairs, retrieval commands, proof links, and upstream drift gates."}
+            </p>
+            {docsTwinRehearsal ? <small>{docsTwinRehearsal.nextAction}</small> : null}
           </div>
           <ul className="compact-status-list">
             {(docsTwinExplorer?.groups ?? []).map((group) => (

@@ -1299,6 +1299,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-docs-twin-explorer/rehearse": {
+        post: {
+          tags: ["Builder Access"],
+          summary: "Rehearse Swiggy Docs Twin retrieval for reviewer source-pair evidence",
+          responses: {
+            "200": {
+              description:
+                "Selected retrieval lane and docs section with markdown/rendered source pairs, proof links, commands, readiness decision, missing drift gates, telemetry, and source safety assertions",
+            },
+          },
+        },
+      },
       "/api/swiggy-llms-manifest-verifier": {
         get: {
           tags: ["Builder Access"],

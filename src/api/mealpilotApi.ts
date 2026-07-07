@@ -119,6 +119,7 @@ import type {
   SwiggyDocsCoverageReport,
   SwiggyDocsSection,
   SwiggyDocsTwinExplorer,
+  SwiggyDocsTwinRehearsal,
   SwiggyFaqAnswerResolution,
   SwiggyFaqPolicyCenter,
   SwiggyFaqResolutionCenter,
@@ -950,6 +951,21 @@ export function drillSwiggyDocsCoverage(input: {
 
 export function fetchSwiggyDocsTwinExplorer() {
   return requestJson<{ docsTwinExplorer: SwiggyDocsTwinExplorer }>("/api/swiggy-docs-twin-explorer");
+}
+
+export function rehearseSwiggyDocsTwinRetrieval(input: {
+  laneId: string;
+  section: SwiggyDocsSection;
+  includeRenderedPages: boolean;
+  includeProofLinks: boolean;
+}) {
+  return requestJson<{ docsTwinRehearsal: SwiggyDocsTwinRehearsal }>(
+    "/api/swiggy-docs-twin-explorer/rehearse",
+    {
+      method: "POST",
+      body: JSON.stringify(input),
+    },
+  );
 }
 
 export function fetchSwiggyLlmsManifestVerifier() {

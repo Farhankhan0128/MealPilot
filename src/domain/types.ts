@@ -1631,6 +1631,27 @@ export interface SwiggyDocsTwinExplorer {
   externalGates: string[];
 }
 
+export type SwiggyDocsTwinRehearsalDecision = "ready_retrieval_packet" | "manual_drift_gate" | "unknown_lane";
+
+export interface SwiggyDocsTwinRehearsal {
+  generatedAt: string;
+  decision: SwiggyDocsTwinRehearsalDecision;
+  readinessScore: number;
+  laneId: string;
+  section: SwiggyDocsSection;
+  includeRenderedPages: boolean;
+  includeProofLinks: boolean;
+  selectedLane?: SwiggyDocsTwinRetrievalLane;
+  selectedRows: SwiggyDocsTwinRow[];
+  selectedGroup?: SwiggyDocsTwinGroup;
+  commands: Array<{ command: string; expectedSignal: string; proves: string }>;
+  sourcePairs: Array<{ id: string; title: string; markdownUrl: string; renderedUrl: string; evidenceLinks: string[] }>;
+  missingInputs: string[];
+  telemetry: Array<{ field: string; value: string; redaction: string }>;
+  assertions: string[];
+  nextAction: string;
+}
+
 export type SwiggyFaqPolicyStatus = "ready" | "documented" | "external_gate";
 export type SwiggyFaqResolutionStatus = "ready" | "operator_input" | "swiggy_gate";
 export type SwiggyFaqResolutionOwner = "MealPilot" | "Operator" | "Swiggy" | "Joint";

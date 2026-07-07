@@ -151,6 +151,7 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/swiggy-docs-coverage"].get.summary).toContain("llms.txt");
     expect(openApi.body.paths["/api/swiggy-docs-coverage/drill"].post.summary).toContain("Docs Coverage");
     expect(openApi.body.paths["/api/swiggy-docs-twin-explorer"].get.summary).toContain("docs twin");
+    expect(openApi.body.paths["/api/swiggy-docs-twin-explorer/rehearse"].post.summary).toContain("Docs Twin");
     expect(openApi.body.paths["/api/swiggy-llms-manifest-verifier"].get.summary).toContain("llms.txt manifest");
     expect(openApi.body.paths["/api/swiggy-llms-manifest-verifier"].get.responses["200"].description).toContain("Instamart 13");
     expect(openApi.body.paths["/api/swiggy-tool-parity-auditor"].get.summary).toContain("tool parity");
@@ -4554,6 +4555,42 @@ describe("MealPilot API", () => {
     ).toBe(true);
     expect(explorer.assertions.some((assertion: string) => assertion.includes("markdown twin URL"))).toBe(true);
     expect(explorer.externalGates.some((gate: string) => gate.includes("re-browse llms.txt"))).toBe(true);
+  });
+
+  it("rehearses Swiggy docs twin retrieval lanes with source-pair gates", async () => {
+    const { app } = createMealPilotServer();
+
+    const readyResponse = await request(app)
+      .post("/api/swiggy-docs-twin-explorer/rehearse")
+      .send({
+        laneId: "markdown_twins",
+        section: "start",
+        includeRenderedPages: true,
+        includeProofLinks: true,
+      })
+      .expect(200);
+    const ready = readyResponse.body.docsTwinRehearsal;
+
+    expect(ready.decision).toBe("ready_retrieval_packet");
+    expect(ready.selectedLane.id).toBe("markdown_twins");
+    expect(ready.sourcePairs.length).toBeGreaterThan(0);
+    expect(ready.sourcePairs.every((pair: { markdownUrl: string; renderedUrl: string }) => pair.markdownUrl.endsWith(".md") && pair.renderedUrl.includes("/builders/"))).toBe(true);
+    expect(ready.commands.some((command: { command: string }) => command.command.includes("docs/start/developer/index.md"))).toBe(true);
+
+    const gatedResponse = await request(app)
+      .post("/api/swiggy-docs-twin-explorer/rehearse")
+      .send({
+        laneId: "proof_readback",
+        section: "reference",
+        includeRenderedPages: true,
+        includeProofLinks: false,
+      })
+      .expect(200);
+    const gated = gatedResponse.body.docsTwinRehearsal;
+
+    expect(gated.decision).toBe("manual_drift_gate");
+    expect(gated.missingInputs).toEqual(expect.arrayContaining(["MealPilot proof links"]));
+    expect(gated.sourcePairs.every((pair: { evidenceLinks: string[] }) => pair.evidenceLinks.length === 0)).toBe(true);
   });
 
   it("returns Swiggy upstream docs, changelog, and roadmap watch evidence", async () => {

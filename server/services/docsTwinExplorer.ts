@@ -3,6 +3,7 @@ import type {
   SwiggyDocsCoverageStatus,
   SwiggyDocsSection,
   SwiggyDocsTwinExplorer,
+  SwiggyDocsTwinRehearsal,
   SwiggyDocsTwinStatus,
 } from "../../src/domain/types.js";
 import { buildSwiggyDocsCoverage } from "./docsCoverage.js";
@@ -149,5 +150,96 @@ export function buildSwiggyDocsTwinExplorer(): SwiggyDocsTwinExplorer {
       "Enterprise and production-only docs remain evidence until Swiggy issues credentials and access approval.",
       "Signed manifest verification remains a Swiggy roadmap gate tracked by Upstream Watch.",
     ],
+  };
+}
+
+function rehearsalScore(statuses: SwiggyDocsTwinStatus[]) {
+  return Math.max(45, Math.min(99, Math.round((statuses.reduce((sum, status) => sum + statusScore(status), 0) / statuses.length) * 100)));
+}
+
+export function rehearseSwiggyDocsTwinRetrieval(input: {
+  laneId: string;
+  section: SwiggyDocsSection;
+  includeRenderedPages: boolean;
+  includeProofLinks: boolean;
+}): SwiggyDocsTwinRehearsal {
+  const explorer = buildSwiggyDocsTwinExplorer();
+  const selectedLane = explorer.retrievalLanes.find((lane) => lane.id === input.laneId);
+  const selectedGroup = explorer.groups.find((group) => group.id === input.section);
+  const sectionRows = explorer.rows.filter((row) => row.section === input.section);
+  const selectedRows =
+    input.laneId === "proof_readback"
+      ? sectionRows.filter((row) => row.evidenceLinks.length > 0).slice(0, 12)
+      : input.laneId === "markdown_twins"
+        ? sectionRows.filter((row) => row.markdownUrl.endsWith(".md")).slice(0, 12)
+        : input.laneId === "rendered_pages"
+          ? sectionRows.filter((row) => row.renderedUrl.startsWith("https://mcp.swiggy.com/builders/")).slice(0, 12)
+          : sectionRows.slice(0, 12);
+  const missingInputs: string[] = [];
+
+  if (!selectedLane) missingInputs.push("known retrieval lane");
+  if (!selectedGroup) missingInputs.push("known docs section");
+  if (selectedRows.length === 0) missingInputs.push("matching docs twin rows");
+  if (!input.includeRenderedPages && input.laneId === "rendered_pages") missingInputs.push("rendered page browser proof");
+  if (!input.includeProofLinks && input.laneId === "proof_readback") missingInputs.push("MealPilot proof links");
+  if (selectedLane?.status === "watch") missingInputs.push("upstream drift review");
+
+  const decision: SwiggyDocsTwinRehearsal["decision"] = !selectedLane || !selectedGroup
+    ? "unknown_lane"
+    : missingInputs.length > 0
+      ? "manual_drift_gate"
+      : "ready_retrieval_packet";
+
+  return {
+    generatedAt: new Date().toISOString(),
+    decision,
+    readinessScore: rehearsalScore([
+      ...(selectedRows.length > 0 ? selectedRows.map((row) => row.status) : (["external_gate"] as SwiggyDocsTwinStatus[])),
+      selectedLane?.status ?? "external_gate",
+    ]),
+    laneId: input.laneId,
+    section: input.section,
+    includeRenderedPages: input.includeRenderedPages,
+    includeProofLinks: input.includeProofLinks,
+    selectedLane,
+    selectedRows,
+    selectedGroup,
+    commands: selectedLane
+      ? [
+          { command: selectedLane.command, expectedSignal: selectedLane.expectedSignal, proves: selectedLane.label },
+          {
+            command: "curl -s http://localhost:8787/api/swiggy-docs-twin-explorer",
+            expectedSignal: "totals.pages === 69 && totals.markdownTwins === 69",
+            proves: "Local Docs Twin Explorer readback stays aligned with production verifier.",
+          },
+        ]
+      : [],
+    sourcePairs: selectedRows.map((row) => ({
+      id: row.id,
+      title: row.title,
+      markdownUrl: row.markdownUrl,
+      renderedUrl: row.renderedUrl,
+      evidenceLinks: input.includeProofLinks ? row.evidenceLinks : [],
+    })),
+    missingInputs,
+    telemetry: [
+      { field: "lane_id", value: input.laneId, redaction: "safe retrieval lane id" },
+      { field: "section", value: input.section, redaction: "safe docs section enum" },
+      { field: "selected_rows", value: String(selectedRows.length), redaction: "aggregate count only" },
+      { field: "rendered_pages", value: String(input.includeRenderedPages), redaction: "boolean only" },
+      { field: "proof_links", value: String(input.includeProofLinks), redaction: "boolean only" },
+    ],
+    assertions: [
+      "Every source pair keeps the official markdown twin and rendered Swiggy URL together.",
+      "The retrieval packet never treats local fallback proof as live Swiggy credentials or production approval.",
+      "Proof links are included only when requested and remain route references without user data or tokens.",
+      "Watch lanes require upstream drift review before final submission.",
+    ],
+    nextAction:
+      decision === "ready_retrieval_packet"
+        ? `Run ${selectedLane?.command ?? "curl -s http://localhost:8787/api/swiggy-docs-twin-explorer"} and inspect ${selectedRows.length} source pair(s).`
+        : decision === "manual_drift_gate"
+          ? `Resolve ${missingInputs.join(", ")} before presenting this Docs Twin packet.`
+          : "Choose a known Docs Twin retrieval lane and docs section before preparing source-pair evidence.",
   };
 }

@@ -97,7 +97,7 @@ import { buildDeveloperQuickstartWorkbench, executeDeveloperFirstCall } from "./
 import { buildSwiggyDiscoveryFreshness, resolveSwiggyDiscoveryFreshness } from "./services/discoveryFreshness.js";
 import { buildSwiggyDineoutPrecisionCenter } from "./services/dineoutPrecisionCenter.js";
 import { buildSwiggyDocsCoverage, drillSwiggyDocsCoverage } from "./services/docsCoverage.js";
-import { buildSwiggyDocsTwinExplorer } from "./services/docsTwinExplorer.js";
+import { buildSwiggyDocsTwinExplorer, rehearseSwiggyDocsTwinRetrieval } from "./services/docsTwinExplorer.js";
 import { buildSwiggyLlmsManifestVerifier } from "./services/llmsManifestVerifier.js";
 import { buildEnterpriseDelegatedAuthCenter } from "./services/enterpriseDelegatedAuth.js";
 import { buildEnterprisePlatformCenter } from "./services/enterprisePlatformCenter.js";
@@ -348,6 +348,13 @@ const docsCoverageDrillSchema = z.object({
   focus: z.enum(["all_pages", "mcp_tools", "access_review", "agent_build"]),
   includeRenderedTwins: z.boolean(),
   includeExternalGates: z.boolean(),
+});
+
+const docsTwinRehearsalSchema = z.object({
+  laneId: z.string().trim().min(2).max(80),
+  section: z.enum(["start", "build", "operate", "reference", "blog"]),
+  includeRenderedPages: z.boolean(),
+  includeProofLinks: z.boolean(),
 });
 
 const offerDecisionSchema = z.object({
@@ -1635,6 +1642,11 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/swiggy-docs-twin-explorer", (_req, res) => {
     res.json({ docsTwinExplorer: buildSwiggyDocsTwinExplorer() });
+  });
+
+  app.post("/api/swiggy-docs-twin-explorer/rehearse", (req, res) => {
+    const body = docsTwinRehearsalSchema.parse(req.body);
+    res.json({ docsTwinRehearsal: rehearseSwiggyDocsTwinRetrieval(body) });
   });
 
   app.get(

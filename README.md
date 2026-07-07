@@ -327,6 +327,7 @@ POST /api/visual-qa-center/rehearse
 GET  /api/swiggy-docs-coverage
 POST /api/swiggy-docs-coverage/drill
 GET  /api/swiggy-docs-twin-explorer
+POST /api/swiggy-docs-twin-explorer/rehearse
 GET  /api/swiggy-llms-manifest-verifier
 GET  /api/swiggy-tool-parity-auditor
 GET  /api/swiggy-upstream-watch
@@ -628,6 +629,8 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 `GET /api/visual-qa-center` and `POST /api/visual-qa-center/rehearse` are the screenshot and layout evidence center: desktop, tablet, and mobile selectors, Playwright artifact paths, no-overlap rules, text-fit rules, widget fallback checks, redaction visibility, commercial confirmation visibility, Source Intelligence, Deep Site Map, Innovation Radar, and screenshot automation gates are made reviewable. The Launch Center rehearsal accepts target group, viewport, capture mode, Swiggy-widget inclusion, and manual attachment readiness, then returns screenshot targets, rules, commands, artifact paths, readiness decision, missing capture gates, telemetry, and no-blank-render assertions.
 
 `GET /api/swiggy-docs-coverage` and `POST /api/swiggy-docs-coverage/drill` are the 69-page Swiggy source coverage layer: every `llms.txt` page across Start, Build, Operate, Reference, and Blog is mapped to rendered and markdown URLs, MealPilot evidence, and external gates. The Launch Center drill accepts docs section, focus, rendered-twin inclusion, and external-gate disclosure, then returns selected pages, evidence routes, retrieval commands, readiness decision, missing source gates, telemetry, and credential/drift assertions.
+
+`GET /api/swiggy-docs-twin-explorer` and `POST /api/swiggy-docs-twin-explorer/rehearse` pair every official markdown twin with its rendered Swiggy page. The Launch Center rehearsal accepts retrieval lane, docs section, rendered-page inclusion, and proof-link inclusion, then returns source pairs, commands, readiness decision, missing drift gates, telemetry, and source-safety assertions.
 
 `GET /api/coding-agent-governance` is the repo-native Swiggy coding-agent proof: it reads the actual root `AGENTS.md`, verifies official docs source signals, preserves the Food 14 / Instamart 13 / Dineout 8 smoke split, lists guardrails, and fails production verification when future coding-agent rules drift.
 

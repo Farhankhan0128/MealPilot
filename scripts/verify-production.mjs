@@ -97,7 +97,8 @@ assert(
   "OpenAPI growth partnership composer contract is missing",
 );
 assert(
-  openApi.paths["/api/swiggy-docs-twin-explorer"]?.get?.summary?.includes("docs twin"),
+  openApi.paths["/api/swiggy-docs-twin-explorer"]?.get?.summary?.includes("docs twin") &&
+    openApi.paths["/api/swiggy-docs-twin-explorer/rehearse"]?.post?.summary?.includes("Docs Twin"),
   "OpenAPI docs twin explorer contract is missing",
 );
 assert(
@@ -3943,6 +3944,40 @@ assert(
   docsTwinExplorer.docsTwinExplorer.assertions.some((assertion) => assertion.includes("markdown twin URL")) &&
     docsTwinExplorer.docsTwinExplorer.externalGates.some((gate) => gate.includes("re-browse llms.txt")),
   "Swiggy docs twin assertions or external gates are missing",
+);
+const readyDocsTwinRehearsal = await request("/api/swiggy-docs-twin-explorer/rehearse", {
+  method: "POST",
+  body: JSON.stringify({
+    laneId: "markdown_twins",
+    section: "start",
+    includeRenderedPages: true,
+    includeProofLinks: true,
+  }),
+});
+assert(
+  readyDocsTwinRehearsal.docsTwinRehearsal.decision === "ready_retrieval_packet" &&
+    readyDocsTwinRehearsal.docsTwinRehearsal.sourcePairs.length > 0 &&
+    readyDocsTwinRehearsal.docsTwinRehearsal.sourcePairs.every(
+      (pair) => pair.markdownUrl.endsWith(".md") && pair.renderedUrl.includes("/builders/"),
+    ) &&
+    readyDocsTwinRehearsal.docsTwinRehearsal.commands.some((command) =>
+      command.command.includes("docs/start/developer/index.md"),
+    ),
+  "Swiggy docs twin ready rehearsal is incomplete",
+);
+const gatedDocsTwinRehearsal = await request("/api/swiggy-docs-twin-explorer/rehearse", {
+  method: "POST",
+  body: JSON.stringify({
+    laneId: "proof_readback",
+    section: "reference",
+    includeRenderedPages: true,
+    includeProofLinks: false,
+  }),
+});
+assert(
+  gatedDocsTwinRehearsal.docsTwinRehearsal.decision === "manual_drift_gate" &&
+    gatedDocsTwinRehearsal.docsTwinRehearsal.missingInputs.includes("MealPilot proof links"),
+  "Swiggy docs twin gated rehearsal is incomplete",
 );
 
 const llmsManifest = await request("/api/swiggy-llms-manifest-verifier");
