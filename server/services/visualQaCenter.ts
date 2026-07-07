@@ -246,6 +246,17 @@ const targetGroups = [
         "artifacts/visual-qa/ai-native-witness-card.png",
       ),
       target(
+        "enterprise_witness_card",
+        "Enterprise Witness card",
+        "/",
+        ".enterprise-witness-card",
+        "desktop",
+        1280,
+        900,
+        "Enterprise Witness shows delegated auth, tenant controls, quota, support, contracts, audit exports, brand governance, and Swiggy partner gates.",
+        "artifacts/visual-qa/enterprise-witness-card.png",
+      ),
+      target(
         "capability_traceability_card",
         "Capability Traceability card",
         "/",

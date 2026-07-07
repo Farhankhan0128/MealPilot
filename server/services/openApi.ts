@@ -533,6 +533,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-builders-enterprise-witness": {
+        get: {
+          tags: ["Builder Access"],
+          summary: "Swiggy Builders Enterprise Witness for platform, delegated auth, SLA, and partner proof",
+          responses: {
+            "200": {
+              description:
+                "Official enterprise and platform-operator Builders promises witnessed against delegated OAuth, tenant controls, quota and capacity review, support SLA, contract and compliance gates, audit exports, brand governance, growth asks, proof links, and Swiggy-owned approvals",
+            },
+          },
+        },
+      },
       "/api/swiggy-builders-journey-gates": {
         get: {
           tags: ["Builder Access"],

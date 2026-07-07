@@ -175,7 +175,7 @@ export async function buildSwiggyBuildersModuleWitness(options: {
         id: "visual_capture",
         command: "MEALPILOT_URL=http://localhost:8787 npm run verify:visual",
         proves: "The Module Witness Launch Center card is captured with all reviewer-critical surfaces.",
-        expectedSignal: "74 screenshot targets return no overflow issues",
+        expectedSignal: "75 screenshot targets return no overflow issues",
       },
     ],
     assertions: [

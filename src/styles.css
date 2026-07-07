@@ -1154,7 +1154,8 @@ select:focus {
 .module-witness-card,
 .navigation-witness-card,
 .benefits-witness-card,
-.ai-native-witness-card {
+.ai-native-witness-card,
+.enterprise-witness-card {
   grid-column: span 2;
 }
 
@@ -1193,6 +1194,7 @@ select:focus {
 .navigation-witness-grid,
 .benefits-witness-grid,
 .ai-native-witness-grid,
+.enterprise-witness-grid,
 .coverage-receipt-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -1206,6 +1208,7 @@ select:focus {
 .navigation-witness-grid div,
 .benefits-witness-grid div,
 .ai-native-witness-grid div,
+.enterprise-witness-grid div,
 .coverage-receipt-grid div {
   display: grid;
   gap: 3px;
@@ -1222,6 +1225,7 @@ select:focus {
 .navigation-witness-grid strong,
 .benefits-witness-grid strong,
 .ai-native-witness-grid strong,
+.enterprise-witness-grid strong,
 .coverage-receipt-grid strong {
   color: var(--green-dark);
 }
@@ -1233,6 +1237,7 @@ select:focus {
 .navigation-witness-grid span,
 .benefits-witness-grid span,
 .ai-native-witness-grid span,
+.enterprise-witness-grid span,
 .coverage-receipt-grid span {
   color: var(--muted);
   font-size: 0.75rem;
@@ -4753,6 +4758,7 @@ select:focus {
 .navigation-witness-card,
 .benefits-witness-card,
 .ai-native-witness-card,
+.enterprise-witness-card,
 .capability-traceability-card,
 .homepage-signal-card,
 .completion-ledger-card,
@@ -5413,6 +5419,7 @@ select:focus {
 	  .navigation-witness-card,
 	  .benefits-witness-card,
 	  .ai-native-witness-card,
+	  .enterprise-witness-card,
 	  .talent-signal-card,
 	  .conversion-center-card,
 	  .demo-evidence-card,
@@ -5627,6 +5634,7 @@ select:focus {
 	  .navigation-witness-grid,
 	  .benefits-witness-grid,
 	  .ai-native-witness-grid,
+	  .enterprise-witness-grid,
 	  .talent-signal-grid,
 	  .conversion-center-grid,
 	  .benefits-activation-grid,
@@ -5682,6 +5690,7 @@ select:focus {
 	  .navigation-witness-card,
 	  .benefits-witness-card,
 	  .ai-native-witness-card,
+	  .enterprise-witness-card,
 	  .talent-signal-card,
 	  .conversion-center-card,
 	  .demo-evidence-card,

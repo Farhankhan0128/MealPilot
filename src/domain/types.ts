@@ -1170,6 +1170,83 @@ export interface SwiggyBuildersAiNativeWitness {
   externalGates: string[];
 }
 
+export type SwiggyBuildersEnterpriseWitnessStatus =
+  | "proven"
+  | "ready"
+  | "watch"
+  | "operator_gate"
+  | "swiggy_gate";
+export type SwiggyBuildersEnterpriseWitnessOwner = "MealPilot" | "Operator" | "Swiggy" | "Joint";
+export type SwiggyBuildersEnterpriseWitnessKind =
+  | "platform_operator"
+  | "delegated_auth"
+  | "tenant_control"
+  | "quota_capacity"
+  | "support_sla"
+  | "contract_compliance"
+  | "audit_export"
+  | "brand_growth";
+
+export interface SwiggyBuildersEnterpriseWitnessRow {
+  id: string;
+  label: string;
+  kind: SwiggyBuildersEnterpriseWitnessKind;
+  officialSignal: string;
+  sourceUrl: string;
+  owner: SwiggyBuildersEnterpriseWitnessOwner;
+  status: SwiggyBuildersEnterpriseWitnessStatus;
+  mealPilotSurface: string;
+  evidence: string;
+  routeOptimization: string;
+  riskBoundary: string;
+  nextAction: string;
+  proofLinks: string[];
+  relatedApis: string[];
+}
+
+export interface SwiggyBuildersEnterpriseWitnessGroup {
+  id: string;
+  label: string;
+  rows: number;
+  proven: number;
+  ready: number;
+  watch: number;
+  gates: number;
+  proofLinks: string[];
+}
+
+export interface SwiggyBuildersEnterpriseWitness {
+  generatedAt: string;
+  score: number;
+  decision: "enterprise_ready" | "enterprise_watch" | "enterprise_blocked";
+  officialSources: string[];
+  currentTrack: "developer_ready_enterprise_planned";
+  totals: {
+    rows: number;
+    proven: number;
+    ready: number;
+    watch: number;
+    operatorGates: number;
+    swiggyGates: number;
+    proofLinks: number;
+    delegatedFlowSteps: number;
+    onboardingSteps: number;
+    platformLanes: number;
+    tenantControls: number;
+    supportLanes: number;
+    contractGates: number;
+    auditExports: number;
+    operatingPillars: number;
+    operatingRunbooks: number;
+    partnershipAsks: number;
+  };
+  rows: SwiggyBuildersEnterpriseWitnessRow[];
+  groups: SwiggyBuildersEnterpriseWitnessGroup[];
+  commands: Array<{ id: string; command: string; proves: string; expectedSignal: string }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type SwiggyCapabilityTraceabilityOwner = "MealPilot" | "Operator" | "Swiggy" | "Joint";
 export type SwiggyCapabilityTraceabilityKind =
   | "official_page"

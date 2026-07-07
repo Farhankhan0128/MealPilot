@@ -136,6 +136,7 @@ import {
   fetchSwiggyBuildersNavigationWitness,
   fetchSwiggyBuildersBenefitsWitness,
   fetchSwiggyBuildersAiNativeWitness,
+  fetchSwiggyBuildersEnterpriseWitness,
   fetchSwiggyCapabilityTraceability,
   fetchSwiggyHomepageSignalCoverage,
   fetchSwiggyBuildersCompletionLedger,
@@ -319,6 +320,7 @@ import type {
   SwiggyBuildersNavigationWitness,
   SwiggyBuildersBenefitsWitness,
   SwiggyBuildersAiNativeWitness,
+  SwiggyBuildersEnterpriseWitness,
   SwiggyCapabilityTraceabilityMatrix,
   SwiggyBuildersCompletionLedger,
   SwiggyHomepageSignalCoverageBoard,
@@ -610,6 +612,7 @@ function App() {
   const [navigationWitness, setNavigationWitness] = useState<SwiggyBuildersNavigationWitness | null>(null);
   const [benefitsWitness, setBenefitsWitness] = useState<SwiggyBuildersBenefitsWitness | null>(null);
   const [aiNativeWitness, setAiNativeWitness] = useState<SwiggyBuildersAiNativeWitness | null>(null);
+  const [enterpriseWitness, setEnterpriseWitness] = useState<SwiggyBuildersEnterpriseWitness | null>(null);
   const [capabilityTraceability, setCapabilityTraceability] =
     useState<SwiggyCapabilityTraceabilityMatrix | null>(null);
   const [homepageSignalCoverage, setHomepageSignalCoverage] =
@@ -850,6 +853,7 @@ function App() {
       navigationWitnessResponse,
       benefitsWitnessResponse,
       aiNativeWitnessResponse,
+      enterpriseWitnessResponse,
       capabilityTraceabilityResponse,
       homepageSignalCoverageResponse,
       buildersCompletionResponse,
@@ -986,6 +990,7 @@ function App() {
       fetchSwiggyBuildersNavigationWitness(),
       fetchSwiggyBuildersBenefitsWitness(),
       fetchSwiggyBuildersAiNativeWitness(),
+      fetchSwiggyBuildersEnterpriseWitness(),
       fetchSwiggyCapabilityTraceability(),
       fetchSwiggyHomepageSignalCoverage(),
       fetchSwiggyBuildersCompletionLedger(),
@@ -1123,6 +1128,7 @@ function App() {
     setNavigationWitness(navigationWitnessResponse.navigationWitness);
     setBenefitsWitness(benefitsWitnessResponse.benefitsWitness);
     setAiNativeWitness(aiNativeWitnessResponse.aiNativeWitness);
+    setEnterpriseWitness(enterpriseWitnessResponse.enterpriseWitness);
     setCapabilityTraceability(capabilityTraceabilityResponse.capabilityTraceability);
     setHomepageSignalCoverage(homepageSignalCoverageResponse.homepageSignalCoverage);
     setBuildersCompletion(buildersCompletionResponse.buildersCompletion);
@@ -1263,6 +1269,7 @@ function App() {
       navigationWitnessResponse,
       benefitsWitnessResponse,
       aiNativeWitnessResponse,
+      enterpriseWitnessResponse,
       capabilityTraceabilityResponse,
       homepageSignalCoverageResponse,
       buildersCompletionResponse,
@@ -1396,6 +1403,7 @@ function App() {
       fetchSwiggyBuildersNavigationWitness(),
       fetchSwiggyBuildersBenefitsWitness(),
       fetchSwiggyBuildersAiNativeWitness(),
+      fetchSwiggyBuildersEnterpriseWitness(),
       fetchSwiggyCapabilityTraceability(),
       fetchSwiggyHomepageSignalCoverage(),
       fetchSwiggyBuildersCompletionLedger(),
@@ -1529,6 +1537,7 @@ function App() {
     setNavigationWitness(navigationWitnessResponse.navigationWitness);
     setBenefitsWitness(benefitsWitnessResponse.benefitsWitness);
     setAiNativeWitness(aiNativeWitnessResponse.aiNativeWitness);
+    setEnterpriseWitness(enterpriseWitnessResponse.enterpriseWitness);
     setCapabilityTraceability(capabilityTraceabilityResponse.capabilityTraceability);
     setHomepageSignalCoverage(homepageSignalCoverageResponse.homepageSignalCoverage);
     setBuildersCompletion(buildersCompletionResponse.buildersCompletion);
@@ -2237,6 +2246,7 @@ function App() {
                 navigationWitness={navigationWitness}
                 benefitsWitness={benefitsWitness}
                 aiNativeWitness={aiNativeWitness}
+                enterpriseWitness={enterpriseWitness}
                 capabilityTraceability={capabilityTraceability}
                 homepageSignalCoverage={homepageSignalCoverage}
                 buildersCompletion={buildersCompletion}
@@ -2862,6 +2872,7 @@ function LaunchCenterPanel({
   navigationWitness,
   benefitsWitness,
   aiNativeWitness,
+  enterpriseWitness,
   capabilityTraceability,
   homepageSignalCoverage,
   buildersCompletion,
@@ -2970,6 +2981,7 @@ function LaunchCenterPanel({
   navigationWitness: SwiggyBuildersNavigationWitness | null;
   benefitsWitness: SwiggyBuildersBenefitsWitness | null;
   aiNativeWitness: SwiggyBuildersAiNativeWitness | null;
+  enterpriseWitness: SwiggyBuildersEnterpriseWitness | null;
   capabilityTraceability: SwiggyCapabilityTraceabilityMatrix | null;
   homepageSignalCoverage: SwiggyHomepageSignalCoverageBoard | null;
   buildersCompletion: SwiggyBuildersCompletionLedger | null;
@@ -5021,6 +5033,55 @@ function LaunchCenterPanel({
             </a>
             <a href="/api/ai-client-connect-kit" target="_blank" rel="noreferrer">
               Clients
+            </a>
+          </div>
+        </article>
+
+        <article className="enterprise-witness-card">
+          <div className="mini-heading">
+            <Users aria-hidden="true" />
+            <strong>Enterprise Witness</strong>
+          </div>
+          <span>
+            {enterpriseWitness
+              ? `${enterpriseWitness.score}/100, ${enterpriseWitness.totals.proven + enterpriseWitness.totals.ready}/${enterpriseWitness.totals.rows} enterprise lanes ready`
+              : "Witnessing delegated auth, tenants, quota, support, contracts, audit exports, and partner gates"}
+          </span>
+          <div className="enterprise-witness-grid">
+            <div>
+              <strong>{enterpriseWitness?.totals.delegatedFlowSteps ?? 0}</strong>
+              <span>OBO</span>
+            </div>
+            <div>
+              <strong>{enterpriseWitness?.totals.tenantControls ?? 0}</strong>
+              <span>Tenants</span>
+            </div>
+            <div>
+              <strong>{enterpriseWitness?.totals.supportLanes ?? 0}</strong>
+              <span>Support</span>
+            </div>
+            <div>
+              <strong>{enterpriseWitness?.totals.proofLinks ?? 0}</strong>
+              <span>Proofs</span>
+            </div>
+          </div>
+          <ul className="compact-status-list">
+            {(enterpriseWitness?.groups ?? []).map((group) => (
+              <li key={group.id} data-status={group.gates > 0 || group.watch > 0 ? "watch" : "healthy"}>
+                <span>{group.label}</span>
+                <strong>{group.proven + group.ready}/{group.rows}</strong>
+              </li>
+            ))}
+          </ul>
+          <div className="source-intelligence-actions" aria-label="Enterprise witness links">
+            <a href="/api/swiggy-builders-enterprise-witness" target="_blank" rel="noreferrer">
+              Enterprise API
+            </a>
+            <a href="/api/enterprise-delegated-auth" target="_blank" rel="noreferrer">
+              Delegated
+            </a>
+            <a href="/api/enterprise-platform-center" target="_blank" rel="noreferrer">
+              Platform
             </a>
           </div>
         </article>

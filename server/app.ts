@@ -36,6 +36,7 @@ import { buildSwiggyBuildersModuleWitness } from "./services/buildersModuleWitne
 import { buildSwiggyBuildersNavigationWitness } from "./services/buildersNavigationWitness.js";
 import { buildSwiggyBuildersBenefitsWitness } from "./services/buildersBenefitsWitness.js";
 import { buildSwiggyBuildersAiNativeWitness } from "./services/buildersAiNativeWitness.js";
+import { buildSwiggyBuildersEnterpriseWitness } from "./services/buildersEnterpriseWitness.js";
 import { buildSwiggyBuildersReviewDecisionCenter } from "./services/reviewDecisionCenter.js";
 import { buildSwiggyBuildersSourceEvolutionCenter } from "./services/sourceEvolutionCenter.js";
 import { buildSwiggySourceFreezeDiff } from "./services/sourceFreezeDiff.js";
@@ -1402,6 +1403,16 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/swiggy-builders-ai-native-witness", (_req, res) => {
     res.json({ aiNativeWitness: buildSwiggyBuildersAiNativeWitness(store.getAllPlans().at(-1)) });
+  });
+
+  app.get("/api/swiggy-builders-enterprise-witness", (_req, res) => {
+    res.json({
+      enterpriseWitness: buildSwiggyBuildersEnterpriseWitness({
+        config,
+        plans: store.getAllPlans(),
+        telemetry: telemetry.buildReport(),
+      }),
+    });
   });
 
   app.get("/api/swiggy-builders-journey-gates", (_req, res) => {

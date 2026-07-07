@@ -213,6 +213,12 @@ describe("MealPilot app", () => {
         expect.objectContaining({ href: expect.stringContaining("/api/swiggy-builders-ai-native-witness") }),
       ]),
     );
+    expect(screen.getByText("Enterprise Witness")).toBeInTheDocument();
+    expect(screen.getAllByRole("link", { name: "Enterprise API" })).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ href: expect.stringContaining("/api/swiggy-builders-enterprise-witness") }),
+      ]),
+    );
     expect(screen.getByText("Source Availability")).toBeInTheDocument();
     expect(screen.getAllByRole("link", { name: "Availability API" })).toEqual(
       expect.arrayContaining([
