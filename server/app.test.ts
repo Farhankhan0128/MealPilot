@@ -1868,6 +1868,7 @@ describe("MealPilot API", () => {
     expect(packet.readiness.some((item: { id: string; status: string }) => item.id === "post_submit_lifecycle_packet" && item.status === "ready")).toBe(true);
     expect(packet.readiness.some((item: { id: string; status: string }) => item.id === "mcp_client_readiness_packet" && item.status === "ready")).toBe(true);
     expect(packet.readiness.some((item: { id: string; status: string }) => item.id === "source_freeze_live_audit_packet" && item.status === "ready")).toBe(true);
+    expect(packet.readiness.some((item: { id: string; status: string }) => item.id === "executable_rehearsal_packet" && item.status === "ready")).toBe(true);
     expect(packet.readiness.some((item: { id: string; status: string }) => item.id === "demo_video" && item.status === "operator_input")).toBe(true);
     expect(packet.readiness.some((item: { id: string; status: string }) => item.id === "staging_credentials" && item.status === "external_gate")).toBe(true);
     expect(packet.externalGates.some((gate: string) => gate.includes("Google Form"))).toBe(true);
@@ -3773,6 +3774,7 @@ describe("MealPilot API", () => {
         "mcp_contracts",
         "mcp_client_readiness",
         "source_freeze_live_audit",
+        "executable_rehearsal_matrix",
         "partner_signal_operations",
         "operations_and_logs",
       ]),
@@ -3855,6 +3857,56 @@ describe("MealPilot API", () => {
     expect(vault.reviewerEmail.body).toContain("/api/swiggy-source-freeze-diff");
     expect(vault.reviewerEmail.body).toContain("/api/swiggy-credential-vault-center");
     expect(vault.reviewerEmail.body).toContain("/api/swiggy-staging-seed-smoke-center");
+    const executableRehearsalMatrix = vault.artifactSections.find(
+      (section: { id: string; artifacts: Array<{ id: string; path: string }> }) => section.id === "executable_rehearsal_matrix",
+    );
+    expect(executableRehearsalMatrix?.artifacts.map((artifact: { id: string }) => artifact.id)).toEqual(
+      expect.arrayContaining([
+        "access_submission_rehearsal",
+        "reviewer_packet_composer",
+        "visual_qa_rehearsal",
+        "docs_coverage_drill",
+        "docs_twin_rehearsal",
+        "llms_manifest_rehearsal",
+        "ai_client_validate_config",
+        "brand_compliance_rehearsal",
+        "interaction_qa_rehearsal",
+        "source_freeze_rehearsal",
+        "growth_partnership_composer",
+        "partner_success_composer",
+        "showcase_submission_composer",
+        "channel_multimodal_composer",
+        "nutrition_budget_advisor",
+        "household_preference_simulator",
+        "guest_collaboration_composer",
+        "luxury_experience_composer",
+      ]),
+    );
+    expect(executableRehearsalMatrix?.artifacts.map((artifact: { path: string }) => artifact.path)).toEqual(
+      expect.arrayContaining([
+        "/api/access-submission-studio/rehearse",
+        "/api/reviewer-artifact-vault/compose",
+        "/api/visual-qa-center/rehearse",
+        "/api/swiggy-docs-coverage/drill",
+        "/api/swiggy-docs-twin-explorer/rehearse",
+        "/api/swiggy-llms-manifest-verifier/rehearse",
+        "/api/ai-client-connect-kit/validate-config",
+        "/api/brand-compliance-kit/rehearse",
+        "/api/swiggy-interaction-qa-center/rehearse",
+        "/api/swiggy-source-freeze-diff/freeze",
+        "/api/swiggy-growth-partnership/compose",
+        "/api/swiggy-partner-success-desk/compose",
+        "/api/swiggy-showcase-submission-center/compose",
+        "/api/channel-multimodal-studio/compose",
+        "/api/nutrition-budget-intelligence/advise",
+        "/api/household-preference-graph/simulate",
+        "/api/guest-collaboration-calendar/compose",
+        "/api/luxury-experience-workspace/compose",
+      ]),
+    );
+    expect(vault.reviewerEmail.body).toContain("/api/access-submission-studio/rehearse");
+    expect(vault.reviewerEmail.body).toContain("/api/reviewer-artifact-vault/compose");
+    expect(vault.reviewerEmail.body).toContain("/api/luxury-experience-workspace/compose");
     expect(
       vault.artifactSections.some((section: { artifacts: Array<{ id: string; label: string; path: string }> }) =>
         section.artifacts.some(
@@ -7880,6 +7932,24 @@ describe("MealPilot API", () => {
         "CTA Live Audit",
         "Swiggy Interaction QA Center",
         "Swiggy Source Freeze Diff",
+        "Access Submission Rehearsal",
+        "Reviewer Artifact Packet Composer",
+        "Visual QA Rehearsal",
+        "Docs Coverage Drill",
+        "Docs Twin Rehearsal",
+        "llms Manifest Rehearsal",
+        "AI Client Config Validation",
+        "Brand Compliance Rehearsal",
+        "Interaction QA Rehearsal",
+        "Source Freeze Rehearsal",
+        "Growth Partnership Composer",
+        "Partner Success Composer",
+        "Showcase Submission Composer",
+        "Channel & Multimodal Composer",
+        "Nutrition & Budget Advisor",
+        "Household Preference Simulator",
+        "Guest Collaboration Composer",
+        "Luxury Experience Composer",
         "Swiggy Deep Site Map",
         "Developer Quickstart Workbench",
         "CTA Execution Center",
@@ -7960,6 +8030,24 @@ describe("MealPilot API", () => {
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-cta-live-audit");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-interaction-qa-center");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-source-freeze-diff");
+    expect(bundle.handoffEmail.body).toContain("/api/access-submission-studio/rehearse");
+    expect(bundle.handoffEmail.body).toContain("/api/reviewer-artifact-vault/compose");
+    expect(bundle.handoffEmail.body).toContain("/api/visual-qa-center/rehearse");
+    expect(bundle.handoffEmail.body).toContain("/api/swiggy-docs-coverage/drill");
+    expect(bundle.handoffEmail.body).toContain("/api/swiggy-docs-twin-explorer/rehearse");
+    expect(bundle.handoffEmail.body).toContain("/api/swiggy-llms-manifest-verifier/rehearse");
+    expect(bundle.handoffEmail.body).toContain("/api/ai-client-connect-kit/validate-config");
+    expect(bundle.handoffEmail.body).toContain("/api/brand-compliance-kit/rehearse");
+    expect(bundle.handoffEmail.body).toContain("/api/swiggy-interaction-qa-center/rehearse");
+    expect(bundle.handoffEmail.body).toContain("/api/swiggy-source-freeze-diff/freeze");
+    expect(bundle.handoffEmail.body).toContain("/api/swiggy-growth-partnership/compose");
+    expect(bundle.handoffEmail.body).toContain("/api/swiggy-partner-success-desk/compose");
+    expect(bundle.handoffEmail.body).toContain("/api/swiggy-showcase-submission-center/compose");
+    expect(bundle.handoffEmail.body).toContain("/api/channel-multimodal-studio/compose");
+    expect(bundle.handoffEmail.body).toContain("/api/nutrition-budget-intelligence/advise");
+    expect(bundle.handoffEmail.body).toContain("/api/household-preference-graph/simulate");
+    expect(bundle.handoffEmail.body).toContain("/api/guest-collaboration-calendar/compose");
+    expect(bundle.handoffEmail.body).toContain("/api/luxury-experience-workspace/compose");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-showcase-submission-center");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-operating-contract-center");
     expect(bundle.handoffEmail.body).toContain("/api/auth/swiggy/status");

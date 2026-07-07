@@ -3032,7 +3032,7 @@ assert(reviewerArtifactVault.reviewerArtifactVault.totalCommands === 7, "reviewe
 assert(reviewerArtifactVault.reviewerArtifactVault.readyCommands >= 6, "reviewer artifact vault ready commands are incomplete");
 assert(reviewerArtifactVault.reviewerArtifactVault.totalRedactionRules >= 6, "reviewer artifact vault redaction rules are incomplete");
 assert(
-  ["submission_packet", "product_depth", "mcp_contracts", "mcp_client_readiness", "source_freeze_live_audit", "operations_and_logs"].every((id) =>
+  ["submission_packet", "product_depth", "mcp_contracts", "mcp_client_readiness", "source_freeze_live_audit", "executable_rehearsal_matrix", "operations_and_logs"].every((id) =>
     reviewerArtifactVault.reviewerArtifactVault.artifactSections.some((section) => section.id === id),
   ),
   "reviewer artifact vault sections are missing",
@@ -3069,6 +3069,33 @@ assert(
       ["/api/swiggy-staging-seed-smoke-center", "staging_seed_smoke"],
     ].every(([path, id]) => sourceFreezeLiveAuditSection.artifacts.some((artifact) => artifact.id === id && artifact.path === path)),
   "reviewer artifact vault source-freeze live-audit section is missing",
+);
+const executableRehearsalMatrixSection = reviewerArtifactVault.reviewerArtifactVault.artifactSections.find(
+  (section) => section.id === "executable_rehearsal_matrix",
+);
+assert(
+  executableRehearsalMatrixSection &&
+    [
+      ["/api/access-submission-studio/rehearse", "access_submission_rehearsal"],
+      ["/api/reviewer-artifact-vault/compose", "reviewer_packet_composer"],
+      ["/api/visual-qa-center/rehearse", "visual_qa_rehearsal"],
+      ["/api/swiggy-docs-coverage/drill", "docs_coverage_drill"],
+      ["/api/swiggy-docs-twin-explorer/rehearse", "docs_twin_rehearsal"],
+      ["/api/swiggy-llms-manifest-verifier/rehearse", "llms_manifest_rehearsal"],
+      ["/api/ai-client-connect-kit/validate-config", "ai_client_validate_config"],
+      ["/api/brand-compliance-kit/rehearse", "brand_compliance_rehearsal"],
+      ["/api/swiggy-interaction-qa-center/rehearse", "interaction_qa_rehearsal"],
+      ["/api/swiggy-source-freeze-diff/freeze", "source_freeze_rehearsal"],
+      ["/api/swiggy-growth-partnership/compose", "growth_partnership_composer"],
+      ["/api/swiggy-partner-success-desk/compose", "partner_success_composer"],
+      ["/api/swiggy-showcase-submission-center/compose", "showcase_submission_composer"],
+      ["/api/channel-multimodal-studio/compose", "channel_multimodal_composer"],
+      ["/api/nutrition-budget-intelligence/advise", "nutrition_budget_advisor"],
+      ["/api/household-preference-graph/simulate", "household_preference_simulator"],
+      ["/api/guest-collaboration-calendar/compose", "guest_collaboration_composer"],
+      ["/api/luxury-experience-workspace/compose", "luxury_experience_composer"],
+    ].every(([path, id]) => executableRehearsalMatrixSection.artifacts.some((artifact) => artifact.id === id && artifact.path === path)),
+  "reviewer artifact vault executable rehearsal matrix is missing",
 );
 assert(
   reviewerArtifactVault.reviewerArtifactVault.artifactSections.some((section) =>
@@ -3534,6 +3561,27 @@ assert(
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-credential-vault-center") &&
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-staging-seed-smoke-center"),
   "reviewer artifact vault source-freeze live-audit handoff links are incomplete",
+);
+assert(
+  reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/access-submission-studio/rehearse") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/reviewer-artifact-vault/compose") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/visual-qa-center/rehearse") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-docs-coverage/drill") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-docs-twin-explorer/rehearse") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-llms-manifest-verifier/rehearse") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/ai-client-connect-kit/validate-config") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/brand-compliance-kit/rehearse") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-interaction-qa-center/rehearse") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-source-freeze-diff/freeze") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-growth-partnership/compose") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-partner-success-desk/compose") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-showcase-submission-center/compose") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/channel-multimodal-studio/compose") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/nutrition-budget-intelligence/advise") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/household-preference-graph/simulate") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/guest-collaboration-calendar/compose") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/luxury-experience-workspace/compose"),
+  "reviewer artifact vault executable rehearsal handoff links are incomplete",
 );
 const readyReviewerPacket = await request("/api/reviewer-artifact-vault/compose", {
   method: "POST",
@@ -7900,6 +7948,7 @@ assert(
     builderPacket.packet.readiness.some((item) => item.id === "post_submit_lifecycle_packet" && item.status === "ready") &&
     builderPacket.packet.readiness.some((item) => item.id === "mcp_client_readiness_packet" && item.status === "ready") &&
     builderPacket.packet.readiness.some((item) => item.id === "source_freeze_live_audit_packet" && item.status === "ready") &&
+    builderPacket.packet.readiness.some((item) => item.id === "executable_rehearsal_packet" && item.status === "ready") &&
     builderPacket.packet.readiness.some((item) => item.id === "demo_video" && item.status === "operator_input") &&
     builderPacket.packet.readiness.some((item) => item.id === "staging_credentials" && item.status === "external_gate"),
   "builder packet readiness gates are incomplete",
@@ -7959,6 +8008,24 @@ assert(
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "CTA Live Audit") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Interaction QA Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Source Freeze Diff") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Access Submission Rehearsal") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Reviewer Artifact Packet Composer") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Visual QA Rehearsal") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Docs Coverage Drill") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Docs Twin Rehearsal") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "llms Manifest Rehearsal") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "AI Client Config Validation") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Brand Compliance Rehearsal") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Interaction QA Rehearsal") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Source Freeze Rehearsal") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Growth Partnership Composer") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Partner Success Composer") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Showcase Submission Composer") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Channel & Multimodal Composer") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Nutrition & Budget Advisor") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Household Preference Simulator") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Guest Collaboration Composer") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Luxury Experience Composer") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Docs Coverage") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Docs Twin Explorer") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Upstream Watch") &&
@@ -8063,6 +8130,27 @@ assert(
     launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-credential-vault-center") &&
     launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-staging-seed-smoke-center"),
   "launch bundle source-freeze live-audit handoff links are missing",
+);
+assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/access-submission-studio/rehearse") &&
+    launchBundle.launchBundle.handoffEmail.body.includes("/api/reviewer-artifact-vault/compose") &&
+    launchBundle.launchBundle.handoffEmail.body.includes("/api/visual-qa-center/rehearse") &&
+    launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-docs-coverage/drill") &&
+    launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-docs-twin-explorer/rehearse") &&
+    launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-llms-manifest-verifier/rehearse") &&
+    launchBundle.launchBundle.handoffEmail.body.includes("/api/ai-client-connect-kit/validate-config") &&
+    launchBundle.launchBundle.handoffEmail.body.includes("/api/brand-compliance-kit/rehearse") &&
+    launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-interaction-qa-center/rehearse") &&
+    launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-source-freeze-diff/freeze") &&
+    launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-growth-partnership/compose") &&
+    launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-partner-success-desk/compose") &&
+    launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-showcase-submission-center/compose") &&
+    launchBundle.launchBundle.handoffEmail.body.includes("/api/channel-multimodal-studio/compose") &&
+    launchBundle.launchBundle.handoffEmail.body.includes("/api/nutrition-budget-intelligence/advise") &&
+    launchBundle.launchBundle.handoffEmail.body.includes("/api/household-preference-graph/simulate") &&
+    launchBundle.launchBundle.handoffEmail.body.includes("/api/guest-collaboration-calendar/compose") &&
+    launchBundle.launchBundle.handoffEmail.body.includes("/api/luxury-experience-workspace/compose"),
+  "launch bundle executable rehearsal handoff links are missing",
 );
 assert(
   launchBundle.launchBundle.artifacts.some(

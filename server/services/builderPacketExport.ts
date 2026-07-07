@@ -254,6 +254,13 @@ export function buildBuilderPacketExport(options: {
         "Run this packet before recording the final demo or submitting the access form so every live page, CTA, source-freeze row, secret posture, and seeded-staging gate is visible.",
       ),
       readiness(
+        "executable_rehearsal_packet",
+        "Executable CTA rehearsal packet",
+        "ready",
+        "Reviewer Vault and Launch Bundle now promote access submission, reviewer packet, visual QA, docs/source, AI client, brand, interaction, growth, support, showcase, channel, nutrition, household, guest, and luxury rehearsal endpoints together.",
+        "Run this packet when proving that local CTAs and composer buttons produce safe dry-run evidence without submitting Swiggy forms, sending email, exposing secrets, or executing commercial actions.",
+      ),
+      readiness(
         "demo_video",
         "Demo video URL",
         "operator_input",

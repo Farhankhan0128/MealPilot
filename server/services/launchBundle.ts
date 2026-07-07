@@ -393,6 +393,168 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
         "Composes live page mesh, Website Atlas counts, llms/docs coverage, 35-tool parity, access evidence, builder packet export, and browser re-browse gates into the final pre-submission source freeze.",
     },
     {
+      id: "access_submission_rehearsal",
+      label: "Access Submission Rehearsal",
+      path: "/api/access-submission-studio/rehearse",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Dry-runs the official access-form packet with operator inputs, attachments, browser runbook, generated mailto handoff, and explicit Swiggy-owned submit gates.",
+    },
+    {
+      id: "reviewer_packet_composer",
+      label: "Reviewer Artifact Packet Composer",
+      path: "/api/reviewer-artifact-vault/compose",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Builds safe reviewer packets by section, channel, audience, screenshots, demo-video, and credential-gate choices without attaching secrets.",
+    },
+    {
+      id: "visual_qa_rehearsal",
+      label: "Visual QA Rehearsal",
+      path: "/api/visual-qa-center/rehearse",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Turns screenshot target groups, viewport choices, widget inclusion, and manual attachment readiness into capture commands and layout proof gates.",
+    },
+    {
+      id: "docs_coverage_drill",
+      label: "Docs Coverage Drill",
+      path: "/api/swiggy-docs-coverage/drill",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Rehearses selected llms.txt documentation sections with rendered twins, retrieval commands, proof links, and credential/drift gates.",
+    },
+    {
+      id: "docs_twin_rehearsal",
+      label: "Docs Twin Rehearsal",
+      path: "/api/swiggy-docs-twin-explorer/rehearse",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Builds markdown/rendered-page proof packets for official Swiggy docs twins, retrieval lanes, drift gates, and reviewer evidence.",
+    },
+    {
+      id: "llms_manifest_rehearsal",
+      label: "llms Manifest Rehearsal",
+      path: "/api/swiggy-llms-manifest-verifier/rehearse",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Exercises live-fetch, Docs Coverage fallback, and tool-parity modes with commands, telemetry, assertions, readiness decisions, and missing source gates.",
+    },
+    {
+      id: "ai_client_validate_config",
+      label: "AI Client Config Validation",
+      path: "/api/ai-client-connect-kit/validate-config",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Validates AI client MCP endpoint paths, Instamart /im routing, SDK auth mode, submitted-client gates, and secret redaction before handoff.",
+    },
+    {
+      id: "brand_compliance_rehearsal",
+      label: "Brand Compliance Rehearsal",
+      path: "/api/brand-compliance-kit/rehearse",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Dry-runs Powered by Swiggy attribution, co-branding boundaries, no-endorsement copy, asset gates, and launch screenshot checklist.",
+    },
+    {
+      id: "interaction_qa_rehearsal",
+      label: "Interaction QA Rehearsal",
+      path: "/api/swiggy-interaction-qa-center/rehearse",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Generates local CTA dry-run packets with route contracts, browser actions, expected feedback, automation proof, and external Swiggy gates.",
+    },
+    {
+      id: "source_freeze_rehearsal",
+      label: "Source Freeze Rehearsal",
+      path: "/api/swiggy-source-freeze-diff/freeze",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Re-runs pre-demo, pre-access-submission, and post-source-change freeze gates with metadata-only browser re-browse receipts.",
+    },
+    {
+      id: "growth_partnership_composer",
+      label: "Growth Partnership Composer",
+      path: "/api/swiggy-growth-partnership/compose",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Builds launch-experiment, metrics, proof-asset, co-marketing, and builders@swiggy.in partner ask packets while preserving approval gates.",
+    },
+    {
+      id: "partner_success_composer",
+      label: "Partner Success Composer",
+      path: "/api/swiggy-partner-success-desk/compose",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Composes support, quota, incident, growth, enterprise, escalation, and partner-manager handoff packets with operator and Swiggy gates.",
+    },
+    {
+      id: "showcase_submission_composer",
+      label: "Showcase Submission Composer",
+      path: "/api/swiggy-showcase-submission-center/compose",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Packages pitch copy, demo storyboard, metric pack, visual gallery, outreach copy, and showcase approval gates for the final Send Us a Demo path.",
+    },
+    {
+      id: "channel_multimodal_composer",
+      label: "Channel & Multimodal Composer",
+      path: "/api/channel-multimodal-studio/compose",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Builds voice, web chat, Slack/Teams, mobile camera, enterprise, and screenshot-to-order execution packets with route and confirmation gates.",
+    },
+    {
+      id: "nutrition_budget_advisor",
+      label: "Nutrition & Budget Advisor",
+      path: "/api/nutrition-budget-intelligence/advise",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Dry-runs protein-per-rupee, coupon-safe carts, Instamart pantry gaps, group budgets, Dineout balance, and nutrition-data gates.",
+    },
+    {
+      id: "household_preference_simulator",
+      label: "Household Preference Simulator",
+      path: "/api/household-preference-graph/simulate",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Simulates consented Food, Instamart, Dineout, household-weight, forecast, privacy, and external history gates without raw payload storage.",
+    },
+    {
+      id: "guest_collaboration_composer",
+      label: "Guest Collaboration Composer",
+      path: "/api/guest-collaboration-calendar/compose",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Builds guest vote, occasion, Dineout-first, Food reminder, Instamart prep, calendar, Slack/Teams, and no-scheduled-delivery packets.",
+    },
+    {
+      id: "luxury_experience_composer",
+      label: "Luxury Experience Composer",
+      path: "/api/luxury-experience-workspace/compose",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Composes premium Dineout, Food, Instamart, combined-evening, and recovery workspaces with all-tool coverage, widget fallback, and confirmation boundaries.",
+    },
+    {
       id: "docs_coverage",
       label: "Swiggy Docs Coverage",
       path: "/api/swiggy-docs-coverage",
@@ -1326,6 +1488,24 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- CTA Live Audit: /api/swiggy-cta-live-audit",
     "- Swiggy Interaction QA Center: /api/swiggy-interaction-qa-center",
     "- Swiggy Source Freeze Diff: /api/swiggy-source-freeze-diff",
+    "- Access Submission Rehearsal: /api/access-submission-studio/rehearse",
+    "- Reviewer Artifact Packet Composer: /api/reviewer-artifact-vault/compose",
+    "- Visual QA Rehearsal: /api/visual-qa-center/rehearse",
+    "- Docs Coverage Drill: /api/swiggy-docs-coverage/drill",
+    "- Docs Twin Rehearsal: /api/swiggy-docs-twin-explorer/rehearse",
+    "- llms Manifest Rehearsal: /api/swiggy-llms-manifest-verifier/rehearse",
+    "- AI Client Config Validation: /api/ai-client-connect-kit/validate-config",
+    "- Brand Compliance Rehearsal: /api/brand-compliance-kit/rehearse",
+    "- Interaction QA Rehearsal: /api/swiggy-interaction-qa-center/rehearse",
+    "- Source Freeze Rehearsal: /api/swiggy-source-freeze-diff/freeze",
+    "- Growth Partnership Composer: /api/swiggy-growth-partnership/compose",
+    "- Partner Success Composer: /api/swiggy-partner-success-desk/compose",
+    "- Showcase Submission Composer: /api/swiggy-showcase-submission-center/compose",
+    "- Channel & Multimodal Composer: /api/channel-multimodal-studio/compose",
+    "- Nutrition & Budget Advisor: /api/nutrition-budget-intelligence/advise",
+    "- Household Preference Simulator: /api/household-preference-graph/simulate",
+    "- Guest Collaboration Composer: /api/guest-collaboration-calendar/compose",
+    "- Luxury Experience Composer: /api/luxury-experience-workspace/compose",
     "- Swiggy Docs Coverage: /api/swiggy-docs-coverage",
     "- Swiggy Docs Twin Explorer: /api/swiggy-docs-twin-explorer",
     "- Swiggy Upstream Watch: /api/swiggy-upstream-watch",
