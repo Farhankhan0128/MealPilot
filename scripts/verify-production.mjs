@@ -3160,6 +3160,17 @@ assert(
   "reviewer artifact vault benefits activation artifact is missing",
 );
 assert(
+  reviewerArtifactVault.reviewerArtifactVault.artifactSections.some((section) =>
+    section.artifacts.some(
+      (artifact) =>
+        artifact.id === "submission_timeline_center" &&
+        artifact.label === "Swiggy Submission Timeline Center" &&
+        artifact.path === "/api/swiggy-submission-timeline-center",
+    ),
+  ),
+  "reviewer artifact vault submission timeline artifact is missing",
+);
+assert(
   reviewerArtifactVault.reviewerArtifactVault.artifactSections.some(
     (section) =>
       section.id === "partner_signal_operations" &&
@@ -3408,6 +3419,7 @@ assert(
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-partner-support-room") &&
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-benefits-activation-center") &&
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/access-submission-studio") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-submission-timeline-center") &&
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-operating-contract-center") &&
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/brand-compliance-kit") &&
     reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-growth-partnership") &&
@@ -7831,6 +7843,7 @@ assert(
     builderPacket.packet.readiness.some((item) => item.id === "showcase_submission_packet" && item.status === "ready") &&
     builderPacket.packet.readiness.some((item) => item.id === "partner_signal_packet" && item.status === "ready") &&
     builderPacket.packet.readiness.some((item) => item.id === "access_submission_packet" && item.status === "ready") &&
+    builderPacket.packet.readiness.some((item) => item.id === "post_submit_lifecycle_packet" && item.status === "ready") &&
     builderPacket.packet.readiness.some((item) => item.id === "demo_video" && item.status === "operator_input") &&
     builderPacket.packet.readiness.some((item) => item.id === "staging_credentials" && item.status === "external_gate"),
   "builder packet readiness gates are incomplete",
@@ -7970,6 +7983,23 @@ assert(
       artifact.path === "/api/access-submission-studio",
   ) && launchBundle.launchBundle.handoffEmail.body.includes("/api/access-submission-studio"),
   "launch bundle access submission studio handoff evidence is missing",
+);
+assert(
+  launchBundle.launchBundle.artifacts.some(
+    (artifact) =>
+      artifact.id === "submission_timeline_center" &&
+      artifact.label === "Swiggy Submission Timeline Center" &&
+      artifact.path === "/api/swiggy-submission-timeline-center",
+  ) &&
+    launchBundle.launchBundle.artifacts.some(
+      (artifact) =>
+        artifact.id === "partner_success_desk" &&
+        artifact.label === "Swiggy Partner Success Desk" &&
+        artifact.path === "/api/swiggy-partner-success-desk",
+    ) &&
+    launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-submission-timeline-center") &&
+    launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-partner-success-desk"),
+  "launch bundle post-submit lifecycle handoff evidence is missing",
 );
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-builders-launch-story"),

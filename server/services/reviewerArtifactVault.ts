@@ -104,6 +104,14 @@ const artifactSections = [
         "Never submits the external Swiggy form or sends email; demo URL, contacts, redirect URI, egress, terms, credentials, and approval stay explicit operator or Swiggy gates.",
       ),
       artifact(
+        "submission_timeline_center",
+        "Swiggy Submission Timeline Center",
+        "api",
+        "/api/swiggy-submission-timeline-center",
+        "Start Building, proof freeze, demo recording, Request Access, Send Demo, DCR, staging seed, 48-hour soak, partner success, and production promotion sequenced into one owner-tagged timeline.",
+        "Form submission, email send, DCR approval, staging credentials, seeded data, production promotion, and showcase approval remain operator or Swiggy gates.",
+      ),
+      artifact(
         "demo_script",
         "Demo script",
         "doc",
@@ -461,6 +469,7 @@ export function buildReviewerArtifactVault(): ReviewerArtifactVault {
     "- Swiggy Partner Support Room: /api/swiggy-partner-support-room",
     "- Swiggy Benefits Activation Center: /api/swiggy-benefits-activation-center",
     "- Access Submission Studio: /api/access-submission-studio",
+    "- Swiggy Submission Timeline Center: /api/swiggy-submission-timeline-center",
     "- Swiggy Credential Handoff Center: /api/swiggy-credential-handoff-center",
     "- Swiggy Credential Readiness Dossier: /api/swiggy-credential-readiness-dossier",
     "- Credential Issuance Receipt State: /api/swiggy-credential-issuance/state",

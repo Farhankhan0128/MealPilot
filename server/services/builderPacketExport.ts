@@ -233,6 +233,13 @@ export function buildBuilderPacketExport(options: {
         "Open the studio before the final Swiggy browser submission, resolve operator inputs, then manually submit the official form and send the handoff email.",
       ),
       readiness(
+        "post_submit_lifecycle_packet",
+        "Post-submit lifecycle packet",
+        "ready",
+        "Submission Timeline Center and Partner Success Desk are promoted into the launch bundle and reviewer vault so the access form, demo handoff, credential wait, staging soak, capacity/support, growth, and production promotion path stays visible.",
+        "Use the timeline after form submission and the Partner Success Desk for support, quota, incident, growth, and enterprise follow-up without claiming Swiggy approval locally.",
+      ),
+      readiness(
         "demo_video",
         "Demo video URL",
         "operator_input",

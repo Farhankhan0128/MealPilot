@@ -825,6 +825,24 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
         "Turns Start Building, Request access, and Send Us a Demo into copy-ready form values, required attachments, browser runbook steps, mailto handoff, saved operator state, and non-auto-submission rehearsals.",
     },
     {
+      id: "submission_timeline_center",
+      label: "Swiggy Submission Timeline Center",
+      path: "/api/swiggy-submission-timeline-center",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Sequences proof freeze, demo recording, Request Access, Send Demo, DCR, staging seed, 48-hour soak, partner success, and production promotion with explicit MealPilot, operator, and Swiggy ownership.",
+    },
+    {
+      id: "partner_success_desk",
+      label: "Swiggy Partner Success Desk",
+      path: "/api/swiggy-partner-success-desk",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Composes access handoff, developer support, SLO incidents, capacity review, backpressure, growth showcase asks, escalation emails, and enterprise Slack/partner-manager gates into one post-access operator room.",
+    },
+    {
       id: "builder_packet_export",
       label: "Builder Packet Export",
       path: "/api/builder-packet-export",
@@ -1193,6 +1211,8 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- Visual QA Center: /api/visual-qa-center",
     "- Submission Console: /api/submission-console",
     "- Access Submission Studio: /api/access-submission-studio",
+    "- Swiggy Submission Timeline Center: /api/swiggy-submission-timeline-center",
+    "- Swiggy Partner Success Desk: /api/swiggy-partner-success-desk",
     "- Swiggy Docs Coverage: /api/swiggy-docs-coverage",
     "- Swiggy Docs Twin Explorer: /api/swiggy-docs-twin-explorer",
     "- Swiggy Upstream Watch: /api/swiggy-upstream-watch",
