@@ -115,6 +115,9 @@ describe("MealPilot API", () => {
     );
     expect(openApi.body.paths["/api/swiggy-staging-seed-smoke-center"].get.summary).toContain("Seed and Smoke");
     expect(openApi.body.paths["/api/channel-multimodal-studio"].get.summary).toContain("Channel and Multimodal");
+    expect(openApi.body.paths["/api/channel-multimodal-studio/compose"].post.summary).toContain(
+      "Channel and Multimodal execution packet composer",
+    );
     expect(openApi.body.paths["/api/swiggy-visual-dish-capture"].get.summary).toContain("Visual Dish Capture");
     expect(openApi.body.paths["/api/swiggy-visual-dish-capture/analyze"].post.summary).toContain("visual dish");
     expect(openApi.body.paths["/api/swiggy-voice-commerce-center"].get.summary).toContain("Voice Commerce");
@@ -2588,6 +2591,100 @@ describe("MealPilot API", () => {
     expect(studio.assertions.some((assertion: string) => assertion.includes("local execution packet"))).toBe(true);
     expect(studio.externalGates.some((gate: string) => gate.includes("Slack/Teams"))).toBe(true);
     expect(studio.externalGates.some((gate: string) => gate.includes("vision/OCR"))).toBe(true);
+  });
+
+  it("composes a ready Channel and Multimodal execution packet", async () => {
+    const { app } = createMealPilotServer();
+
+    const response = await request(app)
+      .post("/api/channel-multimodal-studio/compose")
+      .send({
+        laneId: "voice_agent",
+        channelId: "voice_tts",
+        operatorEmail: "operator@example.com",
+        userTrigger: "User asks for a hands-free dinner ordering route.",
+        dryRunConfirmed: true,
+      })
+      .expect(200);
+    const composition = response.body.channelExecutionComposition;
+
+    expect(composition.decision).toBe("ready_local_packet");
+    expect(composition.readinessScore).toBe(100);
+    expect(composition.lane.id).toBe("voice_agent");
+    expect(composition.channel.id).toBe("voice_tts");
+    expect(composition.executionPacket.id).toBe("voice_agent_packet");
+    expect(composition.swiggyToolchain).toEqual(expect.arrayContaining(["food.place_food_order", "instamart.your_go_to_items", "dineout.book_table"]));
+    expect(composition.confirmationGate).toContain("explicit yes/confirm");
+    expect(composition.telemetryContract).toContain("surface=voice");
+    expect(composition.proofLinks).toEqual(expect.arrayContaining(["/api/channel-multimodal-studio", "/api/telemetry/runtime"]));
+    expect(composition.assertions.some((assertion: string) => assertion.includes("never installs Slack/Teams"))).toBe(true);
+    expect(composition.missingInputs).toEqual([]);
+  });
+
+  it("guards Channel and Multimodal execution packets until operator inputs are complete", async () => {
+    const { app } = createMealPilotServer();
+
+    const response = await request(app)
+      .post("/api/channel-multimodal-studio/compose")
+      .send({
+        laneId: "voice_agent",
+        channelId: "voice_tts",
+        operatorEmail: "bad-email",
+        userTrigger: "short",
+        dryRunConfirmed: false,
+      })
+      .expect(200);
+    const composition = response.body.channelExecutionComposition;
+
+    expect(composition.decision).toBe("needs_operator_input");
+    expect(composition.readinessScore).toBe(68);
+    expect(composition.missingInputs).toEqual(expect.arrayContaining(["operator_email", "user_trigger", "dry_run_confirmation"]));
+    expect(composition.checklist.some((item: { id: string; status: string }) => item.id === "operator_identity" && item.status === "manual_input")).toBe(true);
+  });
+
+  it("preserves manual gates for platform-dependent Channel and Multimodal packets", async () => {
+    const { app } = createMealPilotServer();
+
+    const response = await request(app)
+      .post("/api/channel-multimodal-studio/compose")
+      .send({
+        laneId: "screenshot_to_order",
+        channelId: "mobile_camera",
+        operatorEmail: "operator@example.com",
+        userTrigger: "User shares a dish screenshot and confirms the detected label.",
+        dryRunConfirmed: true,
+      })
+      .expect(200);
+    const composition = response.body.channelExecutionComposition;
+
+    expect(composition.decision).toBe("manual_gate");
+    expect(composition.readinessScore).toBe(72);
+    expect(composition.lane.id).toBe("screenshot_to_order");
+    expect(composition.executionPacket.surface).toBe("mobile_camera");
+    expect(composition.telemetryContract).toContain("image_retained=false");
+    expect(composition.externalGates.some((gate: string) => gate.includes("vision/OCR"))).toBe(true);
+  });
+
+  it("preserves Swiggy gates for enterprise Channel and Multimodal packets", async () => {
+    const { app } = createMealPilotServer();
+
+    const response = await request(app)
+      .post("/api/channel-multimodal-studio/compose")
+      .send({
+        laneId: "voice_agent",
+        channelId: "enterprise_embedded",
+        operatorEmail: "operator@example.com",
+        userTrigger: "Enterprise tenant asks for an embedded voice commerce proof.",
+        dryRunConfirmed: true,
+      })
+      .expect(200);
+    const composition = response.body.channelExecutionComposition;
+
+    expect(composition.decision).toBe("swiggy_gate");
+    expect(composition.readinessScore).toBe(56);
+    expect(composition.channel.id).toBe("enterprise_embedded");
+    expect(composition.checklist.some((item: { id: string; status: string }) => item.id === "swiggy_gate_preserved" && item.status === "external_gate")).toBe(true);
+    expect(composition.externalGates.some((gate: string) => gate.includes("Enterprise embedded commerce"))).toBe(true);
   });
 
   it("returns a visual dish capture center and analyzes dish captions safely", async () => {

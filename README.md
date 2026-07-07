@@ -111,7 +111,7 @@ Planned MCP servers:
 - Partner Success Desk at `/api/swiggy-partner-success-desk` plus `POST /api/swiggy-partner-success-desk/compose` that composes access handoff, developer support, SLO incidents, capacity review, backpressure, growth showcase asks, and enterprise Slack/partner-manager gates into one reviewer surface with local handoff packets.
 - Swiggy Partner Support Room at `/api/swiggy-partner-support-room` plus `POST /api/swiggy-partner-support-room/compose` that turns report_error, builders@swiggy.in, S0-S3 incidents, capacity escalation, evidence attachments, redaction policy, and enterprise Slack/partner-manager gates into one post-access operator surface with local support packets.
 - Swiggy Interaction QA Center at `/api/swiggy-interaction-qa-center` plus `POST /api/swiggy-interaction-qa-center/rehearse` that proves portal CTAs map to executable routes, visible feedback, automated tests, dry-run rehearsal packets, and explicit Swiggy/operator gates.
-- Channel & Multimodal Studio that turns Swiggy's developer-page ideas into voice, web chat, Slack/Teams, mobile camera, enterprise, and screenshot-to-order contracts with local execution packets for route plans, response rules, confirmation gates, and telemetry.
+- Channel & Multimodal Studio plus `POST /api/channel-multimodal-studio/compose` that turns Swiggy's developer-page ideas into voice, web chat, Slack/Teams, mobile camera, enterprise, and screenshot-to-order contracts with local execution packets for route plans, response rules, confirmation gates, telemetry, and platform approval gates.
 - Nutrition & Budget Intelligence that optimizes protein-per-rupee, coupon-safe Food carts, Instamart pantry gaps, group budgets, and Dineout balance routes without medical claims.
 - Household Preference Graph that turns consented Food active orders, Instamart go-to items/order history, Dineout saved-location signals, group weights, and support failures into privacy-safe personalization.
 - Guest Collaboration & Calendar Center that coordinates guest votes, occasion templates, Dineout slots, Food reminder handoffs, Instamart prep, Slack/Teams gates, and voice-safe briefs.
@@ -301,6 +301,7 @@ POST /api/swiggy-partner-support-room/compose
 GET  /api/swiggy-interaction-qa-center
 POST /api/swiggy-interaction-qa-center/rehearse
 GET  /api/channel-multimodal-studio
+POST /api/channel-multimodal-studio/compose
 GET  /api/swiggy-visual-dish-capture
 GET  /api/swiggy-voice-commerce-center
 GET  /api/swiggy-quality-loop-center
@@ -588,7 +589,7 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 
 `GET /api/swiggy-interaction-qa-center` is the clickable-portal contract: planner, confirmation, packet export, support, privacy, first-call, access submission, and partner-support CTAs are mapped to routes, visible feedback, automation coverage, manual gates, and Swiggy-owned external gates. `POST /api/swiggy-interaction-qa-center/rehearse` powers the Launch Center CTA rehearsal by selecting one lane and returning the route contract, browser action, expected feedback, proof links, automation coverage, missing-input guards, checklist, and explicit form/Slack/credential/commercial-action gates without executing unsafe external actions.
 
-`GET /api/channel-multimodal-studio` is the developer-lane innovation center: voice ordering, auto-restock, group ordering, dietary planning, reservation planning, and screenshot-to-order become channel contracts, MCP toolchains, local execution packets, response rules, data boundaries, telemetry contracts, and external gates for Slack/Teams, mobile camera, vision/OCR, and enterprise embedding.
+`GET /api/channel-multimodal-studio` is the developer-lane innovation center: voice ordering, auto-restock, group ordering, dietary planning, reservation planning, and screenshot-to-order become channel contracts, MCP toolchains, local execution packets, response rules, data boundaries, telemetry contracts, and external gates for Slack/Teams, mobile camera, vision/OCR, and enterprise embedding. `POST /api/channel-multimodal-studio/compose` powers the Launch Center channel composer by selecting one developer lane and one channel, returning the MCP toolchain, route plan, response rules, confirmation gate, telemetry contract, proof links, checklist, missing-input guards, and explicit Slack/Teams, camera/OCR, enterprise, credential, and commercial-action gates without executing live Swiggy commerce or external setup.
 
 `GET /api/swiggy-visual-dish-capture` and `POST /api/swiggy-visual-dish-capture/analyze` productize the screenshot-to-order lane: the analyzer accepts a caption and optional image name, returns a detected dish label, confidence, alternatives, safe Swiggy route plans, no-raw-image-retention telemetry, and confirmation-first next actions.
 

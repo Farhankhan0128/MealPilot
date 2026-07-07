@@ -2554,6 +2554,39 @@ export interface SwiggyChannelMultimodalStudio {
   externalGates: string[];
 }
 
+export type SwiggyChannelExecutionCompositionDecision =
+  | "ready_local_packet"
+  | "needs_operator_input"
+  | "manual_gate"
+  | "swiggy_gate"
+  | "unknown_channel_lane";
+
+export interface SwiggyChannelExecutionComposition {
+  generatedAt: string;
+  laneId: string;
+  channelId: string;
+  decision: SwiggyChannelExecutionCompositionDecision;
+  readinessScore: number;
+  lane: SwiggyChannelMultimodalLane | null;
+  channel: SwiggyChannelIntegration | null;
+  executionPacket: SwiggyChannelExecutionPacket | null;
+  swiggyToolchain: string[];
+  routePlan: string[];
+  responseRules: string[];
+  confirmationGate: string;
+  telemetryContract: string;
+  proofLinks: string[];
+  missingInputs: string[];
+  checklist: Array<{
+    id: string;
+    label: string;
+    status: SwiggyChannelMultimodalStatus;
+    owner: "MealPilot" | "Operator" | "Swiggy";
+  }>;
+  assertions: string[];
+  externalGates: string[];
+}
+
 export type SwiggyVisualDishCaptureStatus = "ready" | "needs_confirmation" | "vision_gate" | "staging_gate";
 export type SwiggyVisualDishCaptureIntent = "dish_photo" | "menu_screenshot" | "pantry_photo" | "chat_image";
 

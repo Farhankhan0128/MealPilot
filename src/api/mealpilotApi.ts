@@ -86,6 +86,7 @@ import type {
   SwiggyCartMutationExecution,
   SwiggyCartMutationReport,
   SwiggyChannelMultimodalStudio,
+  SwiggyChannelExecutionComposition,
   SwiggyConfirmationCommandCenterReport,
   SwiggyConfirmationExecution,
   SwiggyConversionCenter,
@@ -665,6 +666,22 @@ export function rehearseSwiggyInteractionQa(input: {
 
 export function fetchChannelMultimodalStudio() {
   return requestJson<{ channelMultimodalStudio: SwiggyChannelMultimodalStudio }>("/api/channel-multimodal-studio");
+}
+
+export function composeSwiggyChannelExecutionPacket(input: {
+  laneId: string;
+  channelId: string;
+  operatorEmail: string;
+  userTrigger: string;
+  dryRunConfirmed: boolean;
+}) {
+  return requestJson<{ channelExecutionComposition: SwiggyChannelExecutionComposition }>(
+    "/api/channel-multimodal-studio/compose",
+    {
+      method: "POST",
+      body: JSON.stringify(input),
+    },
+  );
 }
 
 export function fetchSwiggyVisualDishCapture() {

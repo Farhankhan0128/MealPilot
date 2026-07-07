@@ -274,6 +274,15 @@ assert(
   "OpenAPI channel and multimodal studio contract is missing",
 );
 assert(
+  openApi.paths["/api/channel-multimodal-studio/compose"]?.post?.summary?.includes(
+    "Channel and Multimodal execution packet composer",
+  ) &&
+    openApi.paths["/api/channel-multimodal-studio/compose"]?.post?.responses?.["200"]?.description?.includes(
+      "without executing live Swiggy commerce",
+    ),
+  "OpenAPI channel and multimodal composer contract is missing",
+);
+assert(
   openApi.paths["/api/swiggy-visual-dish-capture"].get.summary.includes("Visual Dish Capture") &&
     openApi.paths["/api/swiggy-visual-dish-capture/analyze"].post.summary.includes("visual dish"),
   "OpenAPI visual dish capture contract is missing",
@@ -2013,6 +2022,87 @@ assert(
 assert(
   channelMultimodal.channelMultimodalStudio.externalGates.some((gate) => gate.includes("vision/OCR")),
   "channel and multimodal vision gate is missing",
+);
+const channelExecutionComposition = await request("/api/channel-multimodal-studio/compose", {
+  method: "POST",
+  body: JSON.stringify({
+    laneId: "voice_agent",
+    channelId: "voice_tts",
+    operatorEmail: "operator@example.com",
+    userTrigger: "User asks for a hands-free dinner ordering route.",
+    dryRunConfirmed: true,
+  }),
+});
+assert(
+  channelExecutionComposition.channelExecutionComposition.decision === "ready_local_packet" &&
+    channelExecutionComposition.channelExecutionComposition.readinessScore === 100 &&
+    channelExecutionComposition.channelExecutionComposition.lane.id === "voice_agent" &&
+    channelExecutionComposition.channelExecutionComposition.channel.id === "voice_tts" &&
+    channelExecutionComposition.channelExecutionComposition.executionPacket.id === "voice_agent_packet" &&
+    channelExecutionComposition.channelExecutionComposition.swiggyToolchain.includes("food.place_food_order"),
+  "Channel and Multimodal execution composer ready packet is incomplete",
+);
+assert(
+  channelExecutionComposition.channelExecutionComposition.confirmationGate.includes("explicit yes/confirm") &&
+    channelExecutionComposition.channelExecutionComposition.telemetryContract.includes("surface=voice") &&
+    channelExecutionComposition.channelExecutionComposition.assertions.some((assertion) =>
+      assertion.includes("never installs Slack/Teams"),
+    ),
+  "Channel and Multimodal execution composer safety contract is missing",
+);
+const blockedChannelExecutionComposition = await request("/api/channel-multimodal-studio/compose", {
+  method: "POST",
+  body: JSON.stringify({
+    laneId: "voice_agent",
+    channelId: "voice_tts",
+    operatorEmail: "bad-email",
+    userTrigger: "short",
+    dryRunConfirmed: false,
+  }),
+});
+assert(
+  blockedChannelExecutionComposition.channelExecutionComposition.decision === "needs_operator_input" &&
+    blockedChannelExecutionComposition.channelExecutionComposition.readinessScore === 68 &&
+    blockedChannelExecutionComposition.channelExecutionComposition.missingInputs.includes("operator_email") &&
+    blockedChannelExecutionComposition.channelExecutionComposition.missingInputs.includes("user_trigger") &&
+    blockedChannelExecutionComposition.channelExecutionComposition.missingInputs.includes("dry_run_confirmation"),
+  "Channel and Multimodal execution composer missing-input guard is incomplete",
+);
+const manualChannelExecutionComposition = await request("/api/channel-multimodal-studio/compose", {
+  method: "POST",
+  body: JSON.stringify({
+    laneId: "screenshot_to_order",
+    channelId: "mobile_camera",
+    operatorEmail: "operator@example.com",
+    userTrigger: "User shares a dish screenshot and confirms the detected label.",
+    dryRunConfirmed: true,
+  }),
+});
+assert(
+  manualChannelExecutionComposition.channelExecutionComposition.decision === "manual_gate" &&
+    manualChannelExecutionComposition.channelExecutionComposition.readinessScore === 72 &&
+    manualChannelExecutionComposition.channelExecutionComposition.executionPacket.surface === "mobile_camera" &&
+    manualChannelExecutionComposition.channelExecutionComposition.telemetryContract.includes("image_retained=false"),
+  "Channel and Multimodal execution composer manual gate is incomplete",
+);
+const gatedChannelExecutionComposition = await request("/api/channel-multimodal-studio/compose", {
+  method: "POST",
+  body: JSON.stringify({
+    laneId: "voice_agent",
+    channelId: "enterprise_embedded",
+    operatorEmail: "operator@example.com",
+    userTrigger: "Enterprise tenant asks for an embedded voice commerce proof.",
+    dryRunConfirmed: true,
+  }),
+});
+assert(
+  gatedChannelExecutionComposition.channelExecutionComposition.decision === "swiggy_gate" &&
+    gatedChannelExecutionComposition.channelExecutionComposition.readinessScore === 56 &&
+    gatedChannelExecutionComposition.channelExecutionComposition.channel.id === "enterprise_embedded" &&
+    gatedChannelExecutionComposition.channelExecutionComposition.externalGates.some((gate) =>
+      gate.includes("Enterprise embedded commerce"),
+    ),
+  "Channel and Multimodal execution composer Swiggy gate is incomplete",
 );
 
 const visualDishCapture = await request("/api/swiggy-visual-dish-capture");

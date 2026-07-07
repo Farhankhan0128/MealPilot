@@ -40,7 +40,7 @@ import { buildBuilderPacketExport, buildBuilderPacketMarkdown } from "./services
 import { buildMcpBackpressureGovernor } from "./services/backpressureGovernor.js";
 import { buildSwiggyBuilderIntakeCommandCenter } from "./services/builderIntake.js";
 import { buildSwiggyCartMutationWorkbench, mutateSwiggyCartWithReadback } from "./services/cartMutationWorkbench.js";
-import { buildSwiggyChannelMultimodalStudio } from "./services/channelMultimodalStudio.js";
+import { buildSwiggyChannelMultimodalStudio, composeSwiggyChannelExecutionPacket } from "./services/channelMultimodalStudio.js";
 import { buildCodingAgentGovernance } from "./services/codingAgentGovernance.js";
 import { buildCommercialActionGuard } from "./services/commercialActionGuard.js";
 import { buildSwiggyConversionCenter } from "./services/conversionCenter.js";
@@ -1398,6 +1398,18 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
 
   app.get("/api/channel-multimodal-studio", (_req, res) => {
     res.json({ channelMultimodalStudio: buildSwiggyChannelMultimodalStudio() });
+  });
+
+  app.post("/api/channel-multimodal-studio/compose", (req, res) => {
+    res.json({
+      channelExecutionComposition: composeSwiggyChannelExecutionPacket({
+        laneId: typeof req.body?.laneId === "string" ? req.body.laneId : "",
+        channelId: typeof req.body?.channelId === "string" ? req.body.channelId : "",
+        operatorEmail: typeof req.body?.operatorEmail === "string" ? req.body.operatorEmail : "",
+        userTrigger: typeof req.body?.userTrigger === "string" ? req.body.userTrigger : "",
+        dryRunConfirmed: req.body?.dryRunConfirmed === true,
+      }),
+    });
   });
 
   app.get("/api/swiggy-visual-dish-capture", (_req, res) => {

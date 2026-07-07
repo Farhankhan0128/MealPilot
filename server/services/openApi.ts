@@ -921,6 +921,36 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/channel-multimodal-studio/compose": {
+        post: {
+          tags: ["Builder Access"],
+          summary: "Channel and Multimodal execution packet composer for one Swiggy developer lane",
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    laneId: { type: "string" },
+                    channelId: { type: "string" },
+                    operatorEmail: { type: "string" },
+                    userTrigger: { type: "string" },
+                    dryRunConfirmed: { type: "boolean" },
+                  },
+                  required: ["laneId", "channelId"],
+                },
+              },
+            },
+          },
+          responses: {
+            "200": {
+              description:
+                "Local channel execution packet with selected Swiggy developer lane, target channel, MCP toolchain, route plan, response rules, confirmation gate, telemetry contract, proof links, missing-input guards, checklist, and explicit Slack/Teams, camera/OCR, enterprise, credential, and commercial-action gates without executing live Swiggy commerce or external channel setup",
+            },
+          },
+        },
+      },
       "/api/swiggy-visual-dish-capture": {
         get: {
           tags: ["Builder Access"],

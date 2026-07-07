@@ -1,4 +1,6 @@
 import type {
+  SwiggyChannelExecutionComposition,
+  SwiggyChannelExecutionCompositionDecision,
   SwiggyChannelExecutionPacket,
   SwiggyChannelIntegration,
   SwiggyChannelMultimodalLane,
@@ -26,6 +28,35 @@ function statusScore(status: SwiggyChannelMultimodalStatus) {
 
 function scoreFor(items: Array<{ status: SwiggyChannelMultimodalStatus }>) {
   return Math.round((items.reduce((sum, item) => sum + statusScore(item.status), 0) / items.length) * 100);
+}
+
+function hasEmail(value: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+}
+
+function unique(values: string[]) {
+  return [...new Set(values.filter(Boolean))];
+}
+
+function compositionDecision(
+  lane: SwiggyChannelMultimodalLane | undefined,
+  channelIntegration: SwiggyChannelIntegration | undefined,
+  executionPacket: SwiggyChannelExecutionPacket | undefined,
+  missingInputs: string[],
+): SwiggyChannelExecutionCompositionDecision {
+  if (!lane || !executionPacket) return "unknown_channel_lane";
+  if (lane.status === "external_gate" || channelIntegration?.status === "external_gate") return "swiggy_gate";
+  if (missingInputs.length > 0) return "needs_operator_input";
+  if (lane.status === "manual_input" || channelIntegration?.status === "manual_input") return "manual_gate";
+  return "ready_local_packet";
+}
+
+function compositionScore(decision: SwiggyChannelExecutionCompositionDecision) {
+  if (decision === "ready_local_packet") return 100;
+  if (decision === "manual_gate") return 72;
+  if (decision === "needs_operator_input") return 68;
+  if (decision === "swiggy_gate") return 56;
+  return 30;
 }
 
 function lane(input: SwiggyChannelMultimodalLane): SwiggyChannelMultimodalLane {
@@ -504,6 +535,105 @@ export function buildSwiggyChannelMultimodalStudio(): SwiggyChannelMultimodalStu
       "Mobile camera capture and vision/OCR model approval are required before true screenshot-to-order production use.",
       "Enterprise embedded commerce requires Swiggy partner approval, delegated-auth contract, final redirect allowlist, and capacity ceiling.",
       "Live Food, Instamart, and Dineout commerce execution still requires Swiggy staging and production credentials.",
+    ],
+  };
+}
+
+export function composeSwiggyChannelExecutionPacket(options: {
+  laneId: string;
+  channelId: string;
+  operatorEmail?: string;
+  userTrigger?: string;
+  dryRunConfirmed?: boolean;
+}): SwiggyChannelExecutionComposition {
+  const studio = buildSwiggyChannelMultimodalStudio();
+  const laneItem = studio.lanes.find((item) => item.id === options.laneId);
+  const channelIntegration = studio.channels.find((item) => item.id === options.channelId);
+  const executionPacket = studio.executionPackets.find((item) => item.laneId === options.laneId);
+  const operatorEmail = options.operatorEmail?.trim() ?? "";
+  const userTrigger = options.userTrigger?.trim() ?? "";
+  const channelAllowed = laneItem?.channels.includes(channelIntegration?.channel ?? "web_chat") ?? false;
+  const missingInputs = [
+    !hasEmail(operatorEmail) ? "operator_email" : "",
+    userTrigger.length < 16 ? "user_trigger" : "",
+    options.dryRunConfirmed !== true ? "dry_run_confirmation" : "",
+    channelIntegration && !channelAllowed ? "channel_lane_match" : "",
+  ].filter(Boolean);
+  const decision = compositionDecision(laneItem, channelIntegration, executionPacket, missingInputs);
+  const proofLinks = unique([
+    "/api/channel-multimodal-studio",
+    ...(laneItem?.evidenceLinks ?? []),
+    ...(channelIntegration?.evidenceLinks ?? []),
+    ...(executionPacket?.evidenceLinks ?? []),
+    "/api/mcp/tool-contract-matrix",
+    "/api/telemetry/runtime",
+  ]);
+
+  return {
+    generatedAt: new Date().toISOString(),
+    laneId: options.laneId,
+    channelId: options.channelId,
+    decision,
+    readinessScore: compositionScore(decision),
+    lane: laneItem ?? null,
+    channel: channelIntegration ?? null,
+    executionPacket: executionPacket ?? null,
+    swiggyToolchain: unique([...(laneItem?.toolchain ?? []), ...(channelIntegration?.swiggyTools ?? [])]),
+    routePlan: executionPacket?.routePlan ?? [],
+    responseRules: executionPacket?.responseRules ?? [],
+    confirmationGate: executionPacket?.confirmationGate ?? "Choose a known developer lane before composing a channel packet.",
+    telemetryContract: executionPacket?.telemetryContract ?? "No telemetry contract is available for an unknown lane.",
+    proofLinks,
+    missingInputs,
+    checklist: [
+      {
+        id: "operator_identity",
+        label: "Named operator email is attached to the channel packet",
+        status: hasEmail(operatorEmail) ? "ready" : "manual_input",
+        owner: "Operator",
+      },
+      {
+        id: "dry_run_scope",
+        label: "Dry-run channel rehearsal is confirmed before packet composition",
+        status: options.dryRunConfirmed === true ? "ready" : "manual_input",
+        owner: "MealPilot",
+      },
+      {
+        id: "lane_packet",
+        label: laneItem && executionPacket ? `${laneItem.title} has a local execution packet` : "Known developer lane has a packet",
+        status: executionPacket?.status ?? "manual_input",
+        owner: laneItem?.status === "external_gate" ? "Swiggy" : "MealPilot",
+      },
+      {
+        id: "channel_contract",
+        label: channelIntegration ? `${channelIntegration.label} channel contract selected` : "Known channel contract selected",
+        status: channelIntegration?.status ?? "manual_input",
+        owner: channelIntegration?.status === "external_gate" ? "Swiggy" : channelIntegration?.status === "manual_input" ? "Operator" : "MealPilot",
+      },
+      {
+        id: "channel_lane_match",
+        label: channelAllowed ? "Selected channel is supported by the developer lane" : "Selected channel must match the developer lane",
+        status: channelAllowed ? "ready" : "manual_input",
+        owner: "MealPilot",
+      },
+      {
+        id: "swiggy_gate_preserved",
+        label: "Commercial actions, Slack/Teams install, camera/OCR, enterprise embedding, and credentials stay gated",
+        status: decision === "swiggy_gate" ? "external_gate" : "ready",
+        owner: "Swiggy",
+      },
+    ],
+    assertions: [
+      "Channel execution packet is composed locally and never installs Slack/Teams apps, opens camera capture, embeds enterprise commerce, or executes live Swiggy commerce.",
+      "Every packet preserves a confirmation gate before Food place_order, Instamart checkout, or Dineout book_table.",
+      "Voice and multimodal packets never expose raw Swiggy ids, bearer tokens, addresses, order ids, booking ids, or raw image data in user-facing output.",
+      "Production use still requires Swiggy staging or production credentials, platform approvals, and operator-owned channel setup.",
+    ],
+    externalGates: [
+      "Slack/Teams app installation, signing secrets, workspace admin approval, and payer identity mapping remain operator-owned.",
+      "Mobile camera capture, approved vision/OCR model, and raw-image retention policy require product and privacy review.",
+      "Enterprise embedded commerce requires Swiggy partner approval, delegated-auth contract, redirect allowlist, and capacity ceiling.",
+      "Live Food, Instamart, Dineout order/checkout/booking execution requires Swiggy staging and production credentials.",
     ],
   };
 }

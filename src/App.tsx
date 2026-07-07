@@ -43,6 +43,7 @@ import {
   answerSwiggyFaqQuestion,
   buildServerPlan,
   completeSwiggyAuth,
+  composeSwiggyChannelExecutionPacket,
   composeSwiggyGrowthPartnershipAsk,
   composeSwiggyPartnerSuccessHandoff,
   composeSwiggyPartnerSupportPacket,
@@ -280,6 +281,7 @@ import type {
   SwiggyCancellationCareCenterReport,
   SwiggyCartMutationReport,
   SwiggyChannelMultimodalStudio,
+  SwiggyChannelExecutionComposition,
   SwiggyConfirmationCommandCenterReport,
   SwiggyCredentialHandoffCenter,
   SwiggyCredentialVaultCenter,
@@ -2883,6 +2885,15 @@ function LaunchCenterPanel({
   });
   const [interactionQaRehearsal, setInteractionQaRehearsal] = useState<SwiggyInteractionQaRehearsal | null>(null);
   const [interactionQaRehearsalStatus, setInteractionQaRehearsalStatus] = useState<"idle" | "loading" | "error">("idle");
+  const [channelExecutionForm, setChannelExecutionForm] = useState({
+    laneId: "voice_agent",
+    channelId: "voice_tts",
+    operatorEmail: "operator@example.com",
+    userTrigger: "User asks for a hands-free dinner ordering route.",
+    dryRunConfirmed: true,
+  });
+  const [channelExecutionComposition, setChannelExecutionComposition] = useState<SwiggyChannelExecutionComposition | null>(null);
+  const [channelExecutionStatus, setChannelExecutionStatus] = useState<"idle" | "loading" | "error">("idle");
   const [showcaseForm, setShowcaseForm] = useState({
     demoUrl: "https://youtu.be/mealpilot-swiggy-demo",
     githubUrl: "https://github.com/Farhankhan0128/MealPilot",
@@ -2974,6 +2985,18 @@ function LaunchCenterPanel({
       setInteractionQaRehearsalStatus("idle");
     } catch {
       setInteractionQaRehearsalStatus("error");
+    }
+  }
+
+  async function runChannelExecutionComposer(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setChannelExecutionStatus("loading");
+    try {
+      const response = await composeSwiggyChannelExecutionPacket(channelExecutionForm);
+      setChannelExecutionComposition(response.channelExecutionComposition);
+      setChannelExecutionStatus("idle");
+    } catch {
+      setChannelExecutionStatus("error");
     }
   }
 
@@ -5706,6 +5729,85 @@ function LaunchCenterPanel({
               </strong>
               <span>Pipelines</span>
             </div>
+          </div>
+          <form className="channel-execution-composer" onSubmit={runChannelExecutionComposer}>
+            <label htmlFor="channel-execution-lane">Developer lane</label>
+            <select
+              id="channel-execution-lane"
+              value={channelExecutionForm.laneId}
+              onChange={(event) => setChannelExecutionForm((current) => ({ ...current, laneId: event.target.value }))}
+            >
+              {(channelMultimodalStudio?.lanes ?? []).map((laneItem) => (
+                <option key={laneItem.id} value={laneItem.id}>
+                  {laneItem.title}
+                </option>
+              ))}
+            </select>
+            <label htmlFor="channel-execution-channel">Channel</label>
+            <select
+              id="channel-execution-channel"
+              value={channelExecutionForm.channelId}
+              onChange={(event) => setChannelExecutionForm((current) => ({ ...current, channelId: event.target.value }))}
+            >
+              {(channelMultimodalStudio?.channels ?? []).map((channelItem) => (
+                <option key={channelItem.id} value={channelItem.id}>
+                  {channelItem.label}
+                </option>
+              ))}
+            </select>
+            <label htmlFor="channel-execution-email">Operator email</label>
+            <input
+              id="channel-execution-email"
+              type="email"
+              value={channelExecutionForm.operatorEmail}
+              onChange={(event) => setChannelExecutionForm((current) => ({ ...current, operatorEmail: event.target.value }))}
+            />
+            <label className="channel-execution-check" htmlFor="channel-execution-dry-run">
+              <input
+                id="channel-execution-dry-run"
+                type="checkbox"
+                checked={channelExecutionForm.dryRunConfirmed}
+                onChange={(event) => setChannelExecutionForm((current) => ({ ...current, dryRunConfirmed: event.target.checked }))}
+              />
+              Dry run
+            </label>
+            <div>
+              <input
+                aria-label="Channel execution trigger"
+                type="text"
+                value={channelExecutionForm.userTrigger}
+                onChange={(event) => setChannelExecutionForm((current) => ({ ...current, userTrigger: event.target.value }))}
+              />
+              <button type="submit" disabled={channelExecutionStatus === "loading"} aria-label="Compose channel execution packet">
+                {channelExecutionStatus === "loading" ? <Loader2 aria-hidden="true" /> : <Camera aria-hidden="true" />}
+              </button>
+            </div>
+            {channelExecutionStatus === "error" ? <small role="status">Channel execution composer unavailable.</small> : null}
+          </form>
+          <div
+            className="channel-execution-result"
+            data-status={
+              channelExecutionComposition?.decision === "ready_local_packet"
+                ? "healthy"
+                : channelExecutionComposition?.decision === "swiggy_gate" ||
+                    channelExecutionComposition?.decision === "unknown_channel_lane"
+                  ? "blocked"
+                  : "watch"
+            }
+          >
+            <div>
+              <span>Execution packet</span>
+              <strong>
+                {channelExecutionComposition
+                  ? `${channelExecutionComposition.decision.replace(/_/g, " ")} / ${channelExecutionComposition.readinessScore}/100`
+                  : "Awaiting channel packet"}
+              </strong>
+            </div>
+            <p>
+              {channelExecutionComposition
+                ? `${channelExecutionComposition.swiggyToolchain.length} tools / ${channelExecutionComposition.proofLinks.length} proofs / ${channelExecutionComposition.missingInputs.length} missing`
+                : "Compose one developer lane into channel-specific route rules, confirmation gates, and telemetry proof."}
+            </p>
           </div>
           <ul className="compact-status-list">
             {(channelMultimodalStudio?.lanes ?? []).slice(0, 5).map((laneItem) => (

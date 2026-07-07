@@ -2577,6 +2577,127 @@ select:focus {
   overflow-wrap: anywhere;
 }
 
+.channel-execution-composer {
+  display: grid;
+  gap: 8px;
+  border-radius: 8px;
+  padding: 10px;
+  background: #fff;
+}
+
+.channel-execution-composer label {
+  color: var(--ink-muted);
+  font-size: 0.75rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.channel-execution-composer > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 42px;
+  gap: 8px;
+}
+
+.channel-execution-composer select,
+.channel-execution-composer input[type="email"],
+.channel-execution-composer input[type="text"] {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 9px 10px;
+  color: var(--ink);
+  background: #f8faf8;
+  font: inherit;
+  font-weight: 850;
+}
+
+.channel-execution-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 34px;
+}
+
+.channel-execution-check input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--green);
+}
+
+.channel-execution-composer button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  min-height: 42px;
+  border: 0;
+  border-radius: 8px;
+  color: #fff;
+  background: var(--green);
+}
+
+.channel-execution-composer button:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
+.channel-execution-composer svg {
+  width: 17px;
+  height: 17px;
+}
+
+.channel-execution-composer small {
+  color: var(--coral);
+  font-weight: 850;
+}
+
+.channel-execution-result {
+  display: grid;
+  gap: 8px;
+  border-radius: 8px;
+  padding: 10px;
+  background: #fff;
+  border-left: 4px solid var(--gold);
+}
+
+.channel-execution-result[data-status="healthy"] {
+  border-left-color: var(--green);
+}
+
+.channel-execution-result[data-status="blocked"] {
+  border-left-color: var(--coral);
+}
+
+.channel-execution-result > div {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.channel-execution-result span {
+  color: var(--ink-muted);
+  font-size: 0.75rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.channel-execution-result strong {
+  color: var(--green-dark);
+  font-size: 0.84rem;
+  text-align: right;
+  text-transform: capitalize;
+}
+
+.channel-execution-result p {
+  margin: 0;
+  color: var(--ink-muted);
+  font-size: 0.82rem;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
 .builders-map-list,
 .opportunity-list {
   display: grid;
