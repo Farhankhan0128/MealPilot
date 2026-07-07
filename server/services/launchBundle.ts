@@ -400,6 +400,51 @@ function buildArtifacts(latestPlan?: MealPlan): LaunchBundleArtifact[] {
       evidence: "Generates Swiggy MCP configs for AI clients, coding-agent rules, SDK auth modes, and delegated-auth gates.",
     },
     {
+      id: "coding_agent_governance",
+      label: "Coding Agent Governance",
+      path: "/api/coding-agent-governance",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Reads the repo AGENTS.md and official Swiggy coding-agent docs to preserve source-first MCP edits, no fabricated tools, confirmation gates, and no-token/no-PII logging rules.",
+    },
+    {
+      id: "mcp_gateway",
+      label: "MCP Gateway",
+      path: "/api/mcp-gateway",
+      category: "runtime",
+      status: "ready",
+      evidence:
+        "Shows localhost mock routing, staging/production Streamable HTTP cutover posture, OAuth token presence, fail-closed behavior, and per-server endpoint readiness.",
+    },
+    {
+      id: "handshake_doctor",
+      label: "Swiggy Handshake Doctor",
+      path: "/api/mcp/handshake-doctor",
+      category: "runtime",
+      status: "ready",
+      evidence:
+        "Runs safe OAuth metadata and Food, Instamart, and Dineout MCP endpoint probes without bearer tokens, tools/call, or commercial actions.",
+    },
+    {
+      id: "llms_manifest_verifier",
+      label: "Swiggy llms Manifest Verifier",
+      path: "/api/swiggy-llms-manifest-verifier",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Parses the official llms.txt manifest or disclosed Docs Coverage fallback, verifies rendered twins, Swiggy-only origins, and Food 14 / Instamart 13 / Dineout 8 reference counts.",
+    },
+    {
+      id: "tool_parity_auditor",
+      label: "Swiggy Tool Parity Auditor",
+      path: "/api/swiggy-tool-parity-auditor",
+      category: "api",
+      status: "ready",
+      evidence:
+        "Matches live official reference tools against MealPilot contracts, fixtures, route classes, confirmation gates, retry posture, and 35/35 parity evidence.",
+    },
+    {
       id: "journey_compiler",
       label: "Swiggy Journey Compiler",
       path: "/api/swiggy-journey-compiler",
@@ -1219,6 +1264,11 @@ export function buildLaunchBundle(options: { config: ServerConfig; latestPlan?: 
     "- Swiggy Source Intelligence: /api/swiggy-source-intelligence",
     "- Swiggy Innovation Radar: /api/swiggy-innovation-radar",
     "- AI Client Connect Kit: /api/ai-client-connect-kit",
+    "- Coding Agent Governance: /api/coding-agent-governance",
+    "- MCP Gateway: /api/mcp-gateway",
+    "- Swiggy Handshake Doctor: /api/mcp/handshake-doctor",
+    "- Swiggy llms Manifest Verifier: /api/swiggy-llms-manifest-verifier",
+    "- Swiggy Tool Parity Auditor: /api/swiggy-tool-parity-auditor",
     "- Swiggy Journey Compiler: /api/swiggy-journey-compiler",
     "- Swiggy Access Dossier: /api/swiggy-access-dossier",
     "- Premium Use Case Studio: /api/premium-use-case-studio",

@@ -3032,10 +3032,27 @@ assert(reviewerArtifactVault.reviewerArtifactVault.totalCommands === 7, "reviewe
 assert(reviewerArtifactVault.reviewerArtifactVault.readyCommands >= 6, "reviewer artifact vault ready commands are incomplete");
 assert(reviewerArtifactVault.reviewerArtifactVault.totalRedactionRules >= 6, "reviewer artifact vault redaction rules are incomplete");
 assert(
-  ["submission_packet", "product_depth", "mcp_contracts", "operations_and_logs"].every((id) =>
+  ["submission_packet", "product_depth", "mcp_contracts", "mcp_client_readiness", "operations_and_logs"].every((id) =>
     reviewerArtifactVault.reviewerArtifactVault.artifactSections.some((section) => section.id === id),
   ),
   "reviewer artifact vault sections are missing",
+);
+const mcpClientReadinessSection = reviewerArtifactVault.reviewerArtifactVault.artifactSections.find(
+  (section) => section.id === "mcp_client_readiness",
+);
+assert(
+  mcpClientReadinessSection &&
+    [
+      ["/api/ai-client-connect-kit", "ai_client_connect"],
+      ["/api/coding-agent-governance", "coding_agent_governance"],
+      ["/api/mcp-gateway", "mcp_gateway"],
+      ["/api/mcp/capability-registry", "capability_registry"],
+      ["/api/mcp/handshake-doctor", "handshake_doctor"],
+      ["/api/swiggy-llms-manifest-verifier", "llms_manifest_verifier"],
+      ["/api/swiggy-tool-parity-auditor", "tool_parity_auditor"],
+      ["/api/swiggy-docs-coverage", "docs_coverage"],
+    ].every(([path, id]) => mcpClientReadinessSection.artifacts.some((artifact) => artifact.id === id && artifact.path === path)),
+  "reviewer artifact vault MCP client readiness section is missing",
 );
 assert(
   reviewerArtifactVault.reviewerArtifactVault.artifactSections.some((section) =>
@@ -3480,6 +3497,17 @@ assert(
 assert(
   reviewerArtifactVault.reviewerArtifactVault.externalGates.some((gate) => gate.includes("staging credentials")),
   "reviewer artifact vault external gates are missing",
+);
+assert(
+  reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/ai-client-connect-kit") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/coding-agent-governance") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/mcp-gateway") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/mcp/capability-registry") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/mcp/handshake-doctor") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-llms-manifest-verifier") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-tool-parity-auditor") &&
+    reviewerArtifactVault.reviewerArtifactVault.reviewerEmail.body.includes("/api/swiggy-docs-coverage"),
+  "reviewer artifact vault MCP client handoff links are incomplete",
 );
 const readyReviewerPacket = await request("/api/reviewer-artifact-vault/compose", {
   method: "POST",
@@ -7844,6 +7872,7 @@ assert(
     builderPacket.packet.readiness.some((item) => item.id === "partner_signal_packet" && item.status === "ready") &&
     builderPacket.packet.readiness.some((item) => item.id === "access_submission_packet" && item.status === "ready") &&
     builderPacket.packet.readiness.some((item) => item.id === "post_submit_lifecycle_packet" && item.status === "ready") &&
+    builderPacket.packet.readiness.some((item) => item.id === "mcp_client_readiness_packet" && item.status === "ready") &&
     builderPacket.packet.readiness.some((item) => item.id === "demo_video" && item.status === "operator_input") &&
     builderPacket.packet.readiness.some((item) => item.id === "staging_credentials" && item.status === "external_gate"),
   "builder packet readiness gates are incomplete",
@@ -7904,6 +7933,11 @@ assert(
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Source Intelligence") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Innovation Radar") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "AI Client Connect Kit") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Coding Agent Governance") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "MCP Gateway") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Handshake Doctor") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy llms Manifest Verifier") &&
+    launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy Tool Parity Auditor") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Brand Compliance Kit") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Data Governance Center") &&
     launchBundle.launchBundle.artifacts.some((artifact) => artifact.label === "Swiggy OAuth Status") &&
@@ -7974,6 +8008,17 @@ assert(
 assert(
   launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-auth-lifecycle-center"),
   "launch bundle Auth Lifecycle handoff link is missing",
+);
+assert(
+  launchBundle.launchBundle.handoffEmail.body.includes("/api/ai-client-connect-kit") &&
+    launchBundle.launchBundle.handoffEmail.body.includes("/api/coding-agent-governance") &&
+    launchBundle.launchBundle.handoffEmail.body.includes("/api/mcp-gateway") &&
+    launchBundle.launchBundle.handoffEmail.body.includes("/api/mcp/capability-registry") &&
+    launchBundle.launchBundle.handoffEmail.body.includes("/api/mcp/handshake-doctor") &&
+    launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-llms-manifest-verifier") &&
+    launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-tool-parity-auditor") &&
+    launchBundle.launchBundle.handoffEmail.body.includes("/api/swiggy-docs-coverage"),
+  "launch bundle MCP client handoff links are missing",
 );
 assert(
   launchBundle.launchBundle.artifacts.some(

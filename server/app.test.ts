@@ -1866,6 +1866,7 @@ describe("MealPilot API", () => {
     expect(packet.readiness.some((item: { id: string; status: string }) => item.id === "partner_signal_packet" && item.status === "ready")).toBe(true);
     expect(packet.readiness.some((item: { id: string; status: string }) => item.id === "access_submission_packet" && item.status === "ready")).toBe(true);
     expect(packet.readiness.some((item: { id: string; status: string }) => item.id === "post_submit_lifecycle_packet" && item.status === "ready")).toBe(true);
+    expect(packet.readiness.some((item: { id: string; status: string }) => item.id === "mcp_client_readiness_packet" && item.status === "ready")).toBe(true);
     expect(packet.readiness.some((item: { id: string; status: string }) => item.id === "demo_video" && item.status === "operator_input")).toBe(true);
     expect(packet.readiness.some((item: { id: string; status: string }) => item.id === "staging_credentials" && item.status === "external_gate")).toBe(true);
     expect(packet.externalGates.some((gate: string) => gate.includes("Google Form"))).toBe(true);
@@ -3765,7 +3766,7 @@ describe("MealPilot API", () => {
     expect(vault.readyCommands).toBeGreaterThanOrEqual(6);
     expect(vault.totalRedactionRules).toBeGreaterThanOrEqual(6);
     expect(vault.artifactSections.map((section: { id: string }) => section.id)).toEqual(
-      expect.arrayContaining(["submission_packet", "product_depth", "mcp_contracts", "partner_signal_operations", "operations_and_logs"]),
+      expect.arrayContaining(["submission_packet", "product_depth", "mcp_contracts", "mcp_client_readiness", "partner_signal_operations", "operations_and_logs"]),
     );
     expect(
       vault.artifactSections.some((section: { artifacts: Array<{ id: string; path: string }> }) =>
@@ -3787,6 +3788,36 @@ describe("MealPilot API", () => {
         section.artifacts.some((artifact) => artifact.id === "luxury_experience" && artifact.path === "/api/luxury-experience-workspace"),
       ),
     ).toBe(true);
+    const mcpClientReadiness = vault.artifactSections.find(
+      (section: { id: string; artifacts: Array<{ id: string; path: string }> }) => section.id === "mcp_client_readiness",
+    );
+    expect(mcpClientReadiness?.artifacts.map((artifact: { id: string }) => artifact.id)).toEqual(
+      expect.arrayContaining([
+        "ai_client_connect",
+        "coding_agent_governance",
+        "mcp_gateway",
+        "capability_registry",
+        "handshake_doctor",
+        "llms_manifest_verifier",
+        "tool_parity_auditor",
+        "docs_coverage",
+      ]),
+    );
+    expect(mcpClientReadiness?.artifacts.map((artifact: { path: string }) => artifact.path)).toEqual(
+      expect.arrayContaining([
+        "/api/ai-client-connect-kit",
+        "/api/coding-agent-governance",
+        "/api/mcp-gateway",
+        "/api/mcp/capability-registry",
+        "/api/mcp/handshake-doctor",
+        "/api/swiggy-llms-manifest-verifier",
+        "/api/swiggy-tool-parity-auditor",
+        "/api/swiggy-docs-coverage",
+      ]),
+    );
+    expect(vault.reviewerEmail.body).toContain("/api/mcp-gateway");
+    expect(vault.reviewerEmail.body).toContain("/api/coding-agent-governance");
+    expect(vault.reviewerEmail.body).toContain("/api/swiggy-tool-parity-auditor");
     expect(
       vault.artifactSections.some((section: { artifacts: Array<{ id: string; label: string; path: string }> }) =>
         section.artifacts.some(
@@ -7817,6 +7848,11 @@ describe("MealPilot API", () => {
         "Swiggy Source Intelligence",
         "Swiggy Innovation Radar",
         "AI Client Connect Kit",
+        "Coding Agent Governance",
+        "MCP Gateway",
+        "Swiggy Handshake Doctor",
+        "Swiggy llms Manifest Verifier",
+        "Swiggy Tool Parity Auditor",
         "Brand Compliance Kit",
         "Data Governance Center",
         "Swiggy OAuth Status",
@@ -7907,6 +7943,13 @@ describe("MealPilot API", () => {
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-upstream-watch");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-source-intelligence");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-innovation-radar");
+    expect(bundle.handoffEmail.body).toContain("/api/swiggy-docs-coverage");
+    expect(bundle.handoffEmail.body).toContain("/api/ai-client-connect-kit");
+    expect(bundle.handoffEmail.body).toContain("/api/coding-agent-governance");
+    expect(bundle.handoffEmail.body).toContain("/api/mcp-gateway");
+    expect(bundle.handoffEmail.body).toContain("/api/mcp/handshake-doctor");
+    expect(bundle.handoffEmail.body).toContain("/api/swiggy-llms-manifest-verifier");
+    expect(bundle.handoffEmail.body).toContain("/api/swiggy-tool-parity-auditor");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-developer-quickstart");
     expect(bundle.handoffEmail.body).toContain("/api/swiggy-cta-execution-center");
     expect(bundle.handoffEmail.body).toContain("/api/premium-concierge-itinerary");

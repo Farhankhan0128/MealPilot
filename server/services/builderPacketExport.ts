@@ -240,6 +240,13 @@ export function buildBuilderPacketExport(options: {
         "Use the timeline after form submission and the Partner Success Desk for support, quota, incident, growth, and enterprise follow-up without claiming Swiggy approval locally.",
       ),
       readiness(
+        "mcp_client_readiness_packet",
+        "MCP client readiness packet",
+        "ready",
+        "Reviewer Vault and Launch Bundle now promote AI Client Connect, Coding Agent Governance, MCP Gateway, Capability Registry, Handshake Doctor, llms Manifest Verifier, Tool Parity Auditor, and Docs Coverage together.",
+        "Use this packet before sharing repo rules, MCP client configs, manifest parity, gateway posture, or handshake evidence with Swiggy reviewers.",
+      ),
+      readiness(
         "demo_video",
         "Demo video URL",
         "operator_input",
