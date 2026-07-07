@@ -52,6 +52,7 @@ import {
   composeSwiggyPartnerSupportPacket,
   composeSwiggyShowcaseSubmission,
   composeSwiggyTalentOutreach,
+  rehearseSwiggyOperatingContract,
   addGroupMember,
   confirmAllRecommendations,
   confirmServerRecommendation,
@@ -350,6 +351,8 @@ import type {
   SwiggyLocationTrustReport,
   SwiggyOfferIntelligenceReport,
   SwiggyOperatingContractCenterReport,
+  SwiggyOperatingContractRehearsal,
+  SwiggyOperatingContractRehearsalMode,
   SwiggyOrderLifecycleReport,
   SwiggyMealWindow,
   SwiggyMealWindowCenter,
@@ -2874,6 +2877,23 @@ function LaunchCenterPanel({
     new Set((sourceIntelligence?.buildQueue ?? []).flatMap((item) => item.evidenceLinks)),
   ).slice(0, 3);
   const officialSourceLinks = (sourceIntelligence?.officialSources ?? []).slice(0, 2);
+  const [operatingContractForm, setOperatingContractForm] = useState<{
+    mode: SwiggyOperatingContractRehearsalMode;
+    includeCapacityNotice: boolean;
+    includeSupportPacket: boolean;
+    includeVersionWatch: boolean;
+    includeStatusPageFallback: boolean;
+    includeStagingCredentials: boolean;
+  }>({
+    mode: "local_packet",
+    includeCapacityNotice: true,
+    includeSupportPacket: true,
+    includeVersionWatch: true,
+    includeStatusPageFallback: false,
+    includeStagingCredentials: false,
+  });
+  const [operatingContractRehearsal, setOperatingContractRehearsal] = useState<SwiggyOperatingContractRehearsal | null>(null);
+  const [operatingContractRehearsalStatus, setOperatingContractRehearsalStatus] = useState<"idle" | "loading" | "error">("idle");
   const [faqAnswerQuestion, setFaqAnswerQuestion] = useState(FAQ_ANSWER_SAMPLE_QUESTION);
   const [interactiveFaqAnswer, setInteractiveFaqAnswer] = useState<SwiggyFaqAnswerResolution | null>(null);
   const [faqAnswerStatus, setFaqAnswerStatus] = useState<"idle" | "loading" | "error">("idle");
@@ -3169,6 +3189,18 @@ function LaunchCenterPanel({
       setTalentOutreachStatus("idle");
     } catch {
       setTalentOutreachStatus("error");
+    }
+  }
+
+  async function runOperatingContractRehearsal(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setOperatingContractRehearsalStatus("loading");
+    try {
+      const response = await rehearseSwiggyOperatingContract(operatingContractForm);
+      setOperatingContractRehearsal(response.operatingContractRehearsal);
+      setOperatingContractRehearsalStatus("idle");
+    } catch {
+      setOperatingContractRehearsalStatus("error");
     }
   }
 
@@ -4883,6 +4915,114 @@ function LaunchCenterPanel({
               <strong>{operatingContract?.totals.externalGates ?? 0}</strong>
               <span>External</span>
             </div>
+          </div>
+          <form className="operating-contract-rehearsal" onSubmit={runOperatingContractRehearsal}>
+            <label htmlFor="operating-mode">Launch mode</label>
+            <select
+              id="operating-mode"
+              value={operatingContractForm.mode}
+              onChange={(event) =>
+                setOperatingContractForm((current) => ({
+                  ...current,
+                  mode: event.target.value as SwiggyOperatingContractRehearsalMode,
+                }))
+              }
+            >
+              <option value="local_packet">Local packet</option>
+              <option value="staging_cutover">Staging cutover</option>
+              <option value="production_launch">Production launch</option>
+            </select>
+            <div className="operating-contract-toggle-grid">
+              <label htmlFor="operating-capacity">
+                <input
+                  id="operating-capacity"
+                  type="checkbox"
+                  checked={operatingContractForm.includeCapacityNotice}
+                  onChange={(event) =>
+                    setOperatingContractForm((current) => ({ ...current, includeCapacityNotice: event.target.checked }))
+                  }
+                />
+                Capacity
+              </label>
+              <label htmlFor="operating-support">
+                <input
+                  id="operating-support"
+                  type="checkbox"
+                  checked={operatingContractForm.includeSupportPacket}
+                  onChange={(event) =>
+                    setOperatingContractForm((current) => ({ ...current, includeSupportPacket: event.target.checked }))
+                  }
+                />
+                Support
+              </label>
+              <label htmlFor="operating-version">
+                <input
+                  id="operating-version"
+                  type="checkbox"
+                  checked={operatingContractForm.includeVersionWatch}
+                  onChange={(event) =>
+                    setOperatingContractForm((current) => ({ ...current, includeVersionWatch: event.target.checked }))
+                  }
+                />
+                Version
+              </label>
+              <label htmlFor="operating-status-page">
+                <input
+                  id="operating-status-page"
+                  type="checkbox"
+                  checked={operatingContractForm.includeStatusPageFallback}
+                  onChange={(event) =>
+                    setOperatingContractForm((current) => ({ ...current, includeStatusPageFallback: event.target.checked }))
+                  }
+                />
+                Status
+              </label>
+              <label htmlFor="operating-staging">
+                <input
+                  id="operating-staging"
+                  type="checkbox"
+                  checked={operatingContractForm.includeStagingCredentials}
+                  onChange={(event) =>
+                    setOperatingContractForm((current) => ({ ...current, includeStagingCredentials: event.target.checked }))
+                  }
+                />
+                Staging
+              </label>
+            </div>
+            <button
+              type="submit"
+              disabled={operatingContractRehearsalStatus === "loading"}
+              aria-label="Rehearse Swiggy operating contract"
+            >
+              {operatingContractRehearsalStatus === "loading" ? <Loader2 aria-hidden="true" /> : <Gauge aria-hidden="true" />}
+              Rehearse
+            </button>
+            {operatingContractRehearsalStatus === "error" ? <small role="status">Operating contract rehearsal unavailable.</small> : null}
+          </form>
+          <div
+            className="operating-contract-rehearsal-result"
+            data-status={
+              operatingContractRehearsal?.decision === "ready_operating_packet"
+                ? "healthy"
+                : operatingContractRehearsal?.decision === "manual_launch_gate"
+                  ? "watch"
+                  : "blocked"
+            }
+          >
+            <div>
+              <span>Readiness</span>
+              <strong>
+                {operatingContractRehearsal
+                  ? `${operatingContractRehearsal.decision.replace(/_/g, " ")} / ${operatingContractRehearsal.readinessScore}`
+                  : "Awaiting rehearsal"}
+              </strong>
+            </div>
+            <p>
+              {operatingContractRehearsal
+                ? `${operatingContractRehearsal.mode.replace(/_/g, " ")} / ${operatingContractRehearsal.selectedPillars.length} pillars / ${operatingContractRehearsal.selectedGates.length} gates`
+                : "Prepare SLA, capacity, support, version, status-page, and credential evidence before launch handoff."}
+            </p>
+            {operatingContractRehearsal ? <small>{operatingContractRehearsal.nextAction}</small> : null}
           </div>
           <ul className="compact-status-list">
             {(operatingContract?.pillars ?? []).slice(0, 4).map((pillar) => (

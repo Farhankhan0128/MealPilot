@@ -281,6 +281,8 @@ GET  /api/swiggy-builders-module-intelligence
 GET  /api/swiggy-builders-journey-gates
 GET  /api/swiggy-builders-homepage-experience
 GET  /api/swiggy-cta-live-audit
+GET  /api/swiggy-operating-contract-center
+POST /api/swiggy-operating-contract-center/rehearse
 GET  /api/swiggy-builder-intake
 GET  /api/swiggy-faq-policy
 GET  /api/swiggy-faq-resolution-center
@@ -518,7 +520,7 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 
 `GET /api/swiggy-builders-launch-story` is the launch-blog story center: it reconciles the April 2026 Builders Club launch narrative with the current 35-tool docs snapshot, then packages story beats, reviewer demo journey, showcase assets, ecosystem lanes, CTA paths, and co-marketing guardrails.
 
-`GET /api/swiggy-operating-contract-center` is the operate-docs contract center: official SLA, rate-limit, support, versioning, changelog, and ship-to-production guidance become six pillars, S0/rate-limit/support/version runbooks, readiness gates, external Swiggy approval gates, and a launch-review email draft.
+`GET /api/swiggy-operating-contract-center` and `POST /api/swiggy-operating-contract-center/rehearse` are the operate-docs contract layer: official SLA, rate-limit, support, versioning, changelog, and ship-to-production guidance become six pillars, S0/rate-limit/support/version runbooks, readiness gates, external Swiggy approval gates, and a launch-review email draft. The rehearsal accepts local-packet, staging-cutover, and production-launch modes plus capacity, support, version, status-page, and staging credential gates, returning commands, telemetry, missing inputs, and a ready/manual/blocked decision without sending email or claiming Swiggy approval.
 
 `GET /api/swiggy-deep-site-map` is the page-by-page Builders website audit: homepage, developers, enterprises, access, docs, reference, blog, footer, every CTA, header, docs subnav, footer resource, module signal, proof link, source-reconciliation section, assertion, and external gate in one reviewer surface.
 

@@ -2040,6 +2040,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/swiggy-operating-contract-center/rehearse": {
+        post: {
+          tags: ["Operations"],
+          summary: "Rehearse Swiggy operating contract readiness for access handoff",
+          responses: {
+            "200": {
+              description:
+                "Selected operating readiness mode with SLA, capacity notice, support packet, version watch, status fallback, staging credential gates, commands, telemetry, launch email draft, and missing inputs",
+            },
+          },
+        },
+      },
       "/api/data-governance-center": {
         get: {
           tags: ["Operations"],

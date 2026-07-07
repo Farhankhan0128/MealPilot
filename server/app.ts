@@ -117,7 +117,7 @@ import { buildSwiggyTalentSignalCenter, composeSwiggyTalentOutreach } from "./se
 import { adviseNutritionBudget, buildNutritionBudgetIntelligence } from "./services/nutritionBudgetIntelligence.js";
 import { buildObservabilityTraceReport, buildSwiggyRouteOptimizationReport } from "./services/observability.js";
 import { buildSwiggyOfferIntelligence, decideSwiggyOffer } from "./services/offerIntelligence.js";
-import { buildSwiggyOperatingContractCenter } from "./services/operatingContractCenter.js";
+import { buildSwiggyOperatingContractCenter, rehearseSwiggyOperatingContract } from "./services/operatingContractCenter.js";
 import { buildSwiggyOrderLifecycle, probeSwiggyOrderLifecycle } from "./services/orderLifecycle.js";
 import { buildSwiggyPartnerSuccessDesk, composeSwiggyPartnerSuccessHandoff } from "./services/partnerSuccessDesk.js";
 import { buildSwiggyPartnerSupportRoom, composeSwiggyPartnerSupportPacket } from "./services/partnerSupportRoom.js";
@@ -362,6 +362,15 @@ const llmsManifestRehearsalSchema = z.object({
   includeFullManifest: z.boolean(),
   enforceToolParity: z.boolean(),
   includeDriftGates: z.boolean(),
+});
+
+const operatingContractRehearsalSchema = z.object({
+  mode: z.enum(["local_packet", "staging_cutover", "production_launch"]),
+  includeCapacityNotice: z.boolean(),
+  includeSupportPacket: z.boolean(),
+  includeVersionWatch: z.boolean(),
+  includeStatusPageFallback: z.boolean(),
+  includeStagingCredentials: z.boolean(),
 });
 
 const offerDecisionSchema = z.object({
@@ -2348,6 +2357,28 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
         sloIncident,
         supportBridge,
         version,
+      }),
+    });
+  });
+
+  app.post("/api/swiggy-operating-contract-center/rehearse", (req, res) => {
+    const body = operatingContractRehearsalSchema.parse(req.body);
+    const plans = store.getAllPlans();
+    const rateLimit = buildRateLimitPlan(plans);
+    const trafficReadiness = buildTrafficReadinessPlan({ plans, config });
+    const sloIncident = buildSloIncidentCommandCenter({ plans, telemetry: telemetry.buildReport(), config });
+    const supportBridge = buildSupportBridgeReport({ plans });
+    const version = buildVersionMonitor();
+
+    res.json({
+      operatingContractRehearsal: rehearseSwiggyOperatingContract({
+        config,
+        rateLimit,
+        trafficReadiness,
+        sloIncident,
+        supportBridge,
+        version,
+        ...body,
       }),
     });
   });

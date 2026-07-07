@@ -149,6 +149,8 @@ import type {
   SwiggyOfferDecision,
   SwiggyOfferIntelligenceReport,
   SwiggyOperatingContractCenterReport,
+  SwiggyOperatingContractRehearsal,
+  SwiggyOperatingContractRehearsalMode,
   SwiggyOrderLifecycleProbe,
   SwiggyOrderLifecycleReport,
   SwiggyMealWindow,
@@ -505,6 +507,23 @@ export function fetchSwiggyBuildersReviewDecision() {
 export function fetchSwiggyOperatingContractCenter() {
   return requestJson<{ operatingContract: SwiggyOperatingContractCenterReport }>(
     "/api/swiggy-operating-contract-center",
+  );
+}
+
+export function rehearseSwiggyOperatingContract(input: {
+  mode: SwiggyOperatingContractRehearsalMode;
+  includeCapacityNotice: boolean;
+  includeSupportPacket: boolean;
+  includeVersionWatch: boolean;
+  includeStatusPageFallback: boolean;
+  includeStagingCredentials: boolean;
+}) {
+  return requestJson<{ operatingContractRehearsal: SwiggyOperatingContractRehearsal }>(
+    "/api/swiggy-operating-contract-center/rehearse",
+    {
+      method: "POST",
+      body: JSON.stringify(input),
+    },
   );
 }
 

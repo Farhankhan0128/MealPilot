@@ -5,6 +5,8 @@ import type {
   SwiggyOperatingContractCenterReport,
   SwiggyOperatingContractPillar,
   SwiggyOperatingContractReadinessGate,
+  SwiggyOperatingContractRehearsal,
+  SwiggyOperatingContractRehearsalMode,
   SwiggyOperatingContractRunbook,
   TrafficReadinessPlan,
   VersionMonitor,
@@ -262,5 +264,118 @@ export function buildSwiggyOperatingContractCenter(options: {
       "Production client id, exact redirect URI, capacity approval, and 48-hour soak are Swiggy approval gates.",
       "Official status-page polling and partner escalation lanes depend on Swiggy v1.1 or enterprise agreement availability.",
     ],
+  };
+}
+
+export function rehearseSwiggyOperatingContract(options: {
+  config: ServerConfig;
+  rateLimit: RateLimitPlan;
+  trafficReadiness: TrafficReadinessPlan;
+  sloIncident: SloIncidentCommandCenter;
+  supportBridge: SupportBridgeReport;
+  version: VersionMonitor;
+  mode: SwiggyOperatingContractRehearsalMode;
+  includeCapacityNotice: boolean;
+  includeSupportPacket: boolean;
+  includeVersionWatch: boolean;
+  includeStatusPageFallback: boolean;
+  includeStagingCredentials: boolean;
+}): SwiggyOperatingContractRehearsal {
+  const contract = buildSwiggyOperatingContractCenter(options);
+  const missingInputs: string[] = [];
+  const gateById = new Map(contract.readinessGates.map((gate) => [gate.id, gate]));
+  const pillarById = new Map(contract.pillars.map((pillar) => [pillar.id, pillar]));
+
+  if (options.mode !== "local_packet" && options.includeCapacityNotice && gateById.get("capacity_notice")?.status !== "ready") {
+    missingInputs.push("capacity notice evidence");
+  }
+  if (options.mode !== "local_packet" && options.includeSupportPacket && pillarById.get("support_and_reporting")?.status !== "ready") {
+    missingInputs.push("support packet evidence");
+  }
+  if (!options.includeVersionWatch && options.mode !== "local_packet") {
+    missingInputs.push("version/deprecation watch");
+  }
+  if (options.mode !== "local_packet" && options.includeStatusPageFallback && gateById.get("status_page_readiness")?.status !== "ready") {
+    missingInputs.push("status-page fallback readiness");
+  }
+  if (options.includeStagingCredentials && gateById.get("staging_credentials")?.status !== "ready") {
+    missingInputs.push("Swiggy staging credentials");
+  }
+  if (options.mode === "production_launch" && gateById.get("production_approval")?.status !== "ready") {
+    missingInputs.push("Swiggy production approval");
+  }
+
+  const selectedPillars =
+    options.mode === "local_packet"
+      ? contract.pillars
+      : contract.pillars.filter((pillar) =>
+          ["rate_limit_and_backpressure", "traffic_rollout", "support_and_reporting", "credential_and_mode_boundary"].includes(
+            pillar.id,
+          ),
+        );
+  const selectedGates =
+    options.mode === "production_launch"
+      ? contract.readinessGates
+      : contract.readinessGates.filter((gate) => gate.id !== "production_approval");
+  const selectedRunbooks =
+    options.mode === "local_packet"
+      ? contract.runbooks
+      : contract.runbooks.filter((runbook) => runbook.id !== "version_migration" || options.includeVersionWatch);
+
+  const decision: SwiggyOperatingContractRehearsal["decision"] =
+    missingInputs.includes("Swiggy production approval") || missingInputs.includes("Swiggy staging credentials")
+      ? "blocked_operating_gate"
+      : missingInputs.length > 0
+        ? "manual_launch_gate"
+        : "ready_operating_packet";
+
+  return {
+    generatedAt: new Date().toISOString(),
+    decision,
+    readinessScore: contract.score,
+    mode: options.mode,
+    includeCapacityNotice: options.includeCapacityNotice,
+    includeSupportPacket: options.includeSupportPacket,
+    includeVersionWatch: options.includeVersionWatch,
+    includeStatusPageFallback: options.includeStatusPageFallback,
+    includeStagingCredentials: options.includeStagingCredentials,
+    selectedPillars,
+    selectedRunbooks,
+    selectedGates,
+    launchEmail: contract.launchEmail,
+    commands: [
+      {
+        command: "curl -fsS http://localhost:8787/api/swiggy-operating-contract-center",
+        proves: "SLA, rate-limit, support, versioning, and launch gates are consolidated.",
+      },
+      {
+        command: "curl -fsS http://localhost:8787/api/slo-incident-command",
+        proves: "S0-S3 support and 99.9% uptime evidence is ready.",
+      },
+      {
+        command: "MEALPILOT_URL=http://localhost:8787 npm run verify:production",
+        proves: "Operating contract, capacity, support, and launch-bundle gates remain covered.",
+      },
+    ],
+    missingInputs,
+    telemetry: [
+      { field: "mode", value: options.mode, redaction: "safe launch-readiness mode" },
+      { field: "current_mode", value: contract.contractSignal.currentMode, redaction: "safe environment enum" },
+      { field: "target_uptime", value: contract.contractSignal.targetUptime, redaction: "aggregate target only" },
+      { field: "selected_pillars", value: String(selectedPillars.length), redaction: "aggregate count only" },
+      { field: "external_gates", value: String(contract.totals.externalGates), redaction: "aggregate count only" },
+    ],
+    assertions: [
+      "The rehearsal produces local operating evidence only; it never sends email, requests credentials, or claims Swiggy approval.",
+      "Staging credentials and production launch remain explicit Swiggy gates until official access is issued.",
+      "Support payloads are represented as redacted packet evidence and never include OAuth tokens, full addresses, or payment data.",
+      "Rate-limit handling keeps current upstream shedding separate from future 429, Retry-After, and X-RateLimit headers.",
+    ],
+    nextAction:
+      decision === "ready_operating_packet"
+        ? "Attach the operating contract packet, latest production verifier output, and launch email draft to the access handoff."
+        : decision === "manual_launch_gate"
+          ? `Resolve ${missingInputs.join(", ")} before presenting the operating contract packet.`
+          : `Keep launch blocked on ${missingInputs.join(", ")} and use the local packet as evidence only.`,
   };
 }

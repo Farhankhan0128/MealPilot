@@ -2709,7 +2709,8 @@ select:focus {
 .visual-qa-rehearsal,
 .docs-coverage-drill,
 .docs-twin-rehearsal,
-.llms-manifest-rehearsal {
+.llms-manifest-rehearsal,
+.operating-contract-rehearsal {
   display: grid;
   gap: 8px;
   border-radius: 8px;
@@ -2728,7 +2729,8 @@ select:focus {
 .visual-qa-rehearsal label,
 .docs-coverage-drill label,
 .docs-twin-rehearsal label,
-.llms-manifest-rehearsal label {
+.llms-manifest-rehearsal label,
+.operating-contract-rehearsal label {
   color: var(--ink-muted);
   font-size: 0.75rem;
   font-weight: 900;
@@ -2759,7 +2761,9 @@ select:focus {
 .docs-twin-rehearsal select,
 .docs-twin-rehearsal input,
 .llms-manifest-rehearsal select,
-.llms-manifest-rehearsal input {
+.llms-manifest-rehearsal input,
+.operating-contract-rehearsal select,
+.operating-contract-rehearsal input {
   width: 100%;
   min-width: 0;
   border: 1px solid var(--line);
@@ -2799,7 +2803,8 @@ select:focus {
 .visual-qa-toggle-grid label,
 .docs-coverage-toggle-grid label,
 .docs-twin-toggle-grid label,
-.llms-manifest-toggle-grid label {
+.llms-manifest-toggle-grid label,
+.operating-contract-toggle-grid label {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -2813,13 +2818,18 @@ select:focus {
 .visual-qa-toggle-grid,
 .docs-coverage-toggle-grid,
 .docs-twin-toggle-grid,
-.llms-manifest-toggle-grid {
+.llms-manifest-toggle-grid,
+.operating-contract-toggle-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
 }
 
 .nutrition-toggle-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.operating-contract-toggle-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
@@ -2833,7 +2843,8 @@ select:focus {
 .visual-qa-toggle-grid input,
 .docs-coverage-toggle-grid input,
 .docs-twin-toggle-grid input,
-.llms-manifest-toggle-grid input {
+.llms-manifest-toggle-grid input,
+.operating-contract-toggle-grid input {
   width: 18px;
   height: 18px;
   accent-color: var(--green);
@@ -2851,7 +2862,8 @@ select:focus {
 .visual-qa-rehearsal button,
 .docs-coverage-drill button,
 .docs-twin-rehearsal button,
-.llms-manifest-rehearsal button {
+.llms-manifest-rehearsal button,
+.operating-contract-rehearsal button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -2876,7 +2888,8 @@ select:focus {
 .visual-qa-rehearsal button:disabled,
 .docs-coverage-drill button:disabled,
 .docs-twin-rehearsal button:disabled,
-.llms-manifest-rehearsal button:disabled {
+.llms-manifest-rehearsal button:disabled,
+.operating-contract-rehearsal button:disabled {
   cursor: wait;
   opacity: 0.72;
 }
@@ -2892,7 +2905,8 @@ select:focus {
 .visual-qa-rehearsal svg,
 .docs-coverage-drill svg,
 .docs-twin-rehearsal svg,
-.llms-manifest-rehearsal svg {
+.llms-manifest-rehearsal svg,
+.operating-contract-rehearsal svg {
   width: 17px;
   height: 17px;
 }
@@ -2908,7 +2922,8 @@ select:focus {
 .visual-qa-rehearsal small,
 .docs-coverage-drill small,
 .docs-twin-rehearsal small,
-.llms-manifest-rehearsal small {
+.llms-manifest-rehearsal small,
+.operating-contract-rehearsal small {
   color: var(--coral);
   font-weight: 850;
 }
@@ -2924,7 +2939,8 @@ select:focus {
 .visual-qa-rehearsal-result,
 .docs-coverage-drill-result,
 .docs-twin-rehearsal-result,
-.llms-manifest-rehearsal-result {
+.llms-manifest-rehearsal-result,
+.operating-contract-rehearsal-result {
   display: grid;
   gap: 8px;
   border-radius: 8px;
@@ -2944,7 +2960,8 @@ select:focus {
 .visual-qa-rehearsal-result[data-status="healthy"],
 .docs-coverage-drill-result[data-status="healthy"],
 .docs-twin-rehearsal-result[data-status="healthy"],
-.llms-manifest-rehearsal-result[data-status="healthy"] {
+.llms-manifest-rehearsal-result[data-status="healthy"],
+.operating-contract-rehearsal-result[data-status="healthy"] {
   border-left-color: var(--green);
 }
 
@@ -2959,7 +2976,8 @@ select:focus {
 .visual-qa-rehearsal-result[data-status="blocked"],
 .docs-coverage-drill-result[data-status="blocked"],
 .docs-twin-rehearsal-result[data-status="blocked"],
-.llms-manifest-rehearsal-result[data-status="blocked"] {
+.llms-manifest-rehearsal-result[data-status="blocked"],
+.operating-contract-rehearsal-result[data-status="blocked"] {
   border-left-color: var(--coral);
 }
 
@@ -2973,7 +2991,8 @@ select:focus {
 .visual-qa-rehearsal-result[data-status="watch"],
 .docs-coverage-drill-result[data-status="watch"],
 .docs-twin-rehearsal-result[data-status="watch"],
-.llms-manifest-rehearsal-result[data-status="watch"] {
+.llms-manifest-rehearsal-result[data-status="watch"],
+.operating-contract-rehearsal-result[data-status="watch"] {
   border-left-color: var(--gold);
 }
 
@@ -2988,7 +3007,8 @@ select:focus {
 .visual-qa-rehearsal-result > div,
 .docs-coverage-drill-result > div,
 .docs-twin-rehearsal-result > div,
-.llms-manifest-rehearsal-result > div {
+.llms-manifest-rehearsal-result > div,
+.operating-contract-rehearsal-result > div {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -3006,7 +3026,8 @@ select:focus {
 .visual-qa-rehearsal-result span,
 .docs-coverage-drill-result span,
 .docs-twin-rehearsal-result span,
-.llms-manifest-rehearsal-result span {
+.llms-manifest-rehearsal-result span,
+.operating-contract-rehearsal-result span {
   color: var(--ink-muted);
   font-size: 0.75rem;
   font-weight: 900;
@@ -3024,7 +3045,8 @@ select:focus {
 .visual-qa-rehearsal-result strong,
 .docs-coverage-drill-result strong,
 .docs-twin-rehearsal-result strong,
-.llms-manifest-rehearsal-result strong {
+.llms-manifest-rehearsal-result strong,
+.operating-contract-rehearsal-result strong {
   color: var(--green-dark);
   font-size: 0.84rem;
   text-align: right;
@@ -3053,7 +3075,9 @@ select:focus {
 .docs-twin-rehearsal-result p,
 .docs-twin-rehearsal-result small,
 .llms-manifest-rehearsal-result p,
-.llms-manifest-rehearsal-result small {
+.llms-manifest-rehearsal-result small,
+.operating-contract-rehearsal-result p,
+.operating-contract-rehearsal-result small {
   margin: 0;
   color: var(--ink-muted);
   font-size: 0.82rem;
@@ -3071,7 +3095,8 @@ select:focus {
 .visual-qa-rehearsal-result small,
 .docs-coverage-drill-result small,
 .docs-twin-rehearsal-result small,
-.llms-manifest-rehearsal-result small {
+.llms-manifest-rehearsal-result small,
+.operating-contract-rehearsal-result small {
   color: var(--green-dark);
   font-weight: 850;
 }

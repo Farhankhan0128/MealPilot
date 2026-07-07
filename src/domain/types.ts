@@ -7193,6 +7193,33 @@ export interface SwiggyOperatingContractCenterReport {
   externalGates: string[];
 }
 
+export type SwiggyOperatingContractRehearsalMode = "local_packet" | "staging_cutover" | "production_launch";
+export type SwiggyOperatingContractRehearsalDecision =
+  | "ready_operating_packet"
+  | "manual_launch_gate"
+  | "blocked_operating_gate";
+
+export interface SwiggyOperatingContractRehearsal {
+  generatedAt: string;
+  decision: SwiggyOperatingContractRehearsalDecision;
+  readinessScore: number;
+  mode: SwiggyOperatingContractRehearsalMode;
+  includeCapacityNotice: boolean;
+  includeSupportPacket: boolean;
+  includeVersionWatch: boolean;
+  includeStatusPageFallback: boolean;
+  includeStagingCredentials: boolean;
+  selectedPillars: SwiggyOperatingContractPillar[];
+  selectedRunbooks: SwiggyOperatingContractRunbook[];
+  selectedGates: SwiggyOperatingContractReadinessGate[];
+  launchEmail: SwiggyOperatingContractCenterReport["launchEmail"];
+  commands: Array<{ command: string; proves: string }>;
+  missingInputs: string[];
+  telemetry: Array<{ field: string; value: string; redaction: string }>;
+  assertions: string[];
+  nextAction: string;
+}
+
 export interface RuntimeTelemetryEvent {
   ts: string;
   level: "info" | "warn" | "error";

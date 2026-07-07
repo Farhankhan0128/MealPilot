@@ -227,6 +227,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/swiggy-cta-live-audit`
 - `GET /api/swiggy-builders-launch-story`
 - `GET /api/swiggy-operating-contract-center`
+- `POST /api/swiggy-operating-contract-center/rehearse`
 - `GET /api/swiggy-builder-intake`
 - `GET /api/swiggy-faq-policy`
 - `GET /api/swiggy-faq-resolution-center`
@@ -489,7 +490,7 @@ Production should use an HTTPS redirect URI with exact-match allowlisting.
 
 `/api/swiggy-builders-launch-story` turns the April 2026 Builders Club launch blog into a reviewer-ready story center. It reconciles the launch-era 18+ API-tool narrative with the current 35-tool docs snapshot and packages story beats, the demo journey, showcase assets, ecosystem lanes, CTA paths, and co-marketing guardrails.
 
-`/api/swiggy-operating-contract-center` consolidates official operate and ship-to-production guidance into one reviewer contract: SLA and latency targets, current/future rate-limit behavior, traffic rollout, support escalation, version/deprecation watch, runbooks, readiness gates, and Swiggy external approvals.
+`/api/swiggy-operating-contract-center` consolidates official operate and ship-to-production guidance into one reviewer contract: SLA and latency targets, current/future rate-limit behavior, traffic rollout, support escalation, version/deprecation watch, runbooks, readiness gates, and Swiggy external approvals. `/api/swiggy-operating-contract-center/rehearse` powers the Launch Center readiness rehearsal with local-packet, staging-cutover, and production-launch modes plus capacity, support, version, status-page, and staging credential gates, returning commands, telemetry, launch email draft, missing inputs, and a ready/manual/blocked decision without sending email or claiming approval.
 
 `/api/swiggy-cta-execution-center` shows the click-readiness workbench for every official Swiggy Builders CTA, global header link, docs subnav item, footer resource, mailto, Google Form, and legal link. Each target includes a browser action, keyboard path, proof links, completion gate, assertion coverage, and an operator-vs-Swiggy external gate.
 
@@ -548,7 +549,7 @@ The test suite checks that:
 - Swiggy Builders Review Decision Center converts official fit, demo, security, API coverage, source-review, credential, ops, and go-live review signals into approval-readiness gates, recommendation, reviewer questions, proof links, operator blockers, and Swiggy-owned gates.
 - CTA Live Audit probes official Builders/docs click targets, keeps form/email/legal CTAs manual, and fails smoke on unsafe or blocked CTA drift.
 - Swiggy Builders Launch Story Center converts the launch blog into a reviewer-ready story, reconciles the launch-era 18+ signal with the current 35-tool docs snapshot, and packages demo journey, showcase assets, ecosystem lanes, CTA paths, and co-marketing guardrails.
-- Swiggy Operating Contract Center joins SLA, rate limits, support, versioning, changelog, and ship-to-production sources into pillars, runbooks, readiness gates, and external approval gates.
+- Swiggy Operating Contract Center joins SLA, rate limits, support, versioning, changelog, and ship-to-production sources into pillars, runbooks, readiness gates, external approval gates, and executable Launch Center readiness rehearsals.
 - Builder Intake Command Center turns all 11 signup, apply, demo, contact, docs, and footer CTA paths into locally prepared action ownership, form values, demo storyboard steps, copy-ready drafts, and explicit external gates for final form/email submission and Swiggy approval.
 - FAQ & Policy Center maps homepage, developer, enterprise, access-guideline, footer-resource, allowed/restricted/prohibited, operating-principle, and legal signals to MealPilot evidence links.
 - Growth Partnership Center maps get-noticed, hiring, co-branding, direct support, co-marketing, analytics, strategic guidance, launch experiments, metrics, proof assets, and external partner asks. `POST /api/swiggy-growth-partnership/compose` generates a local launch-experiment handoff packet with selected partner ask, proof links, assets, metrics, checklist, builders@swiggy.in draft, and Swiggy-owned co-marketing gates.

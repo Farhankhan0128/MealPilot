@@ -72,6 +72,7 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/swiggy-builders-review-decision"].get.responses["200"].description).toContain("approval");
     expect(openApi.body.paths["/api/swiggy-operating-contract-center"].get.summary).toContain("Operating Contract");
     expect(openApi.body.paths["/api/swiggy-operating-contract-center"].get.responses["200"].description).toContain("99.9%");
+    expect(openApi.body.paths["/api/swiggy-operating-contract-center/rehearse"].post.summary).toContain("operating contract");
     expect(openApi.body.paths["/api/swiggy-builder-intake"].get.summary).toContain("Builder Intake");
     expect(openApi.body.paths["/api/swiggy-faq-policy"].get.summary).toContain("FAQ");
     expect(openApi.body.paths["/api/swiggy-faq-resolution-center"].get.summary).toContain("FAQ Resolution");
@@ -1393,6 +1394,42 @@ describe("MealPilot API", () => {
     expect(contract.launchEmail.to).toBe("builders@swiggy.in");
     expect(contract.assertions.some((assertion: string) => assertion.includes("official Swiggy operate"))).toBe(true);
     expect(contract.externalGates.some((gate: string) => gate.includes("staging credentials"))).toBe(true);
+  });
+
+  it("rehearses Swiggy operating contract readiness with launch gates", async () => {
+    const { app } = createMealPilotServer();
+
+    const ready = await request(app)
+      .post("/api/swiggy-operating-contract-center/rehearse")
+      .send({
+        mode: "local_packet",
+        includeCapacityNotice: true,
+        includeSupportPacket: true,
+        includeVersionWatch: true,
+        includeStatusPageFallback: false,
+        includeStagingCredentials: false,
+      })
+      .expect(200);
+
+    expect(ready.body.operatingContractRehearsal.decision).toBe("ready_operating_packet");
+    expect(ready.body.operatingContractRehearsal.selectedPillars).toHaveLength(6);
+    expect(ready.body.operatingContractRehearsal.commands.some((command: { command: string }) => command.command.includes("verify:production"))).toBe(true);
+    expect(ready.body.operatingContractRehearsal.launchEmail.to).toBe("builders@swiggy.in");
+
+    const gated = await request(app)
+      .post("/api/swiggy-operating-contract-center/rehearse")
+      .send({
+        mode: "staging_cutover",
+        includeCapacityNotice: true,
+        includeSupportPacket: true,
+        includeVersionWatch: true,
+        includeStatusPageFallback: false,
+        includeStagingCredentials: true,
+      })
+      .expect(200);
+
+    expect(gated.body.operatingContractRehearsal.decision).toBe("blocked_operating_gate");
+    expect(gated.body.operatingContractRehearsal.missingInputs).toContain("Swiggy staging credentials");
   });
 
   it("turns every Swiggy signup and application CTA into an intake action center", async () => {

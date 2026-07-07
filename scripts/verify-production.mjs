@@ -62,7 +62,8 @@ assert(
 );
 assert(
   openApi.paths["/api/swiggy-operating-contract-center"]?.get?.summary?.includes("Operating Contract") &&
-    openApi.paths["/api/swiggy-operating-contract-center"]?.get?.responses?.["200"]?.description?.includes("99.9%"),
+    openApi.paths["/api/swiggy-operating-contract-center"]?.get?.responses?.["200"]?.description?.includes("99.9%") &&
+    openApi.paths["/api/swiggy-operating-contract-center/rehearse"]?.post?.summary?.includes("operating contract"),
   "OpenAPI operating contract center is missing",
 );
 assert(
@@ -1075,6 +1076,40 @@ assert(
     operatingContract.operatingContract.launchEmail.to === "builders@swiggy.in" &&
     operatingContract.operatingContract.externalGates.some((gate) => gate.includes("staging credentials")),
   "operating contract readiness gates or launch email are incomplete",
+);
+const readyOperatingContractRehearsal = await request("/api/swiggy-operating-contract-center/rehearse", {
+  method: "POST",
+  body: JSON.stringify({
+    mode: "local_packet",
+    includeCapacityNotice: true,
+    includeSupportPacket: true,
+    includeVersionWatch: true,
+    includeStatusPageFallback: false,
+    includeStagingCredentials: false,
+  }),
+});
+assert(
+  readyOperatingContractRehearsal.operatingContractRehearsal.decision === "ready_operating_packet" &&
+    readyOperatingContractRehearsal.operatingContractRehearsal.selectedPillars.length === 6 &&
+    readyOperatingContractRehearsal.operatingContractRehearsal.launchEmail.to === "builders@swiggy.in" &&
+    readyOperatingContractRehearsal.operatingContractRehearsal.commands.some((command) => command.command.includes("verify:production")),
+  "operating contract ready rehearsal is incomplete",
+);
+const gatedOperatingContractRehearsal = await request("/api/swiggy-operating-contract-center/rehearse", {
+  method: "POST",
+  body: JSON.stringify({
+    mode: "staging_cutover",
+    includeCapacityNotice: true,
+    includeSupportPacket: true,
+    includeVersionWatch: true,
+    includeStatusPageFallback: false,
+    includeStagingCredentials: true,
+  }),
+});
+assert(
+  gatedOperatingContractRehearsal.operatingContractRehearsal.decision === "blocked_operating_gate" &&
+    gatedOperatingContractRehearsal.operatingContractRehearsal.missingInputs.includes("Swiggy staging credentials"),
+  "operating contract gated rehearsal is incomplete",
 );
 
 const builderIntake = await request("/api/swiggy-builder-intake");
