@@ -157,7 +157,7 @@ Planned MCP servers:
 - Staging Transcript Export that produces session-scoped JSONL, Markdown, redaction manifest, support envelope, certification-wave mapping, and proof links for Swiggy review.
 - Builder Access submission package endpoint that mirrors Swiggy's requested application fields and highlights manual inputs.
 - Submission Console that consolidates developer/enterprise form targets, official access requirements, prepared fields, proof attachments, packet order, runbook steps, blockers, and copy-ready handoff drafts.
-- Access Submission Studio that turns Start Building, Request access, and Send Us a Demo into one operator-facing room with copy blocks, required attachments, browser runbook, generated mailto draft, and explicit external gates.
+- Access Submission Studio that turns Start Building, Request access, and Send Us a Demo into one operator-facing room with copy blocks, required attachments, browser runbook, generated mailto draft, local handoff rehearsals, and explicit external gates.
 - Production Launch Bundle with access fields, artifact links, verification commands, go-live gates, and a `builders@swiggy.in` handoff email draft.
 - Production Evidence panel with widget contracts, rate-limit budgets, version/deprecation monitoring, compliance controls, data governance, Source Intelligence, Deep Site Map, and Innovation Radar artifacts, and reviewer proof score.
 - Swiggy widget contract generator with semantic fallbacks for Food restaurant/cart, Instamart product/cart, and Dineout slot surfaces.
@@ -408,6 +408,7 @@ POST /api/error-intelligence/classify
 GET  /api/submission-console
 GET  /api/access-submission-studio
 PATCH /api/access-submission-studio/state
+POST /api/access-submission-studio/rehearse
 GET  /api/swiggy-builders-review-decision
 GET  /api/builder-packet-export
 GET  /api/builder-packet-export.md
@@ -551,7 +552,7 @@ VITE_SWIGGY_SCOPE=mcp:tools mcp:resources mcp:prompts
 
 `GET /api/submission-console` is the operator handoff console for signing up end to end: developer/enterprise form targets, official access fields, required attachments, demo-video gate, final contact/redirect/static-egress gates, runbook steps, and builders@swiggy.in drafts.
 
-`GET /api/access-submission-studio` is the final Swiggy access submission room: official Start Building, Request access, and Send Us a Demo targets; copy-ready form blocks; required proof attachments; browser runbook; generated mailto draft; and explicit operator/Swiggy gates. `PATCH /api/access-submission-studio/state` persists the operator-owned demo URL, primary contact, production redirect URI, egress/IP, environment summary, terms acknowledgement, form-submitted timestamp, handoff-email timestamp, and notes so the studio can move from ready-to-submit into submitted handoff state without calling Swiggy automatically.
+`GET /api/access-submission-studio` is the final Swiggy access submission room: official Start Building, Request access, and Send Us a Demo targets; copy-ready form blocks; required proof attachments; browser runbook; generated mailto draft; and explicit operator/Swiggy gates. `PATCH /api/access-submission-studio/state` persists the operator-owned demo URL, primary contact, production redirect URI, egress/IP, environment summary, terms acknowledgement, form-submitted timestamp, handoff-email timestamp, and notes so the studio can move from ready-to-submit into submitted handoff state without calling Swiggy automatically. `POST /api/access-submission-studio/rehearse` runs a local pre-submit, submitted-handoff, or credential-follow-up rehearsal that returns selected official targets, copy blocks, attachments, proof commands, missing inputs, telemetry, and Swiggy-owned credential gates without submitting the form or sending email.
 
 `GET /api/credential-onboarding` previews the Dynamic Client Registration payload for Swiggy's `POST /auth/register`, audits the redirect URI, and lists the exact access-form fields. It does not create external Swiggy state during local tests.
 

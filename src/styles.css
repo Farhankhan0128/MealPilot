@@ -2711,7 +2711,8 @@ select:focus {
 .docs-twin-rehearsal,
 .llms-manifest-rehearsal,
 .operating-contract-rehearsal,
-.brand-compliance-rehearsal {
+.brand-compliance-rehearsal,
+.access-submission-rehearsal {
   display: grid;
   gap: 8px;
   border-radius: 8px;
@@ -2732,7 +2733,8 @@ select:focus {
 .docs-twin-rehearsal label,
 .llms-manifest-rehearsal label,
 .operating-contract-rehearsal label,
-.brand-compliance-rehearsal label {
+.brand-compliance-rehearsal label,
+.access-submission-rehearsal label {
   color: var(--ink-muted);
   font-size: 0.75rem;
   font-weight: 900;
@@ -2767,7 +2769,9 @@ select:focus {
 .operating-contract-rehearsal select,
 .operating-contract-rehearsal input,
 .brand-compliance-rehearsal select,
-.brand-compliance-rehearsal input {
+.brand-compliance-rehearsal input,
+.access-submission-rehearsal select,
+.access-submission-rehearsal input {
   width: 100%;
   min-width: 0;
   border: 1px solid var(--line);
@@ -2809,7 +2813,8 @@ select:focus {
 .docs-twin-toggle-grid label,
 .llms-manifest-toggle-grid label,
 .operating-contract-toggle-grid label,
-.brand-compliance-toggle-grid label {
+.brand-compliance-toggle-grid label,
+.access-submission-toggle-grid label {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -2825,7 +2830,8 @@ select:focus {
 .docs-twin-toggle-grid,
 .llms-manifest-toggle-grid,
 .operating-contract-toggle-grid,
-.brand-compliance-toggle-grid {
+.brand-compliance-toggle-grid,
+.access-submission-toggle-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
@@ -2852,7 +2858,8 @@ select:focus {
 .docs-twin-toggle-grid input,
 .llms-manifest-toggle-grid input,
 .operating-contract-toggle-grid input,
-.brand-compliance-toggle-grid input {
+.brand-compliance-toggle-grid input,
+.access-submission-toggle-grid input {
   width: 18px;
   height: 18px;
   accent-color: var(--green);
@@ -2872,7 +2879,8 @@ select:focus {
 .docs-twin-rehearsal button,
 .llms-manifest-rehearsal button,
 .operating-contract-rehearsal button,
-.brand-compliance-rehearsal button {
+.brand-compliance-rehearsal button,
+.access-submission-rehearsal button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -2899,7 +2907,8 @@ select:focus {
 .docs-twin-rehearsal button:disabled,
 .llms-manifest-rehearsal button:disabled,
 .operating-contract-rehearsal button:disabled,
-.brand-compliance-rehearsal button:disabled {
+.brand-compliance-rehearsal button:disabled,
+.access-submission-rehearsal button:disabled {
   cursor: wait;
   opacity: 0.72;
 }
@@ -2917,7 +2926,8 @@ select:focus {
 .docs-twin-rehearsal svg,
 .llms-manifest-rehearsal svg,
 .operating-contract-rehearsal svg,
-.brand-compliance-rehearsal svg {
+.brand-compliance-rehearsal svg,
+.access-submission-rehearsal svg {
   width: 17px;
   height: 17px;
 }
@@ -2935,7 +2945,8 @@ select:focus {
 .docs-twin-rehearsal small,
 .llms-manifest-rehearsal small,
 .operating-contract-rehearsal small,
-.brand-compliance-rehearsal small {
+.brand-compliance-rehearsal small,
+.access-submission-rehearsal small {
   color: var(--coral);
   font-weight: 850;
 }
@@ -2953,7 +2964,8 @@ select:focus {
 .docs-twin-rehearsal-result,
 .llms-manifest-rehearsal-result,
 .operating-contract-rehearsal-result,
-.brand-compliance-rehearsal-result {
+.brand-compliance-rehearsal-result,
+.access-submission-rehearsal-result {
   display: grid;
   gap: 8px;
   border-radius: 8px;
@@ -2975,7 +2987,8 @@ select:focus {
 .docs-twin-rehearsal-result[data-status="healthy"],
 .llms-manifest-rehearsal-result[data-status="healthy"],
 .operating-contract-rehearsal-result[data-status="healthy"],
-.brand-compliance-rehearsal-result[data-status="healthy"] {
+.brand-compliance-rehearsal-result[data-status="healthy"],
+.access-submission-rehearsal-result[data-status="healthy"] {
   border-left-color: var(--green);
 }
 
@@ -2992,7 +3005,8 @@ select:focus {
 .docs-twin-rehearsal-result[data-status="blocked"],
 .llms-manifest-rehearsal-result[data-status="blocked"],
 .operating-contract-rehearsal-result[data-status="blocked"],
-.brand-compliance-rehearsal-result[data-status="blocked"] {
+.brand-compliance-rehearsal-result[data-status="blocked"],
+.access-submission-rehearsal-result[data-status="blocked"] {
   border-left-color: var(--coral);
 }
 
@@ -3008,7 +3022,8 @@ select:focus {
 .docs-twin-rehearsal-result[data-status="watch"],
 .llms-manifest-rehearsal-result[data-status="watch"],
 .operating-contract-rehearsal-result[data-status="watch"],
-.brand-compliance-rehearsal-result[data-status="watch"] {
+.brand-compliance-rehearsal-result[data-status="watch"],
+.access-submission-rehearsal-result[data-status="watch"] {
   border-left-color: var(--gold);
 }
 
@@ -3025,7 +3040,8 @@ select:focus {
 .docs-twin-rehearsal-result > div,
 .llms-manifest-rehearsal-result > div,
 .operating-contract-rehearsal-result > div,
-.brand-compliance-rehearsal-result > div {
+.brand-compliance-rehearsal-result > div,
+.access-submission-rehearsal-result > div {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -3045,7 +3061,8 @@ select:focus {
 .docs-twin-rehearsal-result span,
 .llms-manifest-rehearsal-result span,
 .operating-contract-rehearsal-result span,
-.brand-compliance-rehearsal-result span {
+.brand-compliance-rehearsal-result span,
+.access-submission-rehearsal-result span {
   color: var(--ink-muted);
   font-size: 0.75rem;
   font-weight: 900;
@@ -3065,7 +3082,8 @@ select:focus {
 .docs-twin-rehearsal-result strong,
 .llms-manifest-rehearsal-result strong,
 .operating-contract-rehearsal-result strong,
-.brand-compliance-rehearsal-result strong {
+.brand-compliance-rehearsal-result strong,
+.access-submission-rehearsal-result strong {
   color: var(--green-dark);
   font-size: 0.84rem;
   text-align: right;
@@ -3098,7 +3116,9 @@ select:focus {
 .operating-contract-rehearsal-result p,
 .operating-contract-rehearsal-result small,
 .brand-compliance-rehearsal-result p,
-.brand-compliance-rehearsal-result small {
+.brand-compliance-rehearsal-result small,
+.access-submission-rehearsal-result p,
+.access-submission-rehearsal-result small {
   margin: 0;
   color: var(--ink-muted);
   font-size: 0.82rem;
@@ -3118,7 +3138,8 @@ select:focus {
 .docs-twin-rehearsal-result small,
 .llms-manifest-rehearsal-result small,
 .operating-contract-rehearsal-result small,
-.brand-compliance-rehearsal-result small {
+.brand-compliance-rehearsal-result small,
+.access-submission-rehearsal-result small {
   color: var(--green-dark);
   font-weight: 850;
 }

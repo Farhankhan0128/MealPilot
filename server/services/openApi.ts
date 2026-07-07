@@ -1797,6 +1797,18 @@ export function buildOpenApiDocument(config: ServerConfig) {
           },
         },
       },
+      "/api/access-submission-studio/rehearse": {
+        post: {
+          tags: ["Builder Access"],
+          summary: "Rehearse Swiggy access submission handoff without external submission",
+          responses: {
+            "200": {
+              description:
+                "Selected access handoff mode with official targets, copy blocks, attachments, browser runbook, mailto draft, commands, telemetry, missing inputs, and explicit Swiggy credential gates",
+            },
+          },
+        },
+      },
       "/api/builder-packet-export": {
         get: {
           tags: ["Builder Access"],

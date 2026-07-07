@@ -214,6 +214,7 @@ describe("MealPilot API", () => {
     expect(openApi.body.paths["/api/sandbox-credential-workbench"].get.summary).toContain("sandbox");
     expect(openApi.body.paths["/api/access-submission-studio"].get.summary).toContain("submission studio");
     expect(openApi.body.paths["/api/access-submission-studio/state"].patch.summary).toContain("handoff state");
+    expect(openApi.body.paths["/api/access-submission-studio/rehearse"].post.summary).toContain("access submission");
     expect(openApi.body.paths["/api/auth/swiggy/status"].get.summary).toContain("OAuth callback");
     expect(openApi.body.paths["/api/swiggy-auth-lifecycle-center"].get.summary).toContain("Auth Lifecycle");
     expect(openApi.body.paths["/api/swiggy-auth-lifecycle-center"].get.responses["200"].description).toContain("401/419");
@@ -1674,6 +1675,76 @@ describe("MealPilot API", () => {
     expect(reloaded.body.accessSubmissionStudio.handoffState.technicalContactEmail).toBe("eng@example.com");
     expect(reloaded.body.accessSubmissionStudio.handoffState.formSubmittedAt).toBe("2026-07-06T05:00:00.000Z");
     expect(reloaded.body.accessSubmissionStudio.officialTargets.every((target: { status: string }) => target.status !== "operator_input")).toBe(true);
+  });
+
+  it("rehearses Swiggy access submission without submitting external state", async () => {
+    const { app } = createMealPilotServer();
+    await request(app).post("/api/plan").send(planningRequest).expect(201);
+    const readyState = {
+      demoVideoUrl: "https://loom.com/share/mealpilot-demo",
+      technicalContactEmail: "eng@example.com",
+      productionRedirectUri: "https://mealpilot.example.com/auth/swiggy/callback",
+      staticEgressIp: "203.0.113.10/32",
+      environmentSummary: "Render web service, HTTPS redirect, secret env vars, production build.",
+      termsAcknowledged: true,
+      notes: "Ready for Swiggy access review.",
+    };
+
+    const ready = await request(app)
+      .post("/api/access-submission-studio/rehearse")
+      .send({
+        mode: "pre_submit",
+        includeFormSubmission: false,
+        includeHandoffEmail: false,
+        includeCredentialGates: false,
+        handoffState: readyState,
+      })
+      .expect(200);
+    const rehearsal = ready.body.accessSubmissionRehearsal;
+    expect(rehearsal.decision).toBe("ready_access_packet");
+    expect(rehearsal.selectedTargets.map((target: { id: string }) => target.id)).toEqual(
+      expect.arrayContaining(["start_building", "request_access"]),
+    );
+    expect(rehearsal.selectedTargets.some((target: { id: string }) => target.id === "send_demo")).toBe(false);
+    expect(rehearsal.browserRunbook.some((step: { id: string }) => step.id === "await_credentials")).toBe(false);
+    expect(rehearsal.mailto.to).toBe("builders@swiggy.in");
+    expect(rehearsal.commands.some((command: { command: string }) => command.command.includes("export:builder-packet"))).toBe(true);
+    expect(rehearsal.assertions.some((assertion: string) => assertion.includes("never submits"))).toBe(true);
+
+    const manual = await request(app)
+      .post("/api/access-submission-studio/rehearse")
+      .send({
+        mode: "submitted_handoff",
+        includeFormSubmission: true,
+        includeHandoffEmail: true,
+        includeCredentialGates: false,
+        handoffState: readyState,
+      })
+      .expect(200);
+    expect(manual.body.accessSubmissionRehearsal.decision).toBe("manual_submission_gate");
+    expect(manual.body.accessSubmissionRehearsal.missingInputs).toEqual(
+      expect.arrayContaining(["official Swiggy access form submission", "builders@swiggy.in handoff email"]),
+    );
+
+    const blocked = await request(app)
+      .post("/api/access-submission-studio/rehearse")
+      .send({
+        mode: "credential_followup",
+        includeFormSubmission: true,
+        includeHandoffEmail: true,
+        includeCredentialGates: true,
+        handoffState: {
+          ...readyState,
+          formSubmittedAt: "2026-07-06T05:00:00.000Z",
+          handoffEmailSentAt: "2026-07-06T05:05:00.000Z",
+        },
+      })
+      .expect(200);
+    expect(blocked.body.accessSubmissionRehearsal.decision).toBe("blocked_swiggy_gate");
+    expect(blocked.body.accessSubmissionRehearsal.missingInputs).toContain("Swiggy staging credential issuance");
+    expect(
+      blocked.body.accessSubmissionRehearsal.browserRunbook.some((step: { id: string }) => step.id === "await_credentials"),
+    ).toBe(true);
   });
 
   it("returns an executable Swiggy builder packet export with Markdown output", async () => {

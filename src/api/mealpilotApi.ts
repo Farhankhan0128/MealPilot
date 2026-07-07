@@ -1,6 +1,8 @@
 import type {
   AgentSurface,
   AgentSurfaceResponse,
+  AccessSubmissionRehearsal,
+  AccessSubmissionRehearsalMode,
   AccessSubmissionStudio,
   AccessSubmissionHandoffState,
   AuditLedgerCenter,
@@ -1286,6 +1288,22 @@ export function updateAccessSubmissionState(
     method: "PATCH",
     body: JSON.stringify(state),
   });
+}
+
+export function rehearseAccessSubmission(input: {
+  mode: AccessSubmissionRehearsalMode;
+  includeFormSubmission: boolean;
+  includeHandoffEmail: boolean;
+  includeCredentialGates: boolean;
+  handoffState: Partial<Omit<AccessSubmissionHandoffState, "updatedAt">>;
+}) {
+  return requestJson<{ accessSubmissionRehearsal: AccessSubmissionRehearsal }>(
+    "/api/access-submission-studio/rehearse",
+    {
+      method: "POST",
+      body: JSON.stringify(input),
+    },
+  );
 }
 
 export function fetchBuilderPacketExport() {

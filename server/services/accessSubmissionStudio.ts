@@ -1,6 +1,8 @@
 import type { ServerConfig } from "../config.js";
 import type {
   AccessSubmissionHandoffState,
+  AccessSubmissionRehearsal,
+  AccessSubmissionRehearsalMode,
   AccessSubmissionStudio,
   AccessSubmissionStudioCopyBlock,
   AccessSubmissionStudioStep,
@@ -105,6 +107,9 @@ function overrideFieldStatus(
   }
   if (fieldId === "terms_acknowledgement" && state.termsAcknowledged) {
     return { status: "ready" as const, value: `Acknowledged locally at ${state.updatedAt}` };
+  }
+  if (fieldId === "certifications" && original.suggestedValue.toLowerCase().includes("not applicable")) {
+    return { status: "ready" as const, value: original.suggestedValue };
   }
   return { status: original.status, value: original.suggestedValue };
 }
@@ -255,5 +260,102 @@ export function buildAccessSubmissionStudio(options: {
       "Operator must send the builders@swiggy.in handoff email after submission.",
       "Swiggy must issue staging credentials, approve seeded data, and later approve production credentials.",
     ],
+  };
+}
+
+export function rehearseAccessSubmission(options: {
+  config: ServerConfig;
+  profile: UserProfile;
+  coverage: McpServerCoverage[];
+  latestPlan?: MealPlan;
+  handoffState?: AccessSubmissionHandoffState;
+  mode: AccessSubmissionRehearsalMode;
+  includeFormSubmission: boolean;
+  includeHandoffEmail: boolean;
+  includeCredentialGates: boolean;
+}): AccessSubmissionRehearsal {
+  const studio = buildAccessSubmissionStudio(options);
+  const missingInputs = [
+    ...studio.copyBlocks
+      .filter((block) => block.status === "operator_input")
+      .map((block) => `${block.label} copy block`),
+    ...studio.attachmentChecklist
+      .filter((attachment) => attachment.required && attachment.status === "operator_input")
+      .map((attachment) => `${attachment.label} attachment`),
+  ];
+
+  if (options.includeFormSubmission && !studio.handoffState.formSubmittedAt) {
+    missingInputs.push("official Swiggy access form submission");
+  }
+  if (options.includeHandoffEmail && !studio.handoffState.handoffEmailSentAt) {
+    missingInputs.push("builders@swiggy.in handoff email");
+  }
+  if (options.includeCredentialGates || options.mode === "credential_followup") {
+    missingInputs.push("Swiggy staging credential issuance");
+  }
+
+  const decision: AccessSubmissionRehearsal["decision"] =
+    missingInputs.some((input) => input.includes("Swiggy staging credential"))
+      ? "blocked_swiggy_gate"
+      : missingInputs.length > 0
+        ? "manual_submission_gate"
+        : "ready_access_packet";
+
+  const selectedTargets =
+    options.mode === "pre_submit"
+      ? studio.officialTargets.filter((target) => target.id !== "send_demo")
+      : studio.officialTargets;
+  const browserRunbook =
+    options.mode === "credential_followup"
+      ? studio.browserRunbook
+      : studio.browserRunbook.filter((stepItem) => stepItem.id !== "await_credentials");
+
+  return {
+    generatedAt: new Date().toISOString(),
+    decision,
+    readinessScore: studio.score,
+    mode: options.mode,
+    includeFormSubmission: options.includeFormSubmission,
+    includeHandoffEmail: options.includeHandoffEmail,
+    includeCredentialGates: options.includeCredentialGates,
+    selectedTargets,
+    copyBlocks: studio.copyBlocks,
+    attachmentChecklist: studio.attachmentChecklist,
+    browserRunbook,
+    mailto: studio.mailto,
+    commands: [
+      {
+        command: "curl -fsS http://localhost:8787/api/access-submission-studio",
+        proves: "Official targets, copy blocks, attachments, runbook, and external gates are prepared.",
+      },
+      {
+        command: "MEALPILOT_URL=http://localhost:8787 npm run export:builder-packet",
+        proves: "Reviewer packet artifacts and verification summary are refreshed before submission.",
+      },
+      {
+        command: "MEALPILOT_URL=http://localhost:8787 npm run verify:production",
+        proves: "Access dossier, evidence matrix, reviewer vault, and launch bundle remain aligned.",
+      },
+    ],
+    missingInputs,
+    telemetry: [
+      { field: "mode", value: options.mode, redaction: "safe access rehearsal mode" },
+      { field: "copy_blocks_ready", value: `${studio.totals.readyCopyBlocks}/${studio.totals.totalCopyBlocks}`, redaction: "aggregate count only" },
+      { field: "attachments_ready", value: `${studio.totals.readyRequiredAttachments}/${studio.totals.totalRequiredAttachments}`, redaction: "aggregate count only" },
+      { field: "targets", value: String(selectedTargets.length), redaction: "aggregate count only" },
+      { field: "external_gates", value: String(studio.totals.externalGates), redaction: "aggregate count only" },
+    ],
+    assertions: [
+      "The rehearsal prepares the official Swiggy access handoff but never submits the external form.",
+      "The builders@swiggy.in email remains a copy-ready mailto draft and is not sent by the API.",
+      "Demo URL, security contact, redirect URI, egress/IP, and environment summary are operator-owned inputs.",
+      "Staging credentials, production approval, seeded data, and co-branding remain Swiggy external gates.",
+    ],
+    nextAction:
+      decision === "ready_access_packet"
+        ? "Open the official Request access target, paste the prepared copy blocks, attach evidence, and send the handoff email manually."
+        : decision === "manual_submission_gate"
+          ? `Resolve ${missingInputs.join(", ")} before using the official Swiggy access targets.`
+          : `Keep the submission blocked on ${missingInputs.join(", ")} and use the local packet as reviewer evidence only.`,
   };
 }

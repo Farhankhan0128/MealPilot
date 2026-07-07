@@ -553,6 +553,11 @@ assert(
   "OpenAPI submission console is missing",
 );
 assert(
+  openApi.paths["/api/access-submission-studio"].get.summary.includes("submission studio") &&
+    openApi.paths["/api/access-submission-studio/rehearse"]?.post?.summary?.includes("access submission"),
+  "OpenAPI access submission rehearsal contract is missing",
+);
+assert(
   openApi.paths["/api/swiggy-access-evidence-matrix"].get.summary.includes("access evidence matrix"),
   "OpenAPI access evidence matrix is missing",
 );
@@ -7491,6 +7496,64 @@ assert(
   "access submission saved demo attachment is incomplete",
 );
 
+const accessSubmissionReadyRehearsal = await request("/api/access-submission-studio/rehearse", {
+  method: "POST",
+  body: JSON.stringify({
+    mode: "pre_submit",
+    includeFormSubmission: false,
+    includeHandoffEmail: false,
+    includeCredentialGates: false,
+    handoffState: {
+      demoVideoUrl: "https://loom.com/share/mealpilot-demo",
+      technicalContactEmail: "eng@example.com",
+      productionRedirectUri: "https://mealpilot.example.com/auth/swiggy/callback",
+      staticEgressIp: "203.0.113.10/32",
+      environmentSummary: "Production HTTPS web service with secret environment variables and redacted logs.",
+      termsAcknowledged: true,
+    },
+  }),
+});
+assert(
+  accessSubmissionReadyRehearsal.accessSubmissionRehearsal.decision === "ready_access_packet" &&
+    accessSubmissionReadyRehearsal.accessSubmissionRehearsal.missingInputs.length === 0 &&
+    accessSubmissionReadyRehearsal.accessSubmissionRehearsal.selectedTargets.some((target) => target.id === "request_access") &&
+    accessSubmissionReadyRehearsal.accessSubmissionRehearsal.commands.some((command) =>
+      command.command.includes("export:builder-packet"),
+    ),
+  "access submission ready rehearsal is incomplete",
+);
+assert(
+  !accessSubmissionReadyRehearsal.accessSubmissionRehearsal.selectedTargets.some((target) => target.id === "send_demo") &&
+    !accessSubmissionReadyRehearsal.accessSubmissionRehearsal.browserRunbook.some((step) => step.id === "await_credentials"),
+  "access submission pre-submit rehearsal includes post-submit gates",
+);
+
+const accessSubmissionBlockedRehearsal = await request("/api/access-submission-studio/rehearse", {
+  method: "POST",
+  body: JSON.stringify({
+    mode: "credential_followup",
+    includeFormSubmission: true,
+    includeHandoffEmail: true,
+    includeCredentialGates: true,
+    handoffState: {
+      demoVideoUrl: "https://loom.com/share/mealpilot-demo",
+      technicalContactEmail: "eng@example.com",
+      productionRedirectUri: "https://mealpilot.example.com/auth/swiggy/callback",
+      staticEgressIp: "203.0.113.10/32",
+      environmentSummary: "Production HTTPS web service with secret environment variables and redacted logs.",
+      termsAcknowledged: true,
+      formSubmittedAt: "2026-07-06T05:00:00.000Z",
+      handoffEmailSentAt: "2026-07-06T05:05:00.000Z",
+    },
+  }),
+});
+assert(
+  accessSubmissionBlockedRehearsal.accessSubmissionRehearsal.decision === "blocked_swiggy_gate" &&
+    accessSubmissionBlockedRehearsal.accessSubmissionRehearsal.missingInputs.includes("Swiggy staging credential issuance") &&
+    accessSubmissionBlockedRehearsal.accessSubmissionRehearsal.browserRunbook.some((step) => step.id === "await_credentials"),
+  "access submission credential-gated rehearsal is incomplete",
+);
+
 const builderPacket = await request("/api/builder-packet-export");
 assert(builderPacket.packet.score >= 85, "builder packet export score is below target");
 assert(builderPacket.packet.recommendedTrack === "developer", "builder packet export recommended track is wrong");
@@ -8179,6 +8242,9 @@ console.log(
       accessSubmissionStudioScore: accessSubmissionStudio.accessSubmissionStudio.score,
       accessSubmissionTargets: accessSubmissionStudio.accessSubmissionStudio.officialTargets.length,
       accessSubmissionCopyBlocks: accessSubmissionStudio.accessSubmissionStudio.totals.totalCopyBlocks,
+      accessSubmissionReadyRehearsal: accessSubmissionReadyRehearsal.accessSubmissionRehearsal.decision,
+      accessSubmissionBlockedRehearsal: accessSubmissionBlockedRehearsal.accessSubmissionRehearsal.decision,
+      accessSubmissionRehearsalCommands: accessSubmissionReadyRehearsal.accessSubmissionRehearsal.commands.length,
       builderPacketScore: builderPacket.packet.score,
       builderPacketFiles: builderPacket.packet.totals.packetFiles,
       builderPacketVisualTargets: builderPacket.packet.totals.visualTargets,

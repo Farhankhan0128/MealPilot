@@ -61,6 +61,7 @@ import {
   deletePrivacyData,
   exportPrivacyData,
   fetchAccessSubmissionStudio,
+  rehearseAccessSubmission,
   fetchAgentSurface,
   fetchAuditLedger,
   fetchBuilderPackage,
@@ -222,6 +223,8 @@ import type {
   AgentSurface,
   AgentSurfaceResponse,
   AccessSubmissionHandoffState,
+  AccessSubmissionRehearsal,
+  AccessSubmissionRehearsalMode,
   AccessSubmissionStudio,
   AuditLedgerCenter,
   AiClientConnectKit,
@@ -9205,9 +9208,36 @@ function DemoStudioPanel({
 }) {
   const readyFields = submissionPackage?.fields.filter((field) => field.status === "ready").length ?? 0;
   const totalFields = submissionPackage?.fields.length ?? 0;
+  const [accessSubmissionRehearsalForm, setAccessSubmissionRehearsalForm] = useState<{
+    mode: AccessSubmissionRehearsalMode;
+    includeFormSubmission: boolean;
+    includeHandoffEmail: boolean;
+    includeCredentialGates: boolean;
+  }>({
+    mode: "pre_submit",
+    includeFormSubmission: false,
+    includeHandoffEmail: false,
+    includeCredentialGates: false,
+  });
+  const [accessSubmissionRehearsal, setAccessSubmissionRehearsal] = useState<AccessSubmissionRehearsal | null>(null);
+  const [accessSubmissionRehearsalStatus, setAccessSubmissionRehearsalStatus] = useState<"idle" | "loading" | "error">("idle");
   const updateAccessField = (field: keyof AccessSubmissionHandoffState, value: string | boolean | undefined) => {
     onAccessSubmissionFormChange({ ...accessSubmissionForm, [field]: value });
   };
+  async function runAccessSubmissionRehearsal(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setAccessSubmissionRehearsalStatus("loading");
+    try {
+      const response = await rehearseAccessSubmission({
+        ...accessSubmissionRehearsalForm,
+        handoffState: accessSubmissionForm,
+      });
+      setAccessSubmissionRehearsal(response.accessSubmissionRehearsal);
+      setAccessSubmissionRehearsalStatus("idle");
+    } catch {
+      setAccessSubmissionRehearsalStatus("error");
+    }
+  }
 
   return (
     <section className="analysis-panel demo-studio-panel" id="demo-studio">
@@ -9411,6 +9441,89 @@ function DemoStudioPanel({
               <strong>{accessSubmissionStudio ? accessSubmissionStudio.totals.externalGates : "Loading"}</strong>
               <span>External gates</span>
             </div>
+          </div>
+          <form className="access-submission-rehearsal" onSubmit={runAccessSubmissionRehearsal}>
+            <label htmlFor="access-rehearsal-mode">Handoff mode</label>
+            <select
+              id="access-rehearsal-mode"
+              value={accessSubmissionRehearsalForm.mode}
+              onChange={(event) =>
+                setAccessSubmissionRehearsalForm((current) => ({
+                  ...current,
+                  mode: event.target.value as AccessSubmissionRehearsalMode,
+                }))
+              }
+            >
+              <option value="pre_submit">Pre-submit</option>
+              <option value="submitted_handoff">Submitted handoff</option>
+              <option value="credential_followup">Credential follow-up</option>
+            </select>
+            <div className="access-submission-toggle-grid">
+              <label htmlFor="access-form-submission">
+                <input
+                  id="access-form-submission"
+                  type="checkbox"
+                  checked={accessSubmissionRehearsalForm.includeFormSubmission}
+                  onChange={(event) =>
+                    setAccessSubmissionRehearsalForm((current) => ({ ...current, includeFormSubmission: event.target.checked }))
+                  }
+                />
+                Form
+              </label>
+              <label htmlFor="access-handoff-email">
+                <input
+                  id="access-handoff-email"
+                  type="checkbox"
+                  checked={accessSubmissionRehearsalForm.includeHandoffEmail}
+                  onChange={(event) =>
+                    setAccessSubmissionRehearsalForm((current) => ({ ...current, includeHandoffEmail: event.target.checked }))
+                  }
+                />
+                Email
+              </label>
+              <label htmlFor="access-credential-gates">
+                <input
+                  id="access-credential-gates"
+                  type="checkbox"
+                  aria-label="Include Swiggy credential gates"
+                  checked={accessSubmissionRehearsalForm.includeCredentialGates}
+                  onChange={(event) =>
+                    setAccessSubmissionRehearsalForm((current) => ({ ...current, includeCredentialGates: event.target.checked }))
+                  }
+                />
+                Creds
+              </label>
+            </div>
+            <button type="submit" disabled={accessSubmissionRehearsalStatus === "loading"} aria-label="Rehearse Swiggy access submission">
+              {accessSubmissionRehearsalStatus === "loading" ? <Loader2 aria-hidden="true" /> : <Rocket aria-hidden="true" />}
+              Rehearse
+            </button>
+            {accessSubmissionRehearsalStatus === "error" ? <small role="status">Access submission rehearsal unavailable.</small> : null}
+          </form>
+          <div
+            className="access-submission-rehearsal-result"
+            data-status={
+              accessSubmissionRehearsal?.decision === "ready_access_packet"
+                ? "healthy"
+                : accessSubmissionRehearsal?.decision === "manual_submission_gate"
+                  ? "watch"
+                  : "blocked"
+            }
+          >
+            <div>
+              <span>Handoff</span>
+              <strong>
+                {accessSubmissionRehearsal
+                  ? `${accessSubmissionRehearsal.decision.replace(/_/g, " ")} / ${accessSubmissionRehearsal.readinessScore}`
+                  : "Awaiting rehearsal"}
+              </strong>
+            </div>
+            <p>
+              {accessSubmissionRehearsal
+                ? `${accessSubmissionRehearsal.mode.replace(/_/g, " ")} / ${accessSubmissionRehearsal.copyBlocks.length} copy blocks / ${accessSubmissionRehearsal.attachmentChecklist.length} attachments`
+                : "Validate copy blocks, demo URL, attachments, browser runbook, email draft, and Swiggy-owned credential gates."}
+            </p>
+            {accessSubmissionRehearsal ? <small>{accessSubmissionRehearsal.nextAction}</small> : null}
           </div>
           <ul className="compact-status-list">
             {(accessSubmissionStudio?.browserRunbook ?? []).slice(0, 6).map((step) => (

@@ -337,6 +337,7 @@ When `MEALPILOT_DATA_FILE` is set, plans, reminders, pantry state, group state, 
 - `GET /api/submission-console`
 - `GET /api/access-submission-studio`
 - `PATCH /api/access-submission-studio/state`
+- `POST /api/access-submission-studio/rehearse`
 - `GET /api/evaluation-lab`
 - `GET /api/submission-package`
 - `GET /api/production-launch-bundle`
@@ -515,7 +516,7 @@ Production should use an HTTPS redirect URI with exact-match allowlisting.
 
 `/api/coding-agent-governance` reads the root `AGENTS.md` and scores the rules future coding agents must follow before editing Swiggy integrations: fetch official docs first, prefer page `.md` twins, never invent tools or parameters, preserve commercial confirmation gates, and keep sensitive data out of logs.
 
-`/api/access-submission-studio` is the final operator room before Swiggy submission. It joins official Start Building, Request access, and Send Us a Demo targets with copy-ready form values, required attachments, browser runbook steps, generated builders@swiggy.in mailto draft, blockers, and external gates. `PATCH /api/access-submission-studio/state` saves the local handoff fields for demo URL, contact, production redirect, static egress, environment, terms, form submission, handoff email, and notes; it never submits the official Swiggy form or sends email during local tests.
+`/api/access-submission-studio` is the final operator room before Swiggy submission. It joins official Start Building, Request access, and Send Us a Demo targets with copy-ready form values, required attachments, browser runbook steps, generated builders@swiggy.in mailto draft, blockers, and external gates. `PATCH /api/access-submission-studio/state` saves the local handoff fields for demo URL, contact, production redirect, static egress, environment, terms, form submission, handoff email, and notes; it never submits the official Swiggy form or sends email during local tests. `POST /api/access-submission-studio/rehearse` selects pre-submit, submitted-handoff, or credential-follow-up mode and returns the exact local packet, selected targets, missing inputs, proof commands, and Swiggy-owned credential gates.
 
 `/api/swiggy-access-evidence-matrix` is the access-review evidence ledger. It reconciles Access Dossier, Submission Console, Access Submission Studio, and Reviewer Artifact Vault rows into one owner-tagged matrix for official fields, proof attachments, runbook steps, commands, manual operator inputs, and Swiggy approval gates.
 
@@ -610,7 +611,7 @@ The test suite checks that:
 - Swiggy Voice Commerce Rehearsal Center validates short spoken scripts, visual card fallbacks, no raw-audio retention, and confirmation prompts across Food, Instamart, Dineout, and combined journeys.
 - Local MCP JSON-RPC supports `resources/list`, `resources/read`, `prompts/list`, and `prompts/get` for review-time evidence before live Swiggy credentials.
 - Submission Console consolidates developer/enterprise access targets, official access requirements, prepared form fields, required attachments, packet order, demo-video gate, runbook steps, blockers, and builders@swiggy.in drafts.
-- Access Submission Studio validates official CTA targets, copy blocks, required proof attachments, browser runbook, generated mailto handoff, and non-auto-submission gates.
+- Access Submission Studio validates official CTA targets, copy blocks, required proof attachments, browser runbook, generated mailto handoff, local rehearsal decisions, and non-auto-submission gates.
 - Swiggy Access Evidence Matrix validates required field coverage, attachment readiness, proof-command coverage, owner assignment, and unresolved Swiggy/operator gates.
 - Builder Packet Export writes the copy-ready and machine-readable Swiggy access packet under ignored local artifacts, preserving operator-owned form submission and Swiggy credential gates.
 - GitHub Actions installs Chromium for Playwright, runs production smoke, captures visual evidence, exports the Swiggy builder packet, and uploads ignored reviewer artifacts for every push and pull request.

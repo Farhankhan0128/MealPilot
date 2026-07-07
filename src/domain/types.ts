@@ -5200,6 +5200,32 @@ export interface AccessSubmissionStudio {
   externalGates: string[];
 }
 
+export type AccessSubmissionRehearsalMode = "pre_submit" | "submitted_handoff" | "credential_followup";
+export type AccessSubmissionRehearsalDecision =
+  | "ready_access_packet"
+  | "manual_submission_gate"
+  | "blocked_swiggy_gate";
+
+export interface AccessSubmissionRehearsal {
+  generatedAt: string;
+  decision: AccessSubmissionRehearsalDecision;
+  readinessScore: number;
+  mode: AccessSubmissionRehearsalMode;
+  includeFormSubmission: boolean;
+  includeHandoffEmail: boolean;
+  includeCredentialGates: boolean;
+  selectedTargets: AccessSubmissionStudioTarget[];
+  copyBlocks: AccessSubmissionStudioCopyBlock[];
+  attachmentChecklist: AccessSubmissionStudioAttachment[];
+  browserRunbook: AccessSubmissionStudioStep[];
+  mailto: AccessSubmissionStudio["mailto"];
+  commands: Array<{ command: string; proves: string }>;
+  missingInputs: string[];
+  telemetry: Array<{ field: string; value: string; redaction: string }>;
+  assertions: string[];
+  nextAction: string;
+}
+
 export type SwiggyAccessEvidenceStatus = "ready" | "operator_input" | "external_gate" | "watch";
 export type SwiggyAccessEvidenceOwner = "MealPilot" | "Operator" | "Swiggy";
 export type SwiggyAccessEvidenceKind =

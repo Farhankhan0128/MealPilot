@@ -24,7 +24,7 @@ import {
 } from "./services/advancedWorkflows.js";
 import { buildSwiggyAgentExperienceBenchmark } from "./services/agentExperienceBenchmark.js";
 import { buildAiClientConnectKit, validateAiClientConfig } from "./services/aiClientConnect.js";
-import { buildAccessSubmissionStudio } from "./services/accessSubmissionStudio.js";
+import { buildAccessSubmissionStudio, rehearseAccessSubmission } from "./services/accessSubmissionStudio.js";
 import { buildSwiggyAuthLifecycleCenter } from "./services/authLifecycleCenter.js";
 import { buildAuditLedgerCenter } from "./services/auditLedger.js";
 import { activateSwiggyBenefit, buildSwiggyBenefitsActivationCenter } from "./services/benefitsActivationCenter.js";
@@ -235,6 +235,14 @@ const accessSubmissionStateSchema = z.object({
   formSubmittedAt: z.string().trim().optional(),
   handoffEmailSentAt: z.string().trim().optional(),
   notes: z.string().trim().optional(),
+});
+
+const accessSubmissionRehearsalSchema = z.object({
+  mode: z.enum(["pre_submit", "submitted_handoff", "credential_followup"]),
+  includeFormSubmission: z.boolean(),
+  includeHandoffEmail: z.boolean(),
+  includeCredentialGates: z.boolean(),
+  handoffState: accessSubmissionStateSchema.optional(),
 });
 
 const visualDishAnalyzeSchema = z.object({
@@ -2118,6 +2126,30 @@ export function createMealPilotServer(options: MealPilotServerOptions = {}) {
         coverage: buildMcpCoverage(),
         latestPlan: store.getAllPlans().at(-1),
         handoffState: nextState,
+      }),
+    });
+  });
+
+  app.post("/api/access-submission-studio/rehearse", (req, res) => {
+    const body = accessSubmissionRehearsalSchema.parse(req.body);
+    const current = store.getAccessSubmissionState();
+    const handoffState = {
+      ...current,
+      ...(body.handoffState ?? {}),
+      updatedAt: current.updatedAt,
+    };
+
+    res.json({
+      accessSubmissionRehearsal: rehearseAccessSubmission({
+        config,
+        profile: store.getProfile(),
+        coverage: buildMcpCoverage(),
+        latestPlan: store.getAllPlans().at(-1),
+        handoffState,
+        mode: body.mode,
+        includeFormSubmission: body.includeFormSubmission,
+        includeHandoffEmail: body.includeHandoffEmail,
+        includeCredentialGates: body.includeCredentialGates,
       }),
     });
   });
