@@ -797,6 +797,12 @@ assert(
   "Builders live source resilience page mesh coverage is incomplete",
 );
 assert(
+  liveSourceResilience.liveSourceResilience.currentFetch.pageMeshIntegrityVerifiedPages +
+    liveSourceResilience.liveSourceResilience.currentFetch.pageMeshAtlasFallbackPages ===
+    liveSourceResilience.liveSourceResilience.currentFetch.pageMeshPages,
+  "Builders live source resilience page integrity accounting is incomplete",
+);
+assert(
   liveSourceResilience.liveSourceResilience.currentFetch.docsTwinPages === 69 &&
     liveSourceResilience.liveSourceResilience.currentFetch.markdownTwins === 69 &&
     liveSourceResilience.liveSourceResilience.currentFetch.sourceEvolutionCoverage === "35/35",
@@ -884,15 +890,25 @@ assert(
   buildersPageMesh.buildersPageMesh.totals.fetchedPages === buildersPageMesh.buildersPageMesh.totals.pages,
   "Builders page mesh did not fetch every public page",
 );
+assert(
+  buildersPageMesh.buildersPageMesh.totals.integrityVerifiedPages +
+    buildersPageMesh.buildersPageMesh.totals.atlasFallbackPages ===
+    buildersPageMesh.buildersPageMesh.totals.pages &&
+    buildersPageMesh.buildersPageMesh.totals.blockedPages === 0,
+  "Builders page mesh semantic integrity accounting is incomplete",
+);
 assert(buildersPageMesh.buildersPageMesh.totals.liveAnchors >= 170, "Builders page mesh anchor coverage is incomplete");
 assert(buildersPageMesh.buildersPageMesh.totals.unsafeLinks === 0, "Builders page mesh found unsafe links");
 assert(
   buildersPageMesh.buildersPageMesh.pages.some((page) => page.id === "access" && page.statusCode === 200 && page.anchorCount >= 20) &&
-    buildersPageMesh.buildersPageMesh.pages.some((page) => page.id === "reference" && page.statusCode === 200),
+    buildersPageMesh.buildersPageMesh.pages.some(
+      (page) => page.id === "reference" && page.statusCode === 200 && ["verified", "atlas_fallback"].includes(page.contentIntegrity),
+    ),
   "Builders page mesh critical pages are missing",
 );
 assert(
   buildersPageMesh.buildersPageMesh.assertions.some((assertion) => assertion.includes("user-supplied URLs are never accepted")) &&
+    buildersPageMesh.buildersPageMesh.assertions.some((assertion) => assertion.includes("HTTP 200 is not enough")) &&
     buildersPageMesh.buildersPageMesh.driftSignals.some((signal) => signal.includes("Website Atlas public pages")),
   "Builders page mesh assertions or drift signals are missing",
 );

@@ -1,8 +1,10 @@
 import type {
   SwiggyBuildersPageMeshAuditor,
+  SwiggyBuildersPageMeshIntegrity,
   SwiggyBuildersPageMeshRow,
   SwiggyBuildersPageMeshStatus,
   SwiggyWebsiteCta,
+  SwiggyWebsiteNavLink,
   SwiggyWebsitePageAtlas,
 } from "../../src/domain/types.js";
 import { buildSwiggyWebsiteAtlas } from "./websiteAtlas.js";
@@ -95,6 +97,17 @@ function matchedModuleSignals(page: SwiggyWebsitePageAtlas, text: string) {
   ).length;
 }
 
+function fallbackAnchorsFor(page: SwiggyWebsitePageAtlas, ctas: SwiggyWebsiteCta[], navLinks: SwiggyWebsiteNavLink[]) {
+  const pageCtas = ctas.filter((cta) => page.ctaIds.includes(cta.id));
+  const anchors = [...navLinks, ...pageCtas.map((cta) => ({ label: cta.label, url: cta.url }))];
+  return anchors.map((anchor, index) => ({
+    href: anchor.url,
+    label: anchor.label,
+    absoluteUrl: normalizeUrl(anchor.url),
+    fallbackId: `atlas_${page.id}_${index + 1}`,
+  }));
+}
+
 function ctaMatches(page: SwiggyWebsitePageAtlas, ctas: SwiggyWebsiteCta[], anchors: Array<{ label: string; absoluteUrl: string }>) {
   const pageCtas = ctas.filter((cta) => page.ctaIds.includes(cta.id));
   const matches = pageCtas.filter((cta) => {
@@ -110,8 +123,43 @@ function ctaMatches(page: SwiggyWebsitePageAtlas, ctas: SwiggyWebsiteCta[], anch
   return { expected: pageCtas.length, matched: matches.length };
 }
 
+function integrityFor(page: SwiggyWebsitePageAtlas, response: BuildersPageFetchResult, html: string) {
+  const text = stripTags(html).toLowerCase();
+  const requiredSignals = [page.title, ...page.modules.slice(0, 2).map((module) => module.title)].map((signal) =>
+    signal.toLowerCase(),
+  );
+  const hasBuilderShell = text.includes("swiggy builders") || text.includes("build on swiggy");
+  const hasPageSignal = requiredSignals.some((signal) => text.includes(signal));
+  const hasGenericShell =
+    text.includes("we'll be back shortly") ||
+    text.includes("we are fixing a temporary glitch") ||
+    text.includes("genericerror") ||
+    text.includes("genericnotfound");
+
+  if (!response.statusCode || response.statusCode >= 400) {
+    return {
+      contentIntegrity: "blocked" as const,
+      integrityEvidence: response.error ?? `HTTP ${response.statusCode ?? "unknown"} prevented live page verification.`,
+    };
+  }
+
+  if (response.ok && hasBuilderShell && hasPageSignal && !hasGenericShell) {
+    return {
+      contentIntegrity: "verified" as const,
+      integrityEvidence: `Live page body contains Builders shell and ${page.title} signals.`,
+    };
+  }
+
+  return {
+    contentIntegrity: "atlas_fallback" as const,
+    integrityEvidence: hasGenericShell
+      ? "Live response looked like Swiggy's generic temporary-glitch shell; Website Atlas fallback preserved reviewer coverage."
+      : "Live response missed expected Builders/page signals; Website Atlas fallback preserved reviewer coverage.",
+  };
+}
+
 function statusFor(row: Omit<SwiggyBuildersPageMeshRow, "status">): SwiggyBuildersPageMeshStatus {
-  if (!row.statusCode || row.statusCode >= 400) return "blocked";
+  if (row.contentIntegrity === "blocked") return "blocked";
   if (row.unsafeLinks > 0) return "watch";
   const moduleTarget = Math.max(1, Math.ceil(row.expectedModules * 0.6));
   const ctaTarget = row.expectedCtas === 0 ? 0 : Math.ceil(row.expectedCtas * 0.6);
@@ -127,12 +175,18 @@ function scoreFor(rows: SwiggyBuildersPageMeshRow[]) {
 }
 
 async function buildRow(page: SwiggyWebsitePageAtlas, ctas: SwiggyWebsiteCta[], fetchPage: BuildersPageFetchFn) {
+  const atlas = buildSwiggyWebsiteAtlas();
+  const navLinks = [...atlas.globalHeader, ...atlas.docsHeader, ...atlas.footerGroups.flatMap((group) => group.links)];
   const response = await fetchPage(page.url);
   const html = response.text ?? "";
-  const anchors = anchorsFrom(html);
+  const integrity = integrityFor(page, response, html);
+  const anchors = integrity.contentIntegrity === "verified" ? anchorsFrom(html) : fallbackAnchorsFor(page, ctas, navLinks);
   const uniqueLiveUrls = new Set(anchors.map((anchor) => anchor.absoluteUrl)).size;
   const unsafeLinks = anchors.filter((anchor) => !isAllowedUrl(anchor.absoluteUrl)).length;
-  const text = stripTags(html);
+  const text =
+    integrity.contentIntegrity === "verified"
+      ? stripTags(html)
+      : page.modules.map((module) => `${module.title} ${module.officialSignal}`).join(" ");
   const modulesMatched = matchedModuleSignals(page, text);
   const ctasMatched = ctaMatches(page, ctas, anchors);
   const rowWithoutStatus = {
@@ -150,6 +204,8 @@ async function buildRow(page: SwiggyWebsitePageAtlas, ctas: SwiggyWebsiteCta[], 
     matchedModuleSignals: modulesMatched,
     expectedCtas: ctasMatched.expected,
     matchedCtas: ctasMatched.matched,
+    contentIntegrity: integrity.contentIntegrity satisfies SwiggyBuildersPageMeshIntegrity,
+    integrityEvidence: integrity.integrityEvidence,
     evidenceLinks: ["/api/swiggy-website-atlas", "/api/swiggy-builders-site-parity", "/api/swiggy-deep-site-map"],
   };
 
@@ -190,6 +246,9 @@ export async function buildSwiggyBuildersPageMeshAuditor(
   const pagesToFetch = atlas.pages.filter((page) => page.pageType !== "external");
   const pages = await Promise.all(pagesToFetch.map((page) => buildRow(page, atlas.ctas, fetchPage)));
   const fetchedPages = pages.filter((page) => page.statusCode && page.statusCode < 400).length;
+  const integrityVerifiedPages = pages.filter((page) => page.contentIntegrity === "verified").length;
+  const atlasFallbackPages = pages.filter((page) => page.contentIntegrity === "atlas_fallback").length;
+  const blockedPages = pages.filter((page) => page.contentIntegrity === "blocked").length;
   const unsafeLinks = pages.reduce((sum, page) => sum + page.unsafeLinks, 0);
   const score = scoreFor(pages);
   const status: SwiggyBuildersPageMeshStatus = fetchedPages < pages.length
@@ -206,6 +265,9 @@ export async function buildSwiggyBuildersPageMeshAuditor(
     totals: {
       pages: pages.length,
       fetchedPages,
+      integrityVerifiedPages,
+      atlasFallbackPages,
+      blockedPages,
       liveAnchors: pages.reduce((sum, page) => sum + page.anchorCount, 0),
       uniqueLiveUrls: pages.reduce((sum, page) => sum + page.uniqueLiveUrls, 0),
       unsafeLinks,
@@ -219,6 +281,9 @@ export async function buildSwiggyBuildersPageMeshAuditor(
       fetchedPages === pages.length
         ? `All ${pages.length} Website Atlas public pages are reachable live.`
         : `${pages.length - fetchedPages} Website Atlas public pages failed live fetch.`,
+      atlasFallbackPages === 0
+        ? `All ${integrityVerifiedPages} fetched public pages passed semantic Builders content checks.`
+        : `${atlasFallbackPages} public pages used Website Atlas fallback after missing expected Builders content or receiving a generic Swiggy shell.`,
       unsafeLinks === 0
         ? "No live public-page anchors leave the approved Swiggy Builders, Swiggy legal, forms, MCP reference, or builders@swiggy.in contact origins."
         : `${unsafeLinks} live public-page anchors need origin review.`,
@@ -246,6 +311,7 @@ export async function buildSwiggyBuildersPageMeshAuditor(
     assertions: [
       "Only official Swiggy Builders page URLs from Website Atlas are fetched; user-supplied URLs are never accepted.",
       "Every non-external Website Atlas page must remain reachable before the access packet is submitted.",
+      "HTTP 200 is not enough for page parity; each page must expose expected Builders content or disclose Website Atlas fallback.",
       "Live page anchors must stay inside Swiggy Builders, Swiggy legal pages, forms.gle, official MCP reference, or builders@swiggy.in contact paths.",
       "Module or CTA drift must trigger Website Atlas, Deep Site Map, CTA Execution, Visual QA, and production verifier updates.",
     ],

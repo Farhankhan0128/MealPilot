@@ -172,6 +172,8 @@ export async function buildSwiggyBuildersLiveSourceResilienceCenter(options: {
       missingExpectedItems: siteParity.totals.missingExpectedItems,
       pageMeshPages: pageMesh.totals.pages,
       pageMeshFetchedPages: pageMesh.totals.fetchedPages,
+      pageMeshIntegrityVerifiedPages: pageMesh.totals.integrityVerifiedPages,
+      pageMeshAtlasFallbackPages: pageMesh.totals.atlasFallbackPages,
       pageMeshAnchors: pageMesh.totals.liveAnchors,
       docsTwinPages: docsTwin.totals.pages,
       markdownTwins: docsTwin.totals.markdownTwins,

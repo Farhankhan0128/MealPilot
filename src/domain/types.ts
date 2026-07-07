@@ -1079,6 +1079,8 @@ export interface SwiggyBuildersLiveSourceResilienceCenter {
     missingExpectedItems: number;
     pageMeshPages: number;
     pageMeshFetchedPages: number;
+    pageMeshIntegrityVerifiedPages: number;
+    pageMeshAtlasFallbackPages: number;
     pageMeshAnchors: number;
     docsTwinPages: number;
     markdownTwins: number;
@@ -1152,6 +1154,7 @@ export interface SwiggyBuildersReviewDecisionCenter {
 }
 
 export type SwiggyBuildersPageMeshStatus = "covered" | "watch" | "blocked";
+export type SwiggyBuildersPageMeshIntegrity = "verified" | "atlas_fallback" | "blocked";
 
 export interface SwiggyBuildersPageMeshRow {
   id: string;
@@ -1168,6 +1171,8 @@ export interface SwiggyBuildersPageMeshRow {
   matchedModuleSignals: number;
   expectedCtas: number;
   matchedCtas: number;
+  contentIntegrity: SwiggyBuildersPageMeshIntegrity;
+  integrityEvidence: string;
   evidenceLinks: string[];
   status: SwiggyBuildersPageMeshStatus;
 }
@@ -1180,6 +1185,9 @@ export interface SwiggyBuildersPageMeshAuditor {
   totals: {
     pages: number;
     fetchedPages: number;
+    integrityVerifiedPages: number;
+    atlasFallbackPages: number;
+    blockedPages: number;
     liveAnchors: number;
     uniqueLiveUrls: number;
     unsafeLinks: number;

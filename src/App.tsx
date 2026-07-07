@@ -4075,10 +4075,10 @@ function LaunchCenterPanel({
             <div>
               <strong>
                 {liveSourceResilience
-                  ? `${liveSourceResilience.currentFetch.pageMeshFetchedPages}/${liveSourceResilience.currentFetch.pageMeshPages}`
+                  ? `${liveSourceResilience.currentFetch.pageMeshIntegrityVerifiedPages}/${liveSourceResilience.currentFetch.pageMeshPages}`
                   : "0/0"}
               </strong>
-              <span>Pages</span>
+              <span>Verified</span>
             </div>
             <div>
               <strong>{liveSourceResilience?.currentFetch.markdownTwins ?? 0}</strong>
@@ -4171,7 +4171,7 @@ function LaunchCenterPanel({
           </div>
           <span>
             {buildersPageMesh
-              ? `${buildersPageMesh.score}/100, ${buildersPageMesh.totals.fetchedPages}/${buildersPageMesh.totals.pages} live pages`
+              ? `${buildersPageMesh.score}/100, ${buildersPageMesh.totals.integrityVerifiedPages}/${buildersPageMesh.totals.pages} verified pages`
               : "Fetching every public Builders page from Website Atlas"}
           </span>
           <div className="builders-page-mesh-grid">
@@ -4182,6 +4182,10 @@ function LaunchCenterPanel({
             <div>
               <strong>{buildersPageMesh?.totals.unsafeLinks ?? 0}</strong>
               <span>Unsafe</span>
+            </div>
+            <div>
+              <strong>{buildersPageMesh?.totals.atlasFallbackPages ?? 0}</strong>
+              <span>Fallbacks</span>
             </div>
             <div>
               <strong>
@@ -4206,7 +4210,7 @@ function LaunchCenterPanel({
               >
                 <span>{page.title}</span>
                 <strong>
-                  {page.matchedModuleSignals}/{page.expectedModules}
+                  {page.contentIntegrity === "verified" ? "live" : page.contentIntegrity === "atlas_fallback" ? "atlas" : "blocked"}
                 </strong>
               </li>
             ))}

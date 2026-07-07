@@ -166,6 +166,8 @@ The `/api/swiggy-upstream-watch` endpoint keeps shipped Swiggy MCP behavior sepa
 
 The `/api/swiggy-source-intelligence` endpoint keeps website, docs, API count, CTA, and credential-gate drift visible before launch. It treats the 35-tool reference docs as the implementation contract, records homepage/count-language differences as non-blocking watch items, and keeps live Swiggy credential approval as an external gate rather than implying production access.
 
+The `/api/swiggy-builders-page-mesh` endpoint treats HTTP 200 as necessary but not sufficient. If a public Builders URL returns Swiggy's generic temporary-glitch shell or misses expected Builders/page signals, MealPilot marks the row as Website Atlas fallback, keeps local reviewer coverage alive, and avoids claiming the page body was semantically verified live.
+
 The `/api/swiggy-innovation-radar` endpoint keeps innovation grounded in Swiggy's source material and safety boundaries. Premium lanes such as voice ordering, auto-restock, group lunch, Dineout-first evenings, screenshot-to-order, care meals, and enterprise tenant commerce name their MCP tools, route optimizations, proof surfaces, and staging or partner gates before any production claim is made.
 
 The `/api/mcp/widget-runtime` endpoint keeps hosted widget behavior explicit and gated. MealPilot models Food, Instamart, and Dineout iframe surfaces, verifies postMessage origin as `https://mcp.swiggy.com`, omits `allow-top-navigation`, avoids parent-to-iframe DOM access, serves semantic data-envelope fallbacks, exposes activation checks and render contracts, and disables widget rendering on voice surfaces until Swiggy-hosted iframe URLs and opt-in headers are live.

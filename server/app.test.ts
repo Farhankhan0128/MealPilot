@@ -1228,12 +1228,41 @@ describe("MealPilot API", () => {
     expect(auditor.score).toBeGreaterThanOrEqual(95);
     expect(auditor.totals.pages).toBe(7);
     expect(auditor.totals.fetchedPages).toBe(7);
+    expect(auditor.totals.integrityVerifiedPages).toBe(7);
+    expect(auditor.totals.atlasFallbackPages).toBe(0);
+    expect(auditor.totals.blockedPages).toBe(0);
     expect(auditor.totals.unsafeLinks).toBe(0);
     expect(auditor.pages.map((page) => page.id)).toEqual(
       expect.arrayContaining(["home", "developers", "enterprises", "access", "blog_launch", "docs_home", "reference"]),
     );
     expect(auditor.pages.every((page) => page.status === "covered")).toBe(true);
+    expect(auditor.pages.every((page) => page.contentIntegrity === "verified")).toBe(true);
     expect(auditor.assertions.some((assertion) => assertion.includes("user-supplied URLs are never accepted"))).toBe(true);
+  });
+
+  it("discloses Website Atlas fallback when Swiggy returns a generic temporary-glitch shell", async () => {
+    const genericShell = [
+      "<title>Order food online from India's best food delivery service</title>",
+      "<div class=\"GenericError__title\">We'll be back shortly</div>",
+      "<div class=\"GenericError__description\">We are fixing a temporary glitch. Sorry for the inconvenience.</div>",
+      '<a href="javascript:exit()">Go Back</a>',
+    ].join("");
+    const auditor = await buildSwiggyBuildersPageMeshAuditor(async () => ({
+      ok: true,
+      statusCode: 200,
+      durationMs: 6,
+      text: genericShell,
+    }));
+
+    expect(auditor.totals.pages).toBe(7);
+    expect(auditor.totals.fetchedPages).toBe(7);
+    expect(auditor.totals.integrityVerifiedPages).toBe(0);
+    expect(auditor.totals.atlasFallbackPages).toBe(7);
+    expect(auditor.totals.blockedPages).toBe(0);
+    expect(auditor.pages.every((page) => page.contentIntegrity === "atlas_fallback")).toBe(true);
+    expect(auditor.pages.every((page) => page.integrityEvidence.includes("Website Atlas fallback"))).toBe(true);
+    expect(auditor.driftSignals.some((signal) => signal.includes("Website Atlas fallback"))).toBe(true);
+    expect(auditor.assertions.some((assertion) => assertion.includes("HTTP 200 is not enough"))).toBe(true);
   });
 
   it("turns the Swiggy Builders launch blog into a reviewer story center", async () => {
@@ -3745,6 +3774,9 @@ describe("MealPilot API", () => {
     expect(center.currentFetch.missingExpectedItems).toBe(0);
     expect(center.currentFetch.pageMeshPages).toBeGreaterThanOrEqual(7);
     expect(center.currentFetch.pageMeshFetchedPages).toBe(center.currentFetch.pageMeshPages);
+    expect(center.currentFetch.pageMeshIntegrityVerifiedPages + center.currentFetch.pageMeshAtlasFallbackPages).toBe(
+      center.currentFetch.pageMeshPages,
+    );
     expect(center.currentFetch.docsTwinPages).toBe(69);
     expect(center.currentFetch.markdownTwins).toBe(69);
     expect(center.currentFetch.sourceEvolutionCoverage).toBe("35/35");
